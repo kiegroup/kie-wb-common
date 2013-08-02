@@ -15,10 +15,23 @@
  */
 package org.kie.workbench.common.widgets.client.search;
 
+import javax.enterprise.context.ApplicationScoped;
+
 /**
  *
  * @author salaboy
  */
-public class ClearSearchEvent {
+@ApplicationScoped
+public class ContextualSearch {
+    private SearchBehavior searchBehavior;
+
+    public SearchBehavior getSearchBehavior() {
+        return searchBehavior;
+    }
+
+    public void setSearchBehavior(SearchBehavior searchBehavior) {
+        this.searchBehavior = searchBehavior;
+    }
+    
     
 }

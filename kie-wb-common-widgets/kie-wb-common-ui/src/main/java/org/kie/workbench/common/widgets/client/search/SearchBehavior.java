@@ -19,6 +19,7 @@ package org.kie.workbench.common.widgets.client.search;
  *
  * @author salaboy
  */
-public class ClearSearchEvent {
+public interface SearchBehavior {
+    void execute(String searchFilter);
     
 }
