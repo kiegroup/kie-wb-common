@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>drools-wb-default-editor-backend</artifactId>
+  <artifactId>kie-wb-common-default-editor-backend</artifactId>
   <packaging>jar</packaging>
 
   <name>Drools Workbench - Default Editor - Backend</name>
@@ -18,8 +18,8 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.drools</groupId>
-      <artifactId>drools-wb-default-editor-api</artifactId>
+      <groupId>org.kie.workbench.screens</groupId>
+      <artifactId>kie-wb-common-default-editor-api</artifactId>
     </dependency>
 
     <dependency>

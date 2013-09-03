@@ -9,7 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>drools-wb-default-editor-api</artifactId>
+  <artifactId>kie-wb-common-default-editor-api</artifactId>
   <packaging>jar</packaging>
 
   <name>Drools Workbench - Default Editor - API</name>
