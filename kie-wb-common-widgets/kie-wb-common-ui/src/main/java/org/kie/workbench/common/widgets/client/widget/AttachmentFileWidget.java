@@ -52,7 +52,8 @@ public class AttachmentFileWidget extends Composite {
    private Command successCallback;
    private Command errorCallback;
    private String[] validFileExtensions  = null;
-
+   private String fileName= null;
+   
    public AttachmentFileWidget() {
        final FileUpload up = new FileUpload();
        up.setName( FileManagerFields.UPLOAD_FIELD_NAME_ATTACH );
@@ -61,13 +62,15 @@ public class AttachmentFileWidget extends Composite {
        form.addSubmitHandler(new SubmitHandler() {
             @Override
             public void onSubmit(SubmitEvent event) {
-                String fileName = up.getFilename();
+                fileName = up.getFilename();
                 if (fileName == null || "".equals(fileName)) {
                     Window.alert("Please selete a file to upload");
                     event.cancel();
+                    executeCallback( errorCallback );
+                    return;
                 }
-                if (validFileExtensions != null
-                        && validFileExtensions.length != 0) {
+                
+                if (validFileExtensions != null && validFileExtensions.length != 0) {
                     boolean isValid = false;
                     for (String extension : validFileExtensions) {
                         if (fileName.endsWith(extension)) {
@@ -78,6 +81,8 @@ public class AttachmentFileWidget extends Composite {
                     if (!isValid) {
                         Window.alert("The file type is not supported");
                         event.cancel();
+                        executeCallback( errorCallback );
+                        return;
                     }
                 }
             }
@@ -92,7 +97,11 @@ public class AttachmentFileWidget extends Composite {
                    Window.alert( CommonConstants.INSTANCE.UploadSuccess() );
                } else {
                    executeCallback( errorCallback );
-                   ErrorPopup.showMessage( event.getResults() );
+                   if(event.getResults().contains("org.kie.commons.java.nio.file.FileAlreadyExistsException")) {
+                       ErrorPopup.showMessage( CommonConstants.INSTANCE.ExceptionFileAlreadyExists0( fileName ) );
+                   } else {
+                       ErrorPopup.showMessage( CommonConstants.INSTANCE.ExceptionGeneric0( event.getResults() ) );
+                   }
                }
            }
 
