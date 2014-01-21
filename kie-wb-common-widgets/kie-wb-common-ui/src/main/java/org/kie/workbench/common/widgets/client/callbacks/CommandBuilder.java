@@ -25,8 +25,6 @@ import org.uberfire.client.common.MultiPageEditor;
 import org.uberfire.commons.validation.PortablePreconditions;
 import org.uberfire.java.nio.file.NoSuchFileException;
 import org.uberfire.mvp.Command;
-import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
 
 /**
  * Utility class to build the Commands for CommandDrivenErrorCallback.
@@ -57,31 +55,6 @@ public class CommandBuilder {
                      editor.addWidget( new NoSuchFileWidget(),
                                        CommonConstants.INSTANCE.NoSuchFileTabTitle() );
                      view.hideBusyIndicator();
-                 }
-             }
-           );
-        return this;
-    }
-
-    public CommandBuilder addNoSuchFileException( final HasBusyIndicator view,
-                                                  final MultiPageEditor editor,
-                                                  final Menus menus ) {
-        add( NoSuchFileException.class,
-             new Command() {
-
-                 @Override
-                 public void execute() {
-                     editor.clear();
-                     editor.addWidget( new NoSuchFileWidget(),
-                                       CommonConstants.INSTANCE.NoSuchFileTabTitle() );
-                     disableMenuItems( menus );
-                     view.hideBusyIndicator();
-                 }
-
-                 private void disableMenuItems( final Menus menus ) {
-                     for ( MenuItem mi : menus.getItemsMap().values() ) {
-                         mi.setEnabled( false );
-                     }
                  }
              }
            );
