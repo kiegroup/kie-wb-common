@@ -476,7 +476,12 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
 
         if (fields == null || fields.length == 0) {
             fields = projectModelFields.get(factTypeName);
-            AsyncPackageDataModelOracleUtilities.correctModelFields(packageName, fields, imports);
+
+            if (fields == null || isLazyProxy(fields)) {
+                fields = null;
+            } else {
+                AsyncPackageDataModelOracleUtilities.correctModelFields(packageName, fields, imports);
+            }
         }
 
         //Load incremental content
@@ -484,18 +489,26 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
             service.call( new RemoteCallback<PackageDataModelOracleIncrementalPayload>() {
 
                 @Override
-                public void callback( final PackageDataModelOracleIncrementalPayload dataModel ) {
-                    AsyncPackageDataModelOracleUtilities.populateDataModelOracle( AsyncPackageDataModelOracleImpl.this,
-                                                                                  dataModel );
-                    final ModelField[] fields = getModelFields( factTypeName );
-                    callback.callback( fields );
+
+
+                public void callback(final PackageDataModelOracleIncrementalPayload dataModel) {
+                    AsyncPackageDataModelOracleUtilities.populateDataModelOracle(
+                            AsyncPackageDataModelOracleImpl.this,
+                            dataModel);
+
+                    // This will stop an infinite loop if there are no fields to be found
+                    if (dataModel.getModelFields().get(factTypeName) == null || dataModel.getModelFields().get(factTypeName).length == 0) {
+                        callback.callback(new ModelField[0]);
+                    } else {
+                        getFieldCompletions(factType, callback);
+                    }
                 }
             } ).getUpdates( resourcePath,
                             imports,
                             factTypeName );
 
         } else {
-            callback.callback( fields );
+            callback.callback(fields);
         }
     }
 
