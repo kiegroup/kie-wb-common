@@ -91,7 +91,7 @@ public class ValidatorService {
         Boolean b = Boolean.TRUE;
         String className = assembleClassName( packageName, name );
         for ( DataObjectTO d : model.getDataObjects() ) {
-            if ( d.getClassName().equalsIgnoreCase( className ) ) {
+            if ( d.getClassName().equals( className ) ) {
                 b = Boolean.FALSE;
                 break;
             }
