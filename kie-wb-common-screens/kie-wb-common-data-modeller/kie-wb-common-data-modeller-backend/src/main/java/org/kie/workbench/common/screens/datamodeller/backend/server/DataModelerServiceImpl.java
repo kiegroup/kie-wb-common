@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.drools.workbench.models.datamodel.oracle.ProjectDataModelOracle;
+import org.guvnor.common.services.builder.LRUBuilderCache;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
@@ -37,7 +38,9 @@ import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.api.KieServices;
+import org.kie.api.builder.KieModule;
 import org.kie.api.runtime.KieContainer;
+import org.kie.scanner.KieModuleMetaData;
 import org.kie.workbench.common.screens.datamodeller.model.AnnotationDefinitionTO;
 import org.kie.workbench.common.screens.datamodeller.model.DataModelTO;
 import org.kie.workbench.common.screens.datamodeller.model.DataObjectTO;
@@ -108,6 +111,9 @@ public class DataModelerServiceImpl implements DataModelerService {
     @Inject
     private MetadataService metadataService;
 
+    @Inject
+    private LRUBuilderCache builderCache;
+
     private static final String DEFAULT_COMMIT_MESSAGE = "Data modeller generated action.";
 
     private static final String DEFAULT_COMMIT_MESSAGE_OLD_VERSIONS = "Data modeller generated action.";
@@ -166,18 +172,10 @@ public class DataModelerServiceImpl implements DataModelerService {
     }
 
     private ClassLoader getProjectClassLoader(Project project) {
-        if (project == null || project.getPomXMLPath() == null) {
-            logger.warn("project: " + project + " or pomXMLPath: " + project.getPomXMLPath() + " is null." );return null;
-        }
-        POM pom = pomService.load(project.getPomXMLPath());
-        if (pom == null) {
-            logger.warn("Pom couldn't be read for project: " + project + " pomXmlPath: " + project.getPomXMLPath());
-            return null;
-        }
 
-        KieServices kieServices = KieServices.Factory.get();
-        KieContainer kieContainer = kieServices.newKieContainer(kieServices.newReleaseId(pom.getGav().getGroupId(), pom.getGav().getArtifactId(), pom.getGav().getVersion()));
-        return kieContainer.getClassLoader();
+        final KieModule module = builderCache.assertBuilder( project ).getKieModuleIgnoringErrors();
+        final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData( module ).getClassLoader();
+        return classLoader;
     }
 
     @Override
