@@ -27,11 +27,10 @@ import org.guvnor.m2repo.service.M2RepoService;
 import org.uberfire.backend.server.config.ConfigurationService;
 import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;
-import org.uberfire.backend.repositories.Repository;
+import org.uberfire.metadata.backend.lucene.LuceneConfig;
 import org.uberfire.rpc.SessionInfo;
 
 import static org.mockito.Mockito.*;
-import static org.uberfire.backend.server.repositories.SystemRepository.*;
 
 @Singleton
 @Alternative
@@ -73,6 +72,12 @@ public class TestAppSetup {
     @Named("uf")
     public ServletContext servletContext() {
         return mock( ServletContext.class );
+    }
+
+    @Produces
+    @Named("luceneConfig")
+    public LuceneConfig luceneConfig() {
+        return mock( LuceneConfig.class );
     }
 
 }

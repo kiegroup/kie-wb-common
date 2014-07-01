@@ -26,22 +26,18 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopScoreDocCollector;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.junit.Test;
-import org.uberfire.java.nio.file.Path;
 import org.uberfire.metadata.backend.lucene.index.LuceneIndex;
 import org.uberfire.metadata.engine.Index;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class IndexDeletedResourcesTest extends BaseIndexingTest {
 
     @Test
     public void testIndexingUpdatedResources() throws IOException, InterruptedException {
-        //Don't ask, but we need to write a single file first in order for indexing to work
-        final Path basePath = getDirectoryPath().resolveSibling( "someNewOtherPath" );
-        ioService().write( basePath.resolve( "dummy" ),
-                           "<none>" );
-
         //Add test files
         loadProperties( "file1.properties",
                         basePath );
@@ -109,6 +105,11 @@ public class IndexDeletedResourcesTest extends BaseIndexingTest {
     @Override
     protected String getRepositoryName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    protected ProjectService getProjectService() {
+        return mock( ProjectService.class );
     }
 
 }
