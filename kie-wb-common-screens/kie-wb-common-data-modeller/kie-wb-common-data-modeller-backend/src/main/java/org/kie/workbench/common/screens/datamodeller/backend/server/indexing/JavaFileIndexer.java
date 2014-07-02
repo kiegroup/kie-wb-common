@@ -96,9 +96,6 @@ public class JavaFileIndexer implements Indexer {
     private static final Logger logger = LoggerFactory.getLogger( JavaFileIndexer.class );
 
     @Inject
-    protected JavaResourceTypeDefinition javaResourceTypeDefinition;
-
-    @Inject
     @Named("ioStrategy")
     protected IOService ioService;
 
@@ -107,6 +104,9 @@ public class JavaFileIndexer implements Indexer {
 
     @Inject
     private LRUBuilderCache builderCache;
+
+    @Inject
+    protected JavaResourceTypeDefinition javaResourceTypeDefinition;
 
     @Override
     public boolean supportsPath( Path path ) {

@@ -29,15 +29,15 @@ public interface TestIndexer<T extends ResourceTypeDefinition> extends Indexer {
     void setIOService( final IOService ioService );
 
     /**
-     * Mock CDI injection of ResourceTypeDefinition
-     * @param type
-     */
-    void setResourceTypeDefinition( final T type );
-
-    /**
      * Mock CDI injection of ProjectService
      * @param projectService
      */
     void setProjectService( final ProjectService projectService );
+
+    /**
+     * Mock CDI injection of ResourceTypeDefinition
+     * @param type
+     */
+    void setResourceTypeDefinition( final T type );
 
 }
