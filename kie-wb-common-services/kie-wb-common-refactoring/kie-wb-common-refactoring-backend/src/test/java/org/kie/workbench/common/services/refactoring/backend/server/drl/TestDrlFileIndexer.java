@@ -47,9 +47,9 @@ public class TestDrlFileIndexer implements TestIndexer<TestDrlFileTypeDefinition
 
     private IOService ioService;
 
-    private TestDrlFileTypeDefinition type;
-
     private ProjectService projectService;
+
+    private TestDrlFileTypeDefinition type;
 
     @Override
     public void setIOService( final IOService ioService ) {
@@ -57,13 +57,13 @@ public class TestDrlFileIndexer implements TestIndexer<TestDrlFileTypeDefinition
     }
 
     @Override
-    public void setResourceTypeDefinition( final TestDrlFileTypeDefinition type ) {
-        this.type = type;
+    public void setProjectService( final ProjectService projectService ) {
+        this.projectService = projectService;
     }
 
     @Override
-    public void setProjectService( final ProjectService projectService ) {
-        this.projectService = projectService;
+    public void setResourceTypeDefinition( final TestDrlFileTypeDefinition type ) {
+        this.type = type;
     }
 
     @Override

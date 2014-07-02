@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.ProjectService;
@@ -47,10 +46,6 @@ public class RuleNameServiceImpl
 
     @Inject
     private ProjectService projectService;
-
-    @Inject
-    @Named("luceneConfig")
-    private LuceneConfig config;
 
     @Override
     public Collection<String> getRuleNames( final Path path,
