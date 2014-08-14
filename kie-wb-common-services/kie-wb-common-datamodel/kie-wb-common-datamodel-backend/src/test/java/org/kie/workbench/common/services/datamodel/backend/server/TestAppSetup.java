@@ -29,7 +29,6 @@ import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.authz.AuthorizationManager;
-import org.uberfire.security.server.cdi.AppResourcesAuthz;
 
 import static org.mockito.Mockito.*;
 
@@ -76,8 +75,6 @@ public class TestAppSetup {
     }
 
     @Produces
-    @Alternative
-    @AppResourcesAuthz
     public AuthorizationManager authorizationManager() {
         return mock( AuthorizationManager.class );
     }
