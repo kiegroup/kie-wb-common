@@ -57,6 +57,7 @@ import org.kie.workbench.common.widgets.client.popups.file.RenamePopup;
 import org.kie.workbench.common.widgets.client.popups.file.SaveOperationService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -692,6 +693,12 @@ public class ProjectScreenPresenter
     @Override
     public void onDependenciesSelected() {
         view.showDependenciesPanel();
+    }
+
+    @Override
+    public void onDeploymentDescriptorSelected() {
+        placeManager.goTo( PathFactory.newPath("kie-deployment-descriptor.xml",
+                project.getRootPath().toURI() + "/src/main/resources/META-INF/kie-deployment-descriptor.xml") );
     }
 
     private class BuildFailureErrorCallback
