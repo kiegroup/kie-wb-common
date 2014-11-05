@@ -1,7 +1,8 @@
 package org.kie.workbench.common.services.datamodel.backend.server.cache;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -20,15 +21,16 @@ import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.model.ProjectImports;
 import org.guvnor.common.services.project.service.POMService;
 import org.guvnor.common.services.project.service.ProjectService;
-import org.uberfire.io.IOService;
-import org.uberfire.java.nio.file.Files;
-import org.uberfire.commons.validation.PortablePreconditions;
 import org.kie.scanner.KieModuleMetaData;
+import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.FactBuilder;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.commons.validation.PortablePreconditions;
+import org.uberfire.io.IOService;
+import org.uberfire.java.nio.file.Files;
 
 /**
  * A simple LRU cache for Project DataModelOracles
@@ -87,6 +89,7 @@ public class LRUProjectDataModelOracleCache extends LRUCache<Project, ProjectDat
         pdBuilder.addPackages( kieModuleMetaData.getPackages() );
 
         //Add all classes from the KieModule metaData
+        final Map<String, FactBuilder> discoveredFieldFactBuilders = new HashMap<String, FactBuilder>();
         for ( final String packageName : kieModuleMetaData.getPackages() ) {
             for ( final String className : kieModuleMetaData.getClasses( packageName ) ) {
                 try {
@@ -96,6 +99,7 @@ public class LRUProjectDataModelOracleCache extends LRUCache<Project, ProjectDat
                     final TypeSource typeSource = builder.getClassSource( kieModuleMetaData,
                                                                           clazz );
                     pdBuilder.addClass( clazz,
+                                        discoveredFieldFactBuilders,
                                         typeMetaInfo.isEvent(),
                                         typeSource );
 
@@ -115,6 +119,7 @@ public class LRUProjectDataModelOracleCache extends LRUCache<Project, ProjectDat
                 try {
                     Class clazz = this.getClass().getClassLoader().loadClass( item.getType() );
                     pdBuilder.addClass( clazz,
+                                        discoveredFieldFactBuilders,
                                         false,
                                         TypeSource.JAVA_DEPENDENCY );
                 } catch ( ClassNotFoundException cnfe ) {

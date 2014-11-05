@@ -24,6 +24,7 @@ import javax.enterprise.inject.Alternative;
 import javax.enterprise.inject.Produces;
 import javax.inject.Singleton;
 
+import org.guvnor.common.services.shared.identity.RequestIdentityProvider;
 import org.uberfire.security.Identity;
 import org.uberfire.security.Role;
 
@@ -32,6 +33,7 @@ import org.uberfire.security.Role;
 public class TestIdentityFactory {
 
     private Identity identity;
+    private RequestIdentityProvider requestIdentityProvider;
 
     @PostConstruct
     public void onStartup() {
@@ -73,12 +75,29 @@ public class TestIdentityFactory {
             }
 
         };
+        requestIdentityProvider = new RequestIdentityProvider() {
+
+            @Override
+            public String getName() {
+                return "testUser";
+            }
+
+            @Override
+            public List<String> getRoles() {
+                return Collections.emptyList();
+            }
+        };
     }
 
     @Produces
     @Alternative
     public Identity getIdentity() {
         return identity;
+    }
+
+    @Produces
+    public RequestIdentityProvider getRequestIdentityProvider() {
+        return requestIdentityProvider;
     }
 
 }

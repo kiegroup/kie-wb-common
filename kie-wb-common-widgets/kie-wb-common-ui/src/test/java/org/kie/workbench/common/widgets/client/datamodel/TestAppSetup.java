@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 
 import org.guvnor.common.services.project.service.KModuleService;
+import org.guvnor.common.services.shared.identity.RequestIdentityProvider;
 import org.guvnor.m2repo.service.M2RepoService;
 import org.uberfire.backend.repositories.Repository;
 import org.uberfire.io.IOService;
@@ -67,6 +68,11 @@ public class TestAppSetup {
     @Named("uf")
     public ServletContext servletContext() {
         return mock( ServletContext.class );
+    }
+
+    @Produces
+    public RequestIdentityProvider getRequestIdentityProvider() {
+        return mock( RequestIdentityProvider.class );
     }
 
 }
