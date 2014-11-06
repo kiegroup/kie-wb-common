@@ -13,7 +13,6 @@ import org.guvnor.asset.management.model.RepositoryStructureModel;
 import org.guvnor.asset.management.service.RepositoryStructureService;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.structure.client.validation.ValidatorWithReasonCallback;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -21,6 +20,7 @@ import org.kie.uberfire.client.common.popups.errors.ErrorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.wizard.NewProjectWizard;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
+import org.kie.workbench.common.services.shared.validation.ValidatorWithReasonCallback;
 
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
