@@ -157,7 +157,7 @@ public class ProjectScreenPresenter
     private boolean isRepositoryManaged(Repository repository) {
         Boolean isRepositoryManaged = Boolean.FALSE;
 
-        if (repository.getEnvironment().containsKey("managed")) {
+        if (repository != null && repository.getEnvironment().containsKey("managed")) {
             isRepositoryManaged = (Boolean) repository.getEnvironment().get("managed");
         }
 
