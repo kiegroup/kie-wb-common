@@ -19,7 +19,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.uberfire.client.editors.texteditor.TextResourceType;
+import org.uberfire.ext.widgets.core.client.editors.texteditor.TextResourceType;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;

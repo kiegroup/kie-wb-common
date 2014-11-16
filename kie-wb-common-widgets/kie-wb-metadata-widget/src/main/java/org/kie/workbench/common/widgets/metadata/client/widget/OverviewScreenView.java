@@ -20,7 +20,7 @@ import java.util.Date;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.kie.uberfire.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.workbench.type.ClientResourceType;
 

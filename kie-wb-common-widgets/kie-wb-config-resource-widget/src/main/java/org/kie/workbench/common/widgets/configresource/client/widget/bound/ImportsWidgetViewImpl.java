@@ -44,7 +44,7 @@ import com.google.gwt.view.client.ListDataProvider;
 import org.drools.workbench.models.datamodel.imports.Import;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
-import org.kie.uberfire.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorViewImpl;
 
 public class ImportsWidgetViewImpl

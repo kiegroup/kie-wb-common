@@ -30,13 +30,13 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import org.kie.uberfire.client.common.popups.KieBaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
 import org.kie.workbench.common.screens.datamodeller.client.validation.ValidatorService;
 import org.kie.workbench.common.services.shared.validation.ValidatorCallback;
 import org.uberfire.mvp.Command;
 
-public class NewPackagePopup extends KieBaseModal {
+public class NewPackagePopup extends BaseModal {
 
     private TextBox newPackageName = new TextBox();
 

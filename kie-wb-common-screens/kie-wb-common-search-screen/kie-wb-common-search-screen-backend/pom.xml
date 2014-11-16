@@ -52,8 +52,8 @@
 
 
     <dependency>
-      <groupId>org.kie.uberfire</groupId>
-      <artifactId>kie-uberfire-metadata-api</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-metadata-api</artifactId>
     </dependency>
 
     <dependency>

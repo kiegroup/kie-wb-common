@@ -23,7 +23,7 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.uberfire.client.wizards.WizardPageStatusChangeEvent;
+import org.uberfire.ext.widgets.core.client.wizards.WizardPageStatusChangeEvent;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 
 import javax.enterprise.event.Event;

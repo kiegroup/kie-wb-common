@@ -1,7 +1,7 @@
 package org.kie.workbench.common.screens.projecteditor.client.forms;
 
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
-import org.kie.uberfire.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import javax.enterprise.event.Event;

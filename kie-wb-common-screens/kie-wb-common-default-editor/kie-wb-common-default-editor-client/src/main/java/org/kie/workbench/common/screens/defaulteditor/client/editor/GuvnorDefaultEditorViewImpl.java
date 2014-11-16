@@ -17,7 +17,7 @@ package org.kie.workbench.common.screens.defaulteditor.client.editor;
 
 import javax.inject.Inject;
 
-import org.kie.uberfire.client.editors.defaulteditor.DefaultFileEditorPresenter;
+import org.uberfire.ext.widgets.core.client.editors.defaulteditor.DefaultFileEditorPresenter;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorViewImpl;
 import org.uberfire.backend.vfs.ObservablePath;
 

@@ -21,7 +21,7 @@ import java.util.Date;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import org.kie.uberfire.client.common.CheckboxCellImpl;
+import org.uberfire.ext.widgets.common.client.common.CheckboxCellImpl;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.cells.PopupDateEditCell;

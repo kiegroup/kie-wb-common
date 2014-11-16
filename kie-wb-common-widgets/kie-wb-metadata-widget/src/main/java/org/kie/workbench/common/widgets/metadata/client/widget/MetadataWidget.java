@@ -28,9 +28,9 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.kie.uberfire.client.common.DirtyableComposite;
-import org.kie.uberfire.client.common.BusyIndicatorView;
-import org.kie.uberfire.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.DirtyableComposite;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 import static org.uberfire.commons.validation.PortablePreconditions.*;
 

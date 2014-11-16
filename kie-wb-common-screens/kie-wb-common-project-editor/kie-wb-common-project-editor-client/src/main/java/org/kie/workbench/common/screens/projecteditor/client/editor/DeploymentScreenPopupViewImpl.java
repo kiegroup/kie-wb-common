@@ -14,11 +14,11 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.security.shared.api.identity.User;
-import org.kie.uberfire.client.common.popups.KieBaseModal;
-import org.kie.uberfire.client.common.popups.footers.ModalFooterOKCancelButtons;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 
-public class DeploymentScreenPopupViewImpl extends KieBaseModal {
+public class DeploymentScreenPopupViewImpl extends BaseModal {
 
     interface DeploymentScreenPopupWidgetBinder
             extends

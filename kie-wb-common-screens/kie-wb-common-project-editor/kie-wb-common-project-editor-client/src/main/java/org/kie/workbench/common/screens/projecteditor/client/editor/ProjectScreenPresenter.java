@@ -37,11 +37,11 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.kie.uberfire.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.kie.uberfire.client.common.BusyIndicatorView;
-import org.kie.uberfire.client.common.HasBusyIndicator;
-import org.kie.uberfire.client.common.popups.YesNoCancelPopup;
-import org.kie.uberfire.client.common.popups.errors.ErrorPopup;
+import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
@@ -74,7 +74,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
-import static org.kie.uberfire.client.common.ConcurrentChangePopup.*;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.*;
 import static org.kie.workbench.common.screens.projecteditor.security.ProjectEditorFeatures.*;
 
 @WorkbenchScreen(identifier = "projectScreen")
@@ -446,20 +446,20 @@ public class ProjectScreenPresenter
 
     private YesNoCancelPopup createYesNoCancelPopup() {
         return YesNoCancelPopup.newYesNoCancelPopup(
-                org.kie.uberfire.client.resources.i18n.CommonConstants.INSTANCE.Information(),
+                org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants.INSTANCE.Information(),
                 ProjectEditorResources.CONSTANTS.SaveBeforeBuildAndDeploy(),
                 getYesCommand(),
-                org.kie.uberfire.client.resources.i18n.CommonConstants.INSTANCE.YES(),
+                org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants.INSTANCE.YES(),
                 ButtonType.PRIMARY,
                 IconType.SAVE,
 
                 getNoCommand(),
-                org.kie.uberfire.client.resources.i18n.CommonConstants.INSTANCE.NO(),
+                org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants.INSTANCE.NO(),
                 ButtonType.DANGER,
                 IconType.WARNING_SIGN,
 
                 getCancelCommand(),
-                org.kie.uberfire.client.resources.i18n.CommonConstants.INSTANCE.Cancel(),
+                org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants.INSTANCE.Cancel(),
                 ButtonType.DEFAULT,
                 null
                                                    );

@@ -89,11 +89,11 @@ public class ContributorsManager {
     }
 
     private void initDataSets() {
-        DataSetBuilder dsBuilder = DataSetFactory.newDSBuilder()
+        DataSetBuilder dsBuilder = DataSetFactory.newDataSetBuilder()
                 .label(COLUMN_ORG)
                 .label(COLUMN_REPO)
                 .label(COLUMN_AUTHOR)
-                .label(COLUMN_MSG)
+                .text(COLUMN_MSG)
                 .date(COLUMN_DATE);
 
         Collection<OrganizationalUnit> orgUnitList = organizationalUnitService.getOrganizationalUnits();

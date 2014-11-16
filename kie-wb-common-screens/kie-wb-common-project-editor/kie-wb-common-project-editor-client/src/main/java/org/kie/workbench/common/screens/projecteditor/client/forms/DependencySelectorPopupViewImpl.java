@@ -4,12 +4,12 @@ import javax.enterprise.context.Dependent;
 
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.kie.uberfire.client.common.popups.KieBaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.mvp.ParameterizedCommand;
 
 @Dependent
 public class DependencySelectorPopupViewImpl
-        extends KieBaseModal
+        extends BaseModal
         implements DependencySelectorPopupView {
 
     private DependencySelectorPresenter presenter;

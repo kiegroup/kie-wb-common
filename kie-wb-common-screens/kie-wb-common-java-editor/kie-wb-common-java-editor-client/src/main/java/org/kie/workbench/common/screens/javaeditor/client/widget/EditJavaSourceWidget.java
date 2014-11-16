@@ -26,7 +26,7 @@ import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RequiresResize;
-import org.kie.uberfire.client.common.ResizableTextArea;
+import org.uberfire.ext.widgets.common.client.common.ResizableTextArea;
 
 public class EditJavaSourceWidget extends Composite implements RequiresResize {
 

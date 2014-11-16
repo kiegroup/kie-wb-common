@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.uberfire.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.kie.workbench.common.screens.defaulteditor.service.DefaultEditorService;
 import org.kie.workbench.common.widgets.client.popups.validation.DefaultFileNameValidator;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;

@@ -23,7 +23,7 @@ import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 
 import org.guvnor.m2repo.service.M2RepoService;
-import org.kie.uberfire.metadata.backend.lucene.LuceneConfig;
+import org.uberfire.ext.metadata.backend.lucene.LuceneConfig;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;

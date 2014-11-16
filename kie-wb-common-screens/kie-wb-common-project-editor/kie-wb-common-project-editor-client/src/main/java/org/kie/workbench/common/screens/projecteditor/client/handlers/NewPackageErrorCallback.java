@@ -17,8 +17,8 @@ package org.kie.workbench.common.screens.projecteditor.client.handlers;
 
 import org.guvnor.common.services.project.service.PackageAlreadyExistsException;
 import org.jboss.errai.bus.client.api.messaging.Message;
-import org.kie.uberfire.client.callbacks.DefaultErrorCallback;
-import org.kie.uberfire.client.common.popups.errors.ErrorPopup;
+import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 
 /**

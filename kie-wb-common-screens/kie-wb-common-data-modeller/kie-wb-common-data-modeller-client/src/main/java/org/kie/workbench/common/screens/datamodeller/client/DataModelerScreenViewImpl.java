@@ -28,7 +28,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.kie.uberfire.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
 import org.kie.workbench.common.screens.datamodeller.client.widgets.DataObjectBrowser;
 import org.kie.workbench.common.screens.datamodeller.client.widgets.ModelPropertiesEditor;

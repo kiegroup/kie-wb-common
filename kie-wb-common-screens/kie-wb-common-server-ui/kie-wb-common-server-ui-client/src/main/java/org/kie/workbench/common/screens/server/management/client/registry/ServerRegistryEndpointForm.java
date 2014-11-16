@@ -38,7 +38,7 @@ import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.uberfire.client.common.popups.KieBaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.kie.workbench.common.screens.server.management.model.Server;
 import org.kie.workbench.common.screens.server.management.service.ServerAlreadyRegisteredException;
 import org.kie.workbench.common.screens.server.management.service.ServerManagementService;
@@ -96,7 +96,7 @@ public class ServerRegistryEndpointForm
     PasswordTextBox passwordTextBox;
 
     @UiField
-    KieBaseModal popup;
+    BaseModal popup;
 
     @PostConstruct
     public void init() {

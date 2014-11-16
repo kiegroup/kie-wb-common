@@ -24,7 +24,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import com.google.gwt.user.client.ui.TextBox;
-import org.kie.uberfire.client.common.NumericTextBox;
+import org.uberfire.ext.widgets.common.client.common.NumericTextBox;
 
 import java.math.BigDecimal;
 

@@ -37,7 +37,7 @@ import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.m2repo.service.M2RepoService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.uberfire.client.common.popups.KieBaseModal;
+import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.kie.workbench.common.screens.server.management.model.ServerRef;
 import org.kie.workbench.common.screens.server.management.service.ServerManagementService;
 import org.uberfire.mvp.ParameterizedCommand;
@@ -64,7 +64,7 @@ public class NewContainerForm
     private Caller<ServerManagementService> service;
 
     @UiField
-    KieBaseModal popup;
+    BaseModal popup;
 
     @UiField
     ControlGroup containerNameGroup;

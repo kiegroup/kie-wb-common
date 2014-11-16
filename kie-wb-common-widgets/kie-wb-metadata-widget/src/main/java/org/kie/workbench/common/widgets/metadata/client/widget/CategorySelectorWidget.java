@@ -23,10 +23,10 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.kie.uberfire.client.common.DirtyableComposite;
-import org.kie.uberfire.client.common.DirtyableFlexTable;
-import org.kie.uberfire.client.common.SmallLabel;
-import org.kie.uberfire.client.common.popups.FormStylePopup;
+import org.uberfire.ext.widgets.common.client.common.DirtyableComposite;
+import org.uberfire.ext.widgets.common.client.common.DirtyableFlexTable;
+import org.uberfire.ext.widgets.common.client.common.SmallLabel;
+import org.uberfire.ext.widgets.common.client.common.popups.FormStylePopup;
 import org.kie.workbench.common.widgets.metadata.client.resources.Images;
 import org.kie.workbench.common.widgets.metadata.client.resources.i18n.MetadataConstants;
 

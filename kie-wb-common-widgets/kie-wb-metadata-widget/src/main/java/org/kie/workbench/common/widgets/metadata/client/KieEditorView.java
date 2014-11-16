@@ -17,7 +17,7 @@
 package org.kie.workbench.common.widgets.metadata.client;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.uberfire.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 public interface KieEditorView
         extends HasBusyIndicator, IsWidget {

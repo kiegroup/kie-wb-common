@@ -22,8 +22,8 @@ import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.version.events.RestoreEvent;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.uberfire.client.common.MultiPageEditor;
-import org.kie.uberfire.client.common.Page;
+import org.uberfire.ext.widgets.common.client.common.MultiPageEditor;
+import org.uberfire.ext.widgets.common.client.common.Page;
 import org.kie.workbench.common.widgets.client.callbacks.CommandBuilder;
 import org.kie.workbench.common.widgets.client.callbacks.CommandDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
@@ -50,7 +50,7 @@ import javax.enterprise.event.Observes;
 import javax.enterprise.inject.New;
 import javax.inject.Inject;
 
-import static org.kie.uberfire.client.common.ConcurrentChangePopup.*;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.*;
 
 public abstract class KieEditor {
 

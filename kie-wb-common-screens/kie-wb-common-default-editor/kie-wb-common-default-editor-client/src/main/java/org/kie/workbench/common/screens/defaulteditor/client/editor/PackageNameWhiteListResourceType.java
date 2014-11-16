@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.screens.defaulteditor.service.PackageNameWhiteListResourceTypeDefinition;
 import org.uberfire.client.workbench.type.ClientResourceType;
-import org.kie.uberfire.client.resources.CoreImages;
+import org.uberfire.ext.widgets.core.client.resources.CoreImages;
 
 @ApplicationScoped
 public class PackageNameWhiteListResourceType extends PackageNameWhiteListResourceTypeDefinition implements ClientResourceType {

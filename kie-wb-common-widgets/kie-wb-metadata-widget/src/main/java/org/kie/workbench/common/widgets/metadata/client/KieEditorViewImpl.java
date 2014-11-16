@@ -18,7 +18,7 @@ package org.kie.workbench.common.widgets.metadata.client;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
-import org.kie.uberfire.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 
 public abstract class KieEditorViewImpl

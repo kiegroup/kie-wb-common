@@ -26,8 +26,8 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.uberfire.client.callbacks.Callback;
-import org.kie.uberfire.client.wizards.WizardPage;
-import org.kie.uberfire.client.wizards.WizardPageStatusChangeEvent;
+import org.uberfire.ext.widgets.core.client.wizards.WizardPage;
+import org.uberfire.ext.widgets.core.client.wizards.WizardPageStatusChangeEvent;
 
 public class GAVWizardPage
         implements WizardPage {

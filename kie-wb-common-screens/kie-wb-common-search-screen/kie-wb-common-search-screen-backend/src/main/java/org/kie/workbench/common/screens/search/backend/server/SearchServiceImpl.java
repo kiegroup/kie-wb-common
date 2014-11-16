@@ -27,7 +27,7 @@ import org.uberfire.io.IOService;
 import org.uberfire.io.attribute.DublinCoreView;
 import org.uberfire.java.nio.base.version.VersionAttributeView;
 import org.uberfire.java.nio.file.Path;
-import org.kie.uberfire.metadata.search.DateRange;
+import org.uberfire.ext.metadata.search.DateRange;
 import org.uberfire.paging.PageResponse;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
 

@@ -18,8 +18,8 @@ package org.kie.workbench.common.widgets.client.callbacks;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kie.uberfire.client.common.HasBusyIndicator;
-import org.kie.uberfire.client.common.MultiPageEditor;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.MultiPageEditor;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.services.shared.source.SourceGenerationFailedException;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;

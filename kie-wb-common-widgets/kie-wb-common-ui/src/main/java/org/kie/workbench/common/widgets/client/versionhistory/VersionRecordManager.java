@@ -19,7 +19,7 @@ package org.kie.workbench.common.widgets.client.versionhistory;
 import org.guvnor.common.services.shared.version.VersionService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.kie.uberfire.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
 import org.kie.workbench.common.widgets.client.versionhistory.event.VersionSelectedEvent;
 import org.uberfire.backend.vfs.ObservablePath;

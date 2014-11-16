@@ -55,7 +55,7 @@ import org.kie.workbench.common.screens.explorer.model.FolderItemType;
 import org.kie.workbench.common.screens.explorer.model.FolderListing;
 import org.kie.workbench.common.screens.explorer.service.Option;
 import org.kie.workbench.common.screens.explorer.utils.Sorters;
-import org.kie.uberfire.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.type.AnyResourceType;

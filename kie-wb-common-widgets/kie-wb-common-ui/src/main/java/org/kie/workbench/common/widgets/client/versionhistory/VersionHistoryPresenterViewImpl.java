@@ -23,8 +23,8 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.view.client.AsyncDataProvider;
-import org.kie.uberfire.client.common.BusyPopup;
-import org.kie.uberfire.client.tables.PagedTable;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.java.nio.base.version.VersionRecord;
 

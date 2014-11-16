@@ -25,7 +25,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TextBox;
 import org.kie.workbench.common.widgets.client.resources.CommonAltedImages;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
-import org.kie.uberfire.client.common.ImageButton;
+import org.uberfire.ext.widgets.common.client.common.ImageButton;
 
 import java.util.Date;
 
