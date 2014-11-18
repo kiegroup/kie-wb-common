@@ -30,7 +30,6 @@ public class GuvnorDefaultEditorViewImpl
     @Inject
     public GuvnorDefaultEditorViewImpl( final DefaultFileEditorPresenter presenter ) {
         this.presenter = presenter;
-        initWidget( this.presenter.view );
     }
 
     @Override
@@ -40,6 +39,7 @@ public class GuvnorDefaultEditorViewImpl
 
     @Override
     public void onStartup( final ObservablePath path ) {
+        initWidget( this.presenter.view );
         presenter.onStartup( path );
     }
 }
