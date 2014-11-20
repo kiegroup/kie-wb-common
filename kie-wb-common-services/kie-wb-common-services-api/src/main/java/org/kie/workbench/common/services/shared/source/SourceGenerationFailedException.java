@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 JBoss Inc
+ * Copyright 2014 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.widgets.viewsource.client.screen;
+package org.kie.workbench.common.services.shared.source;
 
-import com.google.gwt.user.client.ui.IsWidget;
-import org.kie.uberfire.client.common.HasBusyIndicator;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-public interface ViewSourceView extends HasBusyIndicator,
-                                        IsWidget {
+@Portable
+public class SourceGenerationFailedException
+        extends RuntimeException {
 
-    void setContent( final String content );
+    public SourceGenerationFailedException() {
+    }
 
-    void clear();
-
+    public SourceGenerationFailedException(String message) {
+        super(message);
+    }
 }
