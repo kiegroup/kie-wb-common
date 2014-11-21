@@ -31,7 +31,7 @@ import org.uberfire.java.nio.file.NoSuchFileException;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
-import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
+import org.uberfire.client.workbench.widgets.common.ErrorPopup;
 
 /**
  * Utility class to build the Commands for CommandDrivenErrorCallback.
@@ -76,7 +76,7 @@ public class CommandBuilder {
                  public void execute() {
                      editor.clear();
                      editor.addWidget( new NoSuchFileWidget(),
-                                       CommonConstants.INSTANCE.NoSuchFileTabTitle() );
+                             CommonConstants.INSTANCE.NoSuchFileTabTitle());
                      view.hideBusyIndicator();
                  }
              }
