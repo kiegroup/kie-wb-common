@@ -60,7 +60,7 @@ public abstract class KieEditor {
 
     protected boolean isReadOnly;
 
-    private KieEditorView baseView;
+    protected KieEditorView baseView;
 
     protected ObservablePath.OnConcurrentUpdateEvent concurrentUpdateSessionInfo = null;
 
@@ -97,6 +97,7 @@ public abstract class KieEditor {
     protected PlaceRequest place;
     private ClientResourceType type;
     private ViewDRLSourceWidget sourceWidget;
+    protected Integer originalHash;
 
     protected KieEditor() {
     }
@@ -112,11 +113,16 @@ public abstract class KieEditor {
         overviewWidget.showVersionsTab();
     }
 
-    protected void init(ObservablePath path, PlaceRequest place, ClientResourceType type) {
-        init( path, place, type, true );
+    protected void init(ObservablePath path,
+            PlaceRequest place,
+            ClientResourceType type) {
+        init(path, place, type, true);
     }
 
-    protected void init(ObservablePath path, PlaceRequest place, ClientResourceType type, boolean addFileChangeListeners) {
+    protected void init(ObservablePath path,
+            PlaceRequest place,
+            ClientResourceType type,
+            boolean addFileChangeListeners) {
         this.place = place;
         this.type = type;
 
@@ -142,7 +148,7 @@ public abstract class KieEditor {
                     }
                 });
 
-        if ( addFileChangeListeners ) {
+        if (addFileChangeListeners) {
             addFileChangeListeners(path);
         }
 
@@ -176,10 +182,10 @@ public abstract class KieEditor {
     }
 
     protected CommandDrivenErrorCallback getCouldNotGenerateSourceErrorCallback() {
-        return new CommandDrivenErrorCallback( baseView,
-                                               new CommandBuilder().addSourceCodeGenerationFailedException(
-                                                       baseView,
-                                                       sourceWidget ).build()
+        return new CommandDrivenErrorCallback(baseView,
+                new CommandBuilder().addSourceCodeGenerationFailedException(
+                        baseView,
+                        sourceWidget).build()
         );
     }
 
@@ -204,9 +210,13 @@ public abstract class KieEditor {
         multiPage.addPage(page);
     }
 
+    public void setOriginalHash(Integer originalHash) {
+        this.originalHash = originalHash;
+    }
+
     protected void resetEditorPages(final Overview overview) {
 
-        versionRecordManager.setVersions(overview.getMetadata().getVersion());        
+        versionRecordManager.setVersions(overview.getMetadata().getVersion());
         this.overviewWidget.setContent(overview, versionRecordManager.getPathToLatest(), versionRecordManager.getVersion());
         this.metadata = overview.getMetadata();
 
@@ -320,11 +330,12 @@ public abstract class KieEditor {
     }
 
     private void onDelete() {
-        Scheduler.get().scheduleDeferred( new Scheduler.ScheduledCommand() {
-            @Override public void execute() {
-                placeManager.forceClosePlace( place );
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute() {
+                placeManager.forceClosePlace(place);
             }
-        } );
+        });
     }
 
     /**
@@ -334,7 +345,7 @@ public abstract class KieEditor {
         refreshTitle();
         baseView.showBusyIndicator(CommonConstants.INSTANCE.Loading());
         loadContent();
-        changeTitleNotification.fire( new ChangeTitleWidgetEvent( place, getTitleText(), getTitle() ) );
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(place, getTitleText(), getTitle()));
     }
 
     /**
@@ -401,7 +412,7 @@ public abstract class KieEditor {
      */
     protected void makeMenuBar() {
         menus = menuBuilder
-                .addSave( versionRecordManager.newSaveMenuItem(new Command() {
+                .addSave(versionRecordManager.newSaveMenuItem(new Command() {
                     @Override
                     public void execute() {
                         onSave();
@@ -422,7 +433,6 @@ public abstract class KieEditor {
 
             @Override
             public void callback(final Path path) {
-                baseView.setNotDirty();
                 baseView.hideBusyIndicator();
                 versionRecordManager.reloadVersions(path);
                 notification.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemSavedSuccessfully()));
@@ -446,7 +456,7 @@ public abstract class KieEditor {
         refreshTitle();
         baseView.showBusyIndicator(CommonConstants.INSTANCE.Loading());
         loadContent();
-        changeTitleNotification.fire( new ChangeTitleWidgetEvent( place, getTitleText(), getTitle() ) );
+        changeTitleNotification.fire(new ChangeTitleWidgetEvent(place, getTitleText(), getTitle()));
     }
 
     private void disableMenus() {
@@ -528,5 +538,20 @@ public abstract class KieEditor {
 
     }
 
+    public boolean mayClose(int currentHash) {
+        if (isDirty(currentHash)) {
+            return baseView.confirmClose();
+        } else {
+            return true;
+        }
+    }
+
+    public boolean isDirty(int currentHash) {
+        if (originalHash == null) {
+            return false;
+        } else {
+            return originalHash != currentHash;
+        }
+    }
 }
 

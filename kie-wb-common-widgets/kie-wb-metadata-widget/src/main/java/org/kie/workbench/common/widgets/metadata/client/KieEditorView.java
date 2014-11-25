@@ -20,7 +20,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 public interface KieEditorView
-        extends HasBusyIndicator, IsWidget {
+        extends HasBusyIndicator,
+                IsWidget {
 
     void showLoading();
 
@@ -28,9 +29,11 @@ public interface KieEditorView
 
     void alertReadOnly();
 
-    void setNotDirty();
-
     KieEditorTitle getTitleWidget();
 
-    void refreshTitle(String fileName, String description);
+    void refreshTitle( String fileName,
+                       String description );
+
+    boolean confirmClose();
+
 }

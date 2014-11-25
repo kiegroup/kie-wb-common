@@ -101,8 +101,6 @@ public class DataModelerScreenPresenter
 
         void setContext( DataModelerContext context );
 
-        boolean confirmClose();
-
         void refreshTypeLists( boolean keepCurrentSelection );
     }
 
@@ -142,6 +140,8 @@ public class DataModelerScreenPresenter
     private SessionInfo sessionInfo;
 
     private String currentMessageType;
+
+    private Integer originalSourceHash = null;
 
     private static final int EDITABLE_SOURCE_TAB = 2;
 
@@ -184,33 +184,28 @@ public class DataModelerScreenPresenter
 
         javaSourceEditor.addChangeHandler(new ChangeHandler() {
             @Override
-            public void onChange(ChangeEvent event) {
-                if (getContext() != null) {
+            public void onChange( ChangeEvent event ) {
+                if ( getContext() != null ) {
                     getContext().setEditionStatus(DataModelerContext.EditionStatus.SOURCE_CHANGED);
-                    getContext().setDirty(true);
                 }
             }
         });
     }
 
-    @IsDirty
-    public boolean isDirty() {
-        return getContext() != null && getContext().isDirty();
-    }
-
     @OnMayClose
     public boolean onMayClose() {
-        if ( isDirty() ) {
-            return view.confirmClose();
+        if (isDirty()) {
+            return baseView.confirmClose();
+        } else {
+            return true;
         }
-        return true;
     }
 
     @OnClose
     public void OnClose() {
         open = false;
         versionRecordManager.clear();
-        cleanSystemMessages( getCurrentMessageType() );
+        cleanSystemMessages(getCurrentMessageType());
         clearContext();
         super.OnClose();
     }
@@ -345,7 +340,7 @@ public class DataModelerScreenPresenter
     }
 
     protected void rename() {
-        if ( getContext().isDirty() ) {
+        if ( isDirty() ) {
             YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup( CommonConstants.INSTANCE.Information(),
                                                                                       Constants.INSTANCE.modelEditor_confirm_save_before_rename(),
                                                                                       new Command() {
@@ -381,9 +376,9 @@ public class DataModelerScreenPresenter
             public void execute() {
 
                 //at validation time we must do the same calculation as if we were about to save.
-                final DataObjectTO[] modifiedDataObject = new DataObjectTO[1];
-                if (getContext().isDirty()) {
-                    if (getContext().isEditorChanged()) {
+                final DataObjectTO[] modifiedDataObject = new DataObjectTO[ 1 ];
+                if (isDirty()) {
+                    if ( getContext().isEditorChanged() ) {
 
                         //at save time the source has always priority over the model.
                         //If the source was properly parsed and the editor has changes, we need to send the DataObject
@@ -411,7 +406,20 @@ public class DataModelerScreenPresenter
         };
     }
 
-    private RemoteCallback<Path> getCopySuccessCallback( ) {
+
+    private boolean isDirty() {
+            return isDataObjectDirty() || isSourceDirty();
+    }
+
+    private boolean isDataObjectDirty() {
+        return isDirty(getContext().getDataObject().hashCode());
+    }
+
+    private boolean isSourceDirty() {
+        return originalSourceHash != null && originalSourceHash != getSource().hashCode();
+    }
+
+    private RemoteCallback<Path> getCopySuccessCallback() {
         return new RemoteCallback<Path>() {
 
             @Override
@@ -444,8 +452,8 @@ public class DataModelerScreenPresenter
 
     protected void save() {
 
-        final JavaTypeInfoTO newTypeInfo = new JavaTypeInfoTO(  );
-        if ( getContext().isDirty() ) {
+        final JavaTypeInfoTO newTypeInfo = new JavaTypeInfoTO();
+        if ( isDataObjectDirty() ) {
             if ( getContext().isEditorChanged() ) {
                 newTypeInfo.setPackageName( getContext().getDataObject().getPackageName() );
                 newTypeInfo.setName( getContext().getDataObject().getName() );
@@ -552,7 +560,7 @@ public class DataModelerScreenPresenter
             public void execute( final String commitMessage ) {
 
                 final DataObjectTO[] modifiedDataObject = new DataObjectTO[ 1 ];
-                if ( getContext().isDirty() ) {
+                if ( isDirty() ) {
                     if ( getContext().isEditorChanged() ) {
 
                         //at save time the source has always priority over the model.
@@ -629,16 +637,13 @@ public class DataModelerScreenPresenter
 
                     setSource( result.getSource() );
 
-                    Boolean oldDirtyStatus = getContext().isDirty();
-                    getContext().setDirty( false );
-                    setSourceDirty( false );
                     getContext().setEditionStatus( DataModelerContext.EditionStatus.NO_CHANGES );
 
                     notification.fire( new NotificationEvent( org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.ItemSavedSuccessfully()) );
                     dataModelerEvent.fire( new DataModelStatusChangeEvent( DataModelerEvent.DATA_MODEL_BROWSER,
                                                                            getDataModel(),
-                                                                           oldDirtyStatus,
-                                                                           getContext().isDirty() ) );
+                                                                           true,
+                                                                           true ) );
 
                     dataModelerEvent.fire( new DataModelSaved( null, getDataModel() ) );
 
@@ -680,8 +685,7 @@ public class DataModelerScreenPresenter
                     return;
                 }
 
-                javaSourceEditor.setReadonly( isReadOnly );
-                getContext().setDirty( false );
+                javaSourceEditor.setReadonly(isReadOnly );
                 getContext().setReadonly( isReadOnly );
                 getContext().setEditionStatus( DataModelerContext.EditionStatus.NO_CHANGES );
                 getContext().setEditorModelContent(content);
@@ -725,6 +729,9 @@ public class DataModelerScreenPresenter
                                 }
                     });
                 }
+
+                setOriginalHash(getContext().getDataObject().hashCode());
+                originalSourceHash = getSource().hashCode();
             }
         };
     }
@@ -732,8 +739,8 @@ public class DataModelerScreenPresenter
     private void rename( final boolean saveCurrentChanges ) {
 
         final DataObjectTO[] modifiedDataObject = new DataObjectTO[ 1 ];
-        if ( saveCurrentChanges ) {
-            if ( getContext().isDirty() ) {
+        if ( saveCurrentChanges) {
+            if ( isDirty() ) {
                 if ( getContext().isEditorChanged() ) {
                     //at save time the source has always priority over the model.
                     //If the source was properly parsed and the editor has changes, we need to send the DataObject
@@ -780,10 +787,6 @@ public class DataModelerScreenPresenter
 
     public void setSource( String source ) {
         javaSourceEditor.setContent( source );
-    }
-
-    private void setSourceDirty( boolean dirty ) {
-        javaSourceEditor.setDirty( dirty );
     }
 
     private boolean isSourceTabSelected() {
@@ -886,9 +889,8 @@ public class DataModelerScreenPresenter
 
                     } else {
                         //ok, we can reload the editor tab.
-                        getContext().setParseStatus( DataModelerContext.ParseStatus.PARSED );
+                        getContext().setParseStatus(DataModelerContext.ParseStatus.PARSED );
                         updateEditorView( result.getDataObject() );
-                        setSourceDirty( false );
                         getContext().setEditionStatus( DataModelerContext.EditionStatus.NO_CHANGES );
                         getContext().setDataObject( result.getDataObject() );
                         cleanSystemMessages( getCurrentMessageType() );

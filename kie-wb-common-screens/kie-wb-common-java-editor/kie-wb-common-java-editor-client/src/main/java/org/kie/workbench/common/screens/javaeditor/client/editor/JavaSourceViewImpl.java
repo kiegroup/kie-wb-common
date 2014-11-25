@@ -20,8 +20,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.kie.workbench.common.screens.javaeditor.client.widget.ViewJavaSourceWidget;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorViewImpl;
@@ -48,7 +46,8 @@ public class JavaSourceViewImpl
         javaSourceViewer.clearContent();
     }
 
-    @Override public void setNotDirty() {
-
+    @Override
+    public boolean confirmClose() {
+        return Window.confirm(CommonConstants.INSTANCE.DiscardUnsavedData());
     }
 }

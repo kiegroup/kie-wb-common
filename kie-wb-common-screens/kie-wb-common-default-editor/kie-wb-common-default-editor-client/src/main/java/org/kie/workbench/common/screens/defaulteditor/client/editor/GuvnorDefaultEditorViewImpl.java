@@ -17,9 +17,11 @@ package org.kie.workbench.common.screens.defaulteditor.client.editor;
 
 import javax.inject.Inject;
 
-import org.uberfire.ext.widgets.core.client.editors.defaulteditor.DefaultFileEditorPresenter;
+import com.google.gwt.user.client.Window;
+import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorViewImpl;
 import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.ext.widgets.core.client.editors.defaulteditor.DefaultFileEditorPresenter;
 
 public class GuvnorDefaultEditorViewImpl
         extends KieEditorViewImpl
@@ -33,13 +35,13 @@ public class GuvnorDefaultEditorViewImpl
     }
 
     @Override
-    public void setNotDirty() {
-        //Nothing to do
-    }
-
-    @Override
     public void onStartup( final ObservablePath path ) {
         initWidget( this.presenter.view );
         presenter.onStartup( path );
+    }
+
+    @Override
+    public boolean confirmClose() {
+        return Window.confirm(CommonConstants.INSTANCE.DiscardUnsavedData());
     }
 }

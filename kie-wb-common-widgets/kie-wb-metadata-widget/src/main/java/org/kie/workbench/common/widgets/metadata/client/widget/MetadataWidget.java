@@ -24,11 +24,11 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.uberfire.ext.widgets.common.client.common.DirtyableComposite;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
@@ -39,7 +39,7 @@ import static org.uberfire.commons.validation.PortablePreconditions.*;
  * edits, but it does not load or save anything itself.
  */
 public class MetadataWidget
-        extends DirtyableComposite
+        extends Composite
         implements HasBusyIndicator {
 
     interface Binder
@@ -88,47 +88,35 @@ public class MetadataWidget
         subject.setText(metadata.getSubject());
         subject.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyUp(KeyUpEvent event) {
-                metadata.setSubject(subject.getText());
-                dirtyflag = true;
+            public void onKeyUp( KeyUpEvent event ) {
+                metadata.setSubject( subject.getText() );
             }
         });
 
         type.setText(metadata.getType());
         type.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyUp(KeyUpEvent event) {
-                metadata.setType(type.getText());
-                dirtyflag = true;
+            public void onKeyUp( KeyUpEvent event ) {
+                metadata.setType( type.getText() );
             }
         });
 
         external.setText(metadata.getExternalRelation());
         external.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyUp(KeyUpEvent event) {
-                metadata.setExternalRelation(external.getText());
-                dirtyflag = true;
+            public void onKeyUp( KeyUpEvent event ) {
+                metadata.setExternalRelation( external.getText() );
             }
         });
 
         source.setText(metadata.getExternalSource());
         source.addKeyUpHandler(new KeyUpHandler() {
             @Override
-            public void onKeyUp(KeyUpEvent event) {
-                metadata.setExternalSource(source.getText());
-                dirtyflag = true;
+            public void onKeyUp( KeyUpEvent event ) {
+                metadata.setExternalSource( source.getText() );
             }
         });
 
-    }
-
-    public boolean isDirty() {
-        return dirtyflag;
-    }
-
-    public void resetDirty() {
-        this.dirtyflag = false;
     }
 
     @Deprecated
