@@ -10,6 +10,9 @@ import org.uberfire.backend.vfs.Path;
 @Remote
 public interface RuleNamesService {
 
-    Collection<String> getRuleNames(final Path path,
-            final String packageName);
+    public final String RULE_NAME_SERVICE_ENABLED = "build.enable-rule-name-service";
+
+    Collection<String> getRuleNames( final Path path,
+                                     final String packageName );
+
 }
