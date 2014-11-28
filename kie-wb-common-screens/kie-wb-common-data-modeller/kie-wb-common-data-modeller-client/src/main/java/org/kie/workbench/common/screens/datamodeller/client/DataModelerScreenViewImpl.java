@@ -123,8 +123,4 @@ public class DataModelerScreenViewImpl
         updateChangeStatus(event);
     }
 
-    private DataModelerContext getContext() {
-        return context;
-    }
-
 }
