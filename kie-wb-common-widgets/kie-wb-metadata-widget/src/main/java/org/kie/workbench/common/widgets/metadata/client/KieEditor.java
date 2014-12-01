@@ -543,7 +543,7 @@ public abstract class KieEditor {
 
     }
 
-    public boolean mayClose(int currentHash) {
+    public boolean mayClose(Integer currentHash) {
         if (isDirty(currentHash)) {
             return baseView.confirmClose();
         } else {
@@ -551,11 +551,11 @@ public abstract class KieEditor {
         }
     }
 
-    public boolean isDirty(int currentHash) {
+    public boolean isDirty(Integer currentHash) {
         if (originalHash == null) {
-            return false;
+            return currentHash != null;
         } else {
-            return originalHash != currentHash;
+            return !originalHash.equals( currentHash );
         }
     }
 }
