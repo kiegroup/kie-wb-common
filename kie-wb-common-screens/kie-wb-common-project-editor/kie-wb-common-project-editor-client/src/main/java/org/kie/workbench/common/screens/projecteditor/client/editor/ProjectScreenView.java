@@ -89,4 +89,6 @@ public interface ProjectScreenView
     DropdownButton getBuildOptionsButton();
 
     void setDeployToRuntimeSetting(Boolean supports);
+
+    boolean confirmClose();
 }
