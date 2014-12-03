@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.datamodeller.client;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -27,6 +28,7 @@ import com.github.gwtbootstrap.client.ui.constants.ButtonType;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.user.client.ui.IsWidget;
+import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBaseEvent;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
@@ -34,6 +36,8 @@ import org.guvnor.messageconsole.events.SystemMessage;
 import org.guvnor.messageconsole.events.UnpublishMessagesEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.security.shared.api.Role;
+import org.kie.workbench.common.screens.datamodeller.security.DataModelerFeatures;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.Page;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
@@ -101,8 +105,6 @@ public class DataModelerScreenPresenter
 
         void setContext( DataModelerContext context );
 
-        boolean confirmClose();
-
         void refreshTypeLists( boolean keepCurrentSelection );
     }
 
@@ -119,6 +121,9 @@ public class DataModelerScreenPresenter
 
     @Inject
     private Event<PublishBatchMessagesEvent> publishBatchMessagesEvent;
+
+    @Inject
+    private KieWorkbenchACL kieACL;
 
     @Inject
     private Caller<DataModelerService> modelerService;
@@ -144,6 +149,8 @@ public class DataModelerScreenPresenter
     private String currentMessageType;
 
     private Integer originalSourceHash = null;
+
+    private boolean sourceEditionEnabled = false;
 
     private static final int EDITABLE_SOURCE_TAB = 2;
 
@@ -176,6 +183,7 @@ public class DataModelerScreenPresenter
     @OnStartup
     public void onStartup( final ObservablePath path,
                            final PlaceRequest place ) {
+        setSourceEditionGrant();
         init(path, place, resourceType);
 
         initContext( path );
@@ -697,27 +705,14 @@ public class DataModelerScreenPresenter
                     return;
                 }
 
-                javaSourceEditor.setReadonly( isReadOnly );
+                javaSourceEditor.setReadonly( isReadOnly || !sourceEditionEnabled );
                 context.setReadonly( isReadOnly );
                 context.setEditionStatus( DataModelerContext.EditionStatus.NO_CHANGES );
                 context.setEditorModelContent(content);
                 setModel(content);
 
                 resetEditorPages( content.getOverview() );
-
-                addPage(new Page(javaSourceEditor,
-                        org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.SourceTabTitle()) {
-                    @Override
-                    public void onFocus() {
-                        if (uiStarted) {
-                            onSourceTabSelected();
-                        }
-                    }
-
-                    @Override
-                    public void onLostFocus() {
-                    }
-                });
+                addSourceEditorPage();
 
                 view.hideBusyIndicator();
 
@@ -746,6 +741,22 @@ public class DataModelerScreenPresenter
                 originalSourceHash = getSource().hashCode();
             }
         };
+    }
+
+    private void addSourceEditorPage() {
+        addPage(new Page(javaSourceEditor,
+                org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.SourceTabTitle()) {
+            @Override
+            public void onFocus() {
+                if (uiStarted) {
+                    onSourceTabSelected();
+                }
+            }
+
+            @Override
+            public void onLostFocus() {
+            }
+        });
     }
 
     private void rename( final boolean saveCurrentChanges ) {
@@ -799,6 +810,20 @@ public class DataModelerScreenPresenter
 
     private boolean isSourceTabSelected() {
         return getSelectedTabIndex() == EDITABLE_SOURCE_TAB;
+    }
+
+    private void setSourceEditionGrant() {
+        Set<String> grantedRoles = kieACL.getGrantedRoles( DataModelerFeatures.EDIT_SOURCES );
+        sourceEditionEnabled = false;
+
+        if ( sessionInfo != null && sessionInfo.getIdentity() != null && sessionInfo.getIdentity().getRoles() != null ) {
+            for (Role role : sessionInfo.getIdentity().getRoles()) {
+                if ( grantedRoles.contains( role.getName() ) ) {
+                    sourceEditionEnabled = true;
+                    break;
+                }
+            }
+        }
     }
 
     private void setModel( EditorModelContent model ) {
