@@ -14,30 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.widgets.client.resources.i18n;
+package org.kie.workbench.common.widgets.viewsource.client.screen;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.user.client.ui.IsWidget;
+import org.kie.uberfire.client.common.HasBusyIndicator;
 
-/**
- * New Item Popup I18N constants
- */
-public interface NewItemPopupConstants
-        extends
-        Messages {
+public interface ViewSourceView extends HasBusyIndicator,
+                                        IsWidget {
 
-    public static final NewItemPopupConstants INSTANCE = GWT.create( NewItemPopupConstants.class );
+    void setContent( final String content );
 
-    String popupTitle();
-
-    String itemNameSubheading();
-
-    String fileNameIsMandatory();
-
-    String resourceName();
-
-    String packageName();
-
-    String resourceNamePlaceholder();
+    void clear();
 
 }
