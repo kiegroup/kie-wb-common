@@ -40,8 +40,4 @@ public class GuvnorDefaultEditorViewImpl
         presenter.onStartup( path );
     }
 
-    @Override
-    public boolean confirmClose() {
-        return Window.confirm(CommonConstants.INSTANCE.DiscardUnsavedData());
-    }
 }

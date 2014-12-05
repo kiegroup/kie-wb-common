@@ -168,8 +168,4 @@ public class ImportsWidgetViewImpl
         };
     }
 
-    @Override
-    public boolean confirmClose() {
-        return Window.confirm( CommonConstants.INSTANCE.DiscardUnsavedData() );
-    }
 }
