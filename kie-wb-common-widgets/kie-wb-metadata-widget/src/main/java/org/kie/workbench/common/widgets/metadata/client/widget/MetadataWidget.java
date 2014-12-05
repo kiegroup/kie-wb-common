@@ -133,4 +133,9 @@ public class MetadataWidget
     public void hideBusyIndicator() {
         busyIndicatorView.hideBusyIndicator();
     }
+
+    public void setNote( String text ) {
+        note.setText( text );
+    }
 }
+
