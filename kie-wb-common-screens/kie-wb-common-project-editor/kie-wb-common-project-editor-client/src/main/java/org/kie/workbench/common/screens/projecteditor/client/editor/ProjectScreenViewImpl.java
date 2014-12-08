@@ -49,6 +49,9 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.ImportsWidgetPresenter;
 import org.kie.workbench.common.widgets.metadata.client.widget.MetadataWidget;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.BusyPopup;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 
 import static com.github.gwtbootstrap.client.ui.resources.ButtonSize.*;
 
@@ -244,7 +247,7 @@ public class ProjectScreenViewImpl
 
     @Override
     public void showBusyIndicator(final String message) {
-        BusyPopup.showMessage(message);
+        BusyPopup.showMessage( message );
     }
 
     @Override
@@ -289,7 +292,7 @@ public class ProjectScreenViewImpl
 
     @Override
     public void showABuildIsAlreadyRunning() {
-        ErrorPopup.showMessage(ProjectEditorResources.CONSTANTS.ABuildIsAlreadyRunning());
+        ErrorPopup.showMessage( ProjectEditorResources.CONSTANTS.ABuildIsAlreadyRunning() );
     }
 
     @Override
