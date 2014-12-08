@@ -50,6 +50,12 @@ public interface ProjectScreenView
 
         void onDeploymentDescriptorSelected();
 
+        void validateGroupID( String groupId );
+
+        void validateArtifactID( String artifactId );
+
+        void validateVersion( String version );
+
     }
 
     void setPresenter(Presenter projectScreenPresenter);
@@ -91,4 +97,11 @@ public interface ProjectScreenView
     void setDeployToRuntimeSetting(Boolean supports);
 
     boolean confirmClose();
+
+    void setValidGroupID( boolean isValid );
+
+    void setValidArtifactID( boolean isValid );
+
+    void setValidVersion( boolean isValid );
+
 }

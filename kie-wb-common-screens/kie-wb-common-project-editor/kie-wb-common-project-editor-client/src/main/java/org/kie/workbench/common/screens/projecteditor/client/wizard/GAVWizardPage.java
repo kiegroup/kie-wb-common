@@ -19,7 +19,11 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.guvnor.common.services.project.client.*;
+import org.guvnor.common.services.project.client.ArtifactIdChangeHandler;
+import org.guvnor.common.services.project.client.GroupIdChangeHandler;
+import org.guvnor.common.services.project.client.NameChangeHandler;
+import org.guvnor.common.services.project.client.POMEditorPanel;
+import org.guvnor.common.services.project.client.VersionChangeHandler;
 import org.guvnor.common.services.project.model.POM;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -82,19 +86,19 @@ public class GAVWizardPage
         } );
     }
 
-    public void setPom(final POM pom) {
+    public void setPom( final POM pom ) {
 
         this.pomEditor.setPOM( pom,
-                false);
+                               false );
 
-        if (hasParent(pom)) {
-            pomEditor.disableGroupID(view.InheritedFromAParentPOM());
-            pomEditor.disableVersion(view.InheritedFromAParentPOM());
+        if ( hasParent( pom ) ) {
+            pomEditor.disableGroupID( view.InheritedFromAParentPOM() );
+            pomEditor.disableVersion( view.InheritedFromAParentPOM() );
         }
     }
 
-    private boolean hasParent(POM pom) {
-        return pom.getGav()!= null && pom.getGav().getGroupId() != null && !pom.getGav().getGroupId().trim().isEmpty();
+    private boolean hasParent( POM pom ) {
+        return pom.getGav() != null && pom.getGav().getGroupId() != null && !pom.getGav().getGroupId().trim().isEmpty();
     }
 
     @Override
