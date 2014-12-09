@@ -23,6 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.Divider;
 import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.constants.IconSize;
@@ -32,7 +33,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
-import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -122,18 +122,18 @@ public class ExplorerPresenterImpl implements ExplorerPresenter {
         BranchChangeHandler branchChangeHandler = new BranchChangeHandler() {
 
             @Override
-            public void onBranchSelected(String branch) {
-                businessViewPresenter.branchChanged(branch);
-                technicalViewPresenter.branchChanged(branch);
+            public void onBranchSelected( String branch ) {
+                businessViewPresenter.branchChanged( branch );
+                technicalViewPresenter.branchChanged( branch );
 
-                ProjectContextChangeEvent event = new ProjectContextChangeEvent(context.getActiveOrganizationalUnit(), context.getActiveRepository(), context.getActiveProject(), branch);
+                ProjectContextChangeEvent event = new ProjectContextChangeEvent( context.getActiveOrganizationalUnit(), context.getActiveRepository(), context.getActiveProject(), branch );
 
-                contextChangedEvent.fire(event);
+                contextChangedEvent.fire( event );
             }
         };
 
-        businessViewPresenter.addBranchChangeHandler(branchChangeHandler);
-        technicalViewPresenter.addBranchChangeHandler(branchChangeHandler);
+        businessViewPresenter.addBranchChangeHandler( branchChangeHandler );
+        technicalViewPresenter.addBranchChangeHandler( branchChangeHandler );
     }
 
     private void config() {
@@ -348,7 +348,87 @@ public class ExplorerPresenterImpl implements ExplorerPresenter {
                             }
                         };
                     }
-                } ).endMenu().build();
+                } )
+                .endMenu()
+                .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
+                    @Override
+                    public void push( MenuFactory.CustomMenuBuilder element ) {
+                    }
+
+                    @Override
+                    public MenuItem build() {
+                        return new MenuCustom<Widget>() {
+
+                            @Override
+                            public Widget build() {
+                                return new Button() {
+                                    {
+                                        setIcon( IconType.REFRESH );
+                                        setSize( MINI );
+                                        addClickHandler( new ClickHandler() {
+                                            @Override
+                                            public void onClick( ClickEvent event ) {
+                                                refresh();
+                                            }
+                                        } );
+                                    }
+                                };
+                            }
+
+                            @Override
+                            public boolean isEnabled() {
+                                return false;
+                            }
+
+                            @Override
+                            public void setEnabled( boolean enabled ) {
+
+                            }
+
+                            @Override
+                            public String getContributionPoint() {
+                                return null;
+                            }
+
+                            @Override
+                            public String getCaption() {
+                                return null;
+                            }
+
+                            @Override
+                            public MenuPosition getPosition() {
+                                return null;
+                            }
+
+                            @Override
+                            public int getOrder() {
+                                return 0;
+                            }
+
+                            @Override
+                            public void addEnabledStateChangeListener( EnabledStateChangeListener listener ) {
+
+                            }
+
+                            @Override
+                            public String getSignatureId() {
+                                return null;
+                            }
+
+                            @Override
+                            public Collection<String> getRoles() {
+                                return null;
+                            }
+
+                            @Override
+                            public Collection<String> getTraits() {
+                                return null;
+                            }
+                        };
+                    }
+                } )
+                .endMenu()
+                .build();
     }
 
     @Override
