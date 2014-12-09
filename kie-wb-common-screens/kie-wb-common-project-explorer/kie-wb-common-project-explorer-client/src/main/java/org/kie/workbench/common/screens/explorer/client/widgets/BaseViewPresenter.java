@@ -59,20 +59,20 @@ import org.kie.workbench.common.screens.explorer.service.ExplorerService;
 import org.kie.workbench.common.screens.explorer.service.Option;
 import org.kie.workbench.common.screens.explorer.service.ProjectExplorerContentQuery;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
-import org.kie.workbench.common.services.shared.validation.Validator;
-import org.kie.workbench.common.services.shared.validation.ValidatorCallback;
-import org.kie.workbench.common.widgets.client.popups.file.CommandWithCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.CommandWithFileNameAndCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.CopyPopup;
-import org.kie.workbench.common.widgets.client.popups.file.DeletePopup;
-import org.kie.workbench.common.widgets.client.popups.file.FileNameAndCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.RenamePopup;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.VFSService;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
+import org.uberfire.ext.editor.commons.client.file.CopyPopup;
+import org.uberfire.ext.editor.commons.client.file.DeletePopup;
+import org.uberfire.ext.editor.commons.client.file.FileNameAndCommitMessage;
+import org.uberfire.ext.editor.commons.client.file.RenamePopup;
+import org.uberfire.ext.editor.commons.client.validation.Validator;
+import org.uberfire.ext.editor.commons.client.validation.ValidatorCallback;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
+import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.impl.authz.RuntimeAuthorizationManager;
 import org.uberfire.workbench.events.ResourceAddedEvent;
@@ -213,7 +213,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
     @Override
     public void deleteItem( final FolderItem folderItem ) {
 
-        final DeletePopup popup = new DeletePopup( new CommandWithCommitMessage() {
+        final DeletePopup popup = new DeletePopup( new ParameterizedCommand<String>() {
             @Override
             public void execute( final String comment ) {
                 getView().showBusyIndicator( CommonConstants.INSTANCE.Deleting() );

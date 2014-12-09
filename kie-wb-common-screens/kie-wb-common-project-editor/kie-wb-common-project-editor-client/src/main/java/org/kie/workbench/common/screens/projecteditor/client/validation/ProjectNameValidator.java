@@ -21,8 +21,8 @@ import javax.inject.Inject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
-import org.kie.workbench.common.services.shared.validation.Validator;
-import org.kie.workbench.common.services.shared.validation.ValidatorCallback;
+import org.uberfire.ext.editor.commons.client.validation.Validator;
+import org.uberfire.ext.editor.commons.client.validation.ValidatorCallback;
 
 /**
  * Validator for Project Name

@@ -38,24 +38,11 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.container.IOC;
-import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
-import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
-import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
-import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
-import org.kie.workbench.common.widgets.client.menu.FileMenuBuilder;
-import org.kie.workbench.common.widgets.client.popups.file.CommandWithCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.CommandWithFileNameAndCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.CopyPopup;
-import org.kie.workbench.common.widgets.client.popups.file.DeletePopup;
-import org.kie.workbench.common.widgets.client.popups.file.FileNameAndCommitMessage;
-import org.kie.workbench.common.widgets.client.popups.file.RenamePopup;
-import org.kie.workbench.common.widgets.client.popups.file.SaveOperationService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
@@ -65,6 +52,18 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
+import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
+import org.uberfire.ext.editor.commons.client.file.CopyPopup;
+import org.uberfire.ext.editor.commons.client.file.DeletePopup;
+import org.uberfire.ext.editor.commons.client.file.FileNameAndCommitMessage;
+import org.uberfire.ext.editor.commons.client.file.RenamePopup;
+import org.uberfire.ext.editor.commons.client.file.SaveOperationService;
+import org.uberfire.ext.editor.commons.client.menu.MenuItems;
+import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
+import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.uberfire.lifecycle.OnMayClose;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
@@ -76,8 +75,8 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.*;
 import static org.kie.workbench.common.screens.projecteditor.security.ProjectEditorFeatures.*;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.*;
 
 @WorkbenchScreen(identifier = "projectScreen")
 public class ProjectScreenPresenter
@@ -315,10 +314,10 @@ public class ProjectScreenPresenter
     }
 
     private void disableMenus() {
-        menus.getItemsMap().get( FileMenuBuilder.MenuItems.COPY ).setEnabled(false);
-        menus.getItemsMap().get(FileMenuBuilder.MenuItems.RENAME).setEnabled(false);
-        menus.getItemsMap().get( FileMenuBuilder.MenuItems.DELETE ).setEnabled( false );
-        menus.getItemsMap().get( FileMenuBuilder.MenuItems.VALIDATE ).setEnabled(false);
+        menus.getItemsMap().get( MenuItems.COPY ).setEnabled( false );
+        menus.getItemsMap().get( MenuItems.RENAME ).setEnabled( false );
+        menus.getItemsMap().get( MenuItems.DELETE ).setEnabled( false );
+        menus.getItemsMap().get( MenuItems.VALIDATE ).setEnabled( false );
     }
 
     private void reload() {
@@ -367,7 +366,7 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
-                final DeletePopup popup = new DeletePopup( new CommandWithCommitMessage() {
+                final DeletePopup popup = new DeletePopup( new ParameterizedCommand<String>() {
                     @Override
                     public void execute( final String comment ) {
                         busyIndicatorView.showBusyIndicator( CommonConstants.INSTANCE.Deleting() );
@@ -658,7 +657,7 @@ public class ProjectScreenPresenter
 
     private void save( final RemoteCallback callback ) {
         new SaveOperationService().save( pathToPomXML,
-                                         new CommandWithCommitMessage() {
+                                         new ParameterizedCommand<String>() {
                                              @Override
                                              public void execute( final String comment ) {
 

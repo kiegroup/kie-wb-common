@@ -45,7 +45,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.model.Project;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
-import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.kie.workbench.common.screens.datamodeller.client.DataModelerContext;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
 import org.kie.workbench.common.screens.datamodeller.client.util.AnnotationValueHandler;
@@ -63,8 +62,9 @@ import org.kie.workbench.common.screens.datamodeller.model.DataModelTO;
 import org.kie.workbench.common.screens.datamodeller.model.DataObjectTO;
 import org.kie.workbench.common.screens.datamodeller.model.ObjectPropertyTO;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
-import org.kie.workbench.common.services.shared.validation.ValidatorCallback;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.ext.editor.commons.client.validation.ValidatorCallback;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 
 public class DataObjectFieldEditor extends Composite {
 
