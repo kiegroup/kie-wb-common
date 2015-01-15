@@ -24,10 +24,10 @@ import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.client.widget.NoSuchFileWidget;
 import org.uberfire.client.callbacks.Callback;
-import org.uberfire.client.workbench.widgets.common.ErrorPopup;
 import org.uberfire.commons.validation.PortablePreconditions;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.ext.widgets.common.client.common.MultiPageEditor;
+import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.uberfire.java.nio.file.FileSystemNotFoundException;
 import org.uberfire.java.nio.file.NoSuchFileException;
 import org.uberfire.mvp.Command;
@@ -99,11 +99,22 @@ public class CommandBuilder {
                      view.hideBusyIndicator();
                  }
 
-                 private void disableMenuItems( final Menus menus ) {
-                     for ( MenuItem mi : menus.getItemsMap().values() ) {
-                         mi.setEnabled( false );
-                     }
+             }
+           );
+        return this;
+    }
+
+    public CommandBuilder addNoSuchFileException( final HasBusyIndicator view,
+                                                  final Menus menus ) {
+        add( NoSuchFileException.class,
+             new Command() {
+
+                 @Override
+                 public void execute() {
+                     disableMenuItems( menus );
+                     view.hideBusyIndicator();
                  }
+
              }
            );
         return this;
@@ -124,11 +135,22 @@ public class CommandBuilder {
                      view.hideBusyIndicator();
                  }
 
-                 private void disableMenuItems( final Menus menus ) {
-                     for ( MenuItem mi : menus.getItemsMap().values() ) {
-                         mi.setEnabled( false );
-                     }
+             }
+           );
+        return this;
+    }
+
+    public CommandBuilder addFileSystemNotFoundException( final HasBusyIndicator view,
+                                                          final Menus menus ) {
+        add( FileSystemNotFoundException.class,
+             new Command() {
+
+                 @Override
+                 public void execute() {
+                     disableMenuItems( menus );
+                     view.hideBusyIndicator();
                  }
+
              }
            );
         return this;
@@ -149,6 +171,12 @@ public class CommandBuilder {
              }
            );
         return this;
+    }
+
+    private void disableMenuItems( final Menus menus ) {
+        for ( MenuItem mi : menus.getItemsMap().values() ) {
+            mi.setEnabled( false );
+        }
     }
 
     public Map<Class<? extends Throwable>, Command> build() {
