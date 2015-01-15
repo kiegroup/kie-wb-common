@@ -18,20 +18,21 @@ package org.kie.workbench.common.widgets.client.callbacks;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
-import org.uberfire.ext.widgets.common.client.common.MultiPageEditor;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.services.shared.source.SourceGenerationFailedException;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.client.source.ViewDRLSourceWidget;
 import org.kie.workbench.common.widgets.client.widget.NoSuchFileWidget;
 import org.uberfire.client.callbacks.Callback;
+import org.uberfire.client.workbench.widgets.common.ErrorPopup;
 import org.uberfire.commons.validation.PortablePreconditions;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.ext.widgets.common.client.common.MultiPageEditor;
+import org.uberfire.java.nio.file.FileSystemNotFoundException;
 import org.uberfire.java.nio.file.NoSuchFileException;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
-import org.uberfire.client.workbench.widgets.common.ErrorPopup;
 
 /**
  * Utility class to build the Commands for CommandDrivenErrorCallback.
@@ -51,19 +52,18 @@ public class CommandBuilder {
         return this;
     }
 
-
     public CommandBuilder addNoSuchFileException( final HasBusyIndicator view,
-                                                  final Callback<IsWidget> callback) {
-        add(NoSuchFileException.class,
-                new Command() {
+                                                  final Callback<IsWidget> callback ) {
+        add( NoSuchFileException.class,
+             new Command() {
 
-                    @Override
-                    public void execute() {
-                        callback.callback(new NoSuchFileWidget());
-                        view.hideBusyIndicator();
-                    }
-                }
-        );
+                 @Override
+                 public void execute() {
+                     callback.callback( new NoSuchFileWidget() );
+                     view.hideBusyIndicator();
+                 }
+             }
+           );
         return this;
     }
 
@@ -76,7 +76,7 @@ public class CommandBuilder {
                  public void execute() {
                      editor.clear();
                      editor.addWidget( new NoSuchFileWidget(),
-                             CommonConstants.INSTANCE.NoSuchFileTabTitle());
+                                       CommonConstants.INSTANCE.NoSuchFileTabTitle() );
                      view.hideBusyIndicator();
                  }
              }
@@ -109,19 +109,45 @@ public class CommandBuilder {
         return this;
     }
 
-    public CommandBuilder addSourceCodeGenerationFailedException(final HasBusyIndicator view, final ViewDRLSourceWidget sourceWidget) {
+    public CommandBuilder addFileSystemNotFoundException( final HasBusyIndicator view,
+                                                          final MultiPageEditor editor,
+                                                          final Menus menus ) {
+        add( FileSystemNotFoundException.class,
+             new Command() {
+
+                 @Override
+                 public void execute() {
+                     editor.clear();
+                     editor.addWidget( new NoSuchFileWidget(),
+                                       CommonConstants.INSTANCE.NoSuchFileTabTitle() );
+                     disableMenuItems( menus );
+                     view.hideBusyIndicator();
+                 }
+
+                 private void disableMenuItems( final Menus menus ) {
+                     for ( MenuItem mi : menus.getItemsMap().values() ) {
+                         mi.setEnabled( false );
+                     }
+                 }
+             }
+           );
+        return this;
+    }
+
+    public CommandBuilder addSourceCodeGenerationFailedException( final HasBusyIndicator view,
+                                                                  final ViewDRLSourceWidget sourceWidget ) {
         add( SourceGenerationFailedException.class,
-                new Command() {
+             new Command() {
 
-                    @Override
-                    public void execute() {
-                        sourceWidget.clearContent();
-                        view.hideBusyIndicator();
-                        ErrorPopup.showMessage(CommonConstants.INSTANCE.FailedToGenerateSource());
-                    }
+                 @Override
+                 public void execute() {
+                     sourceWidget.clearContent();
+                     view.hideBusyIndicator();
+                     ErrorPopup.showMessage( CommonConstants.INSTANCE.FailedToGenerateSource() );
+                 }
 
-                }
-        );
+             }
+           );
         return this;
     }
 
