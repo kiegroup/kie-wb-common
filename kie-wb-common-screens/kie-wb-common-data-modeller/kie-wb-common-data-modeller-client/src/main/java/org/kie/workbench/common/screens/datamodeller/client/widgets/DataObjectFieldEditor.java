@@ -74,7 +74,10 @@ public class DataObjectFieldEditor extends Composite {
 
     };
 
-    private static DataObjectFieldEditorUIBinder uiBinder = GWT.create(DataObjectFieldEditorUIBinder.class);
+    //https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html#jvms-4.11
+    private static int MAX_CLASS_FIELDS = 65535;
+
+    private static DataObjectFieldEditorUIBinder uiBinder = GWT.create( DataObjectFieldEditorUIBinder.class );
 
     private static final String DEFAULT_LABEL_CLASS = "gwt-Label";
 
@@ -111,7 +114,7 @@ public class DataObjectFieldEditor extends Composite {
     Icon positionHelpIcon;
 
     @UiField
-    ListBox positionSelector;
+    TextBox position;
 
     @Inject
     Event<DataModelerEvent> dataModelerEventEvent;
@@ -147,8 +150,8 @@ public class DataObjectFieldEditor extends Composite {
             }
         } );
 
-        positionSelector.addChangeHandler( new ChangeHandler() {
-            public void onChange( ChangeEvent event ) {
+        position.addChangeHandler( new ChangeHandler() {
+            @Override public void onChange( ChangeEvent event ) {
                 positionChanged( event );
             }
         });
@@ -205,7 +208,7 @@ public class DataObjectFieldEditor extends Composite {
         typeSelector.setEnabled( value );
         isTypeMultiple.setEnabled( value );
         equalsSelector.setEnabled( value );
-        positionSelector.setEnabled( value );
+        position.setEnabled( value );
     }
 
     private boolean isReadonly() {
@@ -265,9 +268,7 @@ public class DataObjectFieldEditor extends Composite {
             setObjectField(objectField);
             initTypeList();
 
-            initPositions();
-
-            name.setText(getObjectField().getName());
+            name.setText( getObjectField().getName() );
 
             AnnotationTO annotation = objectField.getAnnotation(AnnotationDefinitionTO.LABEL_ANNOTATION);
             if (annotation != null) {
@@ -284,12 +285,11 @@ public class DataObjectFieldEditor extends Composite {
                 equalsSelector.setValue(Boolean.TRUE);
             }
 
-            annotation = objectField.getAnnotation(AnnotationDefinitionTO.POSITION_ANNOTATION );
-            if (annotation != null) {
-                String position = (String) annotation.getValue(AnnotationDefinitionTO.VALUE_PARAM);
-                positionSelector.setSelectedValue(position);
+            annotation = objectField.getAnnotation( AnnotationDefinitionTO.POSITION_ANNOTATION );
+            if ( annotation != null ) {
+                String position = (String) annotation.getValue( AnnotationDefinitionTO.VALUE_PARAM );
+                this.position.setText( position );
             }
-
             setReadonly( getContext() == null || getContext().isReadonly() );
         } else {
             initTypeList();
@@ -496,16 +496,95 @@ public class DataObjectFieldEditor extends Composite {
         notifyFieldChange(AnnotationDefinitionTO.KEY_ANNOTATION, oldEquals, setEquals);
     }
 
-    void positionChanged(ChangeEvent event) {
-        if (getObjectField() == null) return;
+    private void positionChanged( ChangeEvent event ) {
 
-        AnnotationTO annotation = getObjectField().getAnnotation(AnnotationDefinitionTO.POSITION_ANNOTATION );
-        final String oldPosition = (annotation != null) ? annotation.getValue(AnnotationDefinitionTO.VALUE_PARAM).toString() : "-1";
-        final String newPosition = positionSelector.getValue();
+        positionLabel.setStyleName( DEFAULT_LABEL_CLASS );
+        final Command afterCloseCommand = new Command() {
+            @Override
+            public void execute() {
+                positionLabel.setStyleName( TEXT_ERROR_CLASS );
+                position.selectAll();
+            }
+        };
 
-        DataModelerUtils.recalculatePositions(getDataObject(), Integer.parseInt(oldPosition, 10), Integer.parseInt(newPosition, 10));
+        final AnnotationTO annotation = getObjectField().getAnnotation( AnnotationDefinitionTO.POSITION_ANNOTATION );
+        final String oldValue = AnnotationValueHandler.getInstance().getStringValue( annotation, AnnotationDefinitionTO.VALUE_PARAM );
+        final String newValue = position.getText() != null ? position.getText().trim() : null;
 
-        notifyFieldChange(AnnotationDefinitionTO.POSITION_ANNOTATION, oldPosition, newPosition);
+        boolean notify = false;
+
+        // In case an invalid value (entered before), was corrected to the original value, don't do anything but reset the label style
+        if ( oldValue != null && oldValue.equals( newValue ) ) {
+            nameLabel.setStyleName( DEFAULT_LABEL_CLASS );
+            return;
+        }
+
+        if ( newValue != null && !"".equals( newValue )) {
+            // validate that entered value is a valid position.
+            int newPosition;
+            String error = null;
+            try {
+                newPosition = Integer.parseInt( newValue );
+            } catch (NumberFormatException e) {
+                newPosition = -1;
+            }
+
+            /*
+            if ( newPosition < 0 ) {
+                error = Constants.INSTANCE.validation_error_position_greater_or_equal_than( newValue, 0+"" );
+            } else if ( newPosition >= MAX_CLASS_FIELDS ) {
+                error = Constants.INSTANCE.validation_error_position_lower_than( newValue, MAX_CLASS_FIELDS+"" );
+            } */
+
+            if ( newPosition < 0 || newPosition >= MAX_CLASS_FIELDS ) {
+                error = Constants.INSTANCE.validation_error_position_greater_or_equal_than_and_lower_than( newValue, "0", MAX_CLASS_FIELDS+"" );
+            } else {
+                List<ObjectPropertyTO> fieldsUsingPosition = getFieldsUsingPosition( newPosition );
+                if ( fieldsUsingPosition.size() > 0 ) {
+                    String fieldsUsingPositionNames = listNames( fieldsUsingPosition );
+                    error = Constants.INSTANCE.validation_error_position_already_used_by_fields( newPosition+"", fieldsUsingPositionNames );
+                }
+            }
+
+            if ( error != null ) {
+                ErrorPopup.showMessage( error, null, afterCloseCommand );
+            } else {
+                //just proceed to change the position
+                if ( annotation != null) {
+                    annotation.setValue( AnnotationDefinitionTO.VALUE_PARAM, newPosition+"" );
+                } else {
+                    getObjectField().addAnnotation( getContext().getAnnotationDefinitions().get( AnnotationDefinitionTO.POSITION_ANNOTATION ), AnnotationDefinitionTO.VALUE_PARAM, newPosition+"" );
+                }
+                position.setText( newPosition+"" );
+                notify = true;
+            }
+
+        } else {
+            if ( annotation != null ) {
+                getObjectField().removeAnnotation( annotation );
+                notify = true;
+            }
+            position.setText( null );
+        }
+
+        if ( notify ) {
+            notifyFieldChange( AnnotationDefinitionTO.POSITION_ANNOTATION, oldValue, newValue );
+        }
+    }
+
+    private List<ObjectPropertyTO> getFieldsUsingPosition(int position) {
+        return DataModelerUtils.getFieldsUsingPosition( getDataObject(), position, getObjectField().getName() );
+    }
+
+    private String listNames( List<ObjectPropertyTO> fields ) {
+        StringBuilder names = new StringBuilder( );
+        boolean first = true;
+        for ( ObjectPropertyTO propertyTO : fields ) {
+            if (!first) names.append( ", " );
+            names.append( propertyTO.getName() );
+            first = false;
+        }
+        return names.toString();
     }
 
     private void initTypeList() {
@@ -540,37 +619,15 @@ public class DataObjectFieldEditor extends Composite {
         }
     }
 
-    private void initPositions() {
-        positionSelector.clear();
-        List<ObjectPropertyTO> properties = null;
-        if (getDataModel() != null && getDataObject() != null && (properties = getDataObject().getProperties()) != null && properties.size() > 0) {
-            SortedMap<Integer, String> positions = new TreeMap<Integer, String>();
-            String positionValue;
-            Integer positionIntValue;
-            for (ObjectPropertyTO propertyTO : properties) {
-                positionValue = AnnotationValueHandler.getInstance().getStringValue(propertyTO, AnnotationDefinitionTO.POSITION_ANNOTATION, "value");
-                if (positionValue != null) {
-                    try {
-                        positionIntValue = new Integer(positionValue);
-                        positions.put(positionIntValue, positionValue);
-                    } catch (NumberFormatException e) {
-                    }
-                }
-            }
-            for (Map.Entry<Integer, String> position : positions.entrySet()) {
-                positionSelector.addItem(position.getValue(), position.getValue());
-            }
-        }
-    }
-
     private void clean() {
-        nameLabel.setStyleName(DEFAULT_LABEL_CLASS);
-        name.setText(null);
-        label.setText(null);
-        description.setText(null);
-        typeSelector.setSelectedValue(null);
-        equalsSelector.setValue(Boolean.FALSE);
-        positionLabel.setStyleName(DEFAULT_LABEL_CLASS);
-        positionSelector.clear();
+        nameLabel.setStyleName( DEFAULT_LABEL_CLASS );
+        name.setText( null );
+        label.setText( null );
+        description.setText( null );
+        typeSelector.setSelectedValue( null );
+        equalsSelector.setValue( Boolean.FALSE );
+        positionLabel.setStyleName( DEFAULT_LABEL_CLASS );
+        position.setText( null );
+        position.setStyleName( DEFAULT_LABEL_CLASS );
     }
 }
