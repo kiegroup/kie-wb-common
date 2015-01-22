@@ -248,4 +248,6 @@ public interface CommonConstants
 
     String About();
 
+    String PromptResetPerspectives();
+
 }
