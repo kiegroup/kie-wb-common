@@ -192,7 +192,7 @@ public class ProjectDataModelConcurrencyTest {
 
     private void invalidateCaches( final Project project,
                                    final Path resourcePath ) {
-        invalidateDMOProjectCacheEvent.fire( new InvalidateDMOProjectCacheEvent( sessionInfo,
+        invalidateDMOProjectCacheEvent.fire( new InvalidateDMOProjectCacheEvent( sessionInfo, 
                                                                                  project,
                                                                                  resourcePath ) );
     }

@@ -40,9 +40,6 @@ public class NewProjectWizard
     private Event<NotificationEvent> notificationEvent;
 
     @Inject
-    private Event<NewProjectEvent> newProjectEvent;
-
-    @Inject
     private WizardPresenter presenter;
 
     @Inject
