@@ -310,6 +310,7 @@ public class DataObjectFieldEditor extends Composite {
 
         final String originalClassName = getContext() != null ? getContext().getEditorModelContent().getOriginalClassName() : null;
         final String fieldName = oldValue;
+        final Path currentPath = getContext() != null && getContext().getEditorModelContent() != null ? getContext().getEditorModelContent().getPath() : null;
 
         if ( originalClassName != null ) {
             modelerService.call( new RemoteCallback<List<Path>>() {
@@ -345,7 +346,7 @@ public class DataObjectFieldEditor extends Composite {
                         doFieldNameChange( oldValue, newValue );
                     }
                 }
-            } ).findFieldUsages( originalClassName, fieldName );
+            } ).findFieldUsages( currentPath, originalClassName, fieldName );
         } else {
             doFieldNameChange( oldValue, fieldName );
         }

@@ -451,6 +451,7 @@ public class DataObjectEditor extends Composite {
 
         final String originalClassName = getContext() != null ? getContext().getEditorModelContent().getOriginalClassName() : null;
         final String fieldName = oldValue;
+        final Path currentPath = getContext() != null && getContext().getEditorModelContent() != null ? getContext().getEditorModelContent().getPath() : null;
 
         if ( originalClassName != null ) {
             modelerService.call( new RemoteCallback<List<Path>>() {
@@ -486,7 +487,7 @@ public class DataObjectEditor extends Composite {
                         doClassNameChange( packageName, oldValue, newValue );
                     }
                 }
-            } ).findClassUsages( originalClassName );
+            } ).findClassUsages( currentPath, originalClassName );
         } else {
             doClassNameChange( packageName, oldValue, fieldName );
         }
@@ -596,6 +597,7 @@ public class DataObjectEditor extends Composite {
         final String originalClassName = getContext() != null ? getContext().getEditorModelContent().getOriginalClassName() : null;
         final String newPackageName = packageSelector.isValueSelected() ? packageSelector.getPackageList().getValue() : null;
         final String oldPackageName = getContext().getDataObject().getPackageName();
+        final Path currentPath = getContext() != null && getContext().getEditorModelContent() != null ? getContext().getEditorModelContent().getPath() : null;
 
         if ( (oldPackageName != null && !oldPackageName.equals( newPackageName )) ||
                 ( oldPackageName == null && newPackageName != null) ) {
@@ -634,7 +636,7 @@ public class DataObjectEditor extends Composite {
                         doPackageChange( oldPackageName, newPackageName );
                     }
                 }
-            } ).findClassUsages( originalClassName );
+            } ).findClassUsages( currentPath, originalClassName );
         } else {
             doPackageChange( oldPackageName, newPackageName );
         }
