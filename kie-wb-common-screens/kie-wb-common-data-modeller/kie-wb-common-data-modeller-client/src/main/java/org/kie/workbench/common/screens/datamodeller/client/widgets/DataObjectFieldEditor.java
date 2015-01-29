@@ -646,6 +646,5 @@ public class DataObjectFieldEditor extends Composite {
         equalsSelector.setValue( Boolean.FALSE );
         positionLabel.setStyleName( DEFAULT_LABEL_CLASS );
         position.setText( null );
-        position.setStyleName( DEFAULT_LABEL_CLASS );
     }
 }
