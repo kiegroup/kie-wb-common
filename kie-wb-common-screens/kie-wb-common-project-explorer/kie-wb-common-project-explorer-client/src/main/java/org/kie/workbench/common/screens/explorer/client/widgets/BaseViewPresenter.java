@@ -34,6 +34,7 @@ import org.guvnor.common.services.project.events.RenameProjectEvent;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.social.ProjectEventType;
+import org.guvnor.structure.config.SystemRepositoryChangedEvent;
 import org.guvnor.structure.organizationalunit.NewOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
@@ -990,6 +991,13 @@ public abstract class BaseViewPresenter implements ViewPresenter {
 
     private boolean isTheSameRepo(String alias) {
         return activeRepository != null && activeRepository.getAlias().equals(alias);
+    }
+
+    public void onSystemRepositoryChanged( @Observes final SystemRepositoryChangedEvent event ) {
+        if ( !getView().isVisible() ) {
+            return;
+        }
+        refresh( false );
     }
 
 }
