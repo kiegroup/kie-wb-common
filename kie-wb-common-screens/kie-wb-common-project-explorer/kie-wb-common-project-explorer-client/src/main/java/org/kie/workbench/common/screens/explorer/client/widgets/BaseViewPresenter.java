@@ -415,7 +415,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                       activeRepository,
                                       content.getProjects(),
                                       activeProject,
-                                      content.getFolderListing(),
+                                      activeContent,
                                       content.getSiblings() );
 
                 getView().hideBusyIndicator();
