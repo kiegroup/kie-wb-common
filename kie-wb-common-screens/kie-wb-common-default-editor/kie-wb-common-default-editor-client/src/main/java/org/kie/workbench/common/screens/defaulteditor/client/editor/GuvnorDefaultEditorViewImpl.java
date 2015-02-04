@@ -37,6 +37,7 @@ public class GuvnorDefaultEditorViewImpl
     @Override
     public void onStartup( final ObservablePath path ) {
         initWidget( this.presenter.view );
+
         presenter.onStartup( path );
     }
 
