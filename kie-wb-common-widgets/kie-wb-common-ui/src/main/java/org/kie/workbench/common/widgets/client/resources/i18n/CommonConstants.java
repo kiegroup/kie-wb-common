@@ -269,5 +269,11 @@ public interface CommonConstants
     String English();
 
     String PromptResetPerspectives();
+    
+    String Basic();
+    
+    String Advanced();
+    
+    String SwitchModeOfPerspectives(String modeName);
 
 }
