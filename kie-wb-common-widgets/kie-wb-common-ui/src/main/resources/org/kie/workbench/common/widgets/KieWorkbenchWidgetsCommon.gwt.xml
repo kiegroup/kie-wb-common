@@ -34,5 +34,6 @@
 
   <inherits name="org.uberfire.UberfireClientAll"/>
 
-
+  <inherits name="org.uberfire.ext.properties.editor.PropertiesEditorClient"/>
+    
 </module>
