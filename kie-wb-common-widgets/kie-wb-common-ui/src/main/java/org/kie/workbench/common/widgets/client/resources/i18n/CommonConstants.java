@@ -277,5 +277,13 @@ public interface CommonConstants
     String KBase();
 
     String KSession();
+    
+    String Workbench_Settings();
+    
+    String Advanced();
+    
+    String Basic();
+    
+    String View_Mode();
 
 }
