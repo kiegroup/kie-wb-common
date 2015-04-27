@@ -35,6 +35,7 @@ import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.CellS
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.CopyRowsEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.DeleteColumnEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.DeleteRowEvent;
+import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.AfterColumnDeleted;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.InsertInternalColumnEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.InsertRowEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.PasteRowsEvent;
