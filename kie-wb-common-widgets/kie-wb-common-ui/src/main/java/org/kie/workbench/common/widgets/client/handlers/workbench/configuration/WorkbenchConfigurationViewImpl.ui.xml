@@ -1,0 +1,27 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:PropertiesEditor="urn:import:org.uberfire.ext.properties.editor.client.widgets">
+
+    <ui:style>
+        .container {
+        margin: 10px;
+        }
+
+        .horizontalContainer {
+        height:
+        32px;
+        }
+
+        .right {
+        float: right;
+        text-align: right;
+        margin-right: 10px;
+        }
+
+        .center {
+        text-align: center
+        }
+    </ui:style>
+    <g:HTMLPanel ui:field="view">
+    </g:HTMLPanel>
+</ui:UiBinder>
