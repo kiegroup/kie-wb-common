@@ -36,9 +36,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.google.common.base.Charsets;
-import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.drools.core.base.ClassTypeResolver;
-import org.drools.core.util.ClassUtils;
 import org.drools.workbench.models.datamodel.oracle.ProjectDataModelOracle;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.file.JavaFileFilter;
@@ -56,8 +54,6 @@ import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
 import org.kie.workbench.common.screens.datamodeller.backend.server.file.DataModelerCopyHelper;
 import org.kie.workbench.common.screens.datamodeller.backend.server.file.DataModelerRenameHelper;
 import org.kie.workbench.common.screens.datamodeller.events.DataObjectCreatedEvent;
@@ -71,8 +67,6 @@ import org.kie.workbench.common.screens.datamodeller.model.PropertyTypeTO;
 import org.kie.workbench.common.screens.datamodeller.model.TypeInfoResult;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.ServiceException;
-import org.kie.workbench.common.services.backend.builder.LRUBuilderCache;
-import org.kie.workbench.common.services.backend.builder.LRUProjectDependenciesClassLoaderCache;
 import org.kie.workbench.common.services.backend.service.KieService;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 import org.kie.workbench.common.services.datamodeller.codegen.GenerationContext;
@@ -897,7 +891,9 @@ public class DataModelerServiceImpl
             }
             deleteService.delete(path, comment);
             String className = calculateClassName(project, path);
-            DataObject dataObject = new DataObjectImpl(NamingUtils.extractClassName(className), NamingUtils.extractPackageName(className));
+            DataObject dataObject = new DataObjectImpl(
+                    NamingUtils.extractPackageName(className),
+                    NamingUtils.extractClassName(className) );
             dataObjectDeletedEvent.fire( new DataObjectDeletedEvent( project, dataObject ) );
         } catch (final Exception e) {
             logger.error("File: " + path.toURI() + " couldn't be deleted due to the following error. ", e);
