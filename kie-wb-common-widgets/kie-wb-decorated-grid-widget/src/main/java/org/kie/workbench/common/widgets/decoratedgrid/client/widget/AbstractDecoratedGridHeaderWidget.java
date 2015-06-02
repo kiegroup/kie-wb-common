@@ -43,6 +43,8 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
+import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.AfterColumnDeleted;
+import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.AfterColumnInserted;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.SetColumnVisibilityEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.SetInternalModelEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.UpdateColumnDefinitionEvent;
@@ -421,6 +423,7 @@ public abstract class AbstractDecoratedGridHeaderWidget<M, T> extends CellPanel
 
             public void execute() {
                 redraw();
+                eventBus.fireEvent(new AfterColumnDeleted());
             }
 
         } );
@@ -436,6 +439,7 @@ public abstract class AbstractDecoratedGridHeaderWidget<M, T> extends CellPanel
 
             public void execute() {
                 redraw();
+                eventBus.fireEvent(new AfterColumnInserted());
             }
 
         } );

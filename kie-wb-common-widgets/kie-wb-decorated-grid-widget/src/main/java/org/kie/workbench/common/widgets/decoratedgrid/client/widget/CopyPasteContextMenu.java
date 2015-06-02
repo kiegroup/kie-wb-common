@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import org.kie.workbench.common.widgets.decoratedgrid.client.resources.i18n.Constants;
+import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.AfterColumnDeleted;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.PasteRowsEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.CopyRowsEvent;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.events.MoveColumnsEvent;
