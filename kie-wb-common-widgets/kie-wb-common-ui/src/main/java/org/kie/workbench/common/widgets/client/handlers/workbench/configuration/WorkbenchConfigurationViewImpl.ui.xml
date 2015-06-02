@@ -1,0 +1,6 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui"
+    xmlns:PropertiesEditor="urn:import:org.uberfire.ext.properties.editor.client.widgets">
+    <g:HTMLPanel ui:field="view">
+    </g:HTMLPanel>
+</ui:UiBinder>
