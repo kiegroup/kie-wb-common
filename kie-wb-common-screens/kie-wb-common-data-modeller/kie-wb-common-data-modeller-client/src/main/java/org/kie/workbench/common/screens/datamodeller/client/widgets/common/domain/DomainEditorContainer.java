@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.screens.datamodeller.client.widgets.common.domain;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -66,22 +70,35 @@ public class DomainEditorContainer extends Composite {
     @Inject
     private JPADomainEditor jpaDomainEditor;
 
+    @Inject
+    private DomainEditorRegistry domainEditorRegistry;
+
     private DataModelerContext context;
 
+    private List<DomainEditor> domainEditors;
+
+    private List<String> instantiatedDomains = new ArrayList<String>(  );
+
+    private Map<String, Integer> domainEditorIndex = new HashMap<String, Integer>( );
+
     public DomainEditorContainer() {
-        initWidget(uiBinder.createAndBindUi(this));
+        initWidget( uiBinder.createAndBindUi( this ) );
     }
 
     @PostConstruct
     private void init() {
 
         mainPanel.add( deck );
-        deck.add( mainDomainEditor );
-        deck.add( droolsDomainEditor );
-        deck.add( jpaDomainEditor );
+        this.domainEditors = domainEditorRegistry.getNewDomainEditorInstances();
+        int index = 0;
+        for ( DomainEditor domainEditor : domainEditors ) {
+            deck.add( domainEditor.getWidget() );
+            domainEditorIndex.put( domainEditor.getName(), new Integer( index ) );
+            instantiatedDomains.add( domainEditor.getName() );
+            index++;
+        }
 
-        showDomain( MAIN_DOMAIN );
-
+        showDomain( 0 );
     }
 
     public DataModelerContext getContext() {
@@ -94,12 +111,26 @@ public class DomainEditorContainer extends Composite {
 
     public void setContext(DataModelerContext context) {
         this.context = context;
-        mainDomainEditor.setContext( context );
-        droolsDomainEditor.setContext( context );
-        jpaDomainEditor.setContext( context );
+        for ( DomainEditor domainEditor : domainEditors ) {
+            domainEditor.setContext( context );
+        }
     }
 
-    public void showDomain( int domainId ) {
-        deck.showWidget( domainId );
+    public void showDomain( String domainName ) {
+        Integer index;
+        if ( ( index = domainEditorIndex.get( domainName ) ) != null ) {
+            showDomain( index );
+        }
     }
+
+    public List<String> getInstantiatedDomains() {
+        return instantiatedDomains;
+    }
+
+    private void showDomain( int domainId ) {
+        if ( deck.getWidgetCount() > 0 ) {
+            deck.showWidget( domainId );
+        }
+    }
+
 }

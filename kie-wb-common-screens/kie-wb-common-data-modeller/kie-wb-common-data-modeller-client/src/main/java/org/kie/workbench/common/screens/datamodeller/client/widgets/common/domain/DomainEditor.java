@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.datamodeller.client.widgets.droolsdomain;
+package org.kie.workbench.common.screens.datamodeller.client.widgets.common.domain;
 
-import javax.inject.Inject;
+import com.google.gwt.user.client.ui.Widget;
+import org.kie.workbench.common.screens.datamodeller.client.DataModelerContext;
 
-import org.kie.workbench.common.screens.datamodeller.client.widgets.common.domain.BaseDomainEditor;
+public interface DomainEditor {
 
-public class DroolsDomainEditor extends BaseDomainEditor {
+    String getName();
 
-    @Inject
-    public DroolsDomainEditor( DroolsDataObjectEditor objectEditor, DroolsDataObjectFieldEditor fieldEditor ) {
-        super( objectEditor, fieldEditor );
-    }
+    int getPriority();
 
-    @Override public String getName() {
-        return "DROOLS";
-    }
+    Widget getWidget();
 
-    @Override public int getPriority() {
-        return 2;
-    }
+    void setContext( DataModelerContext context );
+
 }

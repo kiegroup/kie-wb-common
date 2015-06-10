@@ -27,4 +27,11 @@ public class JPADomainEditor extends BaseDomainEditor {
         super( objectEditor, fieldEditor );
     }
 
+    @Override public String getName() {
+        return "JPA";
+    }
+
+    @Override public int getPriority() {
+        return 3;
+    }
 }

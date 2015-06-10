@@ -31,4 +31,12 @@ public class MainDomainEditor extends BaseDomainEditor {
         ( ( MainDataObjectEditor ) objectEditor ).refreshTypeList( keepSelection );
         ( ( MainDataObjectFieldEditor ) fieldEditor ).refreshTypeList( keepSelection );
     }
+
+    @Override public String getName() {
+        return "MAIN";
+    }
+
+    @Override public int getPriority() {
+        return 1;
+    }
 }
