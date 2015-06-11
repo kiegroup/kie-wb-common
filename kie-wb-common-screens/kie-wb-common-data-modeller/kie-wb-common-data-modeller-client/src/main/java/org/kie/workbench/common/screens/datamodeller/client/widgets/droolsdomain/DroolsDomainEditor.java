@@ -16,11 +16,16 @@
 
 package org.kie.workbench.common.screens.datamodeller.client.widgets.droolsdomain;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.datamodeller.client.widgets.common.domain.BaseDomainEditor;
 
+@Dependent
 public class DroolsDomainEditor extends BaseDomainEditor {
+
+    public DroolsDomainEditor() {
+    }
 
     @Inject
     public DroolsDomainEditor( DroolsDataObjectEditor objectEditor, DroolsDataObjectFieldEditor fieldEditor ) {

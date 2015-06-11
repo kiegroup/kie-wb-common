@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 
@@ -39,6 +40,7 @@ public class DomainEditorRegistry {
     @PostConstruct
     public void setup() {
         final Collection<IOCBeanDef<DomainEditor>> _domainEditors = iocBeanManager.lookupBeans( DomainEditor.class );
+        Window.alert("_domainEditors.size() = " + _domainEditors.size() );
         if ( _domainEditors != null && _domainEditors.size() > 0 ) {
             domainEditors.addAll( _domainEditors );
         }
