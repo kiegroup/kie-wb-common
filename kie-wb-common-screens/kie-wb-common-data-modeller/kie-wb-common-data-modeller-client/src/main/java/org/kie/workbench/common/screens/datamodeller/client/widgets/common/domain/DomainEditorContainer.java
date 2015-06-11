@@ -23,7 +23,6 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import com.github.gwtbootstrap.client.ui.Tab;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -32,10 +31,6 @@ import com.google.gwt.user.client.ui.DeckPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.screens.datamodeller.client.DataModelerContext;
-import org.kie.workbench.common.screens.datamodeller.client.widgets.droolsdomain.DroolsDomainEditor;
-import org.kie.workbench.common.screens.datamodeller.client.widgets.jpadomain.JPADomainEditor;
-import org.kie.workbench.common.screens.datamodeller.client.widgets.maindomain.MainDomainEditor;
-import org.kie.workbench.common.services.datamodeller.core.DataModel;
 
 public class DomainEditorContainer extends Composite {
 
@@ -50,25 +45,6 @@ public class DomainEditorContainer extends Composite {
     SimplePanel mainPanel;
 
     DeckPanel deck = new DeckPanel();
-
-    private Tab mainTab = new Tab();
-
-    private Tab droolsTab = new Tab();
-
-    public static int MAIN_DOMAIN = 0;
-
-    public static int DROOLS_DOMAIN = 1;
-
-    public static final int JPA_DOMAIN = 2;
-
-    @Inject
-    private MainDomainEditor mainDomainEditor;
-
-    @Inject
-    private DroolsDomainEditor droolsDomainEditor;
-
-    @Inject
-    private JPADomainEditor jpaDomainEditor;
 
     @Inject
     private DomainEditorRegistry domainEditorRegistry;
@@ -103,10 +79,6 @@ public class DomainEditorContainer extends Composite {
 
     public DataModelerContext getContext() {
         return context;
-    }
-
-    private DataModel getDataModel() {
-        return getContext() != null ? getContext().getDataModel() : null;
     }
 
     public void setContext(DataModelerContext context) {
