@@ -32,4 +32,13 @@ public class ScannerOperationResult {
     public Long getPollInterval() {
         return pollInterval;
     }
+
+    @Override
+    public String toString() {
+        return "ScannerOperationResult{" +
+                "scannerStatus=" + scannerStatus +
+                ", message='" + message + '\'' +
+                ", pollInterval=" + pollInterval +
+                '}';
+    }
 }

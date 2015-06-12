@@ -31,72 +31,91 @@ import org.kie.workbench.common.screens.server.management.model.ServerRef;
 import org.kie.workbench.common.screens.server.management.model.impl.ServerImpl;
 
 import static org.kie.remote.common.rest.RestEasy960Util.*;
-import static org.kie.workbench.common.screens.server.management.model.ConnectionType.REMOTE;
-import static org.kie.workbench.common.screens.server.management.model.ContainerStatus.STARTED;
+import static org.kie.workbench.common.screens.server.management.model.ConnectionType.*;
+import static org.kie.workbench.common.screens.server.management.model.ContainerStatus.*;
 
 @Path("/controller")
 @ApplicationScoped
 public class ServerControllerRestImpl {
 
-    @Inject
     private ServerReferenceStorageImpl storage;
 
-    @Inject
     private Event<ServerConnected> serverConnectedEvent;
 
-    @Inject
     private Event<ServerOnError> serverOnErrorEvent;
+
+
+    //enable proxy
+    public ServerControllerRestImpl() {
+    }
+
+    @Inject
+    public ServerControllerRestImpl( final ServerReferenceStorageImpl storage,
+                                     final Event<ServerConnected> serverConnectedEvent,
+                                     final Event<ServerOnError> serverOnErrorEvent ) {
+        this.storage = storage;
+        this.serverConnectedEvent = serverConnectedEvent;
+        this.serverOnErrorEvent = serverOnErrorEvent;
+    }
 
     @GET
     @Path("server/{serverId}")
-    @Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Response syncOnConnect(@Context HttpHeaders headers, @PathParam("serverId")String serverId) {
+    @Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON })
+    public Response syncOnConnect( @Context HttpHeaders headers,
+                                   @PathParam("serverId") String serverId ) {
         List<KieContainerResource> containerResources = new ArrayList<KieContainerResource>();
-        ServerRef serverRef = storage.loadServerRef(serverId);
-        if (serverRef == null) {
-            return createCorrectVariant("Server " + serverId + " not found", headers, Response.Status.NOT_FOUND);
+        ServerRef serverRef = storage.loadServerRef( serverId );
+        if ( serverRef == null ) {
+            return createCorrectVariant( "Server " + serverId + " not found", headers, Response.Status.NOT_FOUND );
         }
 
         Collection<ContainerRef> containerRefList = serverRef.getContainersRef();
 
-        for (ContainerRef containerRef : containerRefList) {
-            ReleaseId releaseId = new ReleaseId(containerRef.getReleasedId().getGroupId(), containerRef.getReleasedId().getArtifactId(), containerRef.getReleasedId().getVersion());
+        for ( ContainerRef containerRef : containerRefList ) {
+            ReleaseId releaseId = new ReleaseId( containerRef.getReleasedId().getGroupId(), containerRef.getReleasedId().getArtifactId(), containerRef.getReleasedId().getVersion() );
 
-            containerResources.add(new KieContainerResource(containerRef.getId(), releaseId,
-                    containerRef.getStatus() == ContainerStatus.STARTED? KieContainerStatus.STARTED:KieContainerStatus.FAILED));
+            containerResources.add( new KieContainerResource( containerRef.getId(), releaseId,
+                                                              containerRef.getStatus() == ContainerStatus.STARTED ? KieContainerStatus.STARTED : KieContainerStatus.FAILED ) );
         }
 
         KieContainerResourceList containerResourceList = new KieContainerResourceList();
-        containerResourceList.setContainers(containerResources);
+        containerResourceList.setContainers( containerResources );
 
-        Server server = new ServerImpl( serverRef.getId(), serverRef.getUrl(), serverRef.getName(), serverRef.getUsername(), serverRef.getPassword(), STARTED, REMOTE, new ArrayList<Container>(), serverRef.getProperties(), serverRef.getContainersRef() );
-        serverConnectedEvent.fire(new ServerConnected(server));
+        Server server = getServer( serverRef );
+        serverConnectedEvent.fire( new ServerConnected( server ) );
 
-        return createCorrectVariant(containerResourceList, headers, Response.Status.OK);
+        return createCorrectVariant( containerResourceList, headers, Response.Status.OK );
+    }
+
+    ServerImpl getServer( ServerRef serverRef ) {
+        return new ServerImpl( serverRef.getId(), serverRef.getUrl(), serverRef.getName(), serverRef.getUsername(), serverRef.getPassword(), STARTED, REMOTE, new ArrayList<Container>(), serverRef.getProperties(), serverRef.getContainersRef() );
     }
 
     @POST
     @Path("server/{serverId}")
-    public Response disconnect(@Context HttpHeaders headers, @PathParam("serverId")String serverId) {
-        ServerRef serverRef = storage.loadServerRef(serverId);
-        if (serverRef == null) {
-            return createCorrectVariant("Server " + serverId + " not found", headers, Response.Status.NOT_FOUND);
+    public Response disconnect( @Context HttpHeaders headers,
+                                @PathParam("serverId") String serverId ) {
+        ServerRef serverRef = storage.loadServerRef( serverId );
+        if ( serverRef == null ) {
+            return createCorrectVariant( "Server " + serverId + " not found", headers, Response.Status.NOT_FOUND );
         }
-        serverOnErrorEvent.fire(new ServerOnError(serverRef, "Server disconnected"));
+        serverOnErrorEvent.fire( new ServerOnError( serverRef, "Server disconnected" ) );
 
         return null;
     }
 
-    public static Response createCorrectVariant(Object responseObj, HttpHeaders headers, javax.ws.rs.core.Response.Status status) {
+    public static Response createCorrectVariant( Object responseObj,
+                                                 HttpHeaders headers,
+                                                 javax.ws.rs.core.Response.Status status ) {
         Response.ResponseBuilder responseBuilder = null;
-        Variant v = getVariant(headers);
-        if( v == null ) {
+        Variant v = getVariant( headers );
+        if ( v == null ) {
             v = defaultVariant;
         }
-        if( status != null ) {
-            responseBuilder = Response.status(status).entity(responseObj).variant(v);
+        if ( status != null ) {
+            responseBuilder = Response.status( status ).entity( responseObj ).variant( v );
         } else {
-            responseBuilder = Response.ok(responseObj, v);
+            responseBuilder = Response.ok( responseObj, v );
         }
         return responseBuilder.build();
     }
