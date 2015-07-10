@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.drools.compiler.kie.builder.impl.KieBuilderImpl;
+import org.drools.compiler.kproject.xml.PomModel;
 import org.drools.workbench.models.datamodel.imports.Import;
 import org.drools.workbench.models.datamodel.imports.Imports;
 import org.drools.workbench.models.datamodel.oracle.TypeSource;
@@ -107,13 +109,16 @@ public class Builder {
 
     private LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache;
 
+    private LRUPomModelCache pomModelCache;
+
     public Builder( final Project project,
                     final IOService ioService,
                     final KieProjectService projectService,
                     final ProjectImportsService importsService,
                     final List<BuildValidationHelper> buildValidationHelpers,
                     final PackageNameWhiteList packageNameWhiteList,
-                    final LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache ) {
+                    final LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache,
+                    final LRUPomModelCache pomModelCache ) {
         this.project = project;
         this.ioService = ioService;
         this.projectService = projectService;
@@ -126,6 +131,7 @@ public class Builder {
         this.kieServices = KieServices.Factory.get();
         this.kieFileSystem = kieServices.newKieFileSystem();
         this.dependenciesClassLoaderCache = dependenciesClassLoaderCache;
+        this.pomModelCache = pomModelCache;
 
         DirectoryStream<org.uberfire.java.nio.file.Path> directoryStream = Files.newDirectoryStream( projectRoot );
         visitPaths( directoryStream );
@@ -134,7 +140,7 @@ public class Builder {
     public BuildResults build() {
         synchronized ( kieFileSystem ) {
             //KieBuilder is not re-usable for successive "full" builds
-            kieBuilder = kieServices.newKieBuilder( kieFileSystem );
+            kieBuilder = createKieBuilder( kieFileSystem );
 
             //Record RTEs from KieBuilder - that can fail if a rule uses an inaccessible class
             final BuildResults results = new BuildResults( projectGAV );
@@ -153,6 +159,8 @@ public class Builder {
                 logger.error( msg,
                               e );
                 results.addBuildMessage( makeErrorMessage( msg ) );
+            } finally {
+                pomModelCache.setEntry( project, ((KieBuilderImpl) kieBuilder).getPomModel() );
             }
 
             //Add validate messages from external helpers
@@ -224,6 +232,15 @@ public class Builder {
 
             return results;
         }
+    }
+
+    private KieBuilder createKieBuilder( KieFileSystem kieFileSystem ) {
+        PomModel pomModel;
+        KieBuilderImpl kieBuilder = ( KieBuilderImpl ) kieServices.newKieBuilder( kieFileSystem );
+        if ( ( pomModel = pomModelCache.getEntry( project ) ) != null ) {
+            kieBuilder.setPomModel( pomModel );
+        }
+        return kieBuilder;
     }
 
     private void updateDependenciesClassLoader( Project project, KieModuleMetaData kieModuleMetaData ) {
