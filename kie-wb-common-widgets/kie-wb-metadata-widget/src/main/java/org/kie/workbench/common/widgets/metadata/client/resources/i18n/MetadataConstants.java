@@ -92,7 +92,7 @@ public interface MetadataConstants extends
     String Cancel();
 
     String smallCommentBy0On1Small( final String author,
-                                    final Date date );
+            final Date date );
 
     String VersionHistory1();
 
@@ -101,26 +101,25 @@ public interface MetadataConstants extends
     String View();
 
     String property0ModifiedOn1By23( final String version,
-                                     final String lastModifier,
-                                     final String lastModifiedDate,
-                                     final String lastModifiedComment );
+            final String lastModifier,
+            final String lastModifiedDate,
+            final String lastModifiedComment );
 
     String URI();
 
     String UsedInProjects();
 
     String Preview();
-    
+
     String LockMetaData();
-    
+
     String LockedByHint();
-    
+
     String UnlockedHint();
-    
+
     String ForceUnlockCaption();
-    
+
     String ForceUnlockConfirmationTitle();
     
     String ForceUnlockConfirmationText(final String lockedBy);
-    
 }

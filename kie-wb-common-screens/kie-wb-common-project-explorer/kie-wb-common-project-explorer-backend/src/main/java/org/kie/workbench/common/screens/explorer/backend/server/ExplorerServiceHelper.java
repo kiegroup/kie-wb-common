@@ -77,7 +77,7 @@ public class ExplorerServiceHelper {
     @Inject
     @Named("configIO")
     private IOService ioServiceConfig;
-
+    
     @Inject
     private VFSLockServiceImpl lockService;
 
@@ -105,8 +105,8 @@ public class ExplorerServiceHelper {
         } else if ( Files.isDirectory( path ) ) {
             final org.uberfire.backend.vfs.Path p = Paths.convert( path );
             return new FolderItem( p,
-                    p.getFileName(),
-                    FolderItemType.FOLDER );
+                                   p.getFileName(),
+                                   FolderItemType.FOLDER );
         }
 
         return null;
@@ -128,16 +128,16 @@ public class ExplorerServiceHelper {
     }
 
     public FolderListing getFolderListing( FolderItem selectedItem,
-            Project selectedProject,
-            Package selectedPackage,
-            Set<Option> options ) {
+                                           Project selectedProject,
+                                           Package selectedPackage,
+                                           Set<Option> options ) {
         return folderListingResolver.resolve( selectedItem, selectedProject, selectedPackage, this, options );
     }
 
     public FolderListing getFolderListing( final Package pkg ) {
         return new FolderListing( toFolderItem( pkg ),
-                getItems( pkg ),
-                getPackageSegments( pkg ) );
+                                  getItems( pkg ),
+                                  getPackageSegments( pkg ) );
     }
 
     public FolderListing getFolderListing( final FolderItem item ) {
@@ -163,7 +163,7 @@ public class ExplorerServiceHelper {
         }
         final Path basePath = Paths.convert( nioPath );
         final DirectoryStream<org.uberfire.java.nio.file.Path> nioPaths = ioService.newDirectoryStream( nioPath,
-                dotFileFilter );
+                                                                                                        dotFileFilter );
         for ( org.uberfire.java.nio.file.Path np : nioPaths ) {
             if ( Files.isRegularFile( np ) ) {
                 final org.uberfire.backend.vfs.Path p = Paths.convert( np );
@@ -189,8 +189,8 @@ public class ExplorerServiceHelper {
         Collections.sort( folderItems, Sorters.ITEM_SORTER );
 
         return new FolderListing( toFolderItem( nioPath ),
-                folderItems,
-                getPathSegments( basePath ) );
+                                  folderItems,
+                                  getPathSegments( basePath ) );
     }
 
     public List<FolderItem> getItems( final Package pkg ) {
@@ -235,19 +235,18 @@ public class ExplorerServiceHelper {
         final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert( packagePath );
         if ( Files.exists( nioPackagePath ) ) {
             final DirectoryStream<org.uberfire.java.nio.file.Path> nioPaths = ioService.newDirectoryStream( nioPackagePath,
-                    regularFileFilter );
+                                                                                                            regularFileFilter );
             for ( org.uberfire.java.nio.file.Path nioPath : nioPaths ) {
                 final org.uberfire.backend.vfs.Path path = Paths.convert( nioPath );
                 if ( Paths.isLock( path ) )
                     continue;
-
+    
                 final String lockedBy = Paths.readLockedBy( path );
                 final FolderItem folderItem = new FolderItem( path,
-                        path.getFileName(),
-                        FolderItemType.FILE,
-                        false,
-                        lockedBy,
-                        metadataService.getMetadata( path ).getTags());
+                                                              path.getFileName(),
+                                                              FolderItemType.FILE,
+                                                              false,
+                                                              lockedBy );
                 folderItems.add( folderItem );
             }
         }
@@ -256,11 +255,11 @@ public class ExplorerServiceHelper {
     }
 
     public void store( final OrganizationalUnit selectedOrganizationalUnit,
-            final Repository selectedRepository,
-            final Project selectedProject,
-            final FolderListing folderListing,
-            final Package selectedPackage,
-            final Set<Option> options ) {
+                       final Repository selectedRepository,
+                       final Project selectedProject,
+                       final FolderListing folderListing,
+                       final Package selectedPackage,
+                       final Set<Option> options ) {
 
         final org.uberfire.java.nio.file.Path userNavPath = userServices.buildPath( "explorer", "user.nav" );
         final org.uberfire.java.nio.file.Path lastUserNavPath = userServices.buildPath( "explorer", "last.user.nav" );
@@ -288,8 +287,8 @@ public class ExplorerServiceHelper {
             public void run() {
                 try {
                     store( userNavPath, lastUserNavPath, _selectedOrganizationalUnit,
-                            _selectedRepository, _selectedProject,
-                            _selectedPackage, _selectedItem, options );
+                           _selectedRepository, _selectedProject,
+                           _selectedPackage, _selectedItem, options );
                 } catch ( final Exception e ) {
                     LOGGER.error( "Can't serialize user's state navigation", e );
                 }
@@ -298,13 +297,13 @@ public class ExplorerServiceHelper {
     }
 
     public void store( final org.uberfire.java.nio.file.Path userNav,
-            final org.uberfire.java.nio.file.Path lastUserNav,
-            final OrganizationalUnit organizationalUnit,
-            final Repository repository,
-            final Project project,
-            final Package pkg,
-            final FolderItem item,
-            final Set<Option> options ) {
+                       final org.uberfire.java.nio.file.Path lastUserNav,
+                       final OrganizationalUnit organizationalUnit,
+                       final Repository repository,
+                       final Project project,
+                       final Package pkg,
+                       final FolderItem item,
+                       final Set<Option> options ) {
         final UserExplorerData content;
         final UserExplorerData _content = loadUserContent( userNav );
         if ( _content == null ) {
@@ -337,9 +336,9 @@ public class ExplorerServiceHelper {
             try {
                 ioServiceConfig.startBatch( userNav.getFileSystem() );
                 ioServiceConfig.write( userNav,
-                        xs.toXML( content ) );
+                                       xs.toXML( content ) );
                 ioServiceConfig.write( lastUserNav,
-                        xs.toXML( lastContent ) );
+                                       xs.toXML( lastContent ) );
             } finally {
                 ioServiceConfig.endBatch();
             }
