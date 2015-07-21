@@ -62,7 +62,7 @@ public class MetadataWidget
 
     //    @UiField Label title;
     @UiField
-    CategorySelectorWidget categories;
+    TagWidget tags;
     @UiField
     Label note;
     @UiField
@@ -88,20 +88,20 @@ public class MetadataWidget
     }
 
     public void setContent( final Metadata metadata,
-                            final boolean readOnly ) {
+            final boolean readOnly ) {
         this.metadata = checkNotNull( "metadata", metadata );
         this.readOnly = readOnly;
 
         loadData();
     }
-    
+
     public void setForceUnlockHandler(final Runnable forceUnlockHandler) {
         this.forceUnlockHandler = forceUnlockHandler;
     }
 
     private void loadData() {
 
-        categories.setContent( metadata, this.readOnly );
+        tags.setContent( metadata, this.readOnly );
 
         note.setText( metadata.getCheckinComment() );
 
@@ -138,13 +138,13 @@ public class MetadataWidget
                 metadata.setExternalSource( source.getText() );
             }
         } );
-        
+
         setLockStatus();
     }
-    
+
     private void setLockStatus() {
         final LockInfo lockInfo = metadata.getLockInfo();
-        
+
         if (lockInfo.isLocked()) {
             lockedBy.setText( MetadataConstants.INSTANCE.LockedByHint() + " " + lockInfo.lockedBy() );
         }
@@ -176,7 +176,7 @@ public class MetadataWidget
     public void setNote( String text ) {
         note.setText( text );
     }
-    
+
     @UiHandler("unlock")
     public void onForceUnlock(ClickEvent e) {
         forceUnlockHandler.run();
