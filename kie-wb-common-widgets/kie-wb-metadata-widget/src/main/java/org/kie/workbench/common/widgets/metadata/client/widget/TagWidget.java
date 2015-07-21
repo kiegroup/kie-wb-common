@@ -1,5 +1,5 @@
 /*
- * Copyright 2005 JBoss Inc
+ * Copyright 2015 JBoss Inc
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +16,13 @@
 
 package org.kie.workbench.common.widgets.metadata.client.widget;
 
-import com.github.gwtbootstrap.client.ui.Button;
-import com.github.gwtbootstrap.client.ui.ButtonGroup;
-import com.github.gwtbootstrap.client.ui.TextBox;
-import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.github.gwtbootstrap.client.ui.constants.IconType;
-import com.github.gwtbootstrap.client.ui.resources.ButtonSize;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
+import javax.inject.Inject;
+
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.kie.workbench.common.widgets.metadata.client.resources.Images;
-import org.kie.workbench.common.widgets.metadata.client.resources.i18n.MetadataConstants;
-import org.uberfire.ext.widgets.common.client.common.SmallLabel;
+import org.jboss.errai.ioc.client.container.IOC;
+import org.jboss.errai.ioc.client.container.IOCBeanDef;
 
 /**
  * This is a viewer/selector for tags.
@@ -44,32 +31,22 @@ import org.uberfire.ext.widgets.common.client.common.SmallLabel;
  * <p/>
  * It is intended to work with the meta data form.
  */
-public class TagWidget
-        extends Composite {
+public class TagWidget implements IsWidget {
 
     private Metadata data;
 
-    @UiField
-    HorizontalPanel tags = new HorizontalPanel();
-
-    @UiField
-    TextBox newTags = new TextBox();
-
-    @UiField
-    Button addTags = new Button(  );
+    private TagWidgetView view;
 
     private boolean readOnly;
 
-    interface TagWidgetBinder
-            extends
-            UiBinder<Widget, TagWidget> {
-
+    @Inject
+    public void setView( TagWidgetView view ) {
+        this.view = view;
+        view.setPresenter( this );
     }
 
-    private static TagWidgetBinder uiBinder = GWT.create( TagWidgetBinder.class );
-
-    public TagWidget() {
-        initWidget( uiBinder.createAndBindUi( this ) );
+    public TagWidgetView getView() {
+        return view;
     }
 
     /**
@@ -80,72 +57,45 @@ public class TagWidget
                             boolean readOnly ) {
         this.data = d;
 
-        tags.clear();
-
         this.readOnly = readOnly;
 
-        loadData();
+        view.setReadOnly(readOnly);
 
-        if (readOnly) {
-            addTags.setVisible( false );
-        } else  {
-            addTags.addClickHandler( new ClickHandler() {
-                @Override
-                public void onClick( ClickEvent clickEvent ) {
-                    String text = newTags.getText();
-                    if (text != null) {
-                        String[] tags = text.split( " " );
-                        for (String tag : tags) {
-                            addTag( tag );
-                        }
-                        newTags.setText( "" );
-                    }
+        loadData();
+    }
+
+    public void onAddTags( String text ) {
+        if (text != null) {
+            String[] tags = text.split( " " );
+            for (String tag : tags) {
+                if (!data.getTags().contains( tag )) {
+                    data.addTag( tag );
+                    view.addTag( tag, readOnly );
                 }
-            } );
-        }
-
-    }
-
-    protected void removeTag( int index ) {
-        data.removeTag( index );
-        resetBox();
-    }
-
-    private void resetBox() {
-        tags.clear();
-        loadData();
-    }
-
-    private void loadData( ) {
-
-        for ( int i = 0; i < data.getTags().size(); i++ ) {
-            final int idx = i;
-            final String tag = data.getTags().get( idx );
-
-            Button fullTag = new Button( tag, IconType.TRASH );
-
-            fullTag.setType( ButtonType.INVERSE );
-            fullTag.setSize( ButtonSize.SMALL );
-
-
-            tags.add( fullTag );
-            if ( !readOnly ) {
-
-                fullTag.addClickHandler( new ClickHandler() {
-                    public void onClick( final ClickEvent event ) {
-                        removeTag( idx );
-                    }
-                } );
             }
         }
     }
 
-    /**
-     * Appy the change (selected tag to be added).
-     */
-    public void addTag( String tag ) {
-        if (data.getTags().contains( tag ) || tag.isEmpty()) return;
-        data.addTag( tag );
-        resetBox();
+    public void onRemoveTag( String tag ) {
+        data.getTags().remove( tag );
+        loadData();
+    }
+
+    public void loadData( ) {
+        view.clear();
+        for (String tag : data.getTags()) {
+            view.addTag( tag, readOnly );
+        }
+    }
+
+    @Override
+    public Widget asWidget() {
+        if (view == null) initView();
+        return view.asWidget();
+    }
+
+    // TODO: remove this method when the MetaDataWidget is moved to MVP
+    private void initView() {
+        setView( new TagWidgetViewImpl() );
     }
 }

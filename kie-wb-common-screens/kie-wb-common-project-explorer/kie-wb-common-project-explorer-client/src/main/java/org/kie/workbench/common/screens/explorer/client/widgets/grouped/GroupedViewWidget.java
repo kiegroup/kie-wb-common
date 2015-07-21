@@ -255,7 +255,18 @@ public class GroupedViewWidget extends Composite implements View {
         while ( itr.hasNext() ) {
             final Map.Entry<ClientResourceType, Collection<FolderItem>> e = itr.next();
 
-            final CollapseTrigger collapseTrigger = makeTriggerWidget( tag, e.getKey() );
+            ClientResourceType resourceType = e.getKey();
+
+            final CollapseTrigger collapseTrigger = new CollapseTrigger( "#" + getCollapseId( tag, resourceType ) );
+            final String description = getResourceTypeDescription( resourceType );
+            final IsWidget icon = resourceType.getIcon();
+            if ( icon == null ) {
+                collapseTrigger.setWidget( new TriggerWidget( description ) );;
+            } else {
+                SimplePanel iconPanel = new SimplePanel(  );
+                iconPanel.getElement().appendChild( DOM.clone( icon.asWidget().getElement(), true ) );
+                collapseTrigger.setWidget( new TriggerWidget( iconPanel, description ) );
+            }
 
             final Collapse collapse = new Collapse();
             collapse.setExistTrigger( true );
@@ -301,22 +312,6 @@ public class GroupedViewWidget extends Composite implements View {
     @Override
     public Explorer getExplorer() {
         return explorer;
-    }
-
-    private CollapseTrigger makeTriggerWidget( final String tag, final ClientResourceType resourceType ) {
-        final CollapseTrigger collapseTrigger = new CollapseTrigger( "#" + getCollapseId( tag, resourceType ) );
-        final String description = getResourceTypeDescription( resourceType );
-        final IsWidget icon = resourceType.getIcon();
-        if ( icon == null ) {
-            collapseTrigger.setWidget( new TriggerWidget( description ) );;
-        } else {
-            SimplePanel iconPanel = new SimplePanel(  );
-            iconPanel.getElement().appendChild( DOM.clone( icon.asWidget().getElement(), true ) );
-            collapseTrigger.setWidget( new TriggerWidget( iconPanel,
-                                                          description ) );
-
-        }
-        return collapseTrigger;
     }
 
     private String getResourceTypeDescription( final ClientResourceType resourceType ) {

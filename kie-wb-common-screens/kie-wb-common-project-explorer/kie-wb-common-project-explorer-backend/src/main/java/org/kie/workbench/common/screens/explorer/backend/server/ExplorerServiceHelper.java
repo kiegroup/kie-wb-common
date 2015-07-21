@@ -101,7 +101,7 @@ public class ExplorerServiceHelper {
                     p.getFileName(),
                     FolderItemType.FILE,
                     false,
-                    Paths.readLockedBy( p ), null );
+                    Paths.readLockedBy( p ), new ArrayList<String>(  ) );
         } else if ( Files.isDirectory( path ) ) {
             final org.uberfire.backend.vfs.Path p = Paths.convert( path );
             return new FolderItem( p,
@@ -181,7 +181,7 @@ public class ExplorerServiceHelper {
                         p.getFileName(),
                         FolderItemType.FOLDER,
                         lockedItems,
-                        null, null);
+                        null, new ArrayList<String>(  ));
                 folderItems.add( folderItem );
             }
         }
