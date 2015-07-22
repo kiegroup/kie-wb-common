@@ -246,7 +246,7 @@ public class ExplorerServiceHelper {
                                                               path.getFileName(),
                                                               FolderItemType.FILE,
                                                               false,
-                                                              lockedBy );
+                                                              lockedBy, metadataService.getMetadata( path ).getTags() );
                 folderItems.add( folderItem );
             }
         }
