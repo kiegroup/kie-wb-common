@@ -411,6 +411,7 @@ public class RemoteAccessImpl {
 
             return new ScannerOperationResult( ScannerStatus.ERROR, response.getMsg(), null );
         } catch ( final Exception ex ) {
+            ex.printStackTrace();
             return new ScannerOperationResult( ScannerStatus.ERROR, ex.getMessage(), null );
         }
     }
@@ -435,7 +436,7 @@ public class RemoteAccessImpl {
         }
     }
 
-    private long toMillis( final Long duration ) {
+    long toMillis( final Long duration ) {
         if ( duration == null ) {
             return 0;
         }
