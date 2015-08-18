@@ -9,6 +9,8 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.GAV;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.remote.common.rest.KieRemoteHttpRequestException;
+import org.kie.server.client.KieServicesException;
 import org.kie.workbench.common.screens.server.management.events.ContainerCreated;
 import org.kie.workbench.common.screens.server.management.events.ContainerDeleted;
 import org.kie.workbench.common.screens.server.management.events.ContainerStarted;
@@ -30,6 +32,8 @@ import org.kie.workbench.common.screens.server.management.model.impl.ServerRefIm
 import org.kie.workbench.common.screens.server.management.service.ContainerAlreadyRegisteredException;
 import org.kie.workbench.common.screens.server.management.service.ServerAlreadyRegisteredException;
 import org.kie.workbench.common.screens.server.management.service.ServerManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.commons.async.SimpleAsyncExecutorService;
 import org.uberfire.commons.data.Pair;
 
@@ -39,6 +43,8 @@ import static org.uberfire.commons.validation.PortablePreconditions.*;
 @Service
 @ApplicationScoped
 public class ServerManagementServiceImpl implements ServerManagementService {
+
+    private static final Logger logger = LoggerFactory.getLogger( ServerManagementServiceImpl.class );
 
     @Inject
     private Event<ServerConnected> serverConnectedEvent;
@@ -108,15 +114,27 @@ public class ServerManagementServiceImpl implements ServerManagementService {
         checkNotEmpty( "endpoint", endpoint );
         checkNotEmpty( "name", name );
 
-        final Server server = remoteAccess.toServer( endpoint, name, username, password, REMOTE );
+        try {
 
-        if ( storage.exists( server ) ) {
-            throw new ServerAlreadyRegisteredException( "Server already registered." );
-        }
+            final Server server = remoteAccess.toServer( endpoint, name, username, password, REMOTE );
 
-        if ( server != null ) {
-            storage.register( server );
-            serverConnectedEvent.fire( new ServerConnected( server ) );
+            if ( storage.exists( server ) ) {
+                throw new ServerAlreadyRegisteredException( "Server already registered." );
+            }
+
+            if ( server != null ) {
+                storage.register( server );
+                serverConnectedEvent.fire( new ServerConnected( server ) );
+            }
+
+            // Yes we log and throw. Throw is for the client side user.
+            // Log is primarily for any connections that are started outside of the client.
+        } catch (KieServicesException e) {
+            logger.warn( "Connection failed", e );
+            throw e;
+        } catch (KieRemoteHttpRequestException e) {
+            logger.warn( "Connection failed", e );
+            throw e;
         }
     }
 
