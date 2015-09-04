@@ -25,6 +25,7 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
@@ -36,18 +37,13 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.Role;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContext;
+import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchFocusEvent;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
 import org.kie.workbench.common.screens.datamodeller.client.util.DataModelerUtils;
 import org.kie.workbench.common.screens.datamodeller.client.validation.JavaFileNameValidator;
 import org.kie.workbench.common.screens.datamodeller.client.validation.ValidatorService;
 import org.kie.workbench.common.screens.datamodeller.client.widgets.refactoring.ShowUsagesPopup;
-import org.kie.workbench.common.screens.datamodeller.events.DataModelSaved;
-import org.kie.workbench.common.screens.datamodeller.events.DataModelStatusChangeEvent;
-import org.kie.workbench.common.screens.datamodeller.events.DataModelerEvent;
-import org.kie.workbench.common.screens.datamodeller.events.DataObjectChangeEvent;
-import org.kie.workbench.common.screens.datamodeller.events.DataObjectCreatedEvent;
-import org.kie.workbench.common.screens.datamodeller.events.DataObjectDeletedEvent;
-import org.kie.workbench.common.screens.datamodeller.events.DataObjectFieldChangeEvent;
+import org.kie.workbench.common.screens.datamodeller.events.*;
 import org.kie.workbench.common.screens.datamodeller.model.DataModelerError;
 import org.kie.workbench.common.screens.datamodeller.model.EditorModelContent;
 import org.kie.workbench.common.screens.datamodeller.model.GenerationResult;
@@ -74,6 +70,7 @@ import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.client.mvp.PlaceManager;
+import org.uberfire.client.workbench.events.PlaceHidEvent;
 import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
 import org.uberfire.ext.editor.commons.client.file.CopyPopup;
 import org.uberfire.ext.editor.commons.client.file.DeletePopup;
@@ -84,10 +81,7 @@ import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.Page;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
-import org.uberfire.lifecycle.OnClose;
-import org.uberfire.lifecycle.OnFocus;
-import org.uberfire.lifecycle.OnMayClose;
-import org.uberfire.lifecycle.OnStartup;
+import org.uberfire.lifecycle.*;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
@@ -119,6 +113,9 @@ public class DataModelerScreenPresenter
 
     @Inject
     private Event<DataModelerEvent> dataModelerEvent;
+
+    @Inject
+    private Event<DataModelerWorkbenchFocusEvent> dataModelerFocusEvent;
 
     @Inject
     private Event<UnpublishMessagesEvent> unpublishMessagesEvent;
@@ -226,6 +223,19 @@ public class DataModelerScreenPresenter
         if ( !loading && context != null ) {
             dataModelerWBContext.setActiveContext( context );
         }
+        enableDataModelerDocksWhenIsHidden();
+    }
+
+    private void enableDataModelerDocksWhenIsHidden() {
+        dataModelerFocusEvent.fire( new DataModelerWorkbenchFocusEvent() );
+    }
+
+    public void disableDataModelerDocksWhenIsHidden( @Observes PlaceHidEvent event ) {
+        if( context!=null ){
+            if( "DataModelerEditor".equals( event.getPlace().getIdentifier() ) ){
+                dataModelerFocusEvent.fire( new DataModelerWorkbenchFocusEvent().hidden() );
+            }
+        }
     }
 
     @OnMayClose
@@ -243,6 +253,7 @@ public class DataModelerScreenPresenter
         clearContext();
         super.OnClose();
         dataModelerWBContext.clearContext();
+
     }
 
     private void onSafeDelete() {
