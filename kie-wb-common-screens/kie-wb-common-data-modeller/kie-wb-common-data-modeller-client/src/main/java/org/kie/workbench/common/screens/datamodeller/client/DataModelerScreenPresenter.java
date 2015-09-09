@@ -25,7 +25,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.github.gwtbootstrap.client.ui.constants.ButtonType;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
@@ -230,10 +229,10 @@ public class DataModelerScreenPresenter
         dataModelerFocusEvent.fire( new DataModelerWorkbenchFocusEvent() );
     }
 
-    public void disableDataModelerDocksWhenIsHidden( @Observes PlaceHidEvent event ) {
+    public void disableDataModelerDocksWhenEditorIsHidden( @Observes PlaceHidEvent event ) {
         if( context!=null ){
             if( "DataModelerEditor".equals( event.getPlace().getIdentifier() ) ){
-                dataModelerFocusEvent.fire( new DataModelerWorkbenchFocusEvent().hidden() );
+                dataModelerFocusEvent.fire( new DataModelerWorkbenchFocusEvent().lostFocus() );
             }
         }
     }

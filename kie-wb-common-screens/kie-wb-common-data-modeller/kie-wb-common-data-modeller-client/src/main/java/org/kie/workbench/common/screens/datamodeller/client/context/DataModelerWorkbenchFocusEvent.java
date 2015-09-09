@@ -19,18 +19,18 @@ package org.kie.workbench.common.screens.datamodeller.client.context;
 public class DataModelerWorkbenchFocusEvent {
 
 
-    private boolean isHidden;
+    private boolean focused;
 
     public DataModelerWorkbenchFocusEvent() {
-        this.isHidden = false;
+        this.focused = true;
     }
 
-    public DataModelerWorkbenchFocusEvent hidden() {
-        this.isHidden = true;
+    public DataModelerWorkbenchFocusEvent lostFocus() {
+        this.focused = false;
         return this;
     }
 
-    public boolean isHidden() {
-        return isHidden;
+    public boolean isFocused() {
+        return focused;
     }
 }
