@@ -33,6 +33,7 @@ import com.github.gwtbootstrap.client.ui.constants.Placement;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -157,14 +158,9 @@ public class DataObjectBrowser extends Composite {
 
         objectButton.setType( ButtonType.LINK );
         objectButton.addClickHandler( new ClickHandler() {
-            @Override public void onClick( ClickEvent event ) {
-                lastSelectedRow = dataObjectPropertiesTable.getKeyboardSelectedRow();
-                showingObject = true;
-                ObjectProperty currentSelection = (( SingleSelectionModel<ObjectProperty> ) dataObjectPropertiesTable.getSelectionModel()).getSelectedObject();
-                if ( currentSelection != null ) {
-                    dataObjectPropertiesTable.getSelectionModel().setSelected( currentSelection, false );
-                }
-                notifyObjectSelected();
+            @Override
+            public void onClick( ClickEvent event ) {
+                selectCurrentObject( true );
             }
         } );
 
@@ -709,6 +705,18 @@ public class DataObjectBrowser extends Composite {
         }
     }
 
+    private void selectCurrentObject( boolean notifySelection ) {
+        lastSelectedRow = dataObjectPropertiesTable.getKeyboardSelectedRow();
+        showingObject = true;
+        ObjectProperty currentSelection = (( SingleSelectionModel<ObjectProperty> ) dataObjectPropertiesTable.getSelectionModel()).getSelectedObject();
+        if ( currentSelection != null ) {
+            dataObjectPropertiesTable.getSelectionModel().setSelected( currentSelection, false );
+        }
+        if ( notifySelection ) {
+            notifyObjectSelected();
+        }
+    }
+
     //Event handlers
 
     @UiHandler("newPropertyButton")
@@ -733,10 +741,17 @@ public class DataObjectBrowser extends Composite {
                 refreshObjectSelector( dataObject );
 
                 // For self references: in case name or package changes redraw properties table
-                if ( dataObject.getClassName().equals( event.getCurrentDataObject().getClassName() ) ) {
-                    dataObjectPropertiesProvider.refresh();
-                    dataObjectPropertiesTable.redraw();
-                }
+                skipNextFieldNotification = true;
+                dataObjectPropertiesProvider.refresh();
+                dataObjectPropertiesTable.redraw();
+
+                Scheduler.get().scheduleDeferred( new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        selectCurrentObject( false );
+                    }
+                } );
+
             }
         }
     }
