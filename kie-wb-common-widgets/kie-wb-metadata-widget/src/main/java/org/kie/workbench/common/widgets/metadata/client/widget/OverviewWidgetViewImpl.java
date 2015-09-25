@@ -212,4 +212,10 @@ public class OverviewWidgetViewImpl
     public void setForceUnlockHandler(final Runnable handler) {
         this.metadata.setForceUnlockHandler( handler );
     }
+
+    @Override
+    public void setCurrentUser( String currentUser ) {
+        metadata.setCurrentUser( currentUser );
+    }
+    
 }
