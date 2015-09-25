@@ -103,7 +103,10 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
     @Override
     public void init( final ViewPresenter presenter ) {
         this.presenter = presenter;
-        explorer.init( Explorer.Mode.EXPANDED, techOptions, Explorer.NavType.BREADCRUMB, presenter );
+        explorer.init( Explorer.Mode.EXPANDED,
+                       techOptions,
+                       Explorer.NavType.BREADCRUMB,
+                       presenter );
         openProjectEditorButton.addClickHandler( new ClickHandler() {
 
             @Override
@@ -132,26 +135,32 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
                             final Project activeProject,
                             final FolderListing folderListing,
                             final Map<FolderItem, List<FolderItem>> siblings ) {
-        explorer.setupHeader( organizationalUnits, activeOrganizationalUnit,
-                              repositories, activeRepository,
-                              projects, activeProject );
+        explorer.setupHeader( organizationalUnits,
+                              activeOrganizationalUnit,
+                              repositories,
+                              activeRepository,
+                              projects,
+                              activeProject );
 
-        tagSelector.loadContent( presenter.getActiveContentTags(), presenter.getCurrentTag() );
+        tagSelector.loadContent( presenter.getActiveContentTags(),
+                                 presenter.getCurrentTag() );
 
-        explorer.loadContent( folderListing, siblings );
+        explorer.loadContent( folderListing,
+                              siblings );
 
         branchSelector.setRepository( activeRepository );
 
     }
 
     @Override
-    public void setItems ( final FolderListing folderListing ) {
+    public void setItems( final FolderListing folderListing ) {
         renderItems( folderListing );
     }
 
     @Override
     public void renderItems( FolderListing folderListing ) {
-        tagSelector.loadContent( presenter.getActiveContentTags(), presenter.getCurrentTag() );
+        tagSelector.loadContent( presenter.getActiveContentTags(),
+                                 presenter.getCurrentTag() );
         explorer.loadContent( folderListing );
     }
 
@@ -168,7 +177,9 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
     @Override
     public void hideTagFilter() {
         tagSelector.hide();
-        if (presenter.getActiveContent() != null) renderItems( presenter.getActiveContent() );
+        if ( presenter.getActiveContent() != null ) {
+            renderItems( presenter.getActiveContent() );
+        }
     }
 
     @Override
@@ -200,7 +211,7 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
         branchSelector.addBranchChangeHandler( branchChangeHandler );
     }
 
-    public void onTagChanged(@Observes TagChangedEvent event) {
+    public void onTagChanged( @Observes TagChangedEvent event ) {
 
     }
 }
