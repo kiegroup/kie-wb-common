@@ -1,6 +1,7 @@
 package org.kie.workbench.common.screens.explorer.client.widgets.navigator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -51,7 +52,7 @@ public class TreeNavigator extends Composite implements Navigator {
             @Override
             public void onOpen( final OpenEvent<TreeItem> event ) {
                 if ( needsLoading( event.getTarget() ) ) {
-                    presenter.loadContent( (FolderItem) event.getTarget().getUserObject(), null );
+                    presenter.loadContent( (FolderItem) event.getTarget().getUserObject() );
                 }
             }
         } );
@@ -73,7 +74,8 @@ public class TreeNavigator extends Composite implements Navigator {
 
     @Override
     public void loadContent( final FolderListing content ) {
-        loadContent( content, null );
+        loadContent( content,
+                     new HashMap<FolderItem, List<FolderItem>>() );
     }
 
     @Override
@@ -84,11 +86,15 @@ public class TreeNavigator extends Composite implements Navigator {
             return;
         }
         if ( content.equals( activeContent ) ) {
-            tree.getSelectedItem().setState( TreeItem.State.OPEN, true, false );
+            if ( tree.getSelectedItem() != null ) {
+                tree.getSelectedItem().setState( TreeItem.State.OPEN,
+                                                 true,
+                                                 false );
+            }
             return;
         }
 
-        activeContent = content;
+        this.activeContent = content;
 
         TreeItem item = null;
         if ( !tree.isEmpty() ) {
@@ -106,19 +112,25 @@ public class TreeNavigator extends Composite implements Navigator {
             } else {
                 final TreeItem parent = loadRoots( content.getSegments(),
                                                    siblings );
-                item = loadSiblings( content.getItem(),
-                                     new TreeNavigatorItemImpl( parent ),
-                                     siblings );
-                item.setUserObject( content.getItem() );
+                if ( parent != null ) {
+                    item = loadSiblings( content.getItem(),
+                                         new TreeNavigatorItemImpl( parent ),
+                                         siblings );
+                    if(item!=null) {
+                        item.setUserObject( content.getItem() );
+                    }
+                }
             }
         }
 
-        item.setState( TreeItem.State.OPEN,
-                       true,
-                       false );
-        tree.setSelectedItem( item );
+        if ( item != null ) {
+            item.setState( TreeItem.State.OPEN,
+                           true,
+                           false );
+            tree.setSelectedItem( item );
 
-        loadContent( new TreeNavigatorItemImpl( item ), content );
+            loadContent( new TreeNavigatorItemImpl( item ), content );
+        }
     }
 
     private TreeItem findItemInTree( final FolderItem xxx ) {
@@ -157,7 +169,9 @@ public class TreeNavigator extends Composite implements Navigator {
                         item = loadSiblings( segment,
                                              new TreeNavigatorItemImpl( parent ),
                                              siblings );
-                        item.setUserObject( segment );
+                        if ( item != null ) {
+                            item.setUserObject( segment );
+                        }
                     } else if ( needsLoading( item ) ) {
                         item.getChild( 0 ).getElement().getStyle().setDisplay( Style.Display.NONE );
                     }

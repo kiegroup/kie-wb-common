@@ -31,7 +31,7 @@ import org.kie.workbench.common.screens.explorer.service.Option;
  */
 public interface ViewPresenter extends HasVisibility {
 
-    void update( final Set<Option> options );
+    void update( );
 
     void initialiseViewForActiveContext( final String path );
 
@@ -63,10 +63,7 @@ public interface ViewPresenter extends HasVisibility {
 
     void refresh();
 
-    void loadContent( final FolderItem item,
-                      final Set<Option> options );
-
-    Set<Option> getActiveOptions();
+    void loadContent( final FolderItem item );
 
     FolderListing getActiveContent();
 

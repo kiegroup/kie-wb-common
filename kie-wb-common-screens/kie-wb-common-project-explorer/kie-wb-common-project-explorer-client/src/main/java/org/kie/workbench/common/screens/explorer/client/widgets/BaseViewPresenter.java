@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.screens.explorer.client.widgets;
 
-import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -51,6 +50,7 @@ import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.uberfire.social.activities.model.ExtendedTypes;
 import org.kie.uberfire.social.activities.model.SocialFileSelectedEvent;
+import org.kie.workbench.common.screens.explorer.client.ActiveContextOptions;
 import org.kie.workbench.common.screens.explorer.client.utils.Utils;
 import org.kie.workbench.common.screens.explorer.model.FolderItem;
 import org.kie.workbench.common.screens.explorer.model.FolderItemType;
@@ -58,7 +58,6 @@ import org.kie.workbench.common.screens.explorer.model.FolderListing;
 import org.kie.workbench.common.screens.explorer.model.ProjectExplorerContent;
 import org.kie.workbench.common.screens.explorer.model.URIStructureExplorerModel;
 import org.kie.workbench.common.screens.explorer.service.ExplorerService;
-import org.kie.workbench.common.screens.explorer.service.Option;
 import org.kie.workbench.common.screens.explorer.service.ProjectExplorerContentQuery;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
@@ -118,6 +117,9 @@ public abstract class BaseViewPresenter implements ViewPresenter {
     @Inject
     private SyncBeanManager iocBeanManager;
 
+    @Inject
+    private ActiveContextOptions activeOptions;
+
     //Active context
     protected OrganizationalUnit activeOrganizationalUnit = null;
     protected Repository activeRepository = null;
@@ -134,12 +136,9 @@ public abstract class BaseViewPresenter implements ViewPresenter {
     }
 
     @Override
-    public void update( final Set<Option> options ) {
-        setOptions( new HashSet<Option>( options ) );
-        getView().setOptions( options );
+    public void update() {
+        getView().setOptions( activeOptions.getOptions() );
     }
-
-    protected abstract void setOptions( final Set<Option> options );
 
     protected abstract View getView();
 
@@ -149,7 +148,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
 
         explorerService.call(
                 getContentCallback(),
-                new HasBusyIndicatorDefaultErrorCallback( getView() ) ).getContent( path, getActiveOptions() );
+                new HasBusyIndicatorDefaultErrorCallback( getView() ) ).getContent( path, activeOptions.getOptions() );
     }
 
     @Override
@@ -201,8 +200,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
     }
 
     @Override
-    public void loadContent( final FolderItem item,
-                             final Set<Option> options ) {
+    public void loadContent( final FolderItem item ) {
         explorerService.call( new RemoteCallback<FolderListing>() {
             @Override
             public void callback( FolderListing fl ) {
@@ -213,7 +211,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                 activeRepository,
                 activeProject,
                 item,
-                options );
+                activeOptions.getOptions() );
     }
 
     @Override
@@ -377,7 +375,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
             getView().showBusyIndicator( CommonConstants.INSTANCE.Loading() );
         }
 
-        query.setOptions( getActiveOptions() );
+        query.setOptions( activeOptions.getOptions() );
 
         explorerService.call(
                 getContentCallback(),
@@ -594,7 +592,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                                                                          activeRepository,
                                                                                          activeProject,
                                                                                          item,
-                                                                                         getActiveOptions() );
+                                                                                         activeOptions.getOptions() );
         }
     }
 
@@ -811,7 +809,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                                           activeRepository,
                                                           activeProject,
                                                           activeFolderItem,
-                                                          getActiveOptions() );
+                                                          activeOptions.getOptions() );
     }
 
     // Refresh when a Resource has been deleted, if it exists in the active package
@@ -837,7 +835,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                                           activeRepository,
                                                           activeProject,
                                                           activeFolderItem,
-                                                          getActiveOptions() );
+                                                          activeOptions.getOptions() );
     }
 
     // Refresh when a Resource has been copied, if it exists in the active package
@@ -863,7 +861,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                                           activeRepository,
                                                           activeProject,
                                                           activeFolderItem,
-                                                          getActiveOptions() );
+                                                          activeOptions.getOptions() );
     }
 
     public void onSocialFileSelected( @Observes final SocialFileSelectedEvent event ) {
@@ -951,7 +949,7 @@ public abstract class BaseViewPresenter implements ViewPresenter {
                                                               activeRepository,
                                                               activeProject,
                                                               activeFolderItem,
-                                                              getActiveOptions() );
+                                                              activeOptions.getOptions() );
         }
     }
 
@@ -1008,5 +1006,4 @@ public abstract class BaseViewPresenter implements ViewPresenter {
         refresh( false );
     }
 
-    public abstract void addOption( final Option option );
 }
