@@ -21,7 +21,6 @@ import javax.enterprise.context.Dependent;
 import com.github.gwtbootstrap.client.ui.Button;
 import com.github.gwtbootstrap.client.ui.ControlGroup;
 import com.github.gwtbootstrap.client.ui.HelpInline;
-import com.github.gwtbootstrap.client.ui.PasswordTextBox;
 import com.github.gwtbootstrap.client.ui.TextBox;
 import com.github.gwtbootstrap.client.ui.constants.ControlGroupType;
 import com.google.gwt.core.client.GWT;
@@ -33,7 +32,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
-import org.uberfire.util.URIUtil;
 
 @Dependent
 public class ServerRegistryEndpointView extends Composite
@@ -80,34 +78,44 @@ public class ServerRegistryEndpointView extends Composite
     @UiField
     HelpInline versionHelpInline;
 
-
     private ServerRegistryEndpointPresenter presenter;
 
     public ServerRegistryEndpointView() {
         initWidget( uiBinder.createAndBindUi( this ) );
     }
 
+    final KeyPressHandler idTextBoxKeyPressHandler = new KeyPressHandler() {
+        public void onKeyPress( KeyPressEvent event ) {
+            idGroup.setType( ControlGroupType.NONE );
+            idHelpInline.setText( "" );
+        }
+    };
+
+    final KeyPressHandler nameTextBoxKeyPressHandler = new KeyPressHandler() {
+        public void onKeyPress( KeyPressEvent event ) {
+            nameGroup.setType( ControlGroupType.NONE );
+            nameHelpInline.setText( "" );
+        }
+    };
+
     @Override
     public void init( final ServerRegistryEndpointPresenter presenter ) {
         this.presenter = presenter;
 
-        idTextBox.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(final KeyPressEvent event) {
-                idGroup.setType(ControlGroupType.NONE);
-                idHelpInline.setText("");
-            }
-        });
+        idTextBox.addKeyPressHandler( idTextBoxKeyPressHandler );
+        nameTextBox.addKeyPressHandler( nameTextBoxKeyPressHandler );
+
+        setTitle( presenter.getTitle() );
     }
 
     @UiHandler("connect")
     public void onConnectClick( final ClickEvent e ) {
         if ( idTextBox.getText() == null || idTextBox.getText().trim().isEmpty() ) {
-            idGroup.setType(ControlGroupType.ERROR);
-            idHelpInline.setText("Identifier mandatory");
+            idGroup.setType( ControlGroupType.ERROR );
+            idHelpInline.setText( "Identifier mandatory" );
             return;
-        }else {
-            idGroup.setType(ControlGroupType.NONE);
+        } else {
+            idGroup.setType( ControlGroupType.NONE );
         }
 
         if ( nameTextBox.getText() == null || nameTextBox.getText().trim().isEmpty() ) {
@@ -130,7 +138,7 @@ public class ServerRegistryEndpointView extends Composite
     public void lockScreen() {
         connect.setEnabled( false );
         cancel.setEnabled( false );
-        idTextBox.setEnabled(false);
+        idTextBox.setEnabled( false );
         nameTextBox.setEnabled( false );
         versionTextBox.setEnabled( false );
     }
@@ -139,7 +147,7 @@ public class ServerRegistryEndpointView extends Composite
     public void unlockScreen() {
         connect.setEnabled( true );
         cancel.setEnabled( true );
-        idTextBox.setEnabled(true);
+        idTextBox.setEnabled( true );
         nameTextBox.setEnabled( true );
         versionTextBox.setEnabled( true );
     }
