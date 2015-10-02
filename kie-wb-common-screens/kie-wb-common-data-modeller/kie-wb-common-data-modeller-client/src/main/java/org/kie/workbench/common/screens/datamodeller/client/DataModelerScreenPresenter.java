@@ -498,6 +498,7 @@ public class DataModelerScreenPresenter
             @Override
             public void callback( final Path targetPath ) {
                 view.hideBusyIndicator();
+                notification.fire( new NotificationEvent( org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemRenamedSuccessfully() ) );
             }
         };
     }
@@ -573,7 +574,7 @@ public class DataModelerScreenPresenter
                                                                                       new Command() {
                                                                                           @Override
                                                                                           public void execute() {
-                                                                                              saveOperationService.save(versionRecordManager.getPathToLatest(), getSaveCommand(newTypeInfo, versionRecordManager.getPathToLatest()));
+                                                                                              saveOperationService.save(versionRecordManager.getPathToLatest(), getSaveCommand( newTypeInfo, versionRecordManager.getPathToLatest()));
                                                                                           }
                                                                                       },
                                                                                       Constants.INSTANCE.modelEditor_action_yes_refactor_file_name(),
@@ -715,6 +716,7 @@ public class DataModelerScreenPresenter
                     versionRecordManager.reloadVersions( currentPath );
 
                 } else {
+                    notification.fire( new NotificationEvent( org.uberfire.ext.editor.commons.client.resources.i18n.CommonConstants.INSTANCE.ItemRenamedSuccessfully() ) );
                     //If the file was renamed as part of the file saving, don't do anything.
                     //A rename event will arrive, the same as for the "Rename" case.
                     //and the file will be automatically reloaded.
