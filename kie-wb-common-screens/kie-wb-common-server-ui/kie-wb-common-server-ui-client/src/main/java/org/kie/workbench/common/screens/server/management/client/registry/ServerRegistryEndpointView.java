@@ -96,6 +96,14 @@ public class ServerRegistryEndpointView extends Composite
             }
         } );
 
+        nameTextBox.addKeyPressHandler( new KeyPressHandler() {
+            @Override
+            public void onKeyPress( final KeyPressEvent event ) {
+                nameGroup.setValidationState( ValidationState.NONE );
+                nameHelpInline.setText( "" );
+            }
+        } );
+
         setTitle( presenter.getTitle() );
     }
 
