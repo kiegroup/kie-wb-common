@@ -23,7 +23,6 @@ import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.model.GAV;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -44,7 +43,6 @@ import org.kie.workbench.common.screens.server.management.model.ServerInstanceRe
 import org.kie.workbench.common.screens.server.management.model.impl.ScannerOperationResult;
 import org.kie.workbench.common.screens.server.management.service.ServerManagementService;
 import org.uberfire.client.annotations.DefaultPosition;
-import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -59,10 +57,6 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.CompassPosition;
 import org.uberfire.workbench.model.Position;
-import org.uberfire.workbench.model.menu.MenuFactory;
-import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
-import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 
 import static org.kie.workbench.common.screens.server.management.client.container.ContainerInfoPresenter.State.*;
 import static org.uberfire.commons.validation.PortablePreconditions.*;
@@ -429,32 +423,6 @@ public class ContainerInfoPresenter {
     @DefaultPosition
     public Position getPosition() {
         return CompassPosition.EAST;
-    }
-
-    @WorkbenchMenu
-    public Menus buildMenu() {
-        return MenuFactory
-                .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
-                    @Override
-                    public void push( MenuFactory.CustomMenuBuilder element ) {
-                    }
-
-                    @Override
-                    public MenuItem build() {
-                        return new BaseMenuCustom<Widget>() {
-
-                            @Override
-                            public Widget build() {
-                                return view.getCustomMenuItem( new Command() {
-                                    @Override
-                                    public void execute() {
-                                        close();
-                                    }
-                                } ).asWidget();
-                            }
-                        };
-                    }
-                } ).endMenu().build();
     }
 
     void close() {
