@@ -537,32 +537,4 @@ public class ContainerInfoPresenterTest {
         verify( notification, times( 2 ) ).fire( any( NotificationEvent.class ) );
     }
 
-    @Test
-    public void testMenu() {
-        final Container container = new ContainerImpl( "my_id", "my_container", ContainerStatus.STARTED, new GAV( "com.example", "example-artifact", "LATEST" ), null, null, null );
-
-        when( service.getContainerInfo( "my_id", "my_container" ) ).thenReturn( container );
-        when( view.getCustomMenuItem( any( Command.class ) ) ).thenAnswer( new Answer<IsWidget>() {
-            @Override
-            public IsWidget answer( InvocationOnMock invocationOnMock ) throws Throwable {
-                containerInfoPresenter.close();
-                return mock( IsWidget.class );
-            }
-        } );
-
-        assertFalse( containerInfoPresenter.isClosed() );
-
-        final Menus menus = containerInfoPresenter.buildMenu();
-
-        assertNotNull( menus );
-
-        assertEquals( 1, menus.getItems().size() );
-        assertTrue( menus.getItems().get( 0 ) instanceof MenuCustom );
-
-        final MenuCustom menuCustom = (MenuCustom) menus.getItems().get( 0 );
-        //triggers the mock exec - hack for now
-        menuCustom.build();
-
-        assertTrue( containerInfoPresenter.isClosed() );
-    }
 }
