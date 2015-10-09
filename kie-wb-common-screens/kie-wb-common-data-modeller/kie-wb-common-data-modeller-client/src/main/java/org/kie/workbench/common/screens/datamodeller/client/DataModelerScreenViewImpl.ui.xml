@@ -30,6 +30,7 @@
         background-color: #FFFFFF !important;
         border-collapse: collapse;
         margin: 0px;
+        width: 100%;
       }
       .TdLateralTable {
         background-color: #FFFFFF !important;

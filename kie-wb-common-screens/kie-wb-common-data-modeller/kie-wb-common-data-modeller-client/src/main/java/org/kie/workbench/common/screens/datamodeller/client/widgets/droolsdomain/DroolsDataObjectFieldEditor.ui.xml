@@ -26,6 +26,7 @@
 
         <style>
             .drools-data-object-field-editor {
+            height: 640px;
             min-height: 400px !Important;
             min-width: 400px !Important;
             overflow: hidden;
