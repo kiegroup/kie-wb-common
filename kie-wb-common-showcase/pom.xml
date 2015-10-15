@@ -36,6 +36,7 @@
     <as.version>8.1.0.Final</as.version>
     <!-- Add the absolute path for $JBOSS_HOME below to manage another instance -->
     <errai.jboss.home>${project.build.directory}/wildfly-${as.version}</errai.jboss.home>
+    <gwt.compiler.localWorkers>1</gwt.compiler.localWorkers>
   </properties>
 
   <dependencies>
@@ -866,6 +867,7 @@
         <artifactId>gwt-maven-plugin</artifactId>
         <configuration>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
+          <localWorkers>${gwt.compiler.localWorkers}</localWorkers>
           <extraJvmArgs>-Xmx2048m -XX:MaxPermSize=256m -Xms1024m -XX:PermSize=128m -Xss1M -XX:CompileThreshold=7000 -Derrai.jboss.home=${errai.jboss.home} -Derrai.marshalling.server.classOutput=${project.build.outputDirectory}</extraJvmArgs>
           <module>org.kie.workbench.common.FastCompiledShowcase</module>
           <logLevel>INFO</logLevel>
@@ -1091,24 +1093,19 @@
         </property>
       </activation>
 
-      <dependencies>
-        <!-- Add back ANT when building full profile as it's needed by AS7 and Tomcat -->
-        <dependency>
-          <groupId>org.apache.ant</groupId>
-          <artifactId>ant</artifactId>
-        </dependency>
-      </dependencies>
+      <properties>
+        <gwt.compiler.localWorkers>4</gwt.compiler.localWorkers>
+      </properties>
 
       <build>
         <plugins>
-          <plugin><!-- Keep in sync with soa profile -->
+          <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
               <!-- Build all GWT permutations and optimize them -->
               <module>org.kie.workbench.common.Showcase</module>
               <draftCompile>false</draftCompile>
-              <localWorkers>4</localWorkers>
               <extraJvmArgs>-Xms1024m -Xmx1300m -Xss1M -XX:PermSize=128m -XX:MaxPermSize=256m</extraJvmArgs>
             </configuration>
           </plugin>
