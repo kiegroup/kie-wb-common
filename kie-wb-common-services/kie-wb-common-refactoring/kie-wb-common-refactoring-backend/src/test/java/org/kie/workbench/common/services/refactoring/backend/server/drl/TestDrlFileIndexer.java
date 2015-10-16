@@ -40,8 +40,11 @@ import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Path;
 
+import static org.mockito.Mockito.*;
+
 @ApplicationScoped
-public class TestDrlFileIndexer implements TestIndexer<TestDrlFileTypeDefinition> {
+public class TestDrlFileIndexer
+        implements TestIndexer<TestDrlFileTypeDefinition> {
 
     private static final Logger logger = LoggerFactory.getLogger( TestDrlFileIndexer.class );
 
@@ -85,9 +88,11 @@ public class TestDrlFileIndexer implements TestIndexer<TestDrlFileTypeDefinition
                 return index;
             }
 
-            final ProjectDataModelOracle dmo = getProjectDataModelOracle( path );
+            final ProjectDataModelOracle dmo = getProjectDataModelOracle();
             final Project project = projectService.resolveProject( Paths.convert( path ) );
-            final Package pkg = projectService.resolvePackage( Paths.convert( path ) );
+
+            final Package pkg = mock( Package.class );
+            when( pkg.getPackageName() ).thenReturn( packageDescr.getName() );
 
             final DefaultIndexBuilder builder = new DefaultIndexBuilder( project,
                                                                          pkg );
@@ -112,7 +117,7 @@ public class TestDrlFileIndexer implements TestIndexer<TestDrlFileTypeDefinition
         return KObjectUtil.toKObjectKey( path );
     }
 
-    private ProjectDataModelOracle getProjectDataModelOracle( final Path path ) {
+    private ProjectDataModelOracle getProjectDataModelOracle() {
         final ProjectDataModelOracle dmo = new ProjectDataModelOracleImpl();
         dmo.addProjectModelFields( new HashMap<String, ModelField[]>() {{
             put( "org.kie.workbench.common.services.refactoring.backend.server.drl.classes.Applicant",
