@@ -49,7 +49,7 @@ public class RefactoringQueryServiceImplGeneralTest extends BaseIndexingTest<Tes
     @Test
     public void testGetNamedQueries() throws IOException, InterruptedException {
         final RefactoringQueryService service = new RefactoringQueryServiceImpl( getConfig(),
-                                                                                 namedQueriesProducer );
+                                                                                 new NamedQueries( namedQueriesProducer ) );
 
         final Set<String> queryNames = service.getQueries();
         assertNotNull( queryNames );
@@ -61,7 +61,7 @@ public class RefactoringQueryServiceImplGeneralTest extends BaseIndexingTest<Tes
     @Test(expected = IllegalArgumentException.class)
     public void testGetNonExistentNamedQueryTerms() throws IOException, InterruptedException {
         final RefactoringQueryService service = new RefactoringQueryServiceImpl( getConfig(),
-                                                                                 namedQueriesProducer );
+                                                                                 new NamedQueries( namedQueriesProducer ) );
         final Set<String> queryNames = service.getQueries();
         assertNotNull( queryNames );
         assertEquals( 1,
@@ -74,7 +74,7 @@ public class RefactoringQueryServiceImplGeneralTest extends BaseIndexingTest<Tes
     @Test
     public void testGetNamedQueryTerms() throws IOException, InterruptedException {
         final RefactoringQueryService service = new RefactoringQueryServiceImpl( getConfig(),
-                                                                                 namedQueriesProducer );
+                                                                                 new NamedQueries( namedQueriesProducer ) );
         final Set<String> queryNames = service.getQueries();
         assertNotNull( queryNames );
         assertEquals( 1,
