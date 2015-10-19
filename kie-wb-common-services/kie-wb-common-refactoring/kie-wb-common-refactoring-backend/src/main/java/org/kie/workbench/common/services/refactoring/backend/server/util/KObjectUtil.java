@@ -129,6 +129,11 @@ public class KObjectUtil {
             }
 
             @Override
+            public boolean isFullText() {
+                return false;
+            }
+
+            @Override
             public Iterable<KProperty<?>> getProperties() {
                 final List<KProperty<?>> result = new ArrayList<KProperty<?>>();
                 for ( final Pair<String, String> indexElement : indexElements ) {

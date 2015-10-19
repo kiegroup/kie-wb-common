@@ -86,6 +86,20 @@ public class IndexDeletedResourcesTest extends BaseIndexingTest {
             ( (LuceneIndex) index ).nrtRelease( searcher );
         }
 
+        {
+            final IndexSearcher searcher = ( (LuceneIndex) index ).nrtSearcher();
+            final TopScoreDocCollector collector = TopScoreDocCollector.create( 10,
+                                                                                true );
+            searcher.search( new TermQuery( new Term( "fullText",
+                                                      "properties" ) ),
+                             collector );
+            final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+            //The remaining three properties files should have a fullText entry
+            assertEquals( 3,
+                          hits.length );
+            ( (LuceneIndex) index ).nrtRelease( searcher );
+        }
+
     }
 
     @Override
