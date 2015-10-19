@@ -21,6 +21,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.enterprise.event.Event;
 
+import com.github.gwtbootstrap.client.ui.DropdownButton;
+import com.github.gwtbootstrap.client.ui.NavLink;
+import com.github.gwtbootstrap.client.ui.base.IconAnchor;
+import com.github.gwtbootstrap.client.ui.base.UnorderedList;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.asset.management.service.AssetManagementService;
@@ -35,10 +39,6 @@ import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Repository;
-import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.ButtonGroup;
-import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,19 +65,19 @@ public class ProjectScreenPresenterTest {
 
     @GwtMock
     @SuppressWarnings("unused")
-    private ButtonGroup buildOptions;
+    private DropdownButton buildOptions;
 
     @GwtMock
     @SuppressWarnings("unused")
-    private Button buildOptionsButton1;
+    private IconAnchor buildOptionsButton1;
 
     @GwtMock
     @SuppressWarnings("unused")
-    private DropDownMenu buildOptionsMenu;
+    private UnorderedList buildOptionsMenu;
 
     @GwtMock
     @SuppressWarnings("unused")
-    private AnchorListItem buildOptionsMenuButton1;
+    private NavLink buildOptionsMenuButton1;
 
     private ProjectScreenView view;
     private ProjectContext context;
@@ -96,8 +96,8 @@ public class ProjectScreenPresenterTest {
 
         //The BuildOptions widget is manipulated in the Presenter so we need some nasty mocking
         when( view.getBuildOptionsButton() ).thenReturn( buildOptions );
-        when( buildOptions.getWidget( eq( 0 ) ) ).thenReturn( buildOptionsButton1 );
-        when( buildOptions.getWidget( eq( 1 ) ) ).thenReturn( buildOptionsMenu );
+        when( buildOptions.getTriggerWidget() ).thenReturn( buildOptionsButton1 );
+        when( buildOptions.getMenuWiget() ).thenReturn( buildOptionsMenu );
         when( buildOptionsMenu.getWidget( eq( 0 ) ) ).thenReturn( buildOptionsMenuButton1 );
         when( buildOptionsMenu.getWidget( eq( 1 ) ) ).thenReturn( buildOptionsMenuButton1 );
 
