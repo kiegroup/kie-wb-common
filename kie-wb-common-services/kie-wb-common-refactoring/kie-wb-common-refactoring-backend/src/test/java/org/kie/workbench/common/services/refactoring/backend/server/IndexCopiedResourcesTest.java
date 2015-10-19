@@ -19,7 +19,6 @@ package org.kie.workbench.common.services.refactoring.backend.server;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.Term;
@@ -84,6 +83,20 @@ public class IndexCopiedResourcesTest extends BaseIndexingTest {
             final ScoreDoc[] hits = collector.topDocs().scoreDocs;
             //One of the properties files have a title containing "lucene"
             assertEquals( 3,
+                          hits.length );
+            ( (LuceneIndex) index ).nrtRelease( searcher );
+        }
+
+        {
+            final IndexSearcher searcher = ( (LuceneIndex) index ).nrtSearcher();
+            final TopScoreDocCollector collector = TopScoreDocCollector.create( 10,
+                                                                                true );
+            searcher.search( new TermQuery( new Term( "fullText",
+                                                      "properties" ) ),
+                             collector );
+            final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+            //All five properties files (four original and one copy) should have a fullText entry
+            assertEquals( 5,
                           hits.length );
             ( (LuceneIndex) index ).nrtRelease( searcher );
         }

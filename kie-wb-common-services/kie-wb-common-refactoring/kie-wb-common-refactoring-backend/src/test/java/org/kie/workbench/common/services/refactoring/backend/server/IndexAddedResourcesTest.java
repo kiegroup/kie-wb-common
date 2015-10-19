@@ -67,6 +67,20 @@ public class IndexAddedResourcesTest extends BaseIndexingTest<TestPropertiesFile
             ( (LuceneIndex) index ).nrtRelease( searcher );
         }
 
+        {
+            final IndexSearcher searcher = ( (LuceneIndex) index ).nrtSearcher();
+            final TopScoreDocCollector collector = TopScoreDocCollector.create( 10,
+                                                                                true );
+            searcher.search( new TermQuery( new Term( "fullText",
+                                                      "properties" ) ),
+                             collector );
+            final ScoreDoc[] hits = collector.topDocs().scoreDocs;
+            //All four properties files should have a fullText entry
+            assertEquals( 4,
+                          hits.length );
+            ( (LuceneIndex) index ).nrtRelease( searcher );
+        }
+
     }
 
     @Override
