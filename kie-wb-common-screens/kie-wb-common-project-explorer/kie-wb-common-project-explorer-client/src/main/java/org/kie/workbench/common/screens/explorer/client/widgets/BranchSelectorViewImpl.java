@@ -75,7 +75,7 @@ public class BranchSelectorViewImpl
 
     @Override
     public void clear() {
-        button.clear();
+        menu.clear();
     }
 
     @Override
