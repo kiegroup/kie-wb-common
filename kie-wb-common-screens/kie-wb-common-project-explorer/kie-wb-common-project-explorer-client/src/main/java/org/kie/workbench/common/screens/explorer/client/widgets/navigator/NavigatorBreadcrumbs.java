@@ -21,8 +21,11 @@ import com.github.gwtbootstrap.client.ui.NavLink;
 import com.github.gwtbootstrap.client.ui.base.InlineLabel;
 import com.github.gwtbootstrap.client.ui.base.ListItem;
 import com.github.gwtbootstrap.client.ui.constants.Constants;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.Composite;
 import org.guvnor.structure.client.resources.NavigatorResources;
 import org.kie.workbench.common.screens.explorer.client.widgets.dropdown.CustomDropdown;
@@ -93,6 +96,28 @@ public class NavigatorBreadcrumbs extends Composite {
             header.addStyleName( NavigatorResources.INSTANCE.css().breadcrumbHeader() );
             if ( i + 1 == headers.length ) {
                 header.setRightDropdown( true );
+
+                //This is a workaround for https://bugzilla.redhat.com/show_bug.cgi?id=1277556
+                //When the CustomDropdown is made visible check whether it's element is clipped
+                //on the left of the screen. If it is re-position it accordingly.
+                header.addClickHandler( new ClickHandler() {
+                    @Override
+                    public void onClick( ClickEvent event ) {
+                        //We have to use a DeferredCommand as there's no other event to which
+                        //we can attach. The CustomDropdown's "menu" (a <UL>) is always attached
+                        //to the DOM and made visible by jQuery. This seemed the simplest solution.
+                        Scheduler.get().scheduleDeferred( new Command() {
+                            @Override
+                            public void execute() {
+                                final com.google.gwt.dom.client.Element e = header.getMenuWiget().getElement();
+                                final int left = e.getAbsoluteLeft();
+                                if ( left < 0 ) {
+                                    header.getMenuWiget().getElement().getStyle().setRight( left, Style.Unit.PX );
+                                }
+                            }
+                        } );
+                    }
+                } );
             }
             breadcrumbs.add( header );
         }
