@@ -77,6 +77,16 @@
     </dependency>
 
     <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-backend-server</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-commons</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>javax.enterprise</groupId>
       <artifactId>cdi-api</artifactId>
       <scope>provided</scope>
@@ -92,17 +102,11 @@
       <artifactId>guvnor-project-api</artifactId>
     </dependency>
 
-    <!-- EJB for AsyncDispatcher -->
- <!--    <dependency>
-      <groupId>org.jboss.spec.javax.ejb</groupId>
-      <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-    </dependency>
-
     <dependency>
-      <groupId>org.kie</groupId>
-      <artifactId>kie-server-client</artifactId>
-    </dependency> -->
-
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-services-api</artifactId>
+    </dependency>
+    
     <!-- Errai Core -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
