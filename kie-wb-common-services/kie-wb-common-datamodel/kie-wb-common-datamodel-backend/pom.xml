@@ -116,11 +116,23 @@
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-project-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.uberfire</groupId>
+          <artifactId>kie-uberfire-social-activities-backend</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-services-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.uberfire</groupId>
+          <artifactId>kie-uberfire-social-activities-backend</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -207,6 +219,12 @@
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-structure-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.uberfire</groupId>
+          <artifactId>kie-uberfire-social-activities-backend</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
 

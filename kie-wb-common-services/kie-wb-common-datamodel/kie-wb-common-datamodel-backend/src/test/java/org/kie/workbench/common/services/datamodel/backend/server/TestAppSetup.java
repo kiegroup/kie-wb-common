@@ -23,6 +23,7 @@ import javax.inject.Singleton;
 
 import org.guvnor.m2repo.service.M2RepoService;
 import org.guvnor.structure.server.config.ConfigurationService;
+import org.kie.uberfire.social.activities.service.SocialUserRepositoryAPI;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.uberfire.ext.metadata.backend.lucene.LuceneConfig;
 import org.uberfire.io.IOService;
@@ -79,4 +80,10 @@ public class TestAppSetup {
     public AuthorizationManager getAuthManager() {
         return new RuntimeAuthorizationManager();
     }
+
+    @Produces
+    public SocialUserRepositoryAPI getSocialUserRepositoryAPI() {
+        return mock( SocialUserRepositoryAPI.class );
+    }
+
 }
