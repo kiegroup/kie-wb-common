@@ -35,7 +35,6 @@ import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
@@ -43,7 +42,6 @@ import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.commons.lifecycle.PriorityDisposableRegistry;
 import org.uberfire.io.IOService;
 import org.uberfire.rpc.SessionInfo;
 
@@ -51,12 +49,6 @@ import static org.junit.Assert.*;
 
 @RunWith(Arquillian.class)
 public class ProjectDataModelConcurrencyTest {
-
-    @AfterClass
-    public static void clearPriorityDisposableRegistry() {
-        //WELD disposes all CDI managed beans but the PriorityDisposableRegistry remains populated (with "shutdown" FileSystems)
-        PriorityDisposableRegistry.clear();
-    }
 
     @Deployment()
     public static Archive<?> createDeployment() {
