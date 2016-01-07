@@ -135,25 +135,25 @@ public class ExplorerServiceHelper {
         return folderListingResolver.resolve( selectedItem, selectedProject, selectedPackage, this, options );
     }
 
-    public FolderListing getFolderListing( final Package pkg ) {
+    public FolderListing getFolderListing( final Package pkg, final ActiveOptions options ) {
         return new FolderListing( toFolderItem( pkg ),
-                                  getItems( pkg ),
+                                  getItems( pkg, options ),
                                   getPackageSegments( pkg ) );
     }
 
-    public FolderListing getFolderListing( final FolderItem item ) {
+    public FolderListing getFolderListing( final FolderItem item, final ActiveOptions options ) {
 
         FolderListing result = null;
         if ( item.getItem() instanceof Path ) {
-            result = getFolderListing( (Path) item.getItem() );
+            result = getFolderListing( (Path) item.getItem(), options );
         } else if ( item.getItem() instanceof Package ) {
-            result = getFolderListing( (Package) item.getItem() );
+            result = getFolderListing( (Package) item.getItem(), options );
         }
 
         return result;
     }
 
-    public FolderListing getFolderListing( final Path path ) {
+    public FolderListing getFolderListing( final Path path, final ActiveOptions options ) {
         //Get list of files and folders contained in the path
         final List<FolderItem> folderItems = new ArrayList<FolderItem>();
 
@@ -194,7 +194,7 @@ public class ExplorerServiceHelper {
                                   getPathSegments( basePath ) );
     }
 
-    public List<FolderItem> getItems( final Package pkg ) {
+    public List<FolderItem> getItems( final Package pkg, final ActiveOptions options ) {
         final List<FolderItem> folderItems = new ArrayList<FolderItem>();
         if ( pkg == null ) {
             return emptyList();
@@ -205,10 +205,10 @@ public class ExplorerServiceHelper {
             folderItems.add( toFolderItem( childPackage ) );
         }
 
-        folderItems.addAll( getItems( pkg.getPackageMainSrcPath() ) );
-        folderItems.addAll( getItems( pkg.getPackageTestSrcPath() ) );
-        folderItems.addAll( getItems( pkg.getPackageMainResourcesPath() ) );
-        folderItems.addAll( getItems( pkg.getPackageTestResourcesPath() ) );
+        folderItems.addAll( getItems( pkg.getPackageMainSrcPath(), options ) );
+        folderItems.addAll( getItems( pkg.getPackageTestSrcPath(), options ) );
+        folderItems.addAll( getItems( pkg.getPackageMainResourcesPath(), options ) );
+        folderItems.addAll( getItems( pkg.getPackageTestResourcesPath(), options ) );
 
         Collections.sort( folderItems, Sorters.ITEM_SORTER );
 
@@ -231,10 +231,14 @@ public class ExplorerServiceHelper {
         return Arrays.asList( segments );
     }
 
-    private List<FolderItem> getItems( final Path packagePath ) {
+    private List<FolderItem> getItems( final Path packagePath, final ActiveOptions options ) {
+        final boolean includeTags = options.contains( Option.SHOW_TAG_FILTER );
         final List<FolderItem> folderItems = new ArrayList<FolderItem>();
         final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert( packagePath );
         if ( Files.exists( nioPackagePath ) ) {
+            if(LOGGER.isDebugEnabled()) {
+               LOGGER.debug("get items for path " + nioPackagePath + " (includeTags=" + includeTags + ")");
+            }
             final DirectoryStream<org.uberfire.java.nio.file.Path> nioPaths = ioService.newDirectoryStream( nioPackagePath,
                                                                                                             regularFileFilter );
             for ( org.uberfire.java.nio.file.Path nioPath : nioPaths ) {
@@ -247,7 +251,7 @@ public class ExplorerServiceHelper {
                                                               path.getFileName(),
                                                               FolderItemType.FILE,
                                                               false,
-                                                              lockedBy, metadataService.getMetadata( path ).getTags() );
+                                                              lockedBy, includeTags ? metadataService.getTags( path ) : new ArrayList<String>( ) ); // BZ-1296498 only get tags if tag option is enabled
                 folderItems.add( folderItem );
             }
         }
