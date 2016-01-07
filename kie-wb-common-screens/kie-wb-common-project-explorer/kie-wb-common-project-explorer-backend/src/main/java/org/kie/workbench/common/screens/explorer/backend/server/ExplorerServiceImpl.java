@@ -222,7 +222,7 @@ public class ExplorerServiceImpl
                                            final FolderItem item,
                                            final ActiveOptions options ) {
         //TODO: BUSINESS_CONTENT, TECHNICAL_CONTENT
-        final FolderListing result = helper.getFolderListing( item );
+        final FolderListing result = helper.getFolderListing( item, options);
 
         if ( result != null ) {
             final org.uberfire.java.nio.file.Path userNavPath = userServices.buildPath( "explorer", "user.nav" );
