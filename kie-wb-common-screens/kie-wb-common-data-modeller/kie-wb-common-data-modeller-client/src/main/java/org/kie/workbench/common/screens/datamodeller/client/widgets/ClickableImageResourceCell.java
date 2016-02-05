@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.datamodeller.client.widgets.editor;
-
-import java.util.HashSet;
-import java.util.Set;
+package org.kie.workbench.common.screens.datamodeller.client.widgets;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ImageResourceCell;
@@ -30,7 +27,11 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
 
-import static com.google.gwt.dom.client.BrowserEvents.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static com.google.gwt.dom.client.BrowserEvents.CLICK;
+import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
 
 public class ClickableImageResourceCell extends ImageResourceCell {
 
