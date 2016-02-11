@@ -24,6 +24,7 @@ import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.kie.workbench.common.widgets.client.discussion.DiscussionWidgetPresenter;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.impl.LockInfo;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.ext.editor.commons.client.history.VersionHistoryPresenter;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
@@ -216,6 +217,11 @@ public class OverviewWidgetViewImpl
     @Override
     public void setCurrentUser( String currentUser ) {
         metadata.setCurrentUser( currentUser );
+    }
+    
+    @Override
+    public void setLockStatus( final LockInfo lockInfo ) {
+        metadata.setLockStatus( lockInfo );
     }
     
 }
