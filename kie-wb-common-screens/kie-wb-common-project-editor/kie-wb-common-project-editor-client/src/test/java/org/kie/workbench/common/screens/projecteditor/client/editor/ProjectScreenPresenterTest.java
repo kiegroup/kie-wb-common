@@ -162,8 +162,8 @@ public class ProjectScreenPresenterTest {
         //Mock ProjectContext
         final Repository repository = mock( Repository.class );
         when( context.getActiveRepository() ).thenReturn( repository );
+        when( context.getActiveBranch() ).thenReturn( "master" );
         when( repository.getAlias() ).thenReturn( "repository" );
-        when( repository.getCurrentBranch() ).thenReturn( "master" );
 
         final Project project = mock( Project.class );
         when( context.getActiveProject() ).thenReturn( project );
@@ -172,6 +172,7 @@ public class ProjectScreenPresenterTest {
         //Trigger initialisation of view. Unfortunately this is the only way to initialise a Project in the Presenter
         context.onProjectContextChanged( new ProjectContextChangeEvent( mock( OrganizationalUnit.class ),
                                                                         repository,
+                                                                        "master",
                                                                         project ) );
 
         verify( view,

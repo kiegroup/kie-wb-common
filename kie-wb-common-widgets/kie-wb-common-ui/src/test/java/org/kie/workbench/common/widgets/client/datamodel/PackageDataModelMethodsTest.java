@@ -40,7 +40,7 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.callbacks.Callback;
 
 import static org.junit.Assert.*;
-import static org.kie.workbench.common.widgets.client.datamodel.PackageDataModelOracleTestUtils.assertContains;
+import static org.kie.workbench.common.widgets.client.datamodel.PackageDataModelOracleTestUtils.*;
 import static org.mockito.Mockito.*;
 
 public class PackageDataModelMethodsTest {

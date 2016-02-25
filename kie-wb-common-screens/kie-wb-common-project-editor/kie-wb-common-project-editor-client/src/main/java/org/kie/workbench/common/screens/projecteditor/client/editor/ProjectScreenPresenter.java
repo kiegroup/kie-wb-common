@@ -715,8 +715,12 @@ public class ProjectScreenPresenter
                                                   }
                                               }
                                             ).buildProject( workbenchContext.getActiveRepository().getAlias(),
-                                                            workbenchContext.getActiveRepository().getCurrentBranch(),
-                                                            project.getProjectName(), null, null, null, false );
+                                                            workbenchContext.getActiveBranch(),
+                                                            project.getProjectName(),
+                                                            null,
+                                                            null,
+                                                            null,
+                                                            false );
 
             }
         };
@@ -746,12 +750,12 @@ public class ProjectScreenPresenter
                                                   }
                                               }
                                             ).buildProject( workbenchContext.getActiveRepository().getAlias(),
-                        workbenchContext.getActiveRepository().getCurrentBranch(),
-                        project.getProjectName(),
-                        username,
-                        password,
-                        serverURL,
-                        true );
+                                                            workbenchContext.getActiveBranch(),
+                                                            project.getProjectName(),
+                                                            username,
+                                                            password,
+                                                            serverURL,
+                                                            true );
 
             }
         };

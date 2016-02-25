@@ -284,6 +284,7 @@ public class ExplorerServiceHelper {
 
     public void store( final OrganizationalUnit selectedOrganizationalUnit,
                        final Repository selectedRepository,
+                       final String branch,
                        final Project selectedProject,
                        final FolderListing folderListing,
                        final Package selectedPackage,
@@ -294,6 +295,7 @@ public class ExplorerServiceHelper {
 
         final OrganizationalUnit _selectedOrganizationalUnit = selectedOrganizationalUnit;
         final Repository _selectedRepository = selectedRepository;
+        final String _branch = branch;
         final Project _selectedProject = selectedProject;
         final FolderItem _selectedItem = folderListing.getItem();
         final org.guvnor.common.services.project.model.Package _selectedPackage;
@@ -315,7 +317,7 @@ public class ExplorerServiceHelper {
             public void run() {
                 try {
                     store( userNavPath, lastUserNavPath, _selectedOrganizationalUnit,
-                           _selectedRepository, _selectedProject,
+                           _selectedRepository, _branch, _selectedProject,
                            _selectedPackage, _selectedItem, options );
                 } catch ( final Exception e ) {
                     LOGGER.error( "Can't serialize user's state navigation", e );
@@ -328,6 +330,7 @@ public class ExplorerServiceHelper {
                        final org.uberfire.java.nio.file.Path lastUserNav,
                        final OrganizationalUnit organizationalUnit,
                        final Repository repository,
+                       final String branch,
                        final Project project,
                        final Package pkg,
                        final FolderItem item,
@@ -349,12 +352,12 @@ public class ExplorerServiceHelper {
         if ( project != null && organizationalUnit != null && repository != null ) {
             content.addProject( organizationalUnit, repository, project );
         }
-        if ( item != null && organizationalUnit != null && repository != null && project != null ) {
-            lastContent.setFolderItem( organizationalUnit, repository, project, item );
+        if ( item != null && organizationalUnit != null && repository != null && branch != null && project != null ) {
+            lastContent.setFolderItem( organizationalUnit, repository, branch, project, item );
             content.addFolderItem( organizationalUnit, repository, project, item );
         }
-        if ( pkg != null && organizationalUnit != null && repository != null && project != null ) {
-            lastContent.setPackage( organizationalUnit, repository, project, pkg );
+        if ( pkg != null && organizationalUnit != null && repository != null && branch != null && project != null ) {
+            lastContent.setPackage( organizationalUnit, repository, branch, project, pkg );
             content.addPackage( organizationalUnit, repository, project, pkg );
         }
         if ( options != null && !options.isEmpty() ) {
