@@ -282,8 +282,8 @@ public class ExplorerPresenterImpl implements ExplorerPresenter {
 
                 ProjectContextChangeEvent event = new ProjectContextChangeEvent( context.getActiveOrganizationalUnit(),
                                                                                  context.getActiveRepository(),
-                                                                                 context.getActiveProject(),
-                                                                                 branch );
+                                                                                 context.getActiveBranch(),
+                                                                                 context.getActiveProject());
 
                 contextChangedEvent.fire( event );
             }
