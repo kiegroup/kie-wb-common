@@ -1,46 +1,46 @@
-/*
- * Copyright 2015 Red Hat, Inc. and/or its affiliates.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
-*/
-
 package org.kie.workbench.common.screens.server.management.client;
 
+import org.junit.Before;
 import org.junit.Test;
-import org.uberfire.client.workbench.panels.impl.SimpleWorkbenchPanelPresenter;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
-import org.uberfire.workbench.model.PartDefinition;
-import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.junit.runner.RunWith;
+import org.kie.server.controller.api.model.spec.ServerTemplate;
+import org.kie.workbench.common.screens.server.management.client.events.AddNewContainer;
+import org.kie.workbench.common.screens.server.management.client.events.AddNewServerTemplate;
+import org.kie.workbench.common.screens.server.management.client.wizard.NewContainerWizard;
+import org.kie.workbench.common.screens.server.management.client.wizard.NewServerTemplateWizard;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ServerManagementPerspectiveTest {
 
+    @Mock
+    private NewServerTemplateWizard newServerTemplateWizard;
+    @Mock
+    private NewContainerWizard newContainerWizard;
+
+    private ServerManagementPerspective perspective;
+
+    @Before
+    public void init() {
+        perspective = new ServerManagementPerspective( newServerTemplateWizard, newContainerWizard );
+    }
+
     @Test
-    public void checkPerspectiveDefinition() {
-        final ServerManagementPerspective perspective = new ServerManagementPerspective();
-        final PerspectiveDefinition definition = perspective.buildPerspective();
+    public void testOnNewContainer() {
+        final ServerTemplate template = mock( ServerTemplate.class );
+        perspective.onNewContainer( new AddNewContainer( template ) );
+        verify( newContainerWizard ).clear();
+        verify( newContainerWizard ).setServerTemplate( eq( template ) );
+        verify( newContainerWizard ).start();
+    }
 
-        assertNotNull( definition );
-
-        assertEquals( "ServerManagementPerspective", definition.getName() );
-        assertEquals( SimpleWorkbenchPanelPresenter.class.getName(), definition.getRoot().getPanelType() );
-
-        assertEquals( 1, definition.getRoot().getParts().size() );
-
-        final PartDefinition partDefinition = definition.getRoot().getParts().iterator().next();
-
-        assertTrue( partDefinition.getPlace() instanceof DefaultPlaceRequest );
-
-        assertEquals( "ServerManagementBrowser", partDefinition.getPlace().getIdentifier() );
+    @Test
+    public void testOnNewTemplate() {
+        perspective.onNewTemplate( new AddNewServerTemplate() );
+        verify( newServerTemplateWizard ).clear();
+        verify( newServerTemplateWizard ).start();
     }
 }
