@@ -795,19 +795,19 @@ public class DataModelerScreenPresenter
                     selectEditorTab();
                     uiStarted = true;
                     context.setEditionMode( DataModelerContext.EditionMode.GRAPHICAL_MODE );
-                } else {
-                    context.setEditionMode( DataModelerContext.EditionMode.SOURCE_MODE );
-                    showParseErrorsDialog( Constants.INSTANCE.modelEditor_message_file_parsing_errors(),
-                                           false,
-                                           context.getEditorModelContent().getErrors(),
-                                           new Command() {
-                                               @Override
-                                               public void execute() {
-                                                   //we need to go directly to the sources tab
-                                                   uiStarted = true;
-                                                   setSelectedTab( EDITABLE_SOURCE_TAB );
-                                               }
-                                           } );
+                } else if ( !isEditorTabSelected() ) {
+                    context.setEditionMode(DataModelerContext.EditionMode.SOURCE_MODE);
+                    showParseErrorsDialog(Constants.INSTANCE.modelEditor_message_file_parsing_errors(),
+                            false,
+                            context.getEditorModelContent().getErrors(),
+                            new Command() {
+                                @Override
+                                public void execute() {
+                                    //we need to go directly to the sources tab
+                                    uiStarted = true;
+                                    setSelectedTab(EDITABLE_SOURCE_TAB);
+                                }
+                            });
                 }
 
                 dataModelerWBContext.setActiveContext( context );
@@ -1067,12 +1067,7 @@ public class DataModelerScreenPresenter
 
         YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup( CommonConstants.INSTANCE.Information(),
                                                                                   message,
-                                                                                  new Command() {
-                                                                                      @Override
-                                                                                      public void execute() {
-                                                                                          command.execute();
-                                                                                      }
-                                                                                  },
+                                                                                  command,
                                                                                   CommonConstants.INSTANCE.OK(),
                                                                                   null,
                                                                                   null,
