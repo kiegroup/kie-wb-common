@@ -54,6 +54,7 @@ import org.kie.workbench.common.screens.explorer.client.resources.images.Project
 import org.kie.workbench.common.screens.explorer.client.utils.Classifier;
 import org.kie.workbench.common.screens.explorer.client.utils.Utils;
 import org.kie.workbench.common.screens.explorer.client.widgets.BaseViewImpl;
+import org.kie.workbench.common.screens.explorer.client.widgets.BaseViewPresenter;
 import org.kie.workbench.common.screens.explorer.client.widgets.BranchChangeHandler;
 import org.kie.workbench.common.screens.explorer.client.widgets.BranchSelector;
 import org.kie.workbench.common.screens.explorer.client.widgets.View;
@@ -138,7 +139,7 @@ public class BusinessViewWidget extends BaseViewImpl implements View {
     }
 
     @Override
-    public void init( final ViewPresenter presenter ) {
+    public void init( final BaseViewPresenter presenter ) {
         this.presenter = presenter;
         explorer.init( Explorer.Mode.COLLAPSED, businessOptions, Explorer.NavType.TREE, presenter );
         openProjectEditorButton.addClickHandler( new ClickHandler() {
@@ -147,6 +148,7 @@ public class BusinessViewWidget extends BaseViewImpl implements View {
                 placeManager.goTo( "projectScreen" );
             }
         } );
+        branchSelector.addBranchChangeHandler( presenter );
     }
 
     //@TODO: we need to remove these two when we remove the projectScreen from here
@@ -327,10 +329,6 @@ public class BusinessViewWidget extends BaseViewImpl implements View {
 
     private String getCollapseId( ClientResourceType resourceType ) {
         return resourceType != null ? resourceType.getShortName().replaceAll( ID_CLEANUP_PATTERN, "" ) : "";
-    }
-
-    public void addBranchChangeHandler( BranchChangeHandler branchChangeHandler ) {
-        branchSelector.addBranchChangeHandler( branchChangeHandler );
     }
 
     @Override

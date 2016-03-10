@@ -37,7 +37,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 
 public interface View extends HasBusyIndicator,
                               HasVisibility,
-                              UberView<ViewPresenter> {
+                              UberView<BaseViewPresenter> {
 
     void setContent( final Set<OrganizationalUnit> organizationalUnits,
                      final OrganizationalUnit activeOrganizationalUnit,
@@ -74,4 +74,5 @@ public interface View extends HasBusyIndicator,
     void showTagFilter();
 
     void hideHeaderNavigator();
+
 }

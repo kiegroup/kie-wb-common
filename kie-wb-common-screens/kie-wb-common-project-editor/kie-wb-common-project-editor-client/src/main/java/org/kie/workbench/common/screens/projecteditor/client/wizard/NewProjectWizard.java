@@ -162,7 +162,7 @@ public class NewProjectWizard
         final String baseUrl = url.replace( GWT.getModuleName() + "/", "" );
         busyIndicatorView.showBusyIndicator( CommonConstants.INSTANCE.Saving() );
         projectServiceCaller.call( getSuccessCallback(),
-                                   new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).newProject( context.getActiveRepository(),
+                                   new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).newProject( context.getActiveRepositoryRoot(),
                                                                                                                pom.getName(),
                                                                                                                pom,
                                                                                                                baseUrl );

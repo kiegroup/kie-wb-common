@@ -135,13 +135,11 @@ public class ProjectServiceImplNewProjectTest {
                                        new HashMap<String, Object>() );
         }
 
-        final Repository repository = mock( Repository.class );
         final String name = "p0";
         final POM pom = new POM();
         final String baseURL = "/";
 
         final Path repositoryRootPath = mock( Path.class );
-        when( repository.getRoot() ).thenReturn( repositoryRootPath );
         when( repositoryRootPath.toURI() ).thenReturn( "git://test" );
 
         pom.getGav().setGroupId( "org.kie.workbench.services" );
@@ -152,7 +150,7 @@ public class ProjectServiceImplNewProjectTest {
 
         final AbstractProjectService projectServiceSpy = spy( projectService );
 
-        final Project project = projectServiceSpy.newProject( repository,
+        final Project project = projectServiceSpy.newProject( repositoryRootPath,
                                                               name,
                                                               pom,
                                                               baseURL );
@@ -200,7 +198,7 @@ public class ProjectServiceImplNewProjectTest {
                 times( 1 ) ).fire( any( DeleteProjectEvent.class ) );
 
         verify( projectServiceSpy,
-                times( 0 ) ).newProject( any( Repository.class ),
+                times( 0 ) ).newProject( any( Path.class ),
                                          any( String.class ),
                                          any( POM.class ),
                                          any( String.class ) );
@@ -220,13 +218,11 @@ public class ProjectServiceImplNewProjectTest {
 
         final Map<String, String> writes = new HashMap<String, String>();
 
-        final Repository repository = mock( Repository.class );
         final String name = "p0";
         final POM pom = new POM();
         final String baseURL = "/";
 
         final Path repositoryRootPath = mock( Path.class );
-        when( repository.getRoot() ).thenReturn( repositoryRootPath );
         when( repositoryRootPath.toURI() ).thenReturn( "git://test" );
 
         when( ioService.write( any( org.uberfire.java.nio.file.Path.class ),
@@ -247,7 +243,7 @@ public class ProjectServiceImplNewProjectTest {
         pom.getGav().setArtifactId( "kie-wb-common-services-test" );
         pom.getGav().setVersion( "1.0.0-SNAPSHOT" );
 
-        projectService.newProject( repository,
+        projectService.newProject( repositoryRootPath,
                                    name,
                                    pom,
                                    baseURL );

@@ -35,6 +35,7 @@ import org.guvnor.common.services.project.model.Project;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Repository;
 import org.kie.workbench.common.screens.explorer.client.widgets.BaseViewImpl;
+import org.kie.workbench.common.screens.explorer.client.widgets.BaseViewPresenter;
 import org.kie.workbench.common.screens.explorer.client.widgets.BranchChangeHandler;
 import org.kie.workbench.common.screens.explorer.client.widgets.BranchSelector;
 import org.kie.workbench.common.screens.explorer.client.widgets.View;
@@ -101,7 +102,7 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
     }
 
     @Override
-    public void init( final ViewPresenter presenter ) {
+    public void init( final BaseViewPresenter presenter ) {
         this.presenter = presenter;
         explorer.init( Explorer.Mode.EXPANDED,
                        techOptions,
@@ -114,6 +115,8 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
                 placeManager.goTo( "projectScreen" );
             }
         } );
+
+        branchSelector.addBranchChangeHandler( presenter );
     }
 
     //@TODO: we need to remove these two when we remove the projectScreen from here
@@ -205,10 +208,6 @@ public class TechnicalViewWidget extends BaseViewImpl implements View {
     @Override
     public Explorer getExplorer() {
         return explorer;
-    }
-
-    public void addBranchChangeHandler( BranchChangeHandler branchChangeHandler ) {
-        branchSelector.addBranchChangeHandler( branchChangeHandler );
     }
 
     public void onTagChanged( @Observes TagChangedEvent event ) {
