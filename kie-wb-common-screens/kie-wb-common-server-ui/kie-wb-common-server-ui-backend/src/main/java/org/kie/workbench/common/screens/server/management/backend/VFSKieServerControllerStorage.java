@@ -239,7 +239,11 @@ public class VFSKieServerControllerStorage implements KieServerControllerStorage
                 instanceInfo.setLocation(serverRef.getUrl());
                 instanceInfo.setStatus(serverRef.getStatus().equals(ContainerStatus.STARTED)? KieServerStatus.UP:KieServerStatus.DOWN);
 
-                kieServerInstance.getManagedInstances().add(instanceInfo);
+                Set<KieServerInstanceInfo> managedInstances = new HashSet<KieServerInstanceInfo>();
+                managedInstances.add(instanceInfo);
+
+                kieServerInstance.setManagedInstances(managedInstances);
+                kieServerInstance.setKieServerSetup(kieServerSetup);
                 // store migrated information
                 store(kieServerInstance);
 
