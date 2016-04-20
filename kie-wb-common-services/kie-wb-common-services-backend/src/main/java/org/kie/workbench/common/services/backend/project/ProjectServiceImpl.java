@@ -98,14 +98,14 @@ public class ProjectServiceImpl
     }
 
     @Override
-    public KieProject newProject( final Repository repository,
+    public KieProject newProject( final Path branchRootPath,
                                   final String projectName,
                                   final POM pom,
                                   final String baseUrl ) {
-        final FileSystem fs = Paths.convert( repository.getRoot() ).getFileSystem();
+        final FileSystem fs = Paths.convert( branchRootPath ).getFileSystem();
         try {
             //Projects are always created in the FS root
-            final Path fsRoot = repository.getRoot();
+            final Path fsRoot = branchRootPath;
 
             final Path projectRootPath = Paths.convert( Paths.convert( fsRoot ).resolve( projectName ) );
 

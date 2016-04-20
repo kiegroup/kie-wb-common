@@ -35,7 +35,7 @@ public class ActiveContextManagerTest {
     private ActiveContextItems activeContextItems;
 
     @Mock
-    private IsVisible view;
+    private View view;
 
     @Spy
     @InjectMocks
@@ -44,7 +44,7 @@ public class ActiveContextManagerTest {
     @Before
     public void setUp() {
         when( view.isVisible() ).thenReturn( true );
-        doNothing().when( activeContextManager ).refresh( false );
+        doNothing().when( activeContextManager ).refresh();
 
         activeContextManager.init( view, null );
     }

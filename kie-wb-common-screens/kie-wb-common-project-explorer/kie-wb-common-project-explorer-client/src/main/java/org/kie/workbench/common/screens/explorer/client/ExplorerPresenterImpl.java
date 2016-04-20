@@ -102,11 +102,6 @@ public class ExplorerPresenterImpl implements ExplorerPresenter {
 
     private String initPath = null;
 
-    @AfterInitialization
-    public void init() {
-        addBranchChangeHandlers();
-    }
-
     @PostConstruct
     protected void postConstruct() {
         businessView.setIconSize( IconSize.SMALL );
@@ -270,27 +265,6 @@ public class ExplorerPresenterImpl implements ExplorerPresenter {
 
         setupMenuItems();
         update();
-    }
-
-    private void addBranchChangeHandlers() {
-        BranchChangeHandler branchChangeHandler = new BranchChangeHandler() {
-
-            @Override
-            public void onBranchSelected( String branch ) {
-                businessViewPresenter.branchChanged( branch );
-                technicalViewPresenter.branchChanged( branch );
-
-                ProjectContextChangeEvent event = new ProjectContextChangeEvent( context.getActiveOrganizationalUnit(),
-                                                                                 context.getActiveRepository(),
-                                                                                 context.getActiveBranch(),
-                                                                                 context.getActiveProject());
-
-                contextChangedEvent.fire( event );
-            }
-        };
-
-        businessViewPresenter.addBranchChangeHandler( branchChangeHandler );
-        technicalViewPresenter.addBranchChangeHandler( branchChangeHandler );
     }
 
     private void setupMenuItems() {

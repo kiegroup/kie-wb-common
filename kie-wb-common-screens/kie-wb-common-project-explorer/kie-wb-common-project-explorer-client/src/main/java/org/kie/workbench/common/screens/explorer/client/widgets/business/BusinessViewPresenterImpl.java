@@ -34,8 +34,4 @@ public class BusinessViewPresenterImpl extends BaseViewPresenter {
         super( view );
         this.view = view;
     }
-
-    public void addBranchChangeHandler( BranchChangeHandler branchChangeHandler ) {
-        view.addBranchChangeHandler( branchChangeHandler );
-    }
 }

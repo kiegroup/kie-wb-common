@@ -35,7 +35,4 @@ public class TechnicalViewPresenterImpl extends BaseViewPresenter {
         this.view = view;
     }
 
-    public void addBranchChangeHandler( BranchChangeHandler branchChangeHandler ) {
-        view.addBranchChangeHandler( branchChangeHandler );
-    }
 }
