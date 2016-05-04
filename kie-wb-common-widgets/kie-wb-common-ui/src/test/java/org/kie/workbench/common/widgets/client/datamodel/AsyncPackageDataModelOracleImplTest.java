@@ -16,6 +16,7 @@
 package org.kie.workbench.common.widgets.client.datamodel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -63,9 +64,11 @@ public class AsyncPackageDataModelOracleImplTest {
         defaultPayload = createDefaultPayload();
 
         oracle.addGlobals(createGlobals());
-
-        oracle.projectModelFields.putAll(createProjectModelFields());
-        oracle.projectMethodInformation.putAll(createProjectMethodInformation());
+        oracle.setPackageName( "org" );
+        oracle.addModelFields( createProjectModelFields() );
+        oracle.addMethodInformation( createProjectMethodInformation() );
+        oracle.addSuperTypes( createSuperTypes() );
+        oracle.addPackageNames( createPackageNames() );
 
         oracle.filter(createImports());
 
@@ -75,22 +78,67 @@ public class AsyncPackageDataModelOracleImplTest {
     private Map<String, List<MethodInfo>> createProjectMethodInformation() {
         HashMap<String, List<MethodInfo>> map = new HashMap<String, List<MethodInfo>>();
 
-        map.put("org.globals.GiantContainerOfInformation", Collections.EMPTY_LIST);
-        ArrayList<MethodInfo> methodInfos = new ArrayList<MethodInfo>();
+        map.put( "org.globals.GiantContainerOfInformation", Collections.EMPTY_LIST );
 
-        ArrayList<String> params = new ArrayList<String>();
-        params.add("Integer");
-        methodInfos.add(new MethodInfo("valueOf", params, "java.lang.String", null, "String"));
-        map.put("java.lang.String", methodInfos);
+        ArrayList<MethodInfo> stringMethodInfos = new ArrayList<MethodInfo>();
+        ArrayList<String> valueOfParams = new ArrayList<String>();
+        valueOfParams.add( "Integer" );
+        stringMethodInfos.add( new MethodInfo( "valueOf",
+                                               valueOfParams,
+                                               "java.lang.String",
+                                               null,
+                                               "String" ) );
+        map.put( "java.lang.String",
+                 stringMethodInfos );
+
+        ArrayList<MethodInfo> personMethodInfos = new ArrayList<MethodInfo>();
+        ArrayList<String> build1Params = new ArrayList<String>();
+        build1Params.add( "String" );
+        build1Params.add( "Integer" );
+        personMethodInfos.add( new MethodInfo( "build",
+                                               build1Params,
+                                               "org.test.Person",
+                                               null,
+                                               null ) );
+        ArrayList<String> getNameParams = new ArrayList<String>();
+        personMethodInfos.add( new MethodInfo( "getName",
+                                               getNameParams,
+                                               "java.lang.String",
+                                               null,
+                                               null ) );
+        ArrayList<String> build2Params = new ArrayList<String>();
+        build2Params.add( "String" );
+        personMethodInfos.add( new MethodInfo( "build",
+                                               build2Params,
+                                               "org.test.Person",
+                                               null,
+                                               null ) );
+        ArrayList<String> build3Params = new ArrayList<String>();
+        build3Params.add( "Integer" );
+        personMethodInfos.add( new MethodInfo( "build",
+                                               build3Params,
+                                               "org.test.Person",
+                                               null,
+                                               null ) );
+        map.put( "org.test.Person",
+                 personMethodInfos );
+
         return map;
     }
 
     private HashMap<String, ModelField[]> createProjectModelFields() {
         HashMap<String, ModelField[]> map = new HashMap<String, ModelField[]>();
-        map.put("org.test.Person", new ModelField[]{getLazyThisField("org.test.Person")});
-        map.put("java.lang.String", new ModelField[]{getLazyThisField("java.lang.String")});
-        map.put("org.Address", new ModelField[]{getLazyThisField("org.Address")});
-        map.put("org.globals.GiantContainerOfInformation", new ModelField[]{getLazyThisField("org.globals.GiantContainerOfInformation")});
+        map.put( "org.test.Person",
+                 new ModelField[]{ getLazyThisField( "org.test.Person" ) } );
+        map.put( "java.lang.String",
+                 new ModelField[]{ getLazyThisField( "java.lang.String" ) } );
+        map.put( "org.Address",
+                 new ModelField[]{ getLazyThisField( "org.Address" ) } );
+        map.put( "org.Document",
+                 new ModelField[]{ getLazyThisField( "org.Document" ) } );
+        map.put( "org.globals.GiantContainerOfInformation",
+                 new ModelField[]{ getLazyThisField( "org.globals.GiantContainerOfInformation" ) } );
+
         return map;
     }
 
@@ -152,17 +200,68 @@ public class AsyncPackageDataModelOracleImplTest {
 
     private HashMap<String, String> createGlobals() {
         HashMap<String, String> globals = new HashMap<String, String>();
-
-        globals.put("giant", "org.globals.GiantContainerOfInformation");
+        globals.put( "giant",
+                     "org.globals.GiantContainerOfInformation" );
+        globals.put( "person",
+                     "org.test.Person" );
 
         return globals;
     }
 
+    private Map<String, List<String>> createSuperTypes() {
+        Map<String, List<String>> superTypes = new HashMap<String, List<String>>();
+        superTypes.put( "org.test.Person", Arrays.asList( new String[]{ "org.test.Parent", "org.test.GrandParent" } ) );
+        superTypes.put( "org.Address", Arrays.asList( new String[]{ "org.Location" } ) );
+
+        return superTypes;
+    }
+
+    private List<String> createPackageNames() {
+        List<String> packageNames = new ArrayList<String>();
+        packageNames.add( "io.test" );
+        packageNames.add( "org.test" );
+        packageNames.add( "com.test" );
+
+        return packageNames;
+    }
+
     @Test
-    public void testIsFactTypeRecognized(){
+    public void testIsFactTypeRecognized() {
+        assertTrue( oracle.isFactTypeRecognized( "org.Address" ) );
+    }
 
-        assertTrue(oracle.isFactTypeRecognized("org.Address"));
+    @Test
+    public void testFactTypes() {
+        final String[] types = oracle.getFactTypes();
 
+        assertEquals( 5, types.length );
+        assertEquals( "Address", types[ 0 ] );
+        assertEquals( "Document", types[ 1 ] );
+        assertEquals( "GiantContainerOfInformation", types[ 2 ] );
+        assertEquals( "Person", types[ 3 ] );
+        assertEquals( "String", types[ 4 ] );
+    }
+
+    @Test
+    public void testAllFactTypes() {
+        final String[] types = oracle.getAllFactTypes();
+
+        assertEquals( 5, types.length );
+        assertEquals( "java.lang.String", types[ 0 ] );
+        assertEquals( "org.Address", types[ 1 ] );
+        assertEquals( "org.Document", types[ 2 ] );
+        assertEquals( "org.globals.GiantContainerOfInformation", types[ 3 ] );
+        assertEquals( "org.test.Person", types[ 4 ] );
+    }
+
+    @Test
+    public void testExternalFactTypes() {
+        final String[] types = oracle.getExternalFactTypes();
+
+        assertEquals( 3, types.length );
+        assertEquals( "java.lang.String", types[ 0 ] );
+        assertEquals( "org.globals.GiantContainerOfInformation", types[ 1 ] );
+        assertEquals( "org.test.Person", types[ 2 ] );
     }
 
     @Test
@@ -179,7 +278,7 @@ public class AsyncPackageDataModelOracleImplTest {
                 assertEquals(2, result.length);
 
                 assertEquals("Address", oracle.getFieldType("Person", "address"));
-                assertEquals("org.Address", oracle.getFieldClassName("Person", "address"));
+                assertEquals("Address", oracle.getFieldClassName("Person", "address"));
 
             }
         });
@@ -196,7 +295,7 @@ public class AsyncPackageDataModelOracleImplTest {
             public void callback(ModelField[] result) {
                 assertEquals(3, result.length);
 
-                assertEquals("org.Address", oracle.getFieldClassName("Address", "this"));
+                assertEquals("Address", oracle.getFieldClassName("Address", "this"));
                 assertEquals("this", oracle.getFieldType("Address", "this"));
                 assertEquals("String", oracle.getFieldClassName("Address", "street"));
                 assertEquals("String", oracle.getFieldType("Address", "street"));
@@ -254,6 +353,37 @@ public class AsyncPackageDataModelOracleImplTest {
         oracle.getMethodInfosForGlobalVariable("giant", callback);
 
         verify(callback).callback(anyList());
+    }
+
+    @Test
+    public void testGetMethodInfosSortedForGlobalVariable() {
+        Callback<List<MethodInfo>> callback = spy( new Callback<List<MethodInfo>>() {
+            @Override
+            public void callback( List<MethodInfo> result ) {
+                assertEquals( 4, result.size() );
+
+                assertEquals( "build", result.get( 0 ).getName() );
+                assertEquals( 1, result.get( 0 ).getParams().size() );
+                assertEquals( "Integer", result.get( 0 ).getParams().get( 0 ) );
+
+                assertEquals( "build", result.get( 1 ).getName() );
+                assertEquals( 1, result.get( 1 ).getParams().size() );
+                assertEquals( "String", result.get( 1 ).getParams().get( 0 ) );
+
+                assertEquals( "build", result.get( 2 ).getName() );
+                assertEquals( 2, result.get( 2 ).getParams().size() );
+                assertEquals( "String", result.get( 2 ).getParams().get( 0 ) );
+                assertEquals( "Integer", result.get( 2 ).getParams().get( 1 ) );
+
+                assertEquals( "getName", result.get( 3 ).getName() );
+                assertEquals( 0, result.get( 3 ).getParams().size() );
+            }
+        } );
+
+        oracle.getMethodInfosForGlobalVariable( "person",
+                                                callback );
+
+        verify( callback ).callback( anyList() );
     }
 
     @Test
@@ -320,14 +450,40 @@ public class AsyncPackageDataModelOracleImplTest {
         verify(connectiveOperatorsCallback).callback(any(String[].class));
     }
 
-    private LazyModelField getLazyThisField(String clazz) {
-        return new LazyModelField(
-                "this",
-                clazz,
-                ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
-                ModelField.FIELD_ORIGIN.SELF,
-                FieldAccessorsAndMutators.ACCESSOR,
-                "this");
+    @Test
+    public void testGetSuperTypes() {
+
+        Callback<List<String>> getSuperTypesCallback = spy( new Callback<List<String>>() {
+            @Override
+            public void callback( List<String> result ) {
+
+                assertEquals( 2, result.size() );
+                assertEquals( "org.test.GrandParent", result.get( 0 ) );
+                assertEquals( "org.test.Parent", result.get( 1 ) );
+            }
+        } );
+
+        oracle.getSuperTypes( "Person", getSuperTypesCallback );
+        verify( getSuperTypesCallback ).callback( anyList() );
+    }
+
+    @Test
+    public void testGetPackageNames() {
+        List<String> packageNames = oracle.getPackageNames();
+
+        assertEquals( 3, packageNames.size() );
+        assertEquals( "com.test", packageNames.get( 0 ) );
+        assertEquals( "io.test", packageNames.get( 1 ) );
+        assertEquals( "org.test", packageNames.get( 2 ) );
+    }
+
+    private LazyModelField getLazyThisField( String clazz ) {
+        return new LazyModelField( "this",
+                                   clazz,
+                                   ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                   ModelField.FIELD_ORIGIN.SELF,
+                                   FieldAccessorsAndMutators.ACCESSOR,
+                                   "this" );
     }
 
     private class Service

@@ -30,6 +30,7 @@ import org.kie.workbench.common.screens.datamodeller.model.maindomain.MainDomain
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 import org.kie.workbench.common.services.datamodeller.core.PropertyType;
+import org.kie.workbench.common.services.datamodel.util.SortHelper;
 import org.uberfire.backend.vfs.Path;
 
 public class DataModelerUtils {
@@ -270,10 +271,10 @@ public class DataModelerUtils {
 
     public static void initTypeList( final ListBox typeSelector, final Collection<PropertyType> baseTypes, final Collection<DataObject> dataObjects, final Collection<DataObject> externalClasses, final String selectedType, boolean selectedTypeMultiple, boolean includeEmptyItem ) {
 
-        SortedMap<String, String> sortedModelTypeNames = new TreeMap<String, String>();
-        SortedMap<String, String> sortedExternalTypeNames = new TreeMap<String, String>();
-        Map<String, PropertyType> orderedBaseTypes = new TreeMap<String, PropertyType>();
-        Map<String, PropertyType> baseTypesByClassName = new TreeMap<String, PropertyType>();
+        SortedMap<String, String> sortedModelTypeNames = new TreeMap<String, String>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
+        SortedMap<String, String> sortedExternalTypeNames = new TreeMap<String, String>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
+        Map<String, PropertyType> orderedBaseTypes = new TreeMap<String, PropertyType>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
+        Map<String, PropertyType> baseTypesByClassName = new TreeMap<String, PropertyType>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
         boolean selectedTypeIncluded = false;
 
         if ( baseTypes != null ) {

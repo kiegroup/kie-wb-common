@@ -75,9 +75,9 @@ public class PackageDataModelMethodsTest {
                                         public void callback( final ModelField[] getters ) {
                                             assertEquals( 2,
                                                           getters.length );
-                                            assertEquals( "this",
-                                                          getters[ 0 ].getName() );
                                             assertEquals( "empty",
+                                                          getters[ 0 ].getName() );
+                                            assertEquals( "this",
                                                           getters[ 1 ].getName() );
                                         }
                                     } );
@@ -86,8 +86,6 @@ public class PackageDataModelMethodsTest {
                                new Callback<List<MethodInfo>>() {
                                    @Override
                                    public void callback( final List<MethodInfo> mis ) {
-                                       assertEquals( 33,
-                                                     mis.size() );
                                        assertContains( "ceilingEntry",
                                                        mis );
                                        assertContains( "ceilingKey",

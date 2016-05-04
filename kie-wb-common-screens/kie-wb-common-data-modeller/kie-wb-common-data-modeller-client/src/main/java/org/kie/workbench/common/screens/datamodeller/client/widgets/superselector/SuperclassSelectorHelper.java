@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import org.kie.workbench.common.screens.datamodeller.client.util.DataModelerUtils;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
+import org.kie.workbench.common.services.datamodel.util.SortHelper;
 import org.uberfire.commons.data.Pair;
 
 public class SuperclassSelectorHelper {
@@ -35,8 +36,8 @@ public class SuperclassSelectorHelper {
         List<Pair<String, String>> options = new ArrayList<Pair<String, String>>();
 
         if ( dataModel != null ) {
-            SortedMap<String, String> sortedModelClasses = new TreeMap<String, String>();
-            SortedMap<String, String> sortedExternalClasses = new TreeMap<String, String>();
+            SortedMap<String, String> sortedModelClasses = new TreeMap<String, String>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
+            SortedMap<String, String> sortedExternalClasses = new TreeMap<String, String>( SortHelper.ALPHABETICAL_ORDER_COMPARATOR );
             boolean isExtensible = false;
             String className;
             String classLabel;
