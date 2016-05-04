@@ -16,6 +16,7 @@
 package org.kie.workbench.common.screens.server.management.backend;
 
 import java.math.BigInteger;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,8 +97,8 @@ public class VFSKieServerControllerStorage implements KieServerControllerStorage
             ioService.startBatch( dir.getFileSystem() );
             for ( final Path registeredServer : ioService.newDirectoryStream( dir ) ) {
                 try {
-                    migrate(registeredServer);
-                    result.add( readKieServerInstance(registeredServer) );
+                    final Path migrated = migrate(registeredServer);
+                    result.add( readKieServerInstance(migrated) );
                 } catch ( final Exception ignore ) {
                     ioService.delete( registeredServer );
                 }
@@ -113,8 +114,8 @@ public class VFSKieServerControllerStorage implements KieServerControllerStorage
     @Override
     public KieServerInstance load(String identifier) {
         final Path path = buildPath( identifier );
-        migrate(path);
-        KieServerInstance serverInstance = readKieServerInstance( path );
+        Path migrated = migrate(path);
+        KieServerInstance serverInstance = readKieServerInstance( migrated );
 
         return serverInstance;
     }
@@ -193,14 +194,21 @@ public class VFSKieServerControllerStorage implements KieServerControllerStorage
         }
     }
 
-    protected void migrate(Path path) {
+    protected Path  migrate(Path path) {
         if (!path.toString().endsWith("-info.xml")) {
             try {
                 final ServerRef serverRef = (ServerRef) xs.fromXML(ioService.readAllString(path));
 
+                String serverId = serverRef.getName();
+                if (serverId == null || serverId.isEmpty()) {
+                    URL url = new URL(serverRef.getUrl());
+                    serverId = url.getHost();
+                }
+                // replace white spaces with - to be URL friendly
+                serverId = serverId.replaceAll("\\s", "-");
 
                 KieServerInstance kieServerInstance = new KieServerInstance();
-                kieServerInstance.setIdentifier(serverRef.getId());
+                kieServerInstance.setIdentifier(serverId);
                 kieServerInstance.setVersion(serverRef.getProperties().get("version"));
                 kieServerInstance.setName(serverRef.getName());
                 kieServerInstance.setStatus(serverRef.getStatus().equals(ContainerStatus.STARTED)? KieServerStatus.UP:KieServerStatus.DOWN);
@@ -255,10 +263,12 @@ public class VFSKieServerControllerStorage implements KieServerControllerStorage
                     ioService.endBatch();
                 }
 
+                return buildPath( kieServerInstance );
+
             } catch (Exception ex) {
                 logger.error("Error wile migrating old version of kie server ref from path {}", path, ex);
             }
         }
-
+        return path;
     }
 }
