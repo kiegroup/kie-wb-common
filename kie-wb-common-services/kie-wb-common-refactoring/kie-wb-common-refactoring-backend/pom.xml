@@ -35,13 +35,13 @@
       <groupId>org.kie</groupId>
       <artifactId>kie-internal</artifactId>
     </dependency>
-    
+
     <!-- kie-wb-common -->
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-api</artifactId>
     </dependency>
-      <dependency>
+    <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-services-api</artifactId>
       <exclusions>
@@ -167,6 +167,12 @@
     <dependency>
       <groupId>org.reflections</groupId>
       <artifactId>reflections</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>simple-jndi</groupId>
+      <artifactId>simple-jndi</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
