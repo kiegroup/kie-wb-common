@@ -91,7 +91,6 @@ public class Builder {
     private final Project project;
     private final Path   projectRoot;
     private final IOService             ioService;
-    private final String projectPrefix;
 
     private final Handles handles = new Handles();
     private final KieProjectService     projectService;
@@ -127,7 +126,6 @@ public class Builder {
         this.packageNameWhiteListService = packageNameWhiteListService;
         this.projectGAV = project.getPom().getGav();
         this.projectRoot = Paths.convert( project.getRootPath() );
-        this.projectPrefix = projectRoot.toUri().toString();
         this.kieServices = KieServices.Factory.get();
         this.kieFileSystem = kieServices.newKieFileSystem();
         this.dependenciesClassLoaderCache = dependenciesClassLoaderCache;
@@ -219,7 +217,7 @@ public class Builder {
 
     private WhiteList getWhiteList( final KieModuleMetaData kieModuleMetaData ) {
         return packageNameWhiteListService.filterPackageNames( project,
-                                                               kieModuleMetaData.getPackages() );
+                kieModuleMetaData.getPackages() );
     }
 
     private KieBuilder createKieBuilder( final KieFileSystem kieFileSystem ) {
@@ -236,8 +234,8 @@ public class Builder {
         KieProject kieProject = projectService.resolveProject( project.getPomXMLPath() );
         if ( kieProject != null ) {
             dependenciesClassLoaderCache.setDependenciesClassLoader( kieProject,
-                                                                     LRUProjectDependenciesClassLoaderCache.buildClassLoader( kieProject,
-                                                                                                                              kieModuleMetaData ) );
+                    LRUProjectDependenciesClassLoaderCache.buildClassLoader( kieProject,
+                            kieModuleMetaData ) );
         }
     }
 
@@ -269,7 +267,7 @@ public class Builder {
             }
 
             //Add new resource
-            final String destinationPath = resource.toUri().toString().substring( projectPrefix.length() + 1 );
+            final String destinationPath = buildKieFSDestinationPath( resource );
             final InputStream is = ioService.newInputStream( resource );
             final BufferedInputStream bis = new BufferedInputStream( is );
             kieFileSystem.write( destinationPath,
@@ -302,7 +300,7 @@ public class Builder {
             }
 
             //Delete resource
-            final String destinationPath = resource.toUri().toString().substring( projectPrefix.length() + 1 );
+            final String destinationPath = buildKieFSDestinationPath( resource );
             kieFileSystem.delete( destinationPath );
             removeJavaClass( resource );
 
@@ -341,7 +339,7 @@ public class Builder {
                     checkNotNull( "resource",
                                   resource );
 
-                    final String destinationPath = resource.toUri().toString().substring( projectPrefix.length() + 1 );
+                    final String destinationPath = buildKieFSDestinationPath( resource );
                     changedFilesKieBuilderPaths.add( destinationPath );
                     switch ( type ) {
                         case ADD:
@@ -436,7 +434,7 @@ public class Builder {
                              KieServices.Factory.get().getResources().newInputStreamResource( bis ) );
         addJavaClass( resource );
         handles.put( getBaseFileName( destinationPath ),
-                     Paths.convert( resource ) );
+                Paths.convert( resource ) );
     }
 
     private void buildIncrementally( final IncrementalBuildResults results,
@@ -553,7 +551,7 @@ public class Builder {
                     }
 
                     //Add new resource
-                    final String destinationPath = path.toUri().toString().substring( projectPrefix.length() + 1 );
+                    final String destinationPath = buildKieFSDestinationPath( path  );
                     final InputStream is = ioService.newInputStream( path );
                     final BufferedInputStream bis = new BufferedInputStream( is );
                     kieFileSystem.write( destinationPath,
@@ -596,7 +594,7 @@ public class Builder {
             return null;
         }
         final String className = path.getFileName().toString().replace( ".java",
-                                                                        "" );
+                "" );
         return (packageName.equals( "" ) ? className : packageName + "." + className);
     }
 
@@ -608,5 +606,10 @@ public class Builder {
             }
         }
         return null;
+    }
+
+    private String buildKieFSDestinationPath( final Path resource ) {
+        final Path relativePath = projectRoot.relativize( resource );
+        return relativePath.toString();
     }
 }

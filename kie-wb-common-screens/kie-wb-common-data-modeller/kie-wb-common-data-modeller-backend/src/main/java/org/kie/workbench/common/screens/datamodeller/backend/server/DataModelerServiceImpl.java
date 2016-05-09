@@ -17,6 +17,8 @@
 package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1309,8 +1311,8 @@ public class DataModelerServiceImpl
     private String calculateClassName( Project project,
                                        Path path ) {
 
-        String rootPathURI = project.getRootPath().toURI();
-        String pathURI = path.toURI();
+        String rootPathURI = decode( project.getRootPath().toURI() );
+        String pathURI = decode( path.toURI() );
         String strPath = null;
 
         if ( !pathURI.startsWith( rootPathURI ) ) {
@@ -1368,4 +1370,13 @@ public class DataModelerServiceImpl
         return tokens;
     }
 
+    private String decode( String uri ) {
+        try {
+            return uri != null ? URLDecoder.decode( uri, "UTF-8" ) : null;
+        } catch ( UnsupportedEncodingException e ) {
+            //will never run into this case since UTF-8 encoding is always supported
+            //and also the suggested encoding to use.
+            return null;
+        }
+    }
 }
