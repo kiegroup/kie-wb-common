@@ -18,13 +18,18 @@ package org.kie.workbench.common.screens.datamodeller.backend.server;
 
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -78,6 +83,7 @@ import org.kie.workbench.common.services.datamodeller.core.impl.DataObjectImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.PropertyTypeFactoryImpl;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriver;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriverException;
+import org.kie.workbench.common.services.datamodeller.driver.SourceFilter;
 import org.kie.workbench.common.services.datamodeller.driver.impl.JavaRoasterModelDriver;
 import org.kie.workbench.common.services.datamodeller.driver.impl.ProjectDataModelOracleUtils;
 import org.kie.workbench.common.services.datamodeller.driver.impl.UpdateInfo;
@@ -169,9 +175,26 @@ public class DataModelerServiceImpl
     @Any
     private Instance<DomainHandler> domainHandlers;
 
+    @Inject
+    @Any
+    private Instance<SourceFilter> filtersInstance;
+
+    private Collection<SourceFilter> filters;
+
     private static final String DEFAULT_COMMIT_MESSAGE = "Data modeller generated action.";
 
     public DataModelerServiceImpl() {
+    }
+
+    @PostConstruct
+    private void setup() {
+        filters = StreamSupport.stream( filtersInstance.spliterator(), false ).collect( Collectors.toList() );
+    }
+
+    @PreDestroy
+    private void tearDown() {
+        filters.forEach( filter -> filtersInstance.destroy( filter ) );
+        filters.clear();
     }
 
     @Override
@@ -323,7 +346,11 @@ public class DataModelerServiceImpl
 
             ClassLoader classLoader = serviceHelper.getProjectClassLoader( project );
 
-            ModelDriver modelDriver = new JavaRoasterModelDriver( ioService, Paths.convert( defaultPackage.getPackageMainSrcPath() ), true, classLoader );
+            ModelDriver modelDriver = new JavaRoasterModelDriver( ioService,
+                                                                  Paths.convert( defaultPackage.getPackageMainSrcPath() ),
+                                                                  true,
+                                                                  classLoader,
+                                                                  filters );
             ModelDriverResult result = modelDriver.loadModel();
             dataModel = result.getDataModel();
 
@@ -384,7 +411,7 @@ public class DataModelerServiceImpl
             }
 
             ClassLoader classLoader = serviceHelper.getProjectClassLoader( project );
-            JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, null, false, classLoader );
+            JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, null, false, classLoader, filters );
             ModelDriverResult driverResult = modelDriver.loadDataObject( source, Paths.convert( sourcePath ) );
 
             if ( !driverResult.hasErrors() ) {
@@ -468,7 +495,7 @@ public class DataModelerServiceImpl
             }
 
             ClassLoader classLoader = serviceHelper.getProjectClassLoader( project );
-            JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, Paths.convert( path ), false, classLoader );
+            JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, Paths.convert( path ), false, classLoader, filters );
             ModelDriverResult driverResult = modelDriver.loadDataObject( source, Paths.convert( path ) );
 
             if ( driverResult.hasErrors() ) {
@@ -603,7 +630,7 @@ public class DataModelerServiceImpl
 
             if ( dataObject == null ) {
                 ClassLoader classLoader = serviceHelper.getProjectClassLoader( project );
-                JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, Paths.convert( path ), false, classLoader );
+                JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver( ioService, Paths.convert( path ), false, classLoader, filters );
                 ModelDriverResult driverResult = modelDriver.loadDataObject( source, Paths.convert( path ) );
 
                 if ( driverResult.hasErrors() ) {

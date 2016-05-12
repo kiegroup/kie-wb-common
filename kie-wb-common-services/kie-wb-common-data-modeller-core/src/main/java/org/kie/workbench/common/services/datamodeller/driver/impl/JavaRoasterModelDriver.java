@@ -60,6 +60,7 @@ import org.kie.workbench.common.services.datamodeller.driver.AnnotationDriver;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriver;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriverException;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriverListener;
+import org.kie.workbench.common.services.datamodeller.driver.SourceFilter;
 import org.kie.workbench.common.services.datamodeller.driver.TypeInfoResult;
 import org.kie.workbench.common.services.datamodeller.driver.impl.annotations.CommonAnnotations;
 import org.kie.workbench.common.services.datamodeller.driver.model.AnnotationSourceRequest;
@@ -96,6 +97,8 @@ public class JavaRoasterModelDriver implements ModelDriver {
 
     private Map<String, AnnotationDriver> annotationDrivers = new HashMap<String, AnnotationDriver>();
 
+    private Collection<SourceFilter> filters;
+
     private static final String DATA_OBJECT_LOAD_ERROR = "It was not possible to create or load DataObject: \"{0}\" .";
 
     private static final String ANNOTATION_LOAD_ERROR = "It was not possible to create or load a DataObject or Field annotation for annotation class name: \"{0}\" .";
@@ -112,14 +115,22 @@ public class JavaRoasterModelDriver implements ModelDriver {
             annotationDrivers.put( annotationDefinition.getClassName(), new DefaultJavaRoasterModelAnnotationDriver() );
             configuredAnnotationsIndex.put( annotationDefinition.getClassName(), annotationDefinition );
         }
+        if (filters == null) {
+            filters = Collections.emptySet();
+        }
     }
 
-    public JavaRoasterModelDriver( IOService ioService, Path javaRootPath, boolean recursiveScan, ClassLoader classLoader ) {
+    public JavaRoasterModelDriver( IOService ioService,
+                                   Path javaRootPath,
+                                   boolean recursiveScan,
+                                   ClassLoader classLoader,
+                                   Collection<SourceFilter> filters ) {
         this();
         this.ioService = ioService;
         this.recursiveScan = recursiveScan;
         this.javaRootPath = javaRootPath;
         this.classLoader = classLoader;
+        this.filters = filters;
     }
 
     @Override
@@ -166,7 +177,9 @@ public class JavaRoasterModelDriver implements ModelDriver {
                 }
                 try {
                     JavaType<?> javaType = Roaster.parse( fileContent );
-                    if ( javaType.isClass() ) {
+                    final boolean isClass = javaType.isClass();
+                    final boolean vetoed = ( isClass ? isVetoed( javaType ) : false );
+                    if ( isClass && !vetoed ) {
                         if ( javaType.getSyntaxErrors() != null && !javaType.getSyntaxErrors().isEmpty() ) {
                             //if a file has parsing errors it will be skipped.
                             addSyntaxErrors( result, scanResult.getFile(), javaType.getSyntaxErrors() );
@@ -184,6 +197,10 @@ public class JavaRoasterModelDriver implements ModelDriver {
                                 addModelDriverError( result, scanResult.getFile(), e );
                             }
                         }
+                    } else if ( vetoed ) {
+                        logger.debug( "The class, {}, in the file, {}, was vetoed and will be skipped.",
+                                      javaType.getQualifiedName(),
+                                      scanResult.getFile() );
                     } else {
                         logger.debug( "No Class definition was found for file: " + scanResult.getFile() + ", it will be skipped." );
                     }
@@ -195,6 +212,10 @@ public class JavaRoasterModelDriver implements ModelDriver {
             }
         }
         return result;
+    }
+
+    private boolean isVetoed( final JavaType<?> javaType ) {
+        return filters.stream().anyMatch( filter -> filter.veto( javaType ) );
     }
 
     public ModelDriverResult loadDataObject( final String source, final Path path ) throws ModelDriverException {
