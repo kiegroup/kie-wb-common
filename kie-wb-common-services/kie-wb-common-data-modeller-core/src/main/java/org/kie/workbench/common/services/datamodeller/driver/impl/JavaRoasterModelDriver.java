@@ -415,20 +415,6 @@ public class JavaRoasterModelDriver implements ModelDriver {
         }
     }
 
-    private boolean isManagedProperty( ObjectProperty property ) {
-        return !property.isStatic() && !property.isFinal();
-    }
-
-    private List<ObjectProperty> filterManagedProperties( DataObject dataObject ) {
-        List<ObjectProperty> result = new ArrayList<ObjectProperty>();
-        for ( ObjectProperty property : dataObject.getProperties() ) {
-            if ( isManagedProperty( property ) ) {
-                result.add( property );
-            }
-        }
-        return result;
-    }
-
     private ObjectProperty addProperty( DataObject dataObject, FieldSource<JavaClassSource> field, ClassTypeResolver classTypeResolver ) throws ModelDriverException {
         ObjectProperty property = parseProperty( field, classTypeResolver );
         dataObject.addProperty( property );
@@ -454,6 +440,7 @@ public class JavaRoasterModelDriver implements ModelDriver {
                 } else {
                     //if this point was reached, we know it's a Collection. Managed type check was done previous to adding the property.
                     multiple = true;
+                    @SuppressWarnings( "unchecked" )
                     Type elementsType = ( ( List<Type> ) type.getTypeArguments() ).get( 0 );
                     className = resolveTypeName( classTypeResolver, elementsType.getName() );
                     bag = resolveTypeName( classTypeResolver, type.getName() );
@@ -1146,7 +1133,6 @@ public class JavaRoasterModelDriver implements ModelDriver {
         FieldSource<JavaClassSource> field;
         GenerationTools genTools = new GenerationTools();
         String methodName;
-        MethodSource<JavaClassSource> method;
 
         field = javaClassSource.getField( fieldName );
         if ( field != null ) {
@@ -1304,7 +1290,6 @@ public class JavaRoasterModelDriver implements ModelDriver {
         }
 
         List<ParameterSource<JavaClassSource>> parameters = constructor.getParameters();
-        List<String> expectedBody = new ArrayList<String>();
         List<String> expectedLines = new ArrayList<String>();
         String expectedLine;
         if ( parameters != null ) {
@@ -1424,7 +1409,7 @@ public class JavaRoasterModelDriver implements ModelDriver {
         if ( driverErrors.size() == 0 ) {
             //TODO review this, we should use DriverUtils.createClassTypeResolver( javaClassSource, classLoader ); instead
 
-            ClassTypeResolver classTypeResolver = new ClassTypeResolver( Collections.EMPTY_SET, classLoader );
+            ClassTypeResolver classTypeResolver = new ClassTypeResolver( Collections.emptySet(), classLoader );
 
             try {
                 annotation = createAnnotation( parseResult.getK1(), classTypeResolver );
@@ -1432,7 +1417,7 @@ public class JavaRoasterModelDriver implements ModelDriver {
                 driverErrors.add( new DriverError( e.getMessage() ) );
             }
         }
-        return new Pair( annotation, driverErrors );
+        return new Pair<>( annotation, driverErrors );
     }
 
     public Pair<AnnotationSource<JavaClassSource>, List<DriverError>> parseAnnotationWithValuePair( String annotationClassName,
@@ -1463,7 +1448,7 @@ public class JavaRoasterModelDriver implements ModelDriver {
         if ( annotation == null ) {
             syntaxErrors.add( new DriverError( "Annotation value pair could not be parsed." ) );
         }
-        return new Pair( annotation, syntaxErrors );
+        return new Pair<>( annotation, syntaxErrors );
     }
 
     public boolean isManagedAnnotation( AnnotationSource<?> annotation, ClassTypeResolver classTypeResolver ) throws Exception {
