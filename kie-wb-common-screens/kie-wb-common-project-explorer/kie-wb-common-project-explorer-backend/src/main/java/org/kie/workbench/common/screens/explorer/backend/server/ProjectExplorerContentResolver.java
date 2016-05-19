@@ -87,10 +87,28 @@ public class ProjectExplorerContentResolver {
         setSelectedBranch( content );
         setSelectedProject( content );
 
-        if ( content.getSelectedOrganizationalUnit() == null || content.getSelectedRepository() == null || content.getSelectedProject() == null ) {
+        if ( content.getSelectedOrganizationalUnit() == null || content.getSelectedRepository() == null || content.getSelectedProject() == null
+                || !isSelectedPackageOk( content.getSelectedPackage(),
+                                         content.getSelectedProject() )
+                ) {
             return emptyProjectExplorerContent( content );
         } else {
             return projectExplorerContentWithSelections( content, query.getOptions() );
+        }
+    }
+
+    private boolean isSelectedPackageOk( final Package selectedPackage,
+                                         final Project selectedProject ) {
+        if ( selectedProject == null ) {
+            return true;
+        } else if ( selectedPackage == null ) {
+            return true;
+        } else if ( selectedProject.getRootPath() == null ) {
+            return true;
+        } else if ( selectedPackage.getProjectRootPath() == null ) {
+            return true;
+        } else {
+            return selectedProject.getRootPath().equals( selectedPackage.getProjectRootPath() );
         }
     }
 
