@@ -28,7 +28,6 @@ import org.drools.workbench.models.datamodel.oracle.ProjectDataModelOracle;
 import org.jboss.errai.common.client.api.Caller;
 import org.junit.Test;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
-import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.FactBuilder;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleBaselinePayload;
 import org.kie.workbench.common.services.datamodel.service.IncrementalDataModelService;
@@ -632,6 +631,51 @@ public class PackageDataModelOracleEnumTest {
         assertFalse( oracle.isDependentEnum( "Fact",
                                              "field1",
                                              "field4" ) );
+    }
+
+    @Test
+    public void testDependentEnumsDynamicLookup() {
+        final ProjectDataModelOracle projectLoader = ProjectDataModelOracleBuilder.newProjectOracleBuilder()
+                .addFact( "Fact" )
+                .addField( new ModelField( "field1",
+                                           String.class.getName(),
+                                           ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                           ModelField.FIELD_ORIGIN.DECLARED,
+                                           FieldAccessorsAndMutators.BOTH,
+                                           DataType.TYPE_STRING ) )
+                .addField( new ModelField( "field2",
+                                           String.class.getName(),
+                                           ModelField.FIELD_CLASS_TYPE.REGULAR_CLASS,
+                                           ModelField.FIELD_ORIGIN.DECLARED,
+                                           FieldAccessorsAndMutators.BOTH,
+                                           DataType.TYPE_STRING ) )
+                .end()
+                .addEnum( "'Fact.field1' : (new com.test.EnumLoader()).getListOfField1()",
+                          Thread.currentThread().getContextClassLoader() )
+                .addEnum( "'Fact.field2[field1]' : '(new com.test.EnumLoader()).getListOfField2(@{field1})'",
+                          Thread.currentThread().getContextClassLoader() )
+                .build();
+
+        final PackageDataModelOracle packageLoader = PackageDataModelOracleBuilder.newPackageOracleBuilder().setProjectOracle( projectLoader ).build();
+
+        //Emulate server-to-client conversions
+        final MockAsyncPackageDataModelOracleImpl oracle = new MockAsyncPackageDataModelOracleImpl();
+        final Caller<IncrementalDataModelService> service = new MockIncrementalDataModelServiceCaller( packageLoader );
+        oracle.setService( service );
+
+        final PackageDataModelOracleBaselinePayload dataModel = new PackageDataModelOracleBaselinePayload();
+        dataModel.setPackageName( packageLoader.getPackageName() );
+        dataModel.setModelFields( packageLoader.getProjectModelFields() );
+        dataModel.setJavaEnumDefinitions( packageLoader.getProjectJavaEnumDefinitions() );
+        dataModel.setWorkbenchEnumDefinitions( packageLoader.getPackageWorkbenchDefinitions() );
+        PackageDataModelOracleTestUtils.populateDataModelOracle( mock( Path.class ),
+                                                                 new MockHasImports(),
+                                                                 oracle,
+                                                                 dataModel );
+
+        assertTrue( oracle.isDependentEnum( "Fact",
+                                            "field1",
+                                            "field2" ) );
     }
 
     @Test

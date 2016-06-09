@@ -32,38 +32,49 @@ public class FilteredEnumLists
     /**
      * For simple cases - where a list of values are known based on a field.
      */
-    public String[] getEnumValues(final String factType,
-                                  final String field) {
-        return this.get(factType + "#" + field);
+    public String[] getEnumValues( final String factType,
+                                   final String field ) {
+        return this.get( factType + "#" + field );
     }
 
-    Object getTypeFields(String type, String field) {
-        return loadDataEnumLookupFields().get(type + "#" + field);
+    Object getTypeFields( String type,
+                          String field ) {
+        return loadDataEnumLookupFields().get( type + "#" + field );
     }
 
-    boolean isDependentEnum(final String factType,
-                            final String parentField,
-                            final String childField) {
+    boolean isDependentEnum( final String factType,
+                             final String parentField,
+                             final String childField ) {
         final Map<String, Object> enums = loadDataEnumLookupFields();
-        if (enums.isEmpty()) {
+        if ( enums.isEmpty() ) {
             return false;
         }
         //Check if the childField is a direct descendant of the parentField
         final String key = factType + "#" + childField;
-        if (!enums.containsKey(key)) {
+        if ( !enums.containsKey( key ) ) {
             return false;
         }
 
         //Otherwise follow the dependency chain...
-        final Object _parent = enums.get(key);
-        if (_parent instanceof String) {
-            final String _parentField = (String) _parent;
-            if (_parentField.equals(parentField)) {
+        String _parentField = null;
+        final Object _parent = enums.get( key );
+        if ( _parent instanceof String ) {
+            _parentField = (String) _parent;
+
+        } else if ( _parent instanceof String[] ) {
+            final String[] _parentFields = ( (String[]) _parent );
+            if ( _parentFields.length == 1 ) {
+                _parentField = _parentFields[ 0 ];
+            }
+        }
+
+        if ( _parentField != null ) {
+            if ( _parentField.equals( parentField ) ) {
                 return true;
             } else {
-                return isDependentEnum(factType,
-                                       parentField,
-                                       _parentField);
+                return isDependentEnum( factType,
+                                        parentField,
+                                        _parentField );
             }
         }
         return false;
@@ -73,38 +84,38 @@ public class FilteredEnumLists
      * This is only used by enums that are like Fact.field[something=X] and so on.
      */
     Map<String, Object> loadDataEnumLookupFields() {
-        if (enumLookupFields == null) {
+        if ( enumLookupFields == null ) {
             enumLookupFields = new HashMap<String, Object>();
             final Set<String> keys = keySet();
-            for (String key : keys) {
-                if (key.indexOf('[') != -1) {
-                    int ix = key.indexOf('[');
-                    final String factField = key.substring(0,
-                                                           ix);
-                    final String predicate = key.substring(ix + 1,
-                                                           key.indexOf(']'));
-                    if (predicate.indexOf('=') > -1) {
+            for ( String key : keys ) {
+                if ( key.indexOf( '[' ) != -1 ) {
+                    int ix = key.indexOf( '[' );
+                    final String factField = key.substring( 0,
+                                                            ix );
+                    final String predicate = key.substring( ix + 1,
+                                                            key.indexOf( ']' ) );
+                    if ( predicate.indexOf( '=' ) > -1 ) {
 
-                        final String[] bits = predicate.split(",");
+                        final String[] bits = predicate.split( "," );
                         final StringBuilder typeFieldBuilder = new StringBuilder();
 
-                        for (int i = 0; i < bits.length; i++) {
-                            typeFieldBuilder.append(bits[i].substring(0,
-                                                                      bits[i].indexOf('=')));
-                            if (i != (bits.length - 1)) {
-                                typeFieldBuilder.append(",");
+                        for ( int i = 0; i < bits.length; i++ ) {
+                            typeFieldBuilder.append( bits[ i ].substring( 0,
+                                                                          bits[ i ].indexOf( '=' ) ) );
+                            if ( i != ( bits.length - 1 ) ) {
+                                typeFieldBuilder.append( "," );
                             }
                         }
 
-                        enumLookupFields.put(factField,
-                                             typeFieldBuilder.toString());
+                        enumLookupFields.put( factField,
+                                              typeFieldBuilder.toString() );
                     } else {
-                        final String[] fields = predicate.split(",");
-                        for (int i = 0; i < fields.length; i++) {
-                            fields[i] = fields[i].trim();
+                        final String[] fields = predicate.split( "," );
+                        for ( int i = 0; i < fields.length; i++ ) {
+                            fields[ i ] = fields[ i ].trim();
                         }
-                        enumLookupFields.put(factField,
-                                             fields);
+                        enumLookupFields.put( factField,
+                                              fields );
                     }
                 }
             }
@@ -113,18 +124,18 @@ public class FilteredEnumLists
         return enumLookupFields;
     }
 
-    boolean hasEnums(final String qualifiedFactField) {
+    boolean hasEnums( final String qualifiedFactField ) {
         boolean hasEnums = false;
-        final String key = qualifiedFactField.replace(".",
-                                                      "#");
+        final String key = qualifiedFactField.replace( ".",
+                                                       "#" );
         final String dependentType = key + "[";
-        for (String e : keySet()) {
+        for ( String e : keySet() ) {
             //e.g. Fact.field1
-            if (e.equals(key)) {
+            if ( e.equals( key ) ) {
                 return true;
             }
             //e.g. Fact.field2[field1=val2]
-            if (e.startsWith(dependentType)) {
+            if ( e.startsWith( dependentType ) ) {
                 return true;
             }
         }
