@@ -32,8 +32,8 @@ import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.server.controller.api.model.spec.ContainerSpec;
 import org.kie.workbench.common.screens.server.management.client.container.status.card.ContainerCardPresenter;
-import org.kie.workbench.common.screens.server.management.client.util.IOCUtil;
 import org.slf4j.Logger;
+import org.uberfire.client.util.IOCUtil;
 
 @Dependent
 public class ContainerRemoteStatusPresenter {
