@@ -25,11 +25,11 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
 import org.kie.workbench.common.screens.server.management.client.events.ServerInstanceSelected;
-import org.kie.workbench.common.screens.server.management.client.util.IOCUtil;
 import org.kie.workbench.common.screens.server.management.client.widget.card.CardPresenter;
 import org.kie.workbench.common.screens.server.management.client.widget.card.body.BodyPresenter;
 import org.kie.workbench.common.screens.server.management.client.widget.card.footer.FooterPresenter;
 import org.kie.workbench.common.screens.server.management.client.widget.card.title.LinkTitlePresenter;
+import org.uberfire.client.util.IOCUtil;
 import org.uberfire.mvp.Command;
 
 @Dependent

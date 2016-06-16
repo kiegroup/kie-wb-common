@@ -24,9 +24,9 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.server.api.model.Message;
-import org.kie.workbench.common.screens.server.management.client.util.IOCUtil;
 import org.kie.workbench.common.screens.server.management.client.widget.card.body.notification.NotificationPresenter;
 import org.uberfire.client.mvp.UberView;
+import org.uberfire.client.util.IOCUtil;
 
 import static org.uberfire.commons.validation.PortablePreconditions.*;
 

@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.workbench.common.screens.server.management.client.remote.card.ContainerCardPresenter;
-import org.kie.workbench.common.screens.server.management.client.util.IOCUtil;
+import org.uberfire.client.util.IOCUtil;
 
 @Dependent
 public class RemoteStatusPresenter {
