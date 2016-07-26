@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright 2012 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,19 +16,29 @@
 
 package org.kie.workbench.common.services.datamodeller.core.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.kie.workbench.common.services.datamodeller.core.DataModel;
+import org.kie.workbench.common.services.datamodeller.core.DataObject;
+import org.kie.workbench.common.services.datamodeller.core.JavaEnum;
 import org.kie.workbench.common.services.datamodeller.core.ObjectSource;
 import org.kie.workbench.common.services.datamodeller.core.Visibility;
 import org.kie.workbench.common.services.datamodeller.util.NamingUtils;
-import org.kie.workbench.common.services.datamodeller.core.DataModel;
-import org.kie.workbench.common.services.datamodeller.core.DataObject;
-
-import java.util.*;
 
 public class DataModelImpl implements DataModel {
 
     Map<String, DataObject> dataObjects = new HashMap<String, DataObject>();
 
     Map<String, DataObject> dependencyDataObjects = new HashMap<String, DataObject>();
+
+    Map<String, JavaEnum> javaEnums = new HashMap<String, JavaEnum>();
+
+    Map<String, JavaEnum> dependencyJavaEnums = new HashMap<String, JavaEnum>();
 
     public DataModelImpl() {
         //errai marshalling
@@ -154,20 +164,61 @@ public class DataModelImpl implements DataModel {
     }
 
     @Override
-    public int getId() {
-        return hashCode();
+    public List<DataObject> getExternalClasses() {
+        List<DataObject> result = new ArrayList<DataObject>();
+        result.addAll( dependencyDataObjects.values() );
+        return result;
     }
 
     @Override
-    public List<DataObject> getExternalClasses() {
-        List<DataObject> result = new ArrayList<DataObject>( );
-        result.addAll( dependencyDataObjects.values() );
+    public JavaEnum addJavaEnum( JavaEnum javaEnum ) {
+        return addJavaEnum( javaEnum, ObjectSource.INTERNAL );
+    }
+
+    @Override
+    public JavaEnum addJavaEnum( JavaEnum javaEnum, ObjectSource source ) {
+        switch ( source ) {
+            case INTERNAL:
+                javaEnums.put( javaEnum.getClassName(), javaEnum );
+                break;
+            case DEPENDENCY:
+                dependencyJavaEnums.put( javaEnum.getClassName(), javaEnum );
+        }
+        return javaEnum;
+    }
+
+    @Override
+    public JavaEnum removeJavaEnum( String className ) {
+        return javaEnums.remove( className );
+    }
+
+    @Override
+    public JavaEnum getJavaEnum( String className ) {
+        return javaEnums.get( className );
+    }
+
+    @Override
+    public List<JavaEnum> getJavaEnums() {
+        List<JavaEnum> result = new ArrayList<JavaEnum>();
+        result.addAll( javaEnums.values() );
+        return result;
+    }
+
+    @Override
+    public List<JavaEnum> getDependencyJavaEnums() {
+        List<JavaEnum> result = new ArrayList<JavaEnum>();
+        result.addAll( dependencyJavaEnums.values() );
         return result;
     }
 
     @Override
     public boolean isExternal( String className ) {
         return dependencyDataObjects.containsKey( className );
+    }
+
+    @Override
+    public boolean isEnum( String className ) {
+        return javaEnums.containsKey( className ) || dependencyJavaEnums.containsKey( className );
     }
 
     @Override public boolean equals( Object o ) {

@@ -75,12 +75,7 @@ public class FieldTypeChangeCommand extends AbstractDataModelCommand {
             field.setBag( ObjectPropertyImpl.DEFAULT_PROPERTY_BAG );
         }
 
-        if ( getContext().getHelper().isBaseType( newType ) ) {
-            field.setBaseType( true );
-        } else {
-            // Un-reference former type reference and set the new one
-            field.setBaseType( false );
-            //TODO check if this is still needed
+        if ( !getContext().getHelper().isBaseType( newType ) ) {
             getContext().getHelper().dataObjectUnReferenced( oldType, getDataObject().getClassName() );
             getContext().getHelper().dataObjectReferenced( newType, getDataObject().getClassName() );
         }
@@ -89,5 +84,4 @@ public class FieldTypeChangeCommand extends AbstractDataModelCommand {
                 newValue );
 
     }
-
 }
