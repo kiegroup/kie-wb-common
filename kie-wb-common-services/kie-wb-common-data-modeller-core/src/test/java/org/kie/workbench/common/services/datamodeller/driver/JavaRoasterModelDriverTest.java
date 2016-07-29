@@ -55,10 +55,12 @@ import org.kie.workbench.common.services.datamodeller.core.Annotation;
 import org.kie.workbench.common.services.datamodeller.core.AnnotationDefinition;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
+import org.kie.workbench.common.services.datamodeller.core.JavaEnum;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 import org.kie.workbench.common.services.datamodeller.core.impl.AnnotationImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.DataModelImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.DataObjectImpl;
+import org.kie.workbench.common.services.datamodeller.core.impl.JavaEnumImpl;
 import org.kie.workbench.common.services.datamodeller.driver.impl.JavaRoasterModelDriver;
 import org.kie.workbench.common.services.datamodeller.driver.impl.UpdateInfo;
 import org.kie.workbench.common.services.datamodeller.driver.model.ModelDriverResult;
@@ -100,6 +102,10 @@ public class JavaRoasterModelDriverTest {
 
             for ( DataObject dataObject : dataModelOriginal.getDataObjects() ) {
                 DataModelerAssert.assertEqualsDataObject( dataObject, modelDriverResult.getDataModel().getDataObject( dataObject.getClassName() ) );
+            }
+
+            for ( JavaEnum javaEnum : dataModelOriginal.getJavaEnums() ) {
+                DataModelerAssert.assertEqualsJavaEnum( javaEnum, modelDriverResult.getDataModel().getJavaEnum( javaEnum.getClassName() ) );
             }
 
         } catch ( Exception e ) {
@@ -281,6 +287,7 @@ public class JavaRoasterModelDriverTest {
 
         dataModel.addDataObject( createPojo1() );
         dataModel.addDataObject( createPojo2() );
+        dataModel.addJavaEnum( createInternalEnum1() );
         dataModel.addDataObject( createAnnotationValuesAnnotationTest() );
         dataModel.addDataObject( createClassAnnotationTest() );
         dataModel.addDataObject( createEnumsAnnotationTest() );
@@ -396,6 +403,12 @@ public class JavaRoasterModelDriverTest {
         DataObject pojo2 = createDataObject( "org.kie.workbench.common.services.datamodeller.driver.package2", "Pojo2", null );
 
         return pojo2;
+    }
+
+    private JavaEnum createInternalEnum1() {
+        JavaEnum javaEnum = new JavaEnumImpl( "org.kie.workbench.common.services.datamodeller.driver.package1",
+                "InternalEnum1" );
+        return javaEnum;
     }
 
     private DataObject createAnnotationValuesAnnotationTest( ) {

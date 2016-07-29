@@ -79,7 +79,8 @@ public class AdjustFieldDefaultRelationsCommand extends AbstractDataModelCommand
             removeManyToOne();
             removeElementCollection();
 
-        } else if ( getContext().getHelper().isBaseType( field.getClassName() ) ) {
+        } else if ( getContext().getHelper().isBaseType( field.getClassName() ) ||
+                getContext().getDataModel().isEnum( field.getClassName() ) ) {
 
             //when a java lang type is set relation annotations should be removed.
             removeOneToOne();
