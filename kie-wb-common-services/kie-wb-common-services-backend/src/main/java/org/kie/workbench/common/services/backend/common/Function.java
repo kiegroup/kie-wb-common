@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2016 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.file;
 
-import org.uberfire.java.nio.file.DirectoryStream;
-import org.uberfire.java.nio.file.Path;
+package org.kie.workbench.common.services.backend.common;
 
-/**
- * Filter to match DRL source files
- */
-public class DRLFileFilter implements DirectoryStream.Filter<Path> {
+public interface Function<F, T> {
 
-    @Override
-    public boolean accept( final Path path ) {
-        final String fileName = path.getFileName().toString();
-        return fileName.toLowerCase().endsWith( ".drl" );
-    }
-
+    T apply( F var );
 }

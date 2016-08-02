@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.builder;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -25,6 +26,7 @@ import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
+import com.google.common.base.Charsets;
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
@@ -46,6 +48,8 @@ import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.m2repo.backend.server.ExtendedM2RepoService;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.api.identity.User;
+import org.kie.workbench.common.services.backend.common.Function;
+import org.kie.workbench.common.services.backend.common.Supplier;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.slf4j.Logger;
@@ -56,8 +60,7 @@ import org.uberfire.workbench.events.ResourceChange;
 
 @Service
 @ApplicationScoped
-public class BuildServiceImpl
-        implements BuildService {
+public class BuildServiceImpl implements BuildService {
 
     private static final Logger logger = LoggerFactory.getLogger( BuildServiceImpl.class );
 
@@ -95,28 +98,28 @@ public class BuildServiceImpl
 
     @Override
     public BuildResults build( final Project project ) {
-        try {
-            final BuildResults results = doBuild( project );
-            StringBuffer message = new StringBuffer();
-            message.append( "Build of project '" + project.getProjectName() + "' (requested by " + getIdentifier() + ") completed.\n" );
-            message.append( " Build: " + ( results.getErrorMessages().isEmpty() ? "SUCCESSFUL" : "FAILURE" ) );
+        return build( project, new Supplier<BuildResults>() {
+            @Override
+            public BuildResults get() {
+                Builder builder = cache.assertBuilder( project );
+                return builder.build();
+            }
+        } );
+    }
 
-            BuildMessage infoMsg = new BuildMessage();
-            infoMsg.setLevel( Level.INFO );
-            infoMsg.setText( message.toString() );
+    @Override
+    public BuildResults build( final Project project,
+                               final Path resource,
+                               final String content ) {
+        return build( project, new Supplier<BuildResults>() {
+            @Override
+            public BuildResults get() {
+                final InputStream inputStream = new ByteArrayInputStream( content.getBytes( Charsets.UTF_8 ) );
+                final Builder clone = cache.assertBuilder( project ).clone();
 
-            results.addBuildMessage( 0, infoMsg );
-
-            return results;
-
-        } catch ( Exception e ) {
-            logger.error( e.getMessage(),
-                          e );
-
-            // BZ-1007894: If throwing the exception, an error popup will be displayed, but it's not the expected behavior. The excepted one is to show the errors in problems widget.
-            // So, instead of throwing the exception, a BuildResults instance is produced on the fly to simulate the error in the problems widget.
-            return buildExceptionResults( e, project.getPom().getGav() );
-        }
+                return clone.build( Paths.convert( resource ), inputStream );
+            }
+        } );
     }
 
     @Override
@@ -230,9 +233,49 @@ public class BuildServiceImpl
 
     private BuildResults doBuild( final Project project ) {
         cache.invalidateCache( project );
+
         final Builder builder = cache.assertBuilder( project );
         final BuildResults results = builder.build();
+
         return results;
+    }
+
+    private BuildResults build( final Project project,
+                                final Supplier<BuildResults> buildResultsSupplier ) {
+        try {
+            cache.invalidateCache( project );
+
+            final BuildResults results = buildResultsSupplier.get();
+
+            BuildMessage infoMsg = new BuildMessage();
+
+            infoMsg.setLevel( Level.INFO );
+            infoMsg.setText( buildResultMessage( project, results ).toString() );
+
+            results.addBuildMessage( 0, infoMsg );
+
+            return results;
+
+        } catch ( Exception e ) {
+            logger.error( e.getMessage(),
+                          e );
+            return buildExceptionResults( e, project.getPom().getGav() );
+        }
+    }
+
+    private StringBuffer buildResultMessage( final Project project,
+                                             final BuildResults results ) {
+        StringBuffer message = new StringBuffer();
+
+        message.append( "Build of project '" );
+        message.append( project.getProjectName() );
+        message.append( "' (requested by " );
+        message.append( getIdentifier() );
+        message.append( ") completed.\n" );
+        message.append( " Build: " );
+        message.append( results.getErrorMessages().isEmpty() ? "SUCCESSFUL" : "FAILURE" );
+
+        return message;
     }
 
     @Override
@@ -291,20 +334,44 @@ public class BuildServiceImpl
 
     @Override
     public IncrementalBuildResults updatePackageResource( final Path resource ) {
-        try {
-            IncrementalBuildResults results = new IncrementalBuildResults();
-            final KieProject project = projectService.resolveProject( resource );
-            if ( project == null ) {
-                return results;
+        return updatePackageResource( resource, new Function<Builder, IncrementalBuildResults>() {
+            @Override
+            public IncrementalBuildResults apply( final Builder builder ) {
+                return builder.updateResource( Paths.convert( resource ) );
             }
-            final Builder builder = cache.assertBuilder( project );
-            if ( !builder.isBuilt() ) {
-                throw new IllegalStateException( "Incremental Build requires a full build be completed first." );
-            } else {
-                results = builder.updateResource( Paths.convert( resource ) );
+        } );
+    }
+
+    @Override
+    public IncrementalBuildResults updatePackageResource( final Path resource,
+                                                          final String content ) {
+        return updatePackageResource( resource, new Function<Builder, IncrementalBuildResults>() {
+            @Override
+            public IncrementalBuildResults apply( final Builder builder ) {
+                final InputStream inputStream = new ByteArrayInputStream( content.getBytes( Charsets.UTF_8 ) );
+                final Builder clone = builder.clone();
+
+                return clone.updateResource( Paths.convert( resource ), inputStream );
+            }
+        } );
+    }
+
+    private IncrementalBuildResults updatePackageResource( final Path resource,
+                                                           final Function<Builder, IncrementalBuildResults> updateResourceAndBuild ) {
+        try {
+            final Project project = projectService.resolveProject( resource );
+
+            if ( project == null ) {
+                return new IncrementalBuildResults();
             }
 
-            return results;
+            final Builder builder = cache.assertBuilder( project );
+
+            if ( !builder.isBuilt() ) {
+                throw new IllegalStateException( "Incremental Build requires a full build be completed first." );
+            }
+
+            return updateResourceAndBuild.apply( builder );
 
         } catch ( Exception e ) {
             logger.error( e.getMessage(),
@@ -348,4 +415,7 @@ public class BuildServiceImpl
         }
     }
 
+    LRUBuilderCache getCache() {
+        return cache;
+    }
 }
