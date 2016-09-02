@@ -24,9 +24,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import org.drools.core.rule.TypeMetaInfo;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
+import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.builder.service.BuildValidationHelper;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Project;
@@ -38,6 +41,7 @@ import org.junit.runner.RunWith;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.kie.scanner.KieModuleMetaData;
+import org.kie.workbench.common.services.backend.common.Predicate;
 import org.kie.workbench.common.services.backend.validation.asset.DefaultGenericKieValidator;
 import org.kie.workbench.common.services.backend.whitelist.PackageNameSearchProvider;
 import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListLoader;
@@ -53,11 +57,19 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 
 import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BuilderTest
         extends BuilderTestBase {
+
+    private final Predicate<String> alwaysTrue = new Predicate<String>() {
+        @Override
+        public boolean apply( final String o ) {
+            return true;
+        }
+    };
 
     @Mock
     private PackageNameSearchProvider packageNameSearchProvider;
@@ -67,6 +79,7 @@ public class BuilderTest
     private ProjectImportsService importsService;
     private LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache;
     private LRUPomModelCache pomModelCache;
+    private BuildService buildService;
 
     @BeforeClass
     public static void setupSystemProperties() {
@@ -92,6 +105,7 @@ public class BuilderTest
         importsService = getReference( ProjectImportsService.class );
         dependenciesClassLoaderCache = getReference( LRUProjectDependenciesClassLoaderCache.class );
         pomModelCache = getReference( LRUPomModelCache.class );
+        buildService = getReference( BuildService.class );
     }
 
     @Test
@@ -111,7 +125,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         assertNotNull( builder.getKieContainer() );
     }
@@ -131,7 +146,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         final BuildResults results = builder.build();
 
@@ -160,7 +176,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         final BuildResults results = builder.build();
 
@@ -189,7 +206,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         final BuildResults results = builder.build();
 
@@ -246,7 +264,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         final BuildResults results = builder.build();
 
@@ -277,7 +296,8 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             mock( PackageNameWhiteListService.class ) );
+                                             mock( PackageNameWhiteListService.class ),
+                                             alwaysTrue );
 
         assertNull( builder.getKieContainer() );
 
@@ -308,17 +328,17 @@ public class BuilderTest
                                              new ArrayList<BuildValidationHelper>(),
                                              dependenciesClassLoaderCache,
                                              pomModelCache,
-                                             getPackageNameWhiteListService() );
+                                             getPackageNameWhiteListService(),
+                                             alwaysTrue );
 
         assertNotNull( builder.getKieContainer() );
 
         //Validate Rule excluding Global definition
-        final DefaultGenericKieValidator validator = new DefaultGenericKieValidator( ioService,
-                                                                                     projectService );
+        final DefaultGenericKieValidator validator = new DefaultGenericKieValidator( projectService, buildService );
         final URL urlToValidate = this.getClass().getResource( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" );
         final org.uberfire.java.nio.file.Path pathToValidate = p.getPath( urlToValidate.toURI() );
         final List<ValidationMessage> validationMessages = validator.validate( Paths.convert( pathToValidate ),
-                                                                               this.getClass().getResourceAsStream( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" ) );
+                                                                               Resources.toString( urlToValidate, Charsets.UTF_8 ) );
         assertNotNull( validationMessages );
         assertEquals( 0,
                       validationMessages.size() );
@@ -339,5 +359,4 @@ public class BuilderTest
                                                                                     ioService ),
                                                     mock( PackageNameWhiteListSaver.class ) );
     }
-
 }

@@ -113,7 +113,8 @@ public class LRUBuilderCache extends LRUCache<Project, Builder> {
                                    buildValidationHelpers,
                                    dependenciesClassLoaderCache,
                                    pomModelCache,
-                                   packageNameWhiteListService );
+                                   packageNameWhiteListService,
+                                   null );
 
             setEntry( project,
                       builder );
