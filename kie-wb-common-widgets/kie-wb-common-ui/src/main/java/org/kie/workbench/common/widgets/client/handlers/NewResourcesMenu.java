@@ -32,7 +32,6 @@ import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.jboss.errai.ioc.client.container.IOCBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
-import org.jboss.errai.security.shared.api.identity.User;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -45,6 +44,7 @@ public class NewResourcesMenu {
 
     private SyncBeanManager iocBeanManager;
     private NewResourcePresenter newResourcePresenter;
+    private ProjectContext projectContext;
 
     private final List<MenuItem> items = new ArrayList<MenuItem>();
     private final Map<NewResourceHandler, MenuItem> newResourceHandlers = new HashMap<NewResourceHandler, MenuItem>();
@@ -55,10 +55,13 @@ public class NewResourcesMenu {
 
     @Inject
     public NewResourcesMenu( final SyncBeanManager iocBeanManager,
-                             final NewResourcePresenter newResourcePresenter ) {
+                             final NewResourcePresenter newResourcePresenter,
+                             final ProjectContext projectContext ) {
         this.iocBeanManager = iocBeanManager;
         this.newResourcePresenter = newResourcePresenter;
+        this.projectContext = projectContext;
     }
+
     private MenuItem projectMenuItem;
 
     @PostConstruct
@@ -81,7 +84,7 @@ public class NewResourcesMenu {
 
     private void addMenuItem( final NewResourceHandler newResourceHandler ) {
 
-        if ( newResourceHandler.canCreate( ) ) {
+        if ( newResourceHandler.canCreate() ) {
 
             final MenuItem menuItem = getMenuItem( newResourceHandler );
 
@@ -133,10 +136,14 @@ public class NewResourcesMenu {
     }
 
     public List<MenuItem> getMenuItems() {
+        enableMenuItemsForContext();
+
         return items;
     }
 
     public List<MenuItem> getMenuItemsWithoutProject() {
+        enableMenuItemsForContext();
+
         if ( projectMenuItem != null && items.contains( projectMenuItem ) ) {
             return items.subList( 1,
                                   items.size() );
@@ -145,21 +152,17 @@ public class NewResourcesMenu {
         }
     }
 
+    @SuppressWarnings("unused")
     public void onProjectContextChanged( @Observes final ProjectContextChangeEvent event ) {
-        final ProjectContext context = new ProjectContext();
-        context.setActiveOrganizationalUnit( event.getOrganizationalUnit() );
-        context.setActiveRepository( event.getRepository() );
-        context.setActiveProject( event.getProject() );
-        context.setActivePackage( event.getPackage() );
-        enableNewResourceHandlers( context );
+        enableMenuItemsForContext();
     }
 
-    private void enableNewResourceHandlers( final ProjectContext context ) {
+    void enableMenuItemsForContext() {
         for ( Map.Entry<NewResourceHandler, MenuItem> entry : this.newResourceHandlers.entrySet() ) {
             final NewResourceHandler handler = entry.getKey();
             final MenuItem menuItem = entry.getValue();
 
-            handler.acceptContext( context,
+            handler.acceptContext( projectContext,
                                    new Callback<Boolean, Void>() {
                                        @Override
                                        public void onFailure( Void reason ) {

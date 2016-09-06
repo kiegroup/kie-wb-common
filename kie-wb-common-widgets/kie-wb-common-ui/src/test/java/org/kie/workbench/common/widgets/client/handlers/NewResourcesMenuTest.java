@@ -59,6 +59,9 @@ public class NewResourcesMenuTest {
     @Mock
     private Command command;
 
+    @Mock
+    private ProjectContext projectContext;
+
     @Before
     public void setup() {
         when( iocBeanManager.lookupBeans( NewResourceHandler.class ) ).thenReturn( new ArrayList<IOCBeanDef<NewResourceHandler>>() {{
@@ -70,7 +73,8 @@ public class NewResourcesMenuTest {
         when( handler.getCommand( newResourcePresenter ) ).thenReturn( command );
 
         menu = new NewResourcesMenu( iocBeanManager,
-                                     newResourcePresenter );
+                                     newResourcePresenter,
+                                     projectContext );
 
         menu.setup();
     }
@@ -129,8 +133,15 @@ public class NewResourcesMenuTest {
                                            any( Callback.class ) );
 
         menu.onProjectContextChanged( event );
+        verify( handler,
+                times( 1 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
 
         final List<MenuItem> menus = menu.getMenuItems();
+        verify( handler,
+                times( 2 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
+
         final MenuItem mi = menus.get( 0 );
         assertTrue( mi.isEnabled() );
     }
@@ -151,10 +162,37 @@ public class NewResourcesMenuTest {
                                            any( Callback.class ) );
 
         menu.onProjectContextChanged( event );
+        verify( handler,
+                times( 1 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
 
         final List<MenuItem> menus = menu.getMenuItems();
+        verify( handler,
+                times( 2 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
+
         final MenuItem mi = menus.get( 0 );
         assertFalse( mi.isEnabled() );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void getMenuItemsSynchronizesEnabledState() {
+        menu.getMenuItems();
+
+        verify( handler,
+                times( 1 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void getMenuItemsWithoutProjectSynchronizesEnabledState() {
+        menu.getMenuItemsWithoutProject();
+
+        verify( handler,
+                times( 1 ) ).acceptContext( any( ProjectContext.class ),
+                                            any( Callback.class ) );
     }
 
 }
