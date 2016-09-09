@@ -139,7 +139,7 @@ public class WildflyDataSourceProvider
         }
 
         WildflyDataSourceDef wfDataSourceDef = buildWFDataSource( deploymentId,
-                jndi, dataSourceDef, driverDeploymentInfo.getDeploymentId() );
+                jndi, dataSourceDef, driverDeploymentInfo.getDriverDeploymentId() );
 
         dataSourceMgmtClient.createDataSource( wfDataSourceDef );
         return new DataSourceDeploymentInfo( deploymentId, true, dataSourceDef.getUuid(), jndi, false );
@@ -154,7 +154,7 @@ public class WildflyDataSourceProvider
     }
 
     /**
-     * Deletes a data source in the Widlfy server.
+     * Deletes a data source in the Wildfy server.
      *
      * @param uuid Identifier of the data source definition to be deleted.
      *

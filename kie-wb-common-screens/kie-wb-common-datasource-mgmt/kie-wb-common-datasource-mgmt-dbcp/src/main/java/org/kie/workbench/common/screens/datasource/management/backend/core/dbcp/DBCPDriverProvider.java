@@ -62,7 +62,7 @@ public class DBCPDriverProvider
         if ( uri == null ) {
             throw new Exception( "Unable to get driver library artifact for driver: " + driverDef );
         }
-        final DriverDeploymentInfo deploymentInfo = new DriverDeploymentInfo(
+        final DriverDeploymentInfo deploymentInfo = new DriverDeploymentInfo( driverDef.getUuid(),
                 driverDef.getUuid(), true, driverDef.getUuid(), driverDef.getDriverClass() );
         deployedUris.put( driverDef.getUuid(), uri );
         deploymentInfos.put( driverDef.getUuid(), deploymentInfo );
