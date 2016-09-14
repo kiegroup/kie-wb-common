@@ -30,6 +30,8 @@ import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Toggle;
+import org.jboss.errai.bus.client.api.ClientMessageBus;
+import org.jboss.errai.bus.client.framework.ClientMessageBusImpl;
 import org.kie.workbench.common.screens.explorer.client.resources.i18n.ProjectExplorerConstants;
 import org.kie.workbench.common.screens.explorer.client.utils.URLHelper;
 import org.uberfire.backend.vfs.Path;
@@ -44,14 +46,16 @@ public class ExplorerMenuViewImpl
     @Inject
     private ProjectScreenMenuItem projectScreenMenuItem;
 
-    private final AnchorListItem businessView = new AnchorListItem( ProjectExplorerConstants.INSTANCE.projectView() );
-    private final AnchorListItem techView = new AnchorListItem( ProjectExplorerConstants.INSTANCE.repositoryView() );
-    private final AnchorListItem treeExplorer = new AnchorListItem( ProjectExplorerConstants.INSTANCE.showAsFolders() );
-    private final AnchorListItem breadcrumbExplorer = new AnchorListItem( ProjectExplorerConstants.INSTANCE.showAsLinks() );
-    private final AnchorListItem showTagFilter = new AnchorListItem( ProjectExplorerConstants.INSTANCE.enableTagFiltering() );
-    private final AnchorListItem archiveRepository = new AnchorListItem( ProjectExplorerConstants.INSTANCE.downloadRepository() );
+    @Inject
+    private ClientMessageBus clientMessageBus;
 
-    private final AnchorListItem archiveProject = new AnchorListItem( ProjectExplorerConstants.INSTANCE.downloadProject() );
+    private final AnchorListItem businessView = getWidgets( ProjectExplorerConstants.INSTANCE.projectView() );
+    private final AnchorListItem techView = getWidgets( ProjectExplorerConstants.INSTANCE.repositoryView() );
+    private final AnchorListItem treeExplorer = getWidgets( ProjectExplorerConstants.INSTANCE.showAsFolders() );
+    private final AnchorListItem breadcrumbExplorer = getWidgets( ProjectExplorerConstants.INSTANCE.showAsLinks() );
+    private final AnchorListItem showTagFilter = getWidgets( ProjectExplorerConstants.INSTANCE.enableTagFiltering() );
+    private final AnchorListItem archiveRepository = getWidgets( ProjectExplorerConstants.INSTANCE.downloadRepository() );
+    private final AnchorListItem archiveProject = getWidgets( ProjectExplorerConstants.INSTANCE.downloadProject() );
 
     private ExplorerMenu presenter;
 
@@ -121,9 +125,17 @@ public class ExplorerMenuViewImpl
 
     @Override
     public void archive( Path path ) {
-        Window.open( URLHelper.getDownloadUrl( path ),
+        Window.open( getDownloadUrl( path ),
                      "downloading",
                      "resizable=no,scrollbars=yes,status=no" );
+    }
+
+    protected String getDownloadUrl( final Path path ) {
+        return URLHelper.getDownloadUrl( path, getClientId() );
+    }
+
+    protected String getClientId() {
+        return ((ClientMessageBusImpl) clientMessageBus ).getClientId();
     }
 
     @Override
@@ -247,5 +259,9 @@ public class ExplorerMenuViewImpl
                 } )
                 .endMenu()
                 .build();
+    }
+
+    protected AnchorListItem getWidgets( final String text ) {
+        return new AnchorListItem( text );
     }
 }

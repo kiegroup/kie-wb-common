@@ -29,6 +29,7 @@ import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.impl.OrganizationalUnitImpl;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.impl.git.GitRepository;
+import org.jboss.errai.bus.client.framework.ClientMessageBusImpl;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Before;
@@ -70,8 +71,6 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
-;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class BaseViewPresenterTest {
@@ -153,6 +152,10 @@ public class BaseViewPresenterTest {
         protected boolean isViewVisible() {
 
             return isPresenterVisible;
+        }
+
+        protected String getClientId() {
+            return "123";
         }
     };
 
@@ -370,4 +373,26 @@ public class BaseViewPresenterTest {
         } ).when( deletePopUpPresenterMock ).show( commandCaptor.capture() );
     }
 
+    public void testGetDownloadUrl() throws Exception {
+        assertEquals( "archive?clientId=123&attachmentPath=", presenter.getDownloadUrl( path() ) );
+    }
+
+    private Path path() {
+        return new Path() {
+            @Override
+            public String getFileName() {
+                return "";
+            }
+
+            @Override
+            public String toURI() {
+                return "";
+            }
+
+            @Override
+            public int compareTo( final Path o ) {
+                return 0;
+            }
+        };
+    }
 }
