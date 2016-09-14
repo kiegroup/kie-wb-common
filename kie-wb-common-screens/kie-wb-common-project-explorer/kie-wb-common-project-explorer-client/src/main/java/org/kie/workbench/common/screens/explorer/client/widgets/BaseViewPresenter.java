@@ -35,7 +35,9 @@ import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.social.ProjectEventType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Repository;
+import org.jboss.errai.bus.client.api.ClientMessageBus;
 import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.framework.ClientMessageBusImpl;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
@@ -122,6 +124,9 @@ public abstract class BaseViewPresenter
 
     @Inject
     private ProjectContext context;
+
+    @Inject
+    private ClientMessageBus clientMessageBus;
 
     private boolean isOnLoading = false;
     private BaseViewImpl baseView;
@@ -350,10 +355,18 @@ public abstract class BaseViewPresenter
         if ( folderItem.getItem() instanceof Path ) {
             final Path path = (Path) folderItem.getItem();
 
-            Window.open( URLHelper.getDownloadUrl( path ),
+            Window.open( getDownloadUrl( path ),
                          "downloading",
                          "resizable=no,scrollbars=yes,status=no" );
         }
+    }
+
+    protected String getDownloadUrl( final Path path ) {
+        return URLHelper.getDownloadUrl( path, getClientId() );
+    }
+
+    protected String getClientId() {
+        return ( (ClientMessageBusImpl) clientMessageBus ).getClientId();
     }
 
     private Path getFolderItemPath( final FolderItem folderItem ) {
