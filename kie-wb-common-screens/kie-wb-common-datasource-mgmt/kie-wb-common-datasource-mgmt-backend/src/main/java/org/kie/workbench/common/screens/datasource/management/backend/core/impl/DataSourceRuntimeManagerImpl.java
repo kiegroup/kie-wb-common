@@ -136,7 +136,8 @@ public class DataSourceRuntimeManagerImpl
             DriverDeploymentInfo deploymentInfo = driverProvider.getDeploymentInfo( uuid );
             if ( deploymentInfo != null && driverDeploymentCache.get( deploymentInfo ) != null ) {
                 DriverDeploymentInfo updatedInfo = new DriverDeploymentInfo( deploymentInfo.getDeploymentId(),
-                        deploymentInfo.isManaged(), deploymentInfo.getUuid(), deploymentInfo.getDriverClass() );
+                        deploymentInfo.getDriverDeploymentId(), deploymentInfo.isManaged(), deploymentInfo.getUuid(),
+                        deploymentInfo.getDriverClass() );
                 updatedInfo.getDependants().addAll( driverDeploymentCache.get( deploymentInfo ).getDependants() );
                 deploymentInfo = updatedInfo;
             }
