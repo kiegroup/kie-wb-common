@@ -18,12 +18,10 @@ package org.kie.workbench.common.services.backend.validation.asset;
 
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.test.TestFileSystem;
@@ -31,12 +29,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.io.IOService;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -49,12 +45,14 @@ public class ValidatorTest {
 
     private TestFileSystem testFileSystem;
 
-    private Validator validator;
+    private DefaultGenericKieValidator validator;
+    private ValidatorBuildService validatorBuildService;
 
     @Before
     public void setUp() throws Exception {
         testFileSystem = new TestFileSystem();
-        validator = new Validator( projectService(), buildService() );
+        validatorBuildService = testFileSystem.getReference( ValidatorBuildService.class );
+        validator = new DefaultGenericKieValidator( validatorBuildService );
     }
 
     @After
@@ -114,7 +112,7 @@ public class ValidatorTest {
     }
 
     @Test
-    public void testValidateWithAInalidJavaFile() throws Throwable {
+    public void testValidateWithAInvalidJavaFile() throws Throwable {
         final Path path1 = path( "/GuvnorM2RepoDependencyExample1/src/main/java/org/kie/workbench/common/services/builder/tests/test1/Bean.java" );
         final String content = "package org.kie.workbench.common.services.builder.tests.test1;\n" +
                 "\n" +
@@ -143,7 +141,7 @@ public class ValidatorTest {
         Path path = path( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" );
         ValidationMessage errorMessage = errorMessage( path( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule1.drl" ) );
 
-        assertFalse( validator.isValidatPath( path, errorMessage ) );
+        assertFalse( validator.isValidPath( path, errorMessage ) );
     }
 
     @Test
@@ -151,7 +149,7 @@ public class ValidatorTest {
         Path path = path( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" );
         ValidationMessage errorMessage = errorMessage( path );
 
-        assertTrue( validator.isValidatPath( path, errorMessage ) );
+        assertTrue( validator.isValidPath( path, errorMessage ) );
     }
 
     @Test
@@ -159,13 +157,7 @@ public class ValidatorTest {
         Path path = path( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" );
         ValidationMessage errorMessage = errorMessage( null );
 
-        assertTrue( validator.isValidatPath( path, errorMessage ) );
-    }
-
-    private ArrayList<ValidationMessage> validationMessages( final ValidationMessage errorMessage ) {
-        return new ArrayList<ValidationMessage>() {{
-            add( errorMessage );
-        }};
+        assertTrue( validator.isValidPath( path, errorMessage ) );
     }
 
     private ValidationMessage errorMessage( Path path ) {
@@ -177,15 +169,4 @@ public class ValidatorTest {
         return Paths.convert( testFileSystem.fileSystemProvider.getPath( urlToValidate.toURI() ) );
     }
 
-    private BuildService buildService() {
-        return testFileSystem.getReference( BuildService.class );
-    }
-
-    private KieProjectService projectService() {
-        return testFileSystem.getReference( KieProjectService.class );
-    }
-
-    private IOService ioService() {
-        return testFileSystem.getReference( IOService.class );
-    }
 }

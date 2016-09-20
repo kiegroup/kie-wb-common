@@ -80,6 +80,7 @@ public class BuilderTest
     private LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache;
     private LRUPomModelCache pomModelCache;
     private BuildService buildService;
+    private DefaultGenericKieValidator validator;
 
     @BeforeClass
     public static void setupSystemProperties() {
@@ -106,6 +107,7 @@ public class BuilderTest
         dependenciesClassLoaderCache = getReference( LRUProjectDependenciesClassLoaderCache.class );
         pomModelCache = getReference( LRUPomModelCache.class );
         buildService = getReference( BuildService.class );
+        validator = getReference( DefaultGenericKieValidator.class );
     }
 
     @Test
@@ -334,7 +336,6 @@ public class BuilderTest
         assertNotNull( builder.getKieContainer() );
 
         //Validate Rule excluding Global definition
-        final DefaultGenericKieValidator validator = new DefaultGenericKieValidator( projectService, buildService );
         final URL urlToValidate = this.getClass().getResource( "/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl" );
         final org.uberfire.java.nio.file.Path pathToValidate = p.getPath( urlToValidate.toURI() );
         final List<ValidationMessage> validationMessages = validator.validate( Paths.convert( pathToValidate ),
