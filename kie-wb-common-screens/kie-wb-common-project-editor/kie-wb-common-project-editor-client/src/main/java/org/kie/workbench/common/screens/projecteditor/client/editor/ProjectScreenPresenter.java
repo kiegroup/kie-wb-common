@@ -56,6 +56,7 @@ import org.jboss.errai.common.client.util.CreationalCallback;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
 import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
+import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.screens.projecteditor.client.editor.extension.BuildOptionExtension;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
@@ -102,6 +103,7 @@ import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
+import org.uberfire.workbench.events.ResourceUpdatedEvent;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
@@ -114,7 +116,8 @@ import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopu
 public class ProjectScreenPresenter
         implements ProjectScreenView.Presenter {
 
-    private ProjectScreenView view;
+    private ProjectScreenView         view;
+    private User user;
     private Caller<ValidationService> validationService;
 
     private Caller<ProjectScreenService> projectScreenService;
@@ -193,6 +196,7 @@ public class ProjectScreenPresenter
                                    final ProjectContext workbenchContext,
                                    final Caller<ProjectScreenService> projectScreenService,
                                    final Caller<BuildService> buildServiceCaller,
+                                   final User user,
                                    final Event<BuildResults> buildResultsEvent,
                                    final Event<NotificationEvent> notificationEvent,
                                    final Event<ChangeTitleWidgetEvent> changeTitleWidgetEvent,
@@ -206,6 +210,7 @@ public class ProjectScreenPresenter
                                    final Event<ForceUnlockEvent> forceLockReleaseEvent,
                                    final ConflictingRepositoriesPopup conflictingRepositoriesPopup ) {
         this.view = view;
+        this.user = user;
         view.setPresenter( this );
         view.setDeployToRuntimeSetting( ApplicationPreferences.getBooleanPref( "support.runtime.deploy" ) );
         view.setGAVCheckDisabledSetting( ApplicationPreferences.getBooleanPref( ProjectRepositoryResolver.CONFLICTING_GAV_CHECK_DISABLED ) );
@@ -252,6 +257,21 @@ public class ProjectScreenPresenter
                 return ( title == null ) ? ProjectScreenPresenter.this.getTitle() : title;
             }
         };
+    }
+
+
+    /**
+     * This is in no way a permanent fix for the refresh issue.
+     * We need something reusable for all the multi file editors we have and will have.
+     */
+    void onResourceUpdated( final @Observes ResourceUpdatedEvent resourceUpdatedEvent ) {
+        if ( resourceUpdatedEvent.getSessionInfo().getIdentity().equals( user ) ) {
+            Path path = resourceUpdatedEvent.getPath();
+            if ( path
+                    .equals( pathToPomXML ) ) {
+                reloadRunnable.run();
+            }
+        }
     }
 
     private void configureBuildExtensions( final Project project,
