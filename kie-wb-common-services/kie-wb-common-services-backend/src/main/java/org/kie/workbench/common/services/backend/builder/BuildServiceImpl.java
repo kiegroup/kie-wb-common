@@ -17,7 +17,6 @@
 package org.kie.workbench.common.services.backend.builder;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +25,6 @@ import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import com.google.common.base.Charsets;
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
@@ -103,21 +101,6 @@ public class BuildServiceImpl implements BuildService {
             public BuildResults get() {
                 Builder builder = cache.assertBuilder( project );
                 return builder.build();
-            }
-        } );
-    }
-
-    @Override
-    public BuildResults build( final Project project,
-                               final Path resource,
-                               final String content ) {
-        return build( project, new Supplier<BuildResults>() {
-            @Override
-            public BuildResults get() {
-                final InputStream inputStream = new ByteArrayInputStream( content.getBytes( Charsets.UTF_8 ) );
-                final Builder clone = cache.assertBuilder( project ).clone();
-
-                return clone.build( Paths.convert( resource ), inputStream );
             }
         } );
     }
@@ -216,7 +199,8 @@ public class BuildServiceImpl implements BuildService {
     /**
      * When an exception is produced by the builder service, this method is uses to generate an instance of
      * <code>org.guvnor.common.services.project.builder.model.BuildResults</code> in generated with the exception details.
-     * @param e The error exception.
+     * @param e
+     *         The error exception.
      * @param gav
      * @return An instance of BuildResults with the exception details.
      */
@@ -338,20 +322,6 @@ public class BuildServiceImpl implements BuildService {
             @Override
             public IncrementalBuildResults apply( final Builder builder ) {
                 return builder.updateResource( Paths.convert( resource ) );
-            }
-        } );
-    }
-
-    @Override
-    public IncrementalBuildResults updatePackageResource( final Path resource,
-                                                          final String content ) {
-        return updatePackageResource( resource, new Function<Builder, IncrementalBuildResults>() {
-            @Override
-            public IncrementalBuildResults apply( final Builder builder ) {
-                final InputStream inputStream = new ByteArrayInputStream( content.getBytes( Charsets.UTF_8 ) );
-                final Builder clone = builder.clone();
-
-                return clone.updateResource( Paths.convert( resource ), inputStream );
             }
         } );
     }

@@ -204,7 +204,7 @@ public class BuildServiceImplTest {
     public void testBuildThatDoesNotUpdateTheCache() throws Exception {
         final Path path = path();
 
-        service.build( projectService.resolveProject( path ), path, content() );
+        service.build( projectService.resolveProject( path ) );
 
         assertTrue( cachedFileSystemDoesNotChange() );
     }
@@ -214,7 +214,7 @@ public class BuildServiceImplTest {
         final Path path = path();
 
         service.build( projectService.resolveProject( path ) );
-        service.updatePackageResource( path, content() );
+        service.updatePackageResource( path );
 
         assertTrue( cachedFileSystemDoesNotChange() );
     }
