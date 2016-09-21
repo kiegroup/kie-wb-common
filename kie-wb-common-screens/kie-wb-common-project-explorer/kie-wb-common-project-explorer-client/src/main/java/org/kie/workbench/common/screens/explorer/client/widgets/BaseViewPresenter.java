@@ -157,6 +157,8 @@ public abstract class BaseViewPresenter
 
         if ( activeOptions.isHeaderNavigationHidden() ) {
             baseView.hideHeaderNavigator();
+        } else {
+            baseView.showHeaderNavigator();
         }
 
         if ( activeOptions.canShowTag() ) {
@@ -187,14 +189,16 @@ public abstract class BaseViewPresenter
         explorerService.call( new RemoteCallback<FolderListing>() {
             @Override
             public void callback( FolderListing fl ) {
-                baseView.getExplorer().loadContent( fl );
+                baseView.getExplorer()
+                        .loadContent( fl );
             }
-        } ).getFolderListing( activeContextItems.getActiveOrganizationalUnit(),
-                              activeContextItems.getActiveRepository(),
-                              activeContextItems.getActiveBranch(),
-                              activeContextItems.getActiveProject(),
-                              item,
-                              activeOptions.getOptions() );
+        } )
+                .getFolderListing( activeContextItems.getActiveOrganizationalUnit(),
+                                   activeContextItems.getActiveRepository(),
+                                   activeContextItems.getActiveBranch(),
+                                   activeContextItems.getActiveProject(),
+                                   item,
+                                   activeOptions.getOptions() );
     }
 
     public FolderListing getActiveContent() {
@@ -213,7 +217,9 @@ public abstract class BaseViewPresenter
                                               activeContextManager.refresh();
                                           }
                                       },
-                                      new HasBusyIndicatorDefaultErrorCallback( baseView ) ).deleteItem( folderItem, comment );
+                                      new HasBusyIndicatorDefaultErrorCallback( baseView ) )
+                        .deleteItem( folderItem,
+                                     comment );
             }
         } );
     }
@@ -274,7 +280,8 @@ public abstract class BaseViewPresenter
             public boolean error( final Message message,
                                   final Throwable throwable ) {
                 renamePopupView.hide();
-                return super.error( message, throwable );
+                return super.error( message,
+                                    throwable );
             }
         };
     }
@@ -337,7 +344,8 @@ public abstract class BaseViewPresenter
             public boolean error( final Message message,
                                   final Throwable throwable ) {
                 copyPopupView.hide();
-                return super.error( message, throwable );
+                return super.error( message,
+                                    throwable );
             }
         };
     }
@@ -367,9 +375,11 @@ public abstract class BaseViewPresenter
     }
 
     private void loadContent( final FolderListing content ) {
-        if ( !activeContextItems.getActiveContent().equals( content ) ) {
+        if ( !activeContextItems.getActiveContent()
+                .equals( content ) ) {
             setActiveContent( content );
-            baseView.getExplorer().loadContent( content );
+            baseView.getExplorer()
+                    .loadContent( content );
         }
     }
 
@@ -386,7 +396,8 @@ public abstract class BaseViewPresenter
             currentTag = null;
         }
         activeContentTags.clear();
-        for ( FolderItem item : activeContextItems.getActiveContent().getContent() ) {
+        for ( FolderItem item : activeContextItems.getActiveContent()
+                .getContent() ) {
             if ( item.getTags() != null ) {
                 activeContentTags.addAll( item.getTags() );
             }
@@ -443,7 +454,8 @@ public abstract class BaseViewPresenter
 
         setActiveContent( content.getFolderListing() );
 
-        baseView.getExplorer().clear();
+        baseView.getExplorer()
+                .clear();
         activeContextItems.setRepositories( content.getRepositories() );
         baseView.setContent( content.getOrganizationalUnits(),
                              activeContextItems.getActiveOrganizationalUnit(),
@@ -481,7 +493,8 @@ public abstract class BaseViewPresenter
     public void onOrganizationalUnitSelected( final OrganizationalUnit organizationalUnit ) {
         if ( Utils.hasOrganizationalUnitChanged( organizationalUnit,
                                                  activeContextItems.getActiveOrganizationalUnit() ) ) {
-            baseView.getExplorer().clear();
+            baseView.getExplorer()
+                    .clear();
             activeContextManager.initActiveContext( organizationalUnit );
         }
     }
@@ -489,7 +502,8 @@ public abstract class BaseViewPresenter
     public void onRepositorySelected( final Repository repository ) {
         if ( Utils.hasRepositoryChanged( repository,
                                          activeContextItems.getActiveRepository() ) ) {
-            baseView.getExplorer().clear();
+            baseView.getExplorer()
+                    .clear();
             activeContextManager.initActiveContext( activeContextItems.getActiveOrganizationalUnit(),
                                                     repository,
                                                     repository.getDefaultBranch() );
@@ -500,7 +514,8 @@ public abstract class BaseViewPresenter
     public void onBranchSelected( final String branch ) {
         if ( Utils.hasBranchChanged( branch,
                                      activeContextItems.getActiveBranch() ) ) {
-            baseView.getExplorer().clear();
+            baseView.getExplorer()
+                    .clear();
             activeContextManager.initActiveContext( activeContextItems.getActiveOrganizationalUnit(),
                                                     activeContextItems.getActiveRepository(),
                                                     branch );
@@ -510,7 +525,8 @@ public abstract class BaseViewPresenter
     public void onProjectSelected( final Project project ) {
         if ( Utils.hasProjectChanged( project,
                                       activeContextItems.getActiveProject() ) ) {
-            baseView.getExplorer().clear();
+            baseView.getExplorer()
+                    .clear();
             activeContextManager.initActiveContext( activeContextItems.getActiveOrganizationalUnit(),
                                                     activeContextItems.getActiveRepository(),
                                                     activeContextItems.getActiveBranch(),
@@ -519,7 +535,8 @@ public abstract class BaseViewPresenter
     }
 
     public void onActiveFolderItemSelected( final FolderItem item ) {
-        if ( !isOnLoading && Utils.hasFolderItemChanged( item, activeContextItems.getActiveFolderItem() ) ) {
+        if ( !isOnLoading && Utils.hasFolderItemChanged( item,
+                                                         activeContextItems.getActiveFolderItem() ) ) {
             activeContextItems.setActiveFolderItem( item );
             activeContextItems.fireContextChangeEvent();
 
@@ -535,12 +552,13 @@ public abstract class BaseViewPresenter
                                           isOnLoading = false;
                                       }
                                   },
-                                  new HasBusyIndicatorDefaultErrorCallback( baseView ) ).getFolderListing( activeContextItems.getActiveOrganizationalUnit(),
-                                                                                                           activeContextItems.getActiveRepository(),
-                                                                                                           activeContextItems.getActiveBranch(),
-                                                                                                           activeContextItems.getActiveProject(),
-                                                                                                           item,
-                                                                                                           activeOptions.getOptions() );
+                                  new HasBusyIndicatorDefaultErrorCallback( baseView ) )
+                    .getFolderListing( activeContextItems.getActiveOrganizationalUnit(),
+                                       activeContextItems.getActiveRepository(),
+                                       activeContextItems.getActiveBranch(),
+                                       activeContextItems.getActiveProject(),
+                                       item,
+                                       activeOptions.getOptions() );
         }
     }
 
@@ -549,7 +567,8 @@ public abstract class BaseViewPresenter
         if ( _item == null ) {
             return;
         }
-        if ( folderItem.getType().equals( FolderItemType.FILE ) && _item instanceof Path ) {
+        if ( folderItem.getType()
+                .equals( FolderItemType.FILE ) && _item instanceof Path ) {
             placeManager.goTo( (Path) _item );
         } else {
             onActiveFolderItemSelected( folderItem );
@@ -579,13 +598,20 @@ public abstract class BaseViewPresenter
         currentTag = tag;
         List<FolderItem> filteredItems = new ArrayList<FolderItem>();
 
-        for ( FolderItem item : activeContextItems.getActiveContent().getContent() ) {
-            if ( tag == null || item.getTags().contains( tag ) || item.getType().equals( FolderItemType.FOLDER ) ) {
+        for ( FolderItem item : activeContextItems.getActiveContent()
+                .getContent() ) {
+            if ( tag == null || item.getTags()
+                    .contains( tag ) || item.getType()
+                    .equals( FolderItemType.FOLDER ) ) {
                 filteredItems.add( item );
             }
         }
 
-        FolderListing filteredContent = new FolderListing( activeContextItems.getActiveContent().getItem(), filteredItems, activeContextItems.getActiveContent().getSegments() );
+        FolderListing filteredContent = new FolderListing( activeContextItems.getActiveContent()
+                                                                   .getItem(),
+                                                           filteredItems,
+                                                           activeContextItems.getActiveContent()
+                                                                   .getSegments() );
         baseView.renderItems( filteredContent );
     }
 
@@ -611,11 +637,13 @@ public abstract class BaseViewPresenter
 
     // Refresh when a lock status changes has occurred, if it affects the active package
     public void onLockStatusChange( @Observes final LockInfo lockInfo ) {
-        refresh( lockInfo.getFile(), true );
+        refresh( lockInfo.getFile(),
+                 true );
     }
 
     private void refresh( final Path resource ) {
-        refresh( resource, false );
+        refresh( resource,
+                 false );
     }
 
     private void refresh( final Path resource,
@@ -654,10 +682,12 @@ public abstract class BaseViewPresenter
         vfsService.call( new RemoteCallback<Path>() {
             @Override
             public void callback( Path path ) {
-                openBestSuitedScreen( event.getEventType(), path );
+                openBestSuitedScreen( event.getEventType(),
+                                      path );
                 setupActiveContextFor( path );
             }
-        } ).get( event.getUri() );
+        } )
+                .get( event.getUri() );
     }
 
     private void openBestSuitedScreen( final String eventType,
@@ -692,7 +722,8 @@ public abstract class BaseViewPresenter
     }
 
     private boolean isProjectEvent( final String eventType ) {
-        return ProjectEventType.NEW_PROJECT.name().equals( eventType );
+        return ProjectEventType.NEW_PROJECT.name()
+                .equals( eventType );
     }
 
     private void setupActiveContextFor( final Path path ) {
@@ -702,10 +733,12 @@ public abstract class BaseViewPresenter
             public void callback( final URIStructureExplorerModel model ) {
                 activeContextManager.initActiveContext( model.getOrganizationalUnit(),
                                                         model.getRepository(),
-                                                        model.getRepository().getDefaultBranch(),
+                                                        model.getRepository()
+                                                                .getDefaultBranch(),
                                                         model.getProject() );
             }
-        } ).getURIStructureExplorerModel( path );
+        } )
+                .getURIStructureExplorerModel( path );
 
     }
 
