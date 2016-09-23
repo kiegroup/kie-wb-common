@@ -34,7 +34,7 @@ import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.*;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class DefaultGenericKieValidatorTest {
 
     private TestFileSystem testFileSystem;
@@ -61,6 +61,23 @@ public class DefaultGenericKieValidatorTest {
                                                                    Resources.toString( urlToValidate, Charsets.UTF_8 ) );
 
         assertTrue( errors.isEmpty() );
+    }
+
+    @Test
+    public void validatingAnAlreadyInvalidAssetShouldReportErrors() throws Exception {
+        final Path path = resourcePath( "/BuilderExampleBrokenSyntax/src/main/resources/rule1.drl" );
+        final URL urlToValidate = this.getClass().getResource( "/BuilderExampleBrokenSyntax/src/main/resources/rule1.drl" );
+
+        final List<ValidationMessage> errors1 = validator.validate( path,
+                                                                    Resources.toString( urlToValidate, Charsets.UTF_8 ) );
+
+        final List<ValidationMessage> errors2 = validator.validate( path,
+                                                                    Resources.toString( urlToValidate, Charsets.UTF_8 ) );
+
+        assertFalse( errors1.isEmpty() );
+        assertFalse( errors2.isEmpty() );
+        assertEquals( errors1.size(),
+                      errors2.size() );
     }
 
     private Path resourcePath( final String resourceName ) throws URISyntaxException {
