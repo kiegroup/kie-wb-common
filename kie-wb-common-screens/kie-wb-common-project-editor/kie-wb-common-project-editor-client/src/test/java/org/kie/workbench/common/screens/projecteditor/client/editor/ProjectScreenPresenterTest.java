@@ -17,8 +17,6 @@
 package org.kie.workbench.common.screens.projecteditor.client.editor;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,37 +33,26 @@ import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.guvnor.common.services.shared.metadata.model.Metadata;
-import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.projecteditor.client.editor.extension.BuildOptionExtension;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
-import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.LockManager;
-import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.commons.data.Pair;
-import org.uberfire.ext.editor.commons.client.file.SaveOperationService;
-import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -522,6 +509,15 @@ public class ProjectScreenPresenterTest
                 times( 3 ) ).hideBusyIndicator();
     }
 
+    @Test
+    public void testGetReimportCommand() throws Exception {
+        Command reImportCommand = presenter.getReImportCommand();
+
+        reImportCommand.execute();
+
+        verify( projectScreenService, times( 1 ) ).reImport( eq( presenter.pathToPomXML ) );
+    }
+
     private void verifyBusyShowHideAnyString( int show,
                                               int hide ) {
         //Check the "Busy" popup has not been shown again
@@ -556,6 +552,4 @@ public class ProjectScreenPresenterTest
 
         return caller;
     }
-
-
 }
