@@ -603,6 +603,10 @@ public class ProjectScreenPresenter
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_COPY ) )
                 .respondsWith( getCopyCommand() )
                 .endMenu()
+                .newTopLevelMenu( CommonConstants.INSTANCE.Reimport() )
+                .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_SAVE ) )
+                .respondsWith( getReImportCommand() )
+                .endMenu()
                 .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
                     @Override
                     public void push( MenuFactory.CustomMenuBuilder element ) {
@@ -640,6 +644,24 @@ public class ProjectScreenPresenter
                     }
                 } ).endMenu()
                 .build();
+    }
+
+    protected Command getReImportCommand() {
+        return new Command() {
+            @Override
+            public void execute() {
+                projectScreenService.call(
+                        new RemoteCallback<Void>() {
+
+                            @Override
+                            public void callback( final Void o ) {
+                                busyIndicatorView.hideBusyIndicator();
+                                notificationEvent.fire( new NotificationEvent( CommonConstants.INSTANCE.ReimportSuccessful() ) );
+                            }
+                        },
+                        new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView ) ).reImport( project.getPomXMLPath() );
+            }
+        };
     }
 
     private Command getDeleteCommand() {
