@@ -98,10 +98,10 @@ public class EnumDropDownUtilities {
 
     }
 
-    private void fillDropDown( final String value,
-                               final DropDownData dropData,
-                               final boolean isMultipleSelect,
-                               final ListBox listBox ) {
+    protected void fillDropDown( final String value,
+                                 final DropDownData dropData,
+                                 final boolean isMultipleSelect,
+                                 final ListBox listBox ) {
         if ( dropData == null ) {
             fillDropDown( value,
                           new String[ 0 ],
@@ -115,10 +115,10 @@ public class EnumDropDownUtilities {
         }
     }
 
-    private void fillDropDown( final String value,
-                               final String[] enumeratedValues,
-                               final boolean isMultipleSelect,
-                               final ListBox listBox ) {
+    protected void fillDropDown( final String value,
+                                 final String[] enumeratedValues,
+                                 final boolean isMultipleSelect,
+                                 final ListBox listBox ) {
 
         listBox.clear();
 
