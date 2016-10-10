@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import org.drools.workbench.models.datamodel.oracle.DropDownData;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
-import org.kie.workbench.common.widgets.client.widget.EnumDropDownUtilities;
+import org.kie.workbench.common.widgets.client.widget.CachingEnumDropDownUtilities;
 import org.kie.workbench.common.widgets.decoratedgrid.client.widget.CellTableDropDownDataValueMapProvider;
 
 /**
@@ -48,7 +48,7 @@ public class PopupDropDownEditCell extends
     private final AsyncPackageDataModelOracle dmo;
     private final CellTableDropDownDataValueMapProvider dropDownManager;
 
-    final EnumDropDownUtilities utilities = new EnumDropDownUtilities() {
+    final CachingEnumDropDownUtilities utilities = new CachingEnumDropDownUtilities() {
         @Override
         protected int addItems( final ListBox listBox ) {
             return 0;

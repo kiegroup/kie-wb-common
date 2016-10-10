@@ -29,7 +29,7 @@ import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.user.client.ui.Widget;
 import org.drools.workbench.models.datamodel.oracle.DropDownData;
 import org.gwtbootstrap3.client.ui.ListBox;
-import org.kie.workbench.common.widgets.client.widget.EnumDropDownUtilities;
+import org.kie.workbench.common.widgets.client.widget.CachingEnumDropDownUtilities;
 
 /**
  * A Popup drop-down Editor for use within AbstractProxyPopupDropDownEditCell
@@ -40,7 +40,7 @@ public abstract class AbstractProxyPopupDropDownListBox<C> implements ProxyPopup
     private final ListBox listBox;
     private final AbstractProxyPopupDropDownEditCell proxy;
 
-    final EnumDropDownUtilities utilities = new EnumDropDownUtilities() {
+    final CachingEnumDropDownUtilities utilities = new CachingEnumDropDownUtilities() {
         @Override
         protected int addItems( final ListBox listBox ) {
             return 0;
