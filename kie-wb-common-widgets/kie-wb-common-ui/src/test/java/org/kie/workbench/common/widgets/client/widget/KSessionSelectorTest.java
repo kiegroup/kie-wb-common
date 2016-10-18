@@ -28,6 +28,7 @@ import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
@@ -52,6 +53,9 @@ public class KSessionSelectorTest {
 
     @Mock
     private KModuleService kModuleService;
+
+    @Captor
+    ArgumentCaptor<List> listArgumentCaptor;
 
     private KSessionSelector     selector;
     private KSessionSelectorView view;
@@ -94,7 +98,6 @@ public class KSessionSelectorTest {
         selector.init( path,
                        "ksession2" );
 
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass( List.class );
         verify( view ).setKSessions( listArgumentCaptor.capture() );
         List ksessionNamesList = listArgumentCaptor.getValue();
         assertEquals( 2, ksessionNamesList.size() );
@@ -110,7 +113,6 @@ public class KSessionSelectorTest {
 
         verify( view ).addKBase( "kbase1" );
 
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass( List.class );
         verify( view ).setKSessions( listArgumentCaptor.capture() );
         List ksessionNamesList = listArgumentCaptor.getValue();
         assertEquals( 1, ksessionNamesList.size() );
@@ -128,7 +130,6 @@ public class KSessionSelectorTest {
 
         verify( view ).addKBase( "defaultKieBase" );
 
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass( List.class );
         verify( view ).setKSessions( listArgumentCaptor.capture() );
 
         verify( view ).setSelected( eq( "defaultKieBase" ), eq( "defaultKieSession" ) );
@@ -164,6 +165,24 @@ public class KSessionSelectorTest {
     }
 
     @Test
+    public void testSelectedSessionName() throws Exception {
+
+        when( view.getSelectedKSessionName() ).thenReturn( "defaultKieSession" );
+
+        assertEquals( "defaultKieSession", selector.getSelectedKSessionName() );
+    }
+
+    @Test
+    public void testSelectedSessionNameDefaultSetToNull() throws Exception {
+
+        selector.setDefaultKieSessionValue( DefaultKieSessionValue.NULL );
+
+        when( view.getSelectedKSessionName() ).thenReturn( "defaultKieSession" );
+
+        assertNull( selector.getSelectedKSessionName() );
+    }
+
+    @Test
     public void testKSessionDefinedInScenarioNoLongerExistsAndKModuleIsEmpty() throws Exception {
         // No kbases or ksessions defined in the kmodule.xml
         when( kModuleService.load( kmodulePath ) ).thenReturn( new KModuleModel() );
@@ -174,7 +193,6 @@ public class KSessionSelectorTest {
         verify( view ).addKBase( "defaultKieBase" );
         verify( view ).addKBase( "---" );
 
-        ArgumentCaptor<List> listArgumentCaptor = ArgumentCaptor.forClass( List.class );
         verify( view ).setKSessions( listArgumentCaptor.capture() );
 
         verify( view ).setSelected( eq( "---" ), eq( "ksessionThatHasBeenRemovedFromKModuleXML" ) );

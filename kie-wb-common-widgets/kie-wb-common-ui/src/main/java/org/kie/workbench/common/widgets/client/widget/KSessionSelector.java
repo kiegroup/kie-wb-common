@@ -48,6 +48,7 @@ public class KSessionSelector
 
     private Caller<KModuleService> kModuleService;
     private KModuleModel           kmodule;
+    private DefaultKieSessionValue defaultKieSessionValue = DefaultKieSessionValue.defaultKieSession;
 
     @Inject
     public KSessionSelector( final KSessionSelectorView view,
@@ -148,7 +149,12 @@ public class KSessionSelector
     }
 
     public String getSelectedKSessionName(){
-        return view.getSelectedKSessionName();
+        if ( view.getSelectedKSessionName().equals( DEFAULT_KIE_SESSION ) ) {
+            return defaultKieSessionValue.getValue();
+        } else {
+            return view.getSelectedKSessionName();
+        }
+
     }
 
     private void selectFromModel( final String currentKSession ) {
@@ -198,4 +204,9 @@ public class KSessionSelector
     public void fireEvent( final GwtEvent<?> gwtEvent ) {
         view.fireEvent( gwtEvent );
     }
+
+    public void setDefaultKieSessionValue( final DefaultKieSessionValue defaultKieSessionValue ) {
+        this.defaultKieSessionValue = defaultKieSessionValue;
+    }
+
 }
