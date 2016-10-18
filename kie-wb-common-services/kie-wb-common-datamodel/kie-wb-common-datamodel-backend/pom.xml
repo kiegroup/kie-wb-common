@@ -211,6 +211,11 @@
       <artifactId>errai-security-picketlink</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate.javax.persistence</groupId>
+      <artifactId>hibernate-jpa-2.0-api</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.hibernate.javax.persistence</groupId>
