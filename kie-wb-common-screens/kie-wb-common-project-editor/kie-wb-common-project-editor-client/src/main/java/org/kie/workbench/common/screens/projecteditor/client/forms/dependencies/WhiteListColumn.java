@@ -59,6 +59,12 @@ public class WhiteListColumn
 
     @Override
     public String getValue( final EnhancedDependency enhancedDependency ) {
+
+        if(whiteList.isEmpty()){
+            return ProjectEditorResources.CONSTANTS.AllPackagesIncluded();
+        }
+
+
         final Set<String> packages = enhancedDependency.getPackages();
         if ( packages.isEmpty() ) {
             return ProjectEditorResources.CONSTANTS.PackagesNotIncluded();
