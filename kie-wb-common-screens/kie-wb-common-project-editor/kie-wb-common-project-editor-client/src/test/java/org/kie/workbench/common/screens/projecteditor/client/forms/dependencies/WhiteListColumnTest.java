@@ -63,12 +63,29 @@ public class WhiteListColumnTest {
     }
 
     @Test
-    public void testEmpty() throws Exception {
-        assertEquals( "PackagesNotIncluded", whiteListColumn.getValue( getDependency() ) );
+    public void testEmptyWhiteListEmptyDependency() throws Exception {
+        assertEquals( "AllPackagesIncluded",
+                      whiteListColumn.getValue( getDependency() ) );
+    }
+
+    @Test
+    public void testEmptyDependency() throws Exception {
+        whiteList.add( "org.hello" );
+        assertEquals( "PackagesNotIncluded",
+                      whiteListColumn.getValue( getDependency() ) );
+    }
+
+    @Test
+    public void testWhiteListEmpty() throws
+                                     Exception {
+        assertEquals( "AllPackagesIncluded",
+                      whiteListColumn.getValue( getDependency( "org.hello" ) ) );
     }
 
     @Test
     public void testNotWhiteListed() throws Exception {
+        whiteList.add( "org.something.else" );
+
         assertEquals( "PackagesNotIncluded", whiteListColumn.getValue( getDependency( "org.hello" ) ) );
     }
 
