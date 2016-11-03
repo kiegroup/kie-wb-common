@@ -23,7 +23,7 @@ public interface DefaultWorkbenchConstants
         extends
         Messages {
 
-    public static final DefaultWorkbenchConstants INSTANCE = GWT.create( DefaultWorkbenchConstants.class );
+    DefaultWorkbenchConstants INSTANCE = GWT.create( DefaultWorkbenchConstants.class );
 
     String Role();
 
@@ -35,8 +35,6 @@ public interface DefaultWorkbenchConstants
 
     String People();
 
-    String SecurityManagement();
-
     String ProjectAuthoring();
 
     String Contributors();
@@ -44,10 +42,6 @@ public interface DefaultWorkbenchConstants
     String ArtifactRepository();
 
     String Administration();
-
-    String DroolsAdministration();
-
-    String PlannerAdministration();
 
     String Plugins();
 
@@ -73,8 +67,6 @@ public interface DefaultWorkbenchConstants
 
     String Group();
 
-    String DocksOptaPlannerTitle();
-
     String DocksProjectExplorerTitle();
 
     String DocksDroolsJBPMTitle();
@@ -83,37 +75,13 @@ public interface DefaultWorkbenchConstants
 
     String DocksAdvancedTitle();
 
-    String WorkbenchRootNodeName();
-
-    String ConfigureRepositories();
-
-    String PermissionAllow();
-
-    String PermissionDeny();
-
     String PromoteAssets();
 
     String ReleaseProjects();
 
-    String DataModelerEditSources();
-
-    String ManageDashboards();
-
-    String ResourcePlanner();
-
-    String WorkbenchRootNodeHelp();
-
-    String ConfigureRepositoriesHelp();
-
     String PromoteAssetsHelp();
 
     String ReleaseProjectsHelp();
-
-    String DataModelerEditSourcesHelp();
-
-    String ManageDashboardsHelp();
-
-    String ResourcePlannerHelp();
 
     String Admin();
 

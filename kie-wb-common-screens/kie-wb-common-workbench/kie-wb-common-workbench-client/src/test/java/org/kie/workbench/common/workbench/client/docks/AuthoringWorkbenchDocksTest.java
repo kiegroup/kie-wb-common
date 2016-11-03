@@ -16,11 +16,7 @@
 
 package org.kie.workbench.common.workbench.client.docks;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.jboss.errai.security.shared.api.Role;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,17 +25,12 @@ import org.kie.workbench.common.screens.datamodeller.client.DataModelerContext;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContext;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContextChangeEvent;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchFocusEvent;
-import org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures;
-import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
 import org.uberfire.client.workbench.docks.UberfireDockReadyEvent;
 import org.uberfire.client.workbench.docks.UberfireDocks;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.authz.AuthorizationManager;
 
@@ -47,8 +38,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AuthoringWorkbenchDocksTest {
-
-    private static final String PLANNER_ROLE = "plannermgmt";
 
     @Mock
     private UberfireDocks uberfireDocks;
@@ -68,76 +57,12 @@ public class AuthoringWorkbenchDocksTest {
     @Mock
     private User user;
 
-    private UberfireDock plannerDock;
-
     @InjectMocks
     private AuthoringWorkbenchDocks authoringDocks;
-
-    private Set<String> featureRoles = new HashSet<String>();
 
     @Before
     public void initTest() {
         authoringDocks.setup( "authoring", placeRequest );
-        featureRoles.add( PLANNER_ROLE );
-        plannerDock = new UberfireDock( UberfireDockPosition.EAST,
-                                        "CALCULATOR",
-                                        new DefaultPlaceRequest( "PlannerDomainScreen" ),
-                                        "authoring" ).withSize( 450 ).withLabel( authoringDocks.constants.DocksOptaPlannerTitle() );
-    }
-
-    @Test
-    public void plannerRoleGrantedTest() {
-        Set<Role> userRoles = new HashSet<Role>();
-        userRoles.add( new Role() {
-            @Override public String getName() {
-                return PLANNER_ROLE;
-            }
-        } );
-
-        when( sessionInfo.getId() ).thenReturn( "logged_user" );
-        when( sessionInfo.getIdentity() ).thenReturn( user );
-        when( user.getRoles() ).thenReturn( userRoles );
-        when( authorizationManager.authorize( WorkbenchFeatures.PLANNER_AVAILABLE, user ) ).thenReturn( true );
-
-        UberfireDockReadyEvent event = new UberfireDockReadyEvent( "authoring" );
-        authoringDocks.perspectiveChangeEvent( event );
-
-        verify( uberfireDocks, times( 1 ) ).add( plannerDock );
-    }
-
-    @Test
-    public void plannerRoleNotGrantedNeverVisitedTest() {
-        testPlannerNotGranted( false );
-    }
-
-    @Test
-    public void plannerRoleNotGrantedVisitedTest() {
-        testPlannerNotGranted( true );
-    }
-
-    private void testPlannerNotGranted( boolean visited ) {
-
-        if ( visited ) {
-            //make that a user with the grants visits the authoring perspective
-            plannerRoleGrantedTest();
-
-        }
-        //user hasn't the planner role in this case
-        Set<Role> userRoles = new HashSet<Role>();
-
-        when( sessionInfo.getId() ).thenReturn( "logged_user" );
-        when( sessionInfo.getIdentity() ).thenReturn( user );
-        when( user.getRoles() ).thenReturn( userRoles );
-
-        UberfireDockReadyEvent event = new UberfireDockReadyEvent( "authoring" );
-        authoringDocks.perspectiveChangeEvent( event );
-
-        if ( visited ) {
-            //if the authoring was visited at least once by a user with the planner role
-            //ensure the dock is removed
-            verify( uberfireDocks, times( 1 ) ).remove( plannerDock );
-        }
-        //if not, do nothing
     }
 
     /**

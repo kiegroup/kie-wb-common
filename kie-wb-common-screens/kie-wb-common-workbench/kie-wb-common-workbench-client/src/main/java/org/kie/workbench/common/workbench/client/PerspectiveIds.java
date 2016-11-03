@@ -27,7 +27,6 @@ public interface PerspectiveIds {
     String GUVNOR_M2REPO = "GuvnorM2RepoPerspective";
     String ADMINISTRATION = "AdministrationPerspective";
     String DROOLS_ADMIN = "DroolsAdminPerspective";
-    String PLANNER_ADMIN = "PlannerAdminPerspective";
     String PROCESS_DEFINITIONS = "Process Definitions";
     String DATASET_PROC_INST_VARS = "DataSet Process Instances With Variables";
     String PLUGIN_AUTHORING = "PlugInAuthoringPerspective";
