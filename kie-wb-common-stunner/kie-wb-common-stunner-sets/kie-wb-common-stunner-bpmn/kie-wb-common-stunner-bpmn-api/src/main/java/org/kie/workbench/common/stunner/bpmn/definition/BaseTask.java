@@ -65,7 +65,7 @@ public abstract class BaseTask implements BPMNDefinition {
     protected TaskType taskType;
 
     @PropertySet
-    @FieldDef( label = "Background Settings", position = 4 )
+    //@FieldDef( label = "Background Settings", position = 4 )
     @Valid
     protected BackgroundSet backgroundSet;
 
@@ -78,7 +78,7 @@ public abstract class BaseTask implements BPMNDefinition {
     protected SimulationSet simulationSet;
 
     @PropertySet
-    @FieldDef( label = "Shape Dimensions", position = 7 )
+    //@FieldDef( label = "Shape Dimensions", position = 7 )
     protected RectangleDimensionsSet dimensionsSet;
 
     public static class TaskTypeMorphPropertyBinding implements MorphPropertyValueBinding<TaskType, TaskTypes> {
