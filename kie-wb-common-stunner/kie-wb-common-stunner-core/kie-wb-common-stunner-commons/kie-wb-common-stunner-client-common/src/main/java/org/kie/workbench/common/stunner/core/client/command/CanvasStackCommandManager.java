@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import java.util.Collection;
 
 @Dependent
 public class CanvasStackCommandManager implements CanvasCommandManager<AbstractCanvasHandler>, StackCommandManager<AbstractCanvasHandler, CanvasViolation> {
@@ -77,7 +76,7 @@ public class CanvasStackCommandManager implements CanvasCommandManager<AbstractC
     }
 
     @Override
-    public Collection<Command<AbstractCanvasHandler, CanvasViolation>> getBatchCommands() {
+    public Iterable<Command<AbstractCanvasHandler, CanvasViolation>> getBatchCommands() {
         return stackCommandManager.getBatchCommands();
     }
 

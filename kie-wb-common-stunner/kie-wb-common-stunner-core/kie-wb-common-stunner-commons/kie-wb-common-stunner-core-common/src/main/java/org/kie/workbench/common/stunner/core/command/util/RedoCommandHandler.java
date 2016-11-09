@@ -24,12 +24,15 @@ import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Stack;
 import java.util.logging.Logger;
 
 /**
  * This handler is an util class that achieves command "re-do" features.
+ * It's behaviour is to keep in a command registry ( usually a in-memory registry), the commands that have been
+ * "undone" for a given context. It allows further re-do ( re-execution ) of that commands. If at some point
+ * the user undo some commands and executes whatever new action that produces a new command, this registry is cleared
+ * so you cannot redo older commands.
  * It can be used as:
  * <b>Inputs</b>
  * - Capture undo operations for commands and call the <code>onUndoCommandExecuted</code> method
@@ -45,6 +48,7 @@ import java.util.logging.Logger;
 public class RedoCommandHandler<C extends Command> {
 
     private static Logger LOGGER = Logger.getLogger( RedoCommandHandler.class.getName() );
+
 
     private final CommandRegistry<C> registry;
 
@@ -62,7 +66,7 @@ public class RedoCommandHandler<C extends Command> {
         return isEnabled();
     }
 
-    public boolean onUndoCommandExecuted( final Collection<C> commands ) {
+    public boolean onUndoCommandExecuted( final Iterable<C> commands ) {
         registry.register( commands );
         return isEnabled();
     }
@@ -74,7 +78,7 @@ public class RedoCommandHandler<C extends Command> {
         }} );
     }
 
-    public boolean onCommandExecuted( final Collection<C> commands ) {
+    public boolean onCommandExecuted( final Iterable<C> commands ) {
         return _onCommandExecuted( commands );
     }
 
@@ -82,18 +86,11 @@ public class RedoCommandHandler<C extends Command> {
     public CommandResult<?> execute( final Object context,
                                      final BatchCommandManager commandManager ) {
         if ( !registry.isEmpty() ) {
-            final Collection<C> last = ( Collection<C> ) registry.peek();
-            final int s = last.size();
-            CommandResult<?> result = null;
-            if ( s == 1 ) {
-                result = commandManager.execute( context, last.iterator().next() );
-            } else {
-                final Stack<C> t = new Stack<>();
-                last.stream().forEach( t::push );
-                t.stream().forEach( commandManager::batch );
-                result = commandManager.executeBatch( context );
-            }
-            return result;
+            final Iterable<C> last =  registry.peek();
+            final Stack<C> t = new Stack<>();
+            last.forEach( t::push );
+            t.stream().forEach( commandManager::batch );
+            return commandManager.executeBatch( context );
         }
         return null;
     }
@@ -106,9 +103,10 @@ public class RedoCommandHandler<C extends Command> {
         registry.clear();
     }
 
-    private boolean _onCommandExecuted( final Collection<C> commands ) {
+    private boolean _onCommandExecuted( final Iterable<C> commands ) {
         if ( !registry.isEmpty() ) {
-            final Collection<C> last = getLastRegistryItem();
+            final Iterable<C> last = registry.peek();
+            // if ( null != last && areEquals( last, commands ) ) {
             if ( null != last && last.equals( commands ) ) {
                 // If the recently executed command is the same in this handler' registry, means it has been
                 // executed by this handler so it can be removed from the registry.
@@ -120,14 +118,6 @@ public class RedoCommandHandler<C extends Command> {
             }
         }
         return isEnabled();
-    }
-
-    private Collection<C> getLastRegistryItem() {
-        try {
-            return ( Collection<C> ) registry.peek();
-        } catch ( ClassCastException e ) {
-            throw new UnsupportedOperationException( "Registry type not supported [" + registry.getClass().getName() + "]", e );
-        }
     }
 
 }

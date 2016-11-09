@@ -26,14 +26,12 @@ import org.kie.workbench.common.stunner.core.command.event.local.CommandUndoExec
 import org.kie.workbench.common.stunner.core.command.event.local.IsCommandAllowedEvent;
 import org.kie.workbench.common.stunner.core.command.exception.CommandException;
 import org.kie.workbench.common.stunner.core.command.impl.BatchCommandResultBuilder;
-import org.kie.workbench.common.stunner.core.command.impl.BatchCommandResultImpl;
+import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -115,7 +113,7 @@ public class GraphCommandManagerImpl
     }
 
     @Override
-    public Collection<Command<GraphCommandExecutionContext, RuleViolation>> getBatchCommands() {
+    public Iterable<Command<GraphCommandExecutionContext, RuleViolation>> getBatchCommands() {
         return batchCommandManager.getBatchCommands();
     }
 
@@ -135,7 +133,7 @@ public class GraphCommandManagerImpl
         final BatchCommandResult<RuleViolation> result = batchCommandManager.undoBatch( context );
         if ( null != commandUndoExecutedEvent ) {
             final CommandUndoExecutedEvent event = new CommandUndoExecutedEvent(
-                    new ArrayList<>( batchCommandManager.getBatchCommands() ),
+                    CommandUtils.toList( batchCommandManager.getBatchCommands() ),
                     result );
             commandUndoExecutedEvent.fire( event );
         }

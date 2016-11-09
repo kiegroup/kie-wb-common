@@ -46,7 +46,7 @@ public abstract class BatchDelegateCommandManager<C, V> extends DelegateCommandM
 
         @Override
         public void onExecuteBatch( final C context,
-                                    final Collection<Command<C, V>> commands,
+                                    final Iterable<Command<C, V>> commands,
                                     final BatchCommandResult<V> result ) {
             postExecuteBatch( context, commands, result );
 
@@ -54,7 +54,7 @@ public abstract class BatchDelegateCommandManager<C, V> extends DelegateCommandM
 
         @Override
         public void onUndoBatch( final C context,
-                                 final Collection<Command<C, V>> commands,
+                                 final Iterable<Command<C, V>> commands,
                                  final CommandResult<V> result ) {
             postUndo( context, commands, result );
 
@@ -83,7 +83,7 @@ public abstract class BatchDelegateCommandManager<C, V> extends DelegateCommandM
     }
 
     @Override
-    public Collection<Command<C, V>> getBatchCommands() {
+    public Iterable<Command<C, V>> getBatchCommands() {
         return getBatchDelegate().getBatchCommands();
     }
 
@@ -115,12 +115,12 @@ public abstract class BatchDelegateCommandManager<C, V> extends DelegateCommandM
     }
 
     protected void postExecuteBatch( final C context,
-                                     final Collection<Command<C, V>> commands,
+                                     final Iterable<Command<C, V>> commands,
                                      final BatchCommandResult<V> result ) {
     }
 
     protected void postUndo( final C context,
-                             final Collection<Command<C, V>> commands,
+                             final Iterable<Command<C, V>> commands,
                              final CommandResult<V> result ) {
     }
 

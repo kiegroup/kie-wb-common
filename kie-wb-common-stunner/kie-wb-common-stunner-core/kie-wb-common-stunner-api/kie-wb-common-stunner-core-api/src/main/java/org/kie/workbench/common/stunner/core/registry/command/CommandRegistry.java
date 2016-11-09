@@ -29,22 +29,26 @@ import java.util.Collection;
 public interface CommandRegistry<C extends Command> extends DynamicRegistry<C>, SizeConstrainedRegistry {
 
     /**
-     * Registers a command.
+     * Registers a single or more than one command/s.
+     * The further iteration order for this collection matters.
      */
-    void register( Collection<C> command );
+    void register( Iterable<C> command );
 
     /**
      * Returns the registered commands, can be composed collections if they're batched.
+     * It must ensure the right iteration order as the commands have been executed.
      */
     Iterable<Iterable<C>> getCommandHistory();
 
     /**
      * Peek the command from the registry.
+     * It must ensure the right iteration order as the commands have been executed.
      */
     Iterable<C> peek();
 
     /**
      * Peek and remove the command from the registry.
+     * It must ensure the right iteration order as the commands have been executed.
      */
     Iterable<C> pop();
 

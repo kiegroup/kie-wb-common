@@ -23,11 +23,10 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class AbstractCanvasCommandEvent<H extends CanvasHandler> extends AbstractCanvasHandlerEvent<H> {
 
-    private final Collection<Command<H, CanvasViolation>> commands;
+    private final Iterable<Command<H, CanvasViolation>> commands;
     private final boolean isBatch;
     private final CommandResult<CanvasViolation> result;
 
@@ -43,7 +42,7 @@ public abstract class AbstractCanvasCommandEvent<H extends CanvasHandler> extend
     }
 
     public AbstractCanvasCommandEvent( final H canvasHandler,
-                                       final Collection<Command<H, CanvasViolation>> commands,
+                                       final Iterable<Command<H, CanvasViolation>> commands,
                                        final CommandResult<CanvasViolation> result ) {
         super( canvasHandler );
         this.commands = commands;
@@ -55,7 +54,7 @@ public abstract class AbstractCanvasCommandEvent<H extends CanvasHandler> extend
         return isBatch ? null : commands.iterator().next();
     }
 
-    public Collection<Command<H, CanvasViolation>> getCommands() {
+    public Iterable<Command<H, CanvasViolation>> getCommands() {
         return isBatch ? commands : null;
     }
 
