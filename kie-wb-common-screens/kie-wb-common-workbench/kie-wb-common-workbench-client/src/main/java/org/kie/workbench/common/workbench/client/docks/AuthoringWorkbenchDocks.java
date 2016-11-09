@@ -24,7 +24,6 @@ import org.kie.workbench.common.screens.datamodeller.client.DataModelerContext;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContext;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContextChangeEvent;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchFocusEvent;
-import org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.workbench.docks.UberfireDock;
 import org.uberfire.client.workbench.docks.UberfireDockPosition;
@@ -56,8 +55,6 @@ public class AuthoringWorkbenchDocks {
 
     protected DataModelerContext lastActiveContext;
 
-    protected UberfireDock plannerDock = null;
-
     protected String currentPerspectiveIdentifier = null;
 
     protected boolean dataModelerDocksEnabled = true;
@@ -76,18 +73,6 @@ public class AuthoringWorkbenchDocks {
     public void perspectiveChangeEvent( @Observes UberfireDockReadyEvent dockReadyEvent ) {
         currentPerspectiveIdentifier = dockReadyEvent.getCurrentPerspective();
         if ( authoringPerspectiveIdentifier != null && dockReadyEvent.getCurrentPerspective().equals( authoringPerspectiveIdentifier ) ) {
-            if ( authorizationManager.authorize( WorkbenchFeatures.PLANNER_AVAILABLE, sessionInfo.getIdentity() ) ) {
-                if ( plannerDock == null ) {
-                    plannerDock = new UberfireDock( UberfireDockPosition.EAST, "CALCULATOR", new DefaultPlaceRequest( "PlannerDomainScreen" ), authoringPerspectiveIdentifier ).withSize( 450 ).withLabel( constants.DocksOptaPlannerTitle() );
-                } else {
-                    //avoid duplications
-                    uberfireDocks.remove( plannerDock );
-                }
-                uberfireDocks.add( plannerDock );
-            } else if ( plannerDock != null ) {
-                uberfireDocks.remove( plannerDock );
-            }
-
             if ( projectExplorerDock != null ) {
                 uberfireDocks.expand( projectExplorerDock );
             }
