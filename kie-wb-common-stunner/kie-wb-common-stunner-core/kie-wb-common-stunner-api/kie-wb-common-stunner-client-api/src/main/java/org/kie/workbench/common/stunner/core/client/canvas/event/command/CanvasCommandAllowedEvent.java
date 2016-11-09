@@ -21,7 +21,6 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 
-import java.util.Collection;
 
 public final class CanvasCommandAllowedEvent<H extends CanvasHandler> extends AbstractCanvasCommandEvent<H> {
 
@@ -32,7 +31,7 @@ public final class CanvasCommandAllowedEvent<H extends CanvasHandler> extends Ab
     }
 
     public CanvasCommandAllowedEvent( final H canvasHandler,
-                                      final Collection<Command<H, CanvasViolation>> commands,
+                                      final Iterable<Command<H, CanvasViolation>> commands,
                                       final CommandResult<CanvasViolation> result ) {
         super( canvasHandler, commands, result );
     }

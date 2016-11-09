@@ -19,8 +19,6 @@ package org.kie.workbench.common.stunner.core.command.batch;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandManager;
 
-import java.util.Collection;
-
 /**
  * Manager to handle batched execution of commands.
  */
@@ -43,6 +41,6 @@ public interface BatchCommandManager<T, V> extends CommandManager<T, V> {
      */
     BatchCommandResult<V> undoBatch( T context );
 
-    Collection<Command<T, V>> getBatchCommands();
+    Iterable<Command<T, V>> getBatchCommands();
 
 }

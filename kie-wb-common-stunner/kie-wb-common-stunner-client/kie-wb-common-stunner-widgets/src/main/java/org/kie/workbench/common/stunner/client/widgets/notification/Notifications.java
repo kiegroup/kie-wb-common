@@ -239,7 +239,7 @@ public class Notifications implements IsWidget {
             final CanvasHandler canvasHandler = commandExecutedEvent.getCanvasHandler();
             final Command<CanvasHandler, CanvasViolation> command =
                     ( Command<CanvasHandler, CanvasViolation> ) commandExecutedEvent.getCommand();
-            final Collection<? extends Command<? extends CanvasHandler, CanvasViolation>> commands = commandExecutedEvent.getCommands();
+            final Iterable<? extends Command<? extends CanvasHandler, CanvasViolation>> commands = commandExecutedEvent.getCommands();
             final CommandResult<CanvasViolation> result = commandExecutedEvent.getResult();
             return new CanvasCommandNotification.CanvasCommandNotificationBuilder<CanvasHandler>()
                     .canvasHander( canvasHandler )

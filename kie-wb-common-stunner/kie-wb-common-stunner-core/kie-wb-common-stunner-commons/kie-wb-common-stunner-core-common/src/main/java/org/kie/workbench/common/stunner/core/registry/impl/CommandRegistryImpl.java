@@ -25,7 +25,9 @@ import java.util.Collection;
 import java.util.Deque;
 
 /**
- * The Stack class behavior when using the iterator is not the expected one, so used
+ * The default generic implementation for the CommandRegistry type.
+ * It's implemented for achieving an in-memory and lightweight registry approach, don't do an overuse of it.
+ * Note: The Stack class behavior when using the iterator is not the expected one, so used
  * ArrayDeque instead of an Stack to provide right iteration order.
  */
 public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C> {
@@ -39,7 +41,7 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
     }
 
     @Override
-    public void register( final Collection<C> commands ) {
+    public void register( final Iterable<C> commands ) {
         addIntoStack( commands );
     }
 
@@ -99,15 +101,19 @@ public class CommandRegistryImpl<C extends Command> implements CommandRegistry<C
         }
     }
 
-    private void addIntoStack( final Collection<C> _commands ) {
-        if ( null != _commands && !_commands.isEmpty() ) {
-            if ( ( commands.size() + _commands.size() ) > maxStackSize ) {
+    private void addIntoStack( final Iterable<C> _commands ) {
+        final int[] cs = { commands.size() };
+        final Deque<C> s = new ArrayDeque<>();
+        _commands.forEach( ( e ) -> {
+            s.push( e );
+            if ( cs[0] + 1 > maxStackSize ) {
                 stackSizeExceeded();
+            } else {
+                cs[ 0 ]++;
+
             }
-            final Deque<C> s = new ArrayDeque<>();
-            _commands.forEach( s::push );
-            commands.push( s );
-        }
+        } );
+        commands.push( s );
     }
 
     private void stackSizeExceeded() {

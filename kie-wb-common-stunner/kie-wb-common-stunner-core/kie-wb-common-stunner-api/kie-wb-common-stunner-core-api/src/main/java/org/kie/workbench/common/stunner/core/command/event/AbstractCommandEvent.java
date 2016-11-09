@@ -20,15 +20,14 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 public abstract class AbstractCommandEvent<C, V> {
 
-    private final Collection<Command<C, V>> commands;
+    private final Iterable<Command<C, V>> commands;
     private final boolean isBatch;
     private final CommandResult<V> result;
 
-    public AbstractCommandEvent( final Collection<Command<C, V>> commands,
+    public AbstractCommandEvent( final Iterable<Command<C, V>> commands,
                                  final CommandResult<V> result ) {
         this.commands = commands;
         this.isBatch = true;
@@ -51,7 +50,7 @@ public abstract class AbstractCommandEvent<C, V> {
         return null;
     }
 
-    public Collection<Command<C, V>> getCommands() {
+    public Iterable<Command<C, V>> getCommands() {
         if ( isBatch ) {
             return commands;
 

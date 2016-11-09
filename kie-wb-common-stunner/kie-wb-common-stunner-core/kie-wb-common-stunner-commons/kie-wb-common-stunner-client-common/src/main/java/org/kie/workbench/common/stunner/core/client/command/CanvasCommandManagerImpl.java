@@ -28,7 +28,6 @@ import org.kie.workbench.common.stunner.core.command.delegate.BatchDelegateComma
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 
 import javax.enterprise.event.Event;
-import java.util.Collection;
 
 class CanvasCommandManagerImpl
         extends BatchDelegateCommandManager<AbstractCanvasHandler, CanvasViolation>
@@ -103,7 +102,7 @@ class CanvasCommandManagerImpl
     @Override
     @SuppressWarnings( "unchecked" )
     protected void postExecuteBatch( final AbstractCanvasHandler context,
-                                     final Collection<Command<AbstractCanvasHandler, CanvasViolation>> commands,
+                                     final Iterable<Command<AbstractCanvasHandler, CanvasViolation>> commands,
                                      final BatchCommandResult<CanvasViolation> result ) {
         super.postExecuteBatch( context, commands, result );
         if ( null != result && !CommandUtils.isError( result ) ) {
@@ -143,7 +142,7 @@ class CanvasCommandManagerImpl
     @Override
     @SuppressWarnings( "unchecked" )
     protected void postUndo( final AbstractCanvasHandler context,
-                             final Collection<Command<AbstractCanvasHandler, CanvasViolation>> commands,
+                             final Iterable<Command<AbstractCanvasHandler, CanvasViolation>> commands,
                              final CommandResult<CanvasViolation> result ) {
         super.postUndo( context, commands, result );
         if ( null != result && !CommandUtils.isError( result ) ) {

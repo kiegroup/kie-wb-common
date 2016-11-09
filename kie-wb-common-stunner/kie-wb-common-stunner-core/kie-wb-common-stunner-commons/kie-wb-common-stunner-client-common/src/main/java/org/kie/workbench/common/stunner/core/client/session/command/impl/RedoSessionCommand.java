@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.core.command.util.RedoCommandHandler;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import java.util.Collection;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -80,7 +79,7 @@ public class RedoSessionCommand extends AbstractClientSessionCommand<AbstractCli
     void onCommandUndoExecuted( @Observes CanvasUndoCommandExecutedEvent commandUndoExecutedEvent ) {
         checkNotNull( "commandUndoExecutedEvent", commandUndoExecutedEvent );
         final CanvasCommand<AbstractCanvasHandler> command = ( CanvasCommand<AbstractCanvasHandler> ) commandUndoExecutedEvent.getCommand();
-        final Collection<CanvasCommand<AbstractCanvasHandler>> commands = commandUndoExecutedEvent.getCommands();
+        final Iterable<CanvasCommand<AbstractCanvasHandler>> commands = commandUndoExecutedEvent.getCommands();
         if ( null != command ) {
             redoCommandHandler.onUndoCommandExecuted( command );
         } else {

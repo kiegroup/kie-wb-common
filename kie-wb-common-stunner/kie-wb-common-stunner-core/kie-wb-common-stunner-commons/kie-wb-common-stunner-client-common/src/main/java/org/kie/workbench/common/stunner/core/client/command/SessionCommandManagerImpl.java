@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.Collection;
 import java.util.logging.Logger;
 
 /**
@@ -124,7 +123,7 @@ public class SessionCommandManagerImpl extends BatchDelegateCommandManager<Abstr
     }
 
     @Override
-    public Collection<Command<AbstractCanvasHandler, CanvasViolation>> getBatchCommands() {
+    public Iterable<Command<AbstractCanvasHandler, CanvasViolation>> getBatchCommands() {
         final StackCommandManager<AbstractCanvasHandler, CanvasViolation> scm = ( StackCommandManager<AbstractCanvasHandler, CanvasViolation> ) getBatchDelegate();
         if ( null != scm ) {
             return scm.getBatchCommands();

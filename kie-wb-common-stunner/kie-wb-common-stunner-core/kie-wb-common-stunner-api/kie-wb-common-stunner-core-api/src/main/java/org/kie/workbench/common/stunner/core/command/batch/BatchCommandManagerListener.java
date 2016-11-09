@@ -20,12 +20,10 @@ import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandManagerListener;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 
-import java.util.Collection;
-
 public interface BatchCommandManagerListener<T, V> extends CommandManagerListener<T, V> {
 
-    void onExecuteBatch( T context, Collection<Command<T, V>> commands, BatchCommandResult<V> result );
+    void onExecuteBatch( T context, Iterable<Command<T, V>> commands, BatchCommandResult<V> result );
 
-    void onUndoBatch( T context, Collection<Command<T, V>> commands, CommandResult<V> result );
+    void onUndoBatch( T context, Iterable<Command<T, V>> commands, CommandResult<V> result );
 
 }
