@@ -49,7 +49,7 @@ public abstract class BaseConnector implements BPMNDefinition {
     protected BPMNGeneralSet general;
 
     @PropertySet
-    @FieldDef( label = "Background Settings", position = 2 )
+    //@FieldDef( label = "Background Settings", position = 2 )
     @Valid
     protected BackgroundSet backgroundSet;
 

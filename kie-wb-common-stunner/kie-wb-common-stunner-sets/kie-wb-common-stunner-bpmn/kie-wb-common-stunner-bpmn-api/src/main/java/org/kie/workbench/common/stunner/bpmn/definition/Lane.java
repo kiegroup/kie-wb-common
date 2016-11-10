@@ -66,7 +66,7 @@ public class Lane implements BPMNDefinition {
     protected BPMNGeneralSet general;
 
     @PropertySet
-    @FieldDef( label = "Background Settings", position = 2)
+    //@FieldDef( label = "Background Settings", position = 2)
     @Valid
     protected BackgroundSet backgroundSet;
 
@@ -75,7 +75,7 @@ public class Lane implements BPMNDefinition {
     private FontSet fontSet;
 
     @PropertySet
-    @FieldDef( label = "Shape Dimensions", position = 5 )
+    //@FieldDef( label = "Shape Dimensions", position = 5 )
     protected RectangleDimensionsSet dimensionsSet;
 
     @Labels

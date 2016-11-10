@@ -69,7 +69,7 @@ public class IntermediateTimerEvent implements BPMNDefinition {
     protected IntermediateTimerEventExecutionSet executionSet;
 
     @PropertySet
-    @FieldDef( label = "Background Settings", position = 2 )
+    //@FieldDef( label = "Background Settings", position = 2 )
     @Valid
     private BackgroundSet backgroundSet;
 
@@ -78,7 +78,7 @@ public class IntermediateTimerEvent implements BPMNDefinition {
     private FontSet fontSet;
 
     @PropertySet
-    @FieldDef( label = "Shape Dimensions", position = 3 )
+    //@FieldDef( label = "Shape Dimensions", position = 3 )
     private CircleDimensionSet dimensionsSet;
 
     @Labels
