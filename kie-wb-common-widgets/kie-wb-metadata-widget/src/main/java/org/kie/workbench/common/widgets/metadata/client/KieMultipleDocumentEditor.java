@@ -132,7 +132,8 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     @Inject
-    protected void setKieEditorWrapperView( final @KieMultipleDocumentEditorQualifier KieMultipleDocumentEditorWrapperView kieEditorWrapperView ) {
+    @KieMultipleDocumentEditorQualifier
+    protected void setKieEditorWrapperView( final KieMultipleDocumentEditorWrapperView kieEditorWrapperView ) {
         this.kieEditorWrapperView = kieEditorWrapperView;
         this.kieEditorWrapperView.setPresenter( this );
     }
