@@ -35,6 +35,7 @@
     <module>kie-wb-common-stunner-bpmn-backend</module>
     <module>kie-wb-common-stunner-bpmn-client</module>
     <module>kie-wb-common-stunner-bpmn-project</module>
+    <module>kie-wb-common-stunner-bpmn-project-api</module>
   </modules>
 
   <dependencies>
