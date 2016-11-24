@@ -26,8 +26,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kie-wb-common-stunner-bpmn-project-api</artifactId>
-    <name>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - api</name>
-    <description>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - api</description>
+    <name>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - API</name>
+    <description>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - API</description>
     <packaging>jar</packaging>
 
     <dependencies>

@@ -30,9 +30,9 @@
             to provide the right dependency tree resolution on the upstream modules.
     -->
 
-    <artifactId>kie-wb-common-stunner-bpmn-project</artifactId>
-    <name>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration</name>
-    <description>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration</description>
+    <artifactId>kie-wb-common-stunner-bpmn-project-client</artifactId>
+    <name>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - Client</name>
+    <description>Kie Workbench - Common - Stunner - BPMN Definition Set - Project integration - Client</description>
     <packaging>jar</packaging>
 
     <dependencies>
@@ -108,6 +108,11 @@
         <dependency>
             <groupId>org.kie.workbench.stunner</groupId>
             <artifactId>kie-wb-common-stunner-bpmn-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kie.workbench.stunner</groupId>
+            <artifactId>kie-wb-common-stunner-bpmn-project-api</artifactId>
         </dependency>
 
         <!-- GWT and GWT Extensions -->
