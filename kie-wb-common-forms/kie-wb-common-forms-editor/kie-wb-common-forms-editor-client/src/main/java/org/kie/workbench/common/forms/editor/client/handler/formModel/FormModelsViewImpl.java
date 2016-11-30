@@ -21,13 +21,12 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Composite;
 import org.gwtbootstrap3.client.ui.Column;
-import org.gwtbootstrap3.client.ui.Radio;
 import org.gwtbootstrap3.client.ui.Row;
 import org.gwtbootstrap3.client.ui.constants.ColumnSize;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.forms.model.FormModel;
+import org.kie.workbench.common.forms.editor.client.handler.formModel.container.FormModelCreationContainer;
 
 @Templated
 public class FormModelsViewImpl extends Composite implements FormModelsView {
@@ -36,12 +35,10 @@ public class FormModelsViewImpl extends Composite implements FormModelsView {
     @DataField
     private FlowPanel content;
 
-    private FormModelCreationView currentCreationView;
-
-    protected List<FormModelCreationView> creationViews;
+    protected List<FormModelCreationContainer> creationViews;
 
     @Override
-    public void setCreationViews( List<FormModelCreationView> creationViews ) {
+    public void setCreationViews( List<FormModelCreationContainer> creationViews ) {
         this.creationViews = creationViews;
 
         render();
@@ -50,52 +47,18 @@ public class FormModelsViewImpl extends Composite implements FormModelsView {
     protected void render() {
         content.clear();
 
-        if ( creationViews.size() == 1 ) {
-            currentCreationView = creationViews.get( 0 );
-            content.add( currentCreationView );
-        } else {
-            currentCreationView = null;
-            for ( FormModelCreationView view : creationViews ) {
-                Row row = new Row();
-                Column col = new Column( ColumnSize.MD_12 );
-                Radio button = new Radio( "creationView" );
-                button.setText( view.getLabel() );
-                button.addClickHandler( event -> setCurrentView( view ) );
-                col.add( button );
-                row.add( col );
-                content.add( row );
-                row = new Row();
-                col = new Column( ColumnSize.MD_12 );
-                view.asWidget().setVisible( false );
-                col.add( view );
-                row.add( col );
-                content.add( row );
-            }
-        }
-    }
+        creationViews.forEach( container -> {
+            Row row = new Row();
 
-    protected void setCurrentView( FormModelCreationView view ) {
-        if ( currentCreationView != null ) {
-            currentCreationView.asWidget().setVisible( false );
-        }
-        currentCreationView = view;
-        currentCreationView.asWidget().setVisible( true );
-    }
+            Column col = new Column( ColumnSize.MD_12 );
 
-    @Override
-    public boolean isValid() {
-        if ( currentCreationView != null ) {
-            return currentCreationView.isValid();
-        }
-        return true;
-    }
+            row.add( col );
+            col.add( container );
 
-    @Override
-    public FormModel getFormModel() {
-        if ( currentCreationView != null ) {
-            return currentCreationView.getFormModel();
-        }
-        return null;
+            content.add( row );
+        } );
+
+        creationViews.get( 0 ).selectManager();
     }
 
     @Override

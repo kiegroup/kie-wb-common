@@ -27,8 +27,9 @@ public interface DataObjectFormModelCreationView extends IsWidget {
 
     DataObjectFormModel getSelectedFormModel();
 
-    boolean isValid();
-
     void reset();
 
+    void setErrorMessage( String translation );
+
+    void clearValidationErrors();
 }

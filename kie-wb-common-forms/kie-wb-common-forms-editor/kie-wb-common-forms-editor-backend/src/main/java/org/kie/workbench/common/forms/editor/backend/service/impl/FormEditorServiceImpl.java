@@ -172,20 +172,22 @@ public class FormEditorServiceImpl extends KieService<FormModelerContent> implem
 
                 FormModelHandler formModelHandler = getHandlerForForm( form, path );
 
-                List<FieldDefinition> modelFields = formModelHandler.getAllFormModelFields();
+                if ( formModelHandler != null ) {
+                    List<FieldDefinition> modelFields = formModelHandler.getAllFormModelFields();
 
-                Map<String, List<FieldDefinition>> availableFields = new HashMap<String, List<FieldDefinition>>();
-                List<FieldDefinition> availableModelFields = new ArrayList<>();
+                    Map<String, List<FieldDefinition>> availableFields = new HashMap<String, List<FieldDefinition>>();
+                    List<FieldDefinition> availableModelFields = new ArrayList<>();
 
-                availableFields.put( form.getModel().getName(), availableModelFields );
+                    availableFields.put( form.getModel().getName(), availableModelFields );
 
-                modelFields.forEach( fieldDefinition -> {
-                    if ( form.getFieldByName( fieldDefinition.getName() ) == null ) {
-                        availableModelFields.add( fieldDefinition );
-                    }
-                } );
+                    modelFields.forEach( fieldDefinition -> {
+                        if ( form.getFieldByName( fieldDefinition.getName() ) == null ) {
+                            availableModelFields.add( fieldDefinition );
+                        }
+                    } );
 
-                result.setAvailableFields(availableFields);
+                    result.setAvailableFields( availableFields );
+                }
             }
 
             resourceOpenedEvent.fire(new ResourceOpenedEvent( path, sessionInfo ));
@@ -225,6 +227,10 @@ public class FormEditorServiceImpl extends KieService<FormModelerContent> implem
 
     protected FormModelHandler getHandlerForForm( FormDefinition form, Path path ) {
         FormModelHandler handler = modelHandlerManager.getFormModelHandler( form.getModel().getClass() );
+
+        if ( handler == null ) {
+            return null;
+        }
 
         handler.init( form.getModel(), path );
 

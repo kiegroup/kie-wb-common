@@ -24,11 +24,13 @@ import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMProcessModel;
 
 public interface JBPMFormModelCreationView extends IsWidget {
 
+    void setPresenter( JBPMFormModelCreationPresenterManager presenter );
+
     void setProcessModels( List<JBPMProcessModel> processModels );
 
-    JBPMFormModel getSelectedFormModel();
-
-    boolean isValid();
-
     void reset();
+
+    void clearValidationErrors();
+
+    void setErrorMessage( String errorMessage );
 }
