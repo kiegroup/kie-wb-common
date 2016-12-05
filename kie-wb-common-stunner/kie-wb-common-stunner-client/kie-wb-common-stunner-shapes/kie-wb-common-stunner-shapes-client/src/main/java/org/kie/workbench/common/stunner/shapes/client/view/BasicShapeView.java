@@ -16,14 +16,28 @@
 
 package org.kie.workbench.common.stunner.shapes.client.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ait.lienzo.client.core.event.NodeMouseOverEvent;
 import com.ait.lienzo.client.core.event.NodeMouseOverHandler;
-import com.ait.lienzo.client.core.shape.*;
+import com.ait.lienzo.client.core.shape.IPrimitive;
+import com.ait.lienzo.client.core.shape.MultiPath;
+import com.ait.lienzo.client.core.shape.Node;
+import com.ait.lienzo.client.core.shape.Shape;
+import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresLayoutContainer;
-import com.ait.lienzo.client.core.shape.wires.event.*;
+import com.ait.lienzo.client.core.shape.wires.event.AbstractWiresDragEvent;
+import com.ait.lienzo.client.core.shape.wires.event.AbstractWiresResizeEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeEndEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeEndHandler;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStartEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStartHandler;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStepEvent;
+import com.ait.lienzo.client.core.shape.wires.event.WiresResizeStepHandler;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.LinearGradient;
 import com.ait.lienzo.shared.core.types.ColorName;
@@ -36,11 +50,16 @@ import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasFillGradient;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.*;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ResizeEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ResizeHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOutEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOverEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
 import org.kie.workbench.common.stunner.shapes.client.util.BasicShapesUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class BasicShapeView<T>
         extends AbstractShapeView<T>
@@ -322,24 +341,31 @@ public abstract class BasicShapeView<T>
     @SuppressWarnings( "unchecked" )
     public T addHandler( final ViewEventType type,
                          final ViewHandler<? extends ViewEvent> eventHandler ) {
-        if ( supports( type ) ) {
-            if ( ViewEventType.DRAG.equals( type ) ) {
-                final HandlerRegistration[] registrations =
-                        registerDragHandler( ( DragHandler ) eventHandler );
-                eventHandlerManager.addHandlersRegistration( type, registrations );
-            } else if ( ViewEventType.RESIZE.equals( type ) ) {
-                final HandlerRegistration[] registrations =
-                        registerResizeHandler( ( ResizeHandler ) eventHandler );
-                eventHandlerManager.addHandlersRegistration( type, registrations );
-            } if ( ViewEventType.TEXT_OVER.equals( type ) )
-                textOverHandlerViewHandler = ( ViewHandler<TextOverEvent> ) eventHandler;{
-            } if ( ViewEventType.TEXT_OUT.equals( type ) ) {
-                textOutEventViewHandler = ( ViewHandler<TextOutEvent> ) eventHandler;
-            } else {
-                eventHandlerManager.addHandler( type, eventHandler );
-            }
+        if (!supports(type)) {
+            return (T) this;
         }
-        return ( T ) this;
+
+        HandlerRegistration[] registrations;
+        switch (type) {
+            case DRAG:
+                registrations = registerDragHandler((DragHandler) eventHandler);
+                eventHandlerManager.addHandlersRegistration(type, registrations);
+                break;
+            case RESIZE:
+                registrations = registerResizeHandler((ResizeHandler) eventHandler);
+                eventHandlerManager.addHandlersRegistration(type, registrations);
+                break;
+            case TEXT_OVER:
+                textOverHandlerViewHandler = (ViewHandler<TextOverEvent>) eventHandler;
+                break;
+            case TEXT_OUT:
+                textOutEventViewHandler = (ViewHandler<TextOutEvent>) eventHandler;
+                break;
+            default:
+                eventHandlerManager.addHandler(type, eventHandler);
+        }
+
+        return (T) this;
     }
 
     @Override
