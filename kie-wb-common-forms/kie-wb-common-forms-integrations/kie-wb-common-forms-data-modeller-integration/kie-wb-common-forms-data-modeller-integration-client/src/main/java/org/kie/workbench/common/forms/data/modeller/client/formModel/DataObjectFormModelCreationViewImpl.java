@@ -20,15 +20,24 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Composite;
 import org.gwtbootstrap3.client.ui.ValueListBox;
+import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.data.modeller.model.DataObjectFormModel;
 
 @Templated
 public class DataObjectFormModelCreationViewImpl extends Composite implements DataObjectFormModelCreationView {
+
+    @DataField
+    DivElement formGroup = Document.get().createDivElement();
+
+    @DataField
+    DivElement modelHelpBlock = Document.get().createDivElement();
 
     @DataField
     private ValueListBox<DataObjectFormModel> listBox = new ValueListBox<>( new Renderer<DataObjectFormModel>() {
@@ -58,13 +67,22 @@ public class DataObjectFormModelCreationViewImpl extends Composite implements Da
     }
 
     @Override
-    public boolean isValid() {
-        return getSelectedFormModel() != null;
+    public void reset() {
+        listBox.setValue( null );
+        listBox.setAcceptableValues( new ArrayList<>() );
+        listBox.reset();
+        clearValidationErrors();
     }
 
     @Override
-    public void reset() {
-        listBox.setAcceptableValues( new ArrayList<>() );
-        listBox.reset();
+    public void clearValidationErrors() {
+        formGroup.removeClassName( ValidationState.ERROR.getCssName() );
+        modelHelpBlock.setInnerText( "" );
+    }
+
+    @Override
+    public void setErrorMessage( String errorMessage ) {
+        formGroup.addClassName( ValidationState.ERROR.getCssName() );
+        modelHelpBlock.setInnerText( errorMessage );
     }
 }

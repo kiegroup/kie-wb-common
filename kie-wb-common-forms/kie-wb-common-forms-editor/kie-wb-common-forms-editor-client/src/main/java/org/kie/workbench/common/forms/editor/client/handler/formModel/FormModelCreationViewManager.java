@@ -23,10 +23,16 @@ import org.uberfire.backend.vfs.Path;
 /**
  * Defines a view to create FormModels on the FormEditor
  */
-public interface FormModelCreationView<F extends FormModel> extends IsWidget {
+public interface FormModelCreationViewManager<F extends FormModel> {
 
+    /**
+     * Returns the label that will be shown on the selection radios
+     */
     String getLabel();
 
+    /**
+     * Priority to allow sorting all the available managers.
+     */
     int getPriority();
 
     /**
@@ -39,7 +45,18 @@ public interface FormModelCreationView<F extends FormModel> extends IsWidget {
      */
     F getFormModel();
 
+    /**
+     * Determines if the selection of the manager is correct or not
+     */
     boolean isValid();
 
+    /**
+     * Resets the container status
+     */
     void reset();
+
+    /**
+     * Retrieves the view that contains the display form
+     */
+    IsWidget getView();
 }

@@ -22,9 +22,12 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Composite;
 import org.gwtbootstrap3.client.ui.ValueListBox;
+import org.gwtbootstrap3.client.ui.constants.ValidationState;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -36,6 +39,12 @@ import org.kie.workbench.common.forms.jbpm.model.authoring.task.TaskFormModel;
 
 @Templated
 public class JBPMFormModelCreationViewImpl extends Composite implements JBPMFormModelCreationView {
+
+    @DataField
+    DivElement formGroup = Document.get().createDivElement();
+
+    @DataField
+    DivElement modelHelpBlock = Document.get().createDivElement();
 
     @DataField
     protected ValueListBox<JBPMProcessModel> processes = new ValueListBox( new Renderer<JBPMProcessModel>() {
@@ -65,10 +74,9 @@ public class JBPMFormModelCreationViewImpl extends Composite implements JBPMForm
                 } else if ( model instanceof TaskFormModel ) {
                     TaskFormModel taskFormModel = (TaskFormModel) model;
                     result = taskFormModel.getTaskName();
-
-                    if ( !taskFormModel.getTaskFormName().isEmpty() ) {
-                        result += " ( " + taskFormModel.getTaskFormName() + " )";
-                    }
+                }
+                if ( model.getFormName() != null && !model.getFormName().isEmpty() ) {
+                    result += " ( " + model.getFormName() + " )";
                 }
             }
 
@@ -82,6 +90,8 @@ public class JBPMFormModelCreationViewImpl extends Composite implements JBPMForm
     } );
 
     protected TranslationService translationService;
+
+    protected JBPMFormModelCreationPresenterManager presenter;
 
     @Inject
     public JBPMFormModelCreationViewImpl( TranslationService translationService ) {
@@ -100,8 +110,19 @@ public class JBPMFormModelCreationViewImpl extends Composite implements JBPMForm
                 tasks.setAcceptableValues( models );
             }  else {
                 tasks.setAcceptableValues( new ArrayList<>() );
+                tasks.setValue( null, true );
             }
         } );
+
+        tasks.addValueChangeHandler( event -> {
+            presenter.setModel( event.getValue() );
+            clearValidationErrors();
+        } );
+    }
+
+    @Override
+    public void setPresenter( JBPMFormModelCreationPresenterManager presenter ) {
+        this.presenter = presenter;
     }
 
     @Override
@@ -111,19 +132,22 @@ public class JBPMFormModelCreationViewImpl extends Composite implements JBPMForm
     }
 
     @Override
-    public JBPMFormModel getSelectedFormModel() {
-        return tasks.getValue();
-    }
-
-    @Override
-    public boolean isValid() {
-        return getSelectedFormModel() != null;
-    }
-
-    @Override
     public void reset() {
         processes.setValue( null );
         tasks.setValue( null );
         tasks.setAcceptableValues( new ArrayList<>() );
+        clearValidationErrors();
+    }
+
+    @Override
+    public void clearValidationErrors() {
+        formGroup.removeClassName( ValidationState.ERROR.getCssName() );
+        modelHelpBlock.setInnerText( "" );
+    }
+
+    @Override
+    public void setErrorMessage( String errorMessage ) {
+        formGroup.addClassName( ValidationState.ERROR.getCssName() );
+        modelHelpBlock.setInnerText( errorMessage );
     }
 }
