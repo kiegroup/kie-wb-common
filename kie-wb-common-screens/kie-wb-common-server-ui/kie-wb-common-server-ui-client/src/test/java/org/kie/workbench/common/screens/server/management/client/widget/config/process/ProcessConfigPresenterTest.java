@@ -82,7 +82,12 @@ public class ProcessConfigPresenterTest {
 
     @Test
     public void testCancel() {
-        final ProcessConfig processConfig = new ProcessConfig( ClientRuntimeStrategy.PER_REQUEST.toString(), "kBase", "kSession", ClientMergeMode.KEEP_ALL.toString() );
+        final ProcessConfig processConfig = new ProcessConfig( ClientRuntimeStrategy.PER_REQUEST.toString(),
+                                                               "kBase",
+                                                               "kSession",
+                                                               ClientMergeMode.OVERRIDE_ALL.toString() );
+
+
         presenter.setProcessConfig( processConfig );
 
         presenter.cancel();
@@ -90,7 +95,7 @@ public class ProcessConfigPresenterTest {
         verify( view, times( 2 ) ).setContent( ClientRuntimeStrategy.PER_REQUEST.getValue( translationService ),
                                                processConfig.getKBase(),
                                                processConfig.getKSession(),
-                                               ClientMergeMode.convert( processConfig.getMergeMode(), translationService ).getValue( translationService ) );
+                                               ClientMergeMode.OVERRIDE_ALL.getValue( translationService ) );
     }
 
     @Test
