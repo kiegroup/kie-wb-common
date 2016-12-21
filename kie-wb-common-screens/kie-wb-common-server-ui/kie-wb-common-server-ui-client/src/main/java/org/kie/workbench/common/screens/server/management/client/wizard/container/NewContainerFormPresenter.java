@@ -63,6 +63,8 @@ public class NewContainerFormPresenter implements WizardPage {
 
         void setVersion( final String version );
 
+        void setContainerName( final String containerName );
+
         String getContainerName();
 
         String getGroupId();
@@ -220,15 +222,33 @@ public class NewContainerFormPresenter implements WizardPage {
                 m2RepoService.call( new RemoteCallback<GAV>() {
                     @Override
                     public void callback( GAV gav ) {
+                        setAValidContainerName( gav.toString() );
+
                         view.setGroupId( gav.getGroupId() );
                         view.setArtifactId( gav.getArtifactId() );
                         view.setVersion( gav.getVersion() );
+
                         wizardPageStatusChangeEvent.fire( new WizardPageStatusChangeEvent( NewContainerFormPresenter.this ) );
                     }
                 } ).loadGAVFromJar( event.getPath() );
             }
         } else {
             logger.warn( "Illegal event argument." );
+        }
+    }
+
+    private void setAValidContainerName( final String containerId ) {
+        if ( view.getContainerName().isEmpty() ) {
+            specManagementService
+                    .call( new RemoteCallback<String>() {
+                        @Override
+                        public void callback( final String validContainerId ) {
+                            view.setContainerName( validContainerId );
+
+                            wizardPageStatusChangeEvent.fire( new WizardPageStatusChangeEvent( NewContainerFormPresenter.this ) );
+                        }
+                    } )
+                    .validContainerId( serverTemplate.getId(), containerId );
         }
     }
 
