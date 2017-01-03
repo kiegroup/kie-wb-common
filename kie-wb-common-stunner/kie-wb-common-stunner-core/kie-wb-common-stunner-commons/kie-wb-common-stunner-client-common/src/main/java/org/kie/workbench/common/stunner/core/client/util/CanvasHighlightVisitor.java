@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.util;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
@@ -31,11 +36,6 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.V
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.uberfire.mvp.Command;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Visits the graph and highlights elements while visiting. Just for development use.

@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.lookup.definition;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.lookup.AbstractLookupRequest;
 import org.kie.workbench.common.stunner.core.lookup.AbstractLookupRequestBuilder;
-
-import java.util.Set;
 
 @Portable
 public final class DefinitionLookupRequestImpl extends AbstractLookupRequest implements DefinitionLookupRequest {

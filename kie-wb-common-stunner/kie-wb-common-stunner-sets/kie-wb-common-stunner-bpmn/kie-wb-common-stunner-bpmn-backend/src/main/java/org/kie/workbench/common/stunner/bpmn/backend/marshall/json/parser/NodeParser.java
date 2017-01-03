@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.ArrayParser;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.IntegerFieldParser;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.ObjectParser;
@@ -27,9 +30,6 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class NodeParser extends ElementParser<Node<View, Edge>> {
 

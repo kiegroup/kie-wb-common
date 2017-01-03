@@ -15,6 +15,18 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.Collection;
+import java.util.HashMap;
+import javax.annotation.PostConstruct;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.ServletContext;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.errai.bus.server.annotations.Service;
@@ -26,7 +38,6 @@ import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetSer
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
-import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
 import org.kie.workbench.common.stunner.core.registry.BackendRegistryFactory;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.slf4j.Logger;
@@ -37,18 +48,6 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.FileSystemAlreadyExistsException;
 import org.uberfire.java.nio.file.StandardDeleteOption;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.ServletContext;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.Collection;
-import java.util.HashMap;
 
 @Service
 public class DiagramServiceImpl

@@ -16,14 +16,24 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import org.kie.workbench.common.stunner.core.api.AbstractDefinitionManager;
-import org.kie.workbench.common.stunner.core.definition.adapter.*;
+import org.kie.workbench.common.stunner.core.definition.adapter.Adapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetRuleAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.MorphAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.PriorityAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.exception.AdapterNotFoundException;
 import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-
-import java.util.*;
-import java.util.logging.Logger;
 
 public class AdapterRegistryImpl implements AdapterRegistry, DynamicRegistry<Adapter> {
 

@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.shapes.client.view.animatiion;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
@@ -25,9 +28,6 @@ import org.kie.workbench.common.stunner.core.client.shape.view.HasRadius;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
 import org.kie.workbench.common.stunner.shapes.client.BasicShape;
 import org.kie.workbench.common.stunner.shapes.client.view.BasicShapeView;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class BasicShapeAnimation
         extends AbstractBasicAnimation<BasicShape> {

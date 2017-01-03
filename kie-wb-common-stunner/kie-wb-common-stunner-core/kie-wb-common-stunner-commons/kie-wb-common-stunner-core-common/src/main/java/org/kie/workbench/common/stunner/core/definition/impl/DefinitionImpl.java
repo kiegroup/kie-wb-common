@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.definition.impl;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.uberfire.commons.validation.PortablePreconditions;
-
-import java.util.Set;
 
 @Portable
 public class DefinitionImpl {

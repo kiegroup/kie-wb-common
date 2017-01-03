@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl.model;
 
+import java.util.HashSet;
+import java.util.Set;
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.rule.ConnectionRule;
 import org.kie.workbench.common.stunner.core.rule.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
@@ -23,10 +27,6 @@ import org.kie.workbench.common.stunner.core.rule.impl.AbstractConnectionRuleMan
 import org.kie.workbench.common.stunner.core.rule.impl.violations.ConnectionRuleViolation;
 import org.kie.workbench.common.stunner.core.rule.model.ModelConnectionRuleManager;
 import org.uberfire.commons.data.Pair;
-
-import javax.enterprise.context.Dependent;
-import java.util.HashSet;
-import java.util.Set;
 
 @Dependent
 public class ModelConnectionRuleManagerImpl extends AbstractConnectionRuleManager implements ModelConnectionRuleManager {

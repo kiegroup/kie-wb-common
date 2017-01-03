@@ -16,16 +16,16 @@
 
 package org.kie.workbench.common.stunner.core.processors.rule;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.AbstractDefinitionSetRuleAdapter;
-import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
-import org.kie.workbench.common.stunner.core.processors.ProcessingRule;
-import org.uberfire.annotations.processors.exceptions.GenerationException;
-
-import javax.annotation.processing.Messager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.processing.Messager;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.AbstractDefinitionSetRuleAdapter;
+import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
+import org.kie.workbench.common.stunner.core.processors.ProcessingRule;
+import org.uberfire.annotations.processors.exceptions.GenerationException;
 
 public class BindableDefinitionSetRuleAdapterGenerator extends AbstractBindableAdapterGenerator {
 

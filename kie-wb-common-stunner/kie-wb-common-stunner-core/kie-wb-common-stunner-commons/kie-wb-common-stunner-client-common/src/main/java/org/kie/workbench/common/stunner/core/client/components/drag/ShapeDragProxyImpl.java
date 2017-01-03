@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.components.drag;
 
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.shape.Shape;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
+import org.kie.workbench.common.stunner.core.client.shape.Shape;
 
 @Dependent
 public class ShapeDragProxyImpl implements ShapeDragProxy<AbstractCanvas> {

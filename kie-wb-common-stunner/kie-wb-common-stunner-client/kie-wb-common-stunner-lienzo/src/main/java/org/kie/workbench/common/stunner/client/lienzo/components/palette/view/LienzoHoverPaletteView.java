@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.components.palette.view;
 
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoPaletteElementView;
 import org.kie.workbench.common.stunner.lienzo.palette.HoverPalette;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class LienzoHoverPaletteView

@@ -16,15 +16,20 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
+import javax.enterprise.event.Event;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandAllowedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasUndoCommandExecutedEvent;
-import org.kie.workbench.common.stunner.core.command.*;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.command.CommandManager;
+import org.kie.workbench.common.stunner.core.command.CommandManagerFactory;
+import org.kie.workbench.common.stunner.core.command.CommandManagerListener;
+import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.HasCommandManagerListener;
 import org.kie.workbench.common.stunner.core.command.delegate.DelegateCommandManager;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
-
-import javax.enterprise.event.Event;
 
 class CanvasCommandManagerImpl
         extends DelegateCommandManager<AbstractCanvasHandler, CanvasViolation>

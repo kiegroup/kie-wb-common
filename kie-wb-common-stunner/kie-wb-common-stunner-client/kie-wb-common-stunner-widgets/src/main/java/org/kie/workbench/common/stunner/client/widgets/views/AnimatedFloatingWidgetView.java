@@ -15,14 +15,14 @@
 
 package org.kie.workbench.common.stunner.client.widgets.views;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Specializes;
+
 import org.gwtbootstrap3.extras.animate.client.ui.Animate;
 import org.gwtbootstrap3.extras.animate.client.ui.constants.Animation;
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingWidgetView;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Specializes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Extension for the Stunner's common floating views which adds support for Bootstrap3 animations.

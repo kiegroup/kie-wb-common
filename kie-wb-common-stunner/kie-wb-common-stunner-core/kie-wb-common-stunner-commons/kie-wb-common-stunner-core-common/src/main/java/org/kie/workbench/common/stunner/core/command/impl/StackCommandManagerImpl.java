@@ -16,14 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.command.impl;
 
-import org.kie.workbench.common.stunner.core.command.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.command.CommandManager;
+import org.kie.workbench.common.stunner.core.command.CommandManagerListener;
+import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.HasCommandManagerListener;
 import org.kie.workbench.common.stunner.core.command.stack.StackCommandManager;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.registry.RegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 class StackCommandManagerImpl<C, V> implements StackCommandManager<C, V> {
 

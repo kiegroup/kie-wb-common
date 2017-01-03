@@ -15,14 +15,13 @@
 
 package org.kie.workbench.common.stunner.core.command.impl;
 
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.CompositeCommand;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * A generic composite command implementation. Feel free to add commands into it.

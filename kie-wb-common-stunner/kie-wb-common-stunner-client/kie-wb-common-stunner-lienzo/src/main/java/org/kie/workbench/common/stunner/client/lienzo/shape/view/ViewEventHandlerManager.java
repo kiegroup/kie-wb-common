@@ -16,14 +16,32 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view;
 
-import com.ait.lienzo.client.core.event.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.ait.lienzo.client.core.event.AbstractNodeGestureEvent;
+import com.ait.lienzo.client.core.event.AbstractNodeTouchEvent;
+import com.ait.lienzo.client.core.event.NodeGestureChangeEvent;
+import com.ait.lienzo.client.core.event.NodeGestureChangeHandler;
+import com.ait.lienzo.client.core.event.NodeGestureEndEvent;
+import com.ait.lienzo.client.core.event.NodeGestureEndHandler;
+import com.ait.lienzo.client.core.event.NodeGestureStartEvent;
+import com.ait.lienzo.client.core.event.NodeGestureStartHandler;
+import com.ait.lienzo.client.core.event.TouchPoint;
 import com.ait.lienzo.client.core.shape.Node;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.*;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.GestureEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.GestureEventImpl;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.GestureHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.HandlerRegistrationImpl;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseClickEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseDoubleClickEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TouchEventImpl;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TouchHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
 
 public class ViewEventHandlerManager {
 

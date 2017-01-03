@@ -15,6 +15,8 @@
 
 package org.kie.workbench.common.stunner.project.client.editor;
 
+import javax.enterprise.event.Event;
+
 import org.kie.workbench.common.stunner.client.widgets.palette.bs3.factory.BS3PaletteFactory;
 import org.kie.workbench.common.stunner.client.widgets.session.presenter.impl.AbstractClientSessionPresenter;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
@@ -26,8 +28,6 @@ import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.client.workbench.type.ClientResourceType;
 import org.uberfire.client.workbench.widgets.common.ErrorPopupPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
-
-import javax.enterprise.event.Event;
 
 class ProjectDiagramEditorStub extends AbstractProjectDiagramEditor<ClientResourceType> {
 

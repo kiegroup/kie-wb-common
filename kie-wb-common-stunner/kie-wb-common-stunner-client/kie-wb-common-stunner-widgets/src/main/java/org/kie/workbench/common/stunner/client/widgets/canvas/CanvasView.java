@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
+import javax.annotation.PostConstruct;
+
 import com.ait.lienzo.client.core.shape.GridLayer;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Line;
@@ -26,8 +28,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasGrid;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
-
-import javax.annotation.PostConstruct;
 
 public class CanvasView extends Composite implements AbstractCanvas.View<com.ait.lienzo.client.widget.LienzoPanel> {
 

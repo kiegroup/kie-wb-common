@@ -15,17 +15,17 @@
 
 package org.kie.workbench.common.stunner.shapes.client.view.glyph;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.google.gwt.safehtml.shared.SafeUri;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.AbstractGlyphBuilder;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.shapes.client.factory.PictureProvidersManager;
 import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @ApplicationScoped
 public class PictureGlyphBuilder extends AbstractGlyphBuilder<Group, PictureGlyphDef<Object, ?>> {

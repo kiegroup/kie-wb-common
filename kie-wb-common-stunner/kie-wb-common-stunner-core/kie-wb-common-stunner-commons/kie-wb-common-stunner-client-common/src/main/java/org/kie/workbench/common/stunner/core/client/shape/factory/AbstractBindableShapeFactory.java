@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.factory;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-
-import java.util.Set;
 
 public abstract class AbstractBindableShapeFactory<W, S extends Shape> extends AbstractShapeFactory<W, S> {
 

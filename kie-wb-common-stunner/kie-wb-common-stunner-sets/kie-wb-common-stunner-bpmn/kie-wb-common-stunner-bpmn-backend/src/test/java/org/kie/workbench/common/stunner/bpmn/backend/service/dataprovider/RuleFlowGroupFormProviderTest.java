@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.dataprovider;
 
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.refactoring.backend.server.query.standard.FindRuleFlowNamesQuery;
@@ -23,11 +25,7 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.valueterm
 import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueSharedPartIndexTerm;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class RuleFlowGroupFormProviderTest {
 

@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.graph.command;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandManagerFactory;
@@ -25,13 +31,6 @@ import org.kie.workbench.common.stunner.core.command.event.local.CommandUndoExec
 import org.kie.workbench.common.stunner.core.command.event.local.IsCommandAllowedEvent;
 import org.kie.workbench.common.stunner.core.command.exception.CommandException;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Dependent
 public class GraphCommandManagerImpl

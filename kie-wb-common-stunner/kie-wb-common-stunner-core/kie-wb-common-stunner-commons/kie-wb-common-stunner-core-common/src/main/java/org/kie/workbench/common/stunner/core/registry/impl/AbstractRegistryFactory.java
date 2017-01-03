@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -27,9 +30,6 @@ import org.kie.workbench.common.stunner.core.registry.definition.TypeDefinitionR
 import org.kie.workbench.common.stunner.core.registry.definition.TypeDefinitionSetRegistry;
 import org.kie.workbench.common.stunner.core.registry.diagram.DiagramRegistry;
 import org.kie.workbench.common.stunner.core.registry.factory.FactoryRegistry;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public abstract class AbstractRegistryFactory implements RegistryFactory {
 

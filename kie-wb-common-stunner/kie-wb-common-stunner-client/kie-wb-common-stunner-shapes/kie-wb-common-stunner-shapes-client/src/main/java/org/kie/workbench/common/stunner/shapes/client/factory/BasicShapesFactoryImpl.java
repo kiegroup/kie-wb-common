@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.shapes.client.factory;
 
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -29,19 +33,33 @@ import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.GlyphBuilderFactory;
 import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
-import org.kie.workbench.common.stunner.shapes.client.*;
-import org.kie.workbench.common.stunner.shapes.client.view.*;
+import org.kie.workbench.common.stunner.shapes.client.CircleShape;
+import org.kie.workbench.common.stunner.shapes.client.ConnectorShape;
+import org.kie.workbench.common.stunner.shapes.client.DynamicIconShape;
+import org.kie.workbench.common.stunner.shapes.client.PictureShape;
+import org.kie.workbench.common.stunner.shapes.client.PolygonShape;
+import org.kie.workbench.common.stunner.shapes.client.RectangleShape;
+import org.kie.workbench.common.stunner.shapes.client.RingShape;
+import org.kie.workbench.common.stunner.shapes.client.StaticIconShape;
+import org.kie.workbench.common.stunner.shapes.client.view.CircleView;
+import org.kie.workbench.common.stunner.shapes.client.view.ConnectorView;
+import org.kie.workbench.common.stunner.shapes.client.view.PictureShapeView;
+import org.kie.workbench.common.stunner.shapes.client.view.PolygonView;
+import org.kie.workbench.common.stunner.shapes.client.view.RectangleView;
+import org.kie.workbench.common.stunner.shapes.client.view.RingView;
+import org.kie.workbench.common.stunner.shapes.client.view.ShapeViewFactory;
 import org.kie.workbench.common.stunner.shapes.client.view.icon.dynamics.DynamicIconShapeView;
 import org.kie.workbench.common.stunner.shapes.client.view.icon.statics.StaticIconShapeView;
-import org.kie.workbench.common.stunner.shapes.def.*;
+import org.kie.workbench.common.stunner.shapes.def.CircleShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.ConnectorShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.HasChildShapeDefs;
+import org.kie.workbench.common.stunner.shapes.def.PolygonShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.RectangleShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.RingShapeDef;
 import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.Icons;
 import org.kie.workbench.common.stunner.shapes.def.icon.statics.IconShapeDef;
 import org.kie.workbench.common.stunner.shapes.def.picture.PictureShapeDef;
 import org.kie.workbench.common.stunner.shapes.factory.BasicShapesFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.Map;
 
 @ApplicationScoped
 public class BasicShapesFactoryImpl

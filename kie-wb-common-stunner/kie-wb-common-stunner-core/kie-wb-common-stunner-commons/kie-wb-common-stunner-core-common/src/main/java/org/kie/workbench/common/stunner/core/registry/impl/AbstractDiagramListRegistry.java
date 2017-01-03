@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.registry.diagram.DiagramRegistry;
-
 import java.util.Collection;
 import java.util.List;
+
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.registry.diagram.DiagramRegistry;
 
 public abstract class AbstractDiagramListRegistry<D extends Diagram>
         extends AbstractDynamicRegistryWrapper<D, ListRegistry<D>>

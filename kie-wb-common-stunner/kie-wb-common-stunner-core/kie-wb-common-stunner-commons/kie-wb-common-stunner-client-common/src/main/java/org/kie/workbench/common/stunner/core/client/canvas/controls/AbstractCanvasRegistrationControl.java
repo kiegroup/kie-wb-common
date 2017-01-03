@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class AbstractCanvasRegistrationControl extends AbstractCanvasControl
         implements CanvasRegistationControl<AbstractCanvas, Shape> {

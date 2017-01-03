@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.index.bounds;
 
+import java.util.Iterator;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -25,10 +29,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.AbstractChildrenTraverseCallback;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.Iterator;
 
 @Dependent
 public class GraphBoundsIndexerImpl implements GraphBoundsIndexer {

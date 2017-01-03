@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.actions;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -31,16 +36,17 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.*;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseDoubleClickEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseDoubleClickHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOutEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOutHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOverEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.TextOverHandler;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

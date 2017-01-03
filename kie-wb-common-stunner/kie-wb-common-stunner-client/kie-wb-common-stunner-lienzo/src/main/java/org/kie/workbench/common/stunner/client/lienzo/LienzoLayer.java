@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.lienzo;
 
+import javax.enterprise.context.Dependent;
+
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.shared.core.types.DataURLType;
@@ -23,15 +25,12 @@ import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.util.LienzoImageDataUtils;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractLayer;
-import org.kie.workbench.common.stunner.core.client.canvas.Layer;
 import org.kie.workbench.common.stunner.core.client.canvas.Point2D;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 @Lienzo

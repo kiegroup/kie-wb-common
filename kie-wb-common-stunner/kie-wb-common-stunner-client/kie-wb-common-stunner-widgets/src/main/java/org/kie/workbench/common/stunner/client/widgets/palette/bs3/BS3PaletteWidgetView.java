@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.widgets.palette.bs3;
 
+import javax.enterprise.context.Dependent;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
@@ -29,8 +31,6 @@ import org.kie.workbench.common.stunner.client.widgets.palette.PaletteWidgetView
 import org.kie.workbench.common.stunner.core.client.components.glyph.ShapeGlyphDragHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.uberfire.client.mvp.UberView;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class BS3PaletteWidgetView extends Composite implements PaletteWidgetView<IsWidget>, UberView<BS3PaletteWidgetImpl> {

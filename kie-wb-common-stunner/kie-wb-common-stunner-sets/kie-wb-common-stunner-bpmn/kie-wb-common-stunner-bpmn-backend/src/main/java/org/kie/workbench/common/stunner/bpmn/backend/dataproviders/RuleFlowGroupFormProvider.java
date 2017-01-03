@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.dataproviders;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorData;
 import org.kie.workbench.common.forms.dynamic.model.config.SelectorDataProvider;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
@@ -25,9 +31,6 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.valueterm
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.PartType;
 import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
-
-import javax.inject.Inject;
-import java.util.*;
 
 public class RuleFlowGroupFormProvider implements SelectorDataProvider {
     @Inject

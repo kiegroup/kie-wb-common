@@ -15,6 +15,9 @@
 
 package org.kie.workbench.common.stunner.project.client.handlers;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import org.guvnor.common.services.project.model.Package;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -30,9 +33,6 @@ import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractProjectDiagramNewResourceHandler<R extends ClientResourceType> extends DefaultNewResourceHandler {
 

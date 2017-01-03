@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.components.views;
 
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOverEvent;
@@ -25,8 +27,6 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.HandlerRegistrationImpl;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.context.Dependent;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

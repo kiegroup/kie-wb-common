@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.widgets.palette.bs3.factory;
 
+import java.util.Map;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-
-import java.util.Map;
 
 public abstract class BindableBS3PaletteViewFactory<V extends IsWidget> implements BS3PaletteViewFactory {
 

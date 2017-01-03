@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property;
 
-import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-import org.kie.workbench.common.stunner.bpmn.definition.property.type.VariablesType;
-
 import javax.enterprise.context.ApplicationScoped;
+
+import org.kie.workbench.common.stunner.bpmn.definition.property.type.VariablesType;
+import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 @ApplicationScoped
 public class VariablesTypeSerializer implements Bpmn2OryxPropertySerializer<String> {

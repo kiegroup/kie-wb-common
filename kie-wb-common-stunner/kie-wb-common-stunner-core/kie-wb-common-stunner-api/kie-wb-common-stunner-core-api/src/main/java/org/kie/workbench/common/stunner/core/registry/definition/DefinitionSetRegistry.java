@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.registry.definition;
 
-import org.kie.workbench.common.stunner.core.registry.Registry;
-
 import java.util.Collection;
+
+import org.kie.workbench.common.stunner.core.registry.Registry;
 
 /**
  * Base registry type for Definition Sets.

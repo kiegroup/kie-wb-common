@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.client.widgets.loading;
 
-import com.google.gwt.logging.client.LogConfiguration;
-import com.google.gwt.user.client.Timer;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import com.google.gwt.logging.client.LogConfiguration;
+import com.google.gwt.user.client.Timer;
 
 @ApplicationScoped
 public class LoadingBox {
@@ -90,7 +90,7 @@ public class LoadingBox {
         }
 
     }
-    
+
     /*public void onCanvasProcessingStarted(@Observes CanvasProcessingStartedEvent canvasProcessingStartedEvent) {
         checkNotNull("canvasProcessingStartedEvent", canvasProcessingStartedEvent);
         show();

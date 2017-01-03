@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
+import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
@@ -29,11 +33,6 @@ import org.kie.workbench.common.stunner.core.command.delegate.DelegateCommandMan
 import org.kie.workbench.common.stunner.core.command.exception.CommandException;
 import org.kie.workbench.common.stunner.core.command.stack.StackCommandManager;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Command manager used in a client session context. It delegates to each session's command manager in order to keep

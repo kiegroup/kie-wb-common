@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.notification;
 
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.ColumnSortEvent;
@@ -45,13 +51,6 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.core.validation.event.AbstractValidationEvent;
 import org.kie.workbench.common.stunner.core.validation.event.AbstractValidationFailEvent;
 import org.uberfire.client.mvp.UberView;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.List;
 
 @Dependent
 public class Notifications implements IsWidget {
@@ -138,9 +137,9 @@ public class Notifications implements IsWidget {
         view.clear();
 
     }
-    
+
     /*  ******************************************************************************************************
-                                 VIEW CALLBACKS 
+                                 VIEW CALLBACKS
      ****************************************************************************************************** */
 
     final ProvidesKey<Notification> KEY_PROVIDER = new ProvidesKey<Notification>() {

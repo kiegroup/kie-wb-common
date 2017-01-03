@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
-import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
-
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 
 public abstract class DefinitionSetAdapterWrapper<T, A extends DefinitionSetAdapter<T>> implements DefinitionSetAdapter<T> {
 

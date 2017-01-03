@@ -21,8 +21,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.graph.command.impl.ClearGraphCommand;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith( MockitoJUnitRunner.class )
 public class ClearCommandTest extends AbstractCanvasCommandTest {

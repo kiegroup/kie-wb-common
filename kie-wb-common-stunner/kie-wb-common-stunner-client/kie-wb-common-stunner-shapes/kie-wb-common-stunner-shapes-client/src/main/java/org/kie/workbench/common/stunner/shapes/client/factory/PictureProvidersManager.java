@@ -15,17 +15,17 @@
 
 package org.kie.workbench.common.stunner.shapes.client.factory;
 
-import com.google.gwt.safehtml.shared.SafeUri;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.shapes.def.picture.PictureProvider;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
+import com.google.gwt.safehtml.shared.SafeUri;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.stunner.shapes.def.picture.PictureProvider;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

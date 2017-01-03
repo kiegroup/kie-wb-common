@@ -14,6 +14,9 @@
  */
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -24,9 +27,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBui
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.uberfire.commons.validation.PortablePreconditions;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * A Command to register and node into the graph storage.

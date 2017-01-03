@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.widgets.canvas.wires;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.client.lienzo.Lienzo;
@@ -28,10 +32,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasDrawnEven
 import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasFocusedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeAddedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeRemovedEvent;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 @Dependent
 public class WiresCanvasPresenter extends WiresCanvas implements IsWidget {

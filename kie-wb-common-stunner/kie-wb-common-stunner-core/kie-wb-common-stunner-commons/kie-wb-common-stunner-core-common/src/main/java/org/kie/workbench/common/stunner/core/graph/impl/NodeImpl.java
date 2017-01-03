@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.graph.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Portable
 public class NodeImpl<C> extends ElementImpl<C> implements Node<C, Edge> {

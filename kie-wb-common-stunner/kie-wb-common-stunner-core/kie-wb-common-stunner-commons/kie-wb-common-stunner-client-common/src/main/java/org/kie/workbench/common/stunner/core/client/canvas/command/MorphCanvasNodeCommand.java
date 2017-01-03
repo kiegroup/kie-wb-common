@@ -15,6 +15,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.EdgeShape;
@@ -28,8 +30,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import java.util.List;
 
 public final class MorphCanvasNodeCommand extends AbstractCanvasCommand {
 

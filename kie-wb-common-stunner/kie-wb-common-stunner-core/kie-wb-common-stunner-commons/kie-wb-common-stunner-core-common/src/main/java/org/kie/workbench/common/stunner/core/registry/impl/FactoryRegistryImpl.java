@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -24,8 +30,6 @@ import org.kie.workbench.common.stunner.core.factory.definition.DefinitionFactor
 import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 import org.kie.workbench.common.stunner.core.registry.factory.TypeFactoryRegistry;
-
-import java.util.*;
 
 class FactoryRegistryImpl<T extends Factory<?>> implements TypeFactoryRegistry<T> {
 

@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
-import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-
 import java.util.Map;
+
+import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 public abstract class PropertyAdapterWrapper<T, V, A extends PropertyAdapter<T, V>> implements PropertyAdapter<T, V> {
 

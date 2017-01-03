@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
-import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
-
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 
 /**
  * A Definition pojo adapter..

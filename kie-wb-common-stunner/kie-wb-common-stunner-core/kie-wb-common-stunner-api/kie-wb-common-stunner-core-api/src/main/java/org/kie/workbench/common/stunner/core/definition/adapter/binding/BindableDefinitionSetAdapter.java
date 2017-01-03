@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
-
 import java.util.Map;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
 
 public interface BindableDefinitionSetAdapter<T> extends DefinitionSetAdapter<T> {
 

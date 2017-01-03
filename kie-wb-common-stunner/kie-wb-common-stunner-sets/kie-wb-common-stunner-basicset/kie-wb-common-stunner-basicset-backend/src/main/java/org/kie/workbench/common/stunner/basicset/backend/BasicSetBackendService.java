@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.basicset.backend;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.backend.service.AbstractDefinitionSetService;
 import org.kie.workbench.common.stunner.backend.service.ErraiDiagramMarshaller;
 import org.kie.workbench.common.stunner.basicset.BasicSetResourceType;
 import org.kie.workbench.common.stunner.core.definition.DefinitionSetResourceType;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
 public class BasicSetBackendService extends AbstractDefinitionSetService {

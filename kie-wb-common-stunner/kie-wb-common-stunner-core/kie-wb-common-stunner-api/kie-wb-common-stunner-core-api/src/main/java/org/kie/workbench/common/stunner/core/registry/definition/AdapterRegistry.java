@@ -16,7 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.registry.definition;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.*;
+import org.kie.workbench.common.stunner.core.definition.adapter.Adapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetRuleAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.MorphAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
 import org.kie.workbench.common.stunner.core.registry.Registry;
 
 /**

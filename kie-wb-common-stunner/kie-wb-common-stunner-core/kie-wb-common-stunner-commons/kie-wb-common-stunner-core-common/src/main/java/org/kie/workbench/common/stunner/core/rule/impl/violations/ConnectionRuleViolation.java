@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl.violations;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.uberfire.commons.data.Pair;
-
-import java.util.Set;
 
 // TODO: I18n.
 @Portable

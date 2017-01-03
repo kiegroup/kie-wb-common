@@ -15,6 +15,15 @@
 
 package org.kie.workbench.common.stunner.core.backend.service;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Set;
+import javax.enterprise.inject.Instance;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -39,11 +48,6 @@ import org.uberfire.java.nio.file.FileVisitResult;
 import org.uberfire.java.nio.file.SimpleFileVisitor;
 import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
-
-import javax.enterprise.inject.Instance;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.*;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.uberfire.java.nio.file.Files.walkFileTree;

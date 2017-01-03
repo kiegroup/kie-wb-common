@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.command.impl;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
-import org.kie.workbench.common.stunner.core.command.CommandResult;
-
 import java.util.Collection;
 import java.util.LinkedList;
+
+import org.jboss.errai.common.client.api.annotations.NonPortable;
+import org.kie.workbench.common.stunner.core.command.CommandResult;
 
 @NonPortable
 public abstract class CommandResultBuilder<V> {

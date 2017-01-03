@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.widgets.canvas;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.core.client.canvas.event.keyboard.KeyDownEvent;
@@ -23,10 +27,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.keyboard.KeyPre
 import org.kie.workbench.common.stunner.core.client.canvas.event.keyboard.KeyUpEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.keyboard.KeyboardEvent;
 import org.uberfire.client.mvp.UberView;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 @Dependent
 public class LienzoPanel implements IsWidget {

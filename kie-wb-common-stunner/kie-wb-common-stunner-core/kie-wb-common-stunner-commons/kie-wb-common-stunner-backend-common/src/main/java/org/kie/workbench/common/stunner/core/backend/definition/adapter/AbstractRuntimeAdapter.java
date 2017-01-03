@@ -15,12 +15,12 @@
 
 package org.kie.workbench.common.stunner.core.backend.definition.adapter;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.PriorityAdapter;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.PriorityAdapter;
 
 public abstract class AbstractRuntimeAdapter<T> implements PriorityAdapter {
 

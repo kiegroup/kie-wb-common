@@ -15,8 +15,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.session.presenter.impl;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.client.widgets.event.SessionDiagramOpenedEvent;
-import org.kie.workbench.common.stunner.client.widgets.notification.Notification;
 import org.kie.workbench.common.stunner.client.widgets.session.presenter.ClientSessionPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.command.CanvasCommandExecutedEvent;
@@ -29,11 +33,6 @@ import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasVali
 import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidationSuccessEvent;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
-import javax.inject.Inject;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

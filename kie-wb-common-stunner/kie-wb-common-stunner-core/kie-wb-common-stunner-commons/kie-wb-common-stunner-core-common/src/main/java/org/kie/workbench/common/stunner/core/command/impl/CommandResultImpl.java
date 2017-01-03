@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.command.impl;
 
+import java.util.Collection;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-
-import java.util.Collection;
 
 @Portable
 public final class CommandResultImpl<V> implements CommandResult<V> {

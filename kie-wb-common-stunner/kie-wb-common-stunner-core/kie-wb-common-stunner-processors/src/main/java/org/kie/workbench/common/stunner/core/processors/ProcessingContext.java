@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.processors;
 
-import javax.lang.model.element.Element;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import javax.lang.model.element.Element;
 
 public class ProcessingContext {
 

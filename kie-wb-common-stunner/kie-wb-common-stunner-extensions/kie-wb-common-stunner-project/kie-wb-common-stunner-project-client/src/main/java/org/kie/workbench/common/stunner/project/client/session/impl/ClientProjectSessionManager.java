@@ -15,18 +15,22 @@
 
 package org.kie.workbench.common.stunner.project.client.session.impl;
 
-import com.google.gwt.logging.client.LogConfiguration;
-import org.kie.workbench.common.stunner.core.client.api.platform.PlatformManager;
-import org.kie.workbench.common.stunner.core.client.session.event.*;
-import org.kie.workbench.common.stunner.core.client.session.impl.ClientSessionManagerImpl;
-import org.kie.workbench.common.stunner.project.client.screens.ProjectDiagramWorkbenchDocks;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Specializes;
 import javax.inject.Inject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import com.google.gwt.logging.client.LogConfiguration;
+import org.kie.workbench.common.stunner.core.client.api.platform.PlatformManager;
+import org.kie.workbench.common.stunner.core.client.session.event.OnSessionErrorEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionDisposedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionOpenedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionPausedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionResumedEvent;
+import org.kie.workbench.common.stunner.core.client.session.impl.ClientSessionManagerImpl;
+import org.kie.workbench.common.stunner.project.client.screens.ProjectDiagramWorkbenchDocks;
 
 @ApplicationScoped
 @Specializes

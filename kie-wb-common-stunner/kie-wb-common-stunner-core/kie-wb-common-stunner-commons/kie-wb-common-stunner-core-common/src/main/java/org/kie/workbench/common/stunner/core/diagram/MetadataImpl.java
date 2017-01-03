@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.diagram;
 
+import java.util.Collection;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -23,8 +25,6 @@ import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.ShapeSet;
 import org.uberfire.backend.vfs.Path;
-
-import java.util.Collection;
 
 @Portable
 public final class MetadataImpl extends AbstractMetadata {

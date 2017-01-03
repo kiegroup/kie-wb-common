@@ -20,14 +20,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.api.platform.PlatformManager;
-import org.kie.workbench.common.stunner.core.client.session.event.*;
+import org.kie.workbench.common.stunner.core.client.session.event.OnSessionErrorEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionDisposedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionOpenedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionPausedEvent;
+import org.kie.workbench.common.stunner.core.client.session.event.SessionResumedEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientSession;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectDiagramWorkbenchDocks;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith( GwtMockitoTestRunner.class )
 public class ClientProjectSessionManagerTest {

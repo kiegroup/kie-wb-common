@@ -15,8 +15,8 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.plugin;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * A service to access the registered plugins and find plugins.

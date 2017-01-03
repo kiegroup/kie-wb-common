@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.io.IOException;
-import java.io.InputStream;
 
 @ApplicationScoped
 public class ErraiDiagramMetadataMarshaller implements DiagramMetadataMarshaller<Metadata> {

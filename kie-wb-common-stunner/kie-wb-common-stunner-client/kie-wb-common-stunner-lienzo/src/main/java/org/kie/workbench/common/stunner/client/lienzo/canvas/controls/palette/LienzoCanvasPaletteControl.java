@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls.palette;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.client.lienzo.LienzoLayer;
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.LienzoDefinitionSetPalette;
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.LienzoPalette;
@@ -30,10 +34,6 @@ import org.kie.workbench.common.stunner.core.client.components.palette.view.Pale
 import org.kie.workbench.common.stunner.core.client.components.palette.view.PaletteGridImpl;
 import org.kie.workbench.common.stunner.core.client.components.palette.view.PaletteView;
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.inject.Inject;
 
 @Dependent
 public class LienzoCanvasPaletteControl extends AbstractCanvasPaletteControl {

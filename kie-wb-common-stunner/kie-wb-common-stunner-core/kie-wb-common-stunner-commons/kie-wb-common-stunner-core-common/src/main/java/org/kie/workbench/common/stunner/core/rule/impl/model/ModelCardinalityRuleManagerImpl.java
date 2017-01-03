@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl.model;
 
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.rule.CardinalityRule;
 import org.kie.workbench.common.stunner.core.rule.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
@@ -23,8 +25,6 @@ import org.kie.workbench.common.stunner.core.rule.impl.AbstractCardinalityRuleMa
 import org.kie.workbench.common.stunner.core.rule.impl.violations.CardinalityMaxRuleViolation;
 import org.kie.workbench.common.stunner.core.rule.impl.violations.CardinalityMinRuleViolation;
 import org.kie.workbench.common.stunner.core.rule.model.ModelCardinalityRuleManager;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class ModelCardinalityRuleManagerImpl extends AbstractCardinalityRuleManager

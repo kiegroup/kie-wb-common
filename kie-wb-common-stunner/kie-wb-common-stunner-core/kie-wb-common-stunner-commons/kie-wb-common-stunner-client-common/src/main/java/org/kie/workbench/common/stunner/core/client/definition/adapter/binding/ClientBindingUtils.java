@@ -16,18 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.client.definition.adapter.binding;
 
-import org.jboss.errai.databinding.client.BindableProxy;
-import org.jboss.errai.databinding.client.HasProperties;
-import org.jboss.errai.databinding.client.NonExistingPropertyException;
-import org.jboss.errai.databinding.client.PropertyType;
-import org.jboss.errai.databinding.client.api.DataBinder;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.jboss.errai.databinding.client.BindableProxy;
+import org.jboss.errai.databinding.client.HasProperties;
+import org.jboss.errai.databinding.client.NonExistingPropertyException;
+import org.jboss.errai.databinding.client.PropertyType;
+import org.jboss.errai.databinding.client.api.DataBinder;
 
 public class ClientBindingUtils {
 

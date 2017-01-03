@@ -16,16 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.processors.rule;
 
-import org.kie.workbench.common.stunner.core.processors.MainProcessor;
-import org.kie.workbench.common.stunner.core.processors.ProcessingContext;
-import org.kie.workbench.common.stunner.core.processors.ProcessingRule;
-import org.kie.workbench.common.stunner.core.rule.annotation.AllowedOccurrences;
-import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
-import org.uberfire.annotations.processors.AbstractGenerator;
-import org.uberfire.annotations.processors.exceptions.GenerationException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
@@ -33,11 +28,16 @@ import javax.lang.model.element.PackageElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.Map;
+
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import org.kie.workbench.common.stunner.core.processors.MainProcessor;
+import org.kie.workbench.common.stunner.core.processors.ProcessingContext;
+import org.kie.workbench.common.stunner.core.processors.ProcessingRule;
+import org.kie.workbench.common.stunner.core.rule.annotation.AllowedOccurrences;
+import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
+import org.uberfire.annotations.processors.AbstractGenerator;
+import org.uberfire.annotations.processors.exceptions.GenerationException;
 
 public class CardinalityRuleGenerator extends AbstractGenerator {
 

@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.graph.command;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultBuilder;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultImpl;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-
-import java.util.Collection;
-import java.util.LinkedList;
 
 @NonPortable
 public class GraphCommandResultBuilder extends CommandResultBuilder<RuleViolation> {

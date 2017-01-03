@@ -15,13 +15,13 @@
 
 package org.kie.workbench.common.stunner.shapes.client.view.glyph;
 
+import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
+
 import com.ait.lienzo.client.core.shape.Group;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.AbstractGlyphBuilder;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.shapes.def.ConnectorGlyphDef;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.logging.Logger;
 
 @ApplicationScoped
 public class ConnectorGlyphBuilder extends AbstractGlyphBuilder<Group, ConnectorGlyphDef<Object>> {

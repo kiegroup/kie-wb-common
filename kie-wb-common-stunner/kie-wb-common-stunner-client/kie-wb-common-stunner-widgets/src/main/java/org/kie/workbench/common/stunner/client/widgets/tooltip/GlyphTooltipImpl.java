@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.client.widgets.tooltip;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -23,11 +28,6 @@ import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.core.client.components.glyph.GlyphTooltip;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.uberfire.client.mvp.UberView;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 @Dependent
 public class GlyphTooltipImpl implements GlyphTooltip<Group>, IsWidget {

@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.api.DefinitionManager;
-import org.kie.workbench.common.stunner.core.definition.adapter.exception.NotPojoTypeException;
-import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.logging.Logger;
+
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.definition.adapter.exception.NotPojoTypeException;
+import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 
 public class BindableAdapterUtils {
 

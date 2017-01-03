@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.widgets.navigation.navigator.item;
 
+import javax.enterprise.context.Dependent;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -25,11 +27,15 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.gwtbootstrap3.client.ui.*;
+import org.gwtbootstrap3.client.ui.Heading;
+import org.gwtbootstrap3.client.ui.Image;
+import org.gwtbootstrap3.client.ui.Panel;
+import org.gwtbootstrap3.client.ui.PanelBody;
+import org.gwtbootstrap3.client.ui.PanelFooter;
+import org.gwtbootstrap3.client.ui.Popover;
+import org.gwtbootstrap3.client.ui.ThumbnailLink;
 import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.NavigatorItem;
 import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.NavigatorItemView;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class NavigatorThumbnailItemView

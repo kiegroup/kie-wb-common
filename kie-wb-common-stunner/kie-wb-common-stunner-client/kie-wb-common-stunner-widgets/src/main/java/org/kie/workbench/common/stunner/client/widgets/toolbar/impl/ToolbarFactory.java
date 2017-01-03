@@ -15,15 +15,15 @@
 
 package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
 
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarView;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ToolbarCommandFactory;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.item.AbstractToolbarItem;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
 
 @Dependent
 public class ToolbarFactory {

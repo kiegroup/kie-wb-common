@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.api;
 
+import java.util.Iterator;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -31,8 +33,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.registry.RegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.factory.FactoryRegistry;
 import org.kie.workbench.common.stunner.core.util.UUID;
-
-import java.util.Iterator;
 
 public abstract class AbstractFactoryManager {
 

@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.lienzo.grid;
 
-import com.ait.lienzo.shared.core.types.Direction;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+
+import com.ait.lienzo.shared.core.types.Direction;
 
 public class Grid implements Iterable<Grid.Point> {
     private int padding;

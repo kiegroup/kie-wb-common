@@ -15,6 +15,9 @@
 
 package org.kie.workbench.common.stunner.project.client.editor;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -30,9 +33,6 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 // TODO: I18n.
 @ApplicationScoped

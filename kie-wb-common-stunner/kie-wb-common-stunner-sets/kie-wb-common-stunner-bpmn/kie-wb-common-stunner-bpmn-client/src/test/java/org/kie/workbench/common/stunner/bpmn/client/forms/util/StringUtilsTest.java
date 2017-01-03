@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.util;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 
 import static org.junit.Assert.*;
 

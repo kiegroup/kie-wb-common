@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.lienzo.toolbox.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Shape;
@@ -24,9 +27,6 @@ import com.ait.lienzo.shared.core.types.Direction;
 import org.kie.workbench.common.stunner.lienzo.toolbox.ToolboxButton;
 import org.kie.workbench.common.stunner.lienzo.toolbox.event.ToolboxButtonEventHandler;
 import org.kie.workbench.common.stunner.lienzo.toolbox.grid.GridToolbox;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractBuilder implements On, Towards, ButtonsOrRegister, ButtonGrid {
 

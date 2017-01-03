@@ -16,16 +16,15 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.index.map;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
-import org.kie.workbench.common.stunner.core.graph.processing.index.IndexBuilder;
-
-import javax.enterprise.context.Dependent;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Dependent
 public class MapIndexBuilder implements GraphIndexBuilder<MapIndex> {

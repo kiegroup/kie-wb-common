@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl.model;
 
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.rule.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRule;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
@@ -23,11 +28,6 @@ import org.kie.workbench.common.stunner.core.rule.impl.AbstractEdgeCardinalityRu
 import org.kie.workbench.common.stunner.core.rule.impl.violations.CardinalityMaxRuleViolation;
 import org.kie.workbench.common.stunner.core.rule.impl.violations.CardinalityMinRuleViolation;
 import org.kie.workbench.common.stunner.core.rule.model.ModelEdgeCardinalityRuleManager;
-
-import javax.enterprise.context.Dependent;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Dependent
 public class ModelEdgeCardinalityRuleManagerImpl extends AbstractEdgeCardinalityRuleManager

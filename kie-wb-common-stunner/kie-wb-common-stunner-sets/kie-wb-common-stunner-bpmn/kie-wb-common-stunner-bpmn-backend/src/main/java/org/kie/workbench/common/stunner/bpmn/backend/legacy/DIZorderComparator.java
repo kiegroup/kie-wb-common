@@ -15,13 +15,17 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy;
 
-import org.eclipse.bpmn2.*;
+import java.util.Comparator;
+import java.util.List;
+
+import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.FlowNode;
+import org.eclipse.bpmn2.Lane;
+import org.eclipse.bpmn2.LaneSet;
+import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.di.DiagramElement;
-
-import java.util.Comparator;
-import java.util.List;
 
 public final class DIZorderComparator implements Comparator<DiagramElement> {
     @Override

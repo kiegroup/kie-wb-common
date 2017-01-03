@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -33,9 +36,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.uberfire.commons.validation.PortablePreconditions;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * A Command to update an element's bounds.

@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.client.widgets.palette;
 
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
+
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
 import org.kie.workbench.common.stunner.core.client.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -24,9 +27,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.event.BuildC
 import org.kie.workbench.common.stunner.core.client.components.palette.factory.AbstractPaletteFactory;
 import org.kie.workbench.common.stunner.core.client.components.palette.factory.DefaultDefSetPaletteDefinitionFactory;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.PaletteDefinition;
-
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
 
 public abstract class AbstractPaletteWidgetFactory<I extends PaletteDefinition, P extends PaletteWidget<I, ?>>
         extends AbstractPaletteFactory<I, P>

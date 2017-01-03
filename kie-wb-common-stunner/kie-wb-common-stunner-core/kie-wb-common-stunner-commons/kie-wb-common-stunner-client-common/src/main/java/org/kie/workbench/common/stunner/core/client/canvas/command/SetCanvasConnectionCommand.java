@@ -15,6 +15,9 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
@@ -25,9 +28,6 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class SetCanvasConnectionCommand extends AbstractCanvasCommand {
 

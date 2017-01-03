@@ -16,7 +16,14 @@
 
 package org.kie.workbench.common.stunner.bpmn.shape.def;
 
-import org.kie.workbench.common.stunner.bpmn.definition.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
+import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
+import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.core.client.shape.HasChildren;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
@@ -27,9 +34,6 @@ import org.kie.workbench.common.stunner.shapes.def.HasChildShapeDefs;
 import org.kie.workbench.common.stunner.shapes.def.RectangleShapeDef;
 import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
 import org.kie.workbench.common.stunner.shapes.def.picture.PictureShapeDef;
-
-import java.util.HashMap;
-import java.util.Map;
 
 // TODO: I18n.
 public final class TaskShapeDef

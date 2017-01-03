@@ -16,16 +16,16 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphProperty;
 import org.kie.workbench.common.stunner.core.definition.morph.PropertyMorphDefinition;
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class AbstractMorphAdapter<S> implements MorphAdapter<S> {
 

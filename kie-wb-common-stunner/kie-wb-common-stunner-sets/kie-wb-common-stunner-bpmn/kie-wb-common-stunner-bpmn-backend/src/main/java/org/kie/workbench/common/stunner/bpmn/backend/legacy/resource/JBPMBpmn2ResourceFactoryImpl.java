@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.resource;
 
+import java.util.ArrayList;
+
 import bpsim.impl.BpsimFactoryImpl;
 import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.Definitions;
@@ -29,8 +31,6 @@ import org.eclipse.emf.ecore.util.ExtendedMetaData;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.impl.ElementHandlerImpl;
 import org.jboss.drools.impl.DroolsFactoryImpl;
-
-import java.util.ArrayList;
 
 public class JBPMBpmn2ResourceFactoryImpl extends ResourceFactoryImpl {
     /**
@@ -72,9 +72,9 @@ public class JBPMBpmn2ResourceFactoryImpl extends ResourceFactoryImpl {
     }
 
     /*
-     * 
+     *
      * Creates a new BpmnResourceImpl and initializes it.
-     * 
+     *
      * The method creates a DocumentRoot and a Definitions element, as both are
      * mandatory.
      */

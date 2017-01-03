@@ -17,9 +17,9 @@
 
 package org.kie.workbench.common.stunner.client.widgets.navigation.navigator;
 
-import com.google.gwt.user.client.ui.IsWidget;
-
 import java.util.List;
+
+import com.google.gwt.user.client.ui.IsWidget;
 
 public interface Navigator<T> extends IsWidget {
 

@@ -15,20 +15,17 @@
 
 package org.kie.workbench.common.stunner.core.client.api.platform.impl;
 
-import org.kie.workbench.common.stunner.core.client.api.platform.AbstractClientPlatform;
-import org.kie.workbench.common.stunner.core.client.api.platform.ClientPlatform;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
-import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
-import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
-import org.kie.workbench.common.stunner.core.client.session.ClientReadOnlySession;
-import org.kie.workbench.common.stunner.core.client.session.ClientSessionProducer;
-import org.kie.workbench.common.stunner.core.client.session.impl.*;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+
+import org.kie.workbench.common.stunner.core.client.api.platform.AbstractClientPlatform;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
+import org.kie.workbench.common.stunner.core.client.session.ClientReadOnlySession;
+import org.kie.workbench.common.stunner.core.client.session.impl.ClientFullSessionImpl;
+import org.kie.workbench.common.stunner.core.client.session.impl.ClientReadOnlySessionImpl;
 
 @ApplicationScoped
 public class DesktopPlatform extends AbstractClientPlatform {

@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.processors.shape;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.processing.Messager;
+
 import org.kie.workbench.common.stunner.core.client.AbstractBindableShapeSet;
 import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
 import org.uberfire.annotations.processors.exceptions.GenerationException;
-
-import javax.annotation.processing.Messager;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BindableShapeSetGenerator extends AbstractBindableAdapterGenerator {
 

@@ -15,6 +15,10 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.enterprise.event.Event;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,10 +37,6 @@ import org.kie.workbench.common.stunner.forms.client.event.FormPropertiesOpened;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.event.Event;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import static org.mockito.Mockito.*;
 

@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.definition.property.type.BooleanType;
-
-import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class BooleanTypeSerializer implements Bpmn2OryxPropertySerializer<Boolean> {

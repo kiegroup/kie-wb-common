@@ -15,15 +15,15 @@
 
 package org.kie.workbench.common.stunner.core.client.session.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.ClientSessionManager;
 import org.kie.workbench.common.stunner.core.command.exception.CommandException;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractClientSessionManager implements ClientSessionManager<AbstractCanvas, AbstractCanvasHandler, AbstractClientSession> {
 

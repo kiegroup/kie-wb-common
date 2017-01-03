@@ -15,13 +15,13 @@
 
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import javax.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class GraphCommandFactory {

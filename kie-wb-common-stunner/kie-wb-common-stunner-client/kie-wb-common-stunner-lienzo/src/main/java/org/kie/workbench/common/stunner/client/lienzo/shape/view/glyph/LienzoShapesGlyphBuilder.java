@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view.glyph;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.wires.WiresConnector;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
@@ -28,9 +31,6 @@ import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.AbstractGlyphShapeBuilder;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.core.definition.shape.GlyphShapeDef;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
 @ApplicationScoped
 public class LienzoShapesGlyphBuilder extends AbstractGlyphShapeBuilder<Group> {

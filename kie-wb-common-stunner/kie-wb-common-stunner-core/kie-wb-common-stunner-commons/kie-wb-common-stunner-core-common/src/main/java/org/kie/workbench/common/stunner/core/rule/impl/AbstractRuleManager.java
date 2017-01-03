@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl;
 
-import org.kie.workbench.common.stunner.core.rule.Rule;
-import org.kie.workbench.common.stunner.core.rule.RuleManager;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.rule.Rule;
+import org.kie.workbench.common.stunner.core.rule.RuleManager;
 
 public abstract class AbstractRuleManager<R extends Rule> implements RuleManager<R> {
 

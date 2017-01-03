@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
-import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
 
 class ListRegistry<T> implements DynamicRegistry<T> {
 

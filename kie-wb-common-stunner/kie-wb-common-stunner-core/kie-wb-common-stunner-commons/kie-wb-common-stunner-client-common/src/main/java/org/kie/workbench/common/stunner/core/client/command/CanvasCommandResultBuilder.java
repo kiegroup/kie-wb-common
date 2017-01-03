@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.client.command;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultBuilder;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultImpl;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 public class CanvasCommandResultBuilder extends CommandResultBuilder<CanvasViolation> {
 

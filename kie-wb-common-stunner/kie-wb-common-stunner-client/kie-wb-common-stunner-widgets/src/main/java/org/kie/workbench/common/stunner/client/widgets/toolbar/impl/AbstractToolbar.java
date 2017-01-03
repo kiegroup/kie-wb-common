@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.inject.Instance;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,12 +33,6 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.command.AbstractT
 import org.kie.workbench.common.stunner.client.widgets.toolbar.item.AbstractToolbarItem;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.inject.Instance;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractToolbar<S extends ClientSession> implements Toolbar<S>, IsWidget {
 

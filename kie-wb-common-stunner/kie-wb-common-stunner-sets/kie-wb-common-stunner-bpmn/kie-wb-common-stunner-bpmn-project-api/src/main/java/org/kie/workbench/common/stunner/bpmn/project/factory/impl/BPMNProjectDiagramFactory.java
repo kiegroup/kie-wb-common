@@ -15,6 +15,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.project.factory.impl;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.util.BPMNUtils;
@@ -27,8 +29,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.diagram.impl.ProjectDiagramImpl;
-
-import javax.enterprise.context.ApplicationScoped;
 
 /**
  * Custom BPMN factory instance for Diagrams on the Project context.

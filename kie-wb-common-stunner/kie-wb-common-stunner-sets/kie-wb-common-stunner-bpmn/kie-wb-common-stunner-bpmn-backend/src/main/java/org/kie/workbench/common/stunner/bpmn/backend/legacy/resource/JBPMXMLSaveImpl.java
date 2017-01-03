@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.resource;
 
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.RootElement;
@@ -28,9 +31,6 @@ import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.XMLResource.ElementHandler;
 import org.eclipse.emf.ecore.xmi.XMLResource.XMLMap;
 import org.eclipse.emf.ecore.xmi.impl.XMLSaveImpl;
-
-import java.util.List;
-import java.util.Map;
 
 public class JBPMXMLSaveImpl extends XMLSaveImpl {
 

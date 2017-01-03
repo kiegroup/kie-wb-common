@@ -15,6 +15,10 @@
 
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
@@ -34,17 +38,17 @@ import org.kie.workbench.common.stunner.core.rule.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRule;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
-import org.kie.workbench.common.stunner.core.rule.graph.*;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphCardinalityRuleManager;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphConnectionRuleManager;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphContainmentRuleManager;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphDockingRuleManager;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphEdgeCardinalityRuleManager;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphRulesManager;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class AbstractGraphCommandTest {
 

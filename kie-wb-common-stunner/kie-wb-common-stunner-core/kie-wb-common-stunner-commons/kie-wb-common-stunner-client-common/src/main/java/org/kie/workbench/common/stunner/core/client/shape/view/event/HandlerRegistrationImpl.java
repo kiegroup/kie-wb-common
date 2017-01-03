@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.view.event;
 
-import com.google.gwt.event.shared.HandlerRegistration;
-
 import java.util.LinkedList;
 import java.util.List;
+
+import com.google.gwt.event.shared.HandlerRegistration;
 
 public class HandlerRegistrationImpl implements HandlerRegistration {
     private final List<HandlerRegistration> m_list = new LinkedList<>();

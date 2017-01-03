@@ -15,10 +15,10 @@
 
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
-
-import javax.enterprise.context.Dependent;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

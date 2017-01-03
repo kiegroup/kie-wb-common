@@ -16,15 +16,15 @@
 
 package org.kie.workbench.common.stunner.shapes.client.view.animatiion;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.ait.lienzo.client.core.animation.AnimationProperties;
 import com.ait.lienzo.client.core.animation.AnimationProperty;
 import com.ait.lienzo.client.core.animation.AnimationTweener;
 import com.ait.lienzo.client.core.shape.Group;
 import org.kie.workbench.common.stunner.shapes.client.BasicConnector;
 import org.kie.workbench.common.stunner.shapes.client.view.BasicConnectorView;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class BasicConnectorAnimation
         extends AbstractBasicAnimation<BasicConnector> {

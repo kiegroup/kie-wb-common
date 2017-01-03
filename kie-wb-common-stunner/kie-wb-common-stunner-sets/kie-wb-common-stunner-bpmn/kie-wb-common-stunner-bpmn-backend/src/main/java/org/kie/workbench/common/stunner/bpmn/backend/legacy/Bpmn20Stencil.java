@@ -15,7 +15,14 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy;
 
-import org.eclipse.bpmn2.*;
+import org.eclipse.bpmn2.Association;
+import org.eclipse.bpmn2.AssociationDirection;
+import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.Bpmn2Factory;
+import org.eclipse.bpmn2.Bpmn2Package;
+import org.eclipse.bpmn2.CatchEvent;
+import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.emf.ecore.EClass;
 
 /**

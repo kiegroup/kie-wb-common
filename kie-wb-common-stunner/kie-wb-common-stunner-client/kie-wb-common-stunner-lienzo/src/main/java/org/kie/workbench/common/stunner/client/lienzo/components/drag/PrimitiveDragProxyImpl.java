@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.components.drag;
 
+import javax.enterprise.context.Dependent;
+
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Layer;
 import org.kie.workbench.common.stunner.core.client.components.drag.DragProxy;
 import org.kie.workbench.common.stunner.core.client.components.drag.DragProxyCallback;
 import org.kie.workbench.common.stunner.core.client.components.drag.PrimitiveDragProxy;
 import org.kie.workbench.common.stunner.lienzo.primitive.AbstractDragProxy;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class PrimitiveDragProxyImpl implements PrimitiveDragProxy<Layer, IPrimitive<?>> {

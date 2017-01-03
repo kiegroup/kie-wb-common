@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.navigation.navigator.diagrams;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.safehtml.shared.SafeUri;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -25,12 +31,6 @@ import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.Navi
 import org.kie.workbench.common.stunner.core.client.ShapeManager;
 import org.kie.workbench.common.stunner.core.lookup.diagram.DiagramRepresentation;
 import org.uberfire.mvp.Command;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Dependent
 public class DiagramNavigatorItemImpl implements IsWidget, DiagramNavigatorItem {

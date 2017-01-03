@@ -15,12 +15,12 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.plugin.impl;
 
-import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.ConfigurationProvider;
-
-import javax.servlet.ServletContext;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import javax.servlet.ServletContext;
+
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.ConfigurationProvider;
 
 /**
  * @author Antoine Toulme

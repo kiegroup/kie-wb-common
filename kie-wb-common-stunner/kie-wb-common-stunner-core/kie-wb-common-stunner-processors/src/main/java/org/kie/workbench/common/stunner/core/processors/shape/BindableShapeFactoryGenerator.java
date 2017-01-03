@@ -16,15 +16,20 @@
 
 package org.kie.workbench.common.stunner.core.processors.shape;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.processing.Messager;
+
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactoryWrapper;
 import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
 import org.kie.workbench.common.stunner.core.processors.MainProcessor;
 import org.kie.workbench.common.stunner.core.processors.ProcessingDefinitionAnnotations;
 import org.kie.workbench.common.stunner.core.processors.ProcessingEntity;
 import org.uberfire.annotations.processors.exceptions.GenerationException;
-
-import javax.annotation.processing.Messager;
-import java.util.*;
 
 public class BindableShapeFactoryGenerator extends AbstractBindableAdapterGenerator {
 
