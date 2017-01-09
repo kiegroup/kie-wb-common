@@ -76,7 +76,7 @@ public class ClassVerifier {
             }
 
         } catch (Throwable e) {
-           final String msg = MessageFormat.format( ERROR_EXTERNAL_CLASS_VERIFICATION,
+            final String msg = MessageFormat.format( ERROR_EXTERNAL_CLASS_VERIFICATION,
                                              toFQCN( packageName, className ),
                                              e.getMessage() );
             logger.warn( msg );
