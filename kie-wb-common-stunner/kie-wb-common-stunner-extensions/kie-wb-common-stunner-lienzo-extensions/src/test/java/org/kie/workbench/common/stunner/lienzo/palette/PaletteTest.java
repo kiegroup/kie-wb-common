@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.lienzo.palette;
 
+import java.util.Iterator;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Rectangle;
@@ -29,8 +31,6 @@ import org.kie.workbench.common.stunner.lienzo.grid.Grid;
 import org.kie.workbench.common.stunner.lienzo.grid.Grid.Point;
 import org.kie.workbench.common.stunner.lienzo.palette.AbstractPalette.Callback;
 import org.mockito.Mock;
-
-import java.util.Iterator;
 
 import static org.mockito.Mockito.*;
 

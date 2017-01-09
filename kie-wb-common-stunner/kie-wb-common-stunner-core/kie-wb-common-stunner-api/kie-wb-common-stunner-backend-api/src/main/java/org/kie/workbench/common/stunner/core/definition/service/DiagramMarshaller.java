@@ -15,12 +15,12 @@
 
 package org.kie.workbench.common.stunner.core.definition.service;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Provides marshalling and unmarshalling services for a Diagram.

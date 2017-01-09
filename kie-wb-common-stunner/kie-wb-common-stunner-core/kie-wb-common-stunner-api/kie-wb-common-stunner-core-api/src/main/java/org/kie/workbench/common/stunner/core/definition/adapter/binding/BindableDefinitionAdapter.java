@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
-import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
-
 import java.util.Map;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
+import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 
 public interface BindableDefinitionAdapter<T> extends DefinitionAdapter<T>, HasInheritance {
 

@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.forms.client.fields.colorPicker;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -29,9 +32,6 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.ext.widgets.common.client.colorpicker.ColorPickerDialog;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 /**
  * @author Pere Fernandez <pefernan@redhat.com>

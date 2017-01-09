@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.client.components.palette.model.definition.impl;
 
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.client.components.palette.model.AbstractPaletteGroup;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.AbstractPaletteGroupBuilder;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionPaletteCategory;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionPaletteItem;
-
-import java.util.List;
 
 public final class DefinitionPaletteCategoryImpl extends AbstractPaletteGroup<DefinitionPaletteItem> implements DefinitionPaletteCategory {
 

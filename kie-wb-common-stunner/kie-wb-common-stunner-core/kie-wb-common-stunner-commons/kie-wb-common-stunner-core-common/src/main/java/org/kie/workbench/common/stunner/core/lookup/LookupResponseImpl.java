@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.lookup;
 
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
-
-import java.util.List;
 
 @Portable
 public final class LookupResponseImpl<T> implements LookupManager.LookupResponse<T> {

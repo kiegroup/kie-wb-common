@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.client.shape;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class AbstractCompositeShape<W, E extends Node<View<W>, Edge>, V extends ShapeView>
         extends AbstractShape<W, E, V>

@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.backend.definition.factory;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.backend.util.BackendBindableDefinitionUtils;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 import org.kie.workbench.common.stunner.core.factory.definition.AbstractTypeDefinitionFactory;
-
-import java.util.Set;
 
 /**
  * Model factory for annotated modelsfor using  on test scope.

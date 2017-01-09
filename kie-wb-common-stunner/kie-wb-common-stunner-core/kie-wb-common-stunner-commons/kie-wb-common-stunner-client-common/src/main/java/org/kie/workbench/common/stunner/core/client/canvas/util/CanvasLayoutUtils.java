@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.util;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+import javax.enterprise.context.Dependent;
+
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -27,11 +32,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
-
-import javax.enterprise.context.Dependent;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

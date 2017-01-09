@@ -15,14 +15,14 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.view.glyph;
 
-import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-
+import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
 
 @ApplicationScoped
 public class GlyphBuilderFactoryImpl implements GlyphBuilderFactory {

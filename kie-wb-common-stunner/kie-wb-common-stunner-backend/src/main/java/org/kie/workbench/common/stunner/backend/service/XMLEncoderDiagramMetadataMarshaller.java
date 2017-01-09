@@ -16,15 +16,15 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
-import org.kie.workbench.common.stunner.core.definition.service.DiagramMetadataMarshaller;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-
-import javax.enterprise.context.ApplicationScoped;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.enterprise.context.ApplicationScoped;
+
+import org.kie.workbench.common.stunner.core.definition.service.DiagramMetadataMarshaller;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
 @ApplicationScoped
 public class XMLEncoderDiagramMetadataMarshaller implements DiagramMetadataMarshaller<Metadata> {

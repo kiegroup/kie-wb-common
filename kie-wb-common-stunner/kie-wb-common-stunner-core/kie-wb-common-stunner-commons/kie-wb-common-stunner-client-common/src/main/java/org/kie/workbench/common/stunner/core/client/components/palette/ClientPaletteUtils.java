@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.client.components.palette;
 
-import org.kie.workbench.common.stunner.core.client.components.palette.model.GlyphPaletteItem;
-
 import java.util.List;
+
+import org.kie.workbench.common.stunner.core.client.components.palette.model.GlyphPaletteItem;
 
 public class ClientPaletteUtils {
 

@@ -15,12 +15,12 @@
  */
 package org.kie.workbench.common.stunner.core.rule.impl.rules;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.rule.ConnectionRule;
 import org.uberfire.commons.validation.PortablePreconditions;
-
-import java.util.Set;
 
 @Portable
 public class ConnectionRuleImpl implements ConnectionRule {

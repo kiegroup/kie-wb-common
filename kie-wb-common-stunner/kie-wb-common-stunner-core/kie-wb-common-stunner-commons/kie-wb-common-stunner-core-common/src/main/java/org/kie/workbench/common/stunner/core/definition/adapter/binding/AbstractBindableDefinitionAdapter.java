@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
-
-import java.util.*;
 
 public abstract class AbstractBindableDefinitionAdapter<T> implements BindableDefinitionAdapter<T> {
 

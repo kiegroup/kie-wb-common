@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.factory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public abstract class AbstractCompositeShapeFactory<W, S extends Shape>
         extends AbstractShapeFactory<W, S>

@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.graph.processing.index.labeled;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * <p>A graph index for labeled elements.</p>

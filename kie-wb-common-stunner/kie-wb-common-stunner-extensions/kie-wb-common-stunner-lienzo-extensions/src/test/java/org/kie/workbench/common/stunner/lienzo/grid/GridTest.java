@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.lienzo.grid;
 
-import org.junit.Test;
-import org.kie.workbench.common.stunner.lienzo.grid.Grid.Point;
-
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import org.kie.workbench.common.stunner.lienzo.grid.Grid.Point;
+
+import static org.junit.Assert.*;
 
 public class GridTest {
 

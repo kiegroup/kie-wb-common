@@ -16,6 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.client.components.palette.factory;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.enterprise.inject.Instance;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import org.jboss.errai.ioc.client.container.SyncBeanDef;
 import org.jboss.errai.ioc.client.container.SyncBeanManager;
@@ -26,13 +33,6 @@ import org.kie.workbench.common.stunner.core.client.components.palette.model.Has
 import org.kie.workbench.common.stunner.core.client.components.palette.model.PaletteDefinitionBuilder;
 import org.kie.workbench.common.stunner.core.client.components.palette.view.PaletteGrid;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
-
-import javax.enterprise.inject.Instance;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractPaletteFactory<I extends HasPaletteItems, P extends Palette<I>>
         implements PaletteFactory<I, P> {

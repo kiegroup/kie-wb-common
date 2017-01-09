@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.processors.factory;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.processing.Messager;
+
 import org.kie.workbench.common.stunner.core.factory.definition.AbstractTypeDefinitionFactory;
 import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
 import org.uberfire.annotations.processors.exceptions.GenerationException;
-
-import javax.annotation.processing.Messager;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ModelFactoryGenerator extends AbstractBindableAdapterGenerator {
 

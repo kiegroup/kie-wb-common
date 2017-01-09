@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule.model;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRule;
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
-
-import java.util.Set;
 
 /**
  * Manager for connector's cardinality rules specific for the Stunner's domain model.

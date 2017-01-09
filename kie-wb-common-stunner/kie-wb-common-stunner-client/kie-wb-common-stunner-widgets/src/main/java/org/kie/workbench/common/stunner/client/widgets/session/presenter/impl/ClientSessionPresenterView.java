@@ -15,6 +15,10 @@
 
 package org.kie.workbench.common.stunner.client.widgets.session.presenter.impl;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -25,10 +29,6 @@ import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.client.widgets.session.presenter.ClientSessionPresenter;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 // TODO: i18n.
 @Dependent

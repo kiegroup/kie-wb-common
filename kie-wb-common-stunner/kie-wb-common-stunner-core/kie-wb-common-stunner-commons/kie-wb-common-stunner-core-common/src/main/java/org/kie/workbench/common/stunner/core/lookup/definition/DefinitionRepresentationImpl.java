@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.lookup.definition;
 
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
-
-import java.util.Set;
 
 @Portable
 public final class DefinitionRepresentationImpl implements DefinitionRepresentation {

@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.command.delegate;
 
-import org.kie.workbench.common.stunner.core.command.*;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.command.CommandManager;
+import org.kie.workbench.common.stunner.core.command.CommandManagerListener;
+import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.HasCommandManagerListener;
 
 public abstract class DelegateCommandManager<C, V> implements CommandManager<C, V> {
 

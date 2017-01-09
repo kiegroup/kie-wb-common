@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter;
 
-import org.kie.workbench.common.stunner.core.rule.Rule;
-
 import java.util.Collection;
+
+import org.kie.workbench.common.stunner.core.rule.Rule;
 
 /**
  * A Definition Set rules pojo adapter..

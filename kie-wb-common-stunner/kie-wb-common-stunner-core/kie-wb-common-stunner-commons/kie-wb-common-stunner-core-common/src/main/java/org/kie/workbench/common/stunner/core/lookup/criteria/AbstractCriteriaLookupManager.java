@@ -16,11 +16,15 @@
 
 package org.kie.workbench.common.stunner.core.lookup.criteria;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import org.kie.workbench.common.stunner.core.lookup.AbstractLookupManager;
 import org.kie.workbench.common.stunner.core.lookup.LookupManager;
-
-import java.util.*;
-import java.util.logging.Logger;
 
 public abstract class AbstractCriteriaLookupManager<I, T, R extends LookupManager.LookupRequest>
         extends AbstractLookupManager<I, T, R> {

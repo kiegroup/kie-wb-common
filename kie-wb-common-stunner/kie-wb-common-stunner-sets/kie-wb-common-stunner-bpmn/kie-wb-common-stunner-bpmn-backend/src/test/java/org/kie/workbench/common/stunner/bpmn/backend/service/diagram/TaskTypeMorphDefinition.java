@@ -16,17 +16,17 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.core.definition.morph.BindableMorphProperty;
 import org.kie.workbench.common.stunner.core.definition.morph.BindablePropertyMorphDefinition;
 import org.kie.workbench.common.stunner.core.definition.morph.MorphProperty;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 // TODO: This class describes the morphing for Task types. Morphing definitions are generated at compile time by
 // annotation processing, so until not introspecting this info via runtime annotation processing on test scope, this

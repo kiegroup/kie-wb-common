@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.shapes.def;
 
+import java.util.Map;
+
 import org.kie.workbench.common.stunner.core.client.shape.HasChildren;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
-
-import java.util.Map;
 
 public interface HasChildShapeDefs<W> {
 

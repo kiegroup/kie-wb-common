@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.registry.impl;
 
-import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+
+import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
 
 class MapRegistry<T> implements DynamicRegistry<T> {
 

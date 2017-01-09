@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
-
 import java.util.Map;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 
 public interface BindablePropertyAdapter<T, V> extends PropertyAdapter<T, V> {
 

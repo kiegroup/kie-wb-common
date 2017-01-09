@@ -15,6 +15,23 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.profile.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+import javax.servlet.ServletContext;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 import bpsim.impl.BpsimFactoryImpl;
 import org.codehaus.jackson.JsonParseException;
 import org.eclipse.bpmn2.Bpmn2Package;
@@ -37,14 +54,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2Re
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.ConfigurationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.servlet.ServletContext;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.*;
-import java.util.*;
 
 /**
  * The implementation of the default profile for Process Designer.

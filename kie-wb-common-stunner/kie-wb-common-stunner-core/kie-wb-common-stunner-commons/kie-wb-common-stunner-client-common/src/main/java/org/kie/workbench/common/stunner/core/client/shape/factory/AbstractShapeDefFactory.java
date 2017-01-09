@@ -16,18 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.factory;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class AbstractShapeDefFactory<W, V extends ShapeView, S extends Shape<V>, P extends ShapeDef<W>>
         extends AbstractBindableShapeFactory<W, S> implements ShapeDefFactory<W, AbstractCanvasHandler, S, P> {

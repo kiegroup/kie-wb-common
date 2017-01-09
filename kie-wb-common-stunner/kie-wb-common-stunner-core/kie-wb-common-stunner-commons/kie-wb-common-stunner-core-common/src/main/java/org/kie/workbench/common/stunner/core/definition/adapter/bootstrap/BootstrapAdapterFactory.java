@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.bootstrap;
 
-import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-
 import javax.enterprise.context.ApplicationScoped;
+
+import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 
 @ApplicationScoped
 public class BootstrapAdapterFactory {

@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.processors.morph;
 
-import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinitionProvider;
-import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
-import org.uberfire.annotations.processors.exceptions.GenerationException;
-
-import javax.annotation.processing.Messager;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.processing.Messager;
+
+import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinitionProvider;
+import org.kie.workbench.common.stunner.core.processors.AbstractBindableAdapterGenerator;
+import org.uberfire.annotations.processors.exceptions.GenerationException;
 
 public class MorphDefinitionProviderGenerator extends AbstractBindableAdapterGenerator {
 

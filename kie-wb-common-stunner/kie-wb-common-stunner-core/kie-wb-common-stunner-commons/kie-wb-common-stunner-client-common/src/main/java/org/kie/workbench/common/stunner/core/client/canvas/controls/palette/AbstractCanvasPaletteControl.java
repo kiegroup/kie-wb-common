@@ -33,7 +33,6 @@ import org.kie.workbench.common.stunner.core.client.components.palette.view.Pale
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
-import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseDoubleClickEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseDoubleClickHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;

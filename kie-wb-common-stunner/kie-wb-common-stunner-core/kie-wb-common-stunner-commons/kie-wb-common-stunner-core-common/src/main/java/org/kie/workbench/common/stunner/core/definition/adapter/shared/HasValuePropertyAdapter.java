@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.shared;
 
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.impl.PropertyImpl;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Map;
 
 @ApplicationScoped
 public class HasValuePropertyAdapter implements PropertyAdapter<PropertyImpl, Object> {

@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.client.widgets.toolbar.item;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.inject.Inject;
+
 import com.google.gwt.logging.client.LogConfiguration;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
@@ -27,10 +31,6 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.mvp.Command;
-
-import javax.inject.Inject;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class AbstractToolbarItem<S extends ClientSession> implements IsWidget {
 

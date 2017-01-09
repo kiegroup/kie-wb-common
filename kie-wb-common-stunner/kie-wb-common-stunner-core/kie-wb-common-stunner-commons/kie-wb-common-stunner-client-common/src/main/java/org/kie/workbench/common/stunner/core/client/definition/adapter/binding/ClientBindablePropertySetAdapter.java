@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindablePropertySetAdapter;
-
 import java.util.Map;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindablePropertySetAdapter;
 
 class ClientBindablePropertySetAdapter extends AbstractClientBindableAdapter<Object> implements BindablePropertySetAdapter<Object> {
 

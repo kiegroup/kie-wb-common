@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.repository;
 
-import org.uberfire.java.nio.file.NoSuchFileException;
-
 import java.util.Collection;
+
+import org.uberfire.java.nio.file.NoSuchFileException;
 
 /**
  * Repository is responsible for managing its components that are as follows:

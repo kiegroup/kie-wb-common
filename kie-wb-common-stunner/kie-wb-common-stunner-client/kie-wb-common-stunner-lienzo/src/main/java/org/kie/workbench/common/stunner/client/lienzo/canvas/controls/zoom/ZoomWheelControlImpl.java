@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls.zoom;
 
+import javax.enterprise.context.Dependent;
+
 import com.ait.lienzo.client.core.mediator.EventFilter;
 import com.ait.lienzo.client.core.mediator.IEventFilter;
 import com.ait.lienzo.client.core.mediator.MouseWheelZoomMediator;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.AbstractMediatorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.zoom.ZoomControl;
-
-import javax.enterprise.context.Dependent;
 
 @Dependent
 public class ZoomWheelControlImpl extends AbstractMediatorControl<MouseWheelZoomMediator> implements ZoomControl<AbstractCanvas> {

@@ -26,7 +26,10 @@ import org.kie.workbench.common.stunner.core.client.components.toolbox.ToolboxBu
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.lienzo.toolbox.Toolboxes;
-import org.kie.workbench.common.stunner.lienzo.toolbox.builder.*;
+import org.kie.workbench.common.stunner.lienzo.toolbox.builder.Button;
+import org.kie.workbench.common.stunner.lienzo.toolbox.builder.ButtonGrid;
+import org.kie.workbench.common.stunner.lienzo.toolbox.builder.ButtonsOrRegister;
+import org.kie.workbench.common.stunner.lienzo.toolbox.builder.On;
 import org.kie.workbench.common.stunner.lienzo.toolbox.event.ToolboxButtonEventHandler;
 
 public class LienzoToolboxBuilderImpl

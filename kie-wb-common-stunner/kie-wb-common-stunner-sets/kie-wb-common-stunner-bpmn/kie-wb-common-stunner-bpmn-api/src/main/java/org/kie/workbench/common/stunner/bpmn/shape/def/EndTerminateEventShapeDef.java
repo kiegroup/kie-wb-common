@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.shape.def;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.core.client.shape.HasChildren;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
@@ -26,9 +29,6 @@ import org.kie.workbench.common.stunner.shapes.def.BasicShapeWithTitleDef;
 import org.kie.workbench.common.stunner.shapes.def.CircleShapeDef;
 import org.kie.workbench.common.stunner.shapes.def.HasChildShapeDefs;
 import org.kie.workbench.common.stunner.shapes.def.WrappedBasicNamedShapeDef;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public final class EndTerminateEventShapeDef
         extends AbstractShapeDef<EndTerminateEvent>

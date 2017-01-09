@@ -15,6 +15,9 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.kie.workbench.common.stunner.core.backend.lookup.impl.AbstractVFSLookupManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -29,9 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
-
-import java.util.List;
-import java.util.Map;
 
 public abstract class AbstractDiagramLookupService<D extends Diagram>
         extends AbstractVFSLookupManager<D, DiagramRepresentation, DiagramLookupRequest>

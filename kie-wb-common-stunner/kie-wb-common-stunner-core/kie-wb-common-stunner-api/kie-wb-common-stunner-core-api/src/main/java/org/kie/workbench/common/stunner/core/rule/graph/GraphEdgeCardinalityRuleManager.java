@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.rule.graph;
 
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRule;
 import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
-
-import java.util.List;
 
 /**
  * Manager for connector's cardinality rules specific for Stunner's graph domain.

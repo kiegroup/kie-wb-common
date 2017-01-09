@@ -15,10 +15,10 @@
 
 package org.kie.workbench.common.stunner.core.definition.service;
 
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 
 /**
  * Provides marshalling and unmarshalling services for the diagram's metadata.

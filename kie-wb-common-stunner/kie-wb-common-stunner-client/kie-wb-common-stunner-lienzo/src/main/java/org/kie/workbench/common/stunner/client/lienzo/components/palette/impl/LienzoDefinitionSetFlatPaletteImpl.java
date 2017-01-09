@@ -16,10 +16,20 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.components.palette.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.AbstractLienzoGlyphItemsPalette;
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.LienzoDefinitionSetFlatPalette;
 import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.LienzoPaletteViewImpl;
-import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.*;
+import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoPaletteElementView;
+import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoSeparatorPaletteElementView;
+import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoSeparatorPaletteElementViewImpl;
+import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoTextPaletteElementView;
+import org.kie.workbench.common.stunner.client.lienzo.components.palette.view.element.LienzoTextPaletteElementViewImpl;
 import org.kie.workbench.common.stunner.core.client.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.components.glyph.DefinitionGlyphTooltip;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.GlyphPaletteItem;
@@ -29,12 +39,6 @@ import org.kie.workbench.common.stunner.core.client.components.palette.model.def
 import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionSetPalette;
 import org.kie.workbench.common.stunner.core.client.components.palette.view.PaletteGrid;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
 
 @Dependent
 public class LienzoDefinitionSetFlatPaletteImpl

@@ -16,13 +16,21 @@
 
 package org.kie.workbench.common.stunner.core.lookup.rule;
 
-import org.kie.workbench.common.stunner.core.api.DefinitionManager;
-import org.kie.workbench.common.stunner.core.lookup.criteria.AbstractCriteriaLookupManager;
-import org.kie.workbench.common.stunner.core.rule.*;
-
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import java.util.*;
+
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.lookup.criteria.AbstractCriteriaLookupManager;
+import org.kie.workbench.common.stunner.core.rule.CardinalityRule;
+import org.kie.workbench.common.stunner.core.rule.ConnectionRule;
+import org.kie.workbench.common.stunner.core.rule.ContainmentRule;
+import org.kie.workbench.common.stunner.core.rule.EdgeCardinalityRule;
+import org.kie.workbench.common.stunner.core.rule.Rule;
 
 @ApplicationScoped
 public class RuleLookupManagerImpl

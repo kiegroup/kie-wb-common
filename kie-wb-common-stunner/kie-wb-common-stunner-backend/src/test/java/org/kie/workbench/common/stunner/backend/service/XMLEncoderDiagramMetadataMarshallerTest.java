@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
+import java.io.InputStream;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,10 +25,7 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.InputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith( MockitoJUnitRunner.class )
 public class XMLEncoderDiagramMetadataMarshallerTest {

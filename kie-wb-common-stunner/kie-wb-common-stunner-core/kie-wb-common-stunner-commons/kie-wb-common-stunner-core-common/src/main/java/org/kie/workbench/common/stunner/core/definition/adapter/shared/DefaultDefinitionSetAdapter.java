@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.shared;
 
+import java.util.Set;
+import javax.enterprise.context.ApplicationScoped;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.definition.impl.DefinitionSetImpl;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.Set;
 
 // TODO
 @ApplicationScoped

@@ -15,9 +15,9 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.profile;
 
+import java.util.Collection;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 
 /**
  * The profile service gives access to profiles.

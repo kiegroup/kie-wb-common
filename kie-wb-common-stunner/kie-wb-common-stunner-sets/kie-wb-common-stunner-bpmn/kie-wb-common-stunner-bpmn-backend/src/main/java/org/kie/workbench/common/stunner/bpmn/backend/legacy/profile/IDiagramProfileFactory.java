@@ -15,8 +15,8 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.profile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Set;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * An interface for other bundles to grab and register profiles.

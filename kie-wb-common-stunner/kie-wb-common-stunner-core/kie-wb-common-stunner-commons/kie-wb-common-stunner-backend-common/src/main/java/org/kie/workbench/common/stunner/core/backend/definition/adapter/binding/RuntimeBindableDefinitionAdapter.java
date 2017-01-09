@@ -15,13 +15,13 @@
 
 package org.kie.workbench.common.stunner.core.backend.definition.adapter.binding;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.AbstractBindableDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
 
 import static org.kie.workbench.common.stunner.core.backend.definition.adapter.RuntimeAdapterUtils.getFieldValue;
 import static org.kie.workbench.common.stunner.core.backend.definition.adapter.RuntimeAdapterUtils.getFieldValues;

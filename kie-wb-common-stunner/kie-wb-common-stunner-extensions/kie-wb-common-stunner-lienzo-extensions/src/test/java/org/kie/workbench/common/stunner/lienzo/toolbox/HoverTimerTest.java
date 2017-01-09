@@ -26,7 +26,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.lienzo.toolbox.HoverTimer.Actions;
 import org.mockito.Mock;
 
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith( GwtMockitoTestRunner.class )

@@ -16,7 +16,6 @@
 package org.kie.workbench.common.stunner.core.graph.processing.index;
 
 import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 
 public interface MutableIndex<N extends Node, E extends Edge> extends Index<N, E> {

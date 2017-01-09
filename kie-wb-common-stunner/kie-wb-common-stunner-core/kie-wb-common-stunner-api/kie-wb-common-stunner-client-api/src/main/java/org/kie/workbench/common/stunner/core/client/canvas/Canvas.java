@@ -16,9 +16,9 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas;
 
-import org.kie.workbench.common.stunner.core.client.shape.Shape;
-
 import java.util.List;
+
+import org.kie.workbench.common.stunner.core.client.shape.Shape;
 
 public interface Canvas<S extends Shape> {
 

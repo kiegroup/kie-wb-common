@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.util;
 
+import java.util.List;
+
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
@@ -25,8 +27,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsFactory;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.MetaDataType;
-
-import java.util.List;
 
 public class Utils {
 

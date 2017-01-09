@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.command;
 
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.ToolboxButton;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
 public interface ToolboxCommand<H extends CanvasHandler, I> {

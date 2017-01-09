@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.core.registry.factory;
 
+import java.util.Collection;
+
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.Factory;
 import org.kie.workbench.common.stunner.core.factory.definition.DefinitionFactory;
 import org.kie.workbench.common.stunner.core.factory.diagram.DiagramFactory;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
-
-import java.util.Collection;
 
 /**
  * Base registry type for different domain model object's factories.

@@ -15,6 +15,8 @@
 
 package org.kie.workbench.common.stunner.client.widgets.session.presenter.impl;
 
+import javax.enterprise.event.Event;
+
 import org.kie.workbench.common.stunner.client.widgets.event.SessionDiagramOpenedEvent;
 import org.kie.workbench.common.stunner.client.widgets.session.presenter.ClientSessionPresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
@@ -24,8 +26,6 @@ import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientS
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientSessionManager;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.uberfire.mvp.Command;
-
-import javax.enterprise.event.Event;
 
 public abstract class AbstractClientSessionPresenter<S extends AbstractClientSession, V extends ClientSessionPresenter.View>
         implements ClientSessionPresenter<AbstractCanvas, AbstractCanvasHandler, S, V> {

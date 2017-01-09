@@ -15,13 +15,13 @@
 
 package org.kie.workbench.common.stunner.project.client.view;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 // TODO: Review this - Does not work. Results in the mainPanel div empty. Once done enable its usage on classes that uses this view.
 @Dependent

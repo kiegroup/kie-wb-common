@@ -15,12 +15,12 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.legacy.profile;
 
+import java.util.Collection;
+import javax.servlet.ServletContext;
+
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.repository.Repository;
-
-import javax.servlet.ServletContext;
-import java.util.Collection;
 
 /**
  * A profile for the editor to choose which stencilset

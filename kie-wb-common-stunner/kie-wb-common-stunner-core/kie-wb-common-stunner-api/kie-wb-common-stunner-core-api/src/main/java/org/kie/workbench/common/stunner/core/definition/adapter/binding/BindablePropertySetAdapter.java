@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
-
 import java.util.Map;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
 
 public interface BindablePropertySetAdapter<T> extends PropertySetAdapter<T> {
 

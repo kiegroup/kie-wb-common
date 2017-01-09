@@ -21,7 +21,12 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.shapes.client.view.icon.dynamics.DynamicIconShapeView;
-import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.*;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.DynamicIconShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.IconShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.Icons;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.MinusIconShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.PlusIconShapeDef;
+import org.kie.workbench.common.stunner.shapes.def.icon.dynamics.XORIconShapeDef;
 
 public class DynamicIconShape<W> extends AbstractBasicDynamicShape<W, DynamicIconShapeView, IconShapeDef<W>> {
 

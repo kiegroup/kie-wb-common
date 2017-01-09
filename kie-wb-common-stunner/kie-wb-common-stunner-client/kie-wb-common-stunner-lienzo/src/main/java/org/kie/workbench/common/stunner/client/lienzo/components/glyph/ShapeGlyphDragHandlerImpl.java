@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.components.glyph;
 
+import javax.enterprise.context.Dependent;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.widget.LienzoPanel;
@@ -28,8 +30,6 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.kie.workbench.common.stunner.core.client.components.glyph.ShapeGlyphDragHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.glyph.Glyph;
-
-import javax.enterprise.context.Dependent;
 
 // TODO: Refactor implementing DragProxy<T>
 @Dependent

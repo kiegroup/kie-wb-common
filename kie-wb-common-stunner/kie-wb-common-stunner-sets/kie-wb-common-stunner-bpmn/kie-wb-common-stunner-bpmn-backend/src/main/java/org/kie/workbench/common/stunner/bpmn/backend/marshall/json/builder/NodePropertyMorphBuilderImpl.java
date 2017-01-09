@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.HasInheritance;
@@ -23,9 +26,6 @@ import org.kie.workbench.common.stunner.core.definition.morph.BindablePropertyMo
 import org.kie.workbench.common.stunner.core.definition.morph.MorphProperty;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
-
-import java.util.Collection;
-import java.util.LinkedList;
 
 public class NodePropertyMorphBuilderImpl extends NodeBuilderImpl {
 

@@ -16,14 +16,18 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.actions;
 
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerControl;
-import org.kie.workbench.common.stunner.core.client.validation.canvas.*;
-import org.kie.workbench.common.stunner.core.rule.graph.GraphRulesManager;
-
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
+
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerControl;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidationFailEvent;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidationSuccessEvent;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidationViolation;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidator;
+import org.kie.workbench.common.stunner.core.client.validation.canvas.CanvasValidatorCallback;
+import org.kie.workbench.common.stunner.core.rule.graph.GraphRulesManager;
 
 @Dependent
 public class CanvasValidationControlImpl

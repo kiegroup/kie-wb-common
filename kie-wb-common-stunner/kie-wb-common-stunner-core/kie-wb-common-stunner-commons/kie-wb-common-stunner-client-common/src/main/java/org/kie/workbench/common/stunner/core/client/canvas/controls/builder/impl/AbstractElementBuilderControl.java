@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.builder.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
 import org.kie.workbench.common.stunner.core.client.api.ClientDefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.CanvasCommandFactory;
@@ -43,12 +49,6 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.model.ModelCardinalityRuleManager;
 import org.kie.workbench.common.stunner.core.rule.model.ModelContainmentRuleManager;
 import org.kie.workbench.common.stunner.core.util.UUID;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 public abstract class AbstractElementBuilderControl extends AbstractCanvasHandlerControl
         implements ElementBuilderControl<AbstractCanvasHandler> {

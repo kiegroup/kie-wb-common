@@ -16,6 +16,15 @@
 
 package org.kie.workbench.common.stunner.client.widgets.navigation.navigator.shapesets;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.logging.Logger;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.client.widgets.event.CreateEmptyDiagramEvent;
 import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.NavigatorItem;
@@ -23,15 +32,6 @@ import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.Navi
 import org.kie.workbench.common.stunner.core.client.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.ShapeSet;
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
-
-import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.logging.Logger;
 
 @Dependent
 public class ShapeSetsNavigatorImpl implements ShapeSetsNavigator {

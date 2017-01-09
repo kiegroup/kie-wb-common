@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.client.definition.adapter.binding;
 
-import org.kie.workbench.common.stunner.core.definition.adapter.PriorityAdapter;
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-
 import java.util.Collection;
 import java.util.Set;
+
+import org.kie.workbench.common.stunner.core.definition.adapter.PriorityAdapter;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 
 public abstract class AbstractClientBindableAdapter<T> implements PriorityAdapter {
 

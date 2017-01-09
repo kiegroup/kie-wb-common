@@ -15,6 +15,12 @@
 
 package org.kie.workbench.common.stunner.backend.service;
 
+import java.util.Collection;
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -24,12 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Collection;
-import java.util.Map;
 
 @ApplicationScoped
 @Service

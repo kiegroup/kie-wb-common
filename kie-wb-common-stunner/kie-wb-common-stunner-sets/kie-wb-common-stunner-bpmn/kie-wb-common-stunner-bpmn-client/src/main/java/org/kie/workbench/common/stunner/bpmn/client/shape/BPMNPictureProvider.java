@@ -15,14 +15,14 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+
 import com.google.gwt.safehtml.shared.SafeUri;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNImageResources;
 import org.kie.workbench.common.stunner.bpmn.shape.def.BPMNPictures;
 import org.kie.workbench.common.stunner.shapes.def.picture.PictureProvider;
-
-import javax.enterprise.context.ApplicationScoped;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 

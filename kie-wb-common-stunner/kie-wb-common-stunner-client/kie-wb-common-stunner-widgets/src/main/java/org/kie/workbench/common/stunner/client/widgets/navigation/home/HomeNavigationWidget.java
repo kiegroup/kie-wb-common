@@ -16,6 +16,12 @@
 
 package org.kie.workbench.common.stunner.client.widgets.navigation.home;
 
+import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
+
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -23,12 +29,6 @@ import org.kie.workbench.common.stunner.client.widgets.navigation.home.item.Home
 import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.diagrams.DiagramsNavigator;
 import org.kie.workbench.common.stunner.client.widgets.navigation.navigator.shapesets.ShapeSetsNavigator;
 import org.uberfire.client.mvp.UberView;
-
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import java.util.logging.Logger;
 
 @Dependent
 public class HomeNavigationWidget implements IsWidget {

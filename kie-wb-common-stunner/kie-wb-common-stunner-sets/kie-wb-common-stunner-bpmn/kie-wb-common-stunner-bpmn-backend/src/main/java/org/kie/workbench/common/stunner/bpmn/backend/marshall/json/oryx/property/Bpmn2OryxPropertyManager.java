@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property;
 
-import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-
+import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import java.util.LinkedList;
-import java.util.List;
+
+import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
 /**
  * Provides the Property Serializers for the serialization expected by oryx/jbpmdesigner marshallers.

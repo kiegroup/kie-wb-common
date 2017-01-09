@@ -16,14 +16,14 @@
 
 package org.kie.workbench.common.stunner.lienzo.palette;
 
+import java.util.Iterator;
+
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.tooling.nativetools.client.event.HandlerRegistrationManager;
 import org.kie.workbench.common.stunner.lienzo.Decorator;
 import org.kie.workbench.common.stunner.lienzo.Decorator.ItemCallback;
 import org.kie.workbench.common.stunner.lienzo.grid.Grid;
-
-import java.util.Iterator;
 
 public abstract class AbstractPalette<T> extends Group {
 

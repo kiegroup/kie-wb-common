@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.bootstrap;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-
-import java.util.Set;
 
 class BootstrapDefinitionAdapter implements DefinitionAdapter<Object> {
 

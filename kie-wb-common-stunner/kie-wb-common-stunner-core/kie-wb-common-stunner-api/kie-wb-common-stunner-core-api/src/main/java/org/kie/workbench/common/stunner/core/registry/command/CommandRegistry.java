@@ -16,12 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.registry.command;
 
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.registry.DynamicRegistry;
 import org.kie.workbench.common.stunner.core.registry.SizeConstrainedRegistry;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Base registry type for Commands.

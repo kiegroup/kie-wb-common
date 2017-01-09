@@ -16,6 +16,11 @@
 
 package org.kie.workbench.common.stunner.core.rule.impl.graph;
 
+import java.util.Map;
+import java.util.Set;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -27,11 +32,6 @@ import org.kie.workbench.common.stunner.core.rule.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.rule.RuleViolations;
 import org.kie.workbench.common.stunner.core.rule.graph.GraphCardinalityRuleManager;
 import org.kie.workbench.common.stunner.core.rule.model.ModelCardinalityRuleManager;
-
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.Map;
-import java.util.Set;
 
 @Dependent
 public class GraphCardinalityRuleManagerImpl extends AbstractGraphRuleManager<CardinalityRule, ModelCardinalityRuleManager>

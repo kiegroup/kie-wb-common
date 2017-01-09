@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.IntegerFieldParser;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.ObjectParser;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common.StringFieldParser;
@@ -24,8 +26,6 @@ import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import java.util.Set;
 
 public abstract class ElementParser<T extends Element<View>> extends ObjectParser implements ContextualParser {
 

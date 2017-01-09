@@ -16,12 +16,12 @@
 
 package org.kie.workbench.common.stunner.core.client.definition.adapter.binding;
 
+import java.util.Collection;
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.AbstractBindableDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.util.DefinitionUtils;
-
-import java.util.Collection;
-import java.util.Set;
 
 class ClientBindableDefinitionAdapter extends AbstractBindableDefinitionAdapter<Object>
         implements BindableDefinitionAdapter<Object> {

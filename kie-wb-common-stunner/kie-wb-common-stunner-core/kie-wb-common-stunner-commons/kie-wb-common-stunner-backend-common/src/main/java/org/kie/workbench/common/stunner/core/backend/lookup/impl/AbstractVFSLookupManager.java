@@ -15,6 +15,9 @@
 
 package org.kie.workbench.common.stunner.core.backend.lookup.impl;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.lookup.AbstractLookupManager;
 import org.kie.workbench.common.stunner.core.lookup.LookupManager;
 import org.slf4j.Logger;
@@ -25,9 +28,6 @@ import org.uberfire.java.nio.file.FileVisitResult;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.SimpleFileVisitor;
 import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
-
-import java.util.LinkedList;
-import java.util.List;
 
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 import static org.uberfire.java.nio.file.Files.walkFileTree;

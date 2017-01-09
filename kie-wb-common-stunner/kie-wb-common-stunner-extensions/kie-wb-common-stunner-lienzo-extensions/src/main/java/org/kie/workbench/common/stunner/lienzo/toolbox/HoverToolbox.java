@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.lienzo.toolbox;
 
+import java.util.List;
+
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.shape.Shape;
@@ -24,8 +26,6 @@ import com.ait.lienzo.shared.core.types.Direction;
 import com.google.gwt.event.shared.HandlerRegistration;
 import org.kie.workbench.common.stunner.lienzo.toolbox.builder.AbstractBuilder;
 import org.kie.workbench.common.stunner.lienzo.toolbox.grid.GridToolbox;
-
-import java.util.List;
 
 public class HoverToolbox extends AbstractToolbox {
 

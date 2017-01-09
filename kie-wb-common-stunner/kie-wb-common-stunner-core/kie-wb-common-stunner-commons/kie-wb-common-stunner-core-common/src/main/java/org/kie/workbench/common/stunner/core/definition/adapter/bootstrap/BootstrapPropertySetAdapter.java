@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.core.definition.adapter.bootstrap;
 
+import java.util.Set;
+
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
-
-import java.util.Set;
 
 class BootstrapPropertySetAdapter implements PropertySetAdapter<Object> {
 

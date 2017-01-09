@@ -15,6 +15,10 @@
 
 package org.kie.workbench.common.stunner.project.backend.service;
 
+import java.io.InputStream;
+import java.util.Map;
+import javax.enterprise.inject.Instance;
+
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.AbstractVFSDiagramService;
@@ -31,10 +35,6 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.OpenOption;
 import org.uberfire.java.nio.file.StandardDeleteOption;
-
-import javax.enterprise.inject.Instance;
-import java.io.InputStream;
-import java.util.Map;
 
 class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectDiagram> {
 

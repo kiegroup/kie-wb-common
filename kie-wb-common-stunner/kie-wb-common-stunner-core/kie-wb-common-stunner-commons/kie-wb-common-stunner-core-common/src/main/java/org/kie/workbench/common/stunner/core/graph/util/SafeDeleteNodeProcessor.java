@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.graph.util;
 
+import java.util.List;
+
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -23,8 +25,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Parent;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import java.util.List;
 
 public class SafeDeleteNodeProcessor {
 

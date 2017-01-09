@@ -23,9 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.assignmentsEditor.ActivityDataIOEditorViewImpl;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.AssignmentData;
-import org.kie.workbench.common.stunner.bpmn.client.forms.util.ListBoxValues;
-
-import static org.junit.Assert.*;
 
 public class ListBoxValuesTest {
 

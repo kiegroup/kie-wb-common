@@ -16,13 +16,13 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.command;
 
+import javax.enterprise.event.Event;
+
 import com.google.gwt.user.client.Timer;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasElementSelectedEvent;
 import org.kie.workbench.common.stunner.core.graph.Element;
-
-import javax.enterprise.event.Event;
 
 public abstract class AbstractToolboxCommand<I> implements ToolboxCommand<AbstractCanvasHandler, I> {
 
