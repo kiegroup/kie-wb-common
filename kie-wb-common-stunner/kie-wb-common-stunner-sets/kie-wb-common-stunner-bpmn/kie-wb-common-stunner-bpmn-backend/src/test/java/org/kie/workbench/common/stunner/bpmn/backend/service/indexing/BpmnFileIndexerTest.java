@@ -107,7 +107,7 @@ public class BpmnFileIndexerTest extends BaseIndexingTest<BPMNDefinitionSetResou
         }
         Path[] paths = pathList.toArray(new Path[pathList.size()]);
 
-        Thread.sleep(5000); //wait for events to be consumed from jgit -> (notify changes -> watcher -> index) -> lucene index
+        Thread.sleep(15000); //wait for events to be consumed from jgit -> (notify changes -> watcher -> index) -> lucene index
 
         {
             final RefactoringPageRequest request = new RefactoringPageRequest(FindResourcesQuery.NAME,
