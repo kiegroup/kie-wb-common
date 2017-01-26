@@ -58,9 +58,9 @@ public class ActionsToolboxControlProvider extends AbstractToolboxControlProvide
     public ActionsToolboxControlProvider(final ToolboxFactory toolboxFactory,
                                          final ToolboxCommandFactory toolboxCommandFactory) {
         super(toolboxFactory);
-        this.removeToolboxCommand = toolboxCommandFactory.newRemoveToolboxCommand();
-        this.moveShapeUpToolboxCommand = toolboxCommandFactory.newMoveShapeUpToolboxCommand();
-        this.moveShapeDownToolboxCommand = toolboxCommandFactory.newMoveShapeDownToolboxCommand();
+        this.removeToolboxCommand = null != toolboxCommandFactory ? toolboxCommandFactory.newRemoveToolboxCommand() : null;
+        this.moveShapeUpToolboxCommand = null != toolboxCommandFactory ? toolboxCommandFactory.newMoveShapeUpToolboxCommand() : null;
+        this.moveShapeDownToolboxCommand = null != toolboxCommandFactory ? toolboxCommandFactory.newMoveShapeDownToolboxCommand() : null;
     }
 
     @Override
