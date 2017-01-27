@@ -3822,7 +3822,7 @@ public class Bpmn2JsonUnmarshaller {
         // process on-entry and on-exit actions as custom elements
         if (properties.get("onentryactions") != null && properties.get("onentryactions").length() > 0) {
             OnEntryScriptType onEntryScript = DroolsFactory.eINSTANCE.createOnEntryScriptType();
-            onEntryScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onentryactions"))));
+            onEntryScript.setScript(wrapInCDATABlock(properties.get("onentryactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onEntryScript.setScriptFormat(scriptLanguage);
             if (sp.getExtensionValues() == null || sp.getExtensionValues().size() < 1) {
@@ -3836,7 +3836,7 @@ public class Bpmn2JsonUnmarshaller {
         }
         if (properties.get("onexitactions") != null && properties.get("onexitactions").length() > 0) {
             OnExitScriptType onExitScript = DroolsFactory.eINSTANCE.createOnExitScriptType();
-            onExitScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onexitactions"))));
+            onExitScript.setScript(wrapInCDATABlock(properties.get("onexitactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onExitScript.setScriptFormat(scriptLanguage);
             if (sp.getExtensionValues() == null || sp.getExtensionValues().size() < 1) {
@@ -5279,8 +5279,7 @@ public class Bpmn2JsonUnmarshaller {
     protected void applyScriptTaskProperties(ScriptTask scriptTask,
                                              Map<String, String> properties) {
         if (properties.get("script") != null && properties.get("script").length() > 0) {
-            //String scriptStr = properties.get("script").replaceAll("\\\\n", "\n");
-            String scriptStr = replaceScriptEscapeAndNewLines(properties.get("script"));
+            String scriptStr = properties.get("script");
             scriptTask.setScript(wrapInCDATABlock(scriptStr));
         }
         if (properties.get("script_language") != null && properties.get("script_language").length() > 0) {
@@ -5545,7 +5544,7 @@ public class Bpmn2JsonUnmarshaller {
         // process on-entry and on-exit actions as custom elements
         if (properties.get("onentryactions") != null && properties.get("onentryactions").length() > 0) {
             OnEntryScriptType onEntryScript = DroolsFactory.eINSTANCE.createOnEntryScriptType();
-            onEntryScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onentryactions"))));
+            onEntryScript.setScript(wrapInCDATABlock(properties.get("onentryactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onEntryScript.setScriptFormat(scriptLanguage);
             if (callActivity.getExtensionValues() == null || callActivity.getExtensionValues().size() < 1) {
@@ -5559,7 +5558,7 @@ public class Bpmn2JsonUnmarshaller {
         }
         if (properties.get("onexitactions") != null && properties.get("onexitactions").length() > 0) {
             OnExitScriptType onExitScript = DroolsFactory.eINSTANCE.createOnExitScriptType();
-            onExitScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onexitactions"))));
+            onExitScript.setScript(wrapInCDATABlock(properties.get("onexitactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onExitScript.setScriptFormat(scriptLanguage);
             if (callActivity.getExtensionValues() == null || callActivity.getExtensionValues().size() < 1) {
@@ -5890,7 +5889,7 @@ public class Bpmn2JsonUnmarshaller {
         // process on-entry and on-exit actions as custom elements
         if (properties.get("onentryactions") != null && properties.get("onentryactions").length() > 0) {
             OnEntryScriptType onEntryScript = DroolsFactory.eINSTANCE.createOnEntryScriptType();
-            onEntryScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onentryactions"))));
+            onEntryScript.setScript(wrapInCDATABlock(properties.get("onentryactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onEntryScript.setScriptFormat(scriptLanguage);
             if (task.getExtensionValues() == null || task.getExtensionValues().size() < 1) {
@@ -5904,7 +5903,7 @@ public class Bpmn2JsonUnmarshaller {
         }
         if (properties.get("onexitactions") != null && properties.get("onexitactions").length() > 0) {
             OnExitScriptType onExitScript = DroolsFactory.eINSTANCE.createOnExitScriptType();
-            onExitScript.setScript(wrapInCDATABlock(replaceScriptEscapeAndNewLines(properties.get("onexitactions"))));
+            onExitScript.setScript(wrapInCDATABlock(properties.get("onexitactions")));
             String scriptLanguage = getScriptLanguageFormat(properties);
             onExitScript.setScriptFormat(scriptLanguage);
             if (task.getExtensionValues() == null || task.getExtensionValues().size() < 1) {
@@ -6838,8 +6837,7 @@ public class Bpmn2JsonUnmarshaller {
         }
         if (properties.get("conditionexpression") != null && !"".equals(properties.get("conditionexpression"))) {
             FormalExpression expr = Bpmn2Factory.eINSTANCE.createFormalExpression();
-            String scriptStr = properties.get("conditionexpression").replaceAll("\\\\n",
-                    "\n");
+            String scriptStr = properties.get("conditionexpression");
             expr.setBody(wrapInCDATABlock(scriptStr));
             // check if language was specified
             if (properties.get("conditionexpressionlanguage") != null && !"".equals(properties.get("conditionexpressionlanguage"))) {
@@ -6999,48 +6997,6 @@ public class Bpmn2JsonUnmarshaller {
                     ret.length() - 1);
         }
         return wrapInCDATABlock(ret);
-    }
-
-    /*
-     * Converts \\ to \ and \n in Script  to '\n'
-     */
-    private String replaceScriptEscapeAndNewLines(String str) {
-        StringBuilder result = new StringBuilder(str.length());
-        char c = '\0';
-        char prevC = '\0';
-        boolean atEscape = false;
-        for (int i = 0; i < str.length(); i++) {
-            prevC = c;
-            c = str.charAt(i);
-            // set atEscape flag
-            if (c == '\\') {
-                // deal with 2nd '\\' char
-                if (atEscape) {
-                    result.append(c);
-                    atEscape = false;
-                    // set c to '\0' so that prevC doesn't match '\\'
-                    // the next time round
-                    c = '\0';
-                } else {
-                    atEscape = true;
-                }
-            } else if (atEscape) {
-                if (c == 'n') {
-                    result.append("\n");
-                } else {
-                    result.append(c);
-                }
-            } else {
-                result.append(c);
-            }
-            // unset atEscape flag if required
-            if (prevC == '\\') {
-                if (atEscape) {
-                    atEscape = false;
-                }
-            }
-        }
-        return result.toString();
     }
 
     private String decodeAssociationValue(String s) {
