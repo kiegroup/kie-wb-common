@@ -93,6 +93,10 @@ public class KieProjectServiceImpl
         this.repositoryResolver = repositoryResolver;
     }
 
+    protected void setProjectSaver(ProjectSaver projectSaver) {
+    	this.projectSaver = projectSaver;
+    }
+    
     @Override
     public KieProject newProject( final Path repositoryPath,
                                   final POM pom,

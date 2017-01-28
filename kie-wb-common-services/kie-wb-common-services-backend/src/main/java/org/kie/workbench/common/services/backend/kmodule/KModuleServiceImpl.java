@@ -58,6 +58,10 @@ public class KModuleServiceImpl
         this.moduleContentHandler = moduleContentHandler;
     }
 
+    protected void setProjectService(KieProjectService projectService) {
+        this.projectService = projectService;
+    }
+    
     @Override
     public boolean isKModule( final Path resource ) {
         try {
