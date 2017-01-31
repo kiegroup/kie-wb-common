@@ -60,23 +60,29 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
 
     private static final DirectoryStream.Filter<org.uberfire.java.nio.file.Path> FILTER_DSLS = new DSLFileFilter();
 
-    @Inject
-    @Named("ioStrategy")
     private IOService ioService;
 
-    @Inject
     private FileDiscoveryService fileDiscoveryService;
 
-    @Inject
-    @Named("ProjectDataModelOracleCache")
     private LRUProjectDataModelOracleCache cacheProjects;
 
-    @Inject
     private KieProjectService projectService;
 
-    @Inject
     private LRUBuilderCache builderCache;
 
+    @Inject
+    public LRUDataModelOracleCache( final @Named("ioStrategy") IOService ioService,
+                                    final FileDiscoveryService fileDiscoveryService,
+                                    final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
+                                    final KieProjectService projectService,
+                                    final LRUBuilderCache builderCache ) {
+        this.ioService = ioService;
+        this.fileDiscoveryService = fileDiscoveryService;
+        this.cacheProjects = cacheProjects;
+        this.projectService = projectService;
+        this.builderCache = builderCache;
+    }
+    
     public synchronized void invalidatePackageCache( @Observes final InvalidateDMOPackageCacheEvent event ) {
         PortablePreconditions.checkNotNull( "event",
                                             event );

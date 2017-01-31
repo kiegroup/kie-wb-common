@@ -36,9 +36,11 @@ import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCac
 import org.guvnor.common.services.project.builder.service.BuildValidationHelper;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Project;
+import org.kie.workbench.common.services.backend.project.KieProjectServiceImpl;
 import org.kie.workbench.common.services.backend.whitelist.PackageNameWhiteListServiceImpl;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
+import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.uberfire.commons.validation.PortablePreconditions;
 import org.uberfire.io.IOService;
 
@@ -48,40 +50,44 @@ import org.uberfire.io.IOService;
 @ApplicationScoped
 public class LRUBuilderCache extends LRUCache<Project, Builder> {
 
-    @Inject
-    @Named("ioStrategy")
     private IOService ioService;
 
-    @Inject
     private KieProjectService projectService;
 
-    @Inject
     private ProjectImportsService importsService;
 
-    @Inject
-    @Any
     private Instance<BuildValidationHelper> buildValidationHelperBeans;
 
-    @Inject
-    @Named("LRUProjectDependenciesClassLoaderCache")
     private LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache;
 
-    @Inject
-    @Named("LRUPomModelCache")
     private LRUPomModelCache pomModelCache;
 
-    @Inject
     private PackageNameWhiteListServiceImpl packageNameWhiteListService;
 
-    @Inject
-    @JavaSourceFilter
     private Instance<Predicate<String>> classFilterBeans;
 
     private final List<BuildValidationHelper> buildValidationHelpers = new ArrayList<>();
 
     private final List<Predicate<String>> classFilters = new ArrayList<>();
-
-    @PostConstruct
+    
+    @Inject
+    public LRUBuilderCache( @Named("ioStrategy") IOService ioService, KieProjectService projectService,
+                            ProjectImportsService importsService, @Any Instance<BuildValidationHelper> buildValidationHelperBeans,
+                            @Named("LRUProjectDependenciesClassLoaderCache") LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache,
+                            @Named("LRUPomModelCache") LRUPomModelCache pomModelCache,
+                            PackageNameWhiteListService packageNameWhiteListService,
+                            @JavaSourceFilter Instance<Predicate<String>> classFilterBeans ) {
+        this.ioService = ioService;
+        this.projectService = projectService;
+        this.importsService = importsService;
+        this.buildValidationHelperBeans = buildValidationHelperBeans;
+        this.dependenciesClassLoaderCache = dependenciesClassLoaderCache;
+        this.pomModelCache = pomModelCache;
+        this.packageNameWhiteListService = (PackageNameWhiteListServiceImpl) packageNameWhiteListService;
+        this.classFilterBeans = classFilterBeans;
+    }
+    
+	@PostConstruct
     public void loadInstances() {
         stream( buildValidationHelperBeans.spliterator(), false ).collect( toCollection( () -> buildValidationHelpers ) );
         stream( classFilterBeans.spliterator(), false ).collect( toCollection( () -> classFilters ) );

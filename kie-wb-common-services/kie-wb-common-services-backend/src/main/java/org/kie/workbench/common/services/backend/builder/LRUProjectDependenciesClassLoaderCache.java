@@ -33,6 +33,10 @@ public class LRUProjectDependenciesClassLoaderCache extends LRUCache<KieProject,
     @Inject
     private LRUBuilderCache builderCache;
 
+    protected void setBuilderCache( LRUBuilderCache builderCache ) {
+    	this.builderCache = builderCache;
+    }
+    
     public synchronized ClassLoader assertDependenciesClassLoader( final KieProject project ) {
         ClassLoader classLoader = getEntry( project );
         if ( classLoader == null ) {

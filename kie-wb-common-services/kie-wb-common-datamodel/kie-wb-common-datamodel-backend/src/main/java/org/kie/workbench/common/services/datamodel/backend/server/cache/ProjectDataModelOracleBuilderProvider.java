@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.java.nio.file.Files;
 
-class ProjectDataModelOracleBuilderProvider {
+public class ProjectDataModelOracleBuilderProvider {
 
     private static final Logger log = LoggerFactory.getLogger( ProjectDataModelOracleBuilderProvider.class );
 

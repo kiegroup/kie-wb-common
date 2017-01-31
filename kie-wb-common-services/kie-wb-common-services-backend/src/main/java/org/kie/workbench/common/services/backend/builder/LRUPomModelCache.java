@@ -32,9 +32,12 @@ import org.uberfire.commons.validation.PortablePreconditions;
 @Named("LRUPomModelCache")
 public class LRUPomModelCache extends LRUCache<Project, PomModel> {
 
-    @Inject
     private ObservablePOMFile observablePOMFile;
 
+    public LRUPomModelCache() {
+    	observablePOMFile = new ObservablePOMFile();
+    }
+    
     public synchronized void invalidateProjectCache( @Observes final InvalidateDMOProjectCacheEvent event ) {
         PortablePreconditions.checkNotNull( "event",
                                             event );
