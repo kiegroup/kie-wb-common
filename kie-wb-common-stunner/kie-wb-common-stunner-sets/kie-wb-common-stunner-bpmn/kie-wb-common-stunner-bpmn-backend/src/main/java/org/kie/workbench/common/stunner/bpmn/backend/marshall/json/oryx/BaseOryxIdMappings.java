@@ -52,10 +52,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Time
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.UnitCost;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.WorkingHours;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -140,6 +142,10 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
                 "adhocprocess");
             put(ProcessInstanceDescription.class,
                 "customdescription");
+            put(WaitForCompletion.class,
+                "waitforcompletion");
+            put(IsAsync.class,
+                "isasync");
 
             // Simulation properties
             put(TimeUnit.class,
