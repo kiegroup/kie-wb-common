@@ -22,8 +22,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
-import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
-import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -37,11 +35,11 @@ public class CompositeCommandTest {
 
     @Mock
     GraphCommandExecutionContext commandExecutionContext;
-    private CompositeCommandStub tested;
+    private CompositeCommandImpl tested;
 
     @Before
     public void setup() throws Exception {
-        this.tested = spy(new CompositeCommandStub());
+        this.tested = spy(new CompositeCommandImpl<>(true));
     }
 
     @Test
@@ -59,8 +57,9 @@ public class CompositeCommandTest {
         assertNotNull(result);
         assertEquals(CommandResult.Type.INFO,
                      result.getType());
-        verify(tested,
-               times(1)).addCommand(any(CommandStub.class));
+
+        //fails here
+        verify(tested).addCommand(any(Command.class));
     }
 
     @Test
@@ -70,64 +69,8 @@ public class CompositeCommandTest {
         assertNotNull(result);
         assertEquals(CommandResult.Type.INFO,
                      result.getType());
-        verify(tested,
-               times(1)).addCommand(any(CommandStub.class));
-    }
 
-    private static class CompositeCommandStub extends AbstractCompositeCommand<GraphCommandExecutionContext, RuleViolation> {
-
-        @Override
-        protected CompositeCommandStub initialize(GraphCommandExecutionContext context) {
-            super.initialize(context);
-            addCommand(new CommandStub());
-            return this;
-        }
-
-        @Override
-        protected CommandResult<RuleViolation> doAllow(GraphCommandExecutionContext context,
-                                                       Command<GraphCommandExecutionContext, RuleViolation> command) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        protected CommandResult<RuleViolation> doExecute(GraphCommandExecutionContext context,
-                                                         Command<GraphCommandExecutionContext, RuleViolation> command) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        protected CommandResult<RuleViolation> doUndo(GraphCommandExecutionContext context,
-                                                      Command<GraphCommandExecutionContext, RuleViolation> command) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext context) {
-            return super.undo(context,
-                              true);
-        }
-    }
-
-    private static class CommandStub extends AbstractGraphCommand {
-
-        @Override
-        protected CommandResult<RuleViolation> check(GraphCommandExecutionContext context) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        public CommandResult<RuleViolation> allow(GraphCommandExecutionContext context) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        public CommandResult<RuleViolation> execute(GraphCommandExecutionContext context) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-
-        @Override
-        public CommandResult<RuleViolation> undo(GraphCommandExecutionContext context) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
+        //fails here
+        verify(tested).addCommand(any(Command.class));
     }
 }
