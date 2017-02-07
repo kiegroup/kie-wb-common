@@ -899,8 +899,6 @@ public class BPMNDiagramMarshallerTest {
                      executionSet.getIndependent().getValue());
         assertEquals(false,
                      executionSet.getWaitForCompletion().getValue());
-        assertEquals(true,
-                     executionSet.getIsAsync().getValue());
 
         String assignmentsInfo = reusableSubprocess.getDataIOSet().getAssignmentsinfo().getValue();
         assertEquals("|input1:String,input2:Float||output1:String,output2:Float|[din]pv1->input1,[din]pv2->input2,[dout]output1->pv1,[dout]output2->pv2",
@@ -1089,7 +1087,6 @@ public class BPMNDiagramMarshallerTest {
                                            ' ').replaceAll("( )+",
                                                            " ");
         assertTrue(flatResult.contains("<drools:metaData name=\"elementname\"> <drools:metaValue><![CDATA[my subprocess]]></drools:metaValue> </drools:metaData>"));
-        assertTrue(flatResult.contains("</drools:metaData> <drools:metaData name=\"customAsync\"> <drools:metaValue><![CDATA[true]]></drools:metaValue> </drools:metaData>"));
     }
 
     @Test
