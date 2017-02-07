@@ -1,11 +1,11 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.task;
+package org.kie.workbench.common.stunner.bpmn.definition.property.event;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -31,19 +31,19 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Read
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-import org.kie.workbench.common.stunner.core.definition.property.type.StringType;
+import org.kie.workbench.common.stunner.core.definition.property.type.BooleanType;
 
 @Portable
 @Bindable
 @Property
 @FieldDefinition
-public class Content implements BPMNProperty {
+public class IsInterrupting implements BPMNProperty {
 
     @Caption
-    public static final transient String caption = "Content";
+    public static final transient String caption = "IsInterrupting";
 
     @Description
-    public static final transient String description = "Content";
+    public static final transient String description = "Is Interrupting";
 
     @ReadOnly
     @FieldReadOnly
@@ -53,19 +53,19 @@ public class Content implements BPMNProperty {
     public static final Boolean optional = false;
 
     @Type
-    public static final PropertyType type = new StringType();
+    public static final PropertyType type = new BooleanType();
 
     @DefaultValue
-    public static final transient String defaultValue = "";
+    public static final Boolean defaultValue = true;
 
     @Value
     @FieldValue
-    private String value = defaultValue;
+    private Boolean value = defaultValue;
 
-    public Content() {
+    public IsInterrupting() {
     }
 
-    public Content(final String value) {
+    public IsInterrupting(final Boolean value) {
         this.value = value;
     }
 
@@ -89,15 +89,15 @@ public class Content implements BPMNProperty {
         return type;
     }
 
-    public String getDefaultValue() {
+    public Boolean getDefaultValue() {
         return defaultValue;
     }
 
-    public String getValue() {
+    public Boolean getValue() {
         return value;
     }
 
-    public void setValue(final String value) {
+    public void setValue(final Boolean value) {
         this.value = value;
     }
 }
