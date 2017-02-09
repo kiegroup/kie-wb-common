@@ -16,9 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.task;
 
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
@@ -40,6 +37,7 @@ import org.kie.workbench.common.stunner.core.definition.property.type.StringType
 @Property
 @FieldDefinition
 public class Description implements BPMNProperty {
+
     @Caption
     public static final transient String caption = "Description";
 
