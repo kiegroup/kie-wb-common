@@ -30,11 +30,18 @@ import org.kie.workbench.common.services.shared.project.KieProject;
 @Named("LRUProjectDependenciesClassLoaderCache")
 public class LRUProjectDependenciesClassLoaderCache extends LRUCache<KieProject, ClassLoader> {
 
-    @Inject
-    private LRUBuilderCache builderCache;
+    private BuildInfoService buildInfoService;
 
-    protected void setBuilderCache(final LRUBuilderCache builderCache) {
-        this.builderCache = builderCache;
+    public LRUProjectDependenciesClassLoaderCache( ) {
+    }
+
+    @Inject
+    public LRUProjectDependenciesClassLoaderCache( BuildInfoService buildInfoService ) {
+        this.buildInfoService = buildInfoService;
+    }
+
+    protected void setBuilderCache( final LRUBuilderCache builderCache) {
+        //TODO remove this method I fix the tests
     }
 
     public synchronized ClassLoader assertDependenciesClassLoader(final KieProject project) {
@@ -54,7 +61,7 @@ public class LRUProjectDependenciesClassLoaderCache extends LRUCache<KieProject,
     }
 
     private ClassLoader buildClassLoader(final KieProject project) {
-        final KieModule module = builderCache.assertBuilder(project).getKieModuleIgnoringErrors();
+        final KieModule module = buildInfoService.getBuildInfo(project).getKieModuleIgnoringErrors();
         return buildClassLoader(project,
                                 KieModuleMetaData.Factory.newKieModuleMetaData(module));
     }

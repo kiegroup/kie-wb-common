@@ -24,6 +24,7 @@ import org.drools.workbench.models.datamodel.imports.Import;
 import org.drools.workbench.models.datamodel.oracle.ProjectDataModelOracle;
 import org.drools.workbench.models.datamodel.oracle.TypeSource;
 import org.kie.scanner.KieModuleMetaData;
+import org.kie.workbench.common.services.backend.builder.BuildInfo;
 import org.kie.workbench.common.services.backend.builder.Builder;
 import org.kie.workbench.common.services.backend.builder.TypeSourceResolver;
 import org.kie.workbench.common.services.datamodel.backend.server.builder.projects.ProjectDataModelOracleBuilder;
@@ -54,11 +55,11 @@ public class ProjectDataModelOracleBuilderProvider {
         this.importsService = importsService;
     }
 
-    public InnerBuilder newBuilder(final KieProject project,
-                                   final Builder builder) {
+    public InnerBuilder newBuilder( final KieProject project,
+                                    final BuildInfo buildInfo ) {
 
-        final KieModuleMetaData kieModuleMetaData = builder.getKieModuleMetaDataIgnoringErrors();
-        final TypeSourceResolver typeSourceResolver = builder.getTypeSourceResolver(kieModuleMetaData);
+        final KieModuleMetaData kieModuleMetaData = buildInfo.getKieModuleMetaDataIgnoringErrors();
+        final TypeSourceResolver typeSourceResolver = buildInfo.getTypeSourceResolver(kieModuleMetaData);
 
         return new InnerBuilder(project,
                                 kieModuleMetaData,
