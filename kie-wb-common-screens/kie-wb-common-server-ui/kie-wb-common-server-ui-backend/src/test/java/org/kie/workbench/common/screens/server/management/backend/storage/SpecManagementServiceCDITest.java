@@ -39,6 +39,7 @@ public class SpecManagementServiceCDITest {
         assertTrue( specManagementService.isContainerIdValid( "templateId", "aaa:bbb:ccc" ) );
         assertTrue( specManagementService.isContainerIdValid( "templateId", "org.jbpm:Evaluation:1.0" ) );
         assertTrue( specManagementService.isContainerIdValid( "templateId", "org.jbpm:Evaluation:1.0-SNAPSHOT" ) );
+        assertTrue( specManagementService.isContainerIdValid( "templateId", "org.jbpm:Evaluation:1.0_demo" ) );
 
         assertFalse( specManagementService.isContainerIdValid( "templateId", "org.jbpm:Evaluation:1.0/SNAPSHOT" ) );
         assertFalse( specManagementService.isContainerIdValid( "templateId", "org.jbpm:Evaluation:1.0&SNAPSHOT" ) );
