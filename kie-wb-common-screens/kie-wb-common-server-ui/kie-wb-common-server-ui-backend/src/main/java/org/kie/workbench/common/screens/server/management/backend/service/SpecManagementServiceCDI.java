@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.server.management.backend.service;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.server.controller.api.model.events.ServerInstanceDeleted;
 import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
@@ -108,13 +109,19 @@ public class SpecManagementServiceCDI extends RestSpecManagementServiceImpl impl
         return containerId + "-" + attemptNumber;
     }
 
-    private boolean isValidIdentifier( final String s ) {
-        for ( char c : s.toCharArray() ) {
-            if ( !( Character.isLetterOrDigit( c ) ||
-                    c == ':' || c == '-' || c == '.' ) ) {
+    private boolean isValidIdentifier( final String identifier ) {
+        for ( final char c : identifier.toCharArray() ) {
+            if ( !( Character.isLetterOrDigit( c ) || allowedChar( c ) ) ) {
                 return false;
             }
         }
+
         return true;
+    }
+
+    private boolean allowedChar( final char c ) {
+        final char[] allowedChars = { ':', '-', '.', '_' };
+
+        return ArrayUtils.contains( allowedChars, c );
     }
 }
