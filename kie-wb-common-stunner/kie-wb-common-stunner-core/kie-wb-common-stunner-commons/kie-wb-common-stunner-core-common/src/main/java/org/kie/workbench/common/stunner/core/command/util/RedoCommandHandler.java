@@ -54,7 +54,7 @@ public class RedoCommandHandler<C extends Command> {
 
     @Inject
     public RedoCommandHandler(final RegistryFactory registryFactory) {
-        this.registry = registryFactory.newCommandRegistry();
+        this.registry = null != registryFactory ? registryFactory.newCommandRegistry() : null;
     }
 
     public boolean onUndoCommandExecuted(final C command) {
