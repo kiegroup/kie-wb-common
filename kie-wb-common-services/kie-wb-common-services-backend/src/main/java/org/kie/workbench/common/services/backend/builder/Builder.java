@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 import org.drools.compiler.kie.builder.impl.InternalKieModule;
@@ -615,7 +616,7 @@ public class Builder implements Serializable {
             final KieModule kieModule = kieBuilder.getKieModule();
             final ReleaseId releaseId = kieModule.getReleaseId();
             final org.drools.compiler.kie.builder.impl.KieProject kieProject = new KieModuleKieProject( (InternalKieModule) kieBuilder.getKieModule(), null );
-            final KieContainer kieContainer = new KieContainerImpl( kieProject,
+            final KieContainer kieContainer = new KieContainerImpl( UUID.randomUUID() + "_bz1202551" , kieProject,
                                                                     KieServices.Factory.get().getRepository(),
                                                                     releaseId );
             return kieContainer;
