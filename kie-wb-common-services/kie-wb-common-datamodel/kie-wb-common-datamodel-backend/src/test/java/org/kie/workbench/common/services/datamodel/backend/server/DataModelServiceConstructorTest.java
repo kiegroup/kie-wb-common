@@ -347,16 +347,18 @@ public class DataModelServiceConstructorTest {
         ProjectDataModelOracleBuilderProvider builderProvider = new ProjectDataModelOracleBuilderProvider(packageNameWhiteListService,
                                                                                                           importsService);
 
+        //TODO fis this test and pass the BuildInfoService.
         LRUProjectDataModelOracleCache cacheProjects = new LRUProjectDataModelOracleCache(builderProvider,
                                                                                           projectService,
-                                                                                          builderCache);
+                                                                                          null );
 
         dependenciesClassLoaderCache.setBuilderCache(builderCache);
+        //TODO Fix this tests and pass the build BuildInfoService instead
         LRUDataModelOracleCache cachePackages = new LRUDataModelOracleCache(ioService,
                                                                             fileDiscoveryService,
                                                                             cacheProjects,
                                                                             projectService,
-                                                                            builderCache);
+                                                                            null ); /* BuildInfoService */
         DataModelService dataModelService = new DataModelServiceImpl(cachePackages,
                                                                      cacheProjects,
                                                                      projectService);
