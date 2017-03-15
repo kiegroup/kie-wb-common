@@ -46,51 +46,21 @@ public class LayoutGenerator {
         rows.clear();
 
         int autoCount = 0;
-        int maxSpan = 0;
 
         for (LayoutColumnDefinition col : structure) {
-            if (col.getSpan().equals(ColSpan.AUTO)) {
-                autoCount++;
-            } else {
-                maxSpan += col.getSpan().getSpan();
-            }
+            autoCount++;
         }
 
-        if (maxSpan > MAX_SPAN) {
-            throw new IllegalArgumentException("Max SPAN allowed for all layout columns is 12.");
-        }
-        if (maxSpan < MAX_SPAN && autoCount == 0) {
-            throw new IllegalArgumentException("Wrong layout definition, the columns total span must be 12");
-        }
-        if (maxSpan + autoCount > MAX_SPAN) {
-            throw new IllegalArgumentException("There's not enough space for all columns in layout.");
-        }
-
-        int freeSpan = MAX_SPAN - maxSpan;
-
-        int freeOffset = 0;
-        int freeAVGSpan = 0;
-
-        if (freeSpan > 0) {
-            freeOffset = freeSpan % autoCount;
-            freeAVGSpan = Math.floorDiv(freeSpan,
-                                        autoCount);
-        }
+        int freeOffset = MAX_SPAN % autoCount;
+        int freeAVGSpan = Math.floorDiv(MAX_SPAN,
+                autoCount);
 
         List<ColSpan> spans = new ArrayList<>();
 
         for (LayoutColumnDefinition definition : structure) {
-            if (definition.getSpan().equals(ColSpan.AUTO)) {
-                int span = freeAVGSpan;
+            int span = freeAVGSpan;
 
-                if (freeOffset > 0) {
-                    span++;
-                    freeOffset--;
-                }
-                spans.add(ColSpan.calculateSpan(span));
-            } else {
-                spans.add(definition.getSpan());
-            }
+            spans.add(ColSpan.calculateSpan(span));
         }
 
         this.structure = spans.toArray(new ColSpan[spans.size()]);
@@ -104,12 +74,7 @@ public class LayoutGenerator {
             newRow();
         }
 
-        if (!currentRow.addComponent(component,
-                                     settings)) {
-            newRow();
-            currentRow.addComponent(component,
-                                    settings);
-        }
+        currentRow.addComponent(component, settings);
     }
 
     public LayoutTemplate build() {
@@ -126,16 +91,8 @@ public class LayoutGenerator {
 
                 if (cell.getComponentsCount() == 0) {
                     return;
-                } else if (cell.getComponentsCount() == 1) {
-                    layoutColumn.add(cell.components.get(0));
                 } else {
-                    cell.components.forEach(component -> {
-                        LayoutRow nestedRow = new LayoutRow();
-                        layoutColumn.addRow(nestedRow);
-                        LayoutColumn nestedColumn = new LayoutColumn(String.valueOf(MAX_SPAN));
-                        nestedRow.add(nestedColumn);
-                        nestedColumn.add(component);
-                    });
+                    layoutColumn.add(cell.components.get(0));
                 }
             });
         });
@@ -166,7 +123,7 @@ public class LayoutGenerator {
             return currentIndex == cells.size() || (currentIndex > 0 && cells.get(currentIndex - 1).wrap);
         }
 
-        public boolean addComponent(LayoutComponent component,
+        public void addComponent(LayoutComponent component,
                                     LayoutSettings settings) {
 
             int horizontalSpan = settings.getHorizontalSpan();
@@ -184,14 +141,12 @@ public class LayoutGenerator {
             }
 
             currentIndex++;
-            return true;
         }
     }
 
     private class Cell {
 
         private int horizontalSpan = 1;
-        private int verticalSpan = 1;
         private boolean wrap;
 
         private List<LayoutComponent> components = new ArrayList<>();
@@ -208,12 +163,5 @@ public class LayoutGenerator {
             return components.size();
         }
 
-        public int getVerticalSpan() {
-            return verticalSpan;
-        }
-
-        public void setVerticalSpan(int verticalSpan) {
-            this.verticalSpan = verticalSpan;
-        }
     }
 }
