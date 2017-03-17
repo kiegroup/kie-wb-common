@@ -16,23 +16,11 @@
 
 package org.kie.workbench.common.services.backend.builder.ala;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import org.guvnor.ala.pipeline.ConfigExecutor;
 import org.guvnor.ala.pipeline.Input;
-import org.guvnor.ala.pipeline.Pipeline;
-import org.guvnor.ala.pipeline.Stage;
-import org.guvnor.ala.pipeline.events.AfterPipelineExecutionEvent;
-import org.guvnor.ala.pipeline.events.AfterStageExecutionEvent;
-import org.guvnor.ala.pipeline.events.BeforePipelineExecutionEvent;
-import org.guvnor.ala.pipeline.events.BeforeStageExecutionEvent;
-import org.guvnor.ala.pipeline.events.PipelineEventListener;
-import org.guvnor.ala.registry.PipelineRegistry;
-import org.guvnor.ala.registry.local.InMemoryPipelineRegistry;
 import org.guvnor.ala.source.Source;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.model.IncrementalBuildResults;
@@ -56,19 +44,13 @@ import static org.mockito.Mockito.*;
 
 @RunWith( MockitoJUnitRunner.class )
 public class BuildPipelineTest
-        extends BuildPipelineTestBase {
+        extends BuildPipelineExecutionTestBase {
 
     @Mock
     private KieProjectService projectService;
 
     @Mock
     private BuildHelper buildHelper;
-
-    private PipelineRegistry pipelineRegistry = new InMemoryPipelineRegistry( );
-
-    private BuildPipelineInitializer pipelineInitializer;
-
-    private Pipeline pipe;
 
     private LocalSourceConfigExecutor localSourceConfigExecutor;
 
@@ -93,11 +75,6 @@ public class BuildPipelineTest
     @Mock
     private IncrementalBuildResults incrementalBuildResults;
 
-    @Mock
-    private PipelineEventListener pipelineEventListener;
-
-    private Input input;
-
     private ArgumentCaptor< LocalSourceConfig > localSourceConfigCaptor;
 
     private ArgumentCaptor< Source > sourceConfigCaptor;
@@ -114,6 +91,7 @@ public class BuildPipelineTest
 
     @Before
     public void setUp( ) {
+        // local build initialization
         localSourceConfigExecutor = spy( new LocalSourceConfigExecutor( ) );
         localProjectConfigExecutor = spy( new LocalProjectConfigExecutor( projectService ) );
         localBuildConfigExecutor = spy( new LocalBuildConfigExecutor( ) );
@@ -127,7 +105,6 @@ public class BuildPipelineTest
         localBuildConfigInternalCaptor = ArgumentCaptor.forClass( LocalBuildConfigInternal.class );
         localBuildExecConfigCaptor = ArgumentCaptor.forClass( LocalBuildExecConfig.class );
 
-        Collection< ConfigExecutor > configs = new ArrayList<>( );
         configs.add( localSourceConfigExecutor );
         configs.add( localProjectConfigExecutor );
         configs.add( localBuildConfigExecutor );
@@ -136,14 +113,10 @@ public class BuildPipelineTest
         pipelineInitializer = new BuildPipelineInitializer( pipelineRegistry, configs );
         pipe = pipelineRegistry.getPipelineByName( BuildPipelineInitializer.LOCAL_BUILD_PIPELINE );
 
-        // verify the pipeline is properly initialized.
-        assertNotNull( pipe );
-        List< Stage > stages = pipe.getStages( );
-        assertEquals( 4, stages.size( ) );
-        assertEquals( "Local Source Config", stages.get( 0 ).getName( ) );
-        assertEquals( "Local Project Config", stages.get( 1 ).getName( ) );
-        assertEquals( "Local Build Config", stages.get( 2 ).getName( ) );
-        assertEquals( "Local Build Exec", stages.get( 3 ).getName( ) );
+        verifyStages( "Local Source Config",
+                "Local Project Config",
+                "Local Build Config",
+                "Local Build Exec" );
 
         when( projectService.resolveProject( Paths.convert( POM_PATH ) ) ).thenReturn( project );
 
@@ -171,7 +144,7 @@ public class BuildPipelineTest
         verifyLocalBuildConfigExecutorWasInvoked( project, LocalBuildConfig.BuildType.FULL_BUILD.name( ) );
         verifyLocalBuildExecConfigExecutorWasInvoked( project, LocalBuildConfig.BuildType.FULL_BUILD );
 
-        verifyPipelineEvents( );
+        verifyPipelineEvents( pipe );
     }
 
     @Test
@@ -219,7 +192,7 @@ public class BuildPipelineTest
         verifyLocalBuildExecConfigExecutorWasInvoked( project, changes );
 
         // verify the pipeline events where properly raised.
-        verifyPipelineEvents( );
+        verifyPipelineEvents( pipe );
     }
 
     @Test
@@ -260,7 +233,7 @@ public class BuildPipelineTest
         verifyLocalBuildExecConfigExecutorWasInvoked( project, LocalBuildConfig.BuildType.FULL_BUILD_AND_DEPLOY, deploymentType, suppressHandlers );
 
         // verify the pipeline events where properly raised.
-        verifyPipelineEvents( );
+        verifyPipelineEvents( pipe );
     }
 
     private void doTestIncrementalBuildResourceExecution( KieProject project, String resourceUri, LocalBuildConfig.BuildType buildType ) {
@@ -279,7 +252,7 @@ public class BuildPipelineTest
         verifyLocalBuildExecConfigExecutorWasInvoked( project, Paths.convert( getNioPath( resourceUri ) ), buildType );
 
         // verify the pipeline events where properly raised.
-        verifyPipelineEvents( );
+        verifyPipelineEvents( pipe );
     }
 
     private void verifyLocalSourceConfigWasInvoked( ) {
@@ -351,31 +324,6 @@ public class BuildPipelineTest
         assertEquals( suppressHandlers, localBuildConfigInternalCaptor.getValue( ).isSuppressHandlers( ) );
     }
 
-    private void verifyPipelineEvents( ) {
-        ArgumentCaptor< BeforePipelineExecutionEvent > beforePipelineExecutionCaptor = ArgumentCaptor.forClass( BeforePipelineExecutionEvent.class );
-        ArgumentCaptor< BeforeStageExecutionEvent > beforeStageExecutionCaptor = ArgumentCaptor.forClass( BeforeStageExecutionEvent.class );
-        ArgumentCaptor< AfterStageExecutionEvent > afterStageExecutionCaptor = ArgumentCaptor.forClass( AfterStageExecutionEvent.class );
-        ArgumentCaptor< AfterPipelineExecutionEvent > afterPipelineExecutionCaptor = ArgumentCaptor.forClass( AfterPipelineExecutionEvent.class );
-
-        // verify the pipeline initialization event was raised.
-        verify( pipelineEventListener, times( 1 ) ).beforePipelineExecution( beforePipelineExecutionCaptor.capture( ) );
-        assertEquals( pipe, beforePipelineExecutionCaptor.getValue( ).getPipeline( ) );
-
-        // verify the initialization and finalization events were properly raised for current pipe stages.
-        verify( pipelineEventListener, times( 4 ) ).beforeStageExecution( beforeStageExecutionCaptor.capture( ) );
-        verify( pipelineEventListener, times( 4 ) ).afterStageExecution( afterStageExecutionCaptor.capture( ) );
-
-        for ( int i = 0; i < pipe.getStages( ).size( ); i++ ) {
-            assertEquals( pipe.getStages( ).get( i ), beforeStageExecutionCaptor.getAllValues( ).get( i ).getStage( ) );
-            assertEquals( pipe, beforeStageExecutionCaptor.getAllValues( ).get( i ).getPipeline( ) );
-            assertEquals( pipe.getStages( ).get( i ), afterStageExecutionCaptor.getAllValues( ).get( i ).getStage( ) );
-            assertEquals( pipe, afterStageExecutionCaptor.getAllValues( ).get( i ).getPipeline( ) );
-        }
-
-        // verify the pipeline finalization event was raised.
-        verify( pipelineEventListener, times( 1 ) ).afterPipelineExecution( afterPipelineExecutionCaptor.capture( ) );
-        assertEquals( pipe, afterPipelineExecutionCaptor.getValue( ).getPipeline( ) );
-    }
 
     private void assertEqualsChanges( Map< Path, Collection< ResourceChange > > expectedResourceChanges, Map< Path, Collection< ResourceChange > > resourceChanges ) {
         assertEquals( expectedResourceChanges.size( ), resourceChanges.size( ) );

@@ -126,4 +126,17 @@ public class BuildPipelineTestBase
             return changes;
         }
     }
+
+    /**
+     * @return the Pipeline input for a maven build pipeline invocation.
+     */
+    public static Input createMavenBuildInput( String repositoryName, String branch, String projectDir, boolean deploy ) {
+        Input input = new Input( );
+        input.put( "repo-name", repositoryName );
+        input.put( "branch", branch );
+        input.put( "project-dir", projectDir );
+        input.put( LocalMavenBuildExecConfig.DEPLOY_INTO_KIE_M2_REPOSITORY, Boolean.toString( deploy ) );
+        input.put( LocalMavenBuildExecConfig.CAPTURE_ERRORS, "true" );
+        return input;
+    }
 }

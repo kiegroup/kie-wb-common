@@ -16,15 +16,20 @@
 
 package org.kie.workbench.common.services.backend.builder.ala;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.guvnor.ala.build.maven.model.impl.MavenProjectBinaryBuildImpl;
+import org.guvnor.ala.config.Config;
 import org.guvnor.ala.pipeline.Input;
 import org.guvnor.ala.pipeline.Pipeline;
 import org.guvnor.ala.pipeline.execution.PipelineExecutor;
 import org.guvnor.ala.registry.PipelineRegistry;
 import org.guvnor.common.services.project.model.Project;
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +38,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.workbench.events.ResourceChange;
 
 import static org.junit.Assert.*;
@@ -50,6 +56,9 @@ public class BuildPipelineInvokerTest
     @Mock
     private PipelineRegistry pipelineRegistry;
 
+    @Mock
+    private RepositoryService repositoryService;
+
     private BuildPipelineInvoker pipelineInvoker;
 
     @Mock
@@ -60,6 +69,9 @@ public class BuildPipelineInvokerTest
 
     @Mock
     private BuildPipelineInvoker.LocalBuildRequest buildRequest;
+
+    @Mock
+    private BuildPipelineInvoker.MavenBuildRequest mavenBuildRequest;
 
     @Mock
     private Project project;
@@ -73,12 +85,19 @@ public class BuildPipelineInvokerTest
     @Mock
     private LocalBinaryConfig localBinaryConfig;
 
+    @Mock
+    private MavenProjectBinaryBuildImpl mavenProjectBinaryBuild;
+
     private Input input;
+
+    @Mock
+    private Repository repository;
 
     @Before
     public void setUp( ) {
-        pipelineInvoker = new BuildPipelineInvoker( pipelineExecutor, pipelineRegistry );
+        pipelineInvoker = new BuildPipelineInvoker( pipelineExecutor, pipelineRegistry, repositoryService );
         when( pipelineRegistry.getPipelineByName( BuildPipelineInitializer.LOCAL_BUILD_PIPELINE ) ).thenReturn( pipeline );
+        when( pipelineRegistry.getPipelineByName( BuildPipelineInitializer.MAVEN_BUILD_PIPELINE ) ).thenReturn( pipeline );
 
         when( buildRequest.getProject( ) ).thenReturn( project );
         when( project.getRootPath( ) ).thenReturn( rootPath );
@@ -93,7 +112,7 @@ public class BuildPipelineInvokerTest
         // the pipeline should be invoked with this input.
         input = createFullBuildInput( ROOT_PATH_URI );
 
-        preparePipeline( input );
+        preparePipeline( input, localBinaryConfig );
 
         LocalBinaryConfig result = pipelineInvoker.invokeLocalBuildPipeLine( buildRequest );
         verifyPipelineInvocation( localBinaryConfig, result );
@@ -117,7 +136,7 @@ public class BuildPipelineInvokerTest
         // the pipeline should be invoked with this input.
         input = createFullBuildAndDeployInput( ROOT_PATH_URI, deploymentType.name( ), false );
 
-        preparePipeline( input );
+        preparePipeline( input, localBinaryConfig );
 
         LocalBinaryConfig result = pipelineInvoker.invokeLocalBuildPipeLine( buildRequest );
         verifyPipelineInvocation( localBinaryConfig, result );
@@ -148,10 +167,35 @@ public class BuildPipelineInvokerTest
         // the pipeline should be invoked with this input.
         input = createBatchChangesInput( ROOT_PATH_URI, LocalBuildConfig.BuildType.INCREMENTAL_BATCH_CHANGES.name( ), changes );
 
-        preparePipeline( input );
+        preparePipeline( input, localBinaryConfig );
 
         LocalBinaryConfig result = pipelineInvoker.invokeLocalBuildPipeLine( buildRequest );
         verifyPipelineInvocation( localBinaryConfig, result );
+    }
+
+    @Test
+    public void testMavenBuildRequest( ) {
+        when( mavenBuildRequest.getProject( ) ).thenReturn( project );
+        when( project.getRootPath( ) ).thenReturn( rootPath );
+        when( rootPath.toURI( ) ).thenReturn( ROOT_PATH_URI );
+        when( rootPath.getFileName() ).thenReturn( "testProject" );
+
+        String repoPathURI = rootPath.toURI( ).substring( 0, rootPath.toURI( ).lastIndexOf( rootPath.getFileName( ) ) );
+        final Path repoPath = PathFactory.newPath( "repo", repoPathURI );
+        when( repositoryService.getRepository( repoPath ) ).thenReturn( repository );
+        when( repository.getAlias() ).thenReturn( "TestRepo" );
+        ArrayList<String> branches = new ArrayList<>( );
+        branches.add( "master" );
+        when ( repository.getBranches() ).thenReturn( branches );
+        when ( repository.getBranchRoot( "master" ) ).thenReturn( repoPath );
+
+        // the maven pipeline should be invoked with this input.
+        input = createMavenBuildInput( "TestRepo", "master", "testProject", false );
+
+        preparePipeline( input, mavenProjectBinaryBuild );
+
+        MavenProjectBinaryBuildImpl result = pipelineInvoker.invokeMavenBuildPipeline( mavenBuildRequest );
+        verifyPipelineInvocation( mavenProjectBinaryBuild, result );
     }
 
     private void testIncrementalBuildResourceRequest( LocalBuildConfig.BuildType buildType, Path resource ) {
@@ -162,25 +206,24 @@ public class BuildPipelineInvokerTest
         // the pipeline should be invoked with this input.
         input = createIncrementalBuildInput( ROOT_PATH_URI, RESOURCE_URI_1, buildType.name( ) );
 
-        preparePipeline( input );
+        preparePipeline( input, localBinaryConfig );
 
         LocalBinaryConfig result = pipelineInvoker.invokeLocalBuildPipeLine( buildRequest );
         verifyPipelineInvocation( localBinaryConfig, result );
     }
 
-    private void preparePipeline( Input input ) {
+    private void preparePipeline( Input input, Config config ) {
         doAnswer( new Answer< Void >( ) {
             public Void answer( InvocationOnMock invocation ) {
                 Consumer consumer = ( Consumer ) invocation.getArguments( )[ 2 ];
-                consumer.accept( localBinaryConfig );
+                consumer.accept( config );
                 return null;
             }
         } ).when( pipelineExecutor ).execute( eq( input ), eq( pipeline ), any( Consumer.class ) );
     }
 
-    private void verifyPipelineInvocation( LocalBinaryConfig expectedResult, LocalBinaryConfig result ) {
+    private void verifyPipelineInvocation( Config expectedResult, Config result ) {
         assertEquals( expectedResult, result );
         verify( pipelineExecutor, times( 1 ) ).execute( eq( input ), eq( pipeline ), any( Consumer.class ) );
     }
-
 }

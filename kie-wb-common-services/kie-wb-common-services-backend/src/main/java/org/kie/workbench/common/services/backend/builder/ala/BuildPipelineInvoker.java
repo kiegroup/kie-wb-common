@@ -25,16 +25,20 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.guvnor.ala.build.maven.model.impl.MavenProjectBinaryBuildImpl;
 import org.guvnor.ala.pipeline.Input;
 import org.guvnor.ala.pipeline.Pipeline;
 import org.guvnor.ala.pipeline.execution.PipelineExecutor;
 import org.guvnor.ala.registry.PipelineRegistry;
 import org.guvnor.common.services.project.model.Project;
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.workbench.events.ResourceChange;
 
 /**
- * Helper class for invoking the build system pipeline.
+ * Helper class for invoking the build system pipelines.
  */
 @ApplicationScoped
 public class BuildPipelineInvoker {
@@ -43,15 +47,19 @@ public class BuildPipelineInvoker {
 
     private PipelineRegistry pipelineRegistry;
 
+    private RepositoryService repositoryService;
+
     public BuildPipelineInvoker( ) {
         //Empty constructor for Weld proxying
     }
 
     @Inject
     public BuildPipelineInvoker( @Named("buildPipelineExecutor") final PipelineExecutor executor,
-                                 final PipelineRegistry pipelineRegistry ) {
+                                 final PipelineRegistry pipelineRegistry,
+                                 final RepositoryService repositoryService ) {
         this.executor = executor;
         this.pipelineRegistry = pipelineRegistry;
+        this.repositoryService = repositoryService;
     }
 
     /**
@@ -99,6 +107,48 @@ public class BuildPipelineInvoker {
         return result[ 0 ];
     }
 
+    /**
+     * Invokes the maven build pipeline.
+     *
+     * @param buildRequest a build request with the project to build.
+     *
+     * @param consumer a consumer for getting the pipeline output.
+     */
+    public void invokeMavenBuildPipeline( MavenBuildRequest buildRequest,
+                                                  Consumer< MavenProjectBinaryBuildImpl > consumer ) {
+        final Path rootPath = buildRequest.getProject( ).getRootPath( );
+        final Path repoPath = PathFactory.newPath( "repo", rootPath.toURI( ).substring( 0, rootPath.toURI( ).lastIndexOf( rootPath.getFileName( ) ) ) );
+        final Repository repository = repositoryService.getRepository( repoPath );
+
+        final Pipeline pipe = pipelineRegistry.getPipelineByName( BuildPipelineInitializer.MAVEN_BUILD_PIPELINE );
+
+        final Input buildInput = new Input( ) {
+            {
+                put( "repo-name", repository.getAlias( ) );
+                put( "branch", getBranchForPath( rootPath, repository ) );
+                put( "project-dir", rootPath.getFileName() );
+                put( LocalMavenBuildExecConfig.DEPLOY_INTO_KIE_M2_REPOSITORY, Boolean.toString( buildRequest.isDeploy( ) ) );
+                put( LocalMavenBuildExecConfig.CAPTURE_ERRORS, "true" );
+            }
+        };
+        executor.execute( buildInput, pipe, consumer );
+    }
+
+    /**
+     * Invokes the maven build pipeline.
+     *
+     * @param buildRequest a build request with the project to build.
+     *
+     * @return the pipeline output.
+     */
+    public MavenProjectBinaryBuildImpl invokeMavenBuildPipeline( MavenBuildRequest buildRequest ) {
+        final MavenProjectBinaryBuildImpl[] result = new MavenProjectBinaryBuildImpl[ 1 ];
+        invokeMavenBuildPipeline( buildRequest, mavenBinary -> {
+            result[ 0 ] = mavenBinary;
+        } );
+        return result[ 0 ];
+    }
+
     private void addResourceChanges( Input input, Map< Path, Collection< ResourceChange > > resourceChanges ) {
         resourceChanges.entrySet( ).forEach( entry -> {
             input.put( encodeResourceChangePath( entry.getKey( ) ), encodeResourceChanges( entry.getValue( ) ) );
@@ -118,6 +168,13 @@ public class BuildPipelineInvoker {
                 .stream( )
                 .map( change -> change.getType( ).name( ) )
                 .collect( Collectors.joining( "," ) );
+    }
+
+    private String getBranchForPath( Path path, Repository repository ) {
+        return repository.getBranches().stream().filter( branch -> {
+            Path branchRoot = repository.getBranchRoot( branch );
+            return branchRoot != null && path.toURI().startsWith( branchRoot.toURI() );
+        } ).findFirst().orElse( repository.getDefaultBranch() );
     }
 
     /**
@@ -270,6 +327,43 @@ public class BuildPipelineInvoker {
             result = 31 * result + ( deploymentType != null ? deploymentType.hashCode( ) : 0 );
             result = 31 * result + ( suppressHandlers ? 1 : 0 );
             return result;
+        }
+    }
+
+    /**
+     * This class models the configuration parameters for a project build execution based on the maven build pipeline.
+     */
+    public static class MavenBuildRequest {
+
+        private Project project;
+
+        private boolean deploy;
+
+        private MavenBuildRequest( Project project, boolean deploy ) {
+            this.project = project;
+            this.deploy = deploy;
+        }
+
+        public Project getProject( ) {
+            return project;
+        }
+
+        public boolean isDeploy( ) {
+            return deploy;
+        }
+
+        /**
+         * Creates a build request for the given project based on the maven build pipeline.
+         *
+         * @param project the project to build.
+         *
+         * @param deploy true if the resulting maven artifact should be deployed into current WB M2 repository, false
+         * in any other case.
+         *
+         * @return a properly constructed build request.
+         */
+        public static final MavenBuildRequest newMavenBuildRequest( Project project, boolean deploy ) {
+            return new MavenBuildRequest( project, deploy );
         }
     }
 }

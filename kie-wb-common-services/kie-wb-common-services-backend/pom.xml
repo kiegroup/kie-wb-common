@@ -84,6 +84,14 @@
       <artifactId>guvnor-ala-registry-local</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.guvnor</groupId>
+      <artifactId>guvnor-ala-source-git</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.guvnor</groupId>
+      <artifactId>guvnor-ala-build-maven</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
     </dependency>
@@ -245,6 +253,13 @@
     <dependency>
       <groupId>org.guvnor</groupId>
       <artifactId>guvnor-test-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.guvnor</groupId>
+      <artifactId>guvnor-ala-build-maven</artifactId>
+      <classifier>tests</classifier>
       <scope>test</scope>
     </dependency>
 
