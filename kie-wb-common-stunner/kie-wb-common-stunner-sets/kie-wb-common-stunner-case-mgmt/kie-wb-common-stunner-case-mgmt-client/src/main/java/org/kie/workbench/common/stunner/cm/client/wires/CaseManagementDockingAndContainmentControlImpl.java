@@ -145,6 +145,7 @@ public class CaseManagementDockingAndContainmentControlImpl extends WiresDocking
         state.setOriginalIndex(Optional.empty());
         state.setOriginalParent(Optional.empty());
         m_layer.getLayer().batch();
+        m_picker = null;
         return true;
     }
 

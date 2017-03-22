@@ -25,6 +25,8 @@ import static org.kie.workbench.common.stunner.client.lienzo.util.LienzoShapeUti
 
 public final class PictureGlyph extends AbstractLienzoShapeGlyph {
 
+    private Picture picture;
+
     public PictureGlyph(final String uri,
                         final double width,
                         final double height) {
@@ -36,6 +38,12 @@ public final class PictureGlyph extends AbstractLienzoShapeGlyph {
               height);
     }
 
+    @Override
+    public void destroy() {
+        picture.getImageProxy().getImage().removeFromParent();
+        picture = null;
+    }
+
     private void build(final String uri,
                        final double width,
                        final double height) {
@@ -44,14 +52,14 @@ public final class PictureGlyph extends AbstractLienzoShapeGlyph {
                 .setCornerRadius(5)
                 .setFillColor(ColorName.LIGHTGREY)
                 .setFillAlpha(0.2d);
-        new Picture(uri,
-                    picture -> {
-                        scalePicture(picture,
-                                     width,
-                                     height);
-                        group.remove(decorator);
-                        group.add(picture);
-                    });
+        picture = new Picture(uri,
+                              picture -> {
+                                  scalePicture(picture,
+                                               width,
+                                               height);
+                                  group.remove(decorator);
+                                  group.add(picture);
+                              });
         group.add(decorator);
     }
 }
