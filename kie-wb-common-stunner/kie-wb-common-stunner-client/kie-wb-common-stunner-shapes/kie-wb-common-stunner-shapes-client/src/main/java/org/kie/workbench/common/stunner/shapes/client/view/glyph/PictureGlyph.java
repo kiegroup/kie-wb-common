@@ -19,6 +19,7 @@ import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.Picture;
 import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.shared.core.types.ColorName;
+import com.google.gwt.core.client.Scheduler;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.glyph.AbstractLienzoShapeGlyph;
 
 import static org.kie.workbench.common.stunner.client.lienzo.util.LienzoShapeUtils.scalePicture;
@@ -40,8 +41,19 @@ public final class PictureGlyph extends AbstractLienzoShapeGlyph {
 
     @Override
     public void destroy() {
-        picture.getImageProxy().getImage().removeFromParent();
-        picture = null;
+        if (!doDestroy()) {
+            Scheduler.get().scheduleFixedDelay(() -> !doDestroy(),
+                                               200);
+        }
+    }
+
+    private boolean doDestroy() {
+        if (picture != null && picture.isLoaded()) {
+            picture.getImageProxy().getImage().removeFromParent();
+            picture = null;
+            return true;
+        }
+        return false;
     }
 
     private void build(final String uri,
