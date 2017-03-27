@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.stunner.client.widgets.explorer.tree;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
@@ -79,6 +81,8 @@ public class TreeExplorer implements IsWidget {
     ManagedInstance<TreeExplorerItem> treeExplorerItemInstances;
     Event<CanvasElementSelectedEvent> elementSelectedEventEvent;
     View view;
+
+    private Set<TreeExplorerItem> treeExplorerItems = new HashSet<>();
 
     private CanvasHandler canvasHandler;
 
@@ -174,6 +178,7 @@ public class TreeExplorer implements IsWidget {
                                                        level);
                                                    if (null == parent) {
                                                        final TreeExplorerItem item = treeExplorerItemInstances.get();
+                                                       treeExplorerItems.add(item);
                                                        view.addItem(node.getUUID(),
                                                                     item.asWidget(),
                                                                     expand);
@@ -183,6 +188,7 @@ public class TreeExplorer implements IsWidget {
                                                        int[] parentsIdx = getParentsIdx(levelIdx,
                                                                                         level);
                                                        final TreeExplorerItem item = treeExplorerItemInstances.get();
+                                                       treeExplorerItems.add(item);
                                                        view.addItem(node.getUUID(),
                                                                     item.asWidget(),
                                                                     expand,
@@ -219,6 +225,8 @@ public class TreeExplorer implements IsWidget {
     }
 
     public void clear() {
+        treeExplorerItems.forEach(TreeExplorerItem::destroy);
+        treeExplorerItems.clear();
         view.clear();
     }
 
