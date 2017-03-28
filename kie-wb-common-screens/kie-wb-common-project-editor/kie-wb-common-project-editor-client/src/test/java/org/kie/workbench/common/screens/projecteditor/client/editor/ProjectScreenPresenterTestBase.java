@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.projecteditor.client.editor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 
 import com.google.gwtmockito.GwtMock;
 import org.guvnor.asset.management.service.AssetManagementService;
@@ -31,6 +32,7 @@ import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.security.KieWorkbenchACL;
 import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
@@ -100,8 +102,12 @@ public abstract class ProjectScreenPresenterTestBase {
     protected Repository repository;
     @Mock
     protected Path pomPath;
+    @Mock
+    protected RepositoryService repositoryService;
 
     protected ObservablePath observablePathToPomXML;
+    
+    protected ProjectScreenPresenter spiedPresenter;
 
     protected void mockBuildOptions() {
         when( view.getBuildOptionsButton() ).thenReturn( buildOptions );
@@ -173,7 +179,8 @@ public abstract class ProjectScreenPresenterTestBase {
                                                 new CallerMock<ValidationService>( mock( ValidationService.class ) ),
                                                 lockManagerInstanceProvider,
                                                 mock( EventSourceMock.class ),
-                                                conflictingRepositoriesPopup ) {
+                                                conflictingRepositoriesPopup,
+                                                new CallerMock<RepositoryService>( repositoryService ) ) {
 
             @Override
             protected void setupPathToPomXML() {
@@ -207,5 +214,18 @@ public abstract class ProjectScreenPresenterTestBase {
             }
         };
 
+        spiedPresenter = spy( presenter );
+    }
+
+    protected void mockRepositoryService() {
+        mockRespositoryAsManaged( true );
+
+        when( repositoryService.getRepository( anyString() ) ).thenReturn( repository );
+    }
+
+    protected void mockRespositoryAsManaged( final boolean managed ) {
+        when( repository.getEnvironment() ).thenReturn( new HashMap<String, Object>() {{
+            put( "managed", managed );
+        }} );
     }
 }
