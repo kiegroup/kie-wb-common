@@ -22,7 +22,6 @@ import javax.inject.Inject;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;

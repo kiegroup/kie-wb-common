@@ -17,154 +17,129 @@
 package org.kie.workbench.common.screens.projecteditor.client.handlers;
 
 import com.google.gwt.core.client.Callback;
-import org.guvnor.asset.management.model.RepositoryStructureModel;
-import org.guvnor.asset.management.service.RepositoryStructureService;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.model.GAV;
+import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.screens.library.api.preferences.LibraryOrganizationalUnitPreferences;
+import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.projecteditor.client.wizard.NewProjectWizard;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.uberfire.ext.editor.commons.client.validation.ValidatorWithReasonCallback;
 import org.uberfire.mocks.CallerMock;
+import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.type.AnyResourceTypeDefinition;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewProjectHandlerTest {
 
+    @Mock
+    private ProjectContext context;
+    @Mock
+    private NewProjectWizard wizard;
+    @Mock
+    private Repository repository;
+    @Mock
+    private ProjectController projectController;
+    @Mock
+    private OrganizationalUnitService organizationalUnitService;
+    @Mock
+    private EventSourceMock<ProjectContextChangeEvent> projectContextChangeEvent;
+
+    @Mock
+    private LibraryPreferences libraryPreferences;
+
     private NewProjectHandler handler;
-
-    @Mock
-    NewProjectHandlerView view;
-
-    @Mock
-    ProjectContext context;
-
-    @Mock
-    NewProjectWizard wizard;
-
-    @Mock
-    RepositoryStructureService repositoryStructureService;
-
-    @Mock
-    Repository repository;
-
-    @Mock
-    RepositoryStructureModel model;
-
-    @Mock
-    ProjectController projectController;
-
     private AnyResourceTypeDefinition resourceType = mock(AnyResourceTypeDefinition.class);
     private NewResourcePresenter newResourcePresenter = mock(NewResourcePresenter.class);
 
     @Before
     public void setup() {
-        handler = new NewProjectHandler(view,
-                context,
-                wizard,
-                new CallerMock<RepositoryStructureService>(repositoryStructureService),
-                projectController,
-                resourceType);
+
+        handler = new NewProjectHandler(context,
+                                        projectContextChangeEvent,
+                                        libraryPreferences,
+                                        wizard,
+                                        new CallerMock<>(organizationalUnitService),
+                                        projectController,
+                                        resourceType);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testCreate() {
         handler.create(mock(org.guvnor.common.services.project.model.Package.class),
-                "projectName",
-                newResourcePresenter);
+                       "projectName",
+                       newResourcePresenter);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testValidate() {
         handler.validate("projectName",
-                mock(ValidatorWithReasonCallback.class));
+                         mock(ValidatorWithReasonCallback.class));
     }
 
     @Test
-    public void testAcceptContextNoActiveRepository() {
-        when(context.getActiveRepository()).thenReturn(null);
+    public void testAcceptContextNoActiveOrganizationalUnit() {
+        when(context.getActiveWorkspaceProject()).thenReturn(null);
 
         final Callback<Boolean, Void> callback = mock(Callback.class);
         handler.acceptContext(callback);
 
         verify(callback,
-                times(1)).onSuccess(eq(false));
+               times(1)).onSuccess(eq(false));
     }
 
     @Test
-    public void testAcceptContextWithUnmanagedActiveRepository() {
-        when(context.getActiveRepository()).thenReturn(repository);
-        when(repositoryStructureService.load(any(Repository.class),
-                anyString())).thenReturn(model);
-        when(model.isManaged()).thenReturn(false);
+    public void testAcceptContextWithActiveActiveOrganizationalUnit() {
+        when(context.getActiveOrganizationalUnit()).thenReturn(mock(OrganizationalUnit.class));
 
         final Callback<Boolean, Void> callback = mock(Callback.class);
         handler.acceptContext(callback);
 
         verify(callback,
-                times(1)).onSuccess(eq(true));
+               times(1)).onSuccess(eq(true));
     }
 
     @Test
-    public void testAcceptContextWithManagedActiveRepositoryIsMultiModule() {
-        multiModuleTestHelp(true);
-    }
+    public void testGetCommandWithActiveRepository() {
 
-    @Test
-    public void testAcceptContextWithManagedActiveRepositoryIsNotMultiModule() {
-        multiModuleTestHelp(false);
-    }
+        final LibraryOrganizationalUnitPreferences libraryOrganizationalUnitPreferences = mock(LibraryOrganizationalUnitPreferences.class);
+        when(libraryOrganizationalUnitPreferences.getName()).thenReturn("myOU");
+        when(libraryPreferences.getOrganizationalUnitPreferences()).thenReturn(libraryOrganizationalUnitPreferences);
 
-    private void multiModuleTestHelp(boolean isMultiModule) {
-        when(context.getActiveRepository()).thenReturn(repository);
-        when(repositoryStructureService.load(any(Repository.class),
-                anyString())).thenReturn(model);
-        when(model.isManaged()).thenReturn(true);
-        when(model.isMultiModule()).thenReturn(isMultiModule);
-
-        final Callback<Boolean, Void> callback = mock(Callback.class);
-        handler.acceptContext(callback);
-
-        verify(callback,
-                times(1)).onSuccess(eq(isMultiModule));
-    }
-
-    @Test
-    public void testGetCommandWithNoActiveRepository() {
-        when(context.getActiveRepository()).thenReturn(null);
-
-        final Command command = handler.getCommand(newResourcePresenter);
-        assertNotNull(command);
-
-        command.execute();
-
-        verify(view, times(1)).showNoRepositorySelectedPleaseSelectARepository();
-        verify(wizard, never()).start();
-    }
-
-    @Test
-    public void testGetCommandWithUnmanagedActiveRepository() {
-        when(context.getActiveRepository()).thenReturn(repository);
-        OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
-        when(context.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                  repository,
+                                                                                  mock(Branch.class),
+                                                                                  mock(Module.class)));
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("defaultGroupId");
-        when(repositoryStructureService.load(any(Repository.class),
-                anyString())).thenReturn(model);
-        when(model.isManaged()).thenReturn(false);
+        when(organizationalUnitService.getOrganizationalUnit("myOU")).thenReturn(organizationalUnit);
+
+        doAnswer(new Answer() {
+            @Override
+            public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
+                when(context.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+                return null;
+            }
+        }).when(projectContextChangeEvent).fire(any(ProjectContextChangeEvent.class));
 
         final Command command = handler.getCommand(newResourcePresenter);
         assertNotNull(command);
@@ -173,47 +148,14 @@ public class NewProjectHandlerTest {
 
         ArgumentCaptor<POM> pomArgumentCaptor = ArgumentCaptor.forClass(POM.class);
         verify(wizard,
-                times(1)).initialise(pomArgumentCaptor.capture());
+               times(1)).initialise(pomArgumentCaptor.capture());
         verify(wizard,
-                times(1)).start(any(org.uberfire.client.callbacks.Callback.class),
-                anyBoolean());
+               times(1)).start(any(org.uberfire.client.callbacks.Callback.class),
+                               anyBoolean());
 
-        assertEquals("defaultGroupId", pomArgumentCaptor.getValue().getGav().getGroupId());
-        assertEquals("kjar", pomArgumentCaptor.getValue().getPackaging());
+        assertEquals("defaultGroupId",
+                     pomArgumentCaptor.getValue().getGav().getGroupId());
+        assertEquals("kjar",
+                     pomArgumentCaptor.getValue().getPackaging());
     }
-
-    @Test
-    public void testGetCommandWithManagedActiveRepository() {
-        when(context.getActiveRepository()).thenReturn(repository);
-        when(repositoryStructureService.load(any(Repository.class),
-                anyString())).thenReturn(model);
-        when(model.isManaged()).thenReturn(true);
-
-        final GAV gav = new GAV("groupID",
-                "",
-                "version");
-
-        final POM pom = new POM(gav);
-        when(model.getPOM()).thenReturn(pom);
-
-        final Command command = handler.getCommand(newResourcePresenter);
-        assertNotNull(command);
-
-        command.execute();
-
-        ArgumentCaptor<POM> pomArgumentCaptor = ArgumentCaptor.forClass(POM.class);
-        verify(wizard).initialise(pomArgumentCaptor.capture());
-        POM capturedPOM = pomArgumentCaptor.getValue();
-        assertEquals("groupID", capturedPOM.getGav().getGroupId());
-        assertEquals("version", capturedPOM.getGav().getVersion());
-        assertEquals("kjar", capturedPOM.getPackaging());
-
-        verify(wizard,
-                times(1)).initialise(any(POM.class));
-        verify(wizard,
-                times(1)).start(any(org.uberfire.client.callbacks.Callback.class),
-                anyBoolean());
-    }
-
-
 }

@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
@@ -44,24 +44,10 @@ import org.uberfire.ext.layout.editor.client.api.ComponentRemovedEvent;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
@@ -317,7 +303,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         loadContent();
         addAllFields();
         when(layoutDragComponentPaletteMock.hasDraggableComponent(anyString(),
-                                                         anyString())).thenReturn(true);
+                                                                  anyString())).thenReturn(true);
         List<FieldDefinition> fieldList = presenter.getFormDefinition().getFields();
 
         presenter.removeAllDraggableGroupComponent(fieldList);
@@ -327,7 +313,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         verify(layoutDragComponentPaletteMock,
                times(fieldList.size())).removeDraggableComponent(anyString(),
-                                                        anyString());
+                                                                 anyString());
     }
 
     @Test
@@ -338,8 +324,8 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         presenter.addAllDraggableGroupComponent(fieldList);
         verify(layoutDragComponentPaletteMock,
                times(fieldList.size())).addDraggableComponent(anyString(),
-                                                    anyString(),
-                                                    any());
+                                                              anyString(),
+                                                              any());
     }
 
     @Test
@@ -459,7 +445,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         loadContent();
@@ -477,7 +463,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         loadContent();

@@ -41,10 +41,6 @@
       <artifactId>uberfire-structure-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-asset-mgmt-api</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
     </dependency>

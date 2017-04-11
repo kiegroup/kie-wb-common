@@ -55,6 +55,7 @@ public class LibraryScreen {
         void updateContent(HTMLElement content);
     }
 
+    protected List<WorkspaceProject> projects;
     private View view;
 
     private ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters;
@@ -67,6 +68,8 @@ public class LibraryScreen {
 
     private OrganizationalUnitController organizationalUnitController;
 
+    private Event<ProjectContextChangeEvent> contextChangeEvent;
+    private ProjectContext projectContext;
     private ProjectController projectController;
 
     private EmptyLibraryScreen emptyLibraryScreen;

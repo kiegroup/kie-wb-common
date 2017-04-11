@@ -27,31 +27,29 @@ import javax.inject.Inject;
 
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
-import org.guvnor.asset.management.social.AssetManagementEventTypes;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
-import org.guvnor.common.services.project.events.DeleteProjectEvent;
-import org.guvnor.common.services.project.events.RenameProjectEvent;
-import org.guvnor.common.services.project.model.Project;
-import org.guvnor.common.services.project.social.ProjectEventType;
+import org.guvnor.common.services.project.context.ProjectContextChangeHandler;
+import org.guvnor.common.services.project.events.RenameModuleEvent;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.screens.examples.client.wizard.ExamplesWizard;
-import org.kie.workbench.common.screens.explorer.model.URIStructureExplorerModel;
-import org.kie.workbench.common.screens.explorer.service.ExplorerService;
 import org.kie.workbench.common.screens.library.api.LibraryService;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
-import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.widgets.library.LibraryToolbarPresenter;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceSuccessEvent;
 import org.kie.workbench.common.workbench.client.docks.AuthoringWorkbenchDocks;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -76,12 +74,10 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 
 @ApplicationScoped
-public class LibraryPlaces {
+public class LibraryPlaces implements ProjectContextChangeHandler {
 
     public static final String LIBRARY_PERSPECTIVE = "LibraryPerspective";
     public static final String LIBRARY_SCREEN = "LibraryScreen";
-    public static final String EMPTY_PROJECT_SCREEN = "EmptyProjectScreen";
-    public static final String IMPORT_PROJECTS_SCREEN = "TrySamplesScreen";
     public static final String PROJECT_SCREEN = "ProjectScreen";
     public static final String PROJECT_DETAIL_SCREEN = "ProjectsDetailScreen";
     public static final String ORG_UNITS_METRICS_SCREEN = "OrgUnitsMetricsScreen";
@@ -94,8 +90,6 @@ public class LibraryPlaces {
 
     public static final List<String> LIBRARY_PLACES = Collections.unmodifiableList(new ArrayList<String>(7) {{
         add(LIBRARY_SCREEN);
-        add(EMPTY_PROJECT_SCREEN);
-        add(IMPORT_PROJECTS_SCREEN);
         add(ORG_UNITS_METRICS_SCREEN);
         add(PROJECT_SCREEN);
         add(PROJECT_METRICS_SCREEN);
@@ -109,8 +103,6 @@ public class LibraryPlaces {
 
     private TranslationService ts;
 
-    private Event<ProjectDetailEvent> projectDetailEvent;
-
     private Event<ProjectMetricsEvent> projectMetricsEvent;
 
     private Event<AssetDetailEvent> assetDetailEvent;
@@ -118,6 +110,10 @@ public class LibraryPlaces {
     private ResourceUtils resourceUtils;
 
     private Caller<LibraryService> libraryService;
+
+    private Caller<ProjectService> projectService;
+
+    private Caller<KieModuleService> moduleService;
 
     private PlaceManager placeManager;
 
@@ -139,8 +135,6 @@ public class LibraryPlaces {
 
     private Caller<VFSService> vfsService;
 
-    private Caller<ExplorerService> explorerService;
-
     private ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
     private Event<PreferencesCentralInitializationEvent> preferencesCentralInitializationEvent;
@@ -149,20 +143,23 @@ public class LibraryPlaces {
 
     private boolean docksHidden = true;
 
-    private Project lastViewedProject = null;
+    private WorkspaceProject lastViewedProject = null;
 
     private boolean closingLibraryPlaces = false;
+
+    public LibraryPlaces() {
+    }
 
     @Inject
     public LibraryPlaces(final UberfireBreadcrumbs breadcrumbs,
                          final TranslationService ts,
-                         final Event<ProjectDetailEvent> projectDetailEvent,
                          final Event<ProjectMetricsEvent> projectMetricsEvent,
                          final Event<AssetDetailEvent> assetDetailEvent,
                          final ResourceUtils resourceUtils,
                          final Caller<LibraryService> libraryService,
+                         final Caller<ProjectService> projectService,
+                         final Caller<KieModuleService> moduleService,
                          final PlaceManager placeManager,
-                         final LibraryPerspective libraryPerspective,
                          final ProjectContext projectContext,
                          final LibraryToolbarPresenter libraryToolbar,
                          final AuthoringWorkbenchDocks docks,
@@ -171,18 +168,17 @@ public class LibraryPlaces {
                          final ManagedInstance<ExamplesWizard> examplesWizards,
                          final TranslationUtils translationUtils,
                          final Caller<VFSService> vfsService,
-                         final Caller<ExplorerService> explorerService,
                          final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier,
                          final Event<PreferencesCentralInitializationEvent> preferencesCentralInitializationEvent) {
         this.breadcrumbs = breadcrumbs;
         this.ts = ts;
-        this.projectDetailEvent = projectDetailEvent;
         this.projectMetricsEvent = projectMetricsEvent;
         this.assetDetailEvent = assetDetailEvent;
         this.resourceUtils = resourceUtils;
         this.libraryService = libraryService;
+        this.projectService = projectService;
+        this.moduleService = moduleService;
         this.placeManager = placeManager;
-        this.libraryPerspective = libraryPerspective;
         this.projectContext = projectContext;
         this.libraryToolbar = libraryToolbar;
         this.docks = docks;
@@ -191,38 +187,32 @@ public class LibraryPlaces {
         this.examplesWizards = examplesWizards;
         this.translationUtils = translationUtils;
         this.vfsService = vfsService;
-        this.explorerService = explorerService;
         this.projectScopedResolutionStrategySupplier = projectScopedResolutionStrategySupplier;
         this.preferencesCentralInitializationEvent = preferencesCentralInitializationEvent;
-    }
 
-    public ProjectInfo getProjectInfo() {
-        return new ProjectInfo(projectContext.getActiveOrganizationalUnit(),
-                               projectContext.getActiveRepository(),
-                               projectContext.getActiveBranch(),
-                               projectContext.getActiveProject());
+        projectContext.addChangeHandler(this);
+
+        breadcrumbs.addToolbar(LibraryPlaces.LIBRARY_PERSPECTIVE,
+                               libraryToolbar.getView().getElement());
     }
 
     public void onSelectPlaceEvent(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
         if (isLibraryPerspectiveOpen() && !closingLibraryPlaces) {
-            final ProjectInfo projectInfo = getProjectInfo();
             final PlaceRequest place = placeGainFocusEvent.getPlace();
 
             if (place instanceof PathPlaceRequest) {
                 final PathPlaceRequest pathPlaceRequest = (PathPlaceRequest) place;
-                setupLibraryBreadCrumbsForAsset(projectInfo,
-                                                pathPlaceRequest.getPath());
+                setupLibraryBreadCrumbsForAsset(pathPlaceRequest.getPath());
                 showDocks();
             } else if (!place.getIdentifier().equals(MESSAGES) && isLibraryPlace(place)) {
                 hideDocks();
                 if (place.getIdentifier().equals(PROJECT_SETTINGS)) {
-                    setupLibraryBreadCrumbsForAsset(projectInfo,
-                                                    null);
-                } else if (projectInfo.getProject() != null
-                        && (place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)
-                        || place.getIdentifier().equals(LibraryPlaces.EMPTY_PROJECT_SCREEN))) {
-                    setupLibraryBreadCrumbsForProject(projectInfo);
-                } else if (place.getIdentifier().equals(LibraryPlaces.LIBRARY_SCREEN)) {
+                    setupLibraryBreadCrumbsForAsset(null);
+                } else if (projectContext.getActiveWorkspaceProject() != null
+                        && place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
+                    setupLibraryBreadCrumbs();
+                } else if (place.getIdentifier().equals(LibraryPlaces.LIBRARY_SCREEN)
+                        || place.getIdentifier().equals(LibraryPlaces.EMPTY_LIBRARY_SCREEN)) {
                     setupLibraryBreadCrumbs();
                 }
             }
@@ -252,27 +242,24 @@ public class LibraryPlaces {
         return LIBRARY_PLACES.contains(place.getIdentifier());
     }
 
-    public void newResourceCreated(@Observes final NewResourceSuccessEvent newResourceSuccessEvent) {
+    public void onNewResourceCreated(@Observes final NewResourceSuccessEvent newResourceSuccessEvent) {
         if (isLibraryPerspectiveOpen()) {
-            assetDetailEvent.fire(new AssetDetailEvent(getProjectInfo(),
+            assetDetailEvent.fire(new AssetDetailEvent(projectContext.getActiveWorkspaceProject(),
                                                        newResourceSuccessEvent.getPath()));
         }
     }
 
-    public void assetRenamedAccepted(@Observes final ConcurrentRenameAcceptedEvent concurrentRenameAcceptedEvent) {
+    public void onAssetRenamedAccepted(@Observes final ConcurrentRenameAcceptedEvent concurrentRenameAcceptedEvent) {
         if (isLibraryPerspectiveOpen()) {
-            final ProjectInfo projectInfo = getProjectInfo();
             final ObservablePath path = concurrentRenameAcceptedEvent.getPath();
-            goToAsset(projectInfo,
-                      path);
-            setupLibraryBreadCrumbsForAsset(projectInfo,
-                                            path);
+            goToAsset(path);
+            setupLibraryBreadCrumbsForAsset(path);
         }
     }
 
-    public void projectDeleted(@Observes final DeleteProjectEvent deleteProjectEvent) {
+    public void onProjectDeleted(@Observes final RepositoryRemovedEvent repositoryRemovedEvent) {
         if (isLibraryPerspectiveOpen()) {
-            if (deleteProjectEvent.getProject().equals(lastViewedProject)) {
+            if (repositoryRemovedEvent.getRepository().equals(lastViewedProject.getRepository())) {
                 closeAllPlaces();
                 goToLibrary();
                 notificationEvent.fire(new NotificationEvent(ts.getTranslation(LibraryConstants.ProjectDeleted),
@@ -281,48 +268,20 @@ public class LibraryPlaces {
         }
     }
 
-    public void projectRenamed(@Observes final RenameProjectEvent renameProjectEvent) {
+    public void onProjectRenamed(@Observes final RenameModuleEvent renameModuleEvent) {
         if (isLibraryPerspectiveOpen()) {
-            final Project activeProject = projectContext.getActiveProject();
-
-            if (renameProjectEvent.getOldProject().equals(activeProject)) {
-                setupLibraryBreadCrumbsForAsset(new ProjectInfo(projectContext.getActiveOrganizationalUnit(),
-                                                                projectContext.getActiveRepository(),
-                                                                projectContext.getActiveBranch(),
-                                                                renameProjectEvent.getNewProject()),
-                                                null);
-                lastViewedProject = renameProjectEvent.getNewProject();
+            if (renameModuleEvent.getOldModule().equals(projectContext.getActiveWorkspaceProject().getMainModule())) {
+                refresh(null);
             }
         }
     }
 
-    public void assetSelected(@Observes final AssetDetailEvent assetDetails) {
-        goToAsset(assetDetails.getProjectInfo(),
-                  assetDetails.getPath());
+    public void onAssetSelected(@Observes final AssetDetailEvent assetDetails) {
+        goToAsset(assetDetails.getPath());
     }
 
-    public void projectContextChange() {
-        final ProjectInfo projectInfo = new ProjectInfo(projectContext.getActiveOrganizationalUnit(),
-                                                        projectContext.getActiveRepository(),
-                                                        projectContext.getActiveBranch(),
-                                                        projectContext.getActiveProject());
-
-        if (isLibraryPerspectiveOpen() && projectContext.getActiveRepository() != null) {
-            if ((libraryToolbar.getSelectedRepository() != null && !libraryToolbar.getSelectedRepository().equals(projectContext.getActiveRepository()))
-                    || (libraryToolbar.getSelectedBranch() != null && !libraryToolbar.getSelectedBranch().equals(projectContext.getActiveBranch()))) {
-                libraryToolbar.setSelectedInfo(projectContext.getActiveOrganizationalUnit(),
-                                               projectContext.getActiveRepository(),
-                                               () -> {
-                                                   if (projectContext.getActiveProject() != null) {
-                                                       goToProject(projectInfo,
-                                                                   false);
-                                                   }
-                                               });
-            } else if (projectContext.getActiveProject() != null && !projectContext.getActiveProject().equals(lastViewedProject)) {
-                goToProject(projectInfo,
-                            false);
-            }
-        }
+    public void setUpBranches() {
+        libraryToolbar.setUpBranches();
     }
 
     private boolean isLibraryPerspectiveOpen() {
@@ -332,13 +291,13 @@ public class LibraryPlaces {
 
     public void onPreferencesSave(@Observes PreferencesCentralSaveEvent event) {
         if (isLibraryPerspectiveOpen()) {
-            goToProject(getProjectInfo());
+            goToProject();
         }
     }
 
     public void onPreferencesCancel(@Observes PreferencesCentralUndoChangesEvent event) {
         if (isLibraryPerspectiveOpen()) {
-            goToProject(getProjectInfo());
+            goToProject();
         }
     }
 
@@ -346,37 +305,37 @@ public class LibraryPlaces {
         vfsService.call(new RemoteCallback<Path>() {
             @Override
             public void callback(Path path) {
-                explorerService.call(new RemoteCallback<URIStructureExplorerModel>() {
+
+                projectService.call(new RemoteCallback<WorkspaceProject>() {
                     @Override
-                    public void callback(final URIStructureExplorerModel model) {
+                    public void callback(final WorkspaceProject project) {
                         openBestSuitedScreen(event.getEventType(),
                                              path,
-                                             new ProjectInfo(model.getOrganizationalUnit(),
-                                                             model.getRepository(),
-                                                             model.getRepository().getDefaultBranch(),
-                                                             model.getProject()));
+                                             project);
                     }
-                }).getURIStructureExplorerModel(path);
+                }).resolveProject(path);
             }
         }).get(event.getUri());
     }
 
     private void openBestSuitedScreen(final String eventType,
                                       final Path path,
-                                      final ProjectInfo projectInfo) {
-        final PlaceRequest libraryPerspective = getLibraryPlaceRequestWithoutRefresh();
+                                      final WorkspaceProject project) {
+
+        if (!projectContext.getActiveWorkspaceProject().equals(project)) {
+            projectContextChangeEvent.fire(new ProjectContextChangeEvent(project));
+        }
+
+        final PlaceRequest libraryPerspectivePlace = getLibraryPlaceRequestWithoutRefresh();
 
         if (isRepositoryEvent(eventType)) {
             placeManager.goTo(REPOSITORY_STRUCTURE_SCREEN);
-        } else if (isProjectEvent(eventType)) {
-            placeManager.goTo(libraryPerspective);
-            goToProject(projectInfo);
+        } else if (isModuleEvent(eventType)) {
+            placeManager.goTo(libraryPerspectivePlace);
+            goToProject();
         } else if (path != null) {
-            placeManager.goTo(libraryPerspective);
-            goToProject(projectInfo,
-                        true,
-                        () -> goToAsset(projectInfo,
-                                        path));
+            placeManager.goTo(libraryPerspectivePlace);
+            goToProject(() -> goToAsset(path));
         }
     }
 
@@ -393,50 +352,39 @@ public class LibraryPlaces {
             return false;
         }
 
-        if (ExtendedTypes.NEW_REPOSITORY_EVENT.name().equals(eventType)
-                || AssetManagementEventTypes.BRANCH_CREATED.name().equals(eventType)
-                || AssetManagementEventTypes.REPOSITORY_CHANGE.name().equals(eventType)) {
+        if (ExtendedTypes.NEW_REPOSITORY_EVENT.name().equals(eventType)) {
             return true;
         }
 
         return false;
     }
 
-    private boolean isProjectEvent(final String eventType) {
-        return ProjectEventType.NEW_PROJECT.name().equals(eventType);
-    }
-
-    public void setupToolBar() {
-        breadcrumbs.clearBreadcrumbsAndToolBars(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addToolbar(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                               libraryToolbar.getView().getElement());
-    }
-
-    public void setupLibraryBreadCrumbsForOrganizationUnits() {
-        breadcrumbs.clearBreadcrumbsAndToolBars(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
+    private boolean isModuleEvent(final String eventType) {
+        return ModuleEventType.NEW_MODULE.name().equals(eventType);
     }
 
     public void setupLibraryBreadCrumbs() {
-        setupToolBar();
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
-    }
-
-    public void setupLibraryBreadCrumbsForTrySamples() {
         breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   translationUtils.getOrganizationalUnitAliasInPlural(),
                                   () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
+        if (projectContext.getActiveOrganizationalUnit() != null) {
+
+            breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
+                                      projectContext.getActiveOrganizationalUnit().getName(),
+                                      () -> goToLibrary());
+        }
+        if (projectContext.getActiveWorkspaceProject() != null) {
+
+            breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
+                                      projectContext.getActiveWorkspaceProject().getName(),
+                                      () -> goToProject());
+        }
+        libraryToolbar.setUpBranches();
+    }
+
+    public void setupLibraryBreadCrumbsForNewProject() {
+        setupLibraryBreadCrumbs();
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   ts.getTranslation(LibraryConstants.TrySamples),
                                   () -> goToTrySamples());
@@ -455,81 +403,37 @@ public class LibraryPlaces {
                                   () -> goToImportProjects(repositoryUrl));
     }
 
-    public void setupLibraryBreadCrumbsForProject(final ProjectInfo projectInfo) {
-        breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  projectInfo.getProject().getProjectName(),
-                                  () -> goToProject(projectInfo));
-    }
-
-    public void setupLibraryBreadCrumbsForProjectMetrics(final ProjectInfo projectInfo) {
-        breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  projectInfo.getProject().getProjectName(),
-                                  () -> goToProject(projectInfo));
+    public void setupLibraryBreadCrumbsForProjectMetrics() {
+        setupLibraryBreadCrumbs();
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   translationUtils.getProjectMetrics(),
-                                  () -> goToProjectMetrics(projectInfo));
+                                  () -> goToProjectMetrics());
     }
 
     public void setupLibraryBreadCrumbsForOrgUnitsMetrics() {
-        breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
+        setupLibraryBreadCrumbs();
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   translationUtils.getOrgUnitsMetrics(),
                                   () -> goToOrgUnitsMetrics());
     }
 
-    public void setupLibraryBreadCrumbsForAsset(final ProjectInfo projectInfo,
-                                                final Path path) {
-        String assetName;
-        if (path != null) {
-            assetName = resourceUtils.getBaseFileName(path);
-        } else {
-            assetName = ts.format(LibraryConstants.Settings);
-        }
-
-        breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
+    public void setupLibraryBreadCrumbsForAsset(final Path path) {
+        setupLibraryBreadCrumbs();
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  projectInfo.getProject().getProjectName(),
-                                  () -> goToProject(projectInfo));
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  assetName,
-                                  () -> goToAsset(projectInfo,
-                                                  path));
+                                  getAssetName(path),
+                                  () -> goToAsset(path));
     }
 
-    public void setupLibraryBreadCrumbsForPreferences(final ProjectInfo projectInfo) {
-        breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  translationUtils.getOrganizationalUnitAliasInPlural(),
-                                  () -> goToOrganizationalUnits());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
-                                  () -> goToLibrary());
-        breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  projectInfo.getProject().getProjectName(),
-                                  () -> goToProject(projectInfo));
+    private String getAssetName(final Path path) {
+        if (path != null) {
+            return resourceUtils.getBaseFileName(path);
+        } else {
+            return ts.format(LibraryConstants.Settings);
+        }
+    }
+
+    public void setupLibraryBreadCrumbsForPreferences() {
+        setupLibraryBreadCrumbs();
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   ts.getTranslation(LibraryConstants.Preferences),
                                   () -> goToPreferences());
@@ -538,8 +442,8 @@ public class LibraryPlaces {
     public void refresh(final Command callback) {
         breadcrumbs.clearBreadcrumbs(LibraryPlaces.LIBRARY_PERSPECTIVE);
         translationUtils.refresh(() -> {
+
             libraryToolbar.init(() -> {
-                setupToolBar();
                 if (callback != null) {
                     callback.execute();
                 }
@@ -549,90 +453,91 @@ public class LibraryPlaces {
 
     public void goToOrganizationalUnits() {
         if (closeAllPlacesOrNothing()) {
+
+            PortablePreconditions.checkNotNull("libraryPerspective.closeAllPlacesOrNothing",
+                                               libraryPerspective);
+
+            projectContextChangeEvent.fire(new ProjectContextChangeEvent());
+
             final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN);
             final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
             part.setSelectable(false);
             placeManager.goTo(part,
                               libraryPerspective.getRootPanel());
-            setupLibraryBreadCrumbsForOrganizationUnits();
+            setupLibraryBreadCrumbs();
         }
     }
 
     public void goToLibrary() {
-        goToLibrary(null);
-    }
 
-    public void goToLibrary(final Command callback) {
-        final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
-        final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
-        part.setSelectable(false);
+        final Command command = () -> libraryService.call(new RemoteCallback<Boolean>() {
+            @Override
+            public void callback(final Boolean hasProjects) {
 
-        closeLibraryPlaces();
-        placeManager.goTo(part,
-                          libraryPerspective.getRootPanel());
+                PortablePreconditions.checkNotNull("libraryPerspective.hasProjects",
+                                                   libraryPerspective);
 
-        setupLibraryBreadCrumbs();
+                final PlaceRequest placeRequest = new ConditionalPlaceRequest(LibraryPlaces.LIBRARY_SCREEN)
+                        .when(p -> hasProjects)
+                        .orElse(new DefaultPlaceRequest(LibraryPlaces.EMPTY_LIBRARY_SCREEN));
+                final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
+                part.setSelectable(false);
 
-        hideDocks();
-
-        if (callback != null) {
-            callback.execute();
-        } else {
-            projectContextChangeEvent.fire(new ProjectContextChangeEvent(getSelectedOrganizationalUnit(),
-                                                                         getSelectedRepository(),
-                                                                         getSelectedBranch()));
-        }
-    }
-
-    public void goToProject(final ProjectInfo projectInfo) {
-        goToProject(projectInfo,
-                    true);
-    }
-
-    public void goToProject(final ProjectInfo projectInfo,
-                            final boolean fireProjectContextChangeEvent) {
-        goToProject(projectInfo,
-                    fireProjectContextChangeEvent,
-                    null);
-    }
-
-    public void goToProject(final ProjectInfo projectInfo,
-                            final boolean fireProjectContextChangeEvent,
-                            final Command callback) {
-        libraryService.call(hasAssets -> {
-            final PlaceRequest projectScreen = new ConditionalPlaceRequest(LibraryPlaces.PROJECT_SCREEN)
-                    .when(p -> (Boolean) hasAssets)
-                    .orElse(new DefaultPlaceRequest(LibraryPlaces.EMPTY_PROJECT_SCREEN));
-            final PartDefinitionImpl part = new PartDefinitionImpl(projectScreen);
-            part.setSelectable(false);
-
-            boolean goToProject = true;
-            if (!projectInfo.getProject().equals(lastViewedProject)) {
-                goToProject = closeAllPlacesOrNothing();
-            }
-
-            if (goToProject) {
                 closeLibraryPlaces();
-                hideDocks();
-                lastViewedProject = projectInfo.getProject();
-                if (fireProjectContextChangeEvent) {
-                    projectContextChangeEvent.fire(new ProjectContextChangeEvent(projectInfo.getOrganizationalUnit(),
-                                                                                 projectInfo.getRepository(),
-                                                                                 projectInfo.getBranch(),
-                                                                                 projectInfo.getProject()));
-                }
-
                 placeManager.goTo(part,
                                   libraryPerspective.getRootPanel());
 
-                setupLibraryBreadCrumbsForProject(projectInfo);
-                projectDetailEvent.fire(new ProjectDetailEvent(projectInfo));
+                setupLibraryBreadCrumbs();
 
-                if (callback != null) {
-                    callback.execute();
-                }
+                hideDocks();
             }
-        }).hasAssets(projectInfo.getProject());
+        }).hasProjects(projectContext.getActiveOrganizationalUnit());
+
+        if (projectContext.getActiveOrganizationalUnit() == null) {
+
+            libraryService.call(
+                    new RemoteCallback<OrganizationalUnit>() {
+                        @Override
+                        public void callback(OrganizationalUnit organizationalUnit) {
+
+                            projectContextChangeEvent.fire(new ProjectContextChangeEvent(organizationalUnit));
+                            command.execute();
+                        }
+                    }
+
+            ).getDefaultOrganizationalUnit();
+        } else {
+            command.execute();
+        }
+    }
+
+    public void goToProject(final WorkspaceProject project) {
+        if (!project.equals(projectContext.getActiveWorkspaceProject())) {
+
+            projectContextChangeEvent.fire(new ProjectContextChangeEvent(project,
+                                                                         project.getMainModule()));
+        }
+    }
+
+    void goToProject() {
+        goToProject(() -> {
+            // do nothing.
+        });
+    }
+
+    private void goToProject(final Command callback) {
+
+        lastViewedProject = projectContext.getActiveWorkspaceProject();
+        setupLibraryBreadCrumbs();
+
+        final PartDefinitionImpl part = new PartDefinitionImpl(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
+        part.setSelectable(false);
+        placeManager.goTo(part,
+                          libraryPerspective.getRootPanel());
+
+        if (callback != null) {
+            callback.execute();
+        }
     }
 
     public void goToOrgUnitsMetrics() {
@@ -644,26 +549,35 @@ public class LibraryPlaces {
         setupLibraryBreadCrumbsForOrgUnitsMetrics();
     }
 
-    public void goToProjectMetrics(final ProjectInfo projectInfo) {
+    public void goToProjectMetrics() {
         final PlaceRequest metricsScreen = new DefaultPlaceRequest(LibraryPlaces.PROJECT_METRICS_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(metricsScreen);
         part.setSelectable(false);
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
-        setupLibraryBreadCrumbsForProjectMetrics(projectInfo);
-        projectMetricsEvent.fire(new ProjectMetricsEvent(projectInfo));
+        setupLibraryBreadCrumbsForProjectMetrics();
+        projectMetricsEvent.fire(new ProjectMetricsEvent(projectContext.getActiveWorkspaceProject()));
     }
 
-    public void goToAsset(final ProjectInfo projectInfo,
-                          final Path path) {
-        final PlaceRequest placeRequest = generatePlaceRequest(path);
-        placeManager.goTo(placeRequest);
+    public void goToAsset(final Path path) {
 
-        if (path != null) {
-            final ObservablePath observablePath = ((PathPlaceRequest) placeRequest).getPath();
-            observablePath.onRename(() -> setupLibraryBreadCrumbsForAsset(projectInfo,
-                                                                          observablePath));
-        }
+        moduleService.call(new RemoteCallback<org.guvnor.common.services.project.model.Package>() {
+            @Override
+            public void callback(final org.guvnor.common.services.project.model.Package response) {
+
+                projectContextChangeEvent.fire(new ProjectContextChangeEvent(projectContext.getActiveWorkspaceProject(),
+                                                                             projectContext.getActiveModule(),
+                                                                             response));
+
+                final PlaceRequest placeRequest = generatePlaceRequest(path);
+                placeManager.goTo(placeRequest);
+
+                if (path != null) {
+                    final ObservablePath observablePath = ((PathPlaceRequest) placeRequest).getPath();
+                    observablePath.onRename(() -> setupLibraryBreadCrumbsForAsset(observablePath));
+                }
+            }
+        }).resolvePackage(path);
     }
 
     public void goToTrySamples() {
@@ -694,19 +608,17 @@ public class LibraryPlaces {
         setupLibraryBreadCrumbsForImportProjects(repositoryUrl);
     }
 
-    public void goToSettings(final ProjectInfo projectInfo) {
-        assetDetailEvent.fire(new AssetDetailEvent(projectInfo,
+    public void goToSettings() {
+        assetDetailEvent.fire(new AssetDetailEvent(projectContext.getActiveWorkspaceProject(),
                                                    null));
     }
 
     public void goToImportProjectWizard() {
         final String organizationalUnitName = projectContext.getActiveOrganizationalUnit().getName();
-        final String repositoryAlias = projectContext.getActiveRepository().getAlias();
 
         final ExamplesWizard examplesWizard = examplesWizards.get();
         examplesWizard.start();
         examplesWizard.setDefaultTargetOrganizationalUnit(organizationalUnitName);
-        examplesWizard.setDefaultTargetRepository(repositoryAlias);
     }
 
     public void goToMessages() {
@@ -714,7 +626,9 @@ public class LibraryPlaces {
     }
 
     public void goToPreferences() {
+
         final PreferenceScopeResolutionStrategyInfo customScopeResolutionStrategy = projectScopedResolutionStrategySupplier.get();
+
         final PreferencesCentralInitializationEvent initEvent = new PreferencesCentralInitializationEvent("ProjectPreferences",
                                                                                                           customScopeResolutionStrategy,
                                                                                                           null);
@@ -722,23 +636,12 @@ public class LibraryPlaces {
         final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(PreferencesRootScreen.IDENTIFIER);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
+
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
 
         preferencesCentralInitializationEvent.fire(initEvent);
-        setupLibraryBreadCrumbsForPreferences(getProjectInfo());
-    }
-
-    public OrganizationalUnit getSelectedOrganizationalUnit() {
-        return projectContext.getActiveOrganizationalUnit();
-    }
-
-    public Repository getSelectedRepository() {
-        return libraryToolbar.getSelectedRepository();
-    }
-
-    public String getSelectedBranch() {
-        return libraryToolbar.getSelectedBranch();
+        setupLibraryBreadCrumbsForPreferences();
     }
 
     PlaceRequest generatePlaceRequest(final Path path) {
@@ -771,5 +674,16 @@ public class LibraryPlaces {
         closingLibraryPlaces = true;
         placeManager.closeAllPlaces();
         closingLibraryPlaces = false;
+    }
+
+    public void init(final LibraryPerspective libraryPerspective) {
+        this.libraryPerspective = libraryPerspective;
+    }
+
+    @Override
+    public void onChange() {
+        if (projectContext.getActiveWorkspaceProject() != null && projectContext.getActivePackage() == null) {
+            goToProject();
+        }
     }
 }

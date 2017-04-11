@@ -23,7 +23,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.widgets.client.resources.i18n.ToolsMenuConstants;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.mvp.Command;
@@ -35,52 +35,49 @@ public class ProjectMenu {
 
     private PlaceManager placeManager;
     private ProjectContext context;
+    private MenuItem projectScreen = MenuFactory.newSimpleItem(ToolsMenuConstants.INSTANCE.ProjectEditor()).respondsWith(
+            new Command() {
+                @Override
+                public void execute() {
+                    placeManager.goTo("projectScreen");
+                }
+            }).endMenu().build().getItems().get(0);
+    private MenuItem projectStructureScreen = MenuFactory.newSimpleItem(ToolsMenuConstants.INSTANCE.RepositoryStructure()).respondsWith(
+            new Command() {
+                @Override
+                public void execute() {
+                    placeManager.goTo("repositoryStructureScreen");
+                }
+            }).endMenu().build().getItems().get(0);
 
     public ProjectMenu() {
         //Zero argument constructor for CDI proxies
     }
 
     @Inject
-    public ProjectMenu( final PlaceManager placeManager,
-                        final ProjectContext context ) {
+    public ProjectMenu(final PlaceManager placeManager,
+                       final ProjectContext context) {
         this.placeManager = placeManager;
         this.context = context;
     }
 
-    private MenuItem projectScreen = MenuFactory.newSimpleItem( ToolsMenuConstants.INSTANCE.ProjectEditor() ).respondsWith(
-            new Command() {
-                @Override
-                public void execute() {
-                    placeManager.goTo( "projectScreen" );
-                }
-            } ).endMenu().build().getItems().get( 0 );
-
-    private MenuItem projectStructureScreen = MenuFactory.newSimpleItem( ToolsMenuConstants.INSTANCE.RepositoryStructure() ).respondsWith(
-            new Command() {
-                @Override
-                public void execute() {
-                    placeManager.goTo( "repositoryStructureScreen" );
-                }
-            } ).endMenu().build().getItems().get( 0 );
-
     public List<MenuItem> getMenuItems() {
-        enableToolsMenuItems( (KieProject) context.getActiveProject() );
+        enableToolsMenuItems((KieModule) context.getActiveModule());
 
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
 
-        menuItems.add( projectScreen );
-        menuItems.add( projectStructureScreen );
+        menuItems.add(projectScreen);
+        menuItems.add(projectStructureScreen);
 
         return menuItems;
     }
 
-    public void onProjectContextChanged( @Observes final ProjectContextChangeEvent event ) {
-        enableToolsMenuItems( (KieProject) event.getProject() );
+    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+        enableToolsMenuItems((KieModule) event.getModule());
     }
 
-    private void enableToolsMenuItems( final KieProject project ) {
-        final boolean enabled = ( project != null );
-        projectScreen.setEnabled( enabled );
+    private void enableToolsMenuItems(final KieModule project) {
+        final boolean enabled = (project != null);
+        projectScreen.setEnabled(enabled);
     }
-
 }

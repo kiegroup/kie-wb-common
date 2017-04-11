@@ -52,7 +52,7 @@ import org.kie.workbench.common.services.datamodeller.core.PropertyType;
 import org.kie.workbench.common.services.datamodeller.core.impl.PropertyTypeFactoryImpl;
 import org.kie.workbench.common.services.datamodeller.util.DriverUtils;
 import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsagesDisplayer;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.widgets.client.menu.FileMenuBuilderImpl;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
@@ -177,7 +177,7 @@ public abstract class DataModelerScreenPresenterTestBase {
      * Emulates the project returned from server.
      */
     @Mock
-    protected KieProject kieProject;
+    protected KieModule kieModule;
 
     /**
      * Emulates the data object returned from server.
@@ -299,8 +299,8 @@ public abstract class DataModelerScreenPresenterTestBase {
         content.setOriginalClassName(testObject1.getClassName());
         content.setOriginalPackageName(testObject1.getPackageName());
         content.setPath(path);
-        content.setCurrentProject(kieProject);
-        content.setCurrentProjectPackages(testPackages);
+        content.setCurrentModule(kieModule);
+        content.setCurrentModulePackages(testPackages);
         content.setOverview(overview);
 
         if (includeTypesInfo) {

@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.datamodeller.client;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.UnpublishMessagesEvent;
@@ -152,7 +152,7 @@ public class DataModelerScreenPresenterTest
                      context.getDataModel());
         assertEquals(testObject1,
                      context.getDataObject());
-        assertEquals(kieProject,
+        assertEquals(kieModule,
                      context.getCurrentProject());
         assertEquals(testPackages,
                      context.getCurrentProjectPackages());
@@ -272,7 +272,7 @@ public class DataModelerScreenPresenterTest
                      context.getDataModel());
         assertEquals(null,
                      context.getDataObject());
-        assertEquals(kieProject,
+        assertEquals(kieModule,
                      context.getCurrentProject());
         assertEquals(testPackages,
                      context.getCurrentProjectPackages());
@@ -513,7 +513,7 @@ public class DataModelerScreenPresenterTest
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
@@ -526,7 +526,7 @@ public class DataModelerScreenPresenterTest
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();

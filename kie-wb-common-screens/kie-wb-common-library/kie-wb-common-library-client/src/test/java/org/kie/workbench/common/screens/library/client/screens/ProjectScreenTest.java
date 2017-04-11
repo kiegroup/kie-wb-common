@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,195 +13,154 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.screens.library.client.screens;
 
-import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.ui.IsWidget;
+import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.repositories.Branch;
+import org.guvnor.structure.repositories.Repository;
+import org.jboss.errai.common.client.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.api.AssetInfo;
-import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
-import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
+import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
+import org.kie.workbench.common.services.shared.project.KieModule;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.mocks.CallerMock;
-import org.uberfire.mvp.Command;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectScreenTest
-        extends ProjectScreenTestBase {
+public class ProjectScreenTest {
 
     @Mock
-    private Timer timer;
+    private ProjectScreen.View view;
+    @Mock
+    private LibraryPlaces libraryPlaces;
+    @Mock
+    private LibraryService libraryService;
+    @Mock
+    private EmptyProjectPresenter emptyProjectPresenter;
+    @Mock
+    private ProjectListAssetsPresenter projectListAssetsPresenter;
+    @Mock
+    private ProjectMigrationPresenter projectMigrationPresenter;
+    @Mock
+    private ProjectContext projectContext;
+    @Mock
+    private EventSourceMock<ProjectDetailEvent> projectDetailEvent;
+
+    @Captor
+    private ArgumentCaptor<ProjectDetailEvent> projectDetailEventArgumentCaptor;
+
+    private ProjectScreen screen;
 
     @Before
-    public void setup() {
-        projectScreen = spy(new ProjectScreen(view,
-                                              libraryPlaces,
-                                              mock(ProjectsDetailScreen.class),
-                                              ts,
-                                              new CallerMock<>(libraryService),
-                                              assetClassifier,
-                                              assetDetailEvent,
-                                              busyIndicatorView,
-                                              projectController) {
-            @Override
-            protected void reload() {
-                onFilterChange();
-            }
-
-            @Override
-            protected Timer createTimer() {
-                return timer;
-            }
-        });
-
-        doReturn("createdTime").when(projectScreen).getCreatedTime(any(AssetInfo.class));
-        doReturn("lastModifiedTime").when(projectScreen).getLastModifiedTime(any(AssetInfo.class));
-
-        doAnswer(a -> {
-            projectScreen.onTimerAction();
-            return null;
-        }).when(timer).schedule(anyInt());
-
-        mockClientResourceType();
-        mockAssets();
-
-        when(view.getFilterValue()).thenReturn("");
-        when(view.getStep()).thenReturn(15);
-
-        doReturn(true).when(projectController).canUpdateProject(any());
-
-        projectInfo = createProjectInfo();
-        projectScreen.onStartup(new ProjectDetailEvent(projectInfo));
+    public void setUp() throws Exception {
+        screen = new ProjectScreen(view,
+                                   libraryPlaces,
+                                   new CallerMock<>(libraryService),
+                                   emptyProjectPresenter,
+                                   projectListAssetsPresenter,
+                                   projectMigrationPresenter,
+                                   projectContext,
+                                   projectDetailEvent);
     }
 
     @Test
-    public void onStartupTest() {
-        verify(busyIndicatorView).showBusyIndicator(anyString());
-        verify(libraryService).getProjectAssets(queryArgumentCaptor.capture());
-        assertEquals(projectInfo.getProject(),
-                     queryArgumentCaptor.getValue().getProject());
-        verify(view).clearAssets();
-        verify(view,
-               times(2)).addAsset(anyString(),
-                                  anyString(),
-                                  anyString(),
-                                  any(IsWidget.class),
-                                  anyString(),
-                                  anyString(),
-                                  any(Command.class),
-                                  any(Command.class));
-        verify(busyIndicatorView).hideBusyIndicator();
-        verify(view).setProjectName("projectName");
-        verify(view).setupAssetsActions();
+    public void setUpBranches() throws Exception {
+
+        final ProjectMigrationPresenter.View view = mock(ProjectMigrationPresenter.View.class);
+        doReturn(view).when(projectMigrationPresenter).getView();
+
+        final WorkspaceProject project = new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                              mock(Repository.class),
+                                                              mock(Branch.class),
+                                                              null);
+        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+
+        screen.onStartup();
+
+        verify(libraryPlaces).setUpBranches();
     }
 
     @Test
-    public void onStartupDoesNotAddNewAssetButtonWhenUserDoesNotHaveUpdateProjectPermissionTest() {
-        reset(view);
-        when(view.getFilterValue()).thenReturn("");
-        when(view.getStep()).thenReturn(15);
-        doReturn(false).when(projectController).canUpdateProject(any());
+    public void showMigration() throws Exception {
 
-        projectScreen.onStartup(new ProjectDetailEvent(projectInfo));
+        final ProjectMigrationPresenter.View view = mock(ProjectMigrationPresenter.View.class);
+        doReturn(view).when(projectMigrationPresenter).getView();
+        final HTMLElement element = mock(HTMLElement.class);
+        doReturn(element).when(view).getElement();
 
-        verify(view,
-               never()).setupAssetsActions();
+        final WorkspaceProject project = new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                              mock(Repository.class),
+                                                              mock(Branch.class),
+                                                              null);
+        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+
+        screen.onStartup();
+
+        verify(projectMigrationPresenter).show(project);
+        verify(this.view).setContent(element);
     }
 
     @Test
-    public void refreshOnFocusTest() {
-        final PlaceRequest place = new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN);
-        final PlaceGainFocusEvent placeGainFocusEvent = new PlaceGainFocusEvent(place);
+    public void showEmptyProject() throws Exception {
 
-        projectScreen.refreshOnFocus(placeGainFocusEvent);
+        final ProjectMigrationPresenter.View view = mock(ProjectMigrationPresenter.View.class);
+        doReturn(view).when(emptyProjectPresenter).getView();
+        final HTMLElement element = mock(HTMLElement.class);
+        doReturn(element).when(view).getElement();
 
-        verify(busyIndicatorView,
-               times(2)).showBusyIndicator(anyString());
-        verify(libraryService,
-               times(2)).getProjectAssets(any(ProjectAssetsQuery.class));
-        verify(view,
-               times(2)).clearAssets();
-        verify(view,
-               times(4)).addAsset(anyString(),
-                                  anyString(),
-                                  anyString(),
-                                  any(IsWidget.class),
-                                  anyString(),
-                                  anyString(),
-                                  any(Command.class),
-                                  any(Command.class));
-        verify(busyIndicatorView,
-               times(2)).hideBusyIndicator();
+        final WorkspaceProject project = new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                              mock(Repository.class),
+                                                              mock(Branch.class),
+                                                              mock(KieModule.class));
+        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+
+        doReturn(false).when(libraryService).hasAssets(project);
+
+        screen.onStartup();
+
+        verify(projectDetailEvent).fire(projectDetailEventArgumentCaptor.capture());
+        assertEquals(project, projectDetailEventArgumentCaptor.getValue().getProject());
+
+        verify(emptyProjectPresenter).show(project);
+        verify(this.view).setContent(element);
     }
 
     @Test
-    public void dontRefreshOnFocusOnAnotherScreenTest() {
-        final PlaceRequest place = new DefaultPlaceRequest("anotherScreen");
-        final PlaceGainFocusEvent placeGainFocusEvent = new PlaceGainFocusEvent(place);
+    public void showList() throws Exception {
 
-        projectScreen.refreshOnFocus(placeGainFocusEvent);
+        final ProjectMigrationPresenter.View view = mock(ProjectMigrationPresenter.View.class);
+        doReturn(view).when(projectListAssetsPresenter).getView();
+        final HTMLElement element = mock(HTMLElement.class);
+        doReturn(element).when(view).getElement();
 
-        verify(busyIndicatorView,
-               times(1)).showBusyIndicator(anyString());
-        verify(libraryService,
-               times(1)).getProjectAssets(queryArgumentCaptor.capture());
-        assertEquals(projectInfo.getProject(),
-                     queryArgumentCaptor.getValue().getProject());
-        verify(view,
-               times(1)).clearAssets();
-        verify(view,
-               times(2)).addAsset(anyString(),
-                                  anyString(),
-                                  anyString(),
-                                  any(IsWidget.class),
-                                  anyString(),
-                                  anyString(),
-                                  any(Command.class),
-                                  any(Command.class));
-        verify(busyIndicatorView,
-               times(1)).hideBusyIndicator();
-    }
+        final WorkspaceProject project = new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                              mock(Repository.class),
+                                                              mock(Branch.class),
+                                                              mock(KieModule.class));
 
-    @Test
-    public void updateAssetsByTest() {
-        reset(view,
-              libraryService);
+        doReturn(project).when(projectContext).getActiveWorkspaceProject();
 
-        when(view.getFilterValue()).thenReturn("file3");
-        when(view.getStep()).thenReturn(100);
-        when(view.getFirstIndex()).thenReturn(12200);
+        doReturn(true).when(libraryService).hasAssets(project);
 
-        projectScreen.onFilterChange();
+        screen.onStartup();
 
-        verify(libraryService).getProjectAssets(queryArgumentCaptor.capture());
-        assertEquals("file3",
-                     queryArgumentCaptor.getValue().getFilter());
-        assertEquals(100,
-                     queryArgumentCaptor.getValue().getAmount());
-        assertEquals(12200,
-                     queryArgumentCaptor.getValue().getStartIndex());
-    }
+        verify(projectDetailEvent).fire(projectDetailEventArgumentCaptor.capture());
+        assertEquals(project, projectDetailEventArgumentCaptor.getValue().getProject());
 
-    @Test
-    public void updatedSearchParameterResetsToFirstPage() throws Exception {
-        reset(view);
-        when(view.getFilterValue()).thenReturn("something");
-        projectScreen.onFilterChange();
-
-        verify(view).resetPageRangeIndicator();
+        verify(projectListAssetsPresenter).show(project);
+        verify(this.view).setContent(element);
     }
 
     @Test

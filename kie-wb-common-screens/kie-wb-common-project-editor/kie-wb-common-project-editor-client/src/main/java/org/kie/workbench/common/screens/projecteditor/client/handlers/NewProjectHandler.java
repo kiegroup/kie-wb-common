@@ -15,17 +15,25 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.handlers;
 
+import java.util.Collections;
+import java.util.List;
+import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
-import org.guvnor.asset.management.model.RepositoryStructureModel;
-import org.guvnor.asset.management.service.RepositoryStructureService;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.wizard.NewProjectWizard;
 import org.kie.workbench.common.screens.projecteditor.client.wizard.POMBuilder;
@@ -36,11 +44,6 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.type.AnyResourceTypeDefinition;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-import java.util.Collections;
-import java.util.List;
-
 /**
  * Handler for the creation of new Projects
  */
@@ -48,33 +51,34 @@ import java.util.List;
 public class NewProjectHandler
         implements org.kie.workbench.common.widgets.client.handlers.NewProjectHandler {
 
-    private NewProjectHandlerView view;
+    private Caller<OrganizationalUnitService> ouService;
     private ProjectContext context;
+    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private LibraryPreferences libraryPreferences;
     private NewProjectWizard wizard;
-    private Caller<RepositoryStructureService> repoStructureService;
     private ProjectController projectController;
-
     //We don't really need this for Packages but it's required by DefaultNewResourceHandler
     private AnyResourceTypeDefinition resourceType;
-
     private boolean openEditorOnCreation = true;
-    private org.uberfire.client.callbacks.Callback<Project> creationSuccessCallback;
+    private org.uberfire.client.callbacks.Callback<WorkspaceProject> creationSuccessCallback;
 
     public NewProjectHandler() {
         //Zero argument constructor for CDI proxies
     }
 
     @Inject
-    public NewProjectHandler(final NewProjectHandlerView view,
-                             final ProjectContext context,
+    public NewProjectHandler(final ProjectContext context,
+                             final Event<ProjectContextChangeEvent> projectContextChangeEvent,
+                             final LibraryPreferences libraryPreferences,
                              final NewProjectWizard wizard,
-                             final Caller<RepositoryStructureService> repoStructureService,
+                             final Caller<OrganizationalUnitService> ouService,
                              final ProjectController projectController,
                              final AnyResourceTypeDefinition resourceType) {
-        this.view = view;
         this.context = context;
+        this.projectContextChangeEvent = projectContextChangeEvent;
+        this.libraryPreferences = libraryPreferences;
         this.wizard = wizard;
-        this.repoStructureService = repoStructureService;
+        this.ouService = ouService;
         this.projectController = projectController;
         this.resourceType = resourceType;
     }
@@ -108,39 +112,20 @@ public class NewProjectHandler
     public void create(final Package pkg,
                        final String projectName,
                        final NewResourcePresenter presenter) {
-        //This is not supported by the NewProjectHandler. It is invoked via NewResourceView that has bypassed for NewProjectHandler
+        //This is not supported by the NewModuleHandler. It is invoked via NewResourceView that has bypassed for NewModuleHandler
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void validate(final String projectName,
                          final ValidatorWithReasonCallback callback) {
-        //This is not supported by the NewProjectHandler. It is invoked via NewResourceView that has bypassed for NewProjectHandler
+        //This is not supported by the NewModuleHandler. It is invoked via NewResourceView that has bypassed for NewModuleHandler
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void acceptContext(final Callback<Boolean, Void> response) {
-
-        if (context.getActiveRepository() != null) {
-
-            //You can always create a new Project (provided a repository has been selected)
-            repoStructureService.call(new RemoteCallback<RepositoryStructureModel>() {
-
-                @Override
-                public void callback(RepositoryStructureModel repoModel) {
-                    if (repoModel != null && repoModel.isManaged()) {
-                        boolean isMultiModule = repoModel.isMultiModule();
-                        response.onSuccess(isMultiModule);
-                    } else {
-                        response.onSuccess(true);
-                    }
-                }
-            }).load(context.getActiveRepository(),
-                    context.getActiveBranch());
-        } else {
-            response.onSuccess(false);
-        }
+        response.onSuccess(context.getActiveOrganizationalUnit() != null);
     }
 
     @Override
@@ -148,37 +133,31 @@ public class NewProjectHandler
         return new Command() {
             @Override
             public void execute() {
-                if (context.getActiveRepository() != null) {
-                    repoStructureService.call(new RemoteCallback<RepositoryStructureModel>() {
 
+                // TODO : Test this
+                // TODO: Might not be actually needed.
+                if (context.getActiveOrganizationalUnit() == null) {
+                    ouService.call(new RemoteCallback<OrganizationalUnit>() {
                         @Override
-                        public void callback(final RepositoryStructureModel repositoryStructureModel) {
-                            POMBuilder builder = new POMBuilder();
-                            if (repositoryStructureModel != null && repositoryStructureModel.isManaged()) {
-                                builder.setProjectName("")
-                                        .setGroupId(repositoryStructureModel.getPOM().getGav().getGroupId())
-                                        .setVersion(repositoryStructureModel.getPOM().getGav().getVersion());
-                            } else {
-                                builder.setProjectName("")
-                                        .setGroupId(context.getActiveOrganizationalUnit().getDefaultGroupId());
-                            }
-                            wizard.initialise(builder.build());
-                            wizard.start(creationSuccessCallback,
-                                    openEditorOnCreation);
-                        }
-                    }).load(context.getActiveRepository(),
-                            context.getActiveBranch());
+                        public void callback(OrganizationalUnit organizationalUnit) {
 
+                            projectContextChangeEvent.fire(new ProjectContextChangeEvent(organizationalUnit));
+
+                            init();
+                        }
+                    }).getOrganizationalUnit(libraryPreferences.getOrganizationalUnitPreferences().getName());
                 } else {
-                    view.showNoRepositorySelectedPleaseSelectARepository();
+                    init();
                 }
             }
         };
     }
 
-    @Override
-    public ProjectContext getProjectContext() {
-        return context;
+    private void init() {
+        wizard.initialise(new POMBuilder().setModuleName("")
+                                  .setGroupId(context.getActiveOrganizationalUnit().getDefaultGroupId()).build());
+        wizard.start(creationSuccessCallback,
+                     openEditorOnCreation);
     }
 
     @Override

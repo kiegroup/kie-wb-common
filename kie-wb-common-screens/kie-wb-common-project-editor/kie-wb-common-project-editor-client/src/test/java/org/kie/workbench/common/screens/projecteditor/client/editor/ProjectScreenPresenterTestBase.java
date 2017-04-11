@@ -25,8 +25,11 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -38,7 +41,7 @@ import org.kie.workbench.common.screens.projecteditor.client.editor.extension.Bu
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -49,8 +52,6 @@ import org.uberfire.client.mvp.LockManager;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpPresenter;
-import org.uberfire.ext.editor.commons.client.file.popups.DeletePopUpPresenter;
-import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mocks.CallerMock;
@@ -72,10 +73,6 @@ public abstract class ProjectScreenPresenterTestBase {
     @Mock
     protected CopyPopUpPresenter copyPopUpPresenter;
     @Mock
-    protected RenamePopUpPresenter renamePopUpPresenter;
-    @Mock
-    protected DeletePopUpPresenter deletePopUpPresenter;
-    @Mock
     protected SavePopUpPresenter savePopUpPresenter;
     @Mock
     protected ProjectScreenService projectScreenService;
@@ -89,6 +86,19 @@ public abstract class ProjectScreenPresenterTestBase {
     protected MockInstance<LockManager> lockManagerInstanceProvider = new MockInstance();
     @Spy
     protected MockInstance<ResourceTypeDefinition> resourceTypeDefinitions = new MockInstance();
+    @Mock
+    protected KieModule module;
+    @Mock
+    protected Repository repository;
+    @Mock
+    protected Path pomPath;
+    @Mock
+    protected GAVPreferences gavPreferences;
+    @Mock
+    protected ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
+    @Mock
+    protected BuildExecutor buildExecutor;
+    protected ObservablePath observablePathToPomXML;
     @GwtMock
     @SuppressWarnings("unused")
     private ButtonGroup buildOptions;
@@ -101,20 +111,6 @@ public abstract class ProjectScreenPresenterTestBase {
     @GwtMock
     @SuppressWarnings("unused")
     private AnchorListItem buildOptionsMenuButton1;
-    @Mock
-    protected KieProject project;
-    @Mock
-    protected Repository repository;
-    @Mock
-    protected Path pomPath;
-    @Mock
-    protected GAVPreferences gavPreferences;
-    @Mock
-    protected ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
-    @Mock
-    protected BuildExecutor buildExecutor;
-
-    protected ObservablePath observablePathToPomXML;
 
     protected void mockBuildOptions() {
         when(view.getBuildButtons()).thenReturn(buildOptions);
@@ -148,21 +144,24 @@ public abstract class ProjectScreenPresenterTestBase {
 
     protected void mockProjectContext(final POM pom,
                                       final Repository repository,
-                                      final KieProject project,
+                                      final KieModule module,
                                       final Path pomPath) {
-        when(context.getActiveRepository()).thenReturn(repository);
-        when(context.getActiveBranch()).thenReturn("master");
+        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                  repository,
+                                                                                  new Branch("master",
+                                                                                             mock(Path.class)),
+                                                                                  module));
         when(repository.getAlias()).thenReturn("repository");
 
-        when(project.getProjectName()).thenReturn("project");
-        when(project.getPomXMLPath()).thenReturn(pomPath);
-        when(project.getPom()).thenReturn(pom);
-        when(project.getRootPath()).thenReturn(mock(Path.class));
+        when(module.getModuleName()).thenReturn("module");
+        when(module.getPomXMLPath()).thenReturn(pomPath);
+        when(module.getPom()).thenReturn(pom);
+        when(module.getRootPath()).thenReturn(mock(Path.class));
         when(pomPath.getFileName()).thenReturn("pom.xml");
-        when(context.getActiveProject()).thenReturn(project);
+        when(context.getActiveModule()).thenReturn(module);
     }
 
-    protected void constructProjectScreenPresenter(final KieProject project) {
+    protected void constructProjectScreenPresenter(final KieModule module) {
         doAnswer(invocationOnMock -> {
             ((ParameterizedCommand<GAVPreferences>) invocationOnMock.getArguments()[1]).execute(gavPreferences);
             return null;
@@ -176,6 +175,7 @@ public abstract class ProjectScreenPresenterTestBase {
                                                user,
                                                notificationEvent,
                                                mock(EventSourceMock.class),
+                                               mock(EventSourceMock.class),
                                                mock(ProjectNameValidator.class),
                                                mock(PlaceManager.class),
                                                mock(BusyIndicatorView.class),
@@ -184,8 +184,6 @@ public abstract class ProjectScreenPresenterTestBase {
                                                mock(EventSourceMock.class),
                                                conflictingRepositoriesPopup,
                                                copyPopUpPresenter,
-                                               renamePopUpPresenter,
-                                               deletePopUpPresenter,
                                                savePopUpPresenter,
                                                gavPreferences,
                                                projectScopedResolutionStrategySupplier,
@@ -207,7 +205,7 @@ public abstract class ProjectScreenPresenterTestBase {
             @Override
             protected void setupPathToPomXML() {
                 //Stub the real implementation that makes direct use of IOC and fails to be mocked
-                observablePathToPomXML = new ObservablePathImpl().wrap(project.getPomXMLPath());
+                observablePathToPomXML = new ObservablePathImpl().wrap(module.getPomXMLPath());
                 pathToPomXML = observablePathToPomXML;
             }
         };

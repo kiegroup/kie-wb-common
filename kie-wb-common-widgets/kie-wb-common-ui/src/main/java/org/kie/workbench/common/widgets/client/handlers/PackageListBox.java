@@ -29,12 +29,12 @@ import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
 import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.project.model.Project;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.mvp.Command;
 
@@ -44,45 +44,42 @@ import org.uberfire.mvp.Command;
 @Dependent
 public class PackageListBox extends Composite {
 
+    private ProjectContext projectContext;
+    protected Caller<KieModuleService> moduleService;
     private SimplePanel panel = new SimplePanel();
-
     private Select select;
-
-    protected Caller<KieProjectService> projectService;
-
     private Map<String, Package> packages;
 
     @Inject
-    public PackageListBox(final Caller<KieProjectService> projectService) {
-        this.projectService = projectService;
+    public PackageListBox(final ProjectContext projectContext,
+                          final Caller<KieModuleService> moduleService) {
+        this.projectContext = projectContext;
+        this.moduleService = moduleService;
         initWidget(panel);
         getElement().getStyle().setMarginBottom(15,
                                                 Style.Unit.PX);
         packages = new HashMap<String, Package>();
     }
 
-    public void setContext(final ProjectContext context,
-                           final boolean includeDefaultPackage) {
-        setContext(context,
-                   includeDefaultPackage,
-                   null);
+    public void setUp(final boolean includeDefaultPackage) {
+        setUp(includeDefaultPackage,
+              null);
     }
 
-    public void setContext(final ProjectContext context,
-                           final boolean includeDefaultPackage,
-                           final Command packagesLoadedCommand) {
+    public void setUp(final boolean includeDefaultPackage,
+                      final Command packagesLoadedCommand) {
         noPackage();
         packages.clear();
 
-        // Disable and set default content if Project is not selected
-        final Project activeProject = context.getActiveProject();
-        if (activeProject == null) {
+        // Disable and set default content if Module is not selected
+        final Module activeModule = projectContext.getActiveModule();
+        if (activeModule == null) {
             return;
         }
 
         // Otherwise show list of packages
-        projectService.call((Set<Package> pkgs) -> {
-            projectService.call((Package activePackage) -> {
+        moduleService.call((Set<Package> pkgs) -> {
+            moduleService.call((Package activePackage) -> {
                 //Sort by caption
                 final List<Package> sortedPackages = new ArrayList<Package>();
                 sortedPackages.addAll(pkgs);
@@ -105,8 +102,8 @@ public class PackageListBox extends Composite {
                 if (packagesLoadedCommand != null) {
                     packagesLoadedCommand.execute();
                 }
-            }).resolveDefaultWorkspacePackage(activeProject);
-        }).resolvePackages(activeProject);
+            }).resolveDefaultWorkspacePackage(activeModule);
+        }).resolvePackages(activeModule);
     }
 
     private void addPackagesToSelect(final List<Package> sortedPackages,

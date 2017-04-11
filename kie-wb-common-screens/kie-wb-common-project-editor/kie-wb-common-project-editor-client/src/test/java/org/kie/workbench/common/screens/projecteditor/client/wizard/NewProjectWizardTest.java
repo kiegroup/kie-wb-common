@@ -24,9 +24,10 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
@@ -34,7 +35,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.projecteditor.client.util.KiePOMDefaultOptions;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -56,15 +56,19 @@ import static org.mockito.Mockito.*;
 @RunWith(GwtMockitoTestRunner.class)
 public class NewProjectWizardTest {
 
+    @GwtMock
+    WizardView view;
     @Mock
-    private KieProjectService kieProjectService;
-
+    BusyIndicatorView busyIndicatorView;
+    @Mock
+    ConflictingRepositoriesPopup conflictingRepositoriesPopup;
+    KiePOMDefaultOptions pomDefaultOptions;
     @Mock
     private POMWizardPage pomWizardPage;
-
     @Mock
-    private ProjectContext projectContext;
-
+    private ProjectContext moduleContext;
+    @Mock
+    private ProjectService projectService;
     @Spy
     private Event<NotificationEvent> notificationEventEvent = new EventSourceMock<NotificationEvent>() {
         @Override
@@ -72,18 +76,6 @@ public class NewProjectWizardTest {
             //Do nothing. Default implementation throws an UnsupportedOperationException
         }
     };
-
-    @GwtMock
-    WizardView view;
-
-    @Mock
-    BusyIndicatorView busyIndicatorView;
-
-    @Mock
-    ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-
-    KiePOMDefaultOptions pomDefaultOptions;
-
     private NewProjectWizardExtended wizard;
 
     private HashMap<String, String> preferences;
@@ -94,13 +86,13 @@ public class NewProjectWizardTest {
         ApplicationPreferences.setUp(preferences);
         pomDefaultOptions = new KiePOMDefaultOptions();
         PlaceManager placeManager = mock(PlaceManager.class);
-        wizard = new NewProjectWizardExtended(placeManager,
+        wizard = new NewProjectWizardExtended(new CallerMock<>(projectService),
+                                              placeManager,
                                               notificationEventEvent,
                                               pomWizardPage,
                                               busyIndicatorView,
                                               conflictingRepositoriesPopup,
-                                              new CallerMock<KieProjectService>(kieProjectService),
-                                              projectContext,
+                                              moduleContext,
                                               view,
                                               pomDefaultOptions
         );
@@ -153,10 +145,10 @@ public class NewProjectWizardTest {
                         "1.3.0");
         OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("mygroup");
-        when(projectContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
 
         POM pom = new POM();
-        pom.setName("another project");
+        pom.setName("another module");
         pom.getGav().setArtifactId("another.artifact");
         pom.getGav().setGroupId("another.group");
         pom.getGav().setVersion("1.2.3");
@@ -174,7 +166,7 @@ public class NewProjectWizardTest {
                      result.getGav().getArtifactId());
         assertEquals("another.group",
                      result.getGav().getGroupId());
-        assertEquals("another project",
+        assertEquals("another module",
                      result.getName());
 
         assertEquals(1,
@@ -187,7 +179,7 @@ public class NewProjectWizardTest {
     public void testInitialize() throws Exception {
         OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("mygroup");
-        when(projectContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
 
         wizard.initialise();
 
@@ -202,14 +194,13 @@ public class NewProjectWizardTest {
     public void testCompleteNonClashingGAV() throws Exception {
         final Path repositoryRoot = mock(Path.class);
         final POM pom = mock(POM.class);
-        when(projectContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
+        when(moduleContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
         when(pomWizardPage.getPom()).thenReturn(pom);
 
         wizard.complete();
-        verify(kieProjectService,
-               times(1)).newProject(eq(repositoryRoot),
+        verify(projectService,
+               times(1)).newProject(any(OrganizationalUnit.class),
                                     eq(pom),
-                                    eq(""),
                                     eq(DeploymentMode.VALIDATED));
         verify(busyIndicatorView,
                times(1)).showBusyIndicator(any(String.class));
@@ -223,22 +214,21 @@ public class NewProjectWizardTest {
         final Path repositoryRoot = mock(Path.class);
         final POM pom = mock(POM.class);
         final GAV gav = mock(GAV.class);
-        when(kieProjectService.newProject(repositoryRoot,
-                                          pom,
-                                          "",
-                                          DeploymentMode.VALIDATED)).thenThrow(GAVAlreadyExistsException.class);
-        when(projectContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
+        when(projectService.newProject(any(OrganizationalUnit.class),
+                                       eq(pom),
+                                       eq(DeploymentMode.VALIDATED))).thenThrow(GAVAlreadyExistsException.class);
+        when(moduleContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
         when(pomWizardPage.getPom()).thenReturn(pom);
         when(pom.getGav()).thenReturn(gav);
 
         final ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
 
         wizard.complete();
-        verify(kieProjectService,
-               times(1)).newProject(eq(repositoryRoot),
-                                    eq(pom),
-                                    eq(""),
-                                    eq(DeploymentMode.VALIDATED));
+        verify(projectService,
+               timeout(1)).newProject(any(OrganizationalUnit.class),
+                                      eq(pom),
+                                      eq(DeploymentMode.VALIDATED));
+
         verify(busyIndicatorView,
                times(1)).showBusyIndicator(any(String.class));
         verify(busyIndicatorView,
@@ -258,10 +248,9 @@ public class NewProjectWizardTest {
         verify(conflictingRepositoriesPopup,
                times(1)).hide();
 
-        verify(kieProjectService,
-               times(1)).newProject(eq(repositoryRoot),
+        verify(projectService,
+               times(1)).newProject(any(OrganizationalUnit.class),
                                     eq(pom),
-                                    eq(""),
                                     eq(DeploymentMode.FORCED));
         verify(busyIndicatorView,
                times(2)).showBusyIndicator(any(String.class));
@@ -271,7 +260,7 @@ public class NewProjectWizardTest {
 
     @Test
     public void testCompleteCallsCallbackOnce() {
-        final Callback<Project> projectCallback = mock(Callback.class);
+        final Callback<WorkspaceProject> projectCallback = mock(Callback.class);
 
         wizard.start(projectCallback,
                      false);
@@ -288,21 +277,21 @@ public class NewProjectWizardTest {
 
     public static class NewProjectWizardExtended extends NewProjectWizard {
 
-        public NewProjectWizardExtended(final PlaceManager placeManager,
+        public NewProjectWizardExtended(final Caller<ProjectService> projectService,
+                                        final PlaceManager placeManager,
                                         final Event<NotificationEvent> notificationEvent,
                                         final POMWizardPage pomWizardPage,
                                         final BusyIndicatorView busyIndicatorView,
                                         final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                                        final Caller<KieProjectService> projectServiceCaller,
                                         final ProjectContext context,
                                         final WizardView view,
                                         final KiePOMDefaultOptions pomDefaultOptions) {
-            super(placeManager,
+            super(projectService,
+                  placeManager,
                   notificationEvent,
                   pomWizardPage,
                   busyIndicatorView,
                   conflictingRepositoriesPopup,
-                  projectServiceCaller,
                   context,
                   pomDefaultOptions);
 

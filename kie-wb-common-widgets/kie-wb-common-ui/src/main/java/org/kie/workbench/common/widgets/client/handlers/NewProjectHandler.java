@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.widgets.client.handlers;
 
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.uberfire.client.callbacks.Callback;
 
 public interface NewProjectHandler extends NewResourceHandler {

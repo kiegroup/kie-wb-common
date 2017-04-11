@@ -23,7 +23,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -48,14 +48,16 @@ import org.uberfire.ext.editor.commons.client.validation.ValidatorWithReasonCall
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
+import org.uberfire.workbench.model.menu.Menus;
 
 public abstract class KieEditor
         extends BaseEditor
         implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
+    protected Menus menus;
+
     @Inject
     protected KieEditorWrapperView kieView;
-
     @Inject
     protected OverviewWidgetPresenter overviewWidget;
 
@@ -64,16 +66,12 @@ public abstract class KieEditor
 
     @Inject
     protected ProjectContext workbenchContext;
-
     @Inject
     protected SavePopUpPresenter savePopUpPresenter;
-
     @Inject
     protected DeletePopUpPresenter deletePopUpPresenter;
-
     @Inject
     protected RenamePopUpPresenter renamePopUpPresenter;
-
     @Inject
     protected CopyPopUpPresenter copyPopUpPresenter;
 
@@ -84,19 +82,27 @@ public abstract class KieEditor
     protected AssetUpdateValidator assetUpdateValidator;
 
     protected Metadata metadata;
-
     private ViewDRLSourceWidget sourceWidget;
 
     //The default implementation delegates to the HashCode comparison in BaseEditor
-    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = (object) -> {
-        if (object != null) {
-            return KieEditor.this.mayClose(object.hashCode());
-        } else {
-            return true;
+    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = new MayCloseHandler() {
+
+        @Override
+        public boolean mayClose(final Object object) {
+            if (object != null) {
+                return KieEditor.this.mayClose(object.hashCode());
+            } else {
+                return true;
+            }
         }
     };
     //This implementation always permits closure as something went wrong loading the Editor's content
-    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = (object) -> true;
+    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = new MayCloseHandler() {
+        @Override
+        public boolean mayClose(final Object object) {
+            return true;
+        }
+    };
 
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
 
@@ -295,7 +301,7 @@ public abstract class KieEditor
     }
 
     protected boolean canUpdateProject() {
-        final Project activeProject = workbenchContext.getActiveProject();
+        final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject();
         return activeProject == null || projectController.canUpdateProject(activeProject);
     }
 
@@ -345,10 +351,10 @@ public abstract class KieEditor
         if (workbenchContext == null) {
             return;
         }
-        if (workbenchContext.getActiveRepository() == null) {
+        if (workbenchContext.getActiveWorkspaceProject() == null) {
             return;
         }
-        if (workbenchContext.getActiveRepository().equals(event.getRepository())) {
+        if (workbenchContext.getActiveWorkspaceProject().getRepository().equals(event.getRepository())) {
             for (MenuItem mi : menus.getItemsMap().values()) {
                 mi.setEnabled(false);
             }

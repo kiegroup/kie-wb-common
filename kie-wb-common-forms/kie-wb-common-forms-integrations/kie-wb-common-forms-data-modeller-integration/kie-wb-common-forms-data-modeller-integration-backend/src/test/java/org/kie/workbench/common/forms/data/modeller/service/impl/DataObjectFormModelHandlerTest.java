@@ -52,14 +52,14 @@ import org.kie.workbench.common.forms.model.TypeKind;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.backend.server.handler.JPADomainHandler;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 import org.kie.workbench.common.services.datamodeller.core.impl.DataModelImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.PropertyTypeFactoryImpl;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModule;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -89,7 +89,7 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     private FieldManager fieldManager = new TestFieldManager();
 
     @Mock
-    private KieProjectService projectService;
+    private KieModuleService moduleService;
 
     @Mock
     private DataModelerService dataModelerService;
@@ -100,10 +100,10 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     private DataObjectFinderService finderService;
 
     @Mock
-    private KieProject project;
+    private KieModule module;
 
     @Mock
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ModuleClassLoaderHelper moduleClassLoaderHelper;
 
     @Mock
     private ClassLoader classLoader;
@@ -111,16 +111,16 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     @Before
     public void setUp() throws Exception {
 
-        when(projectService.resolveProject(any())).thenReturn(project);
-        when(projectClassLoaderHelper.getProjectClassLoader(project)).thenReturn(classLoader);
+        when(moduleService.resolveModule(any())).thenReturn(module);
+        when(moduleClassLoaderHelper.getModuleClassLoader(module)).thenReturn(classLoader);
         when(classLoader.loadClass(any())).thenAnswer((Answer<Class>) invocation -> String.class);
 
         createModel();
 
-        finderService = new DataObjectFinderServiceImpl(projectService,
+        finderService = new DataObjectFinderServiceImpl(moduleService,
                                                         dataModelerService);
-        handler = new DataObjectFormModelHandler(projectService,
-                                                 projectClassLoaderHelper,
+        handler = new DataObjectFormModelHandler(moduleService,
+                                                 moduleClassLoaderHelper,
                                                  finderService,
                                                  new TestFieldManager());
         when(dataModelerService.loadModel(any())).thenReturn(dataModel);

@@ -38,7 +38,6 @@ public class LibraryPerspective {
     private LibraryPlaces libraryPlaces;
 
     private PerspectiveDefinition perspectiveDefinition;
-
     private boolean refresh = true;
 
     public LibraryPerspective() {
@@ -47,6 +46,7 @@ public class LibraryPerspective {
     @Inject
     public LibraryPerspective(final LibraryPlaces libraryPlaces) {
         this.libraryPlaces = libraryPlaces;
+        this.libraryPlaces.init(this);
     }
 
     @Perspective
@@ -66,15 +66,19 @@ public class LibraryPerspective {
 
     @OnOpen
     public void onOpen() {
-        Command callback = null;
+        libraryPlaces.refresh(getRefreshCallBack());
+    }
+
+    private Command getRefreshCallBack() {
         if (refresh) {
-            callback = () -> {
+            return () -> {
                 if (getRootPanel() != null) {
                     libraryPlaces.goToLibrary();
                 }
             };
+        } else {
+            return null;
         }
-        libraryPlaces.refresh(callback);
     }
 
     @OnClose

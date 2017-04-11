@@ -21,7 +21,6 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.client.screens.project.AddProjectPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceUtils;
@@ -100,11 +99,7 @@ public class AddProjectButtonPresenter {
         newProjectHandler.setOpenEditorOnCreation(false);
         newProjectHandler.setCreationSuccessCallback(project -> {
             if (project != null) {
-                final ProjectInfo projectInfo = new ProjectInfo(libraryPlaces.getSelectedOrganizationalUnit(),
-                                                                libraryPlaces.getSelectedRepository(),
-                                                                libraryPlaces.getSelectedBranch(),
-                                                                project);
-                libraryPlaces.goToProject(projectInfo);
+                libraryPlaces.goToProject(project);
             }
         });
 

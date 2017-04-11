@@ -29,7 +29,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.jboss.errai.bus.client.api.messaging.Message;
@@ -79,6 +79,16 @@ import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopu
  */
 public abstract class KieMultipleDocumentEditor<D extends KieDocument> implements KieMultipleDocumentEditorPresenter<D> {
 
+    //Handler for MayClose requests
+    protected interface MayCloseHandler {
+
+        boolean mayClose(final Integer originalHashCode,
+                         final Integer currentHashCode);
+    }
+
+    protected final Set<D> documents = new HashSet<>();
+    //This implementation always permits closure as something went wrong loading the Editor's content
+    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = (originalHashCode, currentHashCode) -> true;
     //Injected
     protected KieMultipleDocumentEditorWrapperView kieEditorWrapperView;
     protected OverviewWidgetPresenter overviewWidget;
@@ -87,7 +97,6 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     protected Event<ChangeTitleWidgetEvent> changeTitleEvent;
     protected ProjectContext workbenchContext;
     protected SavePopUpPresenter savePopUpPresenter;
-
     protected FileMenuBuilder fileMenuBuilder;
     protected VersionRecordManager versionRecordManager;
     protected RegisteredDocumentsMenuBuilder registeredDocumentsMenuBuilder;
@@ -98,30 +107,14 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
 
     //Constructed
     protected BaseEditorView editorView;
+    //The default implementation delegates to the HashCode comparison in BaseEditor
+    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = this::doMayClose;
     protected ViewDRLSourceWidget sourceWidget = GWT.create(ViewDRLSourceWidget.class);
-
+    protected Menus menus;
     private MenuItem saveMenuItem;
     private MenuItem versionMenuItem;
     private MenuItem registeredDocumentsMenuItem;
-
-    protected Menus menus;
-
-    protected D activeDocument = null;
-    protected final Set<D> documents = new HashSet<>();
-
-    //Handler for MayClose requests
-    protected interface MayCloseHandler {
-
-        boolean mayClose(final Integer originalHashCode,
-                         final Integer currentHashCode);
-    }
-
-    //The default implementation delegates to the HashCode comparison in BaseEditor
-    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = this::doMayClose;
-
-    //This implementation always permits closure as something went wrong loading the Editor's content
-    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = (originalHashCode, currentHashCode) -> true;
-
+    private D activeDocument = null;
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
 
     @SuppressWarnings("unused")
@@ -495,7 +488,7 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     protected boolean canUpdateProject() {
-        final Project activeProject = workbenchContext.getActiveProject();
+        final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject();
         return activeProject == null || projectController.canUpdateProject(activeProject);
     }
 
@@ -656,10 +649,10 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
         if (workbenchContext == null) {
             return;
         }
-        if (workbenchContext.getActiveRepository() == null) {
+        if (workbenchContext.getActiveWorkspaceProject() == null) {
             return;
         }
-        if (workbenchContext.getActiveRepository().equals(event.getRepository())) {
+        if (workbenchContext.getActiveWorkspaceProject().getRepository().equals(event.getRepository())) {
             enableMenus(false);
         }
     }

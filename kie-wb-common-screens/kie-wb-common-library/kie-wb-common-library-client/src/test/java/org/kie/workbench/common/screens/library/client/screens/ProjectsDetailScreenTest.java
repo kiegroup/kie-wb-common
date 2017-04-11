@@ -16,12 +16,13 @@
 package org.kie.workbench.common.screens.library.client.screens;
 
 import org.dashbuilder.displayer.client.Displayer;
+import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ProjectMetricsFactory;
@@ -49,10 +50,10 @@ public class ProjectsDetailScreenTest {
     private POM pom;
 
     @Mock
-    private Project project;
+    private WorkspaceProject project;
 
     @Mock
-    private ProjectInfo projectInfo;
+    private ProjectContext projectContext;
 
     private ProjectDetailEvent projectDetailEvent;
     private ProjectsDetailScreen projectsDetail;
@@ -60,14 +61,19 @@ public class ProjectsDetailScreenTest {
     @Before
     public void setup() {
         when(pom.getDescription()).thenReturn("desc");
-        doReturn(pom).when(project).getPom();
-        when(projectInfo.getProject()).thenReturn(project);
+        final Module module = mock(Module.class);
+        doReturn(module).when(project).getMainModule();
+        doReturn(pom).when(module).getPom();
+
         when(projectMetricsFactory.lookupCommitsOverTimeDisplayer_small(any())).thenReturn(contributionsDisplayer);
 
-        projectDetailEvent = new ProjectDetailEvent(projectInfo);
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(project);
+
+        projectDetailEvent = new ProjectDetailEvent(project);
         projectsDetail = new ProjectsDetailScreen(view,
                                                   projectMetricsFactory,
-                                                  libraryPlaces);
+                                                  libraryPlaces,
+                                                  projectContext);
     }
 
     @Test
@@ -80,7 +86,7 @@ public class ProjectsDetailScreenTest {
     public void testViewMetrics() throws Exception {
         projectsDetail.update(projectDetailEvent);
         projectsDetail.gotoProjectMetrics();
-        verify(libraryPlaces).goToProjectMetrics(projectInfo);
+        verify(libraryPlaces).goToProjectMetrics();
     }
 
     @Test
@@ -94,9 +100,7 @@ public class ProjectsDetailScreenTest {
     @Test
     public void testUpdateNullDescription() throws Exception {
         when(pom.getDescription()).thenReturn(null);
-        doReturn(pom).when(project).getPom();
-        when(projectInfo.getProject()).thenReturn(project);
-        projectDetailEvent = new ProjectDetailEvent(projectInfo);
+        projectDetailEvent = new ProjectDetailEvent(project);
 
         projectsDetail.update(projectDetailEvent);
 

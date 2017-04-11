@@ -33,8 +33,8 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.MavenRepositoryMetadata;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.bus.client.api.messaging.Message;
@@ -209,7 +209,7 @@ public class BuildExecutor {
     private void build() {
         building = true;
         buildServiceCaller.call(onBuildSuccess(),
-                                onErrorCallback()).build(activeProject());
+                                onErrorCallback()).build(activeModule());
     }
 
     private BuildFailureErrorCallback onErrorCallback() {
@@ -252,7 +252,7 @@ public class BuildExecutor {
                                                                                      onBuildAndDeployGavExistsHandler());
         building = true;
         buildServiceCaller.call(onBuildSuccess(),
-                                onBuildError).buildAndDeploy(activeProject(),
+                                onBuildError).buildAndDeploy(activeModule(),
                                                              mode);
     }
 
@@ -273,7 +273,7 @@ public class BuildExecutor {
                                                                   getOnBuildAndDeployAndProvisionGavExistsHandler(containerId,
                                                                                                                   containerAlias,
                                                                                                                   serverTemplate,
-                                                                                                                  startContainer))).buildAndDeploy(activeProject(),
+                                                                                                                  startContainer))).buildAndDeploy(activeModule(),
                                                                                                                                                    mode);
         };
     }
@@ -346,7 +346,7 @@ public class BuildExecutor {
                                  releaseId,
                                  status,
                                  makeConfigs(serverTemplate,
-                                		 parameters));
+                                             parameters));
     }
 
     private ReleaseId makeReleaseId() {
@@ -363,7 +363,7 @@ public class BuildExecutor {
     }
 
     Map<Capability, ContainerConfig> makeConfigs(final ServerTemplate serverTemplate,
-            									 final Map<String, String> parameters) {
+                                                 final Map<String, String> parameters) {
         final Map<Capability, ContainerConfig> configs = new HashMap<>();
 
         if (hasProcessCapability(serverTemplate)) {
@@ -382,9 +382,9 @@ public class BuildExecutor {
                               KieScannerStatus.STOPPED);
     }
 
-    ProcessConfig makeProcessConfig(final Map<String, String> parameters) {    	
-    	String strategy = parameters.getOrDefault("RuntimeStrategy", RuntimeStrategy.SINGLETON.name());
-    	
+    ProcessConfig makeProcessConfig(final Map<String, String> parameters) {
+        String strategy = parameters.getOrDefault("RuntimeStrategy", RuntimeStrategy.SINGLETON.name());
+
         return new ProcessConfig(strategy,
                                  "",
                                  "",
@@ -446,12 +446,12 @@ public class BuildExecutor {
         conflictingRepositoriesPopup.show();
     }
 
-    private Project activeProject() {
-        return projectContext.getActiveProject();
+    private Module activeModule() {
+        return projectContext.getActiveProject().getMainModule();
     }
 
     private GAV projectGAV() {
-        final POM pom = activeProject().getPom();
+        final POM pom = activeModule().getPom();
 
         return pom.getGav();
     }

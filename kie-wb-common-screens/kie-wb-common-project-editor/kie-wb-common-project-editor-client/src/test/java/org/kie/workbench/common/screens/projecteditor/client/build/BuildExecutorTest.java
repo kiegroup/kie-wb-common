@@ -27,8 +27,11 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
@@ -41,7 +44,7 @@ import org.kie.workbench.common.screens.projecteditor.client.editor.DeploymentSc
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.server.management.model.RuntimeStrategy;
 import org.kie.workbench.common.screens.server.management.service.SpecManagementService;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieModule;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
@@ -65,31 +68,25 @@ public class BuildExecutorTest {
     protected Repository repository;
 
     @Mock
-    protected KieProject project;
+    protected KieModule module;
 
     @Mock
     protected Path pomPath;
 
     @Mock
     private DeploymentScreenPopupViewImpl deploymentScreenPopupView;
-
     @Mock
     private SpecManagementService specManagementServiceMock;
     private Caller<SpecManagementService> specManagementService;
-
     @Mock
     private BuildService buildServiceMock;
     private Caller<BuildService> buildService;
-
     @Mock
     private EventSourceMock<BuildResults> buildResultsEvent;
-
     @Mock
     private EventSourceMock<NotificationEvent> notificationEvent;
-
     @Mock
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-
     @Mock
     private ProjectContext context;
 
@@ -109,7 +106,7 @@ public class BuildExecutorTest {
         mockBuildService(buildServiceMock);
         mockProjectContext(pom,
                            repository,
-                           project,
+                           module,
                            pomPath);
 
         buildExecutor = spy(new BuildExecutor(deploymentScreenPopupView,
@@ -143,7 +140,7 @@ public class BuildExecutorTest {
         BuildResults results = mock(BuildResults.class);
         when(results.getErrorMessages()).thenReturn(messages);
 
-        when(buildServiceMock.build(any(KieProject.class))).thenReturn(results);
+        when(buildServiceMock.build(any(KieModule.class))).thenReturn(results);
 
         buildExecutor.triggerBuild();
 
@@ -166,7 +163,7 @@ public class BuildExecutorTest {
         verify(specManagementServiceMock).saveContainerSpec(eq(serverTemplate.getId()),
                                                             containerSpecArgumentCaptor.capture());
         final ContainerSpec containerSpec = containerSpecArgumentCaptor.getValue();
-        assertEquals(project.getPom().getGav().getArtifactId(),
+        assertEquals(module.getPom().getGav().getArtifactId(),
                      containerSpec.getContainerName());
 
         verifyNotification(ProjectEditorResources.CONSTANTS.BuildSuccessful(),
@@ -181,8 +178,8 @@ public class BuildExecutorTest {
 
     @Test
     public void testBuildAndDeployCommandSingleServerTemplateContainerExists() {
-        final String containerId = project.getPom().getGav().getArtifactId() + "_" + project.getPom().getGav().getVersion();
-        final String containerName = project.getPom().getGav().getArtifactId();
+        final String containerId = module.getPom().getGav().getArtifactId() + "_" + module.getPom().getGav().getVersion();
+        final String containerName = module.getPom().getGav().getArtifactId();
         final ServerTemplate serverTemplate = new ServerTemplate("id",
                                                                  "name");
         serverTemplate.addContainerSpec(new ContainerSpec(containerId,
@@ -206,8 +203,8 @@ public class BuildExecutorTest {
 
     @Test
     public void testBuildAndDeployCommandMultipleServerTemplate() {
-        final String containerId = project.getPom().getGav().getArtifactId() + "_" + project.getPom().getGav().getVersion();
-        final String containerName = project.getPom().getGav().getArtifactId();
+        final String containerId = module.getPom().getGav().getArtifactId() + "_" + module.getPom().getGav().getVersion();
+        final String containerName = module.getPom().getGav().getArtifactId();
         final ServerTemplate serverTemplate1 = new ServerTemplate("id1",
                                                                   "name1");
         final ServerTemplate serverTemplate2 = new ServerTemplate("id2",
@@ -250,7 +247,7 @@ public class BuildExecutorTest {
         BuildResults results = mock(BuildResults.class);
         when(results.getErrorMessages()).thenReturn(messages);
 
-        when(buildServiceMock.buildAndDeploy(any(KieProject.class),
+        when(buildServiceMock.buildAndDeploy(any(KieModule.class),
                                              any(DeploymentMode.class))).thenReturn(results);
 
         buildExecutor.triggerBuildAndDeploy();
@@ -313,7 +310,7 @@ public class BuildExecutorTest {
         buildExecutor.triggerBuild();
 
         verify(buildServiceMock,
-               times(1)).build(eq(project));
+               times(1)).build(eq(module));
         verifyBusyShowHideAnyString(1,
                                     1,
                                     ProjectEditorResources.CONSTANTS.Building());
@@ -332,7 +329,7 @@ public class BuildExecutorTest {
         buildExecutor.triggerBuild();
 
         verify(buildServiceMock,
-               times(1)).build(eq(project));
+               times(1)).build(eq(module));
         verifyBusyShowHideAnyString(1,
                                     1,
                                     ProjectEditorResources.CONSTANTS.Building());
@@ -349,16 +346,16 @@ public class BuildExecutorTest {
         };
         when(repository.getEnvironment()).thenReturn(env);
 
-        doThrow(GAVAlreadyExistsException.class).when(buildServiceMock).buildAndDeploy(eq(project),
+        doThrow(GAVAlreadyExistsException.class).when(buildServiceMock).buildAndDeploy(eq(module),
                                                                                        eq(DeploymentMode.VALIDATED));
 
-        final GAV gav = project.getPom().getGav();
+        final GAV gav = module.getPom().getGav();
         final ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
 
         buildExecutor.triggerBuildAndDeploy();
 
         verify(buildServiceMock,
-               times(1)).buildAndDeploy(eq(project),
+               times(1)).buildAndDeploy(eq(module),
                                         eq(DeploymentMode.VALIDATED));
         verify(conflictingRepositoriesPopup,
                times(1)).setContent(eq(gav),
@@ -376,7 +373,7 @@ public class BuildExecutorTest {
                times(1)).hide();
 
         verify(buildServiceMock,
-               times(1)).buildAndDeploy(eq(project),
+               times(1)).buildAndDeploy(eq(module),
                                         eq(DeploymentMode.FORCED));
         verify(view,
                times(2)).showBusyIndicator(eq(ProjectEditorResources.CONSTANTS.Building()));
@@ -416,9 +413,8 @@ public class BuildExecutorTest {
         assertTrue(configs.values().contains(ruleConfig));
         assertTrue(configs.values().contains(processConfig));
         assertEquals(2, configs.size());
-        
     }
-    
+
     @Test
     public void testMakeConfigsWhenServerTemplateHasProcessCapabilityWithDefaultStrategy() {
         final ServerTemplate serverTemplate = mock(ServerTemplate.class);
@@ -434,11 +430,11 @@ public class BuildExecutorTest {
         assertTrue(configs.keySet().contains(Capability.PROCESS));
         assertTrue(configs.values().contains(ruleConfig));
         assertEquals(2, configs.size());
-        
+
         ProcessConfig processConf = (ProcessConfig) configs.get(Capability.PROCESS);
         assertEquals(RuntimeStrategy.SINGLETON.name(), processConf.getRuntimeStrategy());
     }
-    
+
     @Test
     public void testMakeConfigsWhenServerTemplateHasProcessCapabilityWithStrategy() {
         final ServerTemplate serverTemplate = mock(ServerTemplate.class);
@@ -455,7 +451,7 @@ public class BuildExecutorTest {
         assertTrue(configs.keySet().contains(Capability.PROCESS));
         assertTrue(configs.values().contains(ruleConfig));
         assertEquals(2, configs.size());
-        
+
         ProcessConfig processConf = (ProcessConfig) configs.get(Capability.PROCESS);
         assertEquals(RuntimeStrategy.PER_PROCESS_INSTANCE.name(), processConf.getRuntimeStrategy());
     }
@@ -498,23 +494,26 @@ public class BuildExecutorTest {
 
     private void mockProjectContext(final POM pom,
                                     final Repository repository,
-                                    final KieProject project,
+                                    final KieModule module,
                                     final Path pomPath) {
-        when(context.getActiveRepository()).thenReturn(repository);
-        when(context.getActiveBranch()).thenReturn("master");
+        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                  repository,
+                                                                                  new Branch("master",
+                                                                                             mock(Path.class)),
+                                                                                  module));
         when(repository.getAlias()).thenReturn("repository");
 
-        when(project.getProjectName()).thenReturn("project");
-        when(project.getPomXMLPath()).thenReturn(pomPath);
-        when(project.getPom()).thenReturn(pom);
-        when(project.getRootPath()).thenReturn(mock(Path.class));
+        when(module.getModuleName()).thenReturn("module");
+        when(module.getPomXMLPath()).thenReturn(pomPath);
+        when(module.getPom()).thenReturn(pom);
+        when(module.getRootPath()).thenReturn(mock(Path.class));
         when(pomPath.getFileName()).thenReturn("pom.xml");
-        when(context.getActiveProject()).thenReturn(project);
+        when(context.getActiveModule()).thenReturn(module);
     }
 
     private void mockBuildService(final BuildService buildService) {
-        when(buildService.build(any(KieProject.class))).thenReturn(new BuildResults());
-        when(buildService.buildAndDeploy(any(KieProject.class),
+        when(buildService.build(any(KieModule.class))).thenReturn(new BuildResults());
+        when(buildService.buildAndDeploy(any(KieModule.class),
                                          any(DeploymentMode.class))).thenReturn(new BuildResults());
     }
 }

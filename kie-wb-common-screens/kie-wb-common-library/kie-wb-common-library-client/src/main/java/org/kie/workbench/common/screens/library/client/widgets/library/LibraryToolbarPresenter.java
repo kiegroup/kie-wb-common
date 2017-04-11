@@ -17,37 +17,23 @@
 package org.kie.workbench.common.screens.library.client.widgets.library;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
-import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.repositories.Repository;
+import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.structure.repositories.Branch;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.screens.library.api.LibraryService;
-import org.kie.workbench.common.screens.library.api.OrganizationalUnitRepositoryInfo;
-import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
-import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.mvp.UberElement;
 import org.uberfire.mvp.Command;
-import org.uberfire.workbench.events.NotificationEvent;
 
 @ApplicationScoped
 public class LibraryToolbarPresenter {
 
     public interface View extends UberElement<LibraryToolbarPresenter> {
-
-        void clearRepositories();
-
-        void addRepository(String alias);
-
-        String getSelectedRepository();
-
-        void setSelectedRepository(String alias);
-
-        void setRepositorySelectorVisibility(final boolean visible);
 
         void clearBranches();
 
@@ -58,172 +44,76 @@ public class LibraryToolbarPresenter {
         void setSelectedBranch(final String branchName);
 
         void setBranchSelectorVisibility(boolean visible);
-
-        String getNotEnoughPermissionsToAccessLibraryMessage();
     }
 
-    private View view;
-    private Caller<LibraryService> libraryService;
-    private LibraryPreferences libraryPreferences;
-    private LibraryInternalPreferences libraryInternalPreferences;
-    private PlaceManager placeManager;
+    private ProjectContext projectContext;
+    private Caller<ProjectService> projectService;
     private LibraryPlaces libraryPlaces;
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
-    private Event<NotificationEvent> notificationEvent;
+    private View view;
+    private PlaceManager placeManager;
 
-    private OrganizationalUnitRepositoryInfo info;
-    private Repository selectedRepository;
-    private String selectedBranch;
+    public LibraryToolbarPresenter() {
+    }
 
     @Inject
-    public LibraryToolbarPresenter(final View view,
-                                   final Caller<LibraryService> libraryService,
-                                   final LibraryPreferences libraryPreferences,
-                                   final LibraryInternalPreferences libraryInternalPreferences,
-                                   final PlaceManager placeManager,
+    public LibraryToolbarPresenter(final ProjectContext projectContext,
+                                   final Caller<ProjectService> projectService,
                                    final LibraryPlaces libraryPlaces,
-                                   final Event<ProjectContextChangeEvent> projectContextChangeEvent,
-                                   final Event<NotificationEvent> notificationEvent) {
-        this.view = view;
-        this.libraryService = libraryService;
-        this.libraryPreferences = libraryPreferences;
-        this.libraryInternalPreferences = libraryInternalPreferences;
-        this.placeManager = placeManager;
+                                   final View view,
+                                   final PlaceManager placeManager) {
+        this.projectContext = projectContext;
+        this.projectService = projectService;
         this.libraryPlaces = libraryPlaces;
-        this.projectContextChangeEvent = projectContextChangeEvent;
-        this.notificationEvent = notificationEvent;
+        this.view = view;
+        this.placeManager = placeManager;
+
+        view.init(this);
     }
 
     public void init(final Command callback) {
-        libraryService.call((OrganizationalUnitRepositoryInfo info) -> {
-            LibraryToolbarPresenter.this.info = info;
-
-            if (info != null) {
-                view.init(LibraryToolbarPresenter.this);
-
-                setupRepositories(info);
-                selectedRepository = info.getSelectedRepository();
-                selectedBranch = info.getSelectedRepository().getDefaultBranch();
-
-                final ProjectContextChangeEvent event = new ProjectContextChangeEvent(info.getSelectedOrganizationalUnit());
-                projectContextChangeEvent.fire(event);
-
-                callback.execute();
-            } else {
-                notificationEvent.fire(new NotificationEvent(view.getNotEnoughPermissionsToAccessLibraryMessage(),
-                                                             NotificationEvent.NotificationType.ERROR));
-            }
-
-            setBranchSelectorVisibility();
-            setRepositorySelectorVisibility();
-        }).getDefaultOrganizationalUnitRepositoryInfo();
+        view.setBranchSelectorVisibility(false);
+        callback.execute();
     }
 
-    public void setSelectedInfo(final OrganizationalUnit organizationalUnit,
-                                final Repository repository,
-                                final Command callback) {
-        libraryService.call((OrganizationalUnitRepositoryInfo newInfo) -> {
-            newInfo.setSelectedRepository(repository);
-            refreshLibrary(newInfo,
-                           callback);
-        }).getOrganizationalUnitRepositoryInfo(organizationalUnit);
-    }
-
-    private void setupRepositories(final OrganizationalUnitRepositoryInfo info) {
-        view.clearRepositories();
-        info.getRepositories().forEach(repo -> view.addRepository(repo.getAlias()));
-        view.setSelectedRepository(info.getSelectedRepository().getAlias());
-
-        setUpBranches(info.getSelectedRepository().getDefaultBranch(),
-                      info.getSelectedRepository());
-    }
-
-    private void setUpBranches(final String selectedBranch,
-                               final Repository repository) {
+    public void setUpBranches() {
         view.clearBranches();
-        for (final String branchName : repository.getBranches()) {
-            view.addBranch(branchName);
+
+        if (projectContext.getActiveWorkspaceProject() != null) {
+            for (final Branch branch : projectContext.getActiveWorkspaceProject().getRepository().getBranches()) {
+                view.addBranch(branch.getName());
+            }
+            view.setSelectedBranch(projectContext.getActiveWorkspaceProject().getBranch().getName());
         }
-        view.setSelectedBranch(selectedBranch);
-    }
 
-    void onUpdateSelectedRepository() {
-        refreshLibrary(null);
-        setUpBranches(selectedBranch,
-                      selectedRepository);
-
-        libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {
-                                            loadedLibraryInternalPreferences.setLastOpenedRepository(selectedRepository.getAlias());
-                                            loadedLibraryInternalPreferences.save();
-                                        },
-                                        error -> {
-                                        });
+        setBranchSelectorVisibility();
     }
 
     void onUpdateSelectedBranch() {
-        refreshLibrary(null);
-    }
-
-    private void refreshLibrary(final OrganizationalUnitRepositoryInfo newInfo) {
-        refreshLibrary(newInfo,
-                       null);
-    }
-
-    private void refreshLibrary(final OrganizationalUnitRepositoryInfo newInfo,
-                                final Command callback) {
         if (placeManager.closeAllPlacesOrNothing()) {
-            if (newInfo != null) {
-                this.info = newInfo;
-                setupRepositories(info);
-            }
-            selectedRepository = getViewSelectedRepository();
-            selectedBranch = getViewSelectedBranch();
 
-            setBranchSelectorVisibility();
-            setRepositorySelectorVisibility();
+            projectService.call(new RemoteCallback<WorkspaceProject>() {
+                @Override
+                public void callback(WorkspaceProject project) {
 
-            libraryPlaces.goToLibrary(callback);
+                    libraryPlaces.goToProject(project);
+
+                    setBranchSelectorVisibility();
+                }
+            }).resolveProject(projectContext.getActiveWorkspaceProject().getRepository().getBranch(view.getSelectedBranch()).get());
         } else {
-            view.setSelectedRepository(selectedRepository.getAlias());
-
-            setUpBranches(selectedBranch,
-                          selectedRepository);
+            setUpBranches();
         }
-    }
-
-    private void setRepositorySelectorVisibility() {
-        final boolean visible = info != null && info.getRepositories().size() > 1;
-        view.setRepositorySelectorVisibility(visible);
     }
 
     private void setBranchSelectorVisibility() {
-        final boolean visible = selectedRepository != null && selectedRepository.getBranches().size() > 1;
-        view.setBranchSelectorVisibility(visible);
+        view.setBranchSelectorVisibility(isBranchVisible());
     }
 
-    private String getViewSelectedBranch() {
-        if (!selectedRepository.getBranches().contains(view.getSelectedBranch())) {
-            return selectedRepository.getDefaultBranch();
-        } else {
-            return view.getSelectedBranch();
-        }
-    }
-
-    public Repository getSelectedRepository() {
-        return selectedRepository;
-    }
-
-    private Repository getViewSelectedRepository() {
-        return info.getRepositories().stream()
-                .filter(repo -> repo.getAlias().equals(view.getSelectedRepository()))
-                .findFirst().get();
+    private boolean isBranchVisible() {
+        return projectContext.getActiveWorkspaceProject() != null && projectContext.getActiveWorkspaceProject().getRepository().getBranches().size() > 1;
     }
 
     public UberElement<LibraryToolbarPresenter> getView() {
         return view;
-    }
-
-    public String getSelectedBranch() {
-        return selectedBranch;
     }
 }

@@ -20,7 +20,6 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.model.Project;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 import org.uberfire.client.mvp.UberElement;
@@ -72,14 +71,14 @@ public class ProjectActionsWidget {
         libraryPlaces.goToPreferences();
     }
 
-    public void compileProject() {
-        if (userCanBuildProject()) {
+    public void compileModule() {
+        if (userCanBuildModule()) {
             buildExecutor.triggerBuild();
         }
     }
 
     public void buildAndDeployProject() {
-        if (userCanBuildProject()) {
+        if (userCanBuildModule()) {
             buildExecutor.triggerBuildAndDeploy();
         }
     }
@@ -88,9 +87,8 @@ public class ProjectActionsWidget {
         libraryPlaces.goToMessages();
     }
 
-    public boolean userCanBuildProject() {
-        final Project activeProject = projectContext.getActiveProject();
-        return projectController.canBuildProjects() && projectController.canBuildProject(activeProject);
+    public boolean userCanBuildModule() {
+        return projectController.canBuildProjects() && projectController.canBuildProject(projectContext.getActiveProject());
     }
 
     public View getView() {

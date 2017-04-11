@@ -41,8 +41,10 @@ import org.kie.workbench.common.screens.library.client.widgets.common.TileWidget
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
+import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.*;
+import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 

@@ -107,6 +107,11 @@ public class OrganizationalUnitsScreen {
         setupOrganizationalUnits();
     }
 
+    @OnStartup
+    public void onStartup() {
+        projectContextChangeEvent.fire(new ProjectContextChangeEvent()); // TODO TEST
+    }
+
     private void setupView() {
         if (!canCreateOrganizationalUnit()) {
             view.hideCreateOrganizationalUnitAction();

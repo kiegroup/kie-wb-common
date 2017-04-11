@@ -22,25 +22,25 @@ public class ProjectScreenMenuItem
     }
 
     @Inject
-    public ProjectScreenMenuItem( final PlaceManager placeManager ) {
+    public ProjectScreenMenuItem(final PlaceManager placeManager) {
         this.placeManager = placeManager;
     }
 
-    public void onProjectContextChanged( @Observes final ProjectContextChangeEvent event ) {
-        this.setEnabled( (event.getProject() != null) );
+    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+        this.setEnabled((event.getModule() != null));
     }
 
     @Override
     public Object build() {
         view = new Button();
-        view.setSize( ButtonSize.SMALL );
-        view.setText( ProjectExplorerConstants.INSTANCE.openProjectEditor() );
-        view.addClickHandler( new ClickHandler() {
+        view.setSize(ButtonSize.SMALL);
+        view.setText(ProjectExplorerConstants.INSTANCE.openProjectEditor());
+        view.addClickHandler(new ClickHandler() {
             @Override
-            public void onClick( ClickEvent event ) {
-                placeManager.goTo( "projectScreen" );
+            public void onClick(ClickEvent event) {
+                placeManager.goTo("projectScreen");
             }
-        } );
+        });
 
         return view;
     }
@@ -49,5 +49,4 @@ public class ProjectScreenMenuItem
     public boolean isEnabled() {
         return view.isEnabled();
     }
-
 }

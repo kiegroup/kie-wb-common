@@ -25,14 +25,13 @@ import org.dashbuilder.displayer.client.AbstractDisplayerTest;
 import org.dashbuilder.displayer.client.Displayer;
 import org.dashbuilder.displayer.client.DisplayerCoordinator;
 import org.dashbuilder.displayer.client.DisplayerListener;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.contributors.model.ContributorsDataSets;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.util.ProjectMetricsFactory;
 import org.mockito.Mock;
@@ -78,22 +77,14 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
 
     @Mock
     ProjectMetricsScreen.View view;
-
     @Mock
     TranslationService i18n;
-
     @Mock
     DisplayerListener displayerListener;
-
     @Mock
     Repository repository;
-
     @Mock
-    Project project;
-
-    @Mock
-    ProjectInfo projectInfo;
-
+    WorkspaceProject project;
     ProjectMetricsFactory metricsFactory;
     ProjectMetricsScreen presenter;
     DataSet contributorsDataSet;
@@ -103,10 +94,9 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
     public void init() throws Exception {
         super.init();
 
-        when(projectInfo.getRepository()).thenReturn(repository);
-        when(projectInfo.getProject()).thenReturn(project);
+        when(project.getRepository()).thenReturn(repository);
         when(repository.getAlias()).thenReturn("repo");
-        when(project.getProjectName()).thenReturn("project1");
+        when(project.getName()).thenReturn("project1");
 
         contributorsDataSet = ContributorsData.INSTANCE.toDataSet();
         contributorsDataSet.setUUID(ContributorsDataSets.GIT_CONTRIB);
@@ -309,13 +299,13 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
 
     @Test
     public void displayersListenOthersTest() {
-        assertTrue(metricsFactory.buildAllCommitsSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildCommitsByDayOfWeekSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildCommitsByQuarterSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildCommitsByYearSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildCommitsOverTimeSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildDateSelectorSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildTopContributorSelectorSettings(projectInfo).isFilterListeningEnabled());
-        assertTrue(metricsFactory.buildCommitsPerAuthorSettings(projectInfo).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildAllCommitsSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildCommitsByDayOfWeekSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildCommitsByQuarterSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildCommitsByYearSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildCommitsOverTimeSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildDateSelectorSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildTopContributorSelectorSettings(project).isFilterListeningEnabled());
+        assertTrue(metricsFactory.buildCommitsPerAuthorSettings(project).isFilterListeningEnabled());
     }
 }

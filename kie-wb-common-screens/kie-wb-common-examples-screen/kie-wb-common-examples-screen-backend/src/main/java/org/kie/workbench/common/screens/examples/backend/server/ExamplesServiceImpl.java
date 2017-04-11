@@ -21,7 +21,6 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.SimpleFileVisitor;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,7 +30,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -40,17 +38,18 @@ import javax.inject.Named;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.guvnor.common.services.backend.config.SafeSessionInfo;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.EnvironmentParameters;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.RepositoryEnvironmentConfigurations;
+import org.guvnor.structure.repositories.RepositoryCopier;
 import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.impl.git.GitRepository;
 import org.guvnor.structure.server.config.ConfigGroup;
@@ -61,24 +60,15 @@ import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
-import org.kie.workbench.common.screens.examples.model.ExampleTargetRepository;
 import org.kie.workbench.common.screens.examples.model.ExamplesMetaData;
 import org.kie.workbench.common.screens.examples.service.ExamplesService;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
-import org.uberfire.java.nio.file.FileAlreadyExistsException;
-import org.uberfire.java.nio.file.FileVisitResult;
-import org.uberfire.java.nio.file.FileVisitor;
-import org.uberfire.java.nio.file.Files;
-import org.uberfire.java.nio.file.StandardCopyOption;
-import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
-import org.uberfire.rpc.SessionInfo;
 
 import static org.guvnor.structure.repositories.EnvironmentParameters.SCHEME;
 import static org.guvnor.structure.server.config.ConfigType.REPOSITORY;
@@ -93,14 +83,15 @@ public class ExamplesServiceImpl implements ExamplesService {
 
     private static final String KIE_WB_PLAYGROUND_ZIP = "org/kie/kie-wb-playground/kie-wb-playground.zip";
     private final Set<Repository> clonedRepositories = new HashSet<Repository>();
+    private ProjectService projectService;
     private IOService ioService;
     private ConfigurationFactory configurationFactory;
     private RepositoryFactory repositoryFactory;
-    private KieProjectService projectService;
+    private KieModuleService moduleService;
     private RepositoryService repositoryService;
+    private RepositoryCopier repositoryCopier;
     private OrganizationalUnitService ouService;
     private Event<NewProjectEvent> newProjectEvent;
-    private SafeSessionInfo sessionInfo;
     private MetadataService metadataService;
     private ExampleRepository playgroundRepository;
 
@@ -112,21 +103,23 @@ public class ExamplesServiceImpl implements ExamplesService {
     public ExamplesServiceImpl(final @Named("ioStrategy") IOService ioService,
                                final ConfigurationFactory configurationFactory,
                                final RepositoryFactory repositoryFactory,
-                               final KieProjectService projectService,
+                               final KieModuleService moduleService,
                                final RepositoryService repositoryService,
+                               final RepositoryCopier repositoryCopier,
                                final OrganizationalUnitService ouService,
+                               final ProjectService projectService,
                                final MetadataService metadataService,
-                               final Event<NewProjectEvent> newProjectEvent,
-                               final SessionInfo sessionInfo) {
+                               final Event<NewProjectEvent> newProjectEvent) {
         this.ioService = ioService;
         this.configurationFactory = configurationFactory;
         this.repositoryFactory = repositoryFactory;
-        this.projectService = projectService;
+        this.moduleService = moduleService;
         this.repositoryService = repositoryService;
+        this.repositoryCopier = repositoryCopier;
         this.ouService = ouService;
+        this.projectService = projectService;
         this.metadataService = metadataService;
         this.newProjectEvent = newProjectEvent;
-        this.sessionInfo = new SafeSessionInfo(sessionInfo);
     }
 
     @PostConstruct
@@ -210,22 +203,12 @@ public class ExamplesServiceImpl implements ExamplesService {
 
     @Override
     public ExamplesMetaData getMetaData() {
-        return new ExamplesMetaData(getPlaygroundRepository(),
-                                    getExampleOrganizationalUnits());
+        return new ExamplesMetaData(getPlaygroundRepository());
     }
 
     @Override
     public ExampleRepository getPlaygroundRepository() {
         return playgroundRepository;
-    }
-
-    Set<ExampleOrganizationalUnit> getExampleOrganizationalUnits() {
-        final Collection<OrganizationalUnit> organizationalUnits = ouService.getOrganizationalUnits();
-        final Set<ExampleOrganizationalUnit> exampleOrganizationalUnits = new HashSet<ExampleOrganizationalUnit>();
-        for (OrganizationalUnit ou : organizationalUnits) {
-            exampleOrganizationalUnits.add(new ExampleOrganizationalUnit(ou.getName()));
-        }
-        return exampleOrganizationalUnits;
     }
 
     @Override
@@ -245,9 +228,8 @@ public class ExamplesServiceImpl implements ExamplesService {
             return Collections.emptySet();
         }
 
-        final Set<Project> projects = projectService.getProjects(gitRepository,
-                                                                 "master");
-        return convert(projects);
+        final Set<Module> modules = moduleService.getAllModules(gitRepository.getBranch("master").get());
+        return convert(modules);
     }
 
     Repository resolveGitRepository(final ExampleRepository exampleRepository) {
@@ -266,7 +248,7 @@ public class ExamplesServiceImpl implements ExamplesService {
                 put("origin",
                     repositoryURL);
                 put(SCHEME,
-                    "git");
+                    GitRepository.SCHEME);
                 put("replaceIfExists",
                     true);
             }};
@@ -307,21 +289,28 @@ public class ExamplesServiceImpl implements ExamplesService {
         return FileSystems.getDefault().getSeparator();
     }
 
-    private Set<ExampleProject> convert(final Set<Project> projects) {
-        return projects.stream()
-                .map(p -> new ExampleProject(p.getRootPath(),
-                                             p.getProjectName(),
-                                             readDescription(p),
-                                             getTags(p)))
+    private Set<ExampleProject> convert(final Set<Module> modules) {
+        return modules.stream()
+                .map(p -> makeExampleProject(p))
                 .collect(Collectors.toSet());
     }
 
-    private String readDescription(final Project project) {
-        final Path root = project.getRootPath();
-        final POM pom = project.getPom();
+    private ExampleProject makeExampleProject(final Module module) {
+        final String description = readDescription(module);
+        final List<String> tags = getTags(module);
+
+        return new ExampleProject(module.getRootPath(),
+                                  module.getModuleName(),
+                                  description,
+                                  tags);
+    }
+
+    private String readDescription(final Module module) {
+        final Path root = module.getRootPath();
+        final POM pom = module.getPom();
         final org.uberfire.java.nio.file.Path nioRoot = Paths.convert(root);
         final org.uberfire.java.nio.file.Path nioDescription = nioRoot.resolve(PROJECT_DESCRIPTON);
-        String description = "Example '" + project.getProjectName() + "' project";
+        String description = "Example '" + module.getModuleName() + "' module";
 
         if (ioService.exists(nioDescription)) {
             description = ioService.readAllString(nioDescription);
@@ -339,28 +328,17 @@ public class ExamplesServiceImpl implements ExamplesService {
         return description;
     }
 
-    private List<String> getTags(final Project project) {
-        List<String> tags = metadataService.getTags(project.getPomXMLPath());
+    private List<String> getTags(final Module module) {
+        List<String> tags = metadataService.getTags(module.getPomXMLPath());
         tags.sort(String::compareTo);
         return tags;
     }
 
     @Override
-    public boolean validateRepositoryName(final String name) {
-        return repositoryService.validateRepositoryName(name);
-    }
-
-    @Override
     public ProjectContextChangeEvent setupExamples(final ExampleOrganizationalUnit exampleTargetOU,
-                                                   final ExampleTargetRepository exampleTarget,
-                                                   final String branch,
                                                    final List<ExampleProject> exampleProjects) {
         PortablePreconditions.checkNotNull("exampleTargetOU",
                                            exampleTargetOU);
-        PortablePreconditions.checkNotNull("exampleTarget",
-                                           exampleTarget);
-        PortablePreconditions.checkNotNull("branch",
-                                           branch);
         PortablePreconditions.checkNotNull("exampleProjects",
                                            exampleProjects);
         PortablePreconditions.checkCondition("Must have at least one ExampleProject",
@@ -368,58 +346,64 @@ public class ExamplesServiceImpl implements ExamplesService {
 
         //Retrieve or create Organizational Unit
         final String targetOUName = exampleTargetOU.getName();
-        OrganizationalUnit targetOU = ouService.getOrganizationalUnit(targetOUName);
-        if (targetOU == null) {
-            targetOU = createOrganizationalUnit(targetOUName);
-        }
+        final OrganizationalUnit targetOU = getOrganizationalUnit(targetOUName);
 
-        //Retrieve or create target Repository
-        final String targetRepositoryAlias = exampleTarget.getAlias();
-        Repository targetRepository = repositoryService.getRepository(targetRepositoryAlias);
-        if (targetRepository == null) {
-            targetRepository = createTargetRepository(targetOU,
-                                                      targetRepositoryAlias);
-        }
+        WorkspaceProject firstExampleProject = null;
 
-        final Path targetRepositoryRoot = targetRepository.getBranchRoot(branch);
-        final org.uberfire.java.nio.file.Path nioTargetRepositoryRoot = Paths.convert(targetRepositoryRoot);
-        KieProject firstExampleProject = null;
-
-        try {
-            ioService.startBatch(nioTargetRepositoryRoot.getFileSystem());
-            for (ExampleProject exampleProject : exampleProjects) {
-                final Path exampleProjectRoot = exampleProject.getRoot();
-                final org.uberfire.java.nio.file.Path nioExampleProjectRoot = Paths.convert(exampleProjectRoot);
-                final org.uberfire.java.nio.file.Path nioTargetProjectRoot = nioTargetRepositoryRoot.resolve(exampleProject.getName());
-
-                final RecursiveCopier copier = new RecursiveCopier(nioExampleProjectRoot,
-                                                                   nioTargetProjectRoot);
-                Files.walkFileTree(nioExampleProjectRoot,
-                                   copier);
+        for (final ExampleProject exampleProject : exampleProjects) {
+            try {
+                final String newRepositoryName = resolveRepositoryName(targetOU,
+                                                                       exampleProject);
+                final Repository targetRepository = repositoryCopier.copy(targetOU,
+                                                                          newRepositoryName,
+                                                                          exampleProject.getRoot());
 
                 // Signal creation of new Project (Creation of OU and Repository, if applicable,
                 // are already handled in the corresponding services).
-                final Path targetProjectRoot = Paths.convert(nioTargetProjectRoot);
-                final KieProject project = projectService.resolveProject(targetProjectRoot);
-                newProjectEvent.fire(new NewProjectEvent(project,
-                                                         sessionInfo.getId(),
-                                                         sessionInfo.getIdentity().getIdentifier()));
+                final WorkspaceProject project = projectService.resolveProject(targetRepository);
+                newProjectEvent.fire(new NewProjectEvent(project));
 
                 //Store first new example project
                 if (firstExampleProject == null) {
                     firstExampleProject = project;
                 }
+            } catch (IOException ioe) {
+                logger.error("Unable to create Example(s).",
+                             ioe);
+            } finally {
+                ioService.endBatch();
             }
-        } catch (IOException ioe) {
-            logger.error("Unable to create Example(s).",
-                         ioe);
-        } finally {
-            ioService.endBatch();
         }
-        return new ProjectContextChangeEvent(targetOU,
-                                             targetRepository,
-                                             targetRepository.getDefaultBranch(),
-                                             firstExampleProject);
+        return new ProjectContextChangeEvent(firstExampleProject);
+    }
+
+    private String resolveRepositoryName(final OrganizationalUnit targetOU,
+                                         final ExampleProject exampleProject) {
+        final String newRepositoryName = exampleProject.getName();
+        final String newTeamRepositoryName = targetOU.getName() + "-" + newRepositoryName;
+
+        if (repositoryService.getRepository(newRepositoryName) == null) {
+            return newRepositoryName;
+        } else if (repositoryService.getRepository(newTeamRepositoryName) == null) {
+            return newTeamRepositoryName;
+        }
+
+        int index = 1;
+        String tempRepositoryName = newTeamRepositoryName + "-1";
+        while (repositoryService.getRepository(tempRepositoryName) != null) {
+            index++;
+            tempRepositoryName = newTeamRepositoryName + "-" + index;
+        }
+
+        return tempRepositoryName;
+    }
+
+    private OrganizationalUnit getOrganizationalUnit(String targetOUName) {
+        OrganizationalUnit targetOU = ouService.getOrganizationalUnit(targetOUName);
+        if (targetOU == null) {
+            targetOU = createOrganizationalUnit(targetOUName);
+        }
+        return targetOU;
     }
 
     private OrganizationalUnit createOrganizationalUnit(final String name) {
@@ -429,17 +413,6 @@ public class ExamplesServiceImpl implements ExamplesService {
         return ou;
     }
 
-    private Repository createTargetRepository(final OrganizationalUnit ou,
-                                              final String alias) {
-        final RepositoryEnvironmentConfigurations configuration = new RepositoryEnvironmentConfigurations();
-        configuration.setManaged(false);
-        final Repository repository = repositoryService.createRepository(ou,
-                                                                         GitRepository.SCHEME,
-                                                                         alias,
-                                                                         configuration);
-        return repository;
-    }
-
     @Override
     public int priority() {
         return 0;
@@ -447,57 +420,15 @@ public class ExamplesServiceImpl implements ExamplesService {
 
     @Override
     public void dispose() {
-        for (Repository repository : clonedRepositories) {
+        for (final Repository repository : clonedRepositories) {
             try {
-                ioService.delete(Paths.convert(repository.getRoot()).getFileSystem().getPath(null));
+                if (repository.getDefaultBranch().isPresent()) {
+                    ioService.delete(Paths.convert(repository.getDefaultBranch().get().getPath()).getFileSystem().getPath(null));
+                }
             } catch (Exception e) {
                 logger.warn("Unable to remove transient Repository '" + repository.getAlias() + "'.",
                             e);
             }
-        }
-    }
-
-    static class RecursiveCopier implements FileVisitor<org.uberfire.java.nio.file.Path> {
-
-        private final org.uberfire.java.nio.file.Path source;
-        private final org.uberfire.java.nio.file.Path target;
-
-        RecursiveCopier(final org.uberfire.java.nio.file.Path source,
-                        final org.uberfire.java.nio.file.Path target) {
-            this.source = source;
-            this.target = target;
-        }
-
-        @Override
-        public FileVisitResult preVisitDirectory(final org.uberfire.java.nio.file.Path src,
-                                                 final BasicFileAttributes attrs) {
-            final org.uberfire.java.nio.file.Path tgt = target.resolve(source.relativize(src));
-            try {
-                Files.copy(src,
-                           tgt,
-                           StandardCopyOption.REPLACE_EXISTING);
-            } catch (FileAlreadyExistsException x) {
-                //Swallow
-            }
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFile(final org.uberfire.java.nio.file.Path file,
-                                         final BasicFileAttributes attrs) {
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult postVisitDirectory(final org.uberfire.java.nio.file.Path dir,
-                                                  final IOException exc) {
-            return FileVisitResult.CONTINUE;
-        }
-
-        @Override
-        public FileVisitResult visitFileFailed(final org.uberfire.java.nio.file.Path file,
-                                               final IOException exc) {
-            return FileVisitResult.CONTINUE;
         }
     }
 

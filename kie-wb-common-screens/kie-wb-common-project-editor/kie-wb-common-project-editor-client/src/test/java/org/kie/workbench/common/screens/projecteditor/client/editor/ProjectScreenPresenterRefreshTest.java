@@ -39,7 +39,7 @@ public class ProjectScreenPresenterRefreshTest
 
     @Before
     public void setup() {
-        ApplicationPreferences.setUp(new HashMap<String, String>());
+        ApplicationPreferences.setUp(new HashMap<>());
 
         mockBuildOptions();
 
@@ -51,10 +51,10 @@ public class ProjectScreenPresenterRefreshTest
 
         mockProjectContext(new POM(),
                            repository,
-                           project,
+                           module,
                            pomPath);
 
-        constructProjectScreenPresenter(project);
+        constructProjectScreenPresenter(module);
         presenter.setupPathToPomXML();
     }
 

@@ -18,21 +18,29 @@ package org.kie.workbench.common.screens.projecteditor.backend.server;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.MavenRepositoryMetadata;
 import org.guvnor.common.services.project.model.MavenRepositorySource;
+import org.guvnor.common.services.project.model.ModuleRepositories;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.ProjectImports;
-import org.guvnor.common.services.project.model.ProjectRepositories;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.guvnor.common.services.project.service.ModuleRepositoriesService;
+import org.guvnor.common.services.project.service.ModuleRepositoryResolver;
 import org.guvnor.common.services.project.service.POMService;
-import org.guvnor.common.services.project.service.ProjectRepositoriesService;
-import org.guvnor.common.services.project.service.ProjectRepositoryResolver;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
+import org.guvnor.structure.organizationalunit.OrganizationalUnit;
+import org.guvnor.structure.repositories.Branch;
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryCopier;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -43,8 +51,8 @@ import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenServi
 import org.kie.workbench.common.services.backend.builder.core.LRUPomModelCache;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModule;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
@@ -52,6 +60,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileSystem;
@@ -64,16 +73,10 @@ import static org.mockito.Mockito.*;
 public class ProjectScreenServiceImplTest {
 
     @Mock
-    private POMService pomService;
-
-    @Mock
     private KModuleService kModuleService;
 
     @Mock
-    private KieProjectService projectService;
-
-    @Mock
-    private MetadataService metadataService;
+    private KieModuleService moduleService;
 
     @Mock
     private ValidationService validationService;
@@ -82,13 +85,13 @@ public class ProjectScreenServiceImplTest {
     private ProjectImportsService importsService;
 
     @Mock
-    private ProjectRepositoriesService repositoriesService;
+    private ModuleRepositoriesService repositoriesService;
 
     @Mock
     private PackageNameWhiteListService whiteListService;
 
     @Mock
-    private ProjectRepositoryResolver repositoryResolver;
+    private ModuleRepositoryResolver repositoryResolver;
 
     @Mock
     private User identity;
@@ -106,13 +109,13 @@ public class ProjectScreenServiceImplTest {
     private Path pathToKieModule;
 
     @Mock
-    private Path pathToProjectImports;
+    private Path pathToModuleImports;
 
     @Mock
-    private Path pathToProjectRepositories;
+    private Path pathToModuleRepositories;
 
     @Mock
-    private KieProject project;
+    private KieModule module;
 
     @Mock
     private KModuleModel kmodule;
@@ -132,11 +135,26 @@ public class ProjectScreenServiceImplTest {
     @Mock
     private LRUPomModelCache pomModelCache;
 
+    @Mock
+    private RepositoryService repositoryService;
+
+    @Mock
+    private RepositoryCopier repositoryCopier;
+
+    @Mock
+    private POMService pomService;
+
+    @Mock
+    private MetadataService metadataService;
+
+    @Mock
+    private ProjectService projectService;
+
     private ProjectScreenService service;
     private ProjectScreenModelLoader loader;
     private ProjectScreenModelSaver saver;
     private ProjectImports projectImports;
-    private ProjectRepositories projectRepositories;
+    private ModuleRepositories moduleRepositories;
 
     private GAV gav = new GAV("org.test",
                               "project-screen-test",
@@ -159,8 +177,8 @@ public class ProjectScreenServiceImplTest {
     @Before
     public void setup() {
         projectImports = new ProjectImports();
-        projectRepositories = new ProjectRepositories();
-        loader = new ProjectScreenModelLoader(projectService,
+        moduleRepositories = new ModuleRepositories();
+        loader = new ProjectScreenModelLoader(moduleService,
                                               pomService,
                                               metadataService,
                                               kModuleService,
@@ -178,31 +196,36 @@ public class ProjectScreenServiceImplTest {
                                             repositoriesService,
                                             whiteListService,
                                             ioService,
-                                            projectService,
+                                            moduleService,
                                             repositoryResolver,
                                             commentedOptionFactory,
                                             pomModelCache);
         service = new ProjectScreenServiceImpl(projectService,
+                                               repositoryService,
+                                               moduleService,
                                                loader,
-                                               saver);
+                                               saver,
+                                               repositoryCopier,
+                                               pomService,
+                                               metadataService);
 
-        when(project.getKModuleXMLPath()).thenReturn(pathToKieModule);
-        when(project.getImportsPath()).thenReturn(pathToProjectImports);
-        when(project.getRepositoriesPath()).thenReturn(pathToProjectRepositories);
-        when(project.getPom()).thenReturn(pom);
+        when(module.getKModuleXMLPath()).thenReturn(pathToKieModule);
+        when(module.getImportsPath()).thenReturn(pathToModuleImports);
+        when(module.getRepositoriesPath()).thenReturn(pathToModuleRepositories);
+        when(module.getPom()).thenReturn(pom);
 
-        when(pathToPom.toURI()).thenReturn("default://project/pom.xml");
+        when(pathToPom.toURI()).thenReturn("default://pom.xml");
 
         when(pomService.load(eq(pathToPom))).thenReturn(pom);
         when(kModuleService.load(eq(pathToKieModule))).thenReturn(kmodule);
-        when(importsService.load(eq(pathToProjectImports))).thenReturn(projectImports);
-        when(repositoriesService.load(eq(pathToProjectRepositories))).thenReturn(projectRepositories);
+        when(importsService.load(eq(pathToModuleImports))).thenReturn(projectImports);
+        when(repositoriesService.load(eq(pathToModuleRepositories))).thenReturn(moduleRepositories);
 
-        when(projectService.resolveProject(eq(pathToPom))).thenReturn(project);
+        when(moduleService.resolveModule(eq(pathToPom))).thenReturn(module);
 
         when(metadataService.getMetadata(eq(pathToPom))).thenReturn(pomMetaData);
         when(metadataService.getMetadata(eq(pathToKieModule))).thenReturn(kmoduleMetaData);
-        when(metadataService.getMetadata(eq(pathToProjectImports))).thenReturn(projectImportsMetaData);
+        when(metadataService.getMetadata(eq(pathToModuleImports))).thenReturn(projectImportsMetaData);
     }
 
     @Test
@@ -227,20 +250,20 @@ public class ProjectScreenServiceImplTest {
                      model.getProjectImports());
         assertEquals(projectImportsMetaData,
                      model.getProjectImportsMetaData());
-        assertEquals(pathToProjectImports,
+        assertEquals(pathToModuleImports,
                      model.getPathToImports());
 
-        assertEquals(projectRepositories,
+        assertEquals(moduleRepositories,
                      model.getRepositories());
-        assertEquals(pathToProjectRepositories,
+        assertEquals(pathToModuleRepositories,
                      model.getPathToRepositories());
 
         verify(pomService,
                times(1)).load(eq(pathToPom));
         verify(metadataService,
                times(1)).getMetadata(eq(pathToPom));
-        verify(projectService,
-               times(1)).resolveProject(eq(pathToPom));
+        verify(moduleService,
+               times(1)).resolveModule(eq(pathToPom));
 
         verify(kModuleService,
                times(1)).load(eq(pathToKieModule));
@@ -248,12 +271,12 @@ public class ProjectScreenServiceImplTest {
                times(1)).getMetadata(eq(pathToKieModule));
 
         verify(importsService,
-               times(1)).load(eq(pathToProjectImports));
+               times(1)).load(eq(pathToModuleImports));
         verify(metadataService,
-               times(1)).getMetadata(eq(pathToProjectImports));
+               times(1)).getMetadata(eq(pathToModuleImports));
 
         verify(repositoriesService,
-               times(1)).load(eq(pathToProjectRepositories));
+               times(1)).load(eq(pathToModuleRepositories));
     }
 
     @Test
@@ -273,10 +296,10 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final String comment = "comment";
 
@@ -286,7 +309,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                times(1)).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                          eq(project));
+                                                          eq(module));
 
         verify(ioService,
                times(1)).startBatch(any(FileSystem.class),
@@ -302,13 +325,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
         verify(ioService,
                times(1)).endBatch();
@@ -329,10 +352,10 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final String comment = "comment";
 
@@ -342,7 +365,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                never()).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                         eq(project));
+                                                         eq(module));
 
         verify(ioService,
                times(1)).startBatch(any(FileSystem.class),
@@ -358,13 +381,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
         verify(ioService,
                times(1)).endBatch();
@@ -387,20 +410,20 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final MavenRepositoryMetadata repositoryMetadata = new MavenRepositoryMetadata("id",
                                                                                        "url",
                                                                                        MavenRepositorySource.LOCAL);
 
-        projectRepositories.getRepositories().add(new ProjectRepositories.ProjectRepository(true,
-                                                                                            repositoryMetadata));
+        moduleRepositories.getRepositories().add(new ModuleRepositories.ModuleRepository(true,
+                                                                                         repositoryMetadata));
 
         when(repositoryResolver.getRepositoriesResolvingArtifact(eq(gav),
-                                                                 eq(project),
+                                                                 eq(module),
                                                                  eq(repositoryMetadata))).thenReturn(new HashSet<MavenRepositoryMetadata>() {{
             add(repositoryMetadata);
         }});
@@ -422,7 +445,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                times(1)).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                          eq(project),
+                                                          eq(module),
                                                           any(MavenRepositoryMetadata.class));
 
         verify(pomService,
@@ -436,13 +459,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
     }
 
@@ -461,20 +484,20 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final MavenRepositoryMetadata repositoryMetadata = new MavenRepositoryMetadata("id",
                                                                                        "url",
                                                                                        MavenRepositorySource.LOCAL);
 
-        projectRepositories.getRepositories().add(new ProjectRepositories.ProjectRepository(true,
-                                                                                            repositoryMetadata));
+        moduleRepositories.getRepositories().add(new ModuleRepositories.ModuleRepository(true,
+                                                                                         repositoryMetadata));
 
         when(repositoryResolver.getRepositoriesResolvingArtifact(eq(gav),
-                                                                 eq(project),
+                                                                 eq(module),
                                                                  eq(repositoryMetadata))).thenReturn(new HashSet<MavenRepositoryMetadata>() {{
             add(repositoryMetadata);
         }});
@@ -491,7 +514,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                never()).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                         eq(project));
+                                                         eq(module));
 
         verify(pomService,
                times(1)).save(eq(pathToPom),
@@ -504,13 +527,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
     }
 
@@ -531,21 +554,21 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final MavenRepositoryMetadata repositoryMetadata = new MavenRepositoryMetadata("id",
                                                                                        "url",
                                                                                        MavenRepositorySource.LOCAL);
 
-        projectRepositories.getRepositories().add(new ProjectRepositories.ProjectRepository(false,
-                                                                                            repositoryMetadata));
+        moduleRepositories.getRepositories().add(new ModuleRepositories.ModuleRepository(false,
+                                                                                         repositoryMetadata));
 
         final ArgumentCaptor<MavenRepositoryMetadata> filterCaptor = ArgumentCaptor.forClass(MavenRepositoryMetadata.class);
         when(repositoryResolver.getRepositoriesResolvingArtifact(eq(gav),
-                                                                 eq(project),
+                                                                 eq(module),
                                                                  filterCaptor.capture())).thenReturn(new HashSet<MavenRepositoryMetadata>());
 
         final String comment = "comment";
@@ -565,7 +588,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                times(1)).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                          eq(project));
+                                                          eq(module));
 
         verify(ioService,
                times(1)).startBatch(any(FileSystem.class),
@@ -581,13 +604,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
         verify(ioService,
                times(1)).endBatch();
@@ -608,21 +631,21 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final MavenRepositoryMetadata repositoryMetadata = new MavenRepositoryMetadata("id",
                                                                                        "url",
                                                                                        MavenRepositorySource.LOCAL);
 
-        projectRepositories.getRepositories().add(new ProjectRepositories.ProjectRepository(false,
-                                                                                            repositoryMetadata));
+        moduleRepositories.getRepositories().add(new ModuleRepositories.ModuleRepository(false,
+                                                                                         repositoryMetadata));
 
         final ArgumentCaptor<MavenRepositoryMetadata> filterCaptor = ArgumentCaptor.forClass(MavenRepositoryMetadata.class);
         when(repositoryResolver.getRepositoriesResolvingArtifact(eq(gav),
-                                                                 eq(project),
+                                                                 eq(module),
                                                                  filterCaptor.capture())).thenReturn(new HashSet<MavenRepositoryMetadata>());
 
         final String comment = "comment";
@@ -642,7 +665,7 @@ public class ProjectScreenServiceImplTest {
 
         verify(repositoryResolver,
                never()).getRepositoriesResolvingArtifact(eq(model.getPOM().getGav()),
-                                                         eq(project));
+                                                         eq(module));
 
         verify(ioService,
                times(1)).startBatch(any(FileSystem.class),
@@ -658,13 +681,13 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
         verify(ioService,
                times(1)).endBatch();
@@ -685,31 +708,36 @@ public class ProjectScreenServiceImplTest {
 
         model.setProjectImports(projectImports);
         model.setProjectImportsMetaData(projectImportsMetaData);
-        model.setPathToImports(pathToProjectImports);
+        model.setPathToImports(pathToModuleImports);
 
-        model.setRepositories(projectRepositories);
-        model.setPathToRepositories(pathToProjectRepositories);
+        model.setRepositories(moduleRepositories);
+        model.setPathToRepositories(pathToModuleRepositories);
 
         final MavenRepositoryMetadata repositoryMetadata = new MavenRepositoryMetadata("id",
                                                                                        "url",
                                                                                        MavenRepositorySource.LOCAL);
 
-        projectRepositories.getRepositories().add(new ProjectRepositories.ProjectRepository(true,
-                                                                                            repositoryMetadata));
+        moduleRepositories.getRepositories().add(new ModuleRepositories.ModuleRepository(true,
+                                                                                         repositoryMetadata));
 
         when(repositoryResolver.getRepositoriesResolvingArtifact(eq(gav),
-                                                                 eq(project),
+                                                                 eq(module),
                                                                  eq(repositoryMetadata))).thenReturn(new HashSet<MavenRepositoryMetadata>() {{
             add(repositoryMetadata);
         }});
 
         final String comment = "comment";
 
+        final WorkspaceProject projectToBeReturned = new WorkspaceProject();
+        doReturn(projectToBeReturned).when(projectService).resolveProject(pathToPom);
+
         try {
-            service.save(pathToPom,
-                         model,
-                         comment,
-                         DeploymentMode.FORCED);
+            final WorkspaceProject project = service.save(pathToPom,
+                                                          model,
+                                                          comment,
+                                                          DeploymentMode.FORCED);
+            assertEquals(projectToBeReturned,
+                         project);
         } catch (GAVAlreadyExistsException e) {
             fail("Unexpected exception thrown: " + e.getMessage());
         }
@@ -725,20 +753,106 @@ public class ProjectScreenServiceImplTest {
                               eq(kmoduleMetaData),
                               eq(comment));
         verify(importsService,
-               times(1)).save(eq(pathToProjectImports),
+               times(1)).save(eq(pathToModuleImports),
                               eq(projectImports),
                               eq(projectImportsMetaData),
                               eq(comment));
         verify(repositoriesService,
-               times(1)).save(eq(pathToProjectRepositories),
-                              eq(projectRepositories),
+               times(1)).save(eq(pathToModuleRepositories),
+                              eq(moduleRepositories),
                               eq(comment));
+    }
+
+    @Test
+    public void testCopy() throws Exception {
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final OrganizationalUnit ou = mock(OrganizationalUnit.class);
+        final Path projectRoot = mock(Path.class);
+        doReturn(ou).when(project).getOrganizationalUnit();
+        doReturn(projectRoot).when(project).getRootPath();
+
+        final Repository newRepository = mock(Repository.class);
+        final Path newRepositoryRoot = PathFactory.newPath("root", "file:///root");
+        doReturn(Optional.of(new Branch("master",
+                                        newRepositoryRoot))).when(newRepository).getDefaultBranch();
+
+        doReturn(newRepository).when(repositoryCopier).copy(ou,
+                                                            "newName",
+                                                            projectRoot);
+
+        final ArgumentCaptor<POM> pomArgumentCaptor = ArgumentCaptor.forClass(POM.class);
+
+        final POM pom = new POM();
+        doReturn(pom).when(pomService).load(any(Path.class));
+
+        final Metadata metadata = mock(Metadata.class);
+        doReturn(metadata).when(metadataService).getMetadata(any(Path.class));
+
+        service.copy(project,
+                     "newName");
+
+        verify(pomService).save(any(Path.class),
+                                pomArgumentCaptor.capture(),
+                                eq(metadata),
+                                eq("Renaming the project."),
+                                eq(true));
+
+        final POM updatedPom = pomArgumentCaptor.getValue();
+        assertEquals("newName", updatedPom.getName());
+        assertEquals("newName", updatedPom.getGav().getArtifactId());
+    }
+
+    @Test
+    public void testCopyNoPOM() throws Exception {
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final OrganizationalUnit ou = mock(OrganizationalUnit.class);
+        final Path projectRoot = mock(Path.class);
+        doReturn(ou).when(project).getOrganizationalUnit();
+        doReturn(projectRoot).when(project).getRootPath();
+
+        final Repository newRepository = mock(Repository.class);
+        final Path newRepositoryRoot = PathFactory.newPath("root", "file:///root");
+
+        doReturn(Optional.of(new Branch("master", newRepositoryRoot))).when(newRepository).getDefaultBranch();
+
+        doReturn(newRepository).when(repositoryCopier).copy(ou,
+                                                            "newName",
+                                                            projectRoot);
+
+        doReturn(null).when(pomService).load(any(Path.class));
+
+        service.copy(project,
+                     "newName");
+
+        verify(repositoryCopier).copy(ou,
+                                      "newName",
+                                      projectRoot);
+
+        verify(metadataService, never()).getMetadata(any(Path.class));
+        verify(pomService, never()).save(any(Path.class),
+                                         any(POM.class),
+                                         any(Metadata.class),
+                                         anyString(),
+                                         anyBoolean());
     }
 
     @Test
     public void testReImport() throws Exception {
         service.reImport(pathToPom);
 
-        verify(projectService).reImport(pathToPom);
+        verify(moduleService).reImport(pathToPom);
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+        final WorkspaceProject project = mock(WorkspaceProject.class);
+        final Repository repository = mock(Repository.class);
+
+        doReturn(repository).when(project).getRepository();
+        doReturn("myrepo").when(repository).getAlias();
+
+        service.delete(project);
+
+        verify(repositoryService).removeRepository("myrepo");
     }
 }

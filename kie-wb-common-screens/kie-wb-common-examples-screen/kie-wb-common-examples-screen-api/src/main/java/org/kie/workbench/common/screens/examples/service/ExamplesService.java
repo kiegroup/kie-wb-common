@@ -24,7 +24,6 @@ import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
-import org.kie.workbench.common.screens.examples.model.ExampleTargetRepository;
 import org.kie.workbench.common.screens.examples.model.ExamplesMetaData;
 import org.uberfire.commons.lifecycle.PriorityDisposable;
 
@@ -39,10 +38,6 @@ public interface ExamplesService extends PriorityDisposable {
 
     Set<ExampleProject> getProjects(final ExampleRepository repository);
 
-    boolean validateRepositoryName(final String name);
-
     ProjectContextChangeEvent setupExamples(final ExampleOrganizationalUnit exampleTargetOU,
-                                            final ExampleTargetRepository exampleTarget,
-                                            final String branch,
                                             final List<ExampleProject> exampleProjects);
 }

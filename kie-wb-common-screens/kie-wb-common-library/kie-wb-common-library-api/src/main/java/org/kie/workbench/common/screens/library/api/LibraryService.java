@@ -21,13 +21,11 @@ import java.util.Set;
 
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.guvnor.common.services.project.model.GAV;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
-import org.kie.workbench.common.services.shared.project.KieProject;
 
 @Remote
 public interface LibraryService {
@@ -39,15 +37,12 @@ public interface LibraryService {
 
     OrganizationalUnitRepositoryInfo getOrganizationalUnitRepositoryInfo(final OrganizationalUnit selectedOrganizationalUnit);
 
-    LibraryInfo getLibraryInfo(final Repository selectedRepository,
-                               final String branch);
+    LibraryInfo getLibraryInfo(final OrganizationalUnit organizationalUnit);
 
-    KieProject createProject(final String projectName,
-                             final OrganizationalUnit selectedOrganizationalUnit,
-                             final Repository selectedRepository,
-                             final String baseURL,
-                             final String projectDescription,
-                             final DeploymentMode mode);
+    WorkspaceProject createProject(final String projectName,
+                                   final OrganizationalUnit selectedOrganizationalUnit,
+                                   final String projectDescription,
+                                   DeploymentMode deploymentMode);
 
     KieProject createProject(final String name,
                              final String description,
@@ -63,10 +58,9 @@ public interface LibraryService {
 
     List<AssetInfo> getProjectAssets(final ProjectAssetsQuery query);
 
-    Boolean hasProjects(final Repository repository,
-                        final String branch);
+    Boolean hasProjects(final OrganizationalUnit organizationalUnit);
 
-    Boolean hasAssets(final Project project);
+    Boolean hasAssets(final WorkspaceProject project);
 
     Set<ExampleProject> getExampleProjects();
 
@@ -77,9 +71,11 @@ public interface LibraryService {
                           final String branch,
                           final ExampleProject exampleProject);
 
-    Project importProject(final ExampleProject exampleProject);
+    WorkspaceProject importProject(final ExampleProject exampleProject);
 
     List<OrganizationalUnit> getOrganizationalUnits();
+
+    OrganizationalUnit getDefaultOrganizationalUnit();
 
     GAV createGAV(final String projectName,
                   final OrganizationalUnit selectedOrganizationalUnit);

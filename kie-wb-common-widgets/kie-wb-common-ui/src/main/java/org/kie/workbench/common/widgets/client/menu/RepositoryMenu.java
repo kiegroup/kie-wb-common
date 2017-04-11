@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModule;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.widgets.client.resources.i18n.ToolsMenuConstants;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.mvp.Command;
@@ -36,56 +36,48 @@ import org.uberfire.workbench.model.menu.MenuItem;
 public class RepositoryMenu {
 
     @Inject
-    private PlaceManager placeManager;
-
-    @Inject
-    protected Caller<KieProjectService> projectService;
-
-
+    protected Caller<KieModuleService> moduleService;
 
     @Inject
     protected ProjectContext context;
-    
-    
-    private MenuItem repositoryStructureScreen = MenuFactory.newSimpleItem( ToolsMenuConstants.INSTANCE.RepositoryStructure() ).respondsWith(
-            new Command() {
-                @Override
-                public void execute() {
-                    placeManager.goTo( "repositoryStructureScreen" );
-                }
-            } ).endMenu().build().getItems().get( 0 );
 
-    private MenuItem categoriesEditor = MenuFactory.newSimpleItem( ToolsMenuConstants.INSTANCE.CategoriesEditor() ).respondsWith(
+    @Inject
+    private PlaceManager placeManager;
+
+    private MenuItem repositoryStructureScreen = MenuFactory.newSimpleItem(ToolsMenuConstants.INSTANCE.RepositoryStructure()).respondsWith(
             new Command() {
                 @Override
                 public void execute() {
-                    placeManager.goTo( "CategoryManager" );
+                    placeManager.goTo("repositoryStructureScreen");
                 }
-            } ).endMenu().build().getItems().get( 0 );
-    
-    
+            }).endMenu().build().getItems().get(0);
+
+    private MenuItem categoriesEditor = MenuFactory.newSimpleItem(ToolsMenuConstants.INSTANCE.CategoriesEditor()).respondsWith(
+            new Command() {
+                @Override
+                public void execute() {
+                    placeManager.goTo("CategoryManager");
+                }
+            }).endMenu().build().getItems().get(0);
 
     public List<MenuItem> getMenuItems() {
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-        
+
         //@TODO: the idea is to remove this one when we add the option to the project explorer
-        
-        menuItems.add( repositoryStructureScreen );
-        
-        
+
+        menuItems.add(repositoryStructureScreen);
+
         //menuItems.add( categoriesEditor );
 
         return menuItems;
     }
-    
+
     //@TODO: we need to remove these two when we remove the projectScreen from here
-    public void onProjectContextChanged( @Observes final ProjectContextChangeEvent event ) {
-        enableToolsMenuItems( (KieProject) event.getProject() );
+    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+        enableToolsMenuItems((KieModule) event.getModule());
     }
 
-    private void enableToolsMenuItems( final KieProject project ) {
-        final boolean enabled = ( project != null );
-        
+    private void enableToolsMenuItems(final KieModule module) {
+        final boolean enabled = (module != null);
     }
-
 }

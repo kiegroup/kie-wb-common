@@ -23,7 +23,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -38,23 +38,23 @@ import org.uberfire.java.nio.file.FileSystemAlreadyExistsException;
 @ApplicationScoped
 public class DataSourceServicesHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger( DataSourceServicesHelper.class );
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceServicesHelper.class);
 
     @Inject
-    @Named( "ioStrategy" )
+    @Named("ioStrategy")
     private IOService ioService;
 
     @Inject
     private DefRegistry defRegistry;
 
     /**
-     *  Root to the platform data sources and drivers repository.
+     * Root to the platform data sources and drivers repository.
      */
     private org.uberfire.java.nio.file.Path root;
 
     /**
      * Filesystem that will hold the platform data sources. Platform data sources has a global scope instead of belong
-     * to a given project.
+     * to a given module.
      */
     private FileSystem fileSystem;
 
@@ -66,17 +66,20 @@ public class DataSourceServicesHelper {
         String repositoryURI = null;
         try {
             repositoryURI = "default://" + getGlobalFileSystemName();
-            fileSystem = ioService.newFileSystem( URI.create( repositoryURI ),
-                    new HashMap<String, Object>() {{
-                        put( "init", Boolean.TRUE );
-                        put( "internal", Boolean.TRUE );
-                    }} );
+            fileSystem = ioService.newFileSystem(URI.create(repositoryURI),
+                                                 new HashMap<String, Object>() {{
+                                                     put("init",
+                                                         Boolean.TRUE);
+                                                     put("internal",
+                                                         Boolean.TRUE);
+                                                 }});
 
-            logger.debug( "Data sources platform repository: {} was successfully created.", repositoryURI );
-
-        } catch ( FileSystemAlreadyExistsException e ) {
-            logger.debug( "Data sources platform repository: {} already exits and will be used.", repositoryURI );
-            fileSystem = ioService.getFileSystem( URI.create( repositoryURI ) );
+            logger.debug("Data sources platform repository: {} was successfully created.",
+                         repositoryURI);
+        } catch (FileSystemAlreadyExistsException e) {
+            logger.debug("Data sources platform repository: {} already exits and will be used.",
+                         repositoryURI);
+            fileSystem = ioService.getFileSystem(URI.create(repositoryURI));
         }
         this.root = fileSystem.getRootDirectories().iterator().next();
     }
@@ -85,33 +88,33 @@ public class DataSourceServicesHelper {
      * Returns the path where platform global data sources and drivers al located.
      */
     public Path getGlobalDataSourcesContext() {
-        return Paths.convert( root );
+        return Paths.convert(root);
     }
 
     /**
-     * Returns the path where data sources and drivers are located for a given project.
+     * Returns the path where data sources and drivers are located for a given module.
      */
-    public Path getProjectDataSourcesContext( final Project project ) {
-        Path rootPath = project.getRootPath();
-        org.uberfire.java.nio.file.Path dataSourcesNioPath = Paths.convert( rootPath ).resolve( "src/main/resources/META-INF" );
-        return Paths.convert( dataSourcesNioPath );
+    public Path getModuleDataSourcesContext(final Module module) {
+        Path rootPath = module.getRootPath();
+        org.uberfire.java.nio.file.Path dataSourcesNioPath = Paths.convert(rootPath).resolve("src/main/resources/META-INF");
+        return Paths.convert(dataSourcesNioPath);
     }
 
-    public DefRegistry getDefRegistry( ) {
+    public DefRegistry getDefRegistry() {
         return defRegistry;
     }
 
-    public boolean isDriverFile( Path path ) {
-        return path != null && path.getFileName( ).endsWith( ".driver" );
+    public boolean isDriverFile(Path path) {
+        return path != null && path.getFileName().endsWith(".driver");
     }
 
-    public boolean isDataSourceFile( Path path ) {
-        return path != null && path.getFileName( ).endsWith( ".datasource" );
+    public boolean isDataSourceFile(Path path) {
+        return path != null && path.getFileName().endsWith(".datasource");
     }
 
     private String getGlobalFileSystemName() {
-        String name = System.getProperty( "org.kie.workbench.datasource-filesystem" );
-        if ( name == null || "".equals( name ) ) {
+        String name = System.getProperty("org.kie.workbench.datasource-filesystem");
+        if (name == null || "".equals(name)) {
             name = "datasources";
         }
         return name;

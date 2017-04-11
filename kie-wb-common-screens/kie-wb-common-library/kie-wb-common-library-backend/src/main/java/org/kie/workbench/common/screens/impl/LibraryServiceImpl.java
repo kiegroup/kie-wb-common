@@ -36,19 +36,18 @@ import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
+import org.guvnor.common.services.project.project.ProjectMigrationService;
 import org.guvnor.common.services.project.service.DeploymentMode;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.RepositoryEnvironmentConfigurations;
-import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.security.OrganizationalUnitAction;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
-import org.kie.workbench.common.screens.examples.model.ExampleTargetRepository;
 import org.kie.workbench.common.screens.examples.service.ExamplesService;
 import org.kie.workbench.common.screens.explorer.backend.server.ExplorerServiceHelper;
 import org.kie.workbench.common.screens.explorer.model.FolderItem;
@@ -59,7 +58,7 @@ import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.OrganizationalUnitRepositoryInfo;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
 import org.kie.workbench.common.screens.library.api.index.LibraryValueFileNameIndexTerm;
-import org.kie.workbench.common.screens.library.api.index.LibraryValueProjectRootPathIndexTerm;
+import org.kie.workbench.common.screens.library.api.index.LibraryValueModuleRootPathIndexTerm;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.projecteditor.util.NewProjectUtils;
@@ -67,8 +66,7 @@ import org.kie.workbench.common.services.refactoring.model.index.terms.valueterm
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
 import org.kie.workbench.common.services.refactoring.service.RefactoringQueryService;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -90,8 +88,6 @@ public class LibraryServiceImpl implements LibraryService {
 
     private RefactoringQueryService refactoringQueryService;
     private OrganizationalUnitService ouService;
-    private RepositoryService repositoryService;
-    private KieProjectService kieProjectService;
     private LibraryPreferences preferences;
 
     private LibraryInternalPreferences internalPreferences;
@@ -99,8 +95,10 @@ public class LibraryServiceImpl implements LibraryService {
     private AuthorizationManager authorizationManager;
     private SessionInfo sessionInfo;
     private ExplorerServiceHelper explorerServiceHelper;
-    private KieProjectService projectService;
+    private ProjectService projectService;
+    private KieModuleService moduleService;
     private ExamplesService examplesService;
+    private ProjectMigrationService projectMigrationService;
     private IOService ioService;
     private SocialUserRepositoryAPI socialUserRepositoryAPI;
 
@@ -109,28 +107,28 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Inject
     public LibraryServiceImpl(final OrganizationalUnitService ouService,
-                              final RepositoryService repositoryService,
-                              final KieProjectService kieProjectService,
                               final RefactoringQueryService refactoringQueryService,
                               final LibraryPreferences preferences,
                               final AuthorizationManager authorizationManager,
                               final SessionInfo sessionInfo,
                               final ExplorerServiceHelper explorerServiceHelper,
-                              final KieProjectService projectService,
+                              final ProjectService projectService,
+                              final KieModuleService moduleService,
                               final ExamplesService examplesService,
+                              final ProjectMigrationService projectMigrationService,
                               @Named("ioStrategy") final IOService ioService,
                               final LibraryInternalPreferences internalPreferences,
                               final SocialUserRepositoryAPI socialUserRepositoryAPI) {
         this.ouService = ouService;
-        this.repositoryService = repositoryService;
-        this.kieProjectService = kieProjectService;
         this.refactoringQueryService = refactoringQueryService;
         this.preferences = preferences;
         this.authorizationManager = authorizationManager;
         this.sessionInfo = sessionInfo;
         this.explorerServiceHelper = explorerServiceHelper;
         this.projectService = projectService;
+        this.moduleService = moduleService;
         this.examplesService = examplesService;
+        this.projectMigrationService = projectMigrationService;
         this.ioService = ioService;
         this.internalPreferences = internalPreferences;
         this.socialUserRepositoryAPI = socialUserRepositoryAPI;
@@ -147,7 +145,6 @@ public class LibraryServiceImpl implements LibraryService {
             return null;
         }
 
-        final Repository selectedRepository = getDefaultRepository(selectedOrganizationalUnit);
         final List<OrganizationalUnit> organizationalUnits = getOrganizationalUnits();
         final OrganizationalUnit organizationalUnit = getOrganizationalUnit(selectedOrganizationalUnit.getIdentifier(),
                                                                             organizationalUnits).get();
@@ -155,27 +152,19 @@ public class LibraryServiceImpl implements LibraryService {
 
         return new OrganizationalUnitRepositoryInfo(organizationalUnits,
                                                     organizationalUnit,
-                                                    repositories,
-                                                    selectedRepository);
+                                                    repositories);
     }
 
     @Override
-    public LibraryInfo getLibraryInfo(final Repository selectedRepository,
-                                      final String branch) {
-        final List<Project> projects = getProjects(selectedRepository,
-                                                   branch);
-        return new LibraryInfo(branch,
-                               projects);
+    public LibraryInfo getLibraryInfo(final OrganizationalUnit organizationalUnit) {
+        return new LibraryInfo(projectService.getAllProjects(organizationalUnit));
     }
 
     @Override
-    public KieProject createProject(final String projectName,
-                                    final OrganizationalUnit selectedOrganizationalUnit,
-                                    final Repository selectedRepository,
-                                    final String baseURL,
-                                    final String projectDescription,
-                                    final DeploymentMode mode) {
-        final Path selectedRepositoryRootPath = selectedRepository.getRoot();
+    public WorkspaceProject createProject(final String projectName,
+                                 final OrganizationalUnit selectedOrganizationalUnit,
+                                 final String projectDescription,
+                                 final DeploymentMode deploymentMode) {
 
         final GAV gav = createGAV(projectName,
                                   selectedOrganizationalUnit);
@@ -183,12 +172,9 @@ public class LibraryServiceImpl implements LibraryService {
                                   projectDescription,
                                   gav);
 
-        final KieProject kieProject = kieProjectService.newProject(selectedRepositoryRootPath,
-                                                                   pom,
-                                                                   baseURL,
-                                                                   mode);
-
-        return kieProject;
+        return projectService.newProject(selectedOrganizationalUnit,
+                                         pom,
+                                         deploymentMode);
     }
 
     @Override
@@ -220,14 +206,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public Boolean thereIsAProjectInTheWorkbench() {
-        return getOrganizationalUnits().stream()
-                .flatMap(organizationalUnit -> organizationalUnit.getRepositories().stream()
-                        .filter(repository -> authorizationManager.authorize(repository,
-                                                                             sessionInfo.getIdentity())))
-                .flatMap(repository -> repository.getBranches().stream()
-                        .map(branch -> kieProjectService.getProjects(repository,
-                                                                     branch)))
-                .anyMatch(projects -> projects != null && !projects.isEmpty());
+        return !projectService.getAllProjects().isEmpty();
     }
 
     @Override
@@ -235,25 +214,25 @@ public class LibraryServiceImpl implements LibraryService {
         checkNotNull("query",
                      query);
 
-        final boolean projectStillExists = ioService.exists(Paths.convert(query.getProject().getRootPath()));
+        final boolean projectStillExists = ioService.exists(Paths.convert(query.getProject().getBranch().getPath()));
         if (!projectStillExists) {
             return Collections.emptyList();
         }
 
         final HashSet<ValueIndexTerm> queryTerms = new HashSet<>();
 
-        queryTerms.add(new LibraryValueProjectRootPathIndexTerm(query.getProject().getRootPath().toURI()));
+        queryTerms.add(new LibraryValueModuleRootPathIndexTerm(query.getProject().getBranch().getPath().toURI()));
 
         if (query.hasFilter()) {
             queryTerms.add(new LibraryValueFileNameIndexTerm("*" + query.getFilter() + "*",
                                                              ValueIndexTerm.TermSearchType.WILDCARD));
         }
 
-        final PageResponse<RefactoringPageRow> findRulesByProjectQuery = refactoringQueryService.query(new RefactoringPageRequest(FindAllLibraryAssetsQuery.NAME,
-                                                                                                                                  queryTerms,
-                                                                                                                                  query.getStartIndex(),
-                                                                                                                                  query.getAmount()));
-        final List<FolderItem> assets = findRulesByProjectQuery
+        final PageResponse<RefactoringPageRow> findRulesByModuleQuery = refactoringQueryService.query(new RefactoringPageRequest(FindAllLibraryAssetsQuery.NAME,
+                                                                                                                                 queryTerms,
+                                                                                                                                 query.getStartIndex(),
+                                                                                                                                 query.getAmount()));
+        final List<FolderItem> assets = findRulesByModuleQuery
                 .getPageRowList()
                 .stream()
                 .map(row -> {
@@ -294,15 +273,13 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Boolean hasProjects(final Repository repository,
-                               final String branch) {
-        return !getProjects(repository,
-                            branch).isEmpty();
+    public Boolean hasProjects(final OrganizationalUnit organizationalUnit) {
+        return !projectService.getAllProjects(organizationalUnit).isEmpty();
     }
 
     @Override
-    public Boolean hasAssets(final Project project) {
-        checkNotNull("project",
+    public Boolean hasAssets(final WorkspaceProject project) {
+        checkNotNull("LibraryServiceImpl.project",
                      project);
 
         final boolean projectStillExists = ioService.exists(Paths.convert(project.getRootPath()));
@@ -310,7 +287,7 @@ public class LibraryServiceImpl implements LibraryService {
             return false;
         }
 
-        final Package defaultPackage = projectService.resolveDefaultPackage(project);
+        final Package defaultPackage = moduleService.resolveDefaultPackage(project);
         return explorerServiceHelper.hasAssets(defaultPackage);
     }
 
@@ -321,7 +298,9 @@ public class LibraryServiceImpl implements LibraryService {
                 ? examplesService.getPlaygroundRepository()
                 : new ExampleRepository(importProjectsUrl);
 
-        return examplesService.getProjects(repository);
+        final Set<ExampleProject> projects = examplesService.getProjects(repository);
+
+        return projects;
     }
 
     @Override
@@ -335,29 +314,23 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Project importProject(final ExampleProject exampleProject) {
+    public WorkspaceProject importProject(final ExampleProject exampleProject) {
         final OrganizationalUnit ou = getDefaultOrganizationalUnit();
         return importProject(ou,
-                             getDefaultRepository(ou),
-                             "master",
                              exampleProject);
     }
 
     @Override
-    public Project importProject(final OrganizationalUnit organizationalUnit,
-                                 final Repository repository,
-                                 final String branch,
+    public WorkspaceProject importProject(final OrganizationalUnit organizationalUnit,
                                  final ExampleProject exampleProject) {
         final ExampleOrganizationalUnit exampleOrganizationalUnit = new ExampleOrganizationalUnit(organizationalUnit.getName());
-        final ExampleTargetRepository exampleRepository = new ExampleTargetRepository(repository.getAlias());
+
         final List<ExampleProject> exampleProjects = Collections.singletonList(exampleProject);
 
         final ProjectContextChangeEvent projectContextChangeEvent = examplesService.setupExamples(exampleOrganizationalUnit,
-                                                                                                  exampleRepository,
-                                                                                                  branch,
                                                                                                   exampleProjects);
 
-        return projectContextChangeEvent.getProject();
+        return projectContextChangeEvent.getWorkspaceProject();
     }
 
     @Override
@@ -450,49 +423,9 @@ public class LibraryServiceImpl implements LibraryService {
         }
     }
 
-    private Repository getDefaultRepository(final OrganizationalUnit ou) {
-        final String lastOpenedRepositoryName = getInternalPreferences().getLastOpenedRepository();
-        final String primaryDefaultRepositoryName = getPrimaryDefaultRepositoryName(ou);
-        final String secondaryDefaultRepositoryName = getSecondaryDefaultRepositoryName(ou);
-
-        final List<Repository> repositories = new ArrayList<>(ou.getRepositories());
-        final Optional<Repository> lastOpenedRepository = getRepositoryByName(lastOpenedRepositoryName,
-                                                                              repositories);
-        final Optional<Repository> primaryRepository = getRepositoryByName(primaryDefaultRepositoryName,
-                                                                           repositories);
-        final Optional<Repository> secondaryRepository = getRepositoryByName(secondaryDefaultRepositoryName,
-                                                                             repositories);
-
-        if (lastOpenedRepository.isPresent()) {
-            return lastOpenedRepository.get();
-        } else if (primaryRepository.isPresent()) {
-            return primaryRepository.get();
-        } else if (secondaryRepository.isPresent()) {
-            return secondaryRepository.get();
-        } else if (!repositories.isEmpty()) {
-            return repositories.get(0);
-        } else {
-            if (repositoryService.getRepository(primaryDefaultRepositoryName) == null) {
-                return createDefaultRepository(ou,
-                                               primaryDefaultRepositoryName);
-            } else if (repositoryService.getRepository(secondaryDefaultRepositoryName) == null) {
-                return createDefaultRepository(ou,
-                                               secondaryDefaultRepositoryName);
-            } else {
-                int i = 1;
-                while (repositoryService.getRepository(secondaryDefaultRepositoryName + "-" + ++i) != null) {
-                }
-                return createDefaultRepository(ou,
-                                               secondaryDefaultRepositoryName + "-" + i);
-            }
-        }
-    }
-
-    private Optional<Repository> getRepositoryByName(String lastOpenedRepositoryName,
-                                                     List<Repository> repositories) {
-        return repositories.stream()
-                .filter(r -> r.getAlias().equalsIgnoreCase(lastOpenedRepositoryName))
-                .findAny();
+    @Override
+    public void migrate(final WorkspaceProject activeProject) {
+        projectMigrationService.migrate(activeProject);
     }
 
     private OrganizationalUnit createDefaultOrganizationalUnit() {
@@ -514,40 +447,11 @@ public class LibraryServiceImpl implements LibraryService {
                                                   contributors);
     }
 
-    private Repository createDefaultRepository(final OrganizationalUnit ou,
-                                               final String repositoryName) {
-        final String scheme = getPreferences().getRepositoryPreferences().getScheme();
-        final RepositoryEnvironmentConfigurations configuration = getDefaultRepositoryEnvironmentConfigurations();
-
-        return repositoryService.createRepository(ou,
-                                                  scheme,
-                                                  repositoryName,
-                                                  configuration);
-    }
-
     private Optional<OrganizationalUnit> getOrganizationalUnit(final String identifier,
                                                                final Collection<OrganizationalUnit> organizationalUnits) {
         return organizationalUnits.stream()
                 .filter(p -> p.getIdentifier().equalsIgnoreCase(identifier))
                 .findFirst();
-    }
-
-    private String getPrimaryDefaultRepositoryName(final OrganizationalUnit ou) {
-        return getPreferences().getRepositoryPreferences().getName();
-    }
-
-    String getSecondaryDefaultRepositoryName(final OrganizationalUnit ou) {
-        final String sanitizedOuIdentifier = ou.getIdentifier().replaceAll("[^A-Za-z0-9]",
-                                                                           "-");
-        final String repositoryNameSuffix = getPreferences().getRepositoryPreferences().getName();
-        final String repositoryName = sanitizedOuIdentifier + "-" + repositoryNameSuffix;
-
-        return repositoryName;
-    }
-
-    private RepositoryEnvironmentConfigurations getDefaultRepositoryEnvironmentConfigurations() {
-        final RepositoryEnvironmentConfigurations configuration = new RepositoryEnvironmentConfigurations();
-        return configuration;
     }
 }
 

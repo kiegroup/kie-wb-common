@@ -24,21 +24,19 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.model.ProjectWizard;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.guvnor.common.services.project.service.ProjectService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.util.KiePOMDefaultOptions;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.client.callbacks.Callback;
@@ -54,21 +52,18 @@ public class NewProjectWizard
         extends AbstractWizard
         implements ProjectWizard {
 
+    boolean openEditor = true;
+    private Caller<ProjectService> projectService;
     private PlaceManager placeManager;
     private Event<NotificationEvent> notificationEvent;
     private POMWizardPage pomWizardPage;
     private BusyIndicatorView busyIndicatorView;
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-    private Caller<KieProjectService> projectServiceCaller;
     private ProjectContext context;
     private KiePOMDefaultOptions pomDefaultOptions;
-
     private ArrayList<WizardPage> pages = new ArrayList<WizardPage>();
-    private Callback<Project> projectCallback;
-
-    boolean openEditor = true;
-
-    //Used by ErrorCallback for "OK" operation, when New Project is to be created.
+    private Callback<WorkspaceProject> moduleCallback;
+    //Used by ErrorCallback for "OK" operation, when New Module is to be created.
     private Map<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable> errors = new HashMap<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable>() {{
         put(GAVAlreadyExistsException.class,
             new CommandWithThrowableDrivenErrorCallback.CommandWithThrowable() {
@@ -93,20 +88,20 @@ public class NewProjectWizard
     }
 
     @Inject
-    public NewProjectWizard(final PlaceManager placeManager,
+    public NewProjectWizard(final Caller<ProjectService> projectService,
+                            final PlaceManager placeManager,
                             final Event<NotificationEvent> notificationEvent,
                             final POMWizardPage pomWizardPage,
                             final BusyIndicatorView busyIndicatorView,
                             final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                            final Caller<KieProjectService> projectServiceCaller,
                             final ProjectContext context,
                             final KiePOMDefaultOptions pomDefaultOptions) {
+        this.projectService = projectService;
         this.placeManager = placeManager;
         this.notificationEvent = notificationEvent;
         this.pomWizardPage = pomWizardPage;
         this.busyIndicatorView = busyIndicatorView;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.projectServiceCaller = projectServiceCaller;
         this.context = context;
         this.pomDefaultOptions = pomDefaultOptions;
     }
@@ -169,16 +164,13 @@ public class NewProjectWizard
     }
 
     private void onComplete(final DeploymentMode mode) {
-        final String url = GWT.getModuleBaseURL();
-        final String baseUrl = url.replace(GWT.getModuleName() + "/",
-                                           "");
         busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Saving());
-        projectServiceCaller.call(getSuccessCallback(),
-                                  new CommandWithThrowableDrivenErrorCallback(busyIndicatorView,
-                                                                              errors)).newProject(context.getActiveRepositoryRoot(),
-                                                                                                  pomWizardPage.getPom(),
-                                                                                                  baseUrl,
-                                                                                                  mode);
+
+        projectService.call(getSuccessCallback(),
+                            new CommandWithThrowableDrivenErrorCallback(busyIndicatorView,
+                                                                        errors)).newProject(context.getActiveOrganizationalUnit(),
+                                                                                            pomWizardPage.getPom(),
+                                                                                            mode);
     }
 
     @Override
@@ -189,23 +181,23 @@ public class NewProjectWizard
     @Override
     public void start() {
         this.openEditor = true;
-        this.projectCallback = null;
+        this.moduleCallback = null;
         super.start();
     }
 
     @Override
-    public void start(Callback<Project> callback,
-                      boolean openEditor) {
-        this.projectCallback = callback;
+    public void start(final Callback<WorkspaceProject> callback,
+                      final boolean openEditor) {
+        this.moduleCallback = callback;
         this.openEditor = openEditor;
         super.start();
     }
 
-    private RemoteCallback<KieProject> getSuccessCallback() {
-        return new RemoteCallback<KieProject>() {
+    private RemoteCallback<WorkspaceProject> getSuccessCallback() {
+        return new RemoteCallback<WorkspaceProject>() {
 
             @Override
-            public void callback(final KieProject project) {
+            public void callback(final WorkspaceProject project) {
                 NewProjectWizard.super.complete();
                 invokeCallback(project);
                 if (openEditor) {
@@ -217,10 +209,10 @@ public class NewProjectWizard
         };
     }
 
-    private void invokeCallback(Project project) {
-        if (projectCallback != null) {
-            projectCallback.callback(project);
-            projectCallback = null;
+    private void invokeCallback(final WorkspaceProject project) {
+        if (moduleCallback != null) {
+            moduleCallback.callback(project);
+            moduleCallback = null;
         }
     }
 }

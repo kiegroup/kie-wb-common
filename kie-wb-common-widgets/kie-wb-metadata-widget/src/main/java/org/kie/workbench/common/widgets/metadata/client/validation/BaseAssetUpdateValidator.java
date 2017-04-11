@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.uberfire.ext.editor.commons.client.validation.ValidationErrorReason;
 import org.uberfire.ext.editor.commons.client.validation.Validator;
 import org.uberfire.ext.editor.commons.client.validation.ValidatorCallback;
@@ -54,7 +54,7 @@ public abstract class BaseAssetUpdateValidator implements Validator {
     protected abstract Validator getFileNameValidator();
 
     private boolean canUpdateProject() {
-        final Project activeProject = workbenchContext.getActiveProject();
+        final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject();
         return activeProject == null || projectController.canUpdateProject(activeProject);
     }
 }

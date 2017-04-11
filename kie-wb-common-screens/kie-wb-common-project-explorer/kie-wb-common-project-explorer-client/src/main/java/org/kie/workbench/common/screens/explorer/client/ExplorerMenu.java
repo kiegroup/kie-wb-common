@@ -38,14 +38,14 @@ public class ExplorerMenu {
     }
 
     @Inject
-    public ExplorerMenu( final ExplorerMenuView view,
-                         final ActiveContextOptions activeOptions,
-                         final ProjectContext projectContext ) {
+    public ExplorerMenu(final ExplorerMenuView view,
+                        final ActiveContextOptions activeOptions,
+                        final ProjectContext projectContext) {
         this.view = view;
         this.activeOptions = activeOptions;
         this.context = projectContext;
 
-        view.setPresenter( this );
+        view.setPresenter(this);
     }
 
     public Menus asMenu() {
@@ -53,13 +53,13 @@ public class ExplorerMenu {
     }
 
     public void refresh() {
-        if ( activeOptions.isTreeNavigatorVisible() ) {
+        if (activeOptions.isTreeNavigatorVisible()) {
             view.showTreeNav();
         } else {
             view.showBreadcrumbNav();
         }
 
-        if ( activeOptions.isTechnicalViewActive() ) {
+        if (activeOptions.isTechnicalViewActive()) {
             view.showTechViewIcon();
             view.hideBusinessViewIcon();
         } else {
@@ -67,23 +67,23 @@ public class ExplorerMenu {
             view.hideTechViewIcon();
         }
 
-        if ( activeOptions.canShowTag() ) {
+        if (activeOptions.canShowTag()) {
             view.showTagFilterIcon();
         } else {
             view.hideTagFilterIcon();
         }
     }
 
-    public void addRefreshCommand( Command refreshCommand ) {
+    public void addRefreshCommand(Command refreshCommand) {
         this.refreshCommand = refreshCommand;
     }
 
-    public void addUpdateCommand( Command updateCommand ) {
+    public void addUpdateCommand(Command updateCommand) {
         this.updateCommand = updateCommand;
     }
 
     public void onBusinessViewSelected() {
-        if ( !activeOptions.isBusinessViewActive() ) {
+        if (!activeOptions.isBusinessViewActive()) {
             activeOptions.activateBusinessView();
             refresh();
             updateCommand.execute();
@@ -91,7 +91,7 @@ public class ExplorerMenu {
     }
 
     public void onTechViewSelected() {
-        if ( !activeOptions.isTechnicalViewActive() ) {
+        if (!activeOptions.isTechnicalViewActive()) {
             activeOptions.activateTechView();
             refresh();
             updateCommand.execute();
@@ -99,7 +99,7 @@ public class ExplorerMenu {
     }
 
     public void onTreeExplorerSelected() {
-        if ( !activeOptions.isTreeNavigatorVisible() ) {
+        if (!activeOptions.isTreeNavigatorVisible()) {
             activeOptions.activateTreeViewNavigation();
             refresh();
             updateCommand.execute();
@@ -107,7 +107,7 @@ public class ExplorerMenu {
     }
 
     public void onBreadCrumbExplorerSelected() {
-        if ( !activeOptions.isBreadCrumbNavigationVisible() ) {
+        if (!activeOptions.isBreadCrumbNavigationVisible()) {
             activeOptions.activateBreadCrumbNavigation();
             refresh();
             updateCommand.execute();
@@ -115,7 +115,7 @@ public class ExplorerMenu {
     }
 
     public void onShowTagFilterSelected() {
-        if ( activeOptions.canShowTag() ) {
+        if (activeOptions.canShowTag()) {
             activeOptions.disableTagFiltering();
         } else {
             activeOptions.activateTagFiltering();
@@ -125,11 +125,11 @@ public class ExplorerMenu {
     }
 
     public void onArchiveActiveProject() {
-        view.archive( context.getActiveProject().getRootPath() );
+        view.archive(context.getActiveModule().getRootPath());
     }
 
     public void onArchiveActiveRepository() {
-        view.archive( context.getActiveRepository().getRoot() );
+        view.archive(context.getActiveProject().getRepository().getRoot());
     }
 
     public void onRefresh() {
