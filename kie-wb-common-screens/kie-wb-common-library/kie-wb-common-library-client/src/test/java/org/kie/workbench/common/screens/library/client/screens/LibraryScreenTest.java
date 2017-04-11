@@ -18,12 +18,11 @@ package org.kie.workbench.common.screens.library.client.screens;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterEditOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
-import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -57,9 +56,6 @@ public class LibraryScreenTest {
     private ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters;
 
     @Mock
-    private ProjectContext projectContext;
-
-    @Mock
     private OrganizationalUnitController organizationalUnitController;
 
     @Mock
@@ -82,7 +78,6 @@ public class LibraryScreenTest {
 
     @Mock
     private LibraryService libraryService;
-    private Caller<LibraryService> libraryServiceCaller;
 
     @Mock
     private LibraryPlaces libraryPlaces;
@@ -96,11 +91,13 @@ public class LibraryScreenTest {
     @Mock
     private ImportRepositoryPopUpPresenter importRepositoryPopUpPresenter;
 
+    @Mock
+    private WorkspaceProjectContext projectContext;
+
     private LibraryScreen libraryScreen;
 
     @Before
     public void setup() {
-        libraryServiceCaller = new CallerMock<>(libraryService);
 
         doReturn(importRepositoryPopUpPresenter).when(importRepositoryPopUpPresenters).get();
         doReturn(editContributorsPopUpPresenter).when(editContributorsPopUpPresenters).get();
@@ -125,7 +122,7 @@ public class LibraryScreenTest {
                                           populatedLibraryScreen,
                                           orgUnitsMetricsScreen,
                                           contributorsListPresenter,
-                                          libraryServiceCaller,
+                                          new CallerMock<>(libraryService),
                                           libraryPlaces);
     }
 
@@ -133,7 +130,7 @@ public class LibraryScreenTest {
     public void setupTest() {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         doReturn("name").when(organizationalUnit).getName();
-        doReturn(organizationalUnit).when(libraryPlaces).getSelectedOrganizationalUnit();
+        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
         doReturn(12).when(contributorsListPresenter).getContributorsCount();
 
         libraryScreen.init();
@@ -213,8 +210,7 @@ public class LibraryScreenTest {
 
     @Test
     public void showProjectsTest() {
-        doReturn(true).when(libraryService).hasProjects(any(),
-                                                        any());
+        doReturn(true).when(libraryService).hasProjects(any());
         final HTMLElement populatedLibraryScreenElement = mock(HTMLElement.class);
         when(populatedLibraryScreen.getView().getElement()).thenReturn(populatedLibraryScreenElement);
         doReturn(3).when(populatedLibraryScreen).getProjectsCount();
@@ -227,8 +223,7 @@ public class LibraryScreenTest {
 
     @Test
     public void showNoProjectsTest() {
-        doReturn(false).when(libraryService).hasProjects(any(),
-                                                         any());
+        doReturn(false).when(libraryService).hasProjects(any());
         final HTMLElement emptyLibraryScreenElement = mock(HTMLElement.class);
         when(emptyLibraryScreen.getView().getElement()).thenReturn(emptyLibraryScreenElement);
 

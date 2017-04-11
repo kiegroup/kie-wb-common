@@ -19,11 +19,11 @@ package org.kie.workbench.common.screens.projecteditor.client.menu;
 import java.util.List;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieModule;
 import org.mockito.Mock;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.workbench.model.menu.MenuItem;
@@ -40,30 +40,29 @@ public class ProjectMenuTest {
     private PlaceManager placeManager;
 
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     @Before
     public void setup() {
-        menu = new ProjectMenu( placeManager,
-                                projectContext );
+        menu = new ProjectMenu(placeManager,
+                               projectContext);
     }
 
     @Test
     public void getMenuItemsSynchronizesDisabledState() {
         final List<MenuItem> menus = menu.getMenuItems();
 
-        assertFalse( menus.get( 0 ).isEnabled() );
-        assertTrue( menus.get( 1 ).isEnabled() );
+        assertFalse(menus.get(0).isEnabled());
+        assertTrue(menus.get(1).isEnabled());
     }
 
     @Test
     public void getMenuItemsSynchronizesEnabledState() {
-        when( projectContext.getActiveProject() ).thenReturn( mock( KieProject.class ) );
+        when(projectContext.getActiveModule()).thenReturn(mock(KieModule.class));
 
         final List<MenuItem> menus = menu.getMenuItems();
 
-        assertTrue( menus.get( 0 ).isEnabled() );
-        assertTrue( menus.get( 1 ).isEnabled() );
+        assertTrue(menus.get(0).isEnabled());
+        assertTrue(menus.get(1).isEnabled());
     }
-
 }

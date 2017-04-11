@@ -16,12 +16,15 @@
 
 package org.kie.workbench.common.screens.library.client.screens;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterEditOrganizationalUnitEvent;
 import org.jboss.errai.common.client.api.Caller;
@@ -55,6 +58,7 @@ public class LibraryScreen {
         void updateContent(HTMLElement content);
     }
 
+    protected List<WorkspaceProject> projects;
     private View view;
 
     private ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters;
@@ -63,10 +67,9 @@ public class LibraryScreen {
 
     private ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters;
 
-    private ProjectContext projectContext;
-
     private OrganizationalUnitController organizationalUnitController;
 
+    private WorkspaceProjectContext projectContext;
     private ProjectController projectController;
 
     private EmptyLibraryScreen emptyLibraryScreen;
@@ -86,7 +89,7 @@ public class LibraryScreen {
                          final ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters,
                          final ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters,
                          final ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters,
-                         final ProjectContext projectContext,
+                         final WorkspaceProjectContext projectContext,
                          final OrganizationalUnitController organizationalUnitController,
                          final ProjectController projectController,
                          final EmptyLibraryScreen emptyLibraryScreen,
@@ -113,7 +116,7 @@ public class LibraryScreen {
     @PostConstruct
     public void init() {
         view.init(this);
-        view.setTitle(libraryPlaces.getSelectedOrganizationalUnit().getName());
+        view.setTitle(projectContext.getActiveOrganizationalUnit().getName());
         showProjects();
         view.setContributorsCount(contributorsListPresenter.getContributorsCount());
     }
@@ -146,6 +149,7 @@ public class LibraryScreen {
     }
 
     public void showProjects() {
+
         libraryService.call((Boolean hasProjects) -> {
             if (hasProjects) {
                 view.updateContent(populatedLibraryScreen.getView().getElement());
@@ -154,8 +158,7 @@ public class LibraryScreen {
                 view.updateContent(emptyLibraryScreen.getView().getElement());
                 view.setProjectsCount(0);
             }
-        }).hasProjects(libraryPlaces.getSelectedRepository(),
-                       libraryPlaces.getSelectedBranch());
+        }).hasProjects(projectContext.getActiveOrganizationalUnit());
     }
 
     public void showContributors() {

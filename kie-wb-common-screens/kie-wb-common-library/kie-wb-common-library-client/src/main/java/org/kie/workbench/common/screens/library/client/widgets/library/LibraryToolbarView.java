@@ -39,14 +39,6 @@ public class LibraryToolbarView implements LibraryToolbarPresenter.View,
     TranslationService ts;
 
     @Inject
-    @DataField("repositories-label")
-    Label repositoriesLabel;
-
-    @Inject
-    @DataField
-    Select repositories;
-
-    @Inject
     @DataField("branches-label")
     Label branchesLabel;
 
@@ -54,39 +46,9 @@ public class LibraryToolbarView implements LibraryToolbarPresenter.View,
     @DataField
     Select branches;
 
-    private LibraryToolbarPresenter presenter;
-
     @Override
     public void init(final LibraryToolbarPresenter presenter) {
-        this.presenter = presenter;
-        repositories.setOnchange(event -> presenter.onUpdateSelectedRepository());
         branches.setOnchange(event -> presenter.onUpdateSelectedBranch());
-    }
-
-    @Override
-    public void clearRepositories() {
-        DOMUtil.removeAllChildren(repositories);
-    }
-
-    @Override
-    public void addRepository(final String alias) {
-        repositories.add(createOption(alias));
-    }
-
-    @Override
-    public String getSelectedRepository() {
-        return repositories.getValue();
-    }
-
-    @Override
-    public void setSelectedRepository(final String alias) {
-        repositories.setValue(alias);
-    }
-
-    @Override
-    public void setRepositorySelectorVisibility(final boolean visible) {
-        repositories.setHidden(!visible);
-        repositoriesLabel.setHidden(!visible);
     }
 
     @Override
@@ -115,6 +77,9 @@ public class LibraryToolbarView implements LibraryToolbarPresenter.View,
         branchesLabel.setHidden(!visible);
     }
 
+    /**
+     * PAULO PLEASE TAKE A LOOK ON THIS ON REVIEW
+     */
     @Override
     public String getNotEnoughPermissionsToAccessLibraryMessage() {
         return ts.format(LibraryConstants.NotEnoughPermissionsToAccessLibrary);

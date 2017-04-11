@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -32,17 +33,18 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeHandle;
-import org.guvnor.common.services.project.context.ProjectContextChangeHandler;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
+import org.guvnor.common.services.project.model.Module;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
-import org.guvnor.common.services.project.security.ProjectAction;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
+import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.security.RepositoryAction;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
@@ -56,13 +58,13 @@ import org.jboss.errai.ioc.client.container.IOC;
 import org.jboss.errai.ioc.client.container.async.AsyncBeanDef;
 import org.jboss.errai.ioc.client.container.async.AsyncBeanManager;
 import org.jboss.errai.security.shared.api.identity.User;
+import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorService;
 import org.kie.workbench.common.screens.projecteditor.client.build.BuildExecutor;
 import org.kie.workbench.common.screens.projecteditor.client.editor.extension.BuildOptionExtension;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.projecteditor.client.validation.ProjectNameValidator;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandBuilder;
 import org.kie.workbench.common.widgets.client.callbacks.CommandDrivenErrorCallback;
@@ -78,15 +80,14 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.LockManager;
-import org.uberfire.client.mvp.LockTarget;
 import org.uberfire.client.mvp.LockTarget.TitleProvider;
+import org.uberfire.client.mvp.LockTarget;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
 import org.uberfire.ext.editor.commons.client.file.FileNameAndCommitMessage;
 import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpPresenter;
-import org.uberfire.ext.editor.commons.client.file.popups.DeletePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
@@ -116,58 +117,34 @@ public class ProjectScreenPresenter
         implements ProjectScreenView.Presenter {
 
     public static final String KIE_DEPLOYMENT_DESCRIPTOR_XML = "kie-deployment-descriptor.xml";
-
+    protected ObservablePath pathToPomXML;
+    protected CopyPopUpPresenter copyPopUpPresenter;
+    protected SavePopUpPresenter savePopUpPresenter;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
     private ProjectScreenView view;
     private User user;
     private Caller<ValidationService> validationService;
-
     private Caller<ProjectScreenService> projectScreenService;
-
     private ProjectNameValidator projectNameValidator;
-
-    private KieProject project;
-    protected ObservablePath pathToPomXML;
-
     private Event<NotificationEvent> notificationEvent;
     private Event<ChangeTitleWidgetEvent> changeTitleWidgetEvent;
-
     private PlaceManager placeManager;
-
     private Menus menus;
     private ProjectScreenModel model;
     private Integer originalHash;
     private PlaceRequest placeRequest;
-
     private BusyIndicatorView busyIndicatorView;
-
     private ObservablePath.OnConcurrentUpdateEvent concurrentUpdateSessionInfo = null;
-
     private ButtonGroup buildOptions;
     private Collection<Widget> buildExtensions;
-
-    private ProjectContext workbenchContext;
-    private ProjectContextChangeHandle projectContextChangeHandle;
-
+    private WorkspaceProjectContext projectContext;
     private Instance<LockManager> lockManagerInstanceProvider;
     private Map<Widget, LockManager> lockManagers = new HashMap<Widget, LockManager>();
-
     private Runnable reloadRunnable;
-
     private TitleProvider titleProvider;
     private String title;
-
     private Event<ForceUnlockEvent> forceLockReleaseEvent;
-
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-
-    protected CopyPopUpPresenter copyPopUpPresenter;
-
-    protected RenamePopUpPresenter renamePopUpPresenter;
-
-    protected DeletePopUpPresenter deletePopUpPresenter;
-
-    protected SavePopUpPresenter savePopUpPresenter;
-
     private Path kieDeploymentDescriptoPath;
 
     private Instance<ResourceTypeDefinition> resourceTypes;
@@ -179,11 +156,12 @@ public class ProjectScreenPresenter
 
     @Inject
     public ProjectScreenPresenter(final ProjectScreenView view,
-                                  final ProjectContext workbenchContext,
+                                  final WorkspaceProjectContext projectContext,
                                   final Caller<ProjectScreenService> projectScreenService,
                                   final User user,
                                   final Event<NotificationEvent> notificationEvent,
                                   final Event<ChangeTitleWidgetEvent> changeTitleWidgetEvent,
+                                  final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
                                   final ProjectNameValidator projectNameValidator,
                                   final PlaceManager placeManager,
                                   final BusyIndicatorView busyIndicatorView,
@@ -192,8 +170,6 @@ public class ProjectScreenPresenter
                                   final Event<ForceUnlockEvent> forceLockReleaseEvent,
                                   final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
                                   final CopyPopUpPresenter copyPopUpPresenter,
-                                  final RenamePopUpPresenter renamePopUpPresenter,
-                                  final DeletePopUpPresenter deletePopUpPresenter,
                                   final SavePopUpPresenter savePopUpPresenter,
                                   final GAVPreferences gavPreferences,
                                   final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier,
@@ -202,6 +178,7 @@ public class ProjectScreenPresenter
 
         this.view = view;
         this.user = user;
+        this.projectContextChangeEvent = projectContextChangeEvent;
         view.setPresenter(this);
 
         gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
@@ -220,22 +197,14 @@ public class ProjectScreenPresenter
         this.validationService = validationService;
 
         this.busyIndicatorView = busyIndicatorView;
-        this.workbenchContext = workbenchContext;
+        this.projectContext = projectContext;
         this.lockManagerInstanceProvider = lockManagerInstanceProvider;
         this.forceLockReleaseEvent = forceLockReleaseEvent;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
 
         this.copyPopUpPresenter = copyPopUpPresenter;
-        this.renamePopUpPresenter = renamePopUpPresenter;
-        this.deletePopUpPresenter = deletePopUpPresenter;
         this.savePopUpPresenter = savePopUpPresenter;
 
-        projectContextChangeHandle = workbenchContext.addChangeHandler(new ProjectContextChangeHandler() {
-            @Override
-            public void onChange() {
-                update();
-            }
-        });
         this.buildOptions = view.getBuildButtons();
 
         reloadRunnable = new Runnable() {
@@ -279,12 +248,12 @@ public class ProjectScreenPresenter
         }
     }
 
-    private void configureBuildExtensions(final Project project,
+    private void configureBuildExtensions(final Module module,
                                           final ButtonGroup buildButtonGroup) {
         cleanExtensions();
         final DropDownMenu buildDropdown = getDropdown(buildButtonGroup);
 
-        if (project == null || buildDropdown == null) {
+        if (module == null || buildDropdown == null) {
             buildExtensions = null;
             return;
         }
@@ -296,7 +265,7 @@ public class ProjectScreenPresenter
         buildExtensions = new ArrayList<Widget>(allExtensions.size());
 
         for (BuildOptionExtension ext : allExtensions) {
-            for (Widget option : ext.getBuildOptions(project)) {
+            for (Widget option : ext.getBuildOptions(module)) {
                 if (option instanceof DropDownHeader ||
                         option instanceof AnchorListItem) {
                     buildExtensions.add(option);
@@ -369,6 +338,18 @@ public class ProjectScreenPresenter
         update();
     }
 
+    private void update() {
+        if (projectContext.getActiveWorkspaceProject() == null) {
+            enableMenus(false);
+            view.showNoProjectSelected();
+            view.hideBusyIndicator();
+        } else {
+            enableMenus(true);
+            view.showProjectEditor();
+            showCurrentModuleInfoIfAny();
+        }
+    }
+
     @OnMayClose
     public boolean onMayClose() {
         if (isDirty()) {
@@ -379,7 +360,6 @@ public class ProjectScreenPresenter
 
     @OnClose
     public void onClose() {
-        workbenchContext.removeChangeHandler(projectContextChangeHandle);
         for (LockManager lockManager : lockManagers.values()) {
             lockManager.releaseLock();
             lockManagerInstanceProvider.destroy(lockManager);
@@ -387,26 +367,12 @@ public class ProjectScreenPresenter
         lockManagers.clear();
     }
 
-    private void update() {
-        if (workbenchContext.getActiveProject() == null) {
-            enableMenus(false);
-            view.showNoProjectSelected();
-            view.hideBusyIndicator();
-        } else {
-            enableMenus(true);
-            view.showProjectEditor();
-            showCurrentProjectInfoIfAny((KieProject) workbenchContext.getActiveProject());
-        }
-    }
+    private void showCurrentModuleInfoIfAny() {
 
-    private void showCurrentProjectInfoIfAny(final KieProject project) {
-        if (project != null && !project.equals(this.project)) {
-            this.project = project;
-            this.kieDeploymentDescriptoPath = PathFactory.newPath(KIE_DEPLOYMENT_DESCRIPTOR_XML,
-                                                                  project.getRootPath().toURI() + "/src/main/resources/META-INF/" + KIE_DEPLOYMENT_DESCRIPTOR_XML);
-            setupPathToPomXML();
-            init();
-        }
+        this.kieDeploymentDescriptoPath = PathFactory.newPath(KIE_DEPLOYMENT_DESCRIPTOR_XML,
+                                                              projectContext.getActiveWorkspaceProject().getRootPath().toURI() + "/src/main/resources/META-INF/" + KIE_DEPLOYMENT_DESCRIPTOR_XML);
+        setupPathToPomXML();
+        init();
     }
 
     private void init() {
@@ -415,6 +381,7 @@ public class ProjectScreenPresenter
                 new RemoteCallback<ProjectScreenModel>() {
                     @Override
                     public void callback(ProjectScreenModel model) {
+
                         concurrentUpdateSessionInfo = null;
                         ProjectScreenPresenter.this.model = model;
 
@@ -468,7 +435,7 @@ public class ProjectScreenPresenter
             view.showGAVPanel();
         }
 
-        configureBuildExtensions(project,
+        configureBuildExtensions(projectContext.getActiveModule(),
                                  buildOptions);
     }
 
@@ -506,7 +473,7 @@ public class ProjectScreenPresenter
             pathToPomXML.dispose();
         }
 
-        pathToPomXML = IOC.getBeanManager().lookupBean(ObservablePath.class).getInstance().wrap(project.getPomXMLPath());
+        pathToPomXML = IOC.getBeanManager().lookupBean(ObservablePath.class).getInstance().wrap(projectContext.getActiveWorkspaceProject().getMainModule().getPomXMLPath());
 
         pathToPomXML.onConcurrentUpdate(new ParameterizedCommand<ObservablePath.OnConcurrentUpdateEvent>() {
             @Override
@@ -572,36 +539,31 @@ public class ProjectScreenPresenter
     }
 
     private Menus makeMenuBar() {
-        showCurrentProjectInfoIfAny((KieProject) workbenchContext.getActiveProject());
+        showCurrentModuleInfoIfAny();
+
         return MenuFactory
                 .newTopLevelMenu(CommonConstants.INSTANCE.Save())
-                .withPermission(Project.RESOURCE_TYPE,
-                                project,
-                                ProjectAction.UPDATE)
+                .withPermission(Repository.RESOURCE_TYPE,
+                                getRepository(),
+                                RepositoryAction.UPDATE)
                 .respondsWith(getSaveCommand(DeploymentMode.VALIDATED))
                 .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Delete())
-                .withPermission(Project.RESOURCE_TYPE,
-                                project,
-                                ProjectAction.DELETE)
+                .withPermission(Repository.RESOURCE_TYPE,
+                                getRepository(),
+                                RepositoryAction.DELETE)
                 .respondsWith(getDeleteCommand())
                 .endMenu()
-                .newTopLevelMenu(CommonConstants.INSTANCE.Rename())
-                .withPermission(Project.RESOURCE_TYPE,
-                                project,
-                                ProjectAction.UPDATE)
-                .respondsWith(getRenameCommand())
-                .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Copy())
-                .withPermission(Project.RESOURCE_TYPE,
-                                project,
-                                ProjectAction.CREATE)
+                .withPermission(Repository.RESOURCE_TYPE,
+                                getRepository(),
+                                RepositoryAction.CREATE)
                 .respondsWith(getCopyCommand())
                 .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Reimport())
-                .withPermission(Project.RESOURCE_TYPE,
-                                project,
-                                ProjectAction.UPDATE)
+                .withPermission(Repository.RESOURCE_TYPE,
+                                getRepository(),
+                                RepositoryAction.UPDATE)
                 .respondsWith(getReImportCommand())
                 .endMenu()
                 .newTopLevelCustomMenu(new MenuFactory.CustomMenuBuilder() {
@@ -633,9 +595,9 @@ public class ProjectScreenPresenter
 
                             @Override
                             public List<ResourceActionRef> getResourceActions() {
-                                ResourceActionRef ref = new ResourceActionRef(Project.RESOURCE_TYPE,
-                                                                              project,
-                                                                              ProjectAction.BUILD);
+                                ResourceActionRef ref = new ResourceActionRef(Repository.RESOURCE_TYPE,
+                                                                              getRepository(),
+                                                                              RepositoryAction.BUILD);
                                 return Collections.singletonList(ref);
                             }
                         };
@@ -644,10 +606,20 @@ public class ProjectScreenPresenter
                 .build();
     }
 
+    private Repository getRepository() {
+
+        if (projectContext.getActiveWorkspaceProject() == null) {
+            return null;
+        } else {
+            return projectContext.getActiveWorkspaceProject().getRepository();
+        }
+    }
+
     protected Command getReImportCommand() {
         return new Command() {
             @Override
             public void execute() {
+
                 projectScreenService.call(
                         new RemoteCallback<Void>() {
 
@@ -657,7 +629,7 @@ public class ProjectScreenPresenter
                                 notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ReimportSuccessful()));
                             }
                         },
-                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).reImport(project.getPomXMLPath());
+                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).reImport(projectContext.getActiveWorkspaceProject().getMainModule().getPomXMLPath());
             }
         };
     }
@@ -666,23 +638,19 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
-                deletePopUpPresenter.show(new ParameterizedCommand<String>() {
-                    @Override
-                    public void execute(final String comment) {
-                        busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Deleting());
-                        projectScreenService.call(
-                                new RemoteCallback<Void>() {
-                                    @Override
-                                    public void callback(final Void o) {
-                                        busyIndicatorView.hideBusyIndicator();
-                                        notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully()));
-                                        placeManager.forceClosePlace(placeRequest);
-                                    }
-                                },
-                                new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).delete(project.getPomXMLPath(),
-                                                                                                    comment);
-                    }
-                });
+
+                busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Deleting());
+
+                projectScreenService.call(
+                        new RemoteCallback<Void>() {
+                            @Override
+                            public void callback(final Void o) {
+                                busyIndicatorView.hideBusyIndicator();
+                                notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully()));
+                                placeManager.forceClosePlace(placeRequest);
+                            }
+                        },
+                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).delete(projectContext.getActiveWorkspaceProject());
             }
         };
     }
@@ -691,11 +659,13 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
-                copyPopUpPresenter.show(project.getRootPath(),
+
+                copyPopUpPresenter.show(projectContext.getActiveWorkspaceProject().getRootPath(),
                                         projectNameValidator,
                                         new CommandWithFileNameAndCommitMessage() {
                                             @Override
                                             public void execute(final FileNameAndCommitMessage details) {
+
                                                 busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Copying());
                                                 projectScreenService.call(
                                                         new RemoteCallback<Void>() {
@@ -707,9 +677,8 @@ public class ProjectScreenPresenter
                                                                 notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemCopiedSuccessfully()));
                                                             }
                                                         },
-                                                        getCopyErrorCallback(copyPopUpPresenter.getView())).copy(project.getPomXMLPath(),
-                                                                                                                 details.getNewFileName(),
-                                                                                                                 details.getCommitMessage());
+                                                        getCopyErrorCallback(copyPopUpPresenter.getView())).copy(projectContext.getActiveWorkspaceProject(),
+                                                                                                                 details.getNewFileName());
                                             }
                                         });
             }
@@ -725,34 +694,6 @@ public class ProjectScreenPresenter
                 copyPopupView.hide();
                 return super.error(message,
                                    throwable);
-            }
-        };
-    }
-
-    private Command getRenameCommand() {
-        return new Command() {
-            @Override
-            public void execute() {
-                renamePopUpPresenter.show(project.getRootPath(),
-                                          projectNameValidator,
-                                          new CommandWithFileNameAndCommitMessage() {
-                                              @Override
-                                              public void execute(final FileNameAndCommitMessage details) {
-                                                  busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Renaming());
-                                                  projectScreenService.call(
-                                                          new RemoteCallback<ProjectScreenModel>() {
-                                                              @Override
-                                                              public void callback(final ProjectScreenModel model) {
-                                                                  renamePopUpPresenter.getView().hide();
-                                                                  busyIndicatorView.hideBusyIndicator();
-                                                                  notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemRenamedSuccessfully()));
-                                                              }
-                                                          },
-                                                          getRenameErrorCallback(renamePopUpPresenter.getView())).rename(project.getPomXMLPath(),
-                                                                                                                         details.getNewFileName(),
-                                                                                                                         details.getCommitMessage());
-                                              }
-                                          });
             }
         };
     }
@@ -782,9 +723,9 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
-                saveProject(new RemoteCallback<Void>() {
+                saveProject(new RemoteCallback<WorkspaceProject>() {
                                 @Override
-                                public void callback(Void v) {
+                                public void callback(final WorkspaceProject project) {
                                     view.hideBusyIndicator();
                                     notificationEvent.fire(new NotificationEvent(ProjectEditorResources.CONSTANTS.SaveSuccessful(pathToPomXML.getFileName()),
                                                                                  NotificationEvent.NotificationType.SUCCESS));
@@ -801,9 +742,9 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
-                saveProject(new RemoteCallback<Void>() {
+                saveProject(new RemoteCallback<WorkspaceProject>() {
                                 @Override
-                                public void callback(Void v) {
+                                public void callback(final WorkspaceProject project) {
                                     notificationEvent.fire(new NotificationEvent(ProjectEditorResources.CONSTANTS.SaveSuccessful(pathToPomXML.getFileName()),
                                                                                  NotificationEvent.NotificationType.SUCCESS));
                                     originalHash = model.hashCode();
@@ -815,7 +756,7 @@ public class ProjectScreenPresenter
         };
     }
 
-    private void saveProject(final RemoteCallback<Void> callback,
+    private void saveProject(final RemoteCallback<WorkspaceProject> callback,
                              final DeploymentMode mode) {
         if (concurrentUpdateSessionInfo != null) {
             newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
@@ -846,7 +787,7 @@ public class ProjectScreenPresenter
         }
     }
 
-    private void save(final RemoteCallback<Void> callback,
+    private void save(final RemoteCallback<WorkspaceProject> callback,
                       final DeploymentMode mode) {
         savePopUpPresenter.show(pathToPomXML,
                                 new ParameterizedCommand<String>() {
@@ -861,7 +802,7 @@ public class ProjectScreenPresenter
     }
 
     private void doSave(final String comment,
-                        final RemoteCallback<Void> callback,
+                        final RemoteCallback<WorkspaceProject> callback,
                         final DeploymentMode mode) {
         view.showBusyIndicator(CommonConstants.INSTANCE.Saving());
 
@@ -871,29 +812,31 @@ public class ProjectScreenPresenter
                 new CommandWithThrowableDrivenErrorCallback.CommandWithThrowable() {
                     @Override
                     public void execute(final Throwable parameter) {
+
                         view.hideBusyIndicator();
                         conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
                                                                 ((GAVAlreadyExistsException) parameter).getRepositories(),
-                                                                new Command() {
-                                                                    @Override
-                                                                    public void execute() {
-                                                                        conflictingRepositoriesPopup.hide();
-                                                                        doSave(comment,
-                                                                               callback,
-                                                                               DeploymentMode.FORCED);
-                                                                    }
+                                                                () -> {
+                                                                    conflictingRepositoriesPopup.hide();
+                                                                    doSave(comment,
+                                                                           callback,
+                                                                           DeploymentMode.FORCED);
                                                                 });
                         conflictingRepositoriesPopup.show();
                     }
                 });
         }};
 
-        projectScreenService.call(new RemoteCallback<Void>() {
+        projectScreenService.call(new RemoteCallback<WorkspaceProject>() {
                                       @Override
-                                      public void callback(Void v) {
-                                          project.setPom(model.getPOM());
+                                      public void callback(final WorkspaceProject project) {
+
+                                          projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project));
+
+                                          update();
+
                                           if (callback != null) {
-                                              callback.callback(v);
+                                              callback.callback(project);
                                           }
                                       }
                                   },
@@ -1013,7 +956,7 @@ public class ProjectScreenPresenter
                   new Boolean(true));
 
         PathPlaceRequest placeRequest = new PathPlaceRequest(PathFactory.newPath("persistence.xml",
-                                                                                 project.getRootPath().toURI() + "/src/main/resources/META-INF/persistence.xml",
+                                                                                 projectContext.getActiveWorkspaceProject().getRootPath().toURI() + PersistenceDescriptorService.PERSISTENCE_DESCRIPTOR_PATH,
                                                                                  attrs));
         placeRequest.addParameter("createIfNotExists",
                                   "true");
@@ -1021,7 +964,7 @@ public class ProjectScreenPresenter
     }
 
     private boolean isDirty() {
-        Integer currentHash = model != null ? model.hashCode() : null;
+        final Integer currentHash = model != null ? model.hashCode() : null;
         if (originalHash == null) {
             return currentHash != null;
         } else {
