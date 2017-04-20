@@ -61,4 +61,5 @@ public interface LibraryService {
 
     Project importProject(final ExampleProject exampleProject);
 
+    List<OrganizationalUnit> getOrganizationalUnits();
 }
