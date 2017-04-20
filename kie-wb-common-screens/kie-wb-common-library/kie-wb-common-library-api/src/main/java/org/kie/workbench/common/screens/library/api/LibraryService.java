@@ -58,4 +58,7 @@ public interface LibraryService {
                           final Repository repository,
                           final String branch,
                           final ExampleProject exampleProject);
+
+    Project importProject(final ExampleProject exampleProject);
+
 }
