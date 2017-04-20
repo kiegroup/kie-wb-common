@@ -85,7 +85,7 @@ public class NewFormDefinitionlHandler extends DefaultNewResourceHandler {
 
     @Override
     public IsWidget getIcon() {
-        return null;
+        return resourceType.getIcon();
     }
 
     @Override
