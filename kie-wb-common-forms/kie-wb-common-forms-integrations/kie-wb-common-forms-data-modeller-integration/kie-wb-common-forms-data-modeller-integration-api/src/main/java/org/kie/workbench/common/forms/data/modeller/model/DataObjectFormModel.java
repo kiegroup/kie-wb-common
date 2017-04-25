@@ -54,4 +54,23 @@ public class DataObjectFormModel implements FormModel, JavaModel {
     public String getType() {
         return getClassName();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        DataObjectFormModel formModel = (DataObjectFormModel) o;
+
+        return className.equals(formModel.className);
+    }
+
+    @Override
+    public int hashCode() {
+        return className.hashCode();
+    }
 }
