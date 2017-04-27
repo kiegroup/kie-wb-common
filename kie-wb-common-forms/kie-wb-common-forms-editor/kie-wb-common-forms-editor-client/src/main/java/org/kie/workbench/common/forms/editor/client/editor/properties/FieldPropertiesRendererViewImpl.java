@@ -17,7 +17,6 @@
 package org.kie.workbench.common.forms.editor.client.editor.properties;
 
 import java.util.Collection;
-import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -28,11 +27,13 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DataBindingEditor;
 import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.kie.workbench.common.forms.editor.service.FormEditorRenderingContext;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
@@ -52,7 +53,7 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
 
     @Inject
     @DataField
-    private ListBox fieldBinding;
+    private FlowPanel fieldBinding;
 
     private DynamicFormRenderer formRenderer;
 
@@ -65,13 +66,14 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
     private BaseModal modal;
 
     @Inject
-    public FieldPropertiesRendererViewImpl( DynamicFormRenderer formRenderer, TranslationService translationService ) {
+    public FieldPropertiesRendererViewImpl(DynamicFormRenderer formRenderer,
+                                           TranslationService translationService) {
         this.formRenderer = formRenderer;
         this.translationService = translationService;
     }
 
     protected void closeModal() {
-        if ( formRenderer.isValid() ) {
+        if (formRenderer.isValid()) {
             helper.onClose();
             modal.hide();
         }
@@ -81,31 +83,33 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
     protected void init() {
 
         modal = new BaseModal();
-        modal.setClosable( false );
-        modal.setBody( this );
-        modal.add( new ModalFooterOKButton( new Command() {
+        modal.setClosable(false);
+        modal.setBody(this);
+        modal.add(new ModalFooterOKButton(new Command() {
             @Override
             public void execute() {
                 closeModal();
             }
-        } ) );
+        }));
 
-        formContent.add( formRenderer );
+        formContent.add(formRenderer);
     }
 
     @Override
-    public void setPresenter( FieldPropertiesRenderer presenter ) {
+    public void setPresenter(FieldPropertiesRenderer presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void render( FieldPropertiesRendererHelper helper, FormEditorRenderingContext renderingContext ) {
+    public void render(FieldPropertiesRendererHelper helper,
+                       FormEditorRenderingContext renderingContext,
+                       DataBindingEditor bindingEditor) {
         this.helper = helper;
-        formRenderer.render( renderingContext );
+        formRenderer.render(renderingContext);
         initFieldTypeList();
-        initFieldBindings();
-
-        modal.setTitle( translationService.getTranslation( FormEditorConstants.FieldPropertiesRendererViewImplTitle ) );
+        fieldBinding.clear();
+        fieldBinding.add(ElementWrapperWidget.getWidget(bindingEditor.getElement()));
+        modal.setTitle(translationService.getTranslation(FormEditorConstants.FieldPropertiesRendererViewImplTitle));
     }
 
     @Override
@@ -117,35 +121,17 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
         fieldType.clear();
         Collection<String> types = helper.getCompatibleFieldTypes();
         int i = 0;
-        for ( String type : types ) {
-            fieldType.addItem( type );
-            if ( type.equals( helper.getCurrentField().getFieldType().getTypeName() )) {
-                fieldType.setSelectedIndex( i );
+        for (String type : types) {
+            fieldType.addItem(type);
+            if (type.equals(helper.getCurrentField().getFieldType().getTypeName())) {
+                fieldType.setSelectedIndex(i);
             }
             i++;
         }
     }
 
-    @EventHandler( "fieldType" )
-    public void onTypeChange( ChangeEvent event ) {
-        helper.onFieldTypeChange( fieldType.getSelectedValue() );
-    }
-
-    @EventHandler( "fieldBinding" )
-    public void onBindingChange( ChangeEvent event ) {
-        helper.onFieldBindingChange( fieldBinding.getSelectedValue() );
-        initFieldBindings();
-    }
-
-    protected void initFieldBindings() {
-        fieldBinding.clear();
-        List<String> fields = helper.getAvailableFields();
-        for ( int i = 0; i < fields.size(); i++ ) {
-            String field = fields.get( i );
-            fieldBinding.addItem( field );
-            if ( field.equals( helper.getCurrentField().getBinding() )) {
-                fieldBinding.setSelectedIndex( i );
-            }
-        }
+    @EventHandler("fieldType")
+    public void onTypeChange(ChangeEvent event) {
+        helper.onFieldTypeChange(fieldType.getSelectedValue());
     }
 }

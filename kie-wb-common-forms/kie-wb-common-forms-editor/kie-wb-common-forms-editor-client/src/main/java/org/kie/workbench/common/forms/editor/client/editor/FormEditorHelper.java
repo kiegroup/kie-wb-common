@@ -23,19 +23,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.container.SyncBeanDef;
-import org.jboss.errai.ioc.client.container.SyncBeanManager;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextRequest;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextResponse;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.FormEditorRenderingContext;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.HasPlaceHolder;
+import org.kie.workbench.common.forms.model.DynamicModel;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.service.FieldManager;
@@ -49,7 +50,7 @@ public class FormEditorHelper {
 
     private Event<FormEditorContextResponse> responseEvent;
 
-    private SyncBeanManager beanManager;
+    private ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents;
 
     private FormModelerContent content;
 
@@ -58,32 +59,35 @@ public class FormEditorHelper {
     private List<EditorFieldLayoutComponent> fieldLayoutComponents;
 
     @Inject
-    public FormEditorHelper( FieldManager fieldManager,
-                             Event<FormEditorContextResponse> responseEvent,
-                             SyncBeanManager beanManager ) {
+    public FormEditorHelper(FieldManager fieldManager,
+                            Event<FormEditorContextResponse> responseEvent,
+                            ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents) {
         this.fieldManager = fieldManager;
         this.responseEvent = responseEvent;
-        this.beanManager = beanManager;
+        this.editorFieldLayoutComponents = editorFieldLayoutComponents;
     }
 
     public FormModelerContent getContent() {
         return content;
     }
 
-    public void initHelper( FormModelerContent content ) {
+    public void initHelper(FormModelerContent content) {
         this.content = content;
 
-        if ( fieldLayoutComponents != null && !fieldLayoutComponents.isEmpty() ) return;
-        fieldLayoutComponents = new ArrayList<EditorFieldLayoutComponent>();
+        if (fieldLayoutComponents != null && !fieldLayoutComponents.isEmpty()) {
+            return;
+        }
+        fieldLayoutComponents = new ArrayList<>();
 
-        for ( String baseType : fieldManager.getBaseFieldTypes() ) {
-            SyncBeanDef<EditorFieldLayoutComponent> beanDef = beanManager.lookupBean( EditorFieldLayoutComponent.class );
-            EditorFieldLayoutComponent layoutComponent = beanDef.newInstance();
-            if ( layoutComponent != null ) {
-                FieldDefinition field = fieldManager.getDefinitionByFieldTypeName( baseType );
-                field.setId( baseType );
-                layoutComponent.init( content.getRenderingContext(), field );
-                fieldLayoutComponents.add( layoutComponent );
+        for (String baseType : fieldManager.getBaseFieldTypes()) {
+            EditorFieldLayoutComponent layoutComponent = editorFieldLayoutComponents.get();
+            if (layoutComponent != null) {
+                FieldDefinition field = fieldManager.getDefinitionByFieldTypeName(baseType);
+                field.setId(baseType);
+                layoutComponent.init(content.getRenderingContext(),
+                                     field);
+                layoutComponent.setDisabled(true);
+                fieldLayoutComponents.add(layoutComponent);
             }
         }
     }
@@ -92,60 +96,64 @@ public class FormEditorHelper {
         return content.getDefinition();
     }
 
-    public void addAvailableFields( List<FieldDefinition> fields ) {
-        for ( FieldDefinition field : fields ) {
-            addAvailableField( field );
+    public void addAvailableFields(List<FieldDefinition> fields) {
+        for (FieldDefinition field : fields) {
+            addAvailableField(field);
         }
     }
 
-    public void addAvailableField( FieldDefinition field ) {
-        availableFields.put( field.getId(), field );
+    public void addAvailableField(FieldDefinition field) {
+        availableFields.put(field.getId(),
+                            field);
     }
 
-    public FieldDefinition getDroppedField( String fieldId ) {
-        FieldDefinition result = getFormField( fieldId );
+    public FieldDefinition getDroppedField(String fieldId) {
+        FieldDefinition result = getFormField(fieldId);
 
-        if ( result != null ) {
-            responseEvent.fire( new FormEditorContextResponse( getFormDefinition().getId(), result.getId(), this ) );
+        if (result != null) {
+            responseEvent.fire(new FormEditorContextResponse(getFormDefinition().getId(),
+                                                             result.getId(),
+                                                             this));
         }
         return result;
     }
 
-    public FieldDefinition getFormField( String fieldId ) {
-        FieldDefinition result = content.getDefinition().getFieldById( fieldId );
-        if ( result == null ) {
+    public FieldDefinition getFormField(String fieldId) {
+        FieldDefinition result = content.getDefinition().getFieldById(fieldId);
+        if (result == null) {
 
-            result = availableFields.get( fieldId );
-            if ( result != null ) {
-                availableFields.remove( fieldId );
+            result = availableFields.get(fieldId);
+            if (result != null) {
+                availableFields.remove(fieldId);
             } else {
-                result = fieldManager.getDefinitionByFieldTypeName( fieldId );
+                result = fieldManager.getDefinitionByFieldTypeName(fieldId);
 
-                if ( result != null ) {
-                    result.setName( generateUnbindedFieldName( result ) );
-                    result.setLabel( result.getFieldType().getTypeName() );
-                    if ( result instanceof HasPlaceHolder ) {
-                        ( (HasPlaceHolder) result ).setPlaceHolder( result.getFieldType().getTypeName() );
+                if (result != null) {
+                    result.setName(generateUnbindedFieldName(result));
+                    result.setLabel(result.getFieldType().getTypeName());
+                    if (result instanceof HasPlaceHolder) {
+                        ((HasPlaceHolder) result).setPlaceHolder(result.getFieldType().getTypeName());
                     }
                 }
             }
-            if ( result != null ) {
-                content.getDefinition().getFields().add( result );
+            if (result != null) {
+                content.getDefinition().getFields().add(result);
             }
-
         }
         return result;
     }
 
-    public FieldDefinition removeField( String fieldId, boolean addToAvailables ) {
+    public FieldDefinition removeField(String fieldId,
+                                       boolean addToAvailables) {
         Iterator<FieldDefinition> it = content.getDefinition().getFields().iterator();
 
-        while ( it.hasNext() ) {
+        while (it.hasNext()) {
             FieldDefinition field = it.next();
-            if ( field.getId().equals( fieldId ) ) {
+            if (field.getId().equals(fieldId)) {
                 it.remove();
-                if ( addToAvailables ) {
-                    availableFields.put( field.getId(), field );
+                if (addToAvailables && content.getModelProperties().contains(field.getBinding())) {
+                    availableFields.put(field.getId(),
+                                        field);
                 }
                 return field;
             }
@@ -153,83 +161,108 @@ public class FormEditorHelper {
         return null;
     }
 
-    public void onFieldRequest( @Observes FormEditorContextRequest request ) {
-        if ( content == null ) {
+    public void onFieldRequest(@Observes FormEditorContextRequest request) {
+        if (content == null) {
             return;
         }
-        if ( request.getFormId().equals( content.getDefinition().getId() ) ) {
-            responseEvent.fire( new FormEditorContextResponse( request.getFormId(), request.getFieldId(), this ) );
+        if (request.getFormId().equals(content.getDefinition().getId())) {
+            responseEvent.fire(new FormEditorContextResponse(request.getFormId(),
+                                                             request.getFieldId(),
+                                                             this));
         }
     }
 
-    public List<String> getCompatibleFieldCodes( FieldDefinition field ) {
-        Collection<String> compatibles = fieldManager.getCompatibleFields( field );
+    public List<String> getCompatibleModelFields(FieldDefinition field) {
+        Collection<String> compatibles = fieldManager.getCompatibleFields(field);
 
         Set<String> result = new TreeSet<>();
-        if ( field.getBinding() != null ) result.add( field.getBinding() );
-        for ( String compatibleType : compatibles ) {
-            for ( FieldDefinition definition : availableFields.values() ) {
-                if ( definition.getFieldType().getTypeName().equals( compatibleType ) ) result.add( definition.getBinding() );
+        if (field.getBinding() != null && !field.getBinding().isEmpty()) {
+            result.add(field.getBinding());
+        }
+        for (String compatibleType : compatibles) {
+            for (FieldDefinition definition : availableFields.values()) {
+                if (definition.getFieldType().getTypeName().equals(compatibleType) && definition.getBinding() != null) {
+                    result.add(definition.getBinding());
+                }
             }
         }
-        return new ArrayList<>( result );
+        return new ArrayList<>(result);
     }
 
-    public Collection<String> getCompatibleFieldTypes( FieldDefinition field ) {
-        return fieldManager.getCompatibleFields( field );
+    public Collection<String> getCompatibleFieldTypes(FieldDefinition field) {
+        return fieldManager.getCompatibleFields(field);
     }
 
-    public FieldDefinition switchToField( FieldDefinition field, String bindingExpression ) {
-        FieldDefinition resultDefinition = fieldManager.getDefinitionByFieldTypeName( field.getFieldType().getTypeName() );
+    public FieldDefinition switchToField(FieldDefinition originalField,
+                                         String bindingExpression) {
 
-        // TODO: make settings copy optional
-        resultDefinition.copyFrom( field );
-
-        // Handling the change when the field binding is going to be removed
-        if ( bindingExpression == null || bindingExpression.equals( "" ) ) {
-            resultDefinition.setName( generateUnbindedFieldName( resultDefinition ) );
-            content.getDefinition().getFields().add( resultDefinition );
-            return resultDefinition;
+        if (content.getDefinition().getFieldByBinding(bindingExpression) != null) {
+            return null;
         }
 
-        // Handling the binding change
-        for ( Iterator<FieldDefinition> it = availableFields.values().iterator(); it.hasNext(); ) {
-            FieldDefinition destField = it.next();
-            if ( destField.getBinding().equals( bindingExpression ) ) {
+        FieldDefinition resultField = fieldManager.getDefinitionByFieldTypeName(originalField.getFieldType().getTypeName());
 
-                resultDefinition.setId( destField.getId() );
-                resultDefinition.setName( destField.getName() );
+        if (bindingExpression == null || bindingExpression.equals("")) {
+            resultField.setName(generateUnbindedFieldName(resultField));
+        } else {
+            // Search if there's an available field with the specified binding
+            for (Iterator<FieldDefinition> it = availableFields.values().iterator(); it.hasNext(); ) {
+                FieldDefinition availableField = it.next();
+                if (availableField.getBinding().equals(bindingExpression)) {
 
-                resultDefinition.copyFrom( destField );
+                    // Check types if we are binding a fields on dynamicModel && change field type if needed
+                    if (content.getDefinition().getModel() instanceof DynamicModel && !resultField.getFieldType().equals(availableField.getFieldType())) {
+                        resultField = fieldManager.getFieldFromProvider(availableField.getFieldType().getTypeName(), availableField.getFieldTypeInfo());
+                    }
 
-                content.getDefinition().getFields().add( resultDefinition );
+                    resultField.setId(availableField.getId());
+                    resultField.setName(availableField.getName());
 
-                it.remove();
+                    resultField.copyFrom(availableField);
 
-                return resultDefinition;
+                    content.getDefinition().getFields().add(resultField);
+
+                    it.remove();
+
+                    return resultField;
+                }
             }
         }
 
-        return null;
+        // If we arrive here is because we have a dynamic binding or we are unbinding a field
+        resultField.copyFrom(originalField);
+        resultField.setBinding(bindingExpression);
+
+        if(resultField.getName() == null) {
+            String name = bindingExpression;
+            if(name == null || name.isEmpty()) {
+                name = generateUnbindedFieldName(resultField);
+            }
+            resultField.setName(name);
+        }
+        content.getDefinition().getFields().add(resultField);
+
+        return resultField;
     }
 
-    public FieldDefinition switchToFieldType( FieldDefinition field, String fieldCode ) {
-        FieldDefinition resultDefinition = fieldManager.getFieldFromProvider( fieldCode,
-                                                                              field.getFieldTypeInfo() );
+    public FieldDefinition switchToFieldType(FieldDefinition field,
+                                             String fieldCode) {
+        FieldDefinition resultDefinition = fieldManager.getFieldFromProvider(fieldCode,
+                                                                             field.getFieldTypeInfo());
 
-        resultDefinition.copyFrom( field );
-        resultDefinition.setId( field.getId() );
-        resultDefinition.setName( field.getName() );
+        resultDefinition.copyFrom(field);
+        resultDefinition.setId(field.getId());
+        resultDefinition.setName(field.getName());
 
-        removeField( field.getId(), false );
+        removeField(field.getId(),
+                    false);
 
-        content.getDefinition().getFields().add( resultDefinition );
+        content.getDefinition().getFields().add(resultDefinition);
 
         return resultDefinition;
     }
 
-
-    public String generateUnbindedFieldName( FieldDefinition field ) {
+    public String generateUnbindedFieldName(FieldDefinition field) {
         return UNBINDED_FIELD_NAME_PREFFIX + field.getId();
     }
 
@@ -243,5 +276,10 @@ public class FormEditorHelper {
 
     public FormEditorRenderingContext getRenderingContext() {
         return content.getRenderingContext();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        editorFieldLayoutComponents.destroyAll();
     }
 }
