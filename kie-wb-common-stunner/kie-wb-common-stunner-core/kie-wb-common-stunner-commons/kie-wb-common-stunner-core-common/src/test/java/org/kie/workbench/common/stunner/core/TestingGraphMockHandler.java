@@ -235,7 +235,9 @@ public class TestingGraphMockHandler {
                                            final Node source) {
         return execute(commandFactory.addConnector(source,
                                                    edge,
-                                                   0));
+                                                   0,
+                                                   0d,
+                                                   0d));
     }
 
     @SuppressWarnings("unchecked")
@@ -243,14 +245,18 @@ public class TestingGraphMockHandler {
                                              final Node target) {
         return execute(commandFactory.setTargetNode(target,
                                                     edge,
-                                                    0));
+                                                    0,
+                                                    0d,
+                                                    0d));
     }
 
     @SuppressWarnings("unchecked")
     public TestingGraphMockHandler removeTargetConnection(final Edge edge) {
         return execute(commandFactory.setTargetNode(null,
                                                     edge,
-                                                    0));
+                                                    0,
+                                                    0d,
+                                                    0d));
     }
 
     private TestingGraphMockHandler execute(final

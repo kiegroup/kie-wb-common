@@ -50,6 +50,8 @@ public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest
     private static final String SOURCET_UUID = "nodeSourceUUID";
     private static final String EDGE_UUID = "edgeUUID";
     private static final Integer MAGNET_INDEX = 1;
+    private static final Double MAGNETX = 15d;
+    private static final Double MAGNETY = 0d;
 
     private Node node;
     private Node lastTargetNode;
@@ -78,7 +80,9 @@ public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest
         when(edge.getTargetNode()).thenReturn(lastTargetNode);
         this.tested = new SetConnectionTargetNodeCommand(node,
                                                          edge,
-                                                         MAGNET_INDEX);
+                                                         MAGNET_INDEX,
+                                                         MAGNETX,
+                                                         MAGNETY);
     }
 
     @Test
@@ -130,7 +134,9 @@ public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest
     public void testAllowNoTargetConnection() {
         this.tested = new SetConnectionTargetNodeCommand(null,
                                                          edge,
-                                                         MAGNET_INDEX);
+                                                         MAGNET_INDEX,
+                                                         MAGNETX,
+                                                         MAGNETY);
         CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
         assertEquals(CommandResult.Type.INFO,
                      result.getType());
@@ -195,7 +201,7 @@ public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest
         verify(targetInEdges,
                times(1)).add(eq(edge));
         verify(edgeContent,
-               times(1)).setTargetMagnetIndex(eq(MAGNET_INDEX));
+               times(1)).setTargetMagnet(eq(MAGNET_INDEX),eq(MAGNETX), eq(MAGNETY));
         verify(edge,
                times(1)).setTargetNode(eq(node));
         verify(targetInEdges,

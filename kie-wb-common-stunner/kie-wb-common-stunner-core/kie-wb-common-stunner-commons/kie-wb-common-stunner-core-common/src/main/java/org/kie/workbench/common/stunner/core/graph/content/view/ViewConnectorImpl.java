@@ -26,14 +26,22 @@ public final class ViewConnectorImpl<W> implements ViewConnector<W> {
     protected W definition;
     protected Bounds bounds;
     protected Integer sourceMagnetIndex;
+    protected Double sourceMagnetX;
+    protected Double sourceMagnetY;
     protected Integer targetMagnetIndex;
+    protected Double targetMagnetX;
+    protected Double targetMagnetY;
 
     public ViewConnectorImpl(final @MapsTo("definition") W definition,
                              final @MapsTo("bounds") Bounds bounds) {
         this.definition = definition;
         this.bounds = bounds;
         this.sourceMagnetIndex = 0;
+        this.sourceMagnetX = 0d;
+        this.sourceMagnetY = 0d;
         this.targetMagnetIndex = 0;
+        this.targetMagnetX = 0d;
+        this.targetMagnetY = 0d;
     }
 
     @Override
@@ -62,8 +70,37 @@ public final class ViewConnectorImpl<W> implements ViewConnector<W> {
     }
 
     @Override
+    public Double getSourceMagnetX() {
+        return sourceMagnetX;
+    }
+
+    @Override
+    public Double getSourceMagnetY() {
+        return sourceMagnetY;
+    }
+
+    @Override
     public Integer getTargetMagnetIndex() {
         return targetMagnetIndex;
+    }
+
+    @Override
+    public Double getTargetMagnetX() {
+        return targetMagnetX;
+    }
+
+    @Override
+    public Double getTargetMagnetY() {
+        return targetMagnetY;
+    }
+
+    @Override
+    public void setSourceMagnet(final Integer index,
+                                final Double x,
+                                final Double y) {
+        this.sourceMagnetIndex = index;
+        this.sourceMagnetX = x;
+        this.sourceMagnetY = y;
     }
 
     @Override
@@ -72,7 +109,45 @@ public final class ViewConnectorImpl<W> implements ViewConnector<W> {
     }
 
     @Override
+    public void setTargetMagnet(final Integer index,
+                                final Double x,
+                                final Double y) {
+        this.targetMagnetIndex = index;
+        this.targetMagnetX = x;
+        this.targetMagnetY = y;
+    }
+
+    @Override
     public void setTargetMagnetIndex(final Integer index) {
         this.targetMagnetIndex = index;
+    }
+
+    @Override
+    public boolean hasValidSourceMagnetCoords() {
+        return areValidMagnetCoords(sourceMagnetX.intValue(),
+                                    sourceMagnetY.intValue(),
+                                    sourceMagnetIndex);
+    }
+
+    @Override
+    public boolean hasValidTargetMagnetCoords() {
+        return areValidMagnetCoords(targetMagnetX.intValue(),
+                                    targetMagnetY.intValue(),
+                                    targetMagnetIndex);
+    }
+
+    private boolean areValidMagnetCoords(int magnetX,
+                                         int magnetY,
+                                         int magnetIndex) {
+        // X and Y both 0 only valid if magnetIndex is 8
+        if (magnetX == 0 && magnetY == 0) {
+            if (magnetIndex == 8) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        // All other coordinates are valid
+        return true;
     }
 }

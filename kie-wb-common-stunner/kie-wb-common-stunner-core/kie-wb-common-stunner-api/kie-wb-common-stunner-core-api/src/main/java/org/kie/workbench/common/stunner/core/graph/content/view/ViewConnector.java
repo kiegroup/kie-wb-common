@@ -24,9 +24,29 @@ public interface ViewConnector<W> extends View<W> {
 
     Integer getSourceMagnetIndex();
 
+    Double getSourceMagnetX();
+
+    Double getSourceMagnetY();
+
     Integer getTargetMagnetIndex();
+
+    Double getTargetMagnetX();
+
+    Double getTargetMagnetY();
+
+    void setSourceMagnet(final Integer index,
+                         final Double magnetX,
+                         final Double magnetY);
 
     void setSourceMagnetIndex(final Integer index);
 
+    void setTargetMagnet(final Integer index,
+                         final Double magnetX,
+                         final Double magnetY);
+
     void setTargetMagnetIndex(final Integer index);
+
+    boolean hasValidSourceMagnetCoords();
+
+    boolean hasValidTargetMagnetCoords();
 }

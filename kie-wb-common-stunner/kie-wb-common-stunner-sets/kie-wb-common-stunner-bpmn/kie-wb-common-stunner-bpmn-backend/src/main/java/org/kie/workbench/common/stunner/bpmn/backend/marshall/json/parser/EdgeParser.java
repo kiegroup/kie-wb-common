@@ -23,6 +23,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.parser.common
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
 public class EdgeParser extends ElementParser<Edge<View, Node>> {
 
@@ -43,18 +44,38 @@ public class EdgeParser extends ElementParser<Edge<View, Node>> {
                                                                                           outNodeId)));
             super.addParser(outgoingParser);
         }
-        // TODO: Dockers -> BPMN2 marshaller expects dockers present for sequence flows,
-        // so using dummy 0,0 coordinates for now - Use magnets index or whatever can fit here.
-        ObjectParser docker1ObjParser = new ObjectParser("")
-                .addParser(new IntegerFieldParser("x",
-                                                  0))
-                .addParser(new IntegerFieldParser("y",
-                                                  0));
-        ObjectParser docker2ObjParser = new ObjectParser("")
-                .addParser(new IntegerFieldParser("x",
-                                                  0))
-                .addParser(new IntegerFieldParser("y",
-                                                  0));
+        // Use dockers
+        ViewConnector viewConnector = (ViewConnector) element.getContent();
+        ObjectParser docker1ObjParser;
+        if (viewConnector.hasValidSourceMagnetCoords()) {
+            docker1ObjParser = new ObjectParser("")
+                    .addParser(new IntegerFieldParser("x",
+                                                      viewConnector.getSourceMagnetX().intValue()))
+                    .addParser(new IntegerFieldParser("y",
+                                                      viewConnector.getSourceMagnetY().intValue()));
+        } else {
+            // create invalid docker with X and Y set to -1; checked for in Bpmn2JsonUnmarshaller
+            docker1ObjParser = new ObjectParser("")
+                    .addParser(new IntegerFieldParser("x",
+                                                      -1))
+                    .addParser(new IntegerFieldParser("y",
+                                                      -1));
+        }
+        ObjectParser docker2ObjParser;
+        if (viewConnector.hasValidTargetMagnetCoords()) {
+            docker2ObjParser = new ObjectParser("")
+                    .addParser(new IntegerFieldParser("x",
+                                                      viewConnector.getTargetMagnetX().intValue()))
+                    .addParser(new IntegerFieldParser("y",
+                                                      viewConnector.getTargetMagnetY().intValue()));
+        } else {
+            // create invalid docker with X and Y set to -1; checked for in Bpmn2JsonUnmarshaller
+            docker2ObjParser = new ObjectParser("")
+                    .addParser(new IntegerFieldParser("x",
+                                                      -1))
+                    .addParser(new IntegerFieldParser("y",
+                                                      -1));
+        }
         ArrayParser dockersParser = new ArrayParser("dockers")
                 .addParser(docker1ObjParser)
                 .addParser(docker2ObjParser);

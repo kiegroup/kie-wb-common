@@ -137,19 +137,53 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
     @Override
     public CanvasCommand<AbstractCanvasHandler> setSourceNode(final Node<? extends View<?>, Edge> node,
                                                               final Edge<? extends View<?>, Node> edge,
-                                                              final int magnetIndex) {
+                                                              final int magnetIndex,
+                                                              final double magnetX,
+                                                              final double magnetY) {
         return new SetConnectionSourceNodeCommand(node,
                                                   edge,
-                                                  magnetIndex);
+                                                  magnetIndex,
+                                                  magnetX,
+                                                  magnetY);
     }
 
     @Override
     public CanvasCommand<AbstractCanvasHandler> setTargetNode(final Node<? extends View<?>, Edge> node,
                                                               final Edge<? extends View<?>, Node> edge,
-                                                              final int magnetIndex) {
+                                                              final int magnetIndex,
+                                                              final double magnetX,
+                                                              final double magnetY) {
         return new SetConnectionTargetNodeCommand(node,
                                                   edge,
-                                                  magnetIndex);
+                                                  magnetIndex,
+                                                  magnetX,
+                                                  magnetY);
+    }
+
+    @Override
+    public CanvasCommand<AbstractCanvasHandler> setSourceMagnet(final Node<? extends View<?>, Edge> node,
+                                                                final Edge<? extends View<?>, Node> edge,
+                                                                final int magnetIndex,
+                                                                final double magnetX,
+                                                                final double magnetY) {
+        return new SetConnectionSourceMagnetCommand(node,
+                                                    edge,
+                                                    magnetIndex,
+                                                    magnetX,
+                                                    magnetY);
+    }
+
+    @Override
+    public CanvasCommand<AbstractCanvasHandler> setTargetMagnet(final Node<? extends View<?>, Edge> node,
+                                                                final Edge<? extends View<?>, Node> edge,
+                                                                final int magnetIndex,
+                                                                final double magnetX,
+                                                                final double magnetY) {
+        return new SetConnectionTargetMagnetCommand(node,
+                                                    edge,
+                                                    magnetIndex,
+                                                    magnetX,
+                                                    magnetY);
     }
 
     @Override

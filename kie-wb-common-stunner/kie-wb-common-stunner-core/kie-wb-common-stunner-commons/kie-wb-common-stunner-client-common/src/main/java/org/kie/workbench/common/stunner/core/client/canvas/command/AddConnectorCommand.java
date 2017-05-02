@@ -46,7 +46,9 @@ public class AddConnectorCommand extends AbstractCanvasGraphCommand {
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new org.kie.workbench.common.stunner.core.graph.command.impl.AddConnectorCommand(source,
                                                                                                 candidate,
-                                                                                                magnetIndex);
+                                                                                                magnetIndex,
+                                                                                                0d,
+                                                                                                0d);
     }
 
     @Override

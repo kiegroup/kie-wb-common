@@ -1,11 +1,12 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +24,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-public class SetConnectionSourceNodeCommand extends AbstractCanvasGraphCommand {
+public class SetConnectionTargetMagnetCommand extends AbstractCanvasGraphCommand {
 
     private final Node<? extends View<?>, Edge> node;
     private final Edge<? extends View<?>, Node> edge;
@@ -31,12 +32,11 @@ public class SetConnectionSourceNodeCommand extends AbstractCanvasGraphCommand {
     private final double magnetX;
     private final double magnetY;
 
-
-    public SetConnectionSourceNodeCommand(final Node<? extends View<?>, Edge> node,
-                                          final Edge<? extends View<?>, Node> edge,
-                                          final int magnetIndex,
-                                          final double magnetX,
-                                          final double magnetY) {
+    public SetConnectionTargetMagnetCommand(final Node<? extends View<?>, Edge> node,
+                                            final Edge<? extends View<?>, Node> edge,
+                                            final int magnetIndex,
+                                            final double magnetX,
+                                            final double magnetY) {
         this.node = node;
         this.edge = edge;
         this.magnetIndex = magnetIndex;
@@ -46,11 +46,11 @@ public class SetConnectionSourceNodeCommand extends AbstractCanvasGraphCommand {
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
-        return new org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionSourceNodeCommand(node,
-                                                                                                           edge,
-                                                                                                           magnetIndex,
-                                                                                                           magnetX,
-                                                                                                           magnetY);
+        return new org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetMagnetCommand(node,
+                                                                                                             edge,
+                                                                                                             magnetIndex,
+                                                                                                             magnetX,
+                                                                                                             magnetY);
     }
 
     @Override

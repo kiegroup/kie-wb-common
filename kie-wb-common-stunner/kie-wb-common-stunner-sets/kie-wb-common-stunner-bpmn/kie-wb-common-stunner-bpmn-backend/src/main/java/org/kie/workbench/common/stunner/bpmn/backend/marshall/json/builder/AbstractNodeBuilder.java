@@ -190,12 +190,21 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
                     // Create the outgoing edge.
                     Edge edge = (Edge) outgoingBuilder.build(context);
                     // Command - Execute the graph command to set the node as the edge connection's source..
+                    Double sourceDocker[] = null;
+                    final List<Double[]> dockers = ((AbstractEdgeBuilder) outgoingBuilder).dockers;
+                    if (dockers != null && dockers.size() > 1) {
+                        sourceDocker = dockers.get(0);
+                    }
+
                     int magnetIdx = getSourceConnectionMagnetIndex(context,
                                                                    node,
-                                                                   edge);
+                                                                   edge,
+                                                                   sourceDocker);
                     commands.add(context.getCommandFactory().setSourceNode(node,
                                                                            edge,
-                                                                           magnetIdx));
+                                                                           magnetIdx,
+                                                                           sourceDocker != null ? sourceDocker[0] : 0d,
+                                                                           sourceDocker != null ? sourceDocker[1] : 0d));
                     ;
                 }
                 if (!commands.isEmpty()) {
@@ -242,14 +251,65 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
 
     public int getSourceConnectionMagnetIndex(final BuilderContext context,
                                               final T node,
-                                              final Edge<ViewConnector<W>, Node> edge) {
-        return 3;
+                                              final Edge<ViewConnector<W>, Node> edge,
+                                              Double[] docker) {
+        int magnetIndex = calculateMagnetIndex(node,
+                                               docker,
+                                               3);
+        return magnetIndex;
     }
 
     public int getTargetConnectionMagnetIndex(final BuilderContext context,
                                               final T node,
-                                              final Edge<ViewConnector<W>, Node> edge) {
-        return 7;
+                                              final Edge<ViewConnector<W>, Node> edge,
+                                              Double[] docker) {
+        int magnetIndex = calculateMagnetIndex(node,
+                                               docker,
+                                               7);
+        return magnetIndex;
+    }
+
+    private int calculateMagnetIndex(final T node,
+                                     Double[] docker,
+                                     final int defaultMagnetIndex) {
+        if (node.getContent() instanceof View && docker != null) {
+            Bounds nodeBounds = ((View) node.getContent()).getBounds();
+            Double nodeWidth = nodeBounds.getLowerRight().getX() - nodeBounds.getUpperLeft().getX();
+            Double nodeHeight = nodeBounds.getLowerRight().getY() - nodeBounds.getUpperLeft().getY();
+            Double dockerX = docker[0];
+            Double dockerY = docker[1];
+
+            if (dockerX < 2d) {
+                // Left hand side dockers, 8,7,6
+                if (dockerY < 2d) {
+                    return 8;
+                } else if (dockerY > (nodeHeight - 2d)) {
+                    return 6;
+                } else {
+                    return 7;
+                }
+            } else if (dockerX > (nodeWidth - 2d)) {
+                // Right hand side dockers 2,3,4
+                if (dockerY < 2d) {
+                    return 2;
+                } else if (dockerY > (nodeHeight - 2d)) {
+                    return 4;
+                } else {
+                    return 3;
+                }
+            } else {
+                // Middle dockers 1,0,5
+                if (dockerY < 2d) {
+                    return 1;
+                } else if (dockerY > (nodeHeight - 2d)) {
+                    return 5;
+                } else {
+                    return 0;
+                }
+            }
+        }
+
+        return defaultMagnetIndex;
     }
 
     @Override

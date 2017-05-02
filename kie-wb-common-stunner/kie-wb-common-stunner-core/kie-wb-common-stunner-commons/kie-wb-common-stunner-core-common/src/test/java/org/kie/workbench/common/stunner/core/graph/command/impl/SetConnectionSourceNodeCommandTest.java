@@ -50,6 +50,8 @@ public class SetConnectionSourceNodeCommandTest extends AbstractGraphCommandTest
     private static final String TARGET_UUID = "nodeTargetUUID";
     private static final String EDGE_UUID = "edgeUUID";
     private static final Integer MAGNET_INDEX = 1;
+    private static final Double MAGNETX = 15d;
+    private static final Double MAGNETY = 0d;
 
     private Node node;
     private Node lastSourceNode;
@@ -78,7 +80,9 @@ public class SetConnectionSourceNodeCommandTest extends AbstractGraphCommandTest
         when(edge.getTargetNode()).thenReturn(target);
         this.tested = new SetConnectionSourceNodeCommand(node,
                                                          edge,
-                                                         MAGNET_INDEX);
+                                                         MAGNET_INDEX,
+                                                         MAGNETX,
+                                                         MAGNETY);
     }
 
     @Test
@@ -130,7 +134,9 @@ public class SetConnectionSourceNodeCommandTest extends AbstractGraphCommandTest
     public void testAllowNoSourceConnection() {
         this.tested = new SetConnectionSourceNodeCommand(null,
                                                          edge,
-                                                         MAGNET_INDEX);
+                                                         MAGNET_INDEX,
+                                                         MAGNETX,
+                                                         MAGNETY);
         CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
         assertEquals(CommandResult.Type.INFO,
                      result.getType());
@@ -195,7 +201,7 @@ public class SetConnectionSourceNodeCommandTest extends AbstractGraphCommandTest
         verify(sourceOutEdges,
                times(1)).add(eq(edge));
         verify(edgeContent,
-               times(1)).setSourceMagnetIndex(eq(MAGNET_INDEX));
+               times(1)).setSourceMagnet(eq(MAGNET_INDEX), eq(MAGNETX), eq(MAGNETY));
         verify(edge,
                times(1)).setSourceNode(eq(node));
         verify(targetInEdges,
