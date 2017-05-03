@@ -81,6 +81,8 @@ public class ProjectScreenPresenterTest
         //The BuildOptions widget is manipulated in the Presenter so we need some nasty mocking
         mockBuildOptions();
 
+        mockRepositoryService();
+
         constructProjectScreenPresenter( new CallerMock<BuildService>( buildService ),
                                          new CallerMock<AssetManagementService>( assetManagementServiceMock ) );
 
@@ -141,6 +143,7 @@ public class ProjectScreenPresenterTest
 
     @Test
     public void testBuildCommandFail() {
+        when( repositoryStructureModel.isManaged() ).thenReturn( false );
         BuildMessage message = mock( BuildMessage.class );
         List<BuildMessage> messages = new ArrayList<BuildMessage>();
         messages.add( message );
@@ -411,13 +414,7 @@ public class ProjectScreenPresenterTest
         verify( view,
                 times( 1 ) ).hideBusyIndicator();
 
-        final Map<String, Object> env = new HashMap<String, Object>() {
-            {
-                put( "managed",
-                     true );
-            }
-        };
-        when( repository.getEnvironment() ).thenReturn( env );
+        when( repositoryStructureModel.isManaged() ).thenReturn( true );
 
         presenter.triggerBuild();
 
@@ -436,13 +433,7 @@ public class ProjectScreenPresenterTest
         verify( view,
                 times( 1 ) ).hideBusyIndicator();
 
-        final Map<String, Object> env = new HashMap<String, Object>() {
-            {
-                put( "managed",
-                     false );
-            }
-        };
-        when( repository.getEnvironment() ).thenReturn( env );
+        when( repositoryStructureModel.isManaged() ).thenReturn( false );
 
         presenter.triggerBuild();
 
@@ -463,13 +454,7 @@ public class ProjectScreenPresenterTest
         verify( view,
                 times( 1 ) ).hideBusyIndicator();
 
-        final Map<String, Object> env = new HashMap<String, Object>() {
-            {
-                put( "managed",
-                     false );
-            }
-        };
-        when( repository.getEnvironment() ).thenReturn( env );
+        when( repositoryStructureModel.isManaged() ).thenReturn( false );
 
         doThrow( GAVAlreadyExistsException.class ).when( buildService ).buildAndDeploy( eq( project ),
                                                                                         eq( DeploymentMode.VALIDATED ) );
@@ -516,6 +501,46 @@ public class ProjectScreenPresenterTest
         reImportCommand.execute();
 
         verify( projectScreenService, times( 1 ) ).reImport( eq( presenter.pathToPomXML ) );
+    }
+
+    @Test
+    public void testAdjustBuildOptionsWhenRepositoryIsManaged() throws Exception {
+        when( repositoryStructureModel.isManaged() ).thenReturn( true );
+
+        spiedPresenter.adjustBuildOptions();
+
+        verify( spiedPresenter ).enableBuild( true, false );
+        verify( spiedPresenter ).enableBuildAndInstall( true, true );
+        verify( spiedPresenter ).enableBuildAndDeploy( true );
+    }
+
+    @Test
+    public void testAdjustBuildOptionsWhenRepositoryIsNotManaged() throws Exception {
+        when( repositoryStructureModel.isManaged() ).thenReturn( false );
+
+        spiedPresenter.adjustBuildOptions();
+
+        verify( spiedPresenter ).enableBuild( true, true );
+        verify( spiedPresenter ).enableBuildAndInstall( false, true );
+        verify( spiedPresenter ).enableBuildAndDeploy( false );
+    }
+
+    @Test
+    public void testGetBuildCommandWhenRepositoryIsManaged() throws Exception {
+        when( repositoryStructureModel.isManaged() ).thenReturn( true );
+
+        spiedPresenter.getBuildCommand( DeploymentMode.VALIDATED ).execute();
+
+        verify( spiedPresenter ).build();
+    }
+
+    @Test
+    public void testGetBuildCommandWhenIsRepositoryIsNotManaged() throws Exception {
+        when( repositoryStructureModel.isManaged() ).thenReturn( false );
+
+        spiedPresenter.getBuildCommand( DeploymentMode.VALIDATED ).execute();
+
+        verify( spiedPresenter ).buildAndDeploy( DeploymentMode.VALIDATED );
     }
 
     private void verifyBusyShowHideAnyString( int show,

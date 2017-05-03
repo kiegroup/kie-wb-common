@@ -30,7 +30,9 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
+import org.guvnor.asset.management.model.RepositoryStructureModel;
 import org.guvnor.asset.management.service.AssetManagementService;
+import org.guvnor.asset.management.service.RepositoryStructureService;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
@@ -43,6 +45,7 @@ import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.guvnor.common.services.project.service.ProjectRepositoryResolver;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.security.KieWorkbenchACL;
+import org.guvnor.structure.repositories.Repository;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.ButtonGroup;
@@ -119,6 +122,8 @@ public class ProjectScreenPresenter
     private ProjectScreenView         view;
     private User user;
     private Caller<ValidationService> validationService;
+
+    private Caller<RepositoryStructureService> repositoryStructureService;
 
     private Caller<ProjectScreenService> projectScreenService;
     private Caller<BuildService> buildServiceCaller;
@@ -208,7 +213,8 @@ public class ProjectScreenPresenter
                                    final Caller<ValidationService> validationService,
                                    final Instance<LockManager> lockManagerInstanceProvider,
                                    final Event<ForceUnlockEvent> forceLockReleaseEvent,
-                                   final ConflictingRepositoriesPopup conflictingRepositoriesPopup ) {
+                                   final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
+                                   final Caller<RepositoryStructureService> repositoryStructureService ) {
         this.view = view;
         this.user = user;
         view.setPresenter( this );
@@ -231,6 +237,7 @@ public class ProjectScreenPresenter
         this.lockManagerInstanceProvider = lockManagerInstanceProvider;
         this.forceLockReleaseEvent = forceLockReleaseEvent;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
+        this.repositoryStructureService = repositoryStructureService;
 
         projectContextChangeHandle = workbenchContext.addChangeHandler( new ProjectContextChangeHandler() {
             @Override
@@ -258,7 +265,6 @@ public class ProjectScreenPresenter
             }
         };
     }
-
 
     /**
      * This is in no way a permanent fix for the refresh issue.
@@ -345,16 +351,6 @@ public class ProjectScreenPresenter
         }
     }
 
-    private boolean isRepositoryManaged() {
-        Boolean isRepositoryManaged = Boolean.FALSE;
-
-        if ( workbenchContext.getActiveRepository() != null && workbenchContext.getActiveRepository().getEnvironment().containsKey( "managed" ) ) {
-            isRepositoryManaged = (Boolean) workbenchContext.getActiveRepository().getEnvironment().get( "managed" );
-        }
-
-        return isRepositoryManaged;
-    }
-
     @OnStartup
     public void onStartup( final PlaceRequest placeRequest ) {
         final boolean paramProjectEditorDisableBuild = Window.Location.getParameterMap().containsKey( "no_build" );
@@ -399,26 +395,48 @@ public class ProjectScreenPresenter
         }
     }
 
-    private void adjustBuildOptions() {
-        boolean supportsRuntimeDeploy = ApplicationPreferences.getBooleanPref( "support.runtime.deploy" );
+    void adjustBuildOptions() {
         if ( disableBuildOption ) {
             ( (Button) buildOptions.getWidget( 0 ) ).setEnabled( false );
             buildOptions.getWidget( 0 ).setVisible( false );
-
-        } else if ( isRepositoryManaged() ) {
-            enableBuild( true,
-                         false );
-            enableBuildAndInstall( true,
-                                   !supportsRuntimeDeploy );
-            enableBuildAndDeploy( true );
-
         } else {
-            enableBuild( true,
-                         true );
-            enableBuildAndInstall( false,
-                                   !supportsRuntimeDeploy );
-            enableBuildAndDeploy( false );
+            loadRepository( new ParameterizedCommand<RepositoryStructureModel>() {
+                @Override
+                public void execute( final RepositoryStructureModel repository ) {
+                    final boolean supportsRuntimeDeploy = ApplicationPreferences.getBooleanPref( "support.runtime.deploy" );
+                    final boolean isRepositoryManaged = repository.isManaged();
+
+                    if ( isRepositoryManaged ) {
+                        enableBuild( true,
+                                     false );
+                        enableBuildAndInstall( true,
+                                               !supportsRuntimeDeploy );
+                        enableBuildAndDeploy( true );
+
+                    } else {
+                        enableBuild( true,
+                                     true );
+                        enableBuildAndInstall( false,
+                                               !supportsRuntimeDeploy );
+                        enableBuildAndDeploy( false );
+                    }
+                }
+            } );
         }
+    }
+
+    private void loadRepository( final ParameterizedCommand<RepositoryStructureModel> command ) {
+        final Repository activeRepository = workbenchContext.getActiveRepository();
+        final HasBusyIndicatorDefaultErrorCallback error = new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView );
+        final RemoteCallback<RepositoryStructureModel> success = new RemoteCallback<RepositoryStructureModel>() {
+            @Override
+            public void callback( RepositoryStructureModel repository ) {
+                command.execute( repository );
+            }
+        };
+
+        repositoryStructureService.call( success,
+                                         error ).load( activeRepository );
     }
 
     private void showCurrentProjectInfoIfAny( final KieProject project ) {
@@ -941,28 +959,38 @@ public class ProjectScreenPresenter
         getSafeExecutedCommand( getBuildCommand( DeploymentMode.VALIDATED ) ).execute();
     }
 
-    private Command getBuildCommand( final DeploymentMode mode ) {
+    Command getBuildCommand( final DeploymentMode mode ) {
         return new Command() {
             @Override
             public void execute() {
+
+                loadRepository( new ParameterizedCommand<RepositoryStructureModel>() {
+
+                    @Override
+                    public void execute( RepositoryStructureModel repositoryStructureModel ) {
+                        final boolean isRepositoryManaged = repositoryStructureModel.isManaged();
+
+                        if ( isRepositoryManaged ) {
+                            build();
+                        } else {
+                            buildAndDeploy( mode );
+                        }
+                    }
+                } );
+
                 view.showBusyIndicator( ProjectEditorResources.CONSTANTS.Building() );
-                if ( isRepositoryManaged() ) {
-                    build();
-                } else {
-                    buildAndDeploy( mode );
-                }
             }
         };
     }
 
-    private void build() {
+    void build() {
         building = true;
         buildServiceCaller.call( getBuildSuccessCallback(),
                                  new BuildFailureErrorCallback( view,
                                                                 Collections.EMPTY_MAP ) ).build( project );
     }
 
-    private void buildAndDeploy( final DeploymentMode mode ) {
+    void buildAndDeploy( final DeploymentMode mode ) {
         building = true;
         buildServiceCaller.call( getBuildSuccessCallback(),
                                  new BuildFailureErrorCallback( view,
@@ -1174,26 +1202,8 @@ public class ProjectScreenPresenter
         }
     }
 
-    private class BuildFailureErrorCallback
-            extends CommandWithThrowableDrivenErrorCallback {
-
-        public BuildFailureErrorCallback( final HasBusyIndicator view,
-                                          final Map<Class<? extends Throwable>, CommandWithThrowable> commands ) {
-            super( view,
-                   commands );
-        }
-
-        @Override
-        public boolean error( final Message message,
-                              final Throwable throwable ) {
-            building = false;
-            return super.error( message,
-                                throwable );
-        }
-    }
-
-    private void enableBuild( boolean enabled,
-                              boolean changeTitle ) {
+    void enableBuild( boolean enabled,
+                      boolean changeTitle ) {
         final DropDownMenu menu = (DropDownMenu) buildOptions.getWidget( 1 );
         menu.getWidget( 0 ).setVisible( enabled );
         if ( changeTitle ) {
@@ -1204,8 +1214,8 @@ public class ProjectScreenPresenter
 
     }
 
-    private void enableBuildAndInstall( boolean enabled,
-                                        boolean changeTitle ) {
+    void enableBuildAndInstall( boolean enabled,
+                                boolean changeTitle ) {
         final DropDownMenu menu = (DropDownMenu) buildOptions.getWidget( 1 );
         menu.getWidget( 1 ).setVisible( enabled );
         if ( changeTitle ) {
@@ -1215,7 +1225,7 @@ public class ProjectScreenPresenter
         }
     }
 
-    private void enableBuildAndDeploy( boolean enabled ) {
+    void enableBuildAndDeploy( boolean enabled ) {
         if ( Boolean.TRUE.equals( ApplicationPreferences.getBooleanPref( "support.runtime.deploy" ) ) ) {
             final DropDownMenu menu = (DropDownMenu) buildOptions.getWidget( 1 );
             menu.getWidget( 2 ).setVisible( enabled );
@@ -1300,6 +1310,24 @@ public class ProjectScreenPresenter
         if ( projectImportsMetaData != null && lockInfo.getFile().equals( projectImportsMetaData.getPath() ) ) {
             projectImportsMetaData.setLockInfo( lockInfo );
             view.setImportsMetadata( projectImportsMetaData );
+        }
+    }
+
+    private class BuildFailureErrorCallback
+            extends CommandWithThrowableDrivenErrorCallback {
+
+        public BuildFailureErrorCallback( final HasBusyIndicator view,
+                                          final Map<Class<? extends Throwable>, CommandWithThrowable> commands ) {
+            super( view,
+                   commands );
+        }
+
+        @Override
+        public boolean error( final Message message,
+                              final Throwable throwable ) {
+            building = false;
+            return super.error( message,
+                                throwable );
         }
     }
 
