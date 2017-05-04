@@ -129,13 +129,9 @@ public class CanvasViewTest {
     @SuppressWarnings("unchecked")
     public void testUndock() {
         final WiresShape wiresShape = mock(WiresShape.class);
-        final WiresShape parentWiresShape = mock(WiresShape.class);
         final WiresShape targetWiresShape = mock(WiresShape.class);
         tested.undock(targetWiresShape,
-                      parentWiresShape,
                       wiresShape);
-        verify(parentWiresShape,
-               times(1)).add(eq(wiresShape));
         verify(targetWiresShape,
                times(1)).remove(eq(wiresShape));
         verify(wiresShape,

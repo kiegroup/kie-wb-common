@@ -26,7 +26,6 @@ import java.util.List;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
@@ -709,8 +708,7 @@ public class BPMNDiagramMarshallerTest {
                      simulationSet.getMean().getValue());
     }
 
-    // TODO: Disabled @Test - As intermediate events has been disabled for M1
-    @Ignore
+    @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallNotBoundaryEvents() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_NOT_BOUNDARY_EVENTS);
@@ -747,8 +745,7 @@ public class BPMNDiagramMarshallerTest {
                      0);
     }
 
-    // TODO: Disabled @Test - As intermediate events has been disabled for M1
-    @Ignore
+    @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallBoundaryEvents() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_BOUNDARY_EVENTS);
@@ -1257,8 +1254,7 @@ public class BPMNDiagramMarshallerTest {
                       7);
     }
 
-    // TODO: Disabled @Test - As intermediate events has been disabled for M1
-    @Ignore
+    @Test
     public void testMarshallNotBoundaryEvents() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_NOT_BOUNDARY_EVENTS);
         String result = tested.marshall(diagram);
@@ -1268,8 +1264,7 @@ public class BPMNDiagramMarshallerTest {
                       4);
     }
 
-    // TODO: Disabled @Test - As intermediate events has been disabled for M1
-    @Ignore
+    @Test
     public void testMarshallBoundaryEvents() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_BOUNDARY_EVENTS);
         String result = tested.marshall(diagram);
@@ -1277,6 +1272,8 @@ public class BPMNDiagramMarshallerTest {
                       1,
                       5,
                       3);
+        // Assert that the boundary event location and size are the expected ones.
+        assertTrue(result.contains("Bounds height=\"30.0\" width=\"30.0\" x=\"312.0\" y=\"195.0\""));
     }
 
     @Test
@@ -1603,8 +1600,7 @@ public class BPMNDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:exclusiveGateway id=\"_877EA035-1A14-42E9-8CAA-43E9BF908C70\" drools:dg=\"under 10 : _5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD\" name=\"AgeSplit\" gatewayDirection=\"Diverging\" default=\"_5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD\">"));
     }
 
-    // TODO: Disabled @Test - As intermediate events has been disabled for M1
-    @Ignore
+    @Test
     public void testMarshallIntermediateTimerEvent() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_TIMER_EVENT);
         IntermediateTimerEvent timerEvent = null;
