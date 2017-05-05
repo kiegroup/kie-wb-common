@@ -47,7 +47,7 @@ public class ProjectScreenPresenterRefreshTest
         ApplicationPreferences.setUp( new HashMap<String, String>() );
 
         mockBuildOptions();
-
+        mockRepositoryService();
 
         final ProjectScreenModel model = new ProjectScreenModel();
         model.setPOMMetaData( new Metadata() );

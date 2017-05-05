@@ -20,7 +20,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import com.google.gwtmockito.GwtMock;
+import org.guvnor.asset.management.model.RepositoryStructureModel;
 import org.guvnor.asset.management.service.AssetManagementService;
+import org.guvnor.asset.management.service.RepositoryStructureService;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
@@ -99,9 +101,15 @@ public abstract class ProjectScreenPresenterTestBase {
     @Mock
     protected Repository repository;
     @Mock
+    protected RepositoryStructureModel repositoryStructureModel;
+    @Mock
     protected Path pomPath;
+    @Mock
+    protected RepositoryStructureService repositoryStructureService;
 
     protected ObservablePath observablePathToPomXML;
+    
+    protected ProjectScreenPresenter spiedPresenter;
 
     protected void mockBuildOptions() {
         when( view.getBuildOptionsButton() ).thenReturn( buildOptions );
@@ -173,7 +181,8 @@ public abstract class ProjectScreenPresenterTestBase {
                                                 new CallerMock<ValidationService>( mock( ValidationService.class ) ),
                                                 lockManagerInstanceProvider,
                                                 mock( EventSourceMock.class ),
-                                                conflictingRepositoriesPopup ) {
+                                                conflictingRepositoriesPopup,
+                                                new CallerMock<RepositoryStructureService>( repositoryStructureService ) ) {
 
             @Override
             protected void setupPathToPomXML() {
@@ -207,5 +216,11 @@ public abstract class ProjectScreenPresenterTestBase {
             }
         };
 
+        spiedPresenter = spy( presenter );
+    }
+
+    protected void mockRepositoryService() {
+        when( repositoryStructureModel.isManaged() ).thenReturn( true );
+        when( repositoryStructureService.load( any(Repository.class) ) ).thenReturn( repositoryStructureModel );
     }
 }
