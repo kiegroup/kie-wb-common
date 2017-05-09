@@ -32,26 +32,22 @@ public class FormDefinitionResourceType extends FormResourceTypeDefinition imple
     private TranslationService translationService;
 
     @Inject
-    public FormDefinitionResourceType( TranslationService translationService ) {
+    public FormDefinitionResourceType(TranslationService translationService) {
         this.translationService = translationService;
     }
 
     @Override
     public IsWidget getIcon() {
-        return new Image( FormModelerEditorResources.INSTANCE.images().typeForm() );
+        return new Image(FormModelerEditorResources.INSTANCE.images().typeForm());
     }
 
     @Override
     public String getShortName() {
-        String desc = translationService.getTranslation( FormEditorConstants.FormDefinitionResourceTypeFormTypeShortName );
-        if ( desc == null || desc.isEmpty() ) return super.getShortName();
-        return desc;
+        return translationService.getTranslation(FormEditorConstants.FormDefinitionResourceTypeFormTypeShortName);
     }
 
     @Override
     public String getDescription() {
-        String desc = translationService.getTranslation( FormEditorConstants.FormDefinitionResourceTypeFormTypeDescription );
-        if ( desc == null || desc.isEmpty() ) return super.getDescription();
-        return desc;
+        return translationService.getTranslation(FormEditorConstants.FormDefinitionResourceTypeFormTypeDescription);
     }
 }

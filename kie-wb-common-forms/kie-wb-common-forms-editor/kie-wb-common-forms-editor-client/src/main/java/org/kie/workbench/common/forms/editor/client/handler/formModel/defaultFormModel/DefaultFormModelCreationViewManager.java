@@ -32,13 +32,13 @@ public class DefaultFormModelCreationViewManager implements FormModelCreationVie
     private TranslationService translationService;
 
     @Inject
-    public DefaultFormModelCreationViewManager( TranslationService translationService ) {
+    public DefaultFormModelCreationViewManager(TranslationService translationService) {
         this.translationService = translationService;
     }
 
     @Override
     public String getLabel() {
-        return translationService.getTranslation( FormEditorConstants.DefaultFormModelLabel );
+        return translationService.getTranslation(FormEditorConstants.DefaultFormModelLabel);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class DefaultFormModelCreationViewManager implements FormModelCreationVie
     }
 
     @Override
-    public void init( Path projectPath ) {
-        // Nothing to initialize here
+    public void init(Path projectPath) {
+        // Nothing to setUp here
     }
 
     @Override
