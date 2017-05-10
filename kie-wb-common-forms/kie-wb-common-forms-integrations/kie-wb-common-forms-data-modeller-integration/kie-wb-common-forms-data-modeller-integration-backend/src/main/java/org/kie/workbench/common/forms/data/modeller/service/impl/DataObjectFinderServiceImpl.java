@@ -18,6 +18,7 @@ package org.kie.workbench.common.forms.data.modeller.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -40,34 +41,39 @@ public class DataObjectFinderServiceImpl implements DataObjectFinderService {
     private DataModelerService dataModelerService;
 
     @Inject
-    public DataObjectFinderServiceImpl( KieProjectService projectService,
-                                        DataModelerService dataModelerService ) {
+    public DataObjectFinderServiceImpl(KieProjectService projectService,
+                                       DataModelerService dataModelerService) {
         this.projectService = projectService;
         this.dataModelerService = dataModelerService;
     }
 
     @Override
-    public DataObject getDataObject( String typeName, Path path ) {
-        DataModel dataModel = dataModelerService.loadModel( projectService.resolveProject( path ) );
+    public DataObject getDataObject(String typeName,
+                                    Path path) {
+        DataModel dataModel = dataModelerService.loadModel(projectService.resolveProject(path));
 
-        return dataModel.getDataObject( typeName );
+        return dataModel.getDataObject(typeName);
     }
 
     @Override
-    public List<ObjectProperty> getDataObjectProperties( String typeName, Path path ) {
-        return getDataObject( typeName, path ).getProperties();
+    public List<ObjectProperty> getDataObjectProperties(String typeName,
+                                                        Path path) {
+        return getDataObject(typeName,
+                             path).getProperties().stream().filter(property -> DataModellerFieldGenerator.isValidDataObjectProperty(property)).collect(Collectors.toList());
     }
 
     @Override
-    public List<DataObjectFormModel> getAvailableDataObjects( Path path ) {
-        DataModel dataModel = dataModelerService.loadModel( projectService.resolveProject( path ) );
+    public List<DataObjectFormModel> getAvailableDataObjects(Path path) {
+        DataModel dataModel = dataModelerService.loadModel(projectService.resolveProject(path));
 
         List<DataObjectFormModel> formModels = new ArrayList<>();
 
-        dataModel.getDataObjects().forEach( dataObject -> {
-            String modelName = dataObject.getName().substring( 0, 1 ).toLowerCase() + dataObject.getName().substring( 1 );
-            formModels.add( new DataObjectFormModel( modelName, dataObject.getClassName() ) );
-        } );
+        dataModel.getDataObjects().forEach(dataObject -> {
+            String modelName = dataObject.getName().substring(0,
+                                                              1).toLowerCase() + dataObject.getName().substring(1);
+            formModels.add(new DataObjectFormModel(modelName,
+                                                   dataObject.getClassName()));
+        });
 
         return formModels;
     }
