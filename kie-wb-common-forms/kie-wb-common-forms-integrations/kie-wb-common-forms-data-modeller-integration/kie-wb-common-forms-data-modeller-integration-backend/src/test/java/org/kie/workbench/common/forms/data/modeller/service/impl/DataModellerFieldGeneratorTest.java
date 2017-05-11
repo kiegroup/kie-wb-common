@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.relations.multipleSubform.definition.MultipleSubFormFieldDefinition;
 import org.kie.workbench.common.forms.fields.test.TestFieldManager;
 import org.kie.workbench.common.forms.model.FieldDefinition;
@@ -31,12 +32,12 @@ import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 import org.kie.workbench.common.services.datamodeller.core.impl.AnnotationDefinitionImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.AnnotationImpl;
 import org.kie.workbench.common.services.datamodeller.core.impl.DataObjectImpl;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
-public class DataModellerFieldGeneratorTest {
-
-    public static final String LABEL_SUFFIX = "Label_";
+@RunWith(MockitoJUnitRunner.class)
+public class DataModellerFieldGeneratorTest extends AbstractDataObjectTest {
 
     public static final String PACKAGE = "org.kie.workbench.common.forms.test";
     public static final String DATA_OBJECT_NAME = "Test";
@@ -181,25 +182,5 @@ public class DataModellerFieldGeneratorTest {
                     withLabels);
 
         return result;
-    }
-
-    private ObjectProperty addProperty(DataObject dataObject,
-                                       String propertyName,
-                                       String className,
-                                       boolean multiple,
-                                       boolean withLabels) {
-
-        ObjectProperty property = dataObject.addProperty(propertyName,
-                                                         className,
-                                                         multiple);
-
-        if (withLabels) {
-            Annotation labelAnnotation = new AnnotationImpl(new AnnotationDefinitionImpl(MainDomainAnnotations.LABEL_ANNOTATION));
-            labelAnnotation.setValue(MainDomainAnnotations.VALUE_PARAM,
-                                     LABEL_SUFFIX + propertyName);
-            property.addAnnotation(labelAnnotation);
-        }
-
-        return property;
     }
 }
