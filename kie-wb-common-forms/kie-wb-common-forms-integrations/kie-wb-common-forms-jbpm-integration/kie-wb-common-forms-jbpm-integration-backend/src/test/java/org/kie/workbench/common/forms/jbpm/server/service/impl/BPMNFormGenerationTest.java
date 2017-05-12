@@ -92,9 +92,6 @@ public abstract class BPMNFormGenerationTest<MODEL extends JBPMFormModel> {
 
         FormDefinition form = forms.iterator().next();
 
-        assertEquals( getModelId(), form.getId() );
-        assertEquals( getModelId() + BPMNVariableUtils.TASK_FORM_SUFFIX, form.getName() );
-
         assertEquals( form.getModel(), model );
 
         assertEquals( "There should be 4 fields", 4, form.getFields().size() );
@@ -137,7 +134,7 @@ public abstract class BPMNFormGenerationTest<MODEL extends JBPMFormModel> {
 
         Map<String, FormDefinition> allForms = new HashMap<>();
 
-        forms.forEach( form -> allForms.put( form.getId(), form ) );
+        forms.forEach( form -> allForms.put( form.getName(), form ) );
 
         try {
             verify( classLoader, times(1) ).loadClass( anyString() );
@@ -149,7 +146,7 @@ public abstract class BPMNFormGenerationTest<MODEL extends JBPMFormModel> {
 
         assertEquals( "There should 4 forms", 4, forms.size() );
 
-        FormDefinition form  = allForms.get( getModelId() );
+        FormDefinition form  = allForms.get( model.getFormName() );
         checkBPMForm( form, allForms );
         form = allForms.get( Person.class.getName() );
         checkPersonForm( form, allForms );
@@ -189,8 +186,7 @@ public abstract class BPMNFormGenerationTest<MODEL extends JBPMFormModel> {
 
     private void checkBPMForm( FormDefinition form, Map<String, FormDefinition> allForms ) {
         assertNotNull( form );
-        assertEquals( getModelId(), form.getId() );
-        assertEquals( getModelId() + BPMNVariableUtils.TASK_FORM_SUFFIX, form.getName() );
+
         assertEquals( 1, form.getFields().size() );
 
         FieldDefinition field = form.getFieldByBinding( "person" );

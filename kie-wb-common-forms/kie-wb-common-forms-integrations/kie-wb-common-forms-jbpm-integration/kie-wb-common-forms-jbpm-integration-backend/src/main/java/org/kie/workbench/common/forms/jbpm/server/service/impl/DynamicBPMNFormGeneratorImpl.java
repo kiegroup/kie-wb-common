@@ -85,7 +85,7 @@ public class DynamicBPMNFormGeneratorImpl implements DynamicBPMNFormGenerator {
         FormDefinition form = new FormDefinition( model );
 
         form.setId( id );
-        form.setName( name + BPMNVariableUtils.TASK_FORM_SUFFIX );
+        form.setName( model.getFormName() );
 
         allForms.put( form.getId(), form );
 

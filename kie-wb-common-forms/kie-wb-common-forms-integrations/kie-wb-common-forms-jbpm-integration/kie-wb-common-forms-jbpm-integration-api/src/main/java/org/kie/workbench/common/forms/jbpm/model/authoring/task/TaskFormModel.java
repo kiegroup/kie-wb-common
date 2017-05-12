@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.forms.jbpm.model.authoring.AbstractJBPMFormModel;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMVariable;
+import org.kie.workbench.common.forms.jbpm.service.bpmn.util.BPMNVariableUtils;
 
 @Portable
 public class TaskFormModel extends AbstractJBPMFormModel {
@@ -34,16 +35,16 @@ public class TaskFormModel extends AbstractJBPMFormModel {
 
     protected String formName;
 
-    public TaskFormModel( @MapsTo( "processId" ) String processId,
-                          @MapsTo( "taskId" ) String taskId,
-                          @MapsTo( "taskName" ) String taskName,
-                          @MapsTo( "formName" ) String formName,
-                          @MapsTo( "variables" ) List<JBPMVariable> variables ) {
-        super( variables );
+    public TaskFormModel(@MapsTo("processId") String processId,
+                         @MapsTo("taskId") String taskId,
+                         @MapsTo("taskName") String taskName,
+                         @MapsTo("formName") String formName,
+                         @MapsTo("variables") List<JBPMVariable> variables) {
+        super(variables);
         this.processId = processId;
         this.taskId = taskId;
         this.taskName = taskName;
-        this.formName = formName;
+        setFormName(formName);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class TaskFormModel extends AbstractJBPMFormModel {
         return processId;
     }
 
-    public void setProcessId( String processId ) {
+    public void setProcessId(String processId) {
         this.processId = processId;
     }
 
@@ -63,7 +64,7 @@ public class TaskFormModel extends AbstractJBPMFormModel {
         return taskId;
     }
 
-    public void setTaskId( String taskId ) {
+    public void setTaskId(String taskId) {
         this.taskId = taskId;
     }
 
@@ -71,7 +72,7 @@ public class TaskFormModel extends AbstractJBPMFormModel {
         return taskName;
     }
 
-    public void setTaskName( String taskName ) {
+    public void setTaskName(String taskName) {
         this.taskName = taskName;
     }
 
@@ -80,7 +81,10 @@ public class TaskFormModel extends AbstractJBPMFormModel {
         return formName;
     }
 
-    public void setFormName( String formName ) {
+    public void setFormName(String formName) {
+        if(!formName.endsWith(BPMNVariableUtils.TASK_FORM_SUFFIX)) {
+            formName += BPMNVariableUtils.TASK_FORM_SUFFIX;
+        }
         this.formName = formName;
     }
 
