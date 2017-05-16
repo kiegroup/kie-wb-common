@@ -113,21 +113,39 @@ public class WiresConnectorView<T> extends WiresConnector
         final MagnetManager.Magnets headMagnets = headWiresShape.getMagnets();
         final MagnetManager.Magnets tailMagnets = tailWiresShape.getMagnets();
         // Obtain the magnet for the head shape which location is equals/closer to the headMagnetDef.
+        Point2D headCoords = getAbsoluteCoordinates(headWiresShape);
         final WiresMagnet headMagnet = getWiresMagnet(headMagnets,
                                                       headMagnetDef,
-                                                      headWiresShape.getX(),
-                                                      headWiresShape.getY(),
+                                                      headCoords.getX(),
+                                                      headCoords.getY(),
                                                       LienzoShapeUtils.DEFAULT_SOURCE_MAGNET);
         // Obtain the magnet for the tail shape which location is equals/closer to the tailMagnetDef.
+        Point2D tailCoords = getAbsoluteCoordinates(tailWiresShape);
         final WiresMagnet tailMagnet = getWiresMagnet(tailMagnets,
                                                       tailMagnetDef,
-                                                      tailWiresShape.getX(),
-                                                      tailWiresShape.getY(),
+                                                      tailCoords.getX(),
+                                                      tailCoords.getY(),
                                                       LienzoShapeUtils.DEFAULT_TARGET_MAGNET);
         // Update the magnets.
         this.setHeadMagnet(headMagnet);
         this.setTailMagnet(tailMagnet);
         return (T) this;
+    }
+
+    private Point2D getAbsoluteCoordinates(WiresShape wiresShape) {
+        double x = wiresShape.getX();
+        double y = wiresShape.getY();
+
+        // adjust coordinates for containers
+        Object parent = wiresShape.getParent();
+        while (parent instanceof WiresShape) {
+            WiresShape parentShape = (WiresShape) parent;
+            x += parentShape.getX();
+            y += parentShape.getY();
+            parent = parentShape.getParent();
+        }
+        return new Point2D(x,
+                           y);
     }
 
     /**
