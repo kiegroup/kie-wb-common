@@ -69,7 +69,9 @@ public class AddConnectorCommandTest extends AbstractGraphCommandTest {
         when(graphIndex.getNode(eq(NODE_UUID))).thenReturn(node);
         this.tested = new AddConnectorCommand(NODE_UUID,
                                               edge,
-                                              0);
+                                              0,
+                                              0d,
+                                              0d);
     }
 
     @Test

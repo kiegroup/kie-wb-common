@@ -61,10 +61,14 @@ public class GraphCommandFactory {
     @SuppressWarnings("unchecked")
     public AddConnectorCommand addConnector(final Node target,
                                             final Edge edge,
-                                            final int magnetIdx) {
+                                            final int magnetIdx,
+                                            final double magnetX,
+                                            final double magnetY) {
         return new AddConnectorCommand(target,
                                        edge,
-                                       magnetIdx);
+                                       magnetIdx,
+                                       magnetX,
+                                       magnetY);
     }
 
     @SuppressWarnings("unchecked")
@@ -98,18 +102,26 @@ public class GraphCommandFactory {
 
     public SetConnectionSourceNodeCommand setSourceNode(final Node<? extends View<?>, Edge> sourceNode,
                                                         final Edge<? extends View<?>, Node> edge,
-                                                        final int magnetIndex) {
+                                                        final int magnetIndex,
+                                                        final double magnetX,
+                                                        final double magnetY) {
         return new SetConnectionSourceNodeCommand(sourceNode,
                                                   edge,
-                                                  magnetIndex);
+                                                  magnetIndex,
+                                                  magnetX,
+                                                  magnetY);
     }
 
     public SetConnectionTargetNodeCommand setTargetNode(final Node<? extends View<?>, Edge> targetNode,
                                                         final Edge<? extends View<?>, Node> edge,
-                                                        final int magnetIndex) {
+                                                        final int magnetIndex,
+                                                        final double magnetX,
+                                                        final double magnetY) {
         return new SetConnectionTargetNodeCommand(targetNode,
                                                   edge,
-                                                  magnetIndex);
+                                                  magnetIndex,
+                                                  magnetX,
+                                                  magnetY);
     }
 
     public UpdateElementPositionCommand updatePosition(final Node<?, Edge> element,

@@ -146,7 +146,9 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
                                                                                                      ssid));
                                                commandBuilder.addCommand(commandFactory.setTargetNode(node,
                                                                                                       inEdge,
-                                                                                                      targetMagnet));
+                                                                                                      targetMagnet,
+                                                                                                      0d,
+                                                                                                      0d));
                                            }
                                            final CommandResult<CanvasViolation> results = elementBuilderControl.getCommandManager().execute(canvasHandler,
                                                                                                                                             commandBuilder.build());

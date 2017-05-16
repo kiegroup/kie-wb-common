@@ -35,25 +35,35 @@ public final class AddConnectorCommand extends AbstractGraphCompositeCommand {
     private final String nodeUUID;
     private final Edge edge;
     private final Integer magnetIndex;
+    private final Double magnetX;
+    private final Double magnetY;
     private transient Node<?, Edge> node;
 
     public AddConnectorCommand(final @MapsTo("nodeUUID") String nodeUUID,
                                final @MapsTo("edge") Edge edge,
-                               final @MapsTo("magnetIndex") Integer magnetIndex) {
+                               final @MapsTo("magnetIndex") Integer magnetIndex,
+                               final @MapsTo("magnetX") Double magnetX,
+                               final @MapsTo("magnetY") Double magnetY) {
         this.nodeUUID = PortablePreconditions.checkNotNull("nodeUUID",
                                                            nodeUUID);
         this.edge = PortablePreconditions.checkNotNull("edge",
                                                        edge);
         this.magnetIndex = PortablePreconditions.checkNotNull("magnetIndex",
                                                               magnetIndex);
+        this.magnetX = magnetX;
+        this.magnetY = magnetY;
     }
 
     public AddConnectorCommand(final Node<?, Edge> sourceNode,
                                final Edge edge,
-                               final Integer magnetIndex) {
+                               final Integer magnetIndex,
+                               final Double magnetX,
+                               final Double magnetY) {
         this(sourceNode.getUUID(),
              edge,
-             magnetIndex);
+             magnetIndex,
+             magnetX,
+             magnetY);
         this.node = sourceNode;
     }
 
@@ -64,7 +74,9 @@ public final class AddConnectorCommand extends AbstractGraphCompositeCommand {
         final Node<? extends View<?>, Edge> source = (Node<? extends View<?>, Edge>) getNode(context);
         commands.add(new SetConnectionSourceNodeCommand(source,
                                                         edge,
-                                                        magnetIndex));
+                                                        magnetIndex,
+                                                        magnetX,
+                                                        magnetY));
         return this;
     }
 
@@ -115,6 +127,14 @@ public final class AddConnectorCommand extends AbstractGraphCompositeCommand {
 
     public Integer getMagnetIndex() {
         return magnetIndex;
+    }
+
+    public Double getMagnetX() {
+        return magnetX;
+    }
+
+    public Double getMagnetY() {
+        return magnetY;
     }
 
     public Node<?, Edge> getSourceNode() {

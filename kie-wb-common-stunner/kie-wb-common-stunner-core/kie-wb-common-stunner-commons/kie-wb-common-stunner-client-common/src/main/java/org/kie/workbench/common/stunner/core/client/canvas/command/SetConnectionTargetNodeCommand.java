@@ -28,20 +28,28 @@ public class SetConnectionTargetNodeCommand extends AbstractCanvasGraphCommand {
     private final Node<? extends View<?>, Edge> node;
     private final Edge<? extends View<?>, Node> edge;
     private final int magnetIndex;
+    private final double magnetX;
+    private final double magnetY;
 
     public SetConnectionTargetNodeCommand(final Node<? extends View<?>, Edge> node,
                                           final Edge<? extends View<?>, Node> edge,
-                                          final int magnetIndex) {
+                                          final int magnetIndex,
+                                          final double magnetX,
+                                          final double magnetY) {
         this.node = node;
         this.edge = edge;
         this.magnetIndex = magnetIndex;
+        this.magnetX = magnetX;
+        this.magnetY = magnetY;
     }
 
     @Override
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand(node,
                                                                                                            edge,
-                                                                                                           magnetIndex);
+                                                                                                           magnetIndex,
+                                                                                                           magnetX,
+                                                                                                           magnetY);
     }
 
     @Override

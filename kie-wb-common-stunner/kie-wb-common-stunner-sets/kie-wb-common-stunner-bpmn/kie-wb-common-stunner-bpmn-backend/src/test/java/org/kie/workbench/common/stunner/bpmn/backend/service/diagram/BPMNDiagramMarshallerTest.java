@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -153,6 +154,7 @@ public class BPMNDiagramMarshallerTest {
     private static final String BPMN_XORGATEWAY = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/xorGateway.bpmn";
     private static final String BPMN_TIMER_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/timerEvent.bpmn";
     private static final String BPMN_SIMULATIONPROPERTIES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/simulationProperties.bpmn";
+    private static final String BPMN_MAGNETDOCKERS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetDockers.bpmn";
 
     @Mock
     DefinitionManager definitionManager;
@@ -1030,6 +1032,186 @@ public class BPMNDiagramMarshallerTest {
     }
 
     @Test
+    public void testUnmarshallMagnetDockers() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_MAGNETDOCKERS);
+
+        testMagnetDockers(diagram);
+    }
+
+    private void testMagnetDockers(Diagram<Graph, Metadata> diagram) throws Exception {
+        Node userTaskNode = (Node) findElementByContentType(diagram,
+                                                            UserTask.class);
+        Node businessRuleTaskNode = (Node) findElementByContentType(diagram,
+                                                                    BusinessRuleTask.class);
+        Node scriptTaskNode = (Node) findElementByContentType(diagram,
+                                                              ScriptTask.class);
+        assertNotNull(userTaskNode);
+        assertNotNull(businessRuleTaskNode);
+        assertNotNull(scriptTaskNode);
+
+        ViewConnector userTaskInEdgeConnector = getInEdgeViewConnector(userTaskNode);
+        ViewConnector businessRuleTaskInEdgeConnector = getInEdgeViewConnector(businessRuleTaskNode);
+        ViewConnector scriptTaskInEdgeConnector = getInEdgeViewConnector(scriptTaskNode);
+        assertNotNull(userTaskInEdgeConnector);
+        assertNotNull(businessRuleTaskInEdgeConnector);
+        assertNotNull(scriptTaskInEdgeConnector);
+
+        ViewConnector userTaskOutEdgeConnector = getOutEdgeViewConnector(userTaskNode);
+        ViewConnector businessRuleTaskOutEdgeConnector = getOutEdgeViewConnector(businessRuleTaskNode);
+        ViewConnector scriptTaskOutEdgeConnector = getOutEdgeViewConnector(scriptTaskNode);
+        assertNotNull(userTaskOutEdgeConnector);
+        assertNotNull(businessRuleTaskOutEdgeConnector);
+        assertNotNull(scriptTaskOutEdgeConnector);
+
+        // userTaskInEdgeConnector is from magnet 1 to 7
+        assertEquals(1,
+                     userTaskInEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(20d,
+                     userTaskInEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(0d,
+                     userTaskInEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(7,
+                     userTaskInEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(0d,
+                     userTaskInEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(24d,
+                     userTaskInEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+
+        // businessRuleTaskInEdgeConnector is from magnet 3 to 8
+        assertEquals(3,
+                     businessRuleTaskInEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(40d,
+                     businessRuleTaskInEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(20d,
+                     businessRuleTaskInEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(8,
+                     businessRuleTaskInEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(0d,
+                     businessRuleTaskInEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(0d,
+                     businessRuleTaskInEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+
+        // scriptTaskInEdgeConnector is from magnet 6 to 6
+        assertEquals(6,
+                     scriptTaskInEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(0d,
+                     scriptTaskInEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(40d,
+                     scriptTaskInEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(6,
+                     scriptTaskInEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(0d,
+                     scriptTaskInEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(48d,
+                     scriptTaskInEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+
+        // userTaskOutEdgeConnector is from magnet 3 to 7
+        assertEquals(3,
+                     userTaskOutEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(136d,
+                     userTaskOutEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(24d,
+                     userTaskOutEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(7,
+                     userTaskOutEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(0d,
+                     userTaskOutEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(14d,
+                     userTaskOutEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+
+        // businessRuleTaskOutEdgeConnector is from magnet 5 to 5
+        assertEquals(5,
+                     businessRuleTaskOutEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(68d,
+                     businessRuleTaskOutEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(48d,
+                     businessRuleTaskOutEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(5,
+                     businessRuleTaskOutEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(14d,
+                     businessRuleTaskOutEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(28d,
+                     businessRuleTaskOutEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+
+        // scriptTaskOutEdgeConnector is from magnet 8 to 8
+        assertEquals(8,
+                     scriptTaskOutEdgeConnector.getSourceMagnetIndex().intValue());
+        assertEquals(0d,
+                     scriptTaskOutEdgeConnector.getSourceMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(0d,
+                     scriptTaskOutEdgeConnector.getSourceMagnetY().doubleValue(),
+                     0.1d);
+        assertEquals(8,
+                     scriptTaskOutEdgeConnector.getTargetMagnetIndex().intValue());
+        assertEquals(0d,
+                     scriptTaskOutEdgeConnector.getTargetMagnetX().doubleValue(),
+                     0.1d);
+        assertEquals(0d,
+                     scriptTaskOutEdgeConnector.getTargetMagnetY().doubleValue(),
+                     0.1d);
+    }
+
+    private ViewConnector getInEdgeViewConnector(Node node) {
+        List<Edge> edges = node.getInEdges();
+        if (edges != null) {
+            for (Edge edge : edges) {
+                if (edge.getContent() instanceof ViewConnector) {
+                    return (ViewConnector) edge.getContent();
+                }
+            }
+        }
+        return null;
+    }
+
+    private ViewConnector getOutEdgeViewConnector(Node node) {
+        List<Edge> edges = node.getOutEdges();
+        if (edges != null) {
+            for (Edge edge : edges) {
+                if (edge.getContent() instanceof ViewConnector) {
+                    return (ViewConnector) edge.getContent();
+                }
+            }
+        }
+        return null;
+    }
+
+    private Element findElementByContentType(Diagram<Graph, Metadata> diagram,
+                                             Class contentClass) {
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (contentClass.isInstance(oDefinition)) {
+                    return element;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Test
     public void testUnmarshallSeveralDiagrams() throws Exception {
         Diagram<Graph, Metadata> diagram1 = unmarshall(BPMN_EVALUATION);
         assertDiagram(diagram1,
@@ -1439,6 +1621,18 @@ public class BPMNDiagramMarshallerTest {
                      timerEvent.getExecutionSet().getTimeCycleLanguage().getValue());
     }
 
+    @Test
+    public void testMarshallMagnetDockers() throws Exception {
+        Diagram<Graph, Metadata> diagram1 = unmarshall(BPMN_MAGNETDOCKERS);
+        String result = tested.marshall(diagram1);
+        assertDiagram(result,
+                      1,
+                      8,
+                      7);
+        Diagram<Graph, Metadata> diagram2 = unmarshall(new ByteArrayInputStream(result.getBytes()));
+        testMagnetDockers(diagram2);
+    }
+
     private void assertDiagram(String result,
                                int diagramCount,
                                int nodeCount,
@@ -1470,6 +1664,10 @@ public class BPMNDiagramMarshallerTest {
 
     private Diagram<Graph, Metadata> unmarshall(String fileName) throws Exception {
         InputStream is = loadStream(fileName);
+        return unmarshall(is);
+    }
+
+    private Diagram<Graph, Metadata> unmarshall(InputStream is) throws Exception {
         Metadata metadata =
                 new MetadataImpl.MetadataImplBuilder(BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class)).build();
         DiagramImpl result = new DiagramImpl(org.kie.workbench.common.stunner.core.util.UUID.uuid(),

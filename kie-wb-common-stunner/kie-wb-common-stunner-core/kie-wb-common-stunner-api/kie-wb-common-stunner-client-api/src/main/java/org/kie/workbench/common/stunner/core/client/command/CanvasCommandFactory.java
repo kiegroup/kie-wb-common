@@ -67,11 +67,27 @@ public interface CanvasCommandFactory<H extends CanvasHandler> {
 
     CanvasCommand<H> setSourceNode(final Node<? extends View<?>, Edge> node,
                                    final Edge<? extends View<?>, Node> edge,
-                                   final int magnetIndex);
+                                   final int magnetIndex,
+                                   final double magnetX,
+                                   final double magnetY);
 
     CanvasCommand<H> setTargetNode(final Node<? extends View<?>, Edge> node,
                                    final Edge<? extends View<?>, Node> edge,
-                                   final int magnetIndex);
+                                   final int magnetIndex,
+                                   final double magnetX,
+                                   final double magnetY);
+
+    CanvasCommand<H> setSourceMagnet(final Node<? extends View<?>, Edge> node,
+                                     final Edge<? extends View<?>, Node> edge,
+                                     final int magnetIndex,
+                                     final double magnetX,
+                                     final double magnetY);
+
+    CanvasCommand<H> setTargetMagnet(final Node<? extends View<?>, Edge> node,
+                                     final Edge<? extends View<?>, Node> edge,
+                                     final int magnetIndex,
+                                     final double magnetX,
+                                     final double magnetY);
 
     CanvasCommand<H> updatePosition(final Node<View<?>, Edge> element,
                                     final Double x,

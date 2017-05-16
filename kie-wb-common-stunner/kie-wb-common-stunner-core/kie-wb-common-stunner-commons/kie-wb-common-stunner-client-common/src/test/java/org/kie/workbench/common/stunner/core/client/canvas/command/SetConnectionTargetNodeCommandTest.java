@@ -44,7 +44,9 @@ public class SetConnectionTargetNodeCommandTest extends AbstractCanvasCommandTes
         when(node.getUUID()).thenReturn("n1");
         this.tested = new SetConnectionTargetNodeCommand(node,
                                                          edge,
-                                                         1);
+                                                         1,
+                                                         0d,
+                                                         0d);
     }
 
     @Test

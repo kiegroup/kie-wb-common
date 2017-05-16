@@ -89,7 +89,9 @@ public class EdgeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
             final CommandResult<CanvasViolation> cr1 = getCommandManager().allow(wch,
                                                                                  commandFactory.setSourceNode(inNode,
                                                                                                               edge,
-                                                                                                              0));
+                                                                                                              0,
+                                                                                                              0d,
+                                                                                                              0d));
             allowsSourceConn = isAllowed(cr1);
         }
         boolean allowsTargetConn = true;
@@ -97,7 +99,9 @@ public class EdgeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
             final CommandResult<CanvasViolation> cr2 = getCommandManager().allow(wch,
                                                                                  commandFactory.setTargetNode(outNode,
                                                                                                               edge,
-                                                                                                              0));
+                                                                                                              0,
+                                                                                                              0d,
+                                                                                                              0d));
             allowsTargetConn = isAllowed(cr2);
         }
         return allowsSourceConn & allowsTargetConn;
@@ -134,7 +138,9 @@ public class EdgeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
         if (null != outNode) {
             commandBuilder.addCommand(commandFactory.setTargetNode(outNode,
                                                                    edge,
-                                                                   magnetIndexes[1]));
+                                                                   magnetIndexes[1],
+                                                                   0d,
+                                                                   0d));
         }
         final CommandResult<CanvasViolation> results = getCommandManager().execute(wch,
                                                                                    commandBuilder.build());

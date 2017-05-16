@@ -3482,14 +3482,28 @@ public class Bpmn2JsonMarshaller {
         Bounds targetBounds = ((BPMNShape) findDiagramElement(plane,
                                                               sequenceFlow.getTargetRef())).getBounds();
         generator.writeArrayFieldStart("dockers");
-        generator.writeStartObject();
-        generator.writeObjectField("x",
-                                   sourceBounds.getWidth() / 2);
-        generator.writeObjectField("y",
-                                   sourceBounds.getHeight() / 2);
-        generator.writeEndObject();
         List<Point> waypoints = ((BPMNEdge) findDiagramElement(plane,
                                                                sequenceFlow)).getWaypoint();
+
+        if (waypoints.size() > 1) {
+            Point waypoint = waypoints.get(0);
+            float x = waypoint.getX() - sourceBounds.getX();
+            float y = waypoint.getY() - sourceBounds.getY();
+            generator.writeStartObject();
+            generator.writeObjectField("x",
+                                       x);
+            generator.writeObjectField("y",
+                                       y);
+            generator.writeEndObject();
+        } else {
+            generator.writeStartObject();
+            generator.writeObjectField("x",
+                                       sourceBounds.getWidth() / 2);
+            generator.writeObjectField("y",
+                                       sourceBounds.getHeight() / 2);
+            generator.writeEndObject();
+        }
+
         for (int i = 1; i < waypoints.size() - 1; i++) {
             Point waypoint = waypoints.get(i);
             generator.writeStartObject();
@@ -3499,12 +3513,25 @@ public class Bpmn2JsonMarshaller {
                                        waypoint.getY());
             generator.writeEndObject();
         }
-        generator.writeStartObject();
-        generator.writeObjectField("x",
-                                   targetBounds.getWidth() / 2);
-        generator.writeObjectField("y",
-                                   targetBounds.getHeight() / 2);
-        generator.writeEndObject();
+
+        if (waypoints.size() > 1) {
+            Point waypoint = waypoints.get(waypoints.size() - 1);
+            float x = waypoint.getX() - targetBounds.getX();
+            float y = waypoint.getY() - targetBounds.getY();
+            generator.writeStartObject();
+            generator.writeObjectField("x",
+                                       x);
+            generator.writeObjectField("y",
+                                       y);
+            generator.writeEndObject();
+        } else {
+            generator.writeStartObject();
+            generator.writeObjectField("x",
+                                       targetBounds.getWidth() / 2);
+            generator.writeObjectField("y",
+                                       targetBounds.getHeight() / 2);
+            generator.writeEndObject();
+        }
         generator.writeEndArray();
     }
 

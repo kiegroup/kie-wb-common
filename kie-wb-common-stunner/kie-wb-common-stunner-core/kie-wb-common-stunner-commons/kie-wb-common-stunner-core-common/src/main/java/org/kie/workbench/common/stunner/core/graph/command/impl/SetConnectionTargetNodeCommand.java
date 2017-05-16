@@ -45,9 +45,13 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
     private final String targetNodeUUID;
     private final String edgeUUID;
     private final Integer magnetIndex;
+    private final Double magnetX;
+    private final Double magnetY;
 
     private String lastTargetNodeUUID;
     private Integer lastMagnetIndex;
+    private Double lastMagnetX;
+    private Double lastMagnetY;
     private transient Edge<? extends View, Node> edge;
     private transient Node<? extends View<?>, Edge> sourceNode;
     private transient Node<? extends View<?>, Edge> targetNode;
@@ -55,22 +59,32 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
     @SuppressWarnings("unchecked")
     public SetConnectionTargetNodeCommand(final @MapsTo("targetNodeUUID") String targetNodeUUID,
                                           final @MapsTo("edgeUUID") String edgeUUID,
-                                          final @MapsTo("magnetIndex") Integer magnetIndex) {
+                                          final @MapsTo("magnetIndex") Integer magnetIndex,
+                                          final @MapsTo("magnetX") Double magnetX,
+                                          final @MapsTo("magnetY") Double magnetY) {
         this.edgeUUID = PortablePreconditions.checkNotNull("edgeUUID",
                                                            edgeUUID);
         this.targetNodeUUID = targetNodeUUID;
         this.magnetIndex = magnetIndex;
+        this.magnetX = magnetX;
+        this.magnetY = magnetY;
         this.lastTargetNodeUUID = null;
         this.lastMagnetIndex = null;
+        this.lastMagnetX = null;
+        this.lastMagnetY = null;
     }
 
     @SuppressWarnings("unchecked")
     public SetConnectionTargetNodeCommand(final Node<? extends View<?>, Edge> targetNode,
                                           final Edge<? extends View, Node> edge,
-                                          final Integer magnetIndex) {
+                                          final Integer magnetIndex,
+                                          final Double magnetX,
+                                          final Double magnetY) {
         this(null != targetNode ? targetNode.getUUID() : null,
              edge.getUUID(),
-             magnetIndex);
+             magnetIndex,
+             magnetX,
+             magnetY);
         this.edge = PortablePreconditions.checkNotNull("edge",
                                                        edge);
         this.sourceNode = edge.getSourceNode();
@@ -82,6 +96,8 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
                                           final Edge<? extends View, Node> edge) {
         this(targetNode,
              edge,
+             null,
+             null,
              null);
     }
 
@@ -104,7 +120,11 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
             if (null != magnetIndex) {
                 ViewConnector connectionContent = (ViewConnector) edge.getContent();
                 lastMagnetIndex = connectionContent.getTargetMagnetIndex();
-                connectionContent.setTargetMagnetIndex(magnetIndex);
+                lastMagnetX = connectionContent.getTargetMagnetX();
+                lastMagnetY = connectionContent.getTargetMagnetY();
+                connectionContent.setTargetMagnet(magnetIndex,
+                                                  magnetX,
+                                                  magnetY);
             }
         }
         return results;
@@ -153,7 +173,9 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
         final SetConnectionTargetNodeCommand undoCommand = new SetConnectionTargetNodeCommand((Node<? extends View<?>, Edge>) getNode(context,
                                                                                                                                       lastTargetNodeUUID),
                                                                                               getEdge(context),
-                                                                                              lastMagnetIndex);
+                                                                                              lastMagnetIndex,
+                                                                                              lastMagnetX,
+                                                                                              lastMagnetY);
         return undoCommand.execute(context);
     }
 
@@ -190,6 +212,14 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
         return magnetIndex;
     }
 
+    public Double getMagnetX() {
+        return magnetX;
+    }
+
+    public Double getMagnetY() {
+        return magnetY;
+    }
+
     public Node<? extends View<?>, Edge> getTargetNode() {
         return targetNode;
     }
@@ -202,6 +232,6 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
     public String toString() {
         return "SetConnectionTargetNodeCommand [edge=" + edgeUUID
                 + ", candidate=" + (null != targetNodeUUID ? targetNodeUUID : "null")
-                + ", magnet=" + magnetIndex + "]";
+                + ", magnet=" + magnetIndex + ", magnetX=" + magnetX + ", magnetY=" + magnetY + "]";
     }
 }

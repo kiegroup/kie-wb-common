@@ -28,17 +28,25 @@ public interface ConnectionAcceptorControl<H extends CanvasHandler> extends Canv
 
     boolean allowSource(final Node source,
                         final Edge<View<?>, Node> connector,
-                        final int magnet);
+                        final int magnet,
+                        final double magnetX,
+                        final double magnetY);
 
     boolean allowTarget(final Node source,
                         final Edge<View<?>, Node> connector,
-                        final int magnet);
+                        final int magnet,
+                        final double magnetX,
+                        final double magnetY);
 
     boolean acceptSource(final Node source,
                          final Edge<View<?>, Node> connector,
-                         final int magnet);
+                         final int magnet,
+                         final double magnetX,
+                         final double magnetY);
 
     boolean acceptTarget(final Node source,
                          final Edge<View<?>, Node> connector,
-                         final int magnet);
+                         final int magnet,
+                         final double magnetX,
+                         final double magnetY);
 }

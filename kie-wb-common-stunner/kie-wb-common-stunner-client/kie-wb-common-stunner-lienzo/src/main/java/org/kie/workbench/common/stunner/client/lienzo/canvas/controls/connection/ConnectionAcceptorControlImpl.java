@@ -80,7 +80,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
     @SuppressWarnings("unchecked")
     public boolean allowSource(final Node source,
                                final Edge<View<?>, Node> connector,
-                               final int magnet) {
+                               final int magnet,
+                               final double magnetX,
+                               final double magnetY) {
         if (null == canvasHandler) {
             return false;
         }
@@ -90,7 +92,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
             final CommandResult<CanvasViolation> violations = getCommandManager().allow(canvasHandler,
                                                                                         canvasCommandFactory.setSourceNode(source,
                                                                                                                            connector,
-                                                                                                                           magnet));
+                                                                                                                           magnet,
+                                                                                                                           magnetX,
+                                                                                                                           magnetY));
             final boolean accepts = isAccept(violations);
             highlight(source,
                       connector,
@@ -104,7 +108,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
     @SuppressWarnings("unchecked")
     public boolean allowTarget(final Node target,
                                final Edge<View<?>, Node> connector,
-                               final int magnet) {
+                               final int magnet,
+                               final double magnetX,
+                               final double magnetY) {
         if (null == canvasHandler) {
             return false;
         }
@@ -114,7 +120,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
             final CommandResult<CanvasViolation> violations = getCommandManager().allow(canvasHandler,
                                                                                         canvasCommandFactory.setTargetNode(target,
                                                                                                                            connector,
-                                                                                                                           magnet));
+                                                                                                                           magnet,
+                                                                                                                           magnetX,
+                                                                                                                           magnetY));
             final boolean accepts = isAccept(violations);
             highlight(target,
                       connector,
@@ -128,42 +136,64 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
     @SuppressWarnings("unchecked")
     public boolean acceptSource(final Node source,
                                 final Edge<View<?>, Node> connector,
-                                final int magnet) {
+                                final int magnet,
+                                final double magnetX,
+                                final double magnetY) {
         if (null == canvasHandler) {
             return false;
         }
         final boolean eq = eq(source,
                               connector.getSourceNode());
+        ensureUnHighLight();
         if (!eq) {
-            ensureUnHighLight();
             final CommandResult<CanvasViolation> violations = getCommandManager().execute(canvasHandler,
                                                                                           canvasCommandFactory.setSourceNode(source,
                                                                                                                              connector,
-                                                                                                                             magnet));
+                                                                                                                             magnet,
+                                                                                                                             magnetX,
+                                                                                                                             magnetY));
+            return isAccept(violations);
+        } else {
+            final CommandResult<CanvasViolation> violations = getCommandManager().execute(canvasHandler,
+                                                                                          canvasCommandFactory.setSourceMagnet(source,
+                                                                                                                               connector,
+                                                                                                                               magnet,
+                                                                                                                               magnetX,
+                                                                                                                               magnetY));
             return isAccept(violations);
         }
-        return true;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public boolean acceptTarget(final Node target,
                                 final Edge<View<?>, Node> connector,
-                                final int magnet) {
+                                final int magnet,
+                                final double magnetX,
+                                final double magnetY) {
         if (null == canvasHandler) {
             return false;
         }
         final boolean eq = eq(target,
                               connector.getTargetNode());
+        ensureUnHighLight();
         if (!eq) {
-            ensureUnHighLight();
             final CommandResult<CanvasViolation> violations = getCommandManager().execute(canvasHandler,
                                                                                           canvasCommandFactory.setTargetNode(target,
                                                                                                                              connector,
-                                                                                                                             magnet));
+                                                                                                                             magnet,
+                                                                                                                             magnetX,
+                                                                                                                             magnetY));
+            return isAccept(violations);
+        } else {
+            final CommandResult<CanvasViolation> violations = getCommandManager().execute(canvasHandler,
+                                                                                          canvasCommandFactory.setTargetMagnet(target,
+                                                                                                                               connector,
+                                                                                                                               magnet,
+                                                                                                                               magnetX,
+                                                                                                                               magnetY));
             return isAccept(violations);
         }
-        return true;
     }
 
     @SuppressWarnings("unchecked")
@@ -195,7 +225,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
                 message);
             return acceptSource(sourceNode,
                                 edge,
-                                mIndex);
+                                mIndex,
+                                magnet.getX(),
+                                magnet.getY());
         }
 
         // Set the target Node for the connector.
@@ -217,7 +249,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
                 message);
             return acceptTarget(targetNode,
                                 edge,
-                                mIndex);
+                                mIndex,
+                                magnet.getX(),
+                                magnet.getY());
         }
 
         @Override
@@ -232,7 +266,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
                                                        shape);
             final boolean b = allowSource(sourceNode,
                                           edge,
-                                          0);
+                                          0,
+                                          0d,
+                                          0d);
             final String nUUID = null != sourceNode ? sourceNode.getUUID() : "null";
             log(Level.FINE,
                 "  Is head allowed [" + nUUID + "] = " + b);
@@ -251,7 +287,9 @@ public class ConnectionAcceptorControlImpl implements ConnectionAcceptorControl<
                                                        shape);
             final boolean b = allowTarget(targetNode,
                                           edge,
-                                          0);
+                                          0,
+                                          0d,
+                                          0d);
             final String nUUID = null != targetNode ? targetNode.getUUID() : "null";
             log(Level.FINE,
                 "  Is tail allowed [" + nUUID + "] = " + b);

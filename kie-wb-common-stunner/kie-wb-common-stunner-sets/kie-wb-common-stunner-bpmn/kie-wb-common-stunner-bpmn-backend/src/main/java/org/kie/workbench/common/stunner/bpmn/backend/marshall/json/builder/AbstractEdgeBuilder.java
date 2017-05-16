@@ -73,12 +73,19 @@ public abstract class AbstractEdgeBuilder<W, T extends Edge<View<W>, Node>>
                 // Command - Add the node into the graph store.
                 AddNodeCommand addNodeCommand = context.getCommandFactory().addNode(node);
                 // Command - Set the edge connection's target node.
+                Double targetDocker[] = null;
+                if (dockers != null && dockers.size() > 1) {
+                    targetDocker = dockers.get(dockers.size() - 1);
+                }
                 int magnetIdx = ((AbstractNodeBuilder) outgoingNodeBuilder).getTargetConnectionMagnetIndex(context,
                                                                                                            node,
-                                                                                                           edge);
+                                                                                                           edge,
+                                                                                                           targetDocker);
                 SetConnectionTargetNodeCommand setTargetNodeCommand = context.getCommandFactory().setTargetNode(node,
                                                                                                                 edge,
-                                                                                                                magnetIdx);
+                                                                                                                magnetIdx,
+                                                                                                                targetDocker != null ? targetDocker[0] : 0d,
+                                                                                                                targetDocker != null ? targetDocker[1] : 0d);
                 CommandResult<RuleViolation> results1 = context.execute(addNodeCommand);
                 if (hasErrors(results1)) {
                     throw new RuntimeException("Error building BPMN graph. Command 'addNodeCommand' execution failed.");
