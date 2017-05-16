@@ -113,16 +113,18 @@ public class WiresConnectorView<T> extends WiresConnector
         final MagnetManager.Magnets headMagnets = headWiresShape.getMagnets();
         final MagnetManager.Magnets tailMagnets = tailWiresShape.getMagnets();
         // Obtain the magnet for the head shape which location is equals/closer to the headMagnetDef.
+        com.ait.lienzo.client.core.types.Point2D headCoords = com.ait.lienzo.client.core.shape.wires.WiresUtils.getLocation(headWiresShape.getGroup());
         final WiresMagnet headMagnet = getWiresMagnet(headMagnets,
                                                       headMagnetDef,
-                                                      headWiresShape.getX(),
-                                                      headWiresShape.getY(),
+                                                      headCoords.getX(),
+                                                      headCoords.getY(),
                                                       LienzoShapeUtils.DEFAULT_SOURCE_MAGNET);
         // Obtain the magnet for the tail shape which location is equals/closer to the tailMagnetDef.
+        com.ait.lienzo.client.core.types.Point2D tailCoords = com.ait.lienzo.client.core.shape.wires.WiresUtils.getLocation(tailWiresShape.getGroup());
         final WiresMagnet tailMagnet = getWiresMagnet(tailMagnets,
                                                       tailMagnetDef,
-                                                      tailWiresShape.getX(),
-                                                      tailWiresShape.getY(),
+                                                      tailCoords.getX(),
+                                                      tailCoords.getY(),
                                                       LienzoShapeUtils.DEFAULT_TARGET_MAGNET);
         // Update the magnets.
         this.setHeadMagnet(headMagnet);
