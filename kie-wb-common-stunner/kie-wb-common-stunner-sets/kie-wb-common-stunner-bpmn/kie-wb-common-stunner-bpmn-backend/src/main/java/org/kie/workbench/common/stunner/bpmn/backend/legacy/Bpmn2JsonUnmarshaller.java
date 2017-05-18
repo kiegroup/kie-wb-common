@@ -695,7 +695,7 @@ public class Bpmn2JsonUnmarshaller {
                                                         if (edgePoints != null && edgePoints.size() > 1) {
                                                             if (eleBounds != null) {
                                                                 Point first = edgePoints.get(0);
-                                                                first.setX(first.getX() + laneBounds.getX() + (eleBounds.getWidth() / 2));
+                                                                first.setX(first.getX() + laneBounds.getX());
                                                                 first.setY(first.getY() + laneBounds.getY());
                                                             }
                                                         }
@@ -713,7 +713,7 @@ public class Bpmn2JsonUnmarshaller {
                                                         if (edgePoints != null && edgePoints.size() > 1) {
                                                             if (eleBounds != null) {
                                                                 Point last = edgePoints.get(edgePoints.size() - 1);
-                                                                last.setX(last.getX() + laneBounds.getX() - eleBounds.getWidth());
+                                                                last.setX(last.getX() + laneBounds.getX());
                                                                 last.setY(last.getY() + laneBounds.getY());
                                                             }
                                                         }
