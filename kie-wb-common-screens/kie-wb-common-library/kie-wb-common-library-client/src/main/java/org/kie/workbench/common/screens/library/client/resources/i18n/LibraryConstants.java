@@ -143,4 +143,6 @@ public class LibraryConstants {
     @TranslationKey(defaultValue = "No more files. Please, press previous.")
     public static final String NoMoreFilesPleasePressPrevious = "NoMoreFilesPleasePressPrevious";
 
+    @TranslationKey(defaultValue = "Asset search")
+    public static final String AssetSearch = "AssetSearch";
 }
