@@ -83,6 +83,7 @@ public class LibraryPlaces {
     public static final String PROJECT_EXPLORER = "org.kie.guvnor.explorer";
     public static final String MESSAGES = "org.kie.workbench.common.screens.messageconsole.MessageConsole";
     public static final String REPOSITORY_STRUCTURE_SCREEN = "repositoryStructureScreen";
+    public static final String ASSET_SEARCH = "FindForm";
 
     public static final List<String> LIBRARY_PLACES = Collections.unmodifiableList(new ArrayList<String>(7) {{
         add(NEW_PROJECT_SCREEN);

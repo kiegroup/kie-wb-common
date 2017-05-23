@@ -20,20 +20,30 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.api.search.FilterUpdateEvent;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.widgets.client.search.ContextualSearch;
 import org.kie.workbench.common.widgets.client.search.SearchBehavior;
 import org.uberfire.client.annotations.Perspective;
+import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPerspective;
+import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
 import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PanelDefinition;
+import org.uberfire.workbench.model.PartDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
+import org.uberfire.workbench.model.menu.MenuFactory;
+import org.uberfire.workbench.model.menu.MenuPosition;
+import org.uberfire.workbench.model.menu.Menus;
 
 @ApplicationScoped
 @WorkbenchPerspective(identifier = "LibraryPerspective")
@@ -45,6 +55,10 @@ public class LibraryPerspective {
 
     private Event<FilterUpdateEvent> filterUpdateEvent;
 
+    private TranslationService translationService;
+
+    private PlaceManager placeManager;
+
     private PerspectiveDefinition perspectiveDefinition;
 
     private boolean refresh = true;
@@ -55,10 +69,14 @@ public class LibraryPerspective {
     @Inject
     public LibraryPerspective(final LibraryPlaces libraryPlaces,
                               final ContextualSearch contextualSearch,
-                              final Event<FilterUpdateEvent> filterUpdateEvent) {
+                              final Event<FilterUpdateEvent> filterUpdateEvent,
+                              final TranslationService translationService,
+                              final PlaceManager placeManager) {
         this.libraryPlaces = libraryPlaces;
         this.contextualSearch = contextualSearch;
         this.filterUpdateEvent = filterUpdateEvent;
+        this.translationService = translationService;
+        this.placeManager = placeManager;
     }
 
     @Perspective
@@ -93,6 +111,23 @@ public class LibraryPerspective {
             callback = () -> libraryPlaces.goToLibrary();
         }
         libraryPlaces.refresh(callback);
+    }
+
+    @WorkbenchMenu
+    @SuppressWarnings("unused")
+    public Menus buildMenuBar() {
+        return MenuFactory
+                .newTopLevelMenu(translationService.getTranslation(LibraryConstants.AssetSearch))
+                .position(MenuPosition.RIGHT)
+                .respondsWith(() -> {
+                    final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ASSET_SEARCH);
+                    final PartDefinition part = new PartDefinitionImpl(placeRequest);
+                    part.setSelectable(false);
+                    placeManager.goTo(part,
+                                      getRootPanel());
+                })
+                .endMenu()
+                .build();
     }
 
     public PanelDefinition getRootPanel() {
