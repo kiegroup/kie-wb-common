@@ -44,6 +44,7 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.MenuItem;
+import org.uberfire.workbench.model.menu.Menus;
 
 public abstract class KieEditor
         extends BaseEditor
@@ -76,6 +77,8 @@ public abstract class KieEditor
     protected Metadata metadata;
 
     private ViewDRLSourceWidget sourceWidget;
+
+    protected Menus menus;
 
     //The default implementation delegates to the HashCode comparison in BaseEditor
     private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = new MayCloseHandler() {
