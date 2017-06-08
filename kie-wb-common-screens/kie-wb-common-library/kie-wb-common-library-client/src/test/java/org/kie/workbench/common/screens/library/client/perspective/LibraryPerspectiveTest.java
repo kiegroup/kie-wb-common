@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.screens.library.client.perspective;
 
-import javax.enterprise.event.Event;
-
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,5 +61,12 @@ public class LibraryPerspectiveTest {
 
         verify(contextualSearch).setPerspectiveSearchBehavior(eq(LibraryPlaces.LIBRARY_PERSPECTIVE),
                                                               any());
+    }
+
+    @Test
+    public void libraryHidesDocksOnCloseTest() {
+        perspective.onClose();
+
+        verify(libraryPlaces).hideDocks();
     }
 }
