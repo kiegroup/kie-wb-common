@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.multipleSubform;
 
 import java.util.ArrayList;
@@ -48,8 +49,7 @@ import org.kie.workbench.common.forms.processing.engine.handling.IsNestedModel;
 import org.uberfire.ext.widgets.table.client.ColumnMeta;
 
 @Templated
-public class MultipleSubFormWidget extends Composite implements TakesValue<List<Object>>,
-                                                                IsNestedModel {
+public class MultipleSubFormWidget extends Composite implements TakesValue<List<Object>>, IsNestedModel {
 
     public static final int PAGE_SIZE = 5;
 
@@ -81,10 +81,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
     protected boolean isReadOnly;
 
     @Inject
-    public MultipleSubFormWidget(ColumnGeneratorManager columnGeneratorManager,
-                                 DynamicFormRenderer formRenderer,
-                                 CrudComponent crudComponent,
-                                 TranslationService translationService) {
+    public MultipleSubFormWidget(ColumnGeneratorManager columnGeneratorManager, DynamicFormRenderer formRenderer, CrudComponent crudComponent, TranslationService translationService) {
         this.columnGeneratorManager = columnGeneratorManager;
         this.formRenderer = formRenderer;
         this.crudComponent = crudComponent;
@@ -119,26 +116,22 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
 
             if (generator != null) {
 
-                ColumnMeta<HasProperties> columnMeta = new ColumnMeta<HasProperties>(generator.getColumn(meta.getProperty()),
-                                                                                     meta.getLabel());
+                ColumnMeta<HasProperties> columnMeta = new ColumnMeta<HasProperties>(generator.getColumn(meta.getProperty()), meta.getLabel());
 
                 metas.add(columnMeta);
             }
         }
 
         dataProvider = new AsyncDataProvider<HasProperties>() {
+
             @Override
             protected void onRangeChanged(HasData<HasProperties> hasData) {
                 if (tableValues != null) {
-                    updateRowCount(tableValues.size(),
-                                   true);
-                    updateRowData(0,
-                                  tableValues);
+                    updateRowCount(tableValues.size(), true);
+                    updateRowData(0, tableValues);
                 } else {
-                    updateRowCount(0,
-                                   true);
-                    updateRowData(0,
-                                  new ArrayList<HasProperties>());
+                    updateRowCount(0, true);
+                    updateRowData(0, new ArrayList<HasProperties>());
                 }
             }
         };
@@ -183,8 +176,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
             public IsFormView<Object> getCreateInstanceForm() {
                 if (field.getCreationForm() != null) {
                     BindableProxy<?> proxy = bindingHelper.getNewProxy();
-                    formRenderer.render(renderingContext.getCopyFor(field.getCreationForm(),
-                                                                    proxy));
+                    formRenderer.render(renderingContext.getCopyFor(field.getCreationForm(), proxy));
                     return formRenderer;
                 }
 
@@ -195,8 +187,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
                 if (field.getEditionForm() != null) {
                     Object instance = bindingHelper.getProxyForModel(values.get(position));
 
-                    formRenderer.render(renderingContext.getCopyFor(field.getCreationForm(),
-                                                                    instance));
+                    formRenderer.render(renderingContext.getCopyFor(field.getCreationForm(), instance));
                     return formRenderer;
                 }
 
@@ -206,52 +197,46 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
             @Override
             public void createInstance() {
                 IsFormView form = getCreateInstanceForm();
-                crudComponent.displayForm(translationService.getTranslation(CrudComponentConstants.CrudComponentViewImplNewInstanceTitle),
-                                          form,
-                                          new FormDisplayer.FormDisplayerCallback() {
+                crudComponent.displayForm(translationService.getTranslation(CrudComponentConstants.CrudComponentViewImplNewInstanceTitle), form, new FormDisplayer.FormDisplayerCallback() {
 
-                                              @Override
-                                              public void onCancel() {
-                                              }
+                    @Override
+                    public void onCancel() {
+                    }
 
-                                              @Override
-                                              public void onAccept() {
-                                                  if (values == null) {
-                                                      values = new ArrayList<>();
-                                                  }
-                                                  values.add(formRenderer.getModel());
-                                                  tableValues.add((HasProperties) formRenderer.getModel());
-                                                  refreshCrud();
-                                                  fireFieldChange();
-                                              }
-                                          });
+                    @Override
+                    public void onAccept() {
+                        if (values == null) {
+                            values = new ArrayList<>();
+                        }
+                        values.add(formRenderer.getModel());
+                        tableValues.add((HasProperties) formRenderer.getModel());
+                        refreshCrud();
+                        fireFieldChange();
+                    }
+                });
             }
 
             @Override
             public void editInstance(int index) {
                 IsFormView form = getEditInstanceForm(index);
-                crudComponent.displayForm(translationService.getTranslation(CrudComponentConstants.CrudComponentViewImplEditInstanceTitle),
-                                          form,
-                                          new FormDisplayer.FormDisplayerCallback() {
+                crudComponent.displayForm(translationService.getTranslation(CrudComponentConstants.CrudComponentViewImplEditInstanceTitle), form, new FormDisplayer.FormDisplayerCallback() {
 
-                                              @Override
-                                              public void onCancel() {
-                                              }
+                    @Override
+                    public void onCancel() {
+                    }
 
-                                              @Override
-                                              public void onAccept() {
+                    @Override
+                    public void onAccept() {
 
-                                                  bindingHelper.afterEdit((BindableProxy) formRenderer.getModel());
+                        bindingHelper.afterEdit((BindableProxy) formRenderer.getModel());
 
-                                                  values.set(index,
-                                                             formRenderer.getModel());
-                                                  tableValues.set(index,
-                                                                  (HasProperties) formRenderer.getModel());
+                        values.set(index, formRenderer.getModel());
+                        tableValues.set(index, (HasProperties) formRenderer.getModel());
 
-                                                  refreshCrud();
-                                                  fireFieldChange();
-                                              }
-                                          });
+                        refreshCrud();
+                        fireFieldChange();
+                    }
+                });
             }
 
             @Override
@@ -263,6 +248,11 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
             }
         });
         initValues();
+    }
+
+    @Override
+    public void forceModelSynchronization() {
+
     }
 
     protected void initValues() {
@@ -284,8 +274,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
         }
     }
 
-    public void config(MultipleSubFormFieldDefinition field,
-                       FormRenderingContext renderingContext) {
+    public void config(MultipleSubFormFieldDefinition field, FormRenderingContext renderingContext) {
         init();
 
         this.field = field;
@@ -293,8 +282,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
 
         isReadOnly = field.getReadOnly() || !renderingContext.getRenderMode().equals(RenderMode.EDIT_MODE);
 
-        bindingHelper = BindingHelpers.getHelper(renderingContext,
-                                                 field);
+        bindingHelper = BindingHelpers.getHelper(renderingContext, field);
 
         initCrud();
     }
@@ -306,10 +294,8 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
         } else if (currentStart <= tableValues.size()) {
             currentStart -= PAGE_SIZE;
         }
-        dataProvider.updateRowCount(tableValues.size(),
-                                    true);
-        dataProvider.updateRowData(currentStart,
-                                   tableValues);
+        dataProvider.updateRowCount(tableValues.size(), true);
+        dataProvider.updateRowData(currentStart, tableValues);
         crudComponent.refresh();
     }
 
@@ -338,8 +324,7 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
 
     public void fireFieldChange() {
         if (changeHandler != null) {
-            changeHandler.onFieldChange(field.getName(),
-                                        values);
+            changeHandler.onFieldChange(field.getName(), values);
         }
     }
 
