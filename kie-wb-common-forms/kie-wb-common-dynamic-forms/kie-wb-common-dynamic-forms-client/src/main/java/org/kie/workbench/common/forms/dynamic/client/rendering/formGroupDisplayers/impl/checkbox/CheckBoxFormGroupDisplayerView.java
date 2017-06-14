@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.impl.labelManaged;
+package org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.impl.checkbox;
 
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroupDisplayers.FormGroupDisplayerView;
 
-public interface LabelManagedFormGroupDisplayerView extends FormGroupDisplayerView {
+public interface CheckBoxFormGroupDisplayerView extends FormGroupDisplayerView {
 
 }
