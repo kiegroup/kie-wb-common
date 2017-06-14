@@ -43,13 +43,13 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
 public class DMNDiagram extends BaseNode implements DMNDefinition {
 
     @Category
-    public static final transient String CATEGORY = Categories.NODES;
+    public static final transient String category = Categories.NODES;
 
     @Title
-    public static final transient String TITLE = "DMN Diagram";
+    public static final transient String title = "DMN Diagram";
 
     @Description
-    public static final transient String DESCRIPTION = "DMN Diagram";
+    public static final transient String description = "DMN Diagram";
 
     @Labels
     private final Set<String> labels = new HashSet<String>() {{
@@ -88,16 +88,16 @@ public class DMNDiagram extends BaseNode implements DMNDefinition {
 
     @Override
     public String getCategory() {
-        return CATEGORY;
+        return category;
     }
 
     @Override
     public String getTitle() {
-        return TITLE;
+        return title;
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return description;
     }
 }

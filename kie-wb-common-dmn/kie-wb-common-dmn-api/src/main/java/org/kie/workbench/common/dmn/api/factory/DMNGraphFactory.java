@@ -17,7 +17,8 @@ package org.kie.workbench.common.dmn.api.factory;
 
 import org.kie.workbench.common.stunner.core.factory.graph.GraphFactory;
 
-public interface DMNGraphFactory extends GraphFactory {
+public interface DMNGraphFactory extends DMNFactory,
+                                         GraphFactory {
 
     double GRAPH_DEFAULT_WIDTH = 1400d;
     double GRAPH_DEFAULT_HEIGHT = 700d;

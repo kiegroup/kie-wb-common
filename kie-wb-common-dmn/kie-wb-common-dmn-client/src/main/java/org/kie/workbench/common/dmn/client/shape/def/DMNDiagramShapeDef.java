@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.kie.workbench.common.dmn.api.definition.DMNDiagram;
-import org.kie.workbench.common.dmn.api.shape.def.DMNPictures;
+import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;

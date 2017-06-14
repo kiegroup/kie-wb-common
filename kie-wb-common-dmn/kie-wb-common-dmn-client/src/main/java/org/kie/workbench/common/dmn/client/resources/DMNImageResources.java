@@ -26,15 +26,13 @@ public interface DMNImageResources extends ClientBundleWithLookup {
     DMNImageResources INSTANCE = GWT.create(DMNImageResources.class);
     String SVG_MIME_TYPE = "image/svg+xml";
 
-    @Source("images/icons/resourceType.png")
-    ImageResource resourceType();
+    @ClientBundle.Source(DMNSVGViewFactory.DIAGRAM)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource nodes();
 
-    @Source("images/icons/nodes.png")
-    ImageResource nodes();
-
-    @Source("images/icons/connectors.png")
-    ImageResource connectors();
-
+    @ClientBundle.Source(DMNSVGViewFactory.DIAGRAM)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource connectors();
 
     @ClientBundle.Source(DMNSVGViewFactory.DIAGRAM)
     @DataResource.MimeType(SVG_MIME_TYPE)

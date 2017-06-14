@@ -48,6 +48,16 @@
         <artifactId>kie-wb-common-dmn-client</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+      <dependency>
+        <groupId>org.kie.workbench</groupId>
+        <artifactId>kie-wb-common-dmn-project-api</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.kie.workbench</groupId>
+        <artifactId>kie-wb-common-dmn-project-client</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -55,6 +65,8 @@
     <module>kie-wb-common-dmn-api</module>
     <module>kie-wb-common-dmn-client</module>
     <module>kie-wb-common-dmn-backend</module>
+    <module>kie-wb-common-dmn-project-api</module>
+    <module>kie-wb-common-dmn-project-client</module>
     <module>kie-wb-common-dmn-webapp</module>
   </modules>
 

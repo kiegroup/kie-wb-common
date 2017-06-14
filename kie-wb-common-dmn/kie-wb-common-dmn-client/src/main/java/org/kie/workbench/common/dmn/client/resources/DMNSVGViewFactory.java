@@ -24,8 +24,12 @@ public interface DMNSVGViewFactory {
 
     String DIAGRAM = "images/shapes/diagram.svg";
 
+    String NODES = "images/shapes/nodes.svg";/**/
+
+    String CONNECTORS = "images/shapes/connectors.svg";
+
     @SVGSource(DIAGRAM)
     SVGShapeView diagram(final double width,
-                       final double height,
-                       final boolean resizable);
+                         final double height,
+                         final boolean resizable);
 }

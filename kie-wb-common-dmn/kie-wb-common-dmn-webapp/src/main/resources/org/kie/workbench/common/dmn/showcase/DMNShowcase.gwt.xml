@@ -24,47 +24,12 @@
   <inherits name="org.uberfire.client.views.PatternFlyTheme"/>
   <inherits name="org.uberfire.ext.plugin.RuntimePluginClient"/>
   <inherits name="org.uberfire.ext.apps.UberfireAppsClient"/>
-  <inherits name="org.ext.uberfire.social.activities.SocialActivitiesAPI"/>
-  <inherits name="org.uberfire.ext.widgets.core.UberfireWidgetsCore"/>
-  <inherits name="org.uberfire.UberfireDocksClient"/>
-  <inherits name="org.uberfire.ext.security.management.UberfireSecurityManagementWorkbench"/>
-
-  <!-- Guvnor, Drools & KIE workbench integration -->
-  <inherits name="org.drools.workbench.models.datamodel.DroolsWorkbenchDataModelAPI"/>
-  <inherits name="org.guvnor.structure.GuvnorStructureClient"/>
-  <inherits name="org.guvnor.m2repo.GuvnorM2RepoEditorAPI"/>
-  <inherits name="org.guvnor.m2repo.GuvnorM2RepoEditorClient"/>
-  <inherits name='org.guvnor.common.services.GuvnorServicesAPI'/>
-  <inherits name="org.guvnor.common.services.project.GuvnorProjectAPI"/>
-  <inherits name="org.guvnor.common.services.workingset.GuvnorWorkingsetAPI"/>
-  <inherits name="org.guvnor.common.services.workingset.GuvnorWorkingsetClient"/>
-  <inherits name="org.guvnor.messageconsole.GuvnorMessageConsoleClient"/>
-  <inherits name="org.guvnor.asset.management.GuvnorAssetMgmtAPI"/>
-  <inherits name='org.guvnor.asset.management.GuvnorAssetMgmtClient'/>
-
-  <!--Common Screens and services -->
   <inherits name="org.kie.workbench.common.services.datamodel.KieWorkbenchCommonDataModelAPI"/>
-  <inherits name="org.kie.workbench.common.screens.defaulteditor.DroolsWorkbenchDefaultEditorClient"/>
-  <inherits name="org.kie.workbench.common.screens.explorer.KieWorkbenchProjectExplorerClient"/>
-  <inherits name="org.kie.workbench.common.screens.projecteditor.KieWorkbenchCommonProjectEditorClient"/>
-  <inherits name="org.kie.workbench.common.screens.projectimportsscreen.KieWorkbenchCommonProjectImportsScreenClient"/>
-  <inherits name="org.kie.workbench.common.workbench.KieDefaultWorkbenchClient"/>
-  <inherits name="org.kie.workbench.common.services.datamodeller.DataModellerCore"/>
-  <inherits name="org.kie.workbench.common.screens.datamodeller.KieWorkbenchDatamodellerClient"/>
-  <inherits name="org.kie.workbench.common.widgets.KieWorkbenchWidgetsCommon"/>
-  <inherits name='org.kie.workbench.common.services.KieWorkbenchCommonServicesAPI'/>
-  <inherits name="org.kie.workbench.common.widgets.metadata.KieWorkbenchMetadataWidget"/>
-  <inherits name="org.kie.workbench.common.widgets.decoratedgrid.KieWorkbenchDecoratedGridWidget"/>
-  <inherits name="org.kie.workbench.common.widgets.decoratedgrid.KieWorkbenchDecoratedGridWidget"/>
-  <inherits name="org.kie.workbench.common.screens.library.LibraryAPI"/>
-  <inherits name="org.kie.workbench.common.screens.library.LibraryClient"/>
-
-  <!-- kie server -->
-  <inherits name="org.kie.workbench.common.screens.server.management.ServerManagementAPI"/>
-  <inherits name="org.kie.workbench.common.screens.server.management.ServerManagementClient"/>
+  <inherits name="org.drools.workbench.models.datamodel.DroolsWorkbenchDataModelAPI"/>
+  <inherits name="org.uberfire.ext.security.management.UberfireSecurityManagementWorkbench"/>
+  <inherits name="org.uberfire.ext.widgets.core.UberfireWidgetsCore"/>
 
   <!-- Stunner -->
-  <inherits name="org.kie.workbench.common.stunner.project.StunnerProjectClient"/>
   <inherits name="org.kie.workbench.common.stunner.client.StunnerWidgets"/>
   <inherits name="org.kie.workbench.common.stunner.basicset.StunnerBasicSetClient"/>
 
@@ -81,8 +46,6 @@
   <extend-property name="locale" values="pt_BR"/>
   <extend-property name="locale" values="zh_CN"/>
   <extend-property name="locale" values="de"/>
-
-  <collapse-property name="locale" values="*"/>
 
   <!-- We don't need to support IE10 or older -->
   <!-- There is no "ie11" permutation. IE11 uses the Firefox one (gecko1_8) -->
