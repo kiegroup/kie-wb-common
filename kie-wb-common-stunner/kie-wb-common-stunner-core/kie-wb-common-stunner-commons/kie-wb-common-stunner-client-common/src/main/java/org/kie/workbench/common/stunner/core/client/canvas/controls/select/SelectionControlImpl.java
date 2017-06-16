@@ -58,7 +58,7 @@ public final class SelectionControlImpl<H extends AbstractCanvasHandler> extends
                 final MouseClickHandler clickHandler = new MouseClickHandler() {
                     @Override
                     public void handle(final MouseClickEvent event) {
-                        if (event.isButtonLeft()) {
+                        if (event.isButtonLeft() || event.isButtonRight()) {
                             SelectionControlImpl.super.select(element,
                                                               !event.isShiftKeyDown());
                         }

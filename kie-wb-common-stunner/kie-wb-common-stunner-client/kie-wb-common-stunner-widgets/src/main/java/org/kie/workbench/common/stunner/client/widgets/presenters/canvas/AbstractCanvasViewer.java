@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,6 +19,13 @@ package org.kie.workbench.common.stunner.client.widgets.presenters.canvas;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.MouseEvent;
+import com.google.gwt.user.client.ui.Widget;
 import org.kie.workbench.common.stunner.client.lienzo.util.LienzoUtils;
 import org.kie.workbench.common.stunner.client.widgets.presenters.Viewer;
 import org.kie.workbench.common.stunner.client.widgets.views.WidgetWrapperView;
@@ -36,6 +43,24 @@ public abstract class AbstractCanvasViewer<T, H extends AbstractCanvasHandler, V
     private final WidgetWrapperView view;
 
     public AbstractCanvasViewer(final WidgetWrapperView view) {
+        view.asWidget().addDomHandler(new ContextMenuHandler() {
+
+            @Override public void onContextMenu(ContextMenuEvent event) {
+                event.preventDefault();
+                /*NativeEvent e = event.getNativeEvent();
+                NativeEvent clickEvent = Document.get().createMouseDownEvent(0,
+                        e.getScreenX(),
+                        e.getScreenY(),
+                        e.getClientX(),
+                        e.getClientY(),
+                        e.getCtrlKey(),
+                        e.getAltKey(),
+                        e.getShiftKey(),
+                        e.getMetaKey(),
+                        e.getButton());
+                MouseEvent.fireNativeEvent(clickEvent, view.asWidget());*/
+            }
+        }, ContextMenuEvent.getType());
         this.view = view;
     }
 

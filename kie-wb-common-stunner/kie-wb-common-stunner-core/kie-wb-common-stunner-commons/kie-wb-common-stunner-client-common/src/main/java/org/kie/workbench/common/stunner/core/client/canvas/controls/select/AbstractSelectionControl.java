@@ -69,7 +69,7 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler> 
 
             @Override
             public void handle(final MouseClickEvent event) {
-                if (event.isButtonLeft()) {
+                if (event.isButtonLeft() || event.isButtonRight()) {
                     handleLayerClick(!event.isShiftKeyDown());
                 }
             }
