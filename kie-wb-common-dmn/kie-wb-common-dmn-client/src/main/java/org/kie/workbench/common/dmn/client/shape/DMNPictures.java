@@ -17,6 +17,11 @@ package org.kie.workbench.common.dmn.client.shape;
 
 public enum DMNPictures {
 
-    DIAGRAM
+    DIAGRAM,
+    INPUT_DATA,
+    KNOWLEDGE_SOURCE,
+    BUSINESS_KNOWLEDGE_MODEL,
+    DECISION,
+    TEXT_ANNOTATION
 
 }

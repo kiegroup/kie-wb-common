@@ -19,7 +19,12 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.databinding.client.api.Bindable;
-import org.kie.workbench.common.dmn.api.definition.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.definition.annotation.DefinitionSet;
@@ -35,7 +40,12 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
         graphFactory = DMNGraphFactory.class,
         qualifier = DMNEditor.class,
         definitions = {
-                DMNDiagram.class
+                DMNDiagram.class,
+                InputData.class,
+                KnowledgeSource.class,
+                BusinessKnowledgeModel.class,
+                Decision.class,
+                TextAnnotation.class
         },
         builder = DMNDefinitionSet.DMNDefinitionSetBuilder.class
 )

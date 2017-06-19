@@ -18,9 +18,9 @@ package org.kie.workbench.common.dmn.client.shape.def;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kie.workbench.common.dmn.api.definition.DMNDiagram;
-import org.kie.workbench.common.dmn.client.shape.DMNPictures;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
+import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;
 import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
@@ -38,7 +38,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
 
     @Override
     public String getBackgroundColor(final DMNDiagram element) {
-        return element.getBackgroundSet().getBgColor().getValue();
+        return element.getBackgroundSet().getBgColour().getValue();
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
 
     @Override
     public String getBorderColor(final DMNDiagram element) {
-        return element.getBackgroundSet().getBorderColor().getValue();
+        return element.getBackgroundSet().getBorderColour().getValue();
     }
 
     @Override
@@ -68,7 +68,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
 
     @Override
     public String getFontColor(final DMNDiagram element) {
-        return element.getFontSet().getFontColor().getValue();
+        return element.getFontSet().getFontColour().getValue();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
         return 0;
     }
 
-    private static final PictureGlyphDef<DMNDiagram, DMNPictures> TASK_GLYPH_DEF = new PictureGlyphDef<DMNDiagram, DMNPictures>() {
+    private static final PictureGlyphDef<DMNDiagram, DMNPictures> DIAGRAM_GLYPH_DEF = new PictureGlyphDef<DMNDiagram, DMNPictures>() {
 
         private final Map<Class<?>, DMNPictures> PICTURES = new HashMap<Class<?>, DMNPictures>() {{
             put(DMNDiagram.class,
@@ -105,7 +105,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
 
         @Override
         public String getGlyphDescription(final DMNDiagram element) {
-            return element.getDescription();
+            return element.getStunnerDescription();
         }
 
         @Override
@@ -116,7 +116,7 @@ public class DMNDiagramShapeDef extends AbstractShapeDef<DMNDiagram>
 
     @Override
     public GlyphDef<DMNDiagram> getGlyphDef() {
-        return TASK_GLYPH_DEF;
+        return DIAGRAM_GLYPH_DEF;
     }
 
     @Override

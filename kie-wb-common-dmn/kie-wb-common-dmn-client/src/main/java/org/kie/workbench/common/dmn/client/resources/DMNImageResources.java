@@ -19,7 +19,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ClientBundleWithLookup;
 import com.google.gwt.resources.client.DataResource;
-import com.google.gwt.resources.client.ImageResource;
 
 public interface DMNImageResources extends ClientBundleWithLookup {
 
@@ -37,4 +36,24 @@ public interface DMNImageResources extends ClientBundleWithLookup {
     @ClientBundle.Source(DMNSVGViewFactory.DIAGRAM)
     @DataResource.MimeType(SVG_MIME_TYPE)
     DataResource diagram();
+
+    @ClientBundle.Source(DMNSVGViewFactory.INPUT_DATA)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource inputData();
+
+    @ClientBundle.Source(DMNSVGViewFactory.KNOWLEDGE_SOURCE)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource knowledgeSource();
+
+    @ClientBundle.Source(DMNSVGViewFactory.BUSINESS_KNOWLEDGE_MODEL)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource businessKnowledgeModel();
+
+    @ClientBundle.Source(DMNSVGViewFactory.DECISION)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource decision();
+
+    @ClientBundle.Source(DMNSVGViewFactory.TEXT_ANNOTATION)
+    @DataResource.MimeType(SVG_MIME_TYPE)
+    DataResource textAnnotation();
 }

@@ -17,7 +17,7 @@ package org.kie.workbench.common.dmn.api.factory;
 
 import java.util.function.Function;
 
-import org.kie.workbench.common.dmn.api.definition.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.impl.BindableDiagramFactory;

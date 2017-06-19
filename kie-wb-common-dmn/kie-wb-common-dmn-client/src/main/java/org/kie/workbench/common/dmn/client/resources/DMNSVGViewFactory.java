@@ -24,12 +24,44 @@ public interface DMNSVGViewFactory {
 
     String DIAGRAM = "images/shapes/diagram.svg";
 
-    String NODES = "images/shapes/nodes.svg";/**/
+    String INPUT_DATA = "images/shapes/input-data.svg";
 
-    String CONNECTORS = "images/shapes/connectors.svg";
+    String KNOWLEDGE_SOURCE = "images/shapes/knowledge-source.svg";
+
+    String BUSINESS_KNOWLEDGE_MODEL = "images/shapes/business-knowledge-model.svg";
+
+    String DECISION = "images/shapes/decision.svg";
+
+    String TEXT_ANNOTATION = "images/shapes/text-annotation.svg";
 
     @SVGSource(DIAGRAM)
     SVGShapeView diagram(final double width,
                          final double height,
                          final boolean resizable);
+
+    @SVGSource(INPUT_DATA)
+    SVGShapeView inputData(final double width,
+                           final double height,
+                           final boolean resizable);
+
+    @SVGSource(KNOWLEDGE_SOURCE)
+    SVGShapeView knowledgeSource(final double width,
+                                 final double height,
+                                 final boolean resizable);
+
+    @SVGSource(BUSINESS_KNOWLEDGE_MODEL)
+    SVGShapeView businessKnowledgeModel(final double width,
+                                        final double height,
+                                        final boolean resizable);
+
+    @SVGSource(DECISION)
+    SVGShapeView decision(final double width,
+                          final double height,
+                          final boolean resizable);
+
+    @SVGSource(TEXT_ANNOTATION)
+    SVGShapeView textAnnotation(final double width,
+                                final double height,
+                                final boolean resizable);
 }
+

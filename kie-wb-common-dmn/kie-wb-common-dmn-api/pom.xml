@@ -41,7 +41,7 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
 
-    <!-- Stunner. -->
+    <!-- Stunner -->
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-core-api</artifactId>
@@ -79,14 +79,14 @@
       <artifactId>kie-wb-common-stunner-forms-api</artifactId>
     </dependency>
 
-    <!-- GWT. -->
+    <!-- GWT -->
     <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
       <scope>provided</scope>
     </dependency>
 
-    <!-- Form modeler API. -->
+    <!-- Form Modeler API -->
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-api</artifactId>
@@ -113,7 +113,7 @@
       <artifactId>kie-wb-common-forms-fields</artifactId>
     </dependency>
 
-    <!-- Uberfire & Errai. -->
+    <!-- Errai -->
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
@@ -135,6 +135,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-ui</artifactId>
+    </dependency>
+
+    <!-- Uberfire -->
+    <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-api</artifactId>
     </dependency>
@@ -142,6 +148,12 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
+    </dependency>
+
+    <!-- Drools DMN model -->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-model</artifactId>
     </dependency>
 
   </dependencies>

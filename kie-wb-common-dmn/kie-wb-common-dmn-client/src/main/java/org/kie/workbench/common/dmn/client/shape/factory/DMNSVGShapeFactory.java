@@ -18,8 +18,18 @@ package org.kie.workbench.common.dmn.client.shape.factory;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.dmn.client.shape.def.BusinessKnowledgeModelShapeDef;
 import org.kie.workbench.common.dmn.client.shape.def.DMNDiagramShapeDef;
+import org.kie.workbench.common.dmn.client.shape.def.DecisionShapeDef;
+import org.kie.workbench.common.dmn.client.shape.def.InputDataShapeDef;
+import org.kie.workbench.common.dmn.client.shape.def.KnowledgeSourceShapeDef;
+import org.kie.workbench.common.dmn.client.shape.def.TextAnnotationShapeDef;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
@@ -58,22 +68,16 @@ public class DMNSVGShapeFactory extends DelegateShapeFactory<Object, AbstractCan
         // Register the shapes and definitions.
         svgShapeFactory.addShapeDef(DMNDiagram.class,
                                     new DMNDiagramShapeDef());
-//        svgShapeFactory.addShapeDef(DataStep.class,
-//                                    new DataStepShapeDef());
-//        svgShapeFactory.addShapeDef(StartNoneEvent.class,
-//                                    new StartEventShapeDef());
-//        svgShapeFactory.addShapeDef(FormStep.class,
-//                                    new FormStepShapeDef());
-//        svgShapeFactory.addShapeDef(DecisionGateway.class,
-//                                    new DecisionShapeDef());
-//        svgShapeFactory.addShapeDef(JoinGateway.class,
-//                                    new JoinShapeDef());
-//        svgShapeFactory.addShapeDef(MatcherStep.class,
-//                                    new DataStepShapeDef());
-//        svgShapeFactory.addShapeDef(MultiStep.class,
-//                                    new MultiStepShapeDef());
-//        basicShapesFactory.addShapeDef(SequenceFlow.class,
-//                                       new SequenceFlowConnectorDef());
+        svgShapeFactory.addShapeDef(InputData.class,
+                                    new InputDataShapeDef());
+        svgShapeFactory.addShapeDef(KnowledgeSource.class,
+                                    new KnowledgeSourceShapeDef());
+        svgShapeFactory.addShapeDef(BusinessKnowledgeModel.class,
+                                    new BusinessKnowledgeModelShapeDef());
+        svgShapeFactory.addShapeDef(Decision.class,
+                                    new DecisionShapeDef());
+        svgShapeFactory.addShapeDef(TextAnnotation.class,
+                                    new TextAnnotationShapeDef());
     }
 
     @Override

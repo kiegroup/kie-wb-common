@@ -18,11 +18,10 @@ package org.kie.workbench.common.dmn.client.widgets.palette.bs3.factory;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
-import org.kie.workbench.common.dmn.api.definition.Categories;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Categories;
 import org.kie.workbench.common.dmn.client.resources.DMNImageResources;
 import org.kie.workbench.common.stunner.client.widgets.palette.factory.BindableBS3PaletteGlyphViewFactory;
 import org.kie.workbench.common.stunner.client.widgets.palette.factory.icons.IconRenderer;
@@ -67,5 +66,4 @@ public class DMNBS3PaletteViewFactory extends BindableBS3PaletteGlyphViewFactory
     protected Map<String, IconResource> getDefinitionIconResources() {
         return Collections.emptyMap();
     }
-
 }

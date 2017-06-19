@@ -17,7 +17,6 @@ package org.kie.workbench.common.dmn.client.shape;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.enterprise.context.ApplicationScoped;
 
 import com.google.gwt.safehtml.shared.SafeUri;
@@ -33,6 +32,16 @@ public class DMNPictureProvider implements PictureProvider<DMNPictures> {
             new HashMap<DMNPictures, SafeUri>() {{
                 put(DMNPictures.DIAGRAM,
                     DMNImageResources.INSTANCE.diagram().getSafeUri());
+                put(DMNPictures.INPUT_DATA,
+                    DMNImageResources.INSTANCE.inputData().getSafeUri());
+                put(DMNPictures.KNOWLEDGE_SOURCE,
+                    DMNImageResources.INSTANCE.knowledgeSource().getSafeUri());
+                put(DMNPictures.BUSINESS_KNOWLEDGE_MODEL,
+                    DMNImageResources.INSTANCE.businessKnowledgeModel().getSafeUri());
+                put(DMNPictures.DECISION,
+                    DMNImageResources.INSTANCE.decision().getSafeUri());
+                put(DMNPictures.TEXT_ANNOTATION,
+                    DMNImageResources.INSTANCE.textAnnotation().getSafeUri());
             }};
 
     @Override

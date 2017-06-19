@@ -18,12 +18,14 @@ package org.kie.workbench.common.dmn.showcase.client.screens;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasExport;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.Layer;
 import org.kie.workbench.common.stunner.core.client.service.ClientDiagramService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
-import org.kie.workbench.common.stunner.core.client.util.ClientSessionUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -37,7 +39,7 @@ import org.uberfire.backend.vfs.Path;
 public class ShowcaseDiagramService {
 
     private final ClientDiagramService clientDiagramServices;
-    private final ClientSessionUtils sessionUtils;
+    private final CanvasExport<AbstractCanvasHandler> canvasExport;
 
     protected ShowcaseDiagramService() {
         this(null,
@@ -46,9 +48,9 @@ public class ShowcaseDiagramService {
 
     @Inject
     public ShowcaseDiagramService(final ClientDiagramService clientDiagramServices,
-                                  final ClientSessionUtils sessionUtils) {
+                                  final CanvasExport<AbstractCanvasHandler> canvasExport) {
         this.clientDiagramServices = clientDiagramServices;
-        this.sessionUtils = sessionUtils;
+        this.canvasExport = canvasExport;
     }
 
     public void loadByName(final String name,
@@ -100,11 +102,16 @@ public class ShowcaseDiagramService {
     public void save(final AbstractClientFullSession session,
                      final ServiceCallback<Diagram<Graph, Metadata>> diagramServiceCallback) {
         // Update diagram's image data as thumbnail.
-        final String thumbData = sessionUtils.canvasToImageData(session);
+        final String thumbData = toImageData(session);
         final CanvasHandler canvasHandler = session.getCanvasHandler();
         final Diagram diagram = canvasHandler.getDiagram();
         diagram.getMetadata().setThumbData(thumbData);
         save(diagram,
              diagramServiceCallback);
+    }
+
+    private String toImageData(final AbstractClientFullSession session) {
+        return canvasExport.toImageData(session.getCanvasHandler(),
+                                        Layer.URLDataType.JPG);
     }
 }

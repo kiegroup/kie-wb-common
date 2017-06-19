@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.dmn.api.definition;
 
+import java.util.Map;
+
 public interface DMNDefinition {
 
+    Map<String, String> getNsContext();
 }

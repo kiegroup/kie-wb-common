@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
-import org.kie.workbench.common.dmn.api.definition.Categories;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Categories;
 import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.components.palette.factory.BindableDefSetPaletteDefinitionFactory;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionSetPaletteBuilder;
@@ -51,7 +51,8 @@ public class DMNPaletteDefinitionFactory extends BindableDefSetPaletteDefinition
     @Override
     protected void configureBuilder() {
         super.configureBuilder();
-        // TODO: Exclude connectors category from being present on the palette model - Dropping connectors from palette produces an error right now, must fix it on lienzo side.
+
+        excludeCategory(Categories.DIAGRAM);
         excludeCategory(Categories.CONNECTORS);
     }
 
