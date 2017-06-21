@@ -57,7 +57,9 @@ import org.guvnor.structure.backend.config.ConfigGroupMarshaller;
 import org.guvnor.structure.backend.config.ConfigurationFactoryImpl;
 import org.guvnor.structure.backend.config.ConfigurationServiceImpl;
 import org.guvnor.structure.backend.config.DefaultPasswordServiceImpl;
+import org.guvnor.structure.backend.repositories.RepositoryServiceImpl;
 import org.guvnor.structure.repositories.Repository;
+import org.guvnor.structure.repositories.RepositoryService;
 import org.guvnor.structure.repositories.impl.git.GitRepository;
 import org.guvnor.structure.security.RepositoryAction;
 import org.guvnor.structure.server.config.ConfigurationFactory;
@@ -389,7 +391,8 @@ public class DataModelServiceConstructorTest {
         PipelineRegistry pipelineRegistry = new InMemoryPipelineRegistry();
         BuildPipelineInitializer pipelineInitializer = new BuildPipelineInitializer( pipelineRegistry,
                 getConfigExecutors( projectService, buildHelper ) );
-        BuildPipelineInvoker pipelineInvoker = new BuildPipelineInvoker( pipelineInitializer.getExecutor(), pipelineRegistry  );
+        RepositoryService repositoryService = new RepositoryServiceImpl();
+        BuildPipelineInvoker pipelineInvoker = new BuildPipelineInvoker( pipelineInitializer.getExecutor(), pipelineRegistry, repositoryService );
 
         BuildServiceHelper buildServiceHelper = new BuildServiceHelper( pipelineInvoker, deploymentVerifier );
         BuildService buildService = new BuildServiceImpl( projectService, buildServiceHelper, builderCache );

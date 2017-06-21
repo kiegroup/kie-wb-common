@@ -18,14 +18,17 @@ package org.kie.workbench.common.services.backend.builder.ala;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Properties;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Default;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.guvnor.ala.build.maven.config.MavenBuildConfig;
+import org.guvnor.ala.build.maven.config.MavenProjectConfig;
 import org.guvnor.ala.config.BinaryConfig;
 import org.guvnor.ala.config.BuildConfig;
 import org.guvnor.ala.config.ProjectConfig;
@@ -37,6 +40,7 @@ import org.guvnor.ala.pipeline.PipelineFactory;
 import org.guvnor.ala.pipeline.Stage;
 import org.guvnor.ala.pipeline.execution.PipelineExecutor;
 import org.guvnor.ala.registry.PipelineRegistry;
+import org.guvnor.ala.source.git.config.GitConfig;
 import org.kie.workbench.common.services.backend.builder.ala.impl.LocalBuildConfigImpl;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
@@ -52,6 +56,8 @@ import static org.guvnor.ala.pipeline.StageUtil.*;
 public class BuildPipelineInitializer {
 
     public static final String LOCAL_BUILD_PIPELINE = "local-build-pipeline";
+
+    public static final String MAVEN_BUILD_PIPELINE = "maven-build-pipeline";
 
     private PipelineRegistry pipelineRegistry;
 
@@ -76,7 +82,7 @@ public class BuildPipelineInitializer {
     public BuildPipelineInitializer( PipelineRegistry pipelineRegistry,
                                      Collection< ConfigExecutor > configs ) {
         this.pipelineRegistry = pipelineRegistry;
-        initLocalBuildPipeline();
+        initPipelines();
         initExecutor( configs );
     }
 
@@ -91,8 +97,13 @@ public class BuildPipelineInitializer {
 
     @PostConstruct
     private void init( ) {
-        initLocalBuildPipeline( );
+        initPipelines();
         initExecutor( );
+    }
+
+    private void initPipelines() {
+        initLocalBuildPipeline();
+        initMavenBuildPipeline();
     }
 
     /**
@@ -119,6 +130,48 @@ public class BuildPipelineInitializer {
                 .andThen( localBuildExecStage )
                 .buildAs( LOCAL_BUILD_PIPELINE );
         pipelineRegistry.registerPipeline( localBuildPipeline );
+    }
+
+    /**
+     * Initializes a build pipeline based on a maven build.
+     */
+    private void initMavenBuildPipeline( ) {
+        final Stage< Input, SourceConfig > sourceConfig = config( "Git Source",
+                ( s ) -> new GitConfig( ) { } );
+
+        final Stage< SourceConfig, ProjectConfig > projectConfig = config( "Maven Project",
+                ( s ) -> new MavenProjectConfig( ) {
+        } );
+
+        final Stage< ProjectConfig, BuildConfig > buildConfig = config( "Maven Build Config",
+                ( s ) -> new MavenBuildConfig( ) {
+                    @Override
+                    public List< String > getGoals( ) {
+                        final List< String > result = new ArrayList<>( );
+                        result.add( "clean" );
+                        result.add( "package" );
+                        return result;
+                    }
+
+                    @Override
+                    public Properties getProperties( ) {
+                        final Properties result = new Properties( );
+                        result.setProperty( "failIfNoTests", "false" );
+                        return result;
+                    }
+                } );
+
+        final Stage< BuildConfig, BinaryConfig > buildExecution = config( "Local Maven Build",
+                ( s ) -> new LocalMavenBuildExecConfig( ) {
+                } );
+
+        final Pipeline alaBuilderPipeline = PipelineFactory
+                .startFrom( sourceConfig )
+                .andThen( projectConfig )
+                .andThen( buildConfig )
+                .andThen( buildExecution )
+                .buildAs( MAVEN_BUILD_PIPELINE );
+        pipelineRegistry.registerPipeline( alaBuilderPipeline );
     }
 
     private void initExecutor( ) {
