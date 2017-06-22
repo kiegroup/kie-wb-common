@@ -88,7 +88,7 @@ public class KnowledgeSourceShapeDef extends AbstractShapeDef<KnowledgeSource>
 
     @Override
     public HasTitle.Position getFontPosition(final KnowledgeSource element) {
-        return HasTitle.Position.TOP;
+        return HasTitle.Position.CENTER;
     }
 
     @Override

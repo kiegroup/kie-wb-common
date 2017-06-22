@@ -88,7 +88,7 @@ public class DecisionShapeDef extends AbstractShapeDef<Decision>
 
     @Override
     public HasTitle.Position getFontPosition(final Decision element) {
-        return HasTitle.Position.TOP;
+        return HasTitle.Position.CENTER;
     }
 
     @Override

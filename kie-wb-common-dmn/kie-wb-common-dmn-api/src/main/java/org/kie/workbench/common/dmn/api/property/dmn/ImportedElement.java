@@ -31,13 +31,12 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Opti
 import org.kie.workbench.common.stunner.core.definition.annotation.property.ReadOnly;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
-import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.definition.property.type.StringType;
 
 @Portable
 @Bindable
-@Property(meta = PropertyMetaTypes.NAME)
+@Property
 @FieldDefinition(labelMode = LabelMode.OVERRIDE_I18N_KEY)
 public class ImportedElement implements DMNProperty {
 

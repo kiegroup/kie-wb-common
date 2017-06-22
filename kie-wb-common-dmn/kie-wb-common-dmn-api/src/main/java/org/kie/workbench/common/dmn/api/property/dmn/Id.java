@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Type
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.definition.property.type.StringType;
+import org.kie.workbench.common.stunner.core.util.UUID;
 
 @Portable
 @Bindable
@@ -49,7 +50,7 @@ public class Id implements DMNProperty {
 
     @ReadOnly
     @FieldReadOnly
-    public static final Boolean readOnly = false;
+    public static final Boolean readOnly = true;
 
     @Optional
     public static final Boolean optional = false;
@@ -65,6 +66,7 @@ public class Id implements DMNProperty {
     private String value = defaultValue;
 
     public Id() {
+        this(UUID.uuid());
     }
 
     public Id(final String value) {

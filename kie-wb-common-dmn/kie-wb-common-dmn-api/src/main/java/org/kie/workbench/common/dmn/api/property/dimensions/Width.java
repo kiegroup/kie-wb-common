@@ -62,7 +62,7 @@ public class Width implements DMNProperty {
     public static final Boolean optional = false;
 
     @DefaultValue
-    public static final Double defaultValue = 50d;
+    public static final Double defaultValue = 100d;
 
     @Value
     @Min(50)

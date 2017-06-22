@@ -88,7 +88,7 @@ public class BusinessKnowledgeModelShapeDef extends AbstractShapeDef<BusinessKno
 
     @Override
     public HasTitle.Position getFontPosition(final BusinessKnowledgeModel element) {
-        return HasTitle.Position.TOP;
+        return HasTitle.Position.CENTER;
     }
 
     @Override

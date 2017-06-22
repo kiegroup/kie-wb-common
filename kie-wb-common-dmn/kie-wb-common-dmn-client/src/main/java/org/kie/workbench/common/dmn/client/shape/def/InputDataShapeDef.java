@@ -88,7 +88,7 @@ public class InputDataShapeDef extends AbstractShapeDef<InputData>
 
     @Override
     public HasTitle.Position getFontPosition(final InputData element) {
-        return HasTitle.Position.TOP;
+        return HasTitle.Position.CENTER;
     }
 
     @Override

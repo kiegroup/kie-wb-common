@@ -19,10 +19,14 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
+import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
@@ -45,7 +49,11 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 KnowledgeSource.class,
                 BusinessKnowledgeModel.class,
                 Decision.class,
-                TextAnnotation.class
+                TextAnnotation.class,
+                Association.class,
+                InformationRequirement.class,
+                KnowledgeRequirement.class,
+                AuthorityRequirement.class
         },
         builder = DMNDefinitionSet.DMNDefinitionSetBuilder.class
 )

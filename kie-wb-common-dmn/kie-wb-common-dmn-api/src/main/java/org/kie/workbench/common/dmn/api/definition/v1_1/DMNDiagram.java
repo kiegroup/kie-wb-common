@@ -47,7 +47,11 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
         "knowledge-source",
         "business-knowledge-model",
         "decision",
-        "text-annotation"
+        "text-annotation",
+        "association",
+        "information-requirement",
+        "knowledge-requirement",
+        "authority-requirement"
 })
 public class DMNDiagram extends DMNModelInstrumentedBase {
 
