@@ -32,8 +32,8 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants;
 
 @Templated
-public class NameEditBoxWidgetViewImpl implements NameEditBoxWidgetView,
-                                                  IsElement {
+public class TextEditorBoxViewImpl implements TextEditorBoxView,
+                                              IsElement {
 
     private TranslationService translationService;
 
@@ -54,7 +54,7 @@ public class NameEditBoxWidgetViewImpl implements NameEditBoxWidgetView,
     private Presenter presenter;
 
     @Inject
-    public NameEditBoxWidgetViewImpl(TranslationService translationService) {
+    public TextEditorBoxViewImpl(TranslationService translationService) {
         this.translationService = translationService;
     }
 

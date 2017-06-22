@@ -22,8 +22,8 @@ import org.kie.workbench.common.stunner.core.client.command.RequiresCommandManag
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.uberfire.mvp.Command;
 
-public interface NameEditBox<C extends CanvasHandler, E extends Element> extends IsElement,
-                                                                                 RequiresCommandManager<C> {
+public interface TextEditorBox<C extends CanvasHandler, E extends Element> extends IsElement,
+                                                                                   RequiresCommandManager<C> {
 
     void initialize(final C canvasHandler,
                     final Command closeCallback);

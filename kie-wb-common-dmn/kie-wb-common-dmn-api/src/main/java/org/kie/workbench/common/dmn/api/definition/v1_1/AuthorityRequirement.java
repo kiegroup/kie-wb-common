@@ -42,7 +42,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 @CanConnect(startRole = "knowledge-source", endRole = "business-knowledge-model")
 @CanConnect(startRole = "knowledge-source", endRole = "knowledge-source")
 @CanConnect(startRole = "input-data", endRole = "knowledge-source")
-@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments={AuthorityRequirement.class})
+@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments = {AuthorityRequirement.class})
 @NoValidation
 public class AuthorityRequirement extends DMNModelInstrumentedBase {
 

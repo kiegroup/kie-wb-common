@@ -40,7 +40,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED)
 @CanConnect(startRole = "decision", endRole = "decision")
 @CanConnect(startRole = "input-data", endRole = "decision")
-@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments={InformationRequirement.class})
+@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments = {InformationRequirement.class})
 @NoValidation
 public class InformationRequirement extends DMNModelInstrumentedBase {
 

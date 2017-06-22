@@ -17,13 +17,13 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.components.actions.NameEditBox;
+import org.kie.workbench.common.stunner.core.client.components.actions.TextEditorBox;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.uberfire.client.mvp.UberElement;
 
-public interface NameEditBoxWidgetView extends UberElement<NameEditBoxWidgetView.Presenter> {
+public interface TextEditorBoxView extends UberElement<TextEditorBoxView.Presenter> {
 
-    interface Presenter extends NameEditBox<AbstractCanvasHandler, Element> {
+    interface Presenter extends TextEditorBox<AbstractCanvasHandler, Element> {
 
         void onSave();
 

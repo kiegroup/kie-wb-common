@@ -79,7 +79,7 @@ public class TextAnnotationShapeDef implements DMNSVGShapeDef<TextAnnotation> {
 
     @Override
     public HasTitle.Position getFontPosition(final TextAnnotation element) {
-        return HasTitle.Position.TOP;
+        return HasTitle.Position.CENTER;
     }
 
     @Override

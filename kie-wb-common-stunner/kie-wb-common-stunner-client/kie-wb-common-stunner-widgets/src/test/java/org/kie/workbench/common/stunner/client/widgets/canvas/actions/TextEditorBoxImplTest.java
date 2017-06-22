@@ -20,6 +20,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.DefaultTextPropertyProviderImpl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.command.RequiresCommandManager;
@@ -34,7 +37,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NameEditBoxWidgetTest {
+public class TextEditorBoxImplTest {
 
     public static final String NAME = "name";
     public static final String MODIFIED_NAME = "modified_name";
@@ -47,7 +50,7 @@ public class NameEditBoxWidgetTest {
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
 
     @Mock
-    private NameEditBoxWidgetView view;
+    private TextEditorBoxView view;
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
@@ -59,6 +62,9 @@ public class NameEditBoxWidgetTest {
     private RequiresCommandManager.CommandManagerProvider<AbstractCanvasHandler> commandProvider;
 
     @Mock
+    private TextPropertyProviderFactory textPropertyProviderFactory;
+
+    @Mock
     private CanvasCommandManager canvasCommandManager;
 
     @Mock
@@ -67,22 +73,28 @@ public class NameEditBoxWidgetTest {
     @Mock
     private Definition definition;
 
+    @Mock
+    private TextPropertyProvider textPropertyProvider;
+
     private Object objectDefinition = new Object();
 
-    private NameEditBoxWidget presenter;
+    private TextEditorBoxImpl presenter;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void init() {
+        this.textPropertyProvider = new DefaultTextPropertyProviderImpl(definitionUtils,
+                                                                        canvasCommandFactory);
 
         when(element.getContent()).thenReturn(definition);
         when(definition.getDefinition()).thenReturn(objectDefinition);
         when(definitionUtils.getName(objectDefinition)).thenReturn(NAME);
         when(definitionUtils.getNameIdentifier(objectDefinition)).thenReturn(ID);
         when(commandProvider.getCommandManager()).thenReturn(canvasCommandManager);
+        when(canvasHandler.getTextPropertyProviderFactory()).thenReturn(textPropertyProviderFactory);
+        when(textPropertyProviderFactory.getProvider(any(Element.class))).thenReturn(textPropertyProvider);
 
-        presenter = new NameEditBoxWidget(definitionUtils,
-                                          canvasCommandFactory,
-                                          view);
+        presenter = new TextEditorBoxImpl(view);
 
         presenter.setup();
 
@@ -127,6 +139,7 @@ public class NameEditBoxWidgetTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testCloseButton() {
         presenter.onChangeName(MODIFIED_NAME);
 
@@ -155,6 +168,7 @@ public class NameEditBoxWidgetTest {
         verify(closeCallback).execute();
     }
 
+    @SuppressWarnings("unchecked")
     protected void verifyNameNotSaved() {
         assertEquals(MODIFIED_NAME,
                      presenter.getNameValue());
@@ -178,6 +192,7 @@ public class NameEditBoxWidgetTest {
                never()).execute();
     }
 
+    @SuppressWarnings("unchecked")
     protected void verifyNameSaved() {
         assertEquals(MODIFIED_NAME,
                      presenter.getNameValue());

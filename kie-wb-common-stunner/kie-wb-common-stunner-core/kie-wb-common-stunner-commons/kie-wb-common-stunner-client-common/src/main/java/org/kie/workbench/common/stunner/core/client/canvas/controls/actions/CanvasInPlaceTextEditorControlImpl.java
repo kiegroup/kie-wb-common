@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasFocusedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasElementSelectedEvent;
-import org.kie.workbench.common.stunner.core.client.components.actions.NameEditBox;
+import org.kie.workbench.common.stunner.core.client.components.actions.TextEditorBox;
 import org.kie.workbench.common.stunner.core.client.components.views.FloatingView;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyDownEvent;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -52,26 +52,26 @@ import org.uberfire.mvp.Command;
 import static org.uberfire.commons.validation.PortablePreconditions.checkNotNull;
 
 @Dependent
-public class CanvasNameEditionControlImpl
+public class CanvasInPlaceTextEditorControlImpl
         extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
-        implements CanvasNameEditionControl<AbstractCanvasHandler, Element> {
+        implements CanvasInPlaceTextEditorControl<AbstractCanvasHandler, Element> {
 
     private static final int FLOATING_VIEW_TIMEOUT = 3000;
-    private static final double SHAPE_EDIT_ALPH = 0.2d;
+    private static final double SHAPE_EDIT_ALPHA = 0.2d;
 
     private final FloatingView<IsWidget> floatingView;
-    private final NameEditBox<AbstractCanvasHandler, Element> nameEditBox;
+    private final TextEditorBox<AbstractCanvasHandler, Element> textEditorBox;
     private final Event<CanvasElementSelectedEvent> elementSelectedEvent;
     private String uuid;
 
-    private final Command floatingHideCallback = CanvasNameEditionControlImpl.this::hide;
+    private final Command floatingHideCallback = CanvasInPlaceTextEditorControlImpl.this::hide;
 
     @Inject
-    public CanvasNameEditionControlImpl(final FloatingView<IsWidget> floatingView,
-                                        final NameEditBox<AbstractCanvasHandler, Element> nameEditBox,
-                                        final Event<CanvasElementSelectedEvent> elementSelectedEvent) {
+    public CanvasInPlaceTextEditorControlImpl(final FloatingView<IsWidget> floatingView,
+                                              final TextEditorBox<AbstractCanvasHandler, Element> textEditorBox,
+                                              final Event<CanvasElementSelectedEvent> elementSelectedEvent) {
         this.floatingView = floatingView;
-        this.nameEditBox = nameEditBox;
+        this.textEditorBox = textEditorBox;
         this.elementSelectedEvent = elementSelectedEvent;
         this.uuid = null;
     }
@@ -79,20 +79,20 @@ public class CanvasNameEditionControlImpl
     @Override
     public void enable(final AbstractCanvasHandler canvasHandler) {
         super.enable(canvasHandler);
-        nameEditBox.initialize(canvasHandler,
-                               () -> {
-                                   final String idToSelect = CanvasNameEditionControlImpl.this.uuid;
-                                   CanvasNameEditionControlImpl.this.hide();
-                                   elementSelectedEvent.fire(new CanvasElementSelectedEvent(canvasHandler,
-                                                                                            idToSelect));
-                               });
+        textEditorBox.initialize(canvasHandler,
+                                 () -> {
+                                     final String idToSelect = CanvasInPlaceTextEditorControlImpl.this.uuid;
+                                     CanvasInPlaceTextEditorControlImpl.this.hide();
+                                     elementSelectedEvent.fire(new CanvasElementSelectedEvent(canvasHandler,
+                                                                                              idToSelect));
+                                 });
 
         // TODO: move folatingView to support IsElement instead of IsWidget
         floatingView
                 .hide()
                 .setHideCallback(floatingHideCallback)
                 .setTimeOut(FLOATING_VIEW_TIMEOUT)
-                .add(ElementWrapperWidget.getWidget(nameEditBox.getElement()));
+                .add(ElementWrapperWidget.getWidget(textEditorBox.getElement()));
     }
 
     @Override
@@ -107,9 +107,9 @@ public class CanvasNameEditionControlImpl
                         final TextDoubleClickHandler clickHandler = new TextDoubleClickHandler() {
                             @Override
                             public void handle(final TextDoubleClickEvent event) {
-                                CanvasNameEditionControlImpl.this.show(element,
-                                                                       event.getClientX(),
-                                                                       event.getClientY());
+                                CanvasInPlaceTextEditorControlImpl.this.show(element,
+                                                                             event.getClientX(),
+                                                                             event.getClientY());
                             }
                         };
                         hasEventHandlers.addHandler(ViewEventType.TEXT_DBL_CLICK,
@@ -147,12 +147,12 @@ public class CanvasNameEditionControlImpl
     }
 
     @Override
-    public CanvasNameEditionControl<AbstractCanvasHandler, Element> show(final Element item,
-                                                                         final double x,
-                                                                         final double y) {
+    public CanvasInPlaceTextEditorControl<AbstractCanvasHandler, Element> show(final Element item,
+                                                                               final double x,
+                                                                               final double y) {
         this.uuid = item.getUUID();
         enableShapeEdit();
-        nameEditBox.show(item);
+        textEditorBox.show(item);
         double[] size;
         try {
             size = GraphUtils.getNodeSize((View) item.getContent());
@@ -168,11 +168,11 @@ public class CanvasNameEditionControlImpl
     }
 
     @Override
-    public CanvasNameEditionControl<AbstractCanvasHandler, Element> hide() {
+    public CanvasInPlaceTextEditorControl<AbstractCanvasHandler, Element> hide() {
         if (isVisible()) {
             disableShapeEdit();
             this.uuid = null;
-            nameEditBox.hide();
+            textEditorBox.hide();
             floatingView.hide();
         }
         return this;
@@ -180,7 +180,7 @@ public class CanvasNameEditionControlImpl
 
     @Override
     public void setCommandManagerProvider(final CommandManagerProvider<AbstractCanvasHandler> provider) {
-        nameEditBox.setCommandManagerProvider(provider);
+        textEditorBox.setCommandManagerProvider(provider);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class CanvasNameEditionControlImpl
         super.doDisable();
         disableShapeEdit();
         this.uuid = null;
-        nameEditBox.hide();
+        textEditorBox.hide();
         floatingView.destroy();
     }
 
@@ -204,7 +204,7 @@ public class CanvasNameEditionControlImpl
         final Shape<?> shape = getShape(this.uuid);
         if (null != shape) {
             final HasTitle hasTitle = (HasTitle) shape.getShapeView();
-            final double alpha = editMode ? SHAPE_EDIT_ALPH : 1d;
+            final double alpha = editMode ? SHAPE_EDIT_ALPHA : 1d;
             shape.getShapeView().setFillAlpha(alpha);
             hasTitle.setTitleAlpha(alpha);
             getCanvas().draw();

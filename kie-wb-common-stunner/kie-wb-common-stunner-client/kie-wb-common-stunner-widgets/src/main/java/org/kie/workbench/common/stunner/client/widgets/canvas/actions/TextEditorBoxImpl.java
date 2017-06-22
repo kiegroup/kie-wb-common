@@ -22,34 +22,29 @@ import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProviderFactory;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.mvp.Command;
 
 @Dependent
-public class NameEditBoxWidget implements NameEditBoxWidgetView.Presenter {
+public class TextEditorBoxImpl implements TextEditorBoxView.Presenter {
 
-    private final NameEditBoxWidgetView view;
-    private final DefinitionUtils definitionUtils;
-    private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
+    private final TextEditorBoxView view;
+
     private AbstractCanvasHandler canvasHandler;
-    private CommandManagerProvider<AbstractCanvasHandler> provider;
+    private TextPropertyProviderFactory textPropertyProviderFactory;
+    private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
     private Command closeCallback;
     private Element<? extends Definition> element;
-    private String nameValue;
+    private String value;
 
     @Inject
-    public NameEditBoxWidget(final DefinitionUtils definitionUtils,
-                             final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                             final NameEditBoxWidgetView view) {
-        this.definitionUtils = definitionUtils;
-        this.canvasCommandFactory = canvasCommandFactory;
+    public TextEditorBoxImpl(final TextEditorBoxView view) {
         this.view = view;
         this.element = null;
-        this.nameValue = null;
+        this.value = null;
     }
 
     @PostConstruct
@@ -62,43 +57,42 @@ public class NameEditBoxWidget implements NameEditBoxWidgetView.Presenter {
                            final Command closeCallback) {
         this.canvasHandler = canvasHandler;
         this.closeCallback = closeCallback;
+        this.textPropertyProviderFactory = canvasHandler.getTextPropertyProviderFactory();
     }
 
     @Override
-    public void setCommandManagerProvider(final CommandManagerProvider<AbstractCanvasHandler> provider) {
-        this.provider = provider;
+    public void setCommandManagerProvider(final CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider) {
+        this.commandManagerProvider = commandManagerProvider;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void show(final Element element) {
         this.element = element;
-        final String name = definitionUtils.getName(this.element.getContent().getDefinition());
+        final TextPropertyProvider textPropertyProvider = textPropertyProviderFactory.getProvider(element);
+        final String name = textPropertyProvider.getText(element);
         view.show(name);
     }
 
     @Override
     public void hide() {
         view.hide();
-        this.nameValue = null;
+        this.value = null;
     }
 
     public void onChangeName(final String name) {
-        this.nameValue = name;
+        this.value = name;
     }
 
     // TODO: Check command result.
     @Override
     public void onSave() {
-        if (null != this.nameValue) {
-            final Object def = element.getContent().getDefinition();
-            final String nameId = definitionUtils.getNameIdentifier(def);
-            if (null != nameId) {
-                CanvasCommand<AbstractCanvasHandler> command = canvasCommandFactory.updatePropertyValue(element,
-                                                                                                        nameId,
-                                                                                                        this.nameValue);
-                provider.getCommandManager().execute(canvasHandler,
-                                                     command);
-            }
+        if (null != this.value) {
+            final TextPropertyProvider textPropertyProvider = textPropertyProviderFactory.getProvider(element);
+            textPropertyProvider.setText(canvasHandler,
+                                         commandManagerProvider.getCommandManager(),
+                                         element,
+                                         value);
         }
         view.hide();
         fireCloseCallback();
@@ -119,7 +113,7 @@ public class NameEditBoxWidget implements NameEditBoxWidgetView.Presenter {
 
     private void processKey(final int keyCode,
                             final String value) {
-        this.nameValue = value;
+        this.value = value;
         // Enter key produces save.
         if (13 == keyCode) {
             onSave();
@@ -133,7 +127,7 @@ public class NameEditBoxWidget implements NameEditBoxWidgetView.Presenter {
     }
 
     public String getNameValue() {
-        return nameValue;
+        return value;
     }
 
     @Override

@@ -24,13 +24,13 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 /**
  * Provides element's name edition via some widget.
  */
-public interface CanvasNameEditionControl<C extends CanvasHandler, E extends Element>
+public interface CanvasInPlaceTextEditorControl<C extends CanvasHandler, E extends Element>
         extends CanvasRegistationControl<C, E>,
                 RequiresCommandManager<C> {
 
-    CanvasNameEditionControl<C, E> show(final E item,
-                                        final double x,
-                                        final double y);
+    CanvasInPlaceTextEditorControl<C, E> show(final E item,
+                                              final double x,
+                                              final double y);
 
-    CanvasNameEditionControl<C, E> hide();
+    CanvasInPlaceTextEditorControl<C, E> hide();
 }
