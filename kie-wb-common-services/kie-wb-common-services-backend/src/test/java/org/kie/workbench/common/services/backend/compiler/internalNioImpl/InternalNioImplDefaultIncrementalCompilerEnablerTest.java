@@ -133,9 +133,8 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        //Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
-        Assert.assertTrue(pomAsAstring.contains("kie-maven-plugin"));
+        Assert.assertTrue(pomAsAstring.contains("kie-maven-takari-plugin"));
 
         InternalNioImplTestUtil.rm(tmpRoot.toFile());
     }
