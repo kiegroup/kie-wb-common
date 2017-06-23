@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,7 @@ import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
+import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.google.gwt.event.shared.HandlerRegistration;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
@@ -176,6 +177,7 @@ public class WiresTextDecorator {
         }
         final boolean changed = !currentTextLayout.equals(layout);
         this.currentTextLayout = layout;
+        text.setWrapBoundaries(text.getWrapBoundaries(),getLayout());
         return changed;
     }
 
@@ -248,5 +250,9 @@ public class WiresTextDecorator {
     private boolean hasText() {
         final String text = this.text.getText();
         return null != text && text.trim().length() > 0;
+    }
+
+    public void setTextBoundaries(BoundingBox boundaries) {
+        text.setWrapBoundaries(boundaries,getLayout());
     }
 }

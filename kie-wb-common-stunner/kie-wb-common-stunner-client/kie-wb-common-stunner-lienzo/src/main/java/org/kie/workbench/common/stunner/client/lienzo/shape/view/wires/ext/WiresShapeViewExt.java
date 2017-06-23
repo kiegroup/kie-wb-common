@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -176,6 +176,7 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         this.fillGradientEndColor = endColor;
         if (null != getShape()) {
             final BoundingBox bb = getShape().getBoundingBox();
+            textViewDecorator.setTextBoundaries(bb);
             final double width = bb.getWidth();
             final double height = bb.getHeight();
             updateFillGradient(width,
@@ -357,14 +358,23 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         HandlerRegistration r0 = addWiresResizeStartHandler(wiresResizeStartEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeStartEvent);
             resizeHandler.start(event);
+            removeChild(textViewDecorator.getView());
+            addTextAsChild();
+            textViewDecorator.setTextBoundaries(getShape().getBoundingBox());
         });
         HandlerRegistration r1 = addWiresResizeStepHandler(wiresResizeStepEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeStepEvent);
             resizeHandler.handle(event);
+            removeChild(textViewDecorator.getView());
+            addTextAsChild();
+            textViewDecorator.setTextBoundaries(getShape().getBoundingBox());
         });
         HandlerRegistration r2 = addWiresResizeEndHandler(wiresResizeEndEvent -> {
             final ResizeEvent event = buildResizeEvent(wiresResizeEndEvent);
             resizeHandler.end(event);
+            removeChild(textViewDecorator.getView());
+            addTextAsChild();
+            textViewDecorator.setTextBoundaries(getShape().getBoundingBox());
         });
         return new HandlerRegistration[]{r0, r1, r2};
     }
