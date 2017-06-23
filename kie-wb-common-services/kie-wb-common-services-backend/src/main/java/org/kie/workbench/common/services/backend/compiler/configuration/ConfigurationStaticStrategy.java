@@ -66,7 +66,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                  "org.kie");
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN,
-                 "kie-maven-plugin-takari");
+                 "kie-maven-takari-plugin");
 
         valid = Boolean.TRUE;
     }
