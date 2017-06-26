@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 @Portable
 @Bindable
 @PropertySet
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "importType")
 public class ImportedValues extends Import implements DMNPropertySet {
 
     @Name

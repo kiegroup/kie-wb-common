@@ -37,7 +37,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 @Portable
 @Bindable
 @Definition(graphFactory = EdgeFactory.class, builder = Association.AssociationBuilder.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 @CanConnect(startRole = "business-knowledge-model", endRole = "text-annotation")
 @CanConnect(startRole = "decision", endRole = "text-annotation")
 @CanConnect(startRole = "input-data", endRole = "text-annotation")

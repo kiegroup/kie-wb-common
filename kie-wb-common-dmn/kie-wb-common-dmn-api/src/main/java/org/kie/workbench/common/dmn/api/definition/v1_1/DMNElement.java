@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 public abstract class DMNElement extends DMNModelInstrumentedBase {
 
     @Property
-    @FormField
+    @FormField(readonly = true)
     protected Id id;
 
     @Property

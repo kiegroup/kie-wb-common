@@ -46,7 +46,7 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class, builder = KnowledgeSource.KnowledgeSourceBuilder.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 public class KnowledgeSource extends DRGElement {
 
     @Category

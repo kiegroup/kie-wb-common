@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 @Portable
 @Bindable
 @PropertySet
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 public class LiteralExpression extends Expression implements DMNPropertySet {
 
     @Name

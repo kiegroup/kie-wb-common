@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 @Portable
 @Bindable
 @PropertySet
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
 public class FunctionDefinition extends Expression implements DMNPropertySet {
 
     @Name
