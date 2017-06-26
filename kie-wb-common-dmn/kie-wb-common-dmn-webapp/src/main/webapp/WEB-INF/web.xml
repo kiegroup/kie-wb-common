@@ -90,7 +90,7 @@
     <servlet-class>org.uberfire.ext.security.server.LoginRedirectServlet</servlet-class>
     <init-param>
       <param-name>display-after-login</param-name>
-      <param-value>/stunner.html</param-value>
+      <param-value>/dmn-editor.html</param-value>
     </init-param>
   </servlet>
 
