@@ -49,7 +49,7 @@
         <plugins>
             <plugin>
                 <groupId>org.kie</groupId>
-                <artifactId>kie-maven-takari-plugin</artifactId>
+                <artifactId>kie-takari-plugin</artifactId>
                 <version>7.1.0-SNAPSHOT</version>
                 <extensions>true</extensions>
             </plugin>

@@ -148,7 +148,7 @@ public class InternalNioImplKieMetadataTest {
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
         InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
-                                                                                             new String[]{MavenArgs.COMPILE},
+                                                                                             new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
         CompilationResponse res = compiler.compileSync(req);
@@ -169,10 +169,9 @@ public class InternalNioImplKieMetadataTest {
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
-        KieModule kModule = kieModuleOptional.get();
 
         Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size() == 4);
+        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
 
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());

@@ -83,6 +83,8 @@ public class DefaultIncrementalCompilerEnablerTest {
                                   StandardCharsets.UTF_8);
         Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
+        Assert.assertFalse(pomAsAstring.contains("kie-takari-plugin"));
+
         TestUtil.rm(tmpRoot.toFile());
     }
 
@@ -101,6 +103,14 @@ public class DefaultIncrementalCompilerEnablerTest {
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        Assert.assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
+
+        byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
+                                                            "/dummyB/pom.xml"));
+
+        String pomAsAstringDummyB = new String(encodedDummyB,
+                                               StandardCharsets.UTF_8);
+        Assert.assertTrue(pomAsAstringDummyB.contains("<packaging>kjar</packaging>"));
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            NIOMavenCompilerFactory.getCompiler(mavenRepo,
@@ -117,7 +127,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("kie-maven-takari-plugin"));
+        Assert.assertTrue(pomAsAstring.contains("kie-takari-plugin"));
 
         Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 

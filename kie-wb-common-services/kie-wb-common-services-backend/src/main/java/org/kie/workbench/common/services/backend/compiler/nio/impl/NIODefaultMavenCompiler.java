@@ -51,7 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Run maven with https://maven.apache.org/ref/3.5.0/maven-embedder/xref/index.html
+ * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
  * <p>
  * <p>
@@ -155,7 +155,7 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
         KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
         KieTuple kieModuleTuple = readKieModule(req);
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
-            //@TODO load the dependencies from target/classes
+
             KieClassLoaderProvider provider = new NIOClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
             return new DefaultCompilationResponse(Boolean.TRUE,

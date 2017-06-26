@@ -78,7 +78,7 @@ public class InternalNioImplDefaultPomEditor extends DefaultPomEditor {
                                                       model.getPackaging(),
                                                       Files.readAllBytes(Paths.get(pom.toAbsolutePath().toString())));
 
-            if (!history.contains(pomPH) /* && model.getPackaging().equals(POM)*/) {
+            if (!history.contains(pomPH)) {
 
                 PluginPresents plugs = updatePom(model);
                 request.getInfo().lateAdditionKiePluginPresent(plugs.isKiePluginPresent());

@@ -93,6 +93,7 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
                                   StandardCharsets.UTF_8);
         Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
+        Assert.assertFalse(pomAsAstring.contains("kie-takari-plugin"));
         InternalNioImplTestUtil.rm(tmpRoot.toFile());
     }
 
@@ -117,12 +118,20 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        Assert.assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
+
+        byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
+                                                            "/dummyB/pom.xml"));
+
+        String pomAsAstringDummyB = new String(encodedDummyB,
+                                               StandardCharsets.UTF_8);
+        Assert.assertTrue(pomAsAstringDummyB.contains("<packaging>kjar</packaging>"));
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    InternalNioImplMavenCompilerFactory.getCompiler(mavenRepo,
                                                                                                                                                    Decorator.NONE));
         InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
-                                                                                             new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                             new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, "-X"},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
         InternalNioImplDefaultIncrementalCompilerEnabler enabler = new InternalNioImplDefaultIncrementalCompilerEnabler(Compilers.JAVAC);
@@ -134,7 +143,7 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
 
-        Assert.assertTrue(pomAsAstring.contains("kie-maven-takari-plugin"));
+        Assert.assertTrue(pomAsAstring.contains("kie-takari-plugin"));
 
         InternalNioImplTestUtil.rm(tmpRoot.toFile());
     }

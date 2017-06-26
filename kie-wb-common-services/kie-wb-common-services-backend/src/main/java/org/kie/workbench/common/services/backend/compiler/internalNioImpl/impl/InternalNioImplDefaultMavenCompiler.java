@@ -51,7 +51,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 /**
- * Run maven with https://maven.apache.org/ref/3.5.0/maven-embedder/xref/index.html
+ * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
  * <p>
  * <p>
@@ -231,8 +231,8 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
     private KieTuple readObjectFromADifferentClassloader(Object o) {
 
         ObjectInput in = null;
-        ObjectOutput out = null;
-        ByteArrayInputStream bis = null;
+        ObjectOutput out ;
+        ByteArrayInputStream bis ;
         ByteArrayOutputStream bos = null;
 
         try {

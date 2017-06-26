@@ -5,13 +5,28 @@
   <groupId>org.acme</groupId>
   <artifactId>deps-services-backend</artifactId>
   <version>1.0.0.Final</version>
-  <name>Dummy Deps</name>
   <packaging>pom</packaging>
+  <name>Dummy Deps</name>
   <description>Dummy Deps complex</description>
   <modules>
     <module>dummyA</module>
     <module>dummyB</module>
   </modules>
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>daily</updatePolicy>
+      </snapshots>
+      <id>jboss-public-repository-group</id>
+      <name>JBoss Public Repository Group</name>
+      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+    </repository>
+  </repositories>
   <build>
     <resources>
       <resource>
@@ -55,19 +70,4 @@
       </plugin>
     </plugins>
   </build>
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
-      </snapshots>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Repository Group</name>
-      <url>https://repository.jboss.org/nexus/content/groups/public/</url>
-    </repository>
-  </repositories>
 </project>

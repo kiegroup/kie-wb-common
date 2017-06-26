@@ -41,7 +41,7 @@ import java.util.Map;
  * MAVEN_PHASE_NONE=none
  *
  * KIE_MAVEN_PLUGINS=org.kie
- * KIE_MAVEN_PLUGIN=kie-maven-plugin-takari
+ * KIE_MAVEN_PLUGIN=kie-takari-plugin
  * <p>
  */
 public class ConfigurationContextProvider implements ConfigurationProvider {

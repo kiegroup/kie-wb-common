@@ -34,8 +34,8 @@ import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
@@ -119,7 +119,7 @@ public class NioKieMetadataTest {
         Assert.assertTrue(kieModuleOptional.isPresent());
         KieModule kModule = kieModuleOptional.get();
         Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size()==5);
+        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getProjectDependencies().get());
@@ -147,7 +147,7 @@ public class NioKieMetadataTest {
                                                                            compiler);
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
-                                                                     new String[]{MavenArgs.COMPILE},
+                                                                     new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
         CompilationResponse res = compiler.compileSync(req);
@@ -168,9 +168,8 @@ public class NioKieMetadataTest {
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
-        KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getProjectDependencies().get().size()==4);
+        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
 
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());
@@ -192,7 +191,6 @@ public class NioKieMetadataTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
                                                                      new String[]{MavenArgs.INSTALL},
@@ -219,7 +217,7 @@ public class NioKieMetadataTest {
         KieModule kModule = kieModuleOptional.get();
 
         Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size()==5);
+        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
                                                                         res.getProjectDependencies().get());
 

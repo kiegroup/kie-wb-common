@@ -44,8 +44,7 @@ public class DefaultPomEditor implements PomEditor {
     public final String POM = "pom";
     public final String TRUE = "true";
     public final String POM_NAME = "pom.xml";
-    public final String MAVEN_COMPILER_EXECUTION_ID = "default-compile";
-    public final String MAVEN_COMPILER_EXECUTION_PHASE = "none";
+    public final String KJAR_EXT = "kjar";
     protected final Logger logger = LoggerFactory.getLogger(DefaultPomEditor.class);
     protected Compilers compiler;
     protected Map<ConfigurationKey, String> conf;
@@ -80,12 +79,17 @@ public class DefaultPomEditor implements PomEditor {
             build = model.getBuild();
         }
 
+
         Boolean defaultCompilerPluginPresent = Boolean.FALSE;
         Boolean alternativeCompilerPluginPresent = Boolean.FALSE;
         Boolean kiePluginPresent = Boolean.FALSE;
         int alternativeCompilerPosition = 0;
         int defaultMavenCompilerPosition = 0;
         int kieMavenPluginPosition = 0;
+
+        if(model.getPackaging().equals(KJAR_EXT)){
+            kiePluginPresent = Boolean.TRUE;
+        }
 
         int i = 0;
         for (Plugin plugin : build.getPlugins()) {
@@ -144,7 +148,6 @@ public class DefaultPomEditor implements PomEditor {
             overwritePOM = Boolean.TRUE;
         }
 
-        //@TODO check about the precedence of kie maven during the compile
         if (!defaultCompilerPluginPresent) {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = new Plugin();
@@ -168,18 +171,6 @@ public class DefaultPomEditor implements PomEditor {
             }
         }
         return overwritePOM;
-    }
-
-    protected int getPluginPosition(Build build,
-                                    String artifactPlugin) {
-        int i = 0;
-        for (Plugin plugin : build.getPlugins()) {
-            if (plugin.getGroupId().equals(artifactPlugin)) {
-                break;
-            }
-            i++;
-        }
-        return i;
     }
 
     protected Plugin getNewCompilerPlugin() {
