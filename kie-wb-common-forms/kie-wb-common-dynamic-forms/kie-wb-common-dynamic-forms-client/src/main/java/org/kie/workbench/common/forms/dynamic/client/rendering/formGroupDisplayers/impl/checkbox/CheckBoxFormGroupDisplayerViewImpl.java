@@ -49,7 +49,6 @@ public class CheckBoxFormGroupDisplayerViewImpl extends Composite implements Che
     public void render(Widget widget,
                        FieldDefinition field) {
         this.getElement().setId(generateFormGroupId(field));
-        fieldLabel.setHtmlFor(widget.getElement().getId());
         DOMUtil.appendWidgetToElement(fieldLabel,
                                       widget);
         labelText.setTextContent(field.getLabel());
