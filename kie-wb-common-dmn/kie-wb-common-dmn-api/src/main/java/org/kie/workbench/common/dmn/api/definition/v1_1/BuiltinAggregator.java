@@ -15,28 +15,22 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
-import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
-import org.kie.workbench.common.stunner.core.definition.builder.Builder;
+@Portable
+public enum BuiltinAggregator {
 
-public abstract class DMNModelInstrumentedBase implements DMNDefinition {
+    SUM,
+    COUNT,
+    MIN,
+    MAX;
 
-    private Map<String, String> nameSpaces = new HashMap<>();
-
-    @NonPortable
-    protected static abstract class BaseNodeBuilder<T extends DMNModelInstrumentedBase> implements Builder<T> {
-
+    public String value() {
+        return name();
     }
 
-    // -----------------------
-    // DMN properties
-    // -----------------------
-
-    @Override
-    public Map<String, String> getNsContext() {
-        return nameSpaces;
+    public static BuiltinAggregator fromValue(final String v) {
+        return valueOf(v);
     }
+
 }

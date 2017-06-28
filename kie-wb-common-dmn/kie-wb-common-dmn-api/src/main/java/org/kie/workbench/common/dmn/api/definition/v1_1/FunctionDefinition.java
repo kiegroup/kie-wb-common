@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -39,15 +42,9 @@ public class FunctionDefinition extends Expression implements DMNPropertySet {
     @FieldLabel
     public static final transient String propertySetName = "FunctionDefinition";
 
-    //@PropertySet
-    //@FormField
-    //TODO {manstis} Form Builder does not appear to support abstract classes?
-    protected Expression expression;
+    private Expression expression;
 
-    //@Property
-    //@FormField
-    //TODO {manstis} How to handle maps and lists with Form Builder?
-    //private List<InformationItem> formalParameter;
+    private List<InformationItem> formalParameter;
 
     public FunctionDefinition() {
         this(new Id(),
@@ -83,5 +80,12 @@ public class FunctionDefinition extends Expression implements DMNPropertySet {
 
     public void setExpression(final Expression expression) {
         this.expression = expression;
+    }
+
+    public List<InformationItem> getFormalParameter() {
+        if (formalParameter == null) {
+            formalParameter = new ArrayList<>();
+        }
+        return this.formalParameter;
     }
 }

@@ -15,28 +15,27 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
-import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
-import org.kie.workbench.common.stunner.core.definition.builder.Builder;
+@Portable
+public class Binding extends DMNModelInstrumentedBase {
 
-public abstract class DMNModelInstrumentedBase implements DMNDefinition {
+    private InformationItem parameter;
+    private Expression expression;
 
-    private Map<String, String> nameSpaces = new HashMap<>();
-
-    @NonPortable
-    protected static abstract class BaseNodeBuilder<T extends DMNModelInstrumentedBase> implements Builder<T> {
-
+    public InformationItem getParameter() {
+        return parameter;
     }
 
-    // -----------------------
-    // DMN properties
-    // -----------------------
+    public void setParameter(final InformationItem value) {
+        this.parameter = value;
+    }
 
-    @Override
-    public Map<String, String> getNsContext() {
-        return nameSpaces;
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(final Expression value) {
+        this.expression = value;
     }
 }

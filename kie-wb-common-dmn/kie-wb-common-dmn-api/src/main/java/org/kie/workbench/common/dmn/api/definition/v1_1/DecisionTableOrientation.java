@@ -15,28 +15,32 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
-import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
-import org.kie.workbench.common.stunner.core.definition.builder.Builder;
+@Portable
+public enum DecisionTableOrientation {
 
-public abstract class DMNModelInstrumentedBase implements DMNDefinition {
+    RULE_AS_ROW("Rule-as-Row"),
+    RULE_AS_COLUMN("Rule-as-Column"),
+    CROSS_TABLE("CrossTable");
 
-    private Map<String, String> nameSpaces = new HashMap<>();
+    private final String value;
 
-    @NonPortable
-    protected static abstract class BaseNodeBuilder<T extends DMNModelInstrumentedBase> implements Builder<T> {
-
+    DecisionTableOrientation(String v) {
+        value = v;
     }
 
-    // -----------------------
-    // DMN properties
-    // -----------------------
-
-    @Override
-    public Map<String, String> getNsContext() {
-        return nameSpaces;
+    public String value() {
+        return value;
     }
+
+    public static DecisionTableOrientation fromValue(final String v) {
+        for (DecisionTableOrientation c : DecisionTableOrientation.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+
 }

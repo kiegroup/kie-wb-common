@@ -15,9 +15,16 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Label;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 
@@ -35,15 +42,9 @@ public abstract class DMNElement extends DMNModelInstrumentedBase {
     @FormField(afterElement = "label")
     protected Description description;
 
-    //@PropertySet
-    //@FormField
-    //TODO {manstis} Should be <QName, String>
-    //private Map<QName, String> otherAttributes = new HashMap<>();
+    private Map<QName, String> otherAttributes = new HashMap<>();
 
-    //@PropertySet
-    //@FormField
-    //TODO {manstis} GWT/Errai cannot handle marshalling Object.. what values do we have?!
-    //private DMNElement.ExtensionElements extensionElements;
+    private DMNElement.ExtensionElements extensionElements;
 
     public DMNElement() {
     }
@@ -82,5 +83,31 @@ public abstract class DMNElement extends DMNModelInstrumentedBase {
 
     public void setDescription(final Description description) {
         this.description = description;
+    }
+
+    public Map<QName, String> getOtherAttributes() {
+        return otherAttributes;
+    }
+
+    public ExtensionElements getExtensionElements() {
+        return extensionElements;
+    }
+
+    public void setExtensionElements(final ExtensionElements extensionElements) {
+        this.extensionElements = extensionElements;
+    }
+
+    //TODO {manstis} The DMN model uses Object not String
+    @Portable
+    public static class ExtensionElements extends DMNModelInstrumentedBase {
+
+        protected List<String> any;
+
+        public List<String> getAny() {
+            if (any == null) {
+                any = new ArrayList<>();
+            }
+            return this.any;
+        }
     }
 }

@@ -15,28 +15,32 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
-import org.jboss.errai.common.client.api.annotations.NonPortable;
-import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
-import org.kie.workbench.common.stunner.core.definition.builder.Builder;
+@Portable
+public enum AssociationDirection {
 
-public abstract class DMNModelInstrumentedBase implements DMNDefinition {
+    NONE("None"),
+    ONE("One"),
+    BOTH("Both");
 
-    private Map<String, String> nameSpaces = new HashMap<>();
+    private final String value;
 
-    @NonPortable
-    protected static abstract class BaseNodeBuilder<T extends DMNModelInstrumentedBase> implements Builder<T> {
-
+    AssociationDirection(final String v) {
+        value = v;
     }
 
-    // -----------------------
-    // DMN properties
-    // -----------------------
-
-    @Override
-    public Map<String, String> getNsContext() {
-        return nameSpaces;
+    public String value() {
+        return value;
     }
+
+    public static AssociationDirection fromValue(final String v) {
+        for (AssociationDirection c : AssociationDirection.values()) {
+            if (c.value.equals(v)) {
+                return c;
+            }
+        }
+        throw new IllegalArgumentException(v);
+    }
+
 }

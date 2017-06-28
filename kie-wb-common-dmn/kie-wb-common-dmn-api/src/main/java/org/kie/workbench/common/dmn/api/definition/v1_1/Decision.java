@@ -75,9 +75,6 @@ public class Decision extends DRGElement {
     @FormField(afterElement = "allowedAnswers")
     protected InformationItem variable;
 
-    //@PropertySet
-    //@FormField
-    //TODO {manstis} Form Builder does not appear to support abstract classes?
     protected Expression expression;
 
     @PropertySet
