@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.dmn.api.property.font;
 
+import javax.validation.Valid;
+
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -43,6 +45,7 @@ public class FontSet implements DMNPropertySet {
 
     @Property
     @FormField
+    @Valid
     private FontFamily fontFamily;
 
     @Property
@@ -50,6 +53,7 @@ public class FontSet implements DMNPropertySet {
             type = ColorPickerFieldType.class,
             afterElement = "fontFamily"
     )
+    @Valid
     private FontColour fontColour;
 
     @Property
@@ -62,6 +66,7 @@ public class FontSet implements DMNPropertySet {
                     @FieldParam(name = "step", value = "1.0")
             }
     )
+    @Valid
     private FontSize fontSize;
 
     @Property
@@ -74,6 +79,7 @@ public class FontSet implements DMNPropertySet {
                     @FieldParam(name = "step", value = "1.0")
             }
     )
+    @Valid
     private FontBorderSize fontBorderSize;
 
     public FontSet() {

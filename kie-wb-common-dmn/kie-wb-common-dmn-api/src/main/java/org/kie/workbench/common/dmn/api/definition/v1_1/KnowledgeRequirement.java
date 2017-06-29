@@ -21,6 +21,7 @@ import java.util.Set;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.dmn.api.validation.NoValidation;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -37,6 +38,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED)
 @CanConnect(startRole = "business-knowledge-model", endRole = "decision")
 @CanConnect(startRole = "business-knowledge-model", endRole = "business-knowledge-model")
+@NoValidation
 public class KnowledgeRequirement extends DMNModelInstrumentedBase {
 
     @Category

@@ -71,10 +71,12 @@ public class InputData extends DRGElement {
 
     @PropertySet
     @FormField(afterElement = "backgroundSet")
+    @Valid
     protected FontSet fontSet;
 
     @PropertySet
     @FormField(afterElement = "fontSet")
+    @Valid
     protected RectangleDimensionsSet dimensionsSet;
 
     @NonPortable

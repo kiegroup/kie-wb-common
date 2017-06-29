@@ -75,10 +75,12 @@ public class BusinessKnowledgeModel extends DRGElement {
 
     @PropertySet
     @FormField(afterElement = "backgroundSet")
+    @Valid
     protected FontSet fontSet;
 
     @PropertySet
     @FormField(afterElement = "fontSet")
+    @Valid
     protected RectangleDimensionsSet dimensionsSet;
 
     @NonPortable
@@ -105,7 +107,7 @@ public class BusinessKnowledgeModel extends DRGElement {
                                   final @MapsTo("label") Label label,
                                   final @MapsTo("description") org.kie.workbench.common.dmn.api.property.dmn.Description description,
                                   final @MapsTo("name") Name name,
-                                  final @MapsTo("type") InformationItem variable,
+                                  final @MapsTo("variable") InformationItem variable,
                                   final @MapsTo("encapsulatedLogic") FunctionDefinition encapsulatedLogic,
                                   final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                                   final @MapsTo("fontSet") FontSet fontSet,

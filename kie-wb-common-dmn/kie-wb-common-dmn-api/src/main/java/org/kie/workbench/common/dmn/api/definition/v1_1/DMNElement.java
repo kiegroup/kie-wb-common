@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
@@ -32,14 +33,17 @@ public abstract class DMNElement extends DMNModelInstrumentedBase {
 
     @Property
     @FormField(readonly = true)
+    @Valid
     protected Id id;
 
     @Property
     @FormField(afterElement = "id")
+    @Valid
     protected Label label;
 
     @Property
     @FormField(afterElement = "label")
+    @Valid
     protected Description description;
 
     private Map<QName, String> otherAttributes = new HashMap<>();

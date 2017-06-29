@@ -84,10 +84,12 @@ public class Decision extends DRGElement {
 
     @PropertySet
     @FormField
+    @Valid
     protected FontSet fontSet;
 
     @PropertySet
     @FormField
+    @Valid
     protected RectangleDimensionsSet dimensionsSet;
 
     @NonPortable
