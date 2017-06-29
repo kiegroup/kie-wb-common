@@ -95,10 +95,13 @@ public class NIODefaultPomEditor extends DefaultPomEditor {
                                      new String(baos.toByteArray(),
                                                 StandardCharsets.UTF_8));
                     }
-                    if(pom.getParent() != null) {
-                        Path tmp = Paths.get(pom.getParent().toAbsolutePath().toString(), POM_NAME);
+                    if (pom.getParent() != null) {
+                        Path tmp = Paths.get(pom.getParent().toAbsolutePath().toString(),
+                                             POM_NAME);
                         Files.delete(tmp);
-                        Files.write(tmp, baos.toByteArray(), StandardOpenOption.CREATE_NEW);//enhanced pom
+                        Files.write(tmp,
+                                    baos.toByteArray(),
+                                    StandardOpenOption.CREATE_NEW);//enhanced pom
                     }
                 }
                 history.add(pomPH);

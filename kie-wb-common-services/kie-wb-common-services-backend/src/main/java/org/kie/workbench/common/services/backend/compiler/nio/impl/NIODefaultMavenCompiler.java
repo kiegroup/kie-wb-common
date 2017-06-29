@@ -66,40 +66,13 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
 
     private KieMavenCli cli;
 
-    private Path mavenRepo;
+    //private Path mavenRepo;
 
     private NIOIncrementalCompilerEnabler enabler;
 
-    public NIODefaultMavenCompiler(Path mavenRepo) {
-        this.mavenRepo = mavenRepo;
+    public NIODefaultMavenCompiler() {
         cli = new KieMavenCli(FileSystemImpl.NIO);
         enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
-    }
-
-    /**
-     * Check if the folder exists and if it's writable and readable
-     * @param mavenRepo
-     * @return
-     */
-    public static Boolean isValidMavenRepo(Path mavenRepo) {
-        if (mavenRepo.getParent() == null) {
-            return Boolean.FALSE;// used because Path("") is considered for Files.exists...
-        }
-        return Files.exists(mavenRepo) && Files.isDirectory(mavenRepo) && Files.isWritable(mavenRepo) && Files.isReadable(mavenRepo);
-    }
-
-    /**
-     * Perform a "mvn -v" call to check if the maven home is correct
-     * @return
-     */
-    @Override
-    public Boolean isValid() {
-        return isValidMavenRepo(this.mavenRepo);
-    }
-
-    @Override
-    public Path getMavenRepo() {
-        return mavenRepo;
     }
 
     @Override
@@ -120,7 +93,7 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
         }
 
         // set the maven repo used in this compilation
-        req.getKieCliRequest().getRequest().setLocalRepositoryPath(mavenRepo.toAbsolutePath().toString());
+        req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
 
         /**
          The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compielr for this reasons:
@@ -272,7 +245,7 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
                                 Optional.of(sb.toString()));
         } finally {
             try {
-                if(bos != null) {
+                if (bos != null) {
                     bos.close();
                 }
                 if (in != null) {

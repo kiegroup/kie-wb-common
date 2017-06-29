@@ -86,13 +86,13 @@ public class NioKieMetadataTest {
         TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-all-resources"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
+
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -139,14 +139,13 @@ public class NioKieMetadataTest {
         TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
 
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -185,14 +184,14 @@ public class NioKieMetadataTest {
         TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
+
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
 
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

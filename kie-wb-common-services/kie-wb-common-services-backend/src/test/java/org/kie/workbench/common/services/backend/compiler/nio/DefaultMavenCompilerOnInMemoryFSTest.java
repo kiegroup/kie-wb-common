@@ -163,7 +163,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         assertNotNull(cloned);
 
         //Compile the repo
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
@@ -173,7 +173,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prjFolder,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -267,7 +267,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         assertTrue(rbResult.getStatus().isSuccessful());
 
         //Compile the repo
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
@@ -279,7 +279,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prjFolder,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -301,7 +301,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
     @Test
     public void buildWithDecoratorsTest() throws Exception {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.JGIT_BEFORE);
 
         String MASTER_BRANCH = "master";
@@ -362,7 +362,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                                                            URI.create("git://localhost:9418/repo"),
                                                                            compiler,
                                                                            cloned);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

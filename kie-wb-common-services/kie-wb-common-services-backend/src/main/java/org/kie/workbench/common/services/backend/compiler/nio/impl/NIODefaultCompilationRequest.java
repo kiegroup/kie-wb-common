@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler.nio.impl;
 
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
     private NIOWorkspaceCompilationInfo info;
     private String requestUUID;
     private Map map;
+    private String mavenRepo;
 
     /***
      *
@@ -39,20 +41,35 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present
      * @param logFile if is not Optional.empty() the output of the build will be provided as a List<String> in the CompilationResponse you can use a simple Optional.of("log")
      */
-    public NIODefaultCompilationRequest(NIOWorkspaceCompilationInfo info,
+    public NIODefaultCompilationRequest(String mavenRepo,
+                                        NIOWorkspaceCompilationInfo info,
                                         String[] args,
                                         Map<String, Object> map,
                                         Optional<String> logFile) {
+        this.mavenRepo = mavenRepo;
         this.info = info;
         this.map = map;
         this.requestUUID = UUID.randomUUID().toString();
         String[] internalArgs = getInternalArgs(args,
                                                 logFile);
+
         this.req = new KieCliRequest(info.getPrjPath().toAbsolutePath().toString(),
                                      internalArgs,
                                      this.map,
                                      this.requestUUID,
                                      logFile);
+    }
+
+    /**
+     * Check if the folder exists and if it's writable and readable
+     * @param mavenRepo
+     * @return
+     */
+    public static Boolean isValidMavenRepo(Path mavenRepo) {
+        if (mavenRepo.getParent() == null) {
+            return Boolean.FALSE;// used because Path("") is considered for Files.exists...
+        }
+        return Files.exists(mavenRepo) && Files.isDirectory(mavenRepo) && Files.isWritable(mavenRepo) && Files.isReadable(mavenRepo);
     }
 
     private String[] getInternalArgs(String[] args,
@@ -96,6 +113,11 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
     @Override
     public KieCliRequest getKieCliRequest() {
         return req;
+    }
+
+    @Override
+    public String getMavenRepo() {
+        return mavenRepo;
     }
 
     public String getRequestUUID() {

@@ -26,7 +26,6 @@ import org.kie.workbench.common.services.backend.compiler.internalNioImpl.Intern
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Path;
 
 public class InternalNioImplJGITCompilerBeforeDecorator extends InternalNioImplCompilerDecorator {
 
@@ -38,16 +37,6 @@ public class InternalNioImplJGITCompilerBeforeDecorator extends InternalNioImplC
 
     public InternalNioImplJGITCompilerBeforeDecorator(InternalNioImplMavenCompiler compiler) {
         this.compiler = compiler;
-    }
-
-    @Override
-    public Boolean isValid() {
-        return compiler.isValid();
-    }
-
-    @Override
-    public Path getMavenRepo() {
-        return compiler.getMavenRepo();
     }
 
     @Override

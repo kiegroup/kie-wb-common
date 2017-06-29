@@ -16,21 +16,14 @@
 package org.kie.workbench.common.services.backend.compiler.internalNioImpl;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.Valid;
-import org.uberfire.java.nio.file.Path;
 
 /**
  * Created by Massimiliano Dessi @desmax74 on 18/04/17.
  */
-public interface InternalNioImplMavenCompiler extends Valid {
+public interface InternalNioImplMavenCompiler {
 
     /**
      * Compile a project starting from the main POM in a sync way
      */
     CompilationResponse compileSync(InternalNioImplCompilationRequest req);
-
-    /**
-     * The local repo used by this compiler
-     */
-    Path getMavenRepo();
 }

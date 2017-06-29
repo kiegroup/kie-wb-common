@@ -32,4 +32,6 @@ public interface NIOCompilationRequest {
     KieCliRequest getKieCliRequest();
 
     NIOWorkspaceCompilationInfo getInfo();
+
+    String getMavenRepo();
 }

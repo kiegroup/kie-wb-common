@@ -66,12 +66,9 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
 
     private KieMavenCli cli;
 
-    private Path mavenRepo;
-
     private InternalNioImplIncrementalCompilerEnabler enabler;
 
-    public InternalNioImplDefaultMavenCompiler(Path mavenRepo) {
-        this.mavenRepo = mavenRepo;
+    public InternalNioImplDefaultMavenCompiler() {
         cli = new KieMavenCli(FileSystemImpl.INTERNAL_NIO_IMPL);
         enabler = new InternalNioImplDefaultIncrementalCompilerEnabler(Compilers.JAVAC);
     }
@@ -92,7 +89,7 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
      * Perform a "mvn -v" call to check if the maven home is correct
      * @return
      */
-    @Override
+    /*@Override
     public Boolean isValid() {
         return isValidMavenRepo(this.mavenRepo);
     }
@@ -100,8 +97,7 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
     @Override
     public Path getMavenRepo() {
         return mavenRepo;
-    }
-
+    }*/
     @Override
     public CompilationResponse compileSync(InternalNioImplCompilationRequest req) {
         if (logger.isDebugEnabled()) {
@@ -119,7 +115,7 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
                                                                 req.getKieCliRequest().getRequestUUID()));
             }
         }
-        req.getKieCliRequest().getRequest().setLocalRepositoryPath(mavenRepo.toAbsolutePath().toString());
+        req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
         /**
          The classworld is now Created in the NioMavenCompiler and in the InternalNioDefaultMaven compielr for this reasons:
          problem: https://stackoverflow.com/questions/22410706/error-when-execute-mavencli-in-the-loop-maven-embedder
@@ -231,8 +227,8 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
     private KieTuple readObjectFromADifferentClassloader(Object o) {
 
         ObjectInput in = null;
-        ObjectOutput out ;
-        ByteArrayInputStream bis ;
+        ObjectOutput out;
+        ByteArrayInputStream bis;
         ByteArrayOutputStream bos = null;
 
         try {
@@ -265,7 +261,7 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
                                 Optional.of(sb.toString()));
         } finally {
             try {
-                if(bos != null) {
+                if (bos != null) {
                     bos.close();
                 }
                 if (in != null) {

@@ -18,7 +18,6 @@ package org.kie.workbench.common.services.backend.compiler.internalNioImpl.impl;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
@@ -81,12 +80,12 @@ public class InternalNioImplClassLoaderProviderImpl implements KieClassLoaderPro
      */
     public Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                    String localRepo) {
-        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(Paths.get(localRepo),
-                                                                                                Decorator.NONE);
+        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(Decorator.NONE);
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(prjPath),
                                                                                                    compiler);
         StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(localRepo,
+                                                                                             info,
                                                                                              new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -283,7 +282,8 @@ public class InternalNioImplClassLoaderProviderImpl implements KieClassLoaderPro
         List<URI> urls = new ArrayList<>();
         try {
 
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),
+                                                          "UTF-8"));
             String sCurrentLine;
             while ((sCurrentLine = br.readLine()) != null) {
                 StringTokenizer token = new StringTokenizer(sCurrentLine,
@@ -314,7 +314,8 @@ public class InternalNioImplClassLoaderProviderImpl implements KieClassLoaderPro
         List<URL> urls = new ArrayList<>();
         try {
 
-            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(filePath),
+                                                          "UTF-8"));
             String sCurrentLine;
 
             while ((sCurrentLine = br.readLine()) != null) {
@@ -361,12 +362,12 @@ public class InternalNioImplClassLoaderProviderImpl implements KieClassLoaderPro
 
     public Optional<List<URI>> getURISFromAllDependencies(String prjPath,
                                                           String localRepo) {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(java.nio.file.Paths.get(localRepo),
-                                                                        Decorator.NONE);
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.NONE);
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(java.nio.file.Paths.get(prjPath),
                                                                            compiler);
         StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(localRepo,
+                                                                     info,
                                                                      new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -411,7 +412,8 @@ public class InternalNioImplClassLoaderProviderImpl implements KieClassLoaderPro
                                                           NIOWorkspaceCompilationInfo info) {
 
         StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(localRepo,
+                                                                     info,
                                                                      new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

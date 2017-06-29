@@ -24,9 +24,9 @@ public class DotFileFilter implements DirectoryStream.Filter<Path> {
     }
 
     public boolean accept(Path path) {
-        if(path != null ){
+        if (path != null) {
             return path.getFileName().toString().startsWith(".");
-        }else {
+        } else {
             return false;
         }
     }

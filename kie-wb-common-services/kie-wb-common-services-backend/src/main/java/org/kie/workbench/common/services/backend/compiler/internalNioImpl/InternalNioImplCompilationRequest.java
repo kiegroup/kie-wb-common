@@ -32,4 +32,6 @@ public interface InternalNioImplCompilationRequest {
     KieCliRequest getKieCliRequest();
 
     InternalNioImplWorkspaceCompilationInfo getInfo();
+
+    String getMavenRepo();
 }

@@ -86,13 +86,12 @@ public class InternalNioImplKieMetadataTest {
                           temp);
         //end NIO
 
-        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(mavenRepo,
+        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
                                                                                                 Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -141,13 +140,12 @@ public class InternalNioImplKieMetadataTest {
         TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
                           tmp);
 
-        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(mavenRepo,
+        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
                                                                                                 Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -188,13 +186,12 @@ public class InternalNioImplKieMetadataTest {
         TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
                           tmp);
 
-        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(mavenRepo,
+        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
                                                                                                 Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

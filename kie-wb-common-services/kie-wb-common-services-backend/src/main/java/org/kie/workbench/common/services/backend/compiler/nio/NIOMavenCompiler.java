@@ -15,23 +15,15 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio;
 
-import java.nio.file.Path;
-
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.Valid;
 
 /**
  * Created by Massimiliano Dessi @desmax74 on 18/04/17.
  */
-public interface NIOMavenCompiler extends Valid {
+public interface NIOMavenCompiler {
 
     /**
      * Compile a project starting from the main POM in a sync way
      */
     CompilationResponse compileSync(NIOCompilationRequest req);
-
-    /**
-     * The local repo used by this compiler
-     */
-    Path getMavenRepo();
 }

@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.services.backend.compiler.nio.decorators;
 
-import java.nio.file.Path;
-
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
@@ -39,16 +37,6 @@ public class JGITCompilerBeforeDecorator extends CompilerDecorator {
 
     public JGITCompilerBeforeDecorator(NIOMavenCompiler compiler) {
         this.compiler = compiler;
-    }
-
-    @Override
-    public Boolean isValid() {
-        return compiler.isValid();
-    }
-
-    @Override
-    public Path getMavenRepo() {
-        return compiler.getMavenRepo();
     }
 
     @Override

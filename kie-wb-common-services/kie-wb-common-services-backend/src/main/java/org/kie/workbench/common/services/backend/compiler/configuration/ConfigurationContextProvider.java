@@ -39,7 +39,7 @@ import java.util.Map;
  * <p>
  * MAVEN_DEFAULT_COMPILE=default-compile
  * MAVEN_PHASE_NONE=none
- *
+ * <p>
  * KIE_MAVEN_PLUGINS=org.kie
  * KIE_MAVEN_PLUGIN=kie-takari-plugin
  * <p>

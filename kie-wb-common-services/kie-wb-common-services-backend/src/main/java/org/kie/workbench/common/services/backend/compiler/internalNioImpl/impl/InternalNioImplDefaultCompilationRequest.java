@@ -31,6 +31,7 @@ public class InternalNioImplDefaultCompilationRequest implements InternalNioImpl
     private InternalNioImplWorkspaceCompilationInfo info;
     private String requestUUID;
     private Map map;
+    private String mavenRepo;
 
     /***
      *
@@ -39,10 +40,12 @@ public class InternalNioImplDefaultCompilationRequest implements InternalNioImpl
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present
      * @param logFile if is not Optional.empty() the output of the build will be provided as a List<String> in the CompilationResponse you can use a simple Optional.of("log")
      */
-    public InternalNioImplDefaultCompilationRequest(InternalNioImplWorkspaceCompilationInfo info,
+    public InternalNioImplDefaultCompilationRequest(String mavenRepo,
+                                                    InternalNioImplWorkspaceCompilationInfo info,
                                                     String[] args,
                                                     Map<String, Object> map,
                                                     Optional<String> logFile) {
+        this.mavenRepo = mavenRepo;
         this.info = info;
         this.requestUUID = UUID.randomUUID().toString();
         this.map = map;
@@ -100,5 +103,10 @@ public class InternalNioImplDefaultCompilationRequest implements InternalNioImpl
     @Override
     public KieCliRequest getKieCliRequest() {
         return req;
+    }
+
+    @Override
+    public String getMavenRepo() {
+        return mavenRepo;
     }
 }

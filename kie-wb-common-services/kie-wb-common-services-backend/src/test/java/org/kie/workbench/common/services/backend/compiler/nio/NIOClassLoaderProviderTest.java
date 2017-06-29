@@ -69,13 +69,12 @@ public class NIOClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -121,13 +120,12 @@ public class NIOClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -169,13 +167,12 @@ public class NIOClassLoaderProviderTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_classloader"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(mavenRepo,
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                                                                         Decorator.NONE);
-        Assert.assertTrue(compiler.isValid());
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

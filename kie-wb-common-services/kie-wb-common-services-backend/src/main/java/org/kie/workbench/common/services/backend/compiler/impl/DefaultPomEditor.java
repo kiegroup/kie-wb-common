@@ -79,7 +79,6 @@ public class DefaultPomEditor implements PomEditor {
             build = model.getBuild();
         }
 
-
         Boolean defaultCompilerPluginPresent = Boolean.FALSE;
         Boolean alternativeCompilerPluginPresent = Boolean.FALSE;
         Boolean kiePluginPresent = Boolean.FALSE;
@@ -87,7 +86,7 @@ public class DefaultPomEditor implements PomEditor {
         int defaultMavenCompilerPosition = 0;
         int kieMavenPluginPosition = 0;
 
-        if(model.getPackaging().equals(KJAR_EXT)){
+        if (model.getPackaging().equals(KJAR_EXT)) {
             kiePluginPresent = Boolean.TRUE;
         }
 

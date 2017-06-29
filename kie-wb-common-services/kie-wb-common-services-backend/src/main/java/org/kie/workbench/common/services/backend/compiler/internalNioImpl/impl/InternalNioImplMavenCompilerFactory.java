@@ -22,11 +22,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.decorators.InternalNioImplJGITCompilerBeforeDecorator;
-import org.uberfire.java.nio.file.Path;
 
 public class InternalNioImplMavenCompilerFactory {
 
-    private static Map<Path, InternalNioImplMavenCompiler> compilers = new ConcurrentHashMap<>();
+    private static Map<String, InternalNioImplMavenCompiler> compilers = new ConcurrentHashMap<>();
 
     private InternalNioImplMavenCompilerFactory() {
     }
@@ -34,34 +33,35 @@ public class InternalNioImplMavenCompilerFactory {
     /**
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
-    public static InternalNioImplMavenCompiler getCompiler(Path mavenRepo,
-                                                           Decorator decorator) {
-        InternalNioImplMavenCompiler compiler = compilers.get(mavenRepo);
+    public static InternalNioImplMavenCompiler getCompiler(Decorator decorator) {
+        InternalNioImplMavenCompiler compiler = compilers.get(decorator.name());
         if (compiler == null) {
-            compiler = createAndAddNewCompiler(mavenRepo,
-                                               decorator);
+            compiler = createAndAddNewCompiler(decorator);
         }
         return compiler;
     }
 
-    private static InternalNioImplMavenCompiler createAndAddNewCompiler(Path mavenRepo,
-                                                                        Decorator decorator) {
+    private static InternalNioImplMavenCompiler createAndAddNewCompiler(Decorator decorator) {
+        InternalNioImplMavenCompiler compiler;
         switch (decorator) {
             case NONE:
-                compilers.put(mavenRepo,
-                              new InternalNioImplDefaultMavenCompiler(mavenRepo));
+                compiler = new InternalNioImplDefaultMavenCompiler();
+                compilers.put(decorator.name(),
+                              compiler);
                 break;
 
             case JGIT_BEFORE:
-                compilers.put(mavenRepo,
-                              new InternalNioImplJGITCompilerBeforeDecorator(new InternalNioImplDefaultMavenCompiler(mavenRepo)));
+                compiler = new InternalNioImplJGITCompilerBeforeDecorator(new InternalNioImplDefaultMavenCompiler());
+                compilers.put(decorator.name(),
+                              compiler);
                 break;
 
             default:
-                compilers.put(mavenRepo,
-                              new InternalNioImplDefaultMavenCompiler(mavenRepo));
+                compiler = new InternalNioImplDefaultMavenCompiler();
+                compilers.put(Decorator.NONE.name(),
+                              compiler);
         }
-        return compilers.get(mavenRepo);
+        return compiler;
     }
 
     /**
@@ -76,15 +76,5 @@ public class InternalNioImplMavenCompilerFactory {
      */
     public static void clearCompilers() {
         compilers.clear();
-    }
-
-    public static void removeCompiler(Path mavenRepo) {
-        compilers.remove(mavenRepo);
-    }
-
-    public static void replaceCompiler(Path mavenRepo,
-                                       InternalNioImplMavenCompiler compiler) {
-        compilers.replace(mavenRepo,
-                          compiler);
     }
 }

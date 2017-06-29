@@ -108,10 +108,6 @@ public class InternalNioImplWorkspaceCompilationInfo {
         }
     }
 
-    public Path getMavenRepo() {
-        return compiler.getMavenRepo();
-    }
-
     public Optional<URI> getRemoteRepo() {
         if (remoteRepo != null) {
             return Optional.of(remoteRepo);
@@ -129,7 +125,6 @@ public class InternalNioImplWorkspaceCompilationInfo {
         final StringBuilder sb = new StringBuilder("WorkspaceCompilationInfo{");
         sb.append("prjPath=").append(prjPath);
         sb.append(", enhancedMainPomFile=").append(enhancedMainPomFile);
-        sb.append(", mavenRepo=").append(compiler.getMavenRepo());
         sb.append(", remoteRepo=").append(remoteRepo);
         sb.append(", compiler=").append(compiler);
         sb.append('}');
