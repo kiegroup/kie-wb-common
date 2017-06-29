@@ -87,7 +87,7 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                                                                        Decorator.KIE_AFTER);
 
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
@@ -140,7 +140,7 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                                                                        Decorator.KIE_AFTER);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
@@ -185,7 +185,7 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                                                                        Decorator.KIE_AFTER);
 
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,

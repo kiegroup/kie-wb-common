@@ -42,8 +42,7 @@ public class NioMavenOutputTest {
         TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
                           tmp);
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);

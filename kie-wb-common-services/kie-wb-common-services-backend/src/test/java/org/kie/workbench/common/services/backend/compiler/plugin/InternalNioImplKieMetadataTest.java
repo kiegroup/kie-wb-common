@@ -87,7 +87,7 @@ public class InternalNioImplKieMetadataTest {
         //end NIO
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                                                                                                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
@@ -141,7 +141,7 @@ public class InternalNioImplKieMetadataTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                                                                                                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
@@ -187,7 +187,7 @@ public class InternalNioImplKieMetadataTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                                                                                                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);

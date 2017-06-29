@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.decorators.JGITCompilerBeforeDecorator;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.KieAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.OutputLogAfterDecorator;
 
 public class NIOMavenCompilerFactory {
 
@@ -46,21 +48,24 @@ public class NIOMavenCompilerFactory {
         switch (decorator) {
             case NONE:
                 compiler = new NIODefaultMavenCompiler();
-                compilers.put(decorator.name(),
-                              compiler);
                 break;
 
             case JGIT_BEFORE:
                 compiler = new JGITCompilerBeforeDecorator(new NIODefaultMavenCompiler());
-                compilers.put(decorator.name(),
-                              compiler);
+                break;
+
+            case KIE_AFTER:
+                compiler = new KieAfterDecorator(new NIODefaultMavenCompiler());
+                break;
+            case LOG_OUTPUT_AFTER:
+                compiler = new OutputLogAfterDecorator(new NIODefaultMavenCompiler());
                 break;
 
             default:
                 compiler = new NIODefaultMavenCompiler();
-                compilers.put(decorator.name(),
-                              compiler);
         }
+        compilers.put(decorator.name(),
+                      compiler);
         return compiler;
     }
 
