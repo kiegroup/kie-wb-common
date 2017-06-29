@@ -22,6 +22,7 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -265,7 +266,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         //Compile the repo
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                                                                                                Decorator.LOG_OUTPUT_AFTER);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -279,9 +280,10 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
         InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
-                                                                                             Optional.empty());
+                                                                                             Optional.of("log"));
 
         CompilationResponse res = compiler.compileSync(req);
+        List<String> output = res.getMavenOutput().get();
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");

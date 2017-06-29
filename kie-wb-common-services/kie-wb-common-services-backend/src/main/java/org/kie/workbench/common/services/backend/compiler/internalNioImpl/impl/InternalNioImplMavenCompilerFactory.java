@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.decorators.InternalNioImplJGITCompilerBeforeDecorator;
+import org.kie.workbench.common.services.backend.compiler.internalNioImpl.decorators.InternalNioImplOutputLogAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.internalNioImpl.decorators.InternalNioKieAfterDecorator;
 
 public class InternalNioImplMavenCompilerFactory {
 
@@ -46,21 +48,26 @@ public class InternalNioImplMavenCompilerFactory {
         switch (decorator) {
             case NONE:
                 compiler = new InternalNioImplDefaultMavenCompiler();
-                compilers.put(decorator.name(),
-                              compiler);
                 break;
 
             case JGIT_BEFORE:
                 compiler = new InternalNioImplJGITCompilerBeforeDecorator(new InternalNioImplDefaultMavenCompiler());
-                compilers.put(decorator.name(),
-                              compiler);
+                break;
+
+            case LOG_OUTPUT_AFTER:
+                compiler = new InternalNioImplOutputLogAfterDecorator(new InternalNioImplDefaultMavenCompiler());
+                break;
+
+            case KIE_AFTER:
+                compiler = new InternalNioKieAfterDecorator(new InternalNioImplDefaultMavenCompiler());
                 break;
 
             default:
                 compiler = new InternalNioImplDefaultMavenCompiler();
-                compilers.put(Decorator.NONE.name(),
-                              compiler);
+
         }
+        compilers.put(Decorator.NONE.name(),
+                      compiler);
         return compiler;
     }
 

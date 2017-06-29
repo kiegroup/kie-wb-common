@@ -46,7 +46,7 @@ public class InternalNioMavenOutputTest {
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                                                                                                Decorator.LOG_OUTPUT_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
