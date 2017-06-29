@@ -46,11 +46,12 @@ public class InternalNioMavenOutputTest {
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.LOG_OUTPUT_AFTER);
+                Decorator.LOG_OUTPUT_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.of("log"));

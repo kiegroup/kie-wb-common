@@ -70,11 +70,12 @@ public class NIOClassLoaderProviderTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                Decorator.NONE);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -121,11 +122,12 @@ public class NIOClassLoaderProviderTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                Decorator.NONE);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -168,11 +170,12 @@ public class NIOClassLoaderProviderTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                Decorator.NONE);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

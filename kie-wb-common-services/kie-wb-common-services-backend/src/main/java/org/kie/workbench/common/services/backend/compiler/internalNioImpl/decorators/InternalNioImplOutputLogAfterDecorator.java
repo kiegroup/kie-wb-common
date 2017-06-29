@@ -16,7 +16,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-public class InternalNioImplOutputLogAfterDecorator extends InternalNioImplCompilerDecorator  {
+public class InternalNioImplOutputLogAfterDecorator extends InternalNioImplCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalNioKieAfterDecorator.class);
     private InternalNioImplMavenCompiler compiler;
@@ -66,5 +66,4 @@ public class InternalNioImplOutputLogAfterDecorator extends InternalNioImplCompi
         }
         return Collections.emptyList();
     }
-
 }

@@ -31,13 +31,13 @@ import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
-import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplTestUtil;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.internalNioImpl.InternalNioImplTestUtil;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.impl.InternalNioImplDefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.impl.InternalNioImplMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.internalNioImpl.impl.InternalNioImplWorkspaceCompilationInfo;
@@ -87,11 +87,12 @@ public class InternalNioImplKieMetadataTest {
         //end NIO
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.KIE_AFTER);
+                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -141,11 +142,12 @@ public class InternalNioImplKieMetadataTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.KIE_AFTER);
+                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -187,11 +189,12 @@ public class InternalNioImplKieMetadataTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.KIE_AFTER);
+                Decorator.KIE_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

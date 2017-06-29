@@ -64,7 +64,6 @@ public class InternalNioImplMavenCompilerFactory {
 
             default:
                 compiler = new InternalNioImplDefaultMavenCompiler();
-
         }
         compilers.put(Decorator.NONE.name(),
                       compiler);

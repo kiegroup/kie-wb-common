@@ -63,12 +63,12 @@ public class InternalNioImplDefaultMavenIncrementalCompilerTest {
         //end NIO
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
-
+                Decorator.NONE);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.VERSION},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -96,11 +96,12 @@ public class InternalNioImplDefaultMavenIncrementalCompilerTest {
         //end NIO
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                Decorator.NONE);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -127,11 +128,12 @@ public class InternalNioImplDefaultMavenIncrementalCompilerTest {
         //end NIO
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                Decorator.NONE);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

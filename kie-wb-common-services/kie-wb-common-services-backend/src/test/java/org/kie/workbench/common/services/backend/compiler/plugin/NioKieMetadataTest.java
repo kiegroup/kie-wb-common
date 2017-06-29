@@ -87,12 +87,12 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.KIE_AFTER);
-
+                Decorator.KIE_AFTER);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -140,12 +140,13 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.KIE_AFTER);
+                Decorator.KIE_AFTER);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
 
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -185,13 +186,13 @@ public class NioKieMetadataTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.KIE_AFTER);
-
+                Decorator.KIE_AFTER);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
 
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

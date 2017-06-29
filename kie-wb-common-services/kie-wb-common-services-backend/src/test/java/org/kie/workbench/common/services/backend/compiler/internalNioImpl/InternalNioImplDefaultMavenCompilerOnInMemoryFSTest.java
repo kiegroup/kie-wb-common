@@ -158,7 +158,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         //Compile the repo
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                Decorator.NONE);
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -167,7 +167,8 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(prjFolder,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -266,7 +267,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         //Compile the repo
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.LOG_OUTPUT_AFTER);
+                Decorator.LOG_OUTPUT_AFTER);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -277,7 +278,8 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(prjFolder,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.of("log"));
@@ -301,7 +303,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
     @Test
     public void buildWithDecoratorsTest() throws Exception {
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.JGIT_BEFORE);
+                Decorator.JGIT_BEFORE);
 
         String MASTER_BRANCH = "master";
 
@@ -365,7 +367,8 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
                                                                                                    URI.create("git://localhost:9418/repo"),
                                                                                                    compiler,
                                                                                                    cloned);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

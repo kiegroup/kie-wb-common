@@ -71,12 +71,13 @@ public class InternalNioImplClassLoaderProviderTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
+                Decorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(uberfireTmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -122,13 +123,13 @@ public class InternalNioImplClassLoaderProviderTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
-
+                Decorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(uberfireTmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -172,13 +173,13 @@ public class InternalNioImplClassLoaderProviderTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                Decorator.NONE);
-
+                Decorator.NONE);
 
         Path uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(uberfireTmp,
                                                                                                    compiler);
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

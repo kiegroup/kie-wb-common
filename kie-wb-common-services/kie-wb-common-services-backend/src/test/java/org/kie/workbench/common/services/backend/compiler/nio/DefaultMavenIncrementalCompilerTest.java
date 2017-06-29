@@ -58,12 +58,12 @@ public class DefaultMavenIncrementalCompilerTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
-
+                Decorator.NONE);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.VERSION},
                                                                      new HashMap(),
                                                                      Optional.empty());
@@ -76,7 +76,7 @@ public class DefaultMavenIncrementalCompilerTest {
     @Test()
     public void testIncompleteArguments() {
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                Decorator.NONE);
     }
 
     @Test
@@ -91,7 +91,8 @@ public class DefaultMavenIncrementalCompilerTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -114,11 +115,12 @@ public class DefaultMavenIncrementalCompilerTest {
                           tmp);
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                                                                        Decorator.NONE);
+                Decorator.NONE);
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            compiler);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());

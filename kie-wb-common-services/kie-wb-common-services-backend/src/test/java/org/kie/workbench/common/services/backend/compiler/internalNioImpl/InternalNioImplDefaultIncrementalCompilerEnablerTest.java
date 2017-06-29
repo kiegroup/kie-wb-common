@@ -79,9 +79,10 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                                                                   Decorator.NONE));
+                                                                                                           Decorator.NONE));
 
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
@@ -129,8 +130,9 @@ public class InternalNioImplDefaultIncrementalCompilerEnablerTest {
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(tmp,
                                                                                                    InternalNioImplMavenCompilerFactory.getCompiler(
-                                                                                                                                                   Decorator.NONE));
-        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+                                                                                                           Decorator.NONE));
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
                                                                                              new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, "-X"},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());

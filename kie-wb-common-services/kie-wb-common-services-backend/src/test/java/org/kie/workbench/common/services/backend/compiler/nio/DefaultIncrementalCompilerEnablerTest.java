@@ -70,8 +70,9 @@ public class DefaultIncrementalCompilerEnablerTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            NIOMavenCompilerFactory.getCompiler(
-                                                                                                               Decorator.NONE));
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+                                                                                   Decorator.NONE));
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
@@ -114,8 +115,9 @@ public class DefaultIncrementalCompilerEnablerTest {
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
                                                                            NIOMavenCompilerFactory.getCompiler(
-                                                                                                               Decorator.NONE));
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),info,
+                                                                                   Decorator.NONE));
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Optional.empty());
