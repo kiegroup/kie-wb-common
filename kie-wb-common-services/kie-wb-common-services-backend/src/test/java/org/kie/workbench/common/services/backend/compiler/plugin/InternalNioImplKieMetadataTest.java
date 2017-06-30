@@ -142,7 +142,7 @@ public class InternalNioImplKieMetadataTest {
                           tmp);
 
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                Decorator.KIE_AFTER);
+                Decorator.KIE_AND_LOG_AFTER);
 
         InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmp.toUri()),
                                                                                                    compiler);
@@ -150,8 +150,9 @@ public class InternalNioImplKieMetadataTest {
                                                                                              info,
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
-                                                                                             Optional.empty());
+                                                                                             Optional.of("log"));
         CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.getMavenOutput().isPresent());
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());
         }

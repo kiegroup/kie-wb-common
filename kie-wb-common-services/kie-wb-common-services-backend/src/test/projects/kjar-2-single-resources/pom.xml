@@ -31,6 +31,11 @@
             <artifactId>spring-aop</artifactId>
             <version>4.3.8.RELEASE</version>
         </dependency>
+        <!--<dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-artifact-transfer</artifactId>
+            <version>0.9.1</version>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>
