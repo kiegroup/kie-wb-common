@@ -17,7 +17,9 @@ import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.KieClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOClassLoaderProviderImpl;
@@ -46,8 +48,8 @@ public class NIOKieAfterDecorator extends NIOCompilerDecorator {
         return res;
     }
 
-    private CompilationResponse handleKieMavenPlugin(NIOCompilationRequest req,
-                                                     CompilationResponse res) {
+    private KieCompilationResponse handleKieMavenPlugin(NIOCompilationRequest req,
+                                                        CompilationResponse res) {
 
         NIOKieAfterDecorator.KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
         NIOKieAfterDecorator.KieTuple kieModuleTuple = readKieModule(req);
@@ -55,11 +57,11 @@ public class NIOKieAfterDecorator extends NIOCompilerDecorator {
 
             KieClassLoaderProvider provider = new NIOClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
-            return new DefaultCompilationResponse(Boolean.TRUE,
-                                                  (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
-                                                  (KieModule) kieModuleTuple.getOptionalObject().get(),
-                                                  res.getMavenOutput(),
-                                                  optionalDeps);
+            return new DefaultKieCompilationResponse(Boolean.TRUE,
+                                                     (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
+                                                     (KieModule) kieModuleTuple.getOptionalObject().get(),
+                                                     res.getMavenOutput(),
+                                                     optionalDeps);
         } else {
             StringBuilder sb = new StringBuilder();
             if (kieModuleMetaInfoTuple.getErrorMsg().isPresent()) {
@@ -68,7 +70,7 @@ public class NIOKieAfterDecorator extends NIOCompilerDecorator {
             if (kieModuleTuple.getErrorMsg().isPresent()) {
                 sb.append(" Error in the kieModule:").append(kieModuleTuple.getErrorMsg().get());
             }
-            return new DefaultCompilationResponse(Boolean.FALSE,
+            return new DefaultKieCompilationResponse(Boolean.FALSE,
                                                   Optional.of(sb.toString()),
                                                   res.getMavenOutput());
         }

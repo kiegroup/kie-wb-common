@@ -32,6 +32,7 @@ import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
@@ -96,7 +97,7 @@ public class InternalNioImplKieMetadataTest {
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
-        CompilationResponse res = compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
         if (res.getErrorMessage().isPresent()) {
             System.out.println("Error:" + res.getErrorMessage().get());
@@ -151,7 +152,7 @@ public class InternalNioImplKieMetadataTest {
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.of("log"));
-        CompilationResponse res = compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         Assert.assertTrue(res.getMavenOutput().isPresent());
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());
@@ -199,7 +200,7 @@ public class InternalNioImplKieMetadataTest {
                                                                                              new String[]{MavenArgs.INSTALL},
                                                                                              new HashMap<>(),
                                                                                              Optional.empty());
-        CompilationResponse res = compiler.compileSync(req);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());
         }

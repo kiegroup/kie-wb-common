@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.internalNioImpl;
+package org.kie.workbench.common.services.backend.compiler.nio;
 
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
-public interface InternalNioImplMavenCompiler {
+public interface NioKieMavenCompiler {
 
     /**
      * Compile a project starting from the main POM in a sync way
      */
-    CompilationResponse compileSync(InternalNioImplCompilationRequest req);
+    KieCompilationResponse compileSync(NIOCompilationRequest req);
+
 }

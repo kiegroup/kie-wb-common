@@ -15,12 +15,12 @@
  */
 package org.kie.workbench.common.services.backend.compiler.internalNioImpl;
 
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
-public interface InternalNioImplMavenCompiler {
+public interface InternalNioImplKieMavenCompiler {
 
     /**
      * Compile a project starting from the main POM in a sync way
      */
-    CompilationResponse compileSync(InternalNioImplCompilationRequest req);
+    KieCompilationResponse compileSync(InternalNioImplCompilationRequest req);
 }

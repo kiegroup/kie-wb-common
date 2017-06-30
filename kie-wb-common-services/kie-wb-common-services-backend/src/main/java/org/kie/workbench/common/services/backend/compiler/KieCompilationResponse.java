@@ -13,29 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.services.backend.compiler;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import org.drools.core.rule.KieModuleMetaInfo;
+import org.kie.api.builder.KieModule;
+
 /**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
-
-    Boolean isSuccessful();
+ * Compilation response with benefits of Kie
+ * */
+public interface KieCompilationResponse extends CompilationResponse{
 
     /**
-     * Provides error messages
+     * Provides the list of all dependencies used by the project, included transitive
      */
-    Optional<String> getErrorMessage();
-
+    Optional<List<URI>> getProjectDependencies();
 
     /**
-     * Provides Maven output
+     * Provides a KieModuleMetaInfo if a kie maven plugin is used in the project
      */
-    Optional<List<String>> getMavenOutput();
+    Optional<KieModuleMetaInfo> getKieModuleMetaInfo();
 
-
+    /**
+     * Provides a KieModule if a kie maven plugin is used in the project
+     */
+    Optional<KieModule> getKieModule();
 }
