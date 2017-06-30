@@ -13,32 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.services.backend.compiler.nio.impl;
+package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
 import java.net.URI;
-import java.nio.file.Path;
 import java.util.Optional;
 
 import org.eclipse.jgit.api.Git;
+import org.uberfire.java.nio.file.Path;
 
-public class NIOWorkspaceCompilationInfo {
+public class InternalNIOWorkspaceCompilationInfo {
 
-    private Path prjPath;
-    private Path enhancedMainPomFile;
-    private URI remoteRepo;
-    private Git gitRepo;
-    private Boolean kiePluginPresent = Boolean.FALSE;
+    protected Path prjPath;
+    protected Path enhancedMainPomFile;
+    protected URI remoteRepo;
+    protected Git gitRepo;
+    protected Boolean kiePluginPresent = Boolean.FALSE;
 
-    public NIOWorkspaceCompilationInfo(Path prjPath,
-                                       URI remoteRepo,
-                                       Git gitRepo) {
+    public InternalNIOWorkspaceCompilationInfo(Path prjPath,
+                                               URI remoteRepo,
+                                               Git gitRepo) {
         this.prjPath = prjPath;
         this.remoteRepo = remoteRepo;
         this.gitRepo = gitRepo;
     }
 
-    public NIOWorkspaceCompilationInfo(Path prjPath) {
+    public InternalNIOWorkspaceCompilationInfo(Path prjPath) {
         this.prjPath = prjPath;
     }
 
@@ -113,9 +112,9 @@ public class NIOWorkspaceCompilationInfo {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WorkspaceCompilationInfo{");
-        sb.append("prjPath=").append(prjPath);
-        sb.append(", enhancedMainPomFile=").append(enhancedMainPomFile);
-        sb.append(", remoteRepo=").append(remoteRepo);
+        sb.append("prjPath:{").append(prjPath);
+        sb.append("}, enhancedMainPomFile:{").append(enhancedMainPomFile);
+        sb.append("}, remoteRepo:{").append(remoteRepo);
         sb.append('}');
         return sb.toString();
     }

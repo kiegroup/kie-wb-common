@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.internalNIO.decorators;
 
-import java.util.List;
-import java.util.Optional;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
 
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
+public abstract class InternalNIOCompilerDecorator implements InternalNIOMavenCompiler {
 
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
 }

@@ -26,7 +26,6 @@ public class DefaultCompilationResponse implements CompilationResponse {
     private Optional<String> errorMessage;
     private Optional<List<String>> mavenOutput;
 
-
     public DefaultCompilationResponse(Boolean successful) {
         this.successful = successful;
         this.errorMessage = Optional.empty();
@@ -46,7 +45,6 @@ public class DefaultCompilationResponse implements CompilationResponse {
         this.successful = successful;
         this.errorMessage = errorMessage;
         this.mavenOutput = mavenOutput;
-
     }
 
     public Boolean isSuccessful() {
@@ -60,5 +58,4 @@ public class DefaultCompilationResponse implements CompilationResponse {
     public Optional<List<String>> getMavenOutput() {
         return mavenOutput;
     }
-
 }

@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
-import java.util.List;
-import java.util.Optional;
+import org.kie.workbench.common.services.backend.compiler.impl.ProcessedPoms;
 
 /**
- * Wrapper of the result of a compilation
+ * Process the pom files before the compilation
  */
-public interface CompilationResponse {
+public interface InternalNIOIncrementalCompilerEnabler {
 
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    ProcessedPoms process(InternalNIOCompilationRequest req);
 }

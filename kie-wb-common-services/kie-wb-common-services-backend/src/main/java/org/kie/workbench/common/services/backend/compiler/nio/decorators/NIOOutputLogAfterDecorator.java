@@ -14,6 +14,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.kie.NIOKieAfterDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

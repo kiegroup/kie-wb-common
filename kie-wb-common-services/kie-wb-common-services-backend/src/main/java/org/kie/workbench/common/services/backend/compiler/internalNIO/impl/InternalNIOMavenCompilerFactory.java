@@ -14,57 +14,57 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler.nio.impl;
+package org.kie.workbench.common.services.backend.compiler.internalNIO.impl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOJGITCompilerBeforeDecorator;
-import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOOutputLogAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.InternalNIOJGITCompilerBeforeDecorator;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.InternalNIOOutputLogAfterDecorator;
 
-public class NIOMavenCompilerFactory {
+public class InternalNIOMavenCompilerFactory {
 
-    private static Map<String, NIOMavenCompiler> compilers = new ConcurrentHashMap<>();
+    private static Map<String, InternalNIOMavenCompiler> compilers = new ConcurrentHashMap<>();
 
-    private NIOMavenCompilerFactory() {
+    private InternalNIOMavenCompilerFactory() {
     }
 
     /**
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
-    public static NIOMavenCompiler getCompiler(Decorator decorator) {
-        NIOMavenCompiler compiler = compilers.get(decorator);
+    public static InternalNIOMavenCompiler getCompiler(Decorator decorator) {
+        InternalNIOMavenCompiler compiler = compilers.get(decorator.name());
         if (compiler == null) {
             compiler = createAndAddNewCompiler(decorator);
         }
         return compiler;
     }
 
-    private static NIOMavenCompiler createAndAddNewCompiler(Decorator decorator) {
-        NIOMavenCompiler compiler;
+    private static InternalNIOMavenCompiler createAndAddNewCompiler(Decorator decorator) {
+        InternalNIOMavenCompiler compiler;
         switch (decorator) {
             case NONE:
-                compiler = new NIODefaultMavenCompiler();
+                compiler = new InternalNIODefaultMavenCompiler();
                 break;
 
             case JGIT_BEFORE:
-                compiler = new NIOJGITCompilerBeforeDecorator(new NIODefaultMavenCompiler());
+                compiler = new InternalNIOJGITCompilerBeforeDecorator(new InternalNIODefaultMavenCompiler());
                 break;
 
             case LOG_OUTPUT_AFTER:
-                compiler = new NIOOutputLogAfterDecorator(new NIODefaultMavenCompiler());
+                compiler = new InternalNIOOutputLogAfterDecorator(new InternalNIODefaultMavenCompiler());
                 break;
 
             case JGIT_BEFORE_AND_LOG_AFTER:
-                compiler = new NIOJGITCompilerBeforeDecorator(new NIOOutputLogAfterDecorator(new NIODefaultMavenCompiler()));
+                compiler = new InternalNIOJGITCompilerBeforeDecorator(new InternalNIOOutputLogAfterDecorator(new InternalNIODefaultMavenCompiler()));
                 break;
 
             default:
-                compiler = new NIODefaultMavenCompiler();
+                compiler = new InternalNIODefaultMavenCompiler();
         }
-        compilers.put(decorator.name(),
+        compilers.put(Decorator.NONE.name(),
                       compiler);
         return compiler;
     }

@@ -24,8 +24,8 @@ import org.kie.api.builder.KieModule;
 
 /**
  * Compilation response with benefits of Kie
- * */
-public interface KieCompilationResponse extends CompilationResponse{
+ */
+public interface KieCompilationResponse extends CompilationResponse {
 
     /**
      * Provides the list of all dependencies used by the project, included transitive

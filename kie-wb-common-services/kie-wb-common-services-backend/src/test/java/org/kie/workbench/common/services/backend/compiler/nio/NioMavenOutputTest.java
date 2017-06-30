@@ -43,8 +43,7 @@ public class NioMavenOutputTest {
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
-                                                                           compiler);
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},

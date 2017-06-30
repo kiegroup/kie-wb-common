@@ -13,26 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.services.backend.compiler.internalNIO.impl;
 
-package org.kie.workbench.common.services.backend.compiler;
+import org.uberfire.java.nio.file.DirectoryStream;
+import org.uberfire.java.nio.file.Path;
 
-import java.util.List;
-import java.util.Optional;
+public class DotFileFilter implements DirectoryStream.Filter<Path> {
 
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
+    public DotFileFilter() {
+    }
 
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    public boolean accept(Path path) {
+        String fileName = path.getFileName().toString();
+        return fileName.startsWith(".");
+    }
 }

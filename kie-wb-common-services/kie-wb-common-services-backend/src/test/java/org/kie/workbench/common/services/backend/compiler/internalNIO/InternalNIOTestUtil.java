@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
-import java.util.List;
-import java.util.Optional;
+import java.io.File;
 
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
+public class InternalNIOTestUtil {
 
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    public static void rm(File f) {
+        if (f.isDirectory()) {
+            for (File c : f.listFiles()) {
+                rm(c);
+            }
+        }
+        if (!f.delete()) {
+            System.err.println("Couldn't delete file " + f);
+        }
+    }
 }

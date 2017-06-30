@@ -60,8 +60,7 @@ public class DefaultMavenIncrementalCompilerTest {
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                 Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
-                                                                           compiler);
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
                                                                      new String[]{MavenArgs.VERSION},
@@ -73,11 +72,6 @@ public class DefaultMavenIncrementalCompilerTest {
         TestUtil.rm(tmpRoot.toFile());
     }
 
-    @Test()
-    public void testIncompleteArguments() {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
-    }
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
@@ -89,8 +83,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
-                                                                           compiler);
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
@@ -117,8 +110,7 @@ public class DefaultMavenIncrementalCompilerTest {
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                 Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp,
-                                                                           compiler);
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},

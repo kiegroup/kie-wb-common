@@ -14,25 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.nio.decorators.kie;
 
-import java.util.List;
-import java.util.Optional;
+import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
 
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
+public abstract class NIOKieCompilerDecorator implements NIOKieMavenCompiler {
 
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
 }

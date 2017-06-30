@@ -13,26 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.services.backend.compiler.configuration;
 
-package org.kie.workbench.common.services.backend.compiler;
+public enum KieDecorator {
 
-import java.util.List;
-import java.util.Optional;
-
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
-
-    Boolean isSuccessful();
-
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    NONE,
+    KIE_AFTER,
+    KIE_AND_LOG_AFTER,
+    JGIT_BEFORE_AND_KIE_AND_LOG_AFTER
 }

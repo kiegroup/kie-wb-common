@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler.nio;
+package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -34,17 +31,9 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
-import org.eclipse.jgit.lib.Constants;
-import org.eclipse.jgit.lib.ObjectId;
-import org.eclipse.jgit.lib.ObjectLoader;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevTree;
-import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
-import org.eclipse.jgit.treewalk.TreeWalk;
-import org.eclipse.jgit.treewalk.filter.PathFilter;
 import org.eclipse.jgit.util.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -54,23 +43,24 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIOMavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uberfire.java.nio.file.Files;
+import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystemProvider;
 import org.uberfire.java.nio.fs.jgit.util.JGitUtil;
 import org.uberfire.java.nio.security.FileSystemAuthenticator;
-import org.uberfire.java.nio.security.FileSystemAuthorizer;
 import org.uberfire.java.nio.security.FileSystemUser;
 
 import static org.junit.Assert.*;
 
-public class DefaultMavenCompilerOnInMemoryFSTest {
+public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerOnInMemoryFSTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(InternalNIODefaultMavenCompilerOnInMemoryFSTest.class);
 
     private Path mavenRepo;
     private int gitSSHPort;
@@ -123,12 +113,15 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
     public void buildWithCloneTest() throws IOException {
 
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
-        File temp = tmp.toFile();
-        copyTree(Paths.get("src/test/projects/dummy_multimodule_untouched"),
-                 Paths.get(temp.toString()));
-        File gitFolder = new File(temp,
+
+        //NIO creation and copy content
+        java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                "dummy"));
+        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/dummy_multimodule_untouched"),
+                          temp);
+        //end NIO
+
+        File gitFolder = new File(temp.toFile(),
                                   ".repo.git");//@TODO why is mandatory use a .git folder name ?
 
         Git origin = JGitUtil.newRepository(gitFolder,
@@ -143,7 +136,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                         null,
                         null,
                         false,
-                        getFilesToCommit(temp)
+                        getFilesToCommit(temp.toFile())
         );
 
         assertEquals(JGitUtil.branchList(origin).size(),
@@ -163,22 +156,23 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         assertNotNull(cloned);
 
         //Compile the repo
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
+        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(
+                Decorator.LOG_OUTPUT_AFTER);
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prjFolder);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Optional.empty());
+        InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(prjFolder);
+        InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                     info,
+                                                                                     new String[]{MavenArgs.COMPILE},
+                                                                                     new HashMap<>(),
+                                                                                     Optional.of("log"));
 
         CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -192,8 +186,21 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         cloned.close();
         origin.close();
 
-        TestUtil.rm(tmpRootCloned.toFile());
-        TestUtil.rm(tmpRoot.toFile());
+        InternalNIOTestUtil.rm(tmpRootCloned.toFile());
+        InternalNIOTestUtil.rm(tmpRoot.toFile());
+    }
+
+    private Map<String, File> getKieFilesToCommit(File temp) {
+        Map<String, File> map = new HashMap<>();
+        map.put("/dummy/pom.xml",
+                new File(temp.toString() + "/pom.xml"));
+        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java",
+                new File(temp.toString() + "/src/main/java/org/kie/maven/plugin/test/Person.java"));
+        map.put("/dummy/src/main/resources/AllResourceTypes/simple-rules.drl",
+                new File(temp.toString() + "/src/main/resources/AllResourceTypes/simple-rules.drl"));
+        map.put("/dummy/src/main/resources/META-INF/kmodule.xml",
+                new File(temp.toString() + "/src/main/resources/META-INF/kmodule.xml"));
+        return map;
     }
 
     private Map<String, File> getFilesToCommit(File temp) {
@@ -211,21 +218,8 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         return map;
     }
 
-    private Map<String, File> getKieFilesToCommit(File temp) {
-        Map<String, File> map = new HashMap<>();
-        map.put("/dummy/pom.xml",
-                new File(temp.toString() + "/pom.xml"));
-        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java",
-                new File(temp.toString() + "/src/main/java/org/kie/maven/plugin/test/Person.java"));
-        map.put("/dummy/src/main/resources/AllResourceTypes/simple-rules.drl",
-                new File(temp.toString() + "/src/main/resources/AllResourceTypes/simple-rules.drl"));
-        map.put("/dummy/src/main/resources/META-INF/kmodule.xml",
-                new File(temp.toString() + "/src/main/resources/META-INF/kmodule.xml"));
-        return map;
-    }
-
     @Test
-    public void buildWithPullRebaseNIOTest() throws Exception {
+    public void buildWithPullRebaseUberfireTest() throws Exception {
 
         provider = new JGitFileSystemProvider(getGitPreferences());
         provider.setAuthenticator(getAuthenticator());
@@ -246,9 +240,13 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        File temp = tmp.toFile();
-        copyTree(Paths.get("src/test/projects/dummy_multimodule_untouched"),
-                 Paths.get(temp.toString()));
+
+        //NIO creation and copy content
+        java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                "dummy"));
+        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/dummy_multimodule_untouched"),
+                          temp);
+        //end NIO
 
         JGitUtil.commit(origin.gitRepo(),
                         "master",
@@ -258,7 +256,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                         null,
                         null,
                         false,
-                        getFilesToCommit(temp)
+                        getFilesToCommit(temp.toFile())
         );
 
         // clone into a regularfs
@@ -280,8 +278,8 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         assertTrue(rbResult.getStatus().isSuccessful());
 
         //Compile the repo
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
+        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(
+                Decorator.LOG_OUTPUT_AFTER);
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/dummy/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -290,14 +288,15 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
         Path prjFolder = Paths.get(tmpCloned + "/dummy/");
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prjFolder);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Optional.empty());
+        InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(prjFolder);
+        InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                     info,
+                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                     new HashMap<>(),
+                                                                                     Optional.of("log"));
 
         CompilationResponse res = compiler.compileSync(req);
+        List<String> output = res.getMavenOutput().get();
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -308,13 +307,13 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                   StandardCharsets.UTF_8);
         Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
-        TestUtil.rm(tmpRoot.toFile());
-        TestUtil.rm(tmpRootCloned.toFile());
+        InternalNIOTestUtil.rm(tmpRoot.toFile());
+        InternalNIOTestUtil.rm(tmpRootCloned.toFile());
     }
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
+        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(
                 Decorator.JGIT_BEFORE);
 
         String MASTER_BRANCH = "master";
@@ -339,9 +338,13 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        File temp = tmp.toFile();
-        copyTree(Paths.get("src/test/projects/dummy_multimodule_untouched"),
-                 Paths.get(temp.toString()));
+
+        //NIO creation and copy content
+        java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                "dummy"));
+        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/dummy_multimodule_untouched"),
+                          temp);
+        //end NIO
 
         JGitUtil.commit(origin.gitRepo(),
                         MASTER_BRANCH,
@@ -351,7 +354,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                         null,
                         null,
                         false,
-                        getFilesToCommit(temp)
+                        getFilesToCommit(temp.toFile())
         );
 
         RevCommit lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
@@ -371,14 +374,14 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
         //@TODO refactor and use only one between the URI or Git
         //@TODO find a way to resolve the problem of the prjname inside .git folder
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
-                                                                           URI.create("git://localhost:9418/repo"),
-                                                                           cloned);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Optional.empty());
+        InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
+                                                                                           URI.create("git://localhost:9418/repo"),
+                                                                                           cloned);
+        InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                     info,
+                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                     new HashMap<>(),
+                                                                                     Optional.empty());
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -411,13 +414,13 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
-        TestUtil.rm(tmpRoot.toFile());
-        TestUtil.rm(tmpRootCloned.toFile());
+        InternalNIOTestUtil.rm(tmpRoot.toFile());
+        InternalNIOTestUtil.rm(tmpRootCloned.toFile());
     }
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
+        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(
                 Decorator.JGIT_BEFORE_AND_LOG_AFTER);
 
         String MASTER_BRANCH = "master";
@@ -442,9 +445,13 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        File temp = tmp.toFile();
-        copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
-                 Paths.get(temp.toString()));
+
+        //NIO creation and copy content
+        java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                "dummy"));
+        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+                          temp);
+        //end NIO
 
         JGitUtil.commit(origin.gitRepo(),
                         MASTER_BRANCH,
@@ -454,7 +461,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                         null,
                         null,
                         false,
-                        getKieFilesToCommit(temp)
+                        getKieFilesToCommit(temp.toFile())
         );
 
         RevCommit lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
@@ -470,18 +477,19 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                               "git://localhost:9418/repo",
                                               false,
                                               CredentialsProvider.getDefault());
+
         assertNotNull(cloned);
 
         //@TODO refactor and use only one between the URI or Git
         //@TODO find a way to resolve the problem of the prjname inside .git folder
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
-                                                                           URI.create("git://localhost:9418/repo"),
-                                                                           cloned);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Optional.of("log"));
+        InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
+                                                                                           URI.create("git://localhost:9418/repo"),
+                                                                                           cloned);
+        InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                     info,
+                                                                                     new String[]{MavenArgs.COMPILE},
+                                                                                     new HashMap<>(),
+                                                                                     Optional.of("log"));
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.isSuccessful());
@@ -516,12 +524,8 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         Assert.assertTrue(res.isSuccessful());
         Assert.assertTrue(res.getMavenOutput().isPresent());
 
-        TestUtil.rm(tmpRoot.toFile());
-        TestUtil.rm(tmpRootCloned.toFile());
-    }
-
-    private FileSystemAuthorizer getFileSystemAuthorizer() {
-        return (fs, fileSystemUser) -> true;
+        InternalNIOTestUtil.rm(tmpRoot.toFile());
+        InternalNIOTestUtil.rm(tmpRootCloned.toFile());
     }
 
     private FileSystemAuthenticator getAuthenticator() {
@@ -537,44 +541,6 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                 };
             }
         };
-    }
-
-    private void copyTree(Path source,
-                          Path target) throws IOException {
-        Files.walkFileTree(source,
-                           new CopyFileVisitor(source,
-                                               target));
-    }
-
-    private void showCommittedFile(Repository gitRepoCloned,
-                                   String filename) throws IOException {
-        ObjectId lastCommitId = gitRepoCloned.resolve(Constants.HEAD);
-
-        try (RevWalk revWalk = new RevWalk(gitRepoCloned)) {
-            RevCommit commit = revWalk.parseCommit(lastCommitId);
-            RevTree tree = commit.getTree();
-
-            try (TreeWalk treeWalk = new TreeWalk(gitRepoCloned)) {
-                treeWalk.addTree(tree);
-                treeWalk.setRecursive(true);
-                treeWalk.setFilter(PathFilter.create(filename));
-                while (treeWalk.next()) {
-                    if (treeWalk.isSubtree()) {
-                        System.out.println("dir: " + treeWalk.getPathString());
-                        treeWalk.enterSubtree();
-                    } else {
-                        System.out.println("\n");
-                        System.out.println("file: " + treeWalk.getPathString());
-                        ObjectId objectId = treeWalk.getObjectId(0);
-                        ObjectLoader loader = gitRepoCloned.open(objectId);
-                        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        loader.copyTo(out);
-                        System.out.println(out.toString());
-                    }
-                }
-            }
-            revWalk.dispose();
-        }
     }
 
     public Map<String, String> getGitPreferences() {

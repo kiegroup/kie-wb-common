@@ -14,25 +14,23 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.backend.compiler;
+package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.kie.workbench.common.services.backend.compiler.external339.KieCliRequest;
+import org.uberfire.java.nio.file.Path;
+
 /**
- * Wrapper of the result of a compilation
+ * Wrap a compilation request
  */
-public interface CompilationResponse {
+public interface InternalNIOCompilationRequest {
 
-    Boolean isSuccessful();
+    Optional<Path> getPomFile();
 
-    /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
+    KieCliRequest getKieCliRequest();
 
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    InternalNIOWorkspaceCompilationInfo getInfo();
+
+    String getMavenRepo();
 }

@@ -13,26 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.services.backend.compiler.nio;
 
-package org.kie.workbench.common.services.backend.compiler;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
-import java.util.List;
-import java.util.Optional;
-
-/**
- * Wrapper of the result of a compilation
- */
-public interface CompilationResponse {
-
-    Boolean isSuccessful();
+public interface NIOKieMavenCompiler {
 
     /**
-     * Provides error messages
+     * Compile a project starting from the main POM in a sync way
      */
-    Optional<String> getErrorMessage();
-
-    /**
-     * Provides Maven output
-     */
-    Optional<List<String>> getMavenOutput();
+    KieCompilationResponse compileSync(NIOCompilationRequest req);
 }
