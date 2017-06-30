@@ -39,17 +39,14 @@ public class InternalNioKieAfterDecorator extends InternalNioImplCompilerDecorat
         if (res.isSuccessful()) {
 
             if (req.getInfo().isKiePluginPresent()) {
-                return handleKieMavenPlugin(req);
+                return handleKieMavenPlugin(req, res);
             }
-            return new DefaultCompilationResponse(Boolean.TRUE,
-                                                  Optional.empty());
-        } else {
-            return new DefaultCompilationResponse(Boolean.FALSE,
-                                                  Optional.empty());
+
         }
+        return res;
     }
 
-    private CompilationResponse handleKieMavenPlugin(InternalNioImplCompilationRequest req) {
+    private CompilationResponse handleKieMavenPlugin(InternalNioImplCompilationRequest req, CompilationResponse res) {
 
         InternalNioKieAfterDecorator.KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
         InternalNioKieAfterDecorator.KieTuple kieModuleTuple = readKieModule(req);
@@ -59,7 +56,7 @@ public class InternalNioKieAfterDecorator extends InternalNioImplCompilerDecorat
             return new DefaultCompilationResponse(Boolean.TRUE,
                                                   (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
                                                   (KieModule) kieModuleTuple.getOptionalObject().get(),
-                                                  Optional.empty(),
+                                                  res.getMavenOutput(),
                                                   optionalDeps);
         } else {
             StringBuilder sb = new StringBuilder();
@@ -71,7 +68,7 @@ public class InternalNioKieAfterDecorator extends InternalNioImplCompilerDecorat
             }
             return new DefaultCompilationResponse(Boolean.FALSE,
                                                   Optional.of(sb.toString()),
-                                                  Optional.empty());
+                                                  res.getMavenOutput());
         }
     }
 

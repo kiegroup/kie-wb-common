@@ -62,6 +62,14 @@ public class InternalNioImplMavenCompilerFactory {
                 compiler = new InternalNioKieAfterDecorator(new InternalNioImplDefaultMavenCompiler());
                 break;
 
+            case KIE_AND_LOG_AFTER:
+                compiler = new InternalNioKieAfterDecorator(new InternalNioImplOutputLogAfterDecorator(new InternalNioImplDefaultMavenCompiler()));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
+                compiler = new InternalNioImplJGITCompilerBeforeDecorator(new InternalNioKieAfterDecorator(new InternalNioImplOutputLogAfterDecorator(new InternalNioImplDefaultMavenCompiler())));
+                break;
+
             default:
                 compiler = new InternalNioImplDefaultMavenCompiler();
         }

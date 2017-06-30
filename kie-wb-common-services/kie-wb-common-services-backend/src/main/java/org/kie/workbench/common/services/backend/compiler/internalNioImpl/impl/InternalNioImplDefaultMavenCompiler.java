@@ -94,11 +94,9 @@ public class InternalNioImplDefaultMavenCompiler implements InternalNioImplMaven
         int exitCode = cli.doMain(req.getKieCliRequest(),
                                   kieClassWorld);
         if (exitCode == 0) {
-            return new DefaultCompilationResponse(Boolean.TRUE,
-                                                  Optional.empty());
+            return new DefaultCompilationResponse(Boolean.TRUE);
         } else {
-            return new DefaultCompilationResponse(Boolean.FALSE,
-                                                  Optional.empty());
+            return new DefaultCompilationResponse(Boolean.FALSE);
         }
     }
 }

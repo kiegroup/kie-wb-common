@@ -57,8 +57,17 @@ public class NIOMavenCompilerFactory {
             case KIE_AFTER:
                 compiler = new KieAfterDecorator(new NIODefaultMavenCompiler());
                 break;
+
             case LOG_OUTPUT_AFTER:
                 compiler = new OutputLogAfterDecorator(new NIODefaultMavenCompiler());
+                break;
+
+            case KIE_AND_LOG_AFTER:
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new NIODefaultMavenCompiler()));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
+                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new OutputLogAfterDecorator(new NIODefaultMavenCompiler())));
                 break;
 
             default:

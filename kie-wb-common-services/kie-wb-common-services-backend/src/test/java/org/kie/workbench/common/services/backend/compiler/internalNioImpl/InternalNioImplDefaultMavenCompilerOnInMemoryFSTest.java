@@ -158,7 +158,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
 
         //Compile the repo
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
+                Decorator.LOG_OUTPUT_AFTER);
         Path prjFolder = Paths.get(gitClonedFolder + "/dummy/");
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -169,11 +169,12 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
                                                                                                    compiler);
         InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                              info,
-                                                                                             new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                             new String[]{MavenArgs.COMPILE},
                                                                                              new HashMap<>(),
-                                                                                             Optional.empty());
+                                                                                             Optional.of("log"));
 
         CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -190,6 +191,16 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
         InternalNioImplTestUtil.rm(tmpRootCloned.toFile());
         InternalNioImplTestUtil.rm(tmpRoot.toFile());
     }
+
+    private Map<String, File> getKieFilesToCommit(File temp) {
+        Map<String, File> map = new HashMap<>();
+        map.put("/dummy/pom.xml", new File(temp.toString() + "/pom.xml"));
+        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java", new File(temp.toString() + "/src/main/java/org/kie/maven/plugin/test/Person.java"));
+        map.put("/dummy/src/main/resources/AllResourceTypes/simple-rules.drl", new File(temp.toString() + "/src/main/resources/AllResourceTypes/simple-rules.drl"));
+        map.put("/dummy/src/main/resources/META-INF/kmodule.xml", new File(temp.toString() + "/src/main/resources/META-INF/kmodule.xml"));
+        return map;
+    }
+
 
     private Map<String, File> getFilesToCommit(File temp) {
         Map<String, File> map = new HashMap<>();
@@ -301,7 +312,7 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithDecoratorsTest() throws Exception {
+    public void buildWithJGitDecoratorTest() throws Exception {
         InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
                 Decorator.JGIT_BEFORE);
 
@@ -403,6 +414,120 @@ public class InternalNioImplDefaultMavenCompilerOnInMemoryFSTest {
         //recompile
         res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
+
+        InternalNioImplTestUtil.rm(tmpRoot.toFile());
+        InternalNioImplTestUtil.rm(tmpRootCloned.toFile());
+    }
+
+
+
+    @Test
+    public void buildWithAllDecoratorsTest() throws Exception {
+        InternalNioImplMavenCompiler compiler = InternalNioImplMavenCompilerFactory.getCompiler(
+                Decorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
+
+        String MASTER_BRANCH = "master";
+
+        provider = new JGitFileSystemProvider(getGitPreferences());
+        provider.setAuthenticator(getAuthenticator());
+        provider.setAuthorizer((fs, fileSystemUser) -> true);
+
+        CredentialsProvider.setDefault(new UsernamePasswordCredentialsProvider("admin",
+                                                                               ""));
+
+        //Setup origin in memory
+        final URI originRepo = URI.create("git://repo");
+        final JGitFileSystem origin = (JGitFileSystem) provider.newFileSystem(originRepo,
+                                                                              new HashMap<String, Object>() {{
+                                                                                  put("listMode",
+                                                                                      "ALL");
+                                                                              }}
+        );
+        assertNotNull(origin);
+
+        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
+
+        //NIO creation and copy content
+        java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                "dummy"));
+        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+                          temp);
+        //end NIO
+
+        JGitUtil.commit(origin.gitRepo(),
+                        MASTER_BRANCH,
+                        "name",
+                        "name@example.com",
+                        "master",
+                        null,
+                        null,
+                        false,
+                        getKieFilesToCommit(temp.toFile())
+        );
+
+        RevCommit lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
+                                                      MASTER_BRANCH);
+        assertNotNull(lastCommit);
+
+        // clone into a regularfs
+        Path tmpRootCloned = Files.createTempDirectory("cloned");
+        Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
+                                                           ".clone.git"));
+        //@TODO find a way to retrieve the address git://... of the repo
+        Git cloned = JGitUtil.cloneRepository(tmpCloned.toFile(),
+                                              "git://localhost:9418/repo",
+                                              false,
+                                              CredentialsProvider.getDefault());
+
+        assertNotNull(cloned);
+
+        //@TODO refactor and use only one between the URI or Git
+        //@TODO find a way to resolve the problem of the prjname inside .git folder
+        InternalNioImplWorkspaceCompilationInfo info = new InternalNioImplWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
+                                                                                                   URI.create("git://localhost:9418/repo"),
+                                                                                                   compiler,
+                                                                                                   cloned);
+        InternalNioImplCompilationRequest req = new InternalNioImplDefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                             info,
+                                                                                             new String[]{ MavenArgs.COMPILE},
+                                                                                             new HashMap<>(),
+                                                                                             Optional.of("log"));
+        CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.getMavenOutput().isPresent());
+        Assert.assertTrue(res.isSuccessful());
+
+
+        lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
+                                            MASTER_BRANCH);
+        assertNotNull(lastCommit);
+
+        //change one file and commit on the origin repo
+        Map<String, File> map = new HashMap<>();
+        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java",
+                new File("src/test/projects/Person.java"));
+
+        JGitUtil.commit(origin.gitRepo(),
+                        MASTER_BRANCH,
+                        "name",
+                        "name@example.com",
+                        "master",
+                        null,
+                        null,
+                        false,
+                        map
+        );
+
+        RevCommit commitBefore = JGitUtil.getLastCommit(origin.gitRepo(),
+                                                        MASTER_BRANCH);
+        assertNotNull(commitBefore);
+        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+
+        //recompile
+        res = compiler.compileSync(req);
+        Assert.assertTrue(res.isSuccessful());
+        Assert.assertTrue(res.getMavenOutput().isPresent());
 
         InternalNioImplTestUtil.rm(tmpRoot.toFile());
         InternalNioImplTestUtil.rm(tmpRootCloned.toFile());
