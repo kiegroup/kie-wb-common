@@ -43,6 +43,10 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 @CanConnect(startRole = "decision", endRole = "text-annotation")
 @CanConnect(startRole = "input-data", endRole = "text-annotation")
 @CanConnect(startRole = "knowledge-source", endRole = "text-annotation")
+@CanConnect(startRole = "text-annotation", endRole = "business-knowledge-model")
+@CanConnect(startRole = "text-annotation", endRole = "decision")
+@CanConnect(startRole = "text-annotation", endRole = "input-data")
+@CanConnect(startRole = "text-annotation", endRole = "knowledge-source")
 @NoValidation
 public class Association extends Artifact {
 
