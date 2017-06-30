@@ -259,6 +259,11 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-widgets-service-api</artifactId>
+    </dependency>
+
     <!-- Uberfire Security Management -->
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -347,6 +352,11 @@
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-cdi-client</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.errai</groupId>
+      <artifactId>errai-cdi-shared</artifactId>
     </dependency>
 
     <dependency>
@@ -764,7 +774,7 @@
           <noServer>false</noServer>
           <server>org.jboss.errai.cdi.server.gwt.EmbeddedWildFlyLauncher</server>
           <disableCastChecking>true</disableCastChecking>
-          <runTarget>stunner.html</runTarget>
+          <runTarget>dmn-editor.html</runTarget>
           <hostedWebapp>src/main/webapp</hostedWebapp>
           <gwtSdkFirstInClasspath>false</gwtSdkFirstInClasspath>
           <logLevel>INFO</logLevel>
