@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.decorators.JGITCompilerBeforeDecorator;
-import org.kie.workbench.common.services.backend.compiler.nio.decorators.KieAfterDecorator;
-import org.kie.workbench.common.services.backend.compiler.nio.decorators.OutputLogAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOJGITCompilerBeforeDecorator;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOKieAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOOutputLogAfterDecorator;
 
 public class NIOMavenCompilerFactory {
 
@@ -51,23 +51,23 @@ public class NIOMavenCompilerFactory {
                 break;
 
             case JGIT_BEFORE:
-                compiler = new JGITCompilerBeforeDecorator(new NIODefaultMavenCompiler());
+                compiler = new NIOJGITCompilerBeforeDecorator(new NIODefaultMavenCompiler());
                 break;
 
             case KIE_AFTER:
-                compiler = new KieAfterDecorator(new NIODefaultMavenCompiler());
+                compiler = new NIOKieAfterDecorator(new NIODefaultMavenCompiler());
                 break;
 
             case LOG_OUTPUT_AFTER:
-                compiler = new OutputLogAfterDecorator(new NIODefaultMavenCompiler());
+                compiler = new NIOOutputLogAfterDecorator(new NIODefaultMavenCompiler());
                 break;
 
             case KIE_AND_LOG_AFTER:
-                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new NIODefaultMavenCompiler()));
+                compiler = new NIOKieAfterDecorator(new NIOOutputLogAfterDecorator(new NIODefaultMavenCompiler()));
                 break;
 
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
-                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new OutputLogAfterDecorator(new NIODefaultMavenCompiler())));
+                compiler = new NIOJGITCompilerBeforeDecorator(new NIOKieAfterDecorator(new NIOOutputLogAfterDecorator(new NIODefaultMavenCompiler())));
                 break;
 
             default:

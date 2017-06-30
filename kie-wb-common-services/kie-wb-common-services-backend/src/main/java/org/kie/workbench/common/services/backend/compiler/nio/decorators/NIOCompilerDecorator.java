@@ -18,6 +18,6 @@ package org.kie.workbench.common.services.backend.compiler.nio.decorators;
 
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 
-public abstract class CompilerDecorator implements NIOMavenCompiler {
+public abstract class NIOCompilerDecorator implements NIOMavenCompiler {
 
 }

@@ -27,15 +27,15 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JGITCompilerBeforeDecorator extends CompilerDecorator {
+public class NIOJGITCompilerBeforeDecorator extends NIOCompilerDecorator {
 
-    private static final Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecorator.class);
+    private static final Logger logger = LoggerFactory.getLogger(NIOJGITCompilerBeforeDecorator.class);
     private final String COMPILED_EXTENSION = ".class";
     private final String REMOTE = "origin";
     private final String REMOTE_BRANCH = "master";
     private NIOMavenCompiler compiler;
 
-    public JGITCompilerBeforeDecorator(NIOMavenCompiler compiler) {
+    public NIOJGITCompilerBeforeDecorator(NIOMavenCompiler compiler) {
         this.compiler = compiler;
     }
 

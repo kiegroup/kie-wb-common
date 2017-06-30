@@ -212,6 +212,19 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         return map;
     }
 
+    private Map<String, File> getKieFilesToCommit(File temp) {
+        Map<String, File> map = new HashMap<>();
+        map.put("/dummy/pom.xml",
+                new File(temp.toString() + "/pom.xml"));
+        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java",
+                new File(temp.toString() + "/src/main/java/org/kie/maven/plugin/test/Person.java"));
+        map.put("/dummy/src/main/resources/AllResourceTypes/simple-rules.drl",
+                new File(temp.toString() + "/src/main/resources/AllResourceTypes/simple-rules.drl"));
+        map.put("/dummy/src/main/resources/META-INF/kmodule.xml",
+                new File(temp.toString() + "/src/main/resources/META-INF/kmodule.xml"));
+        return map;
+    }
+
     @Test
     public void buildWithPullRebaseNIOTest() throws Exception {
 
@@ -302,7 +315,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithDecoratorsTest() throws Exception {
+    public void buildWithJGitDecoratorTest() throws Exception {
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                 Decorator.JGIT_BEFORE);
 
@@ -400,6 +413,112 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         //recompile
         res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
+
+        TestUtil.rm(tmpRoot.toFile());
+        TestUtil.rm(tmpRootCloned.toFile());
+    }
+
+    @Test
+    public void buildWithAllDecoratorsTest() throws Exception {
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
+                Decorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER);
+
+        String MASTER_BRANCH = "master";
+
+        provider = new JGitFileSystemProvider(getGitPreferences());
+        provider.setAuthenticator(getAuthenticator());
+        provider.setAuthorizer((fs, fileSystemUser) -> true);
+
+        CredentialsProvider.setDefault(new UsernamePasswordCredentialsProvider("admin",
+                                                                               ""));
+
+        //Setup origin in memory
+        final URI originRepo = URI.create("git://repo");
+        final JGitFileSystem origin = (JGitFileSystem) provider.newFileSystem(originRepo,
+                                                                              new HashMap<String, Object>() {{
+                                                                                  put("listMode",
+                                                                                      "ALL");
+                                                                              }}
+        );
+        assertNotNull(origin);
+
+        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
+        File temp = tmp.toFile();
+        copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
+                 Paths.get(temp.toString()));
+
+        JGitUtil.commit(origin.gitRepo(),
+                        MASTER_BRANCH,
+                        "name",
+                        "name@example.com",
+                        "master",
+                        null,
+                        null,
+                        false,
+                        getKieFilesToCommit(temp)
+        );
+
+        RevCommit lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
+                                                      MASTER_BRANCH);
+        assertNotNull(lastCommit);
+
+        // clone into a regularfs
+        Path tmpRootCloned = Files.createTempDirectory("cloned");
+        Path tmpCloned = Files.createDirectories(Paths.get(tmpRootCloned.toString(),
+                                                           ".clone.git"));
+        //@TODO find a way to retrieve the address git://... of the repo
+        Git cloned = JGitUtil.cloneRepository(tmpCloned.toFile(),
+                                              "git://localhost:9418/repo",
+                                              false,
+                                              CredentialsProvider.getDefault());
+        assertNotNull(cloned);
+
+        //@TODO refactor and use only one between the URI or Git
+        //@TODO find a way to resolve the problem of the prjname inside .git folder
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"),
+                                                                           URI.create("git://localhost:9418/repo"),
+                                                                           compiler,
+                                                                           cloned);
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
+                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new HashMap<>(),
+                                                                     Optional.of("log"));
+        CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.getMavenOutput().isPresent());
+        Assert.assertTrue(res.isSuccessful());
+
+        lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
+                                            MASTER_BRANCH);
+        assertNotNull(lastCommit);
+
+        //change one file and commit on the origin repo
+        Map<String, File> map = new HashMap<>();
+        map.put("/dummy/src/main/java/org/kie/maven/plugin/test/Person.java",
+                new File("src/test/projects/Person.java"));
+
+        JGitUtil.commit(origin.gitRepo(),
+                        MASTER_BRANCH,
+                        "name",
+                        "name@example.com",
+                        "master",
+                        null,
+                        null,
+                        false,
+                        map
+        );
+
+        RevCommit commitBefore = JGitUtil.getLastCommit(origin.gitRepo(),
+                                                        MASTER_BRANCH);
+        assertNotNull(commitBefore);
+        assertFalse(lastCommit.getId().toString().equals(commitBefore.getId().toString()));
+
+        //recompile
+        res = compiler.compileSync(req);
+        Assert.assertTrue(res.isSuccessful());
+        Assert.assertTrue(res.getMavenOutput().isPresent());
 
         TestUtil.rm(tmpRoot.toFile());
         TestUtil.rm(tmpRootCloned.toFile());

@@ -51,6 +51,7 @@ public class InternalNioKieAfterDecorator extends InternalNioImplCompilerDecorat
         InternalNioKieAfterDecorator.KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
         InternalNioKieAfterDecorator.KieTuple kieModuleTuple = readKieModule(req);
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
+
             KieClassLoaderProvider provider = new InternalNioImplClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
             return new DefaultCompilationResponse(Boolean.TRUE,

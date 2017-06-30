@@ -17,12 +17,12 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class OutputLogAfterDecorator extends CompilerDecorator {
+public class NIOOutputLogAfterDecorator extends NIOCompilerDecorator {
 
-    private static final Logger logger = LoggerFactory.getLogger(KieAfterDecorator.class);
+    private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
     private NIOMavenCompiler compiler;
 
-    public OutputLogAfterDecorator(NIOMavenCompiler compiler) {
+    public NIOOutputLogAfterDecorator(NIOMavenCompiler compiler) {
         this.compiler = compiler;
     }
 
