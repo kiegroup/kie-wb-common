@@ -58,9 +58,21 @@ public class InternalNIOKieMavenCompilerFactory {
                 compiler = new InternalNIOKieAfterDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler()));
                 break;
 
+            case JGIT_BEFORE:
+                compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieDefaultMavenCompiler());
+                break;
+            case JGIT_BEFORE_AND_LOG_AFTER:
+                compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler()));
+                break;
+
+            case LOG_OUTPUT_AFTER:
+                compiler = new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler());
+                break;
+
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
                 compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieAfterDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler())));
                 break;
+
 
             default:
                 compiler = new InternalNIOKieDefaultMavenCompiler();
