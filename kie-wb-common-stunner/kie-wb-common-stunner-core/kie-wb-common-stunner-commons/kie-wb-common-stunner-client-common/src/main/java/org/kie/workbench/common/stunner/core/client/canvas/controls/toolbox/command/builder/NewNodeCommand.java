@@ -67,6 +67,7 @@ public class NewNodeCommand<I> extends AbstractElementBuilderCommand<I> {
     private final DefinitionUtils definitionUtils;
     private final CanvasLayoutUtils canvasLayoutUtils;
 
+    private String edgeId;
     private String definitionId;
     private Magnet sourceMagnet;
     private Magnet targetMagnet;
@@ -112,18 +113,17 @@ public class NewNodeCommand<I> extends AbstractElementBuilderCommand<I> {
         getGlyphTooltip().setPrefix("Click to create a ");
     }
 
+    public void setEdgeIdentifier(final String edgeId) {
+        this.edgeId = edgeId;
+    }
+
     public void setDefinitionIdentifier(final String definitionId) {
         this.definitionId = definitionId;
     }
 
-    private String getEdgeIdentifier(final Context<AbstractCanvasHandler> context) {
-        final String defSetId = context.getCanvasHandler().getDiagram().getMetadata().getDefinitionSetId();
-        return definitionUtils.getDefaultConnectorId(defSetId);
-    }
-
     @Override
     protected String getDefinitionIdentifier(final Context<AbstractCanvasHandler> context) {
-        return getEdgeIdentifier(context);
+        return this.edgeId;
     }
 
     @Override
@@ -176,7 +176,8 @@ public class NewNodeCommand<I> extends AbstractElementBuilderCommand<I> {
                                                                                         NewNodeCommand.this.sourceMagnet = MagnetImpl.Builder.build(Magnet.MagnetType.OUTGOING);
                                                                                         NewNodeCommand.this.targetMagnet = MagnetImpl.Builder.build(Magnet.MagnetType.INCOMING);
                                                                                         final double[] next = canvasLayoutUtils.getNext(canvasHandler,
-                                                                                                                                        (Node<View<?>, Edge>) element);
+                                                                                                                                        (Node<View<?>, Edge>) element,
+                                                                                                                                        (Node<View<?>, Edge>) newEdgeElement.asEdge().getTargetNode());
                                                                                         log(Level.INFO,
                                                                                             "New edge request complete - [UUID=" + newEdgeElement.getUUID()
                                                                                                     + ", x=" + next[0] + ", y=" + next[1] + "]");
