@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -61,6 +62,19 @@ import org.kie.api.runtime.KieContainer;
 import org.kie.internal.builder.IncrementalResults;
 import org.kie.internal.builder.InternalKieBuilder;
 import org.kie.scanner.KieModuleMetaData;
+import org.kie.scanner.KieModuleMetaDataImpl;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.NIOKieMavenCompilerFactory;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.services.shared.project.ProjectImportsService;
@@ -117,6 +131,7 @@ public class Builder implements Serializable {
 
     private final Predicate<String> classFilter;
 
+
     public Builder( final Project project,
                     final IOService ioService,
                     final KieProjectService projectService,
@@ -144,7 +159,6 @@ public class Builder implements Serializable {
         this.kieFileSystem = kieFileSystem;
         this.dependenciesClassLoaderCache = dependenciesClassLoaderCache;
         this.pomModelCache = pomModelCache;
-
         DirectoryStream<org.uberfire.java.nio.file.Path> directoryStream = Files.newDirectoryStream( projectRoot );
         visitPaths( directoryStream );
     }
@@ -205,6 +219,31 @@ public class Builder implements Serializable {
     }
 
     public BuildResults build() {
+
+        java.nio.file.Path mavenRepo = java.nio.file.Paths.get("");//where is the maven repo in the builder ?
+        //converts from Uberfire nio impl to nio
+        java.nio.file.Path prjPath = java.nio.file.Paths.get(projectRoot.toAbsolutePath().toString());
+        NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        NIOWorkspaceCompilationInfo workspaceCompilationInfo = new NIOWorkspaceCompilationInfo(prjPath);
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),workspaceCompilationInfo,
+                                                                     new String[]{ MavenArgs.INSTALL},
+                                                                     new HashMap<>(),
+                                                                     Optional.empty());
+        KieCompilationResponse res = compiler.compileSync(req);
+
+        if(res.isSuccessful() &&  res.getKieModule().isPresent() && res.getProjectDependencies().isPresent()){
+            KieModule kieModule = res.getKieModule().get();
+            KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kieModule, res.getProjectDependencies().get());
+
+            BuildResults results = new BuildResults( projectGAV );
+            results.addAllBuildMessages( verifyClasses( kieModuleMetaData ) );
+            return results;
+        }else{
+            return oldBEhaviour();
+        }
+    }
+
+    private BuildResults oldBEhaviour(){
         synchronized ( kieFileSystem ) {
             //KieBuilder is not re-usable for successive "full" builds
             kieBuilder = createKieBuilder( kieFileSystem );
