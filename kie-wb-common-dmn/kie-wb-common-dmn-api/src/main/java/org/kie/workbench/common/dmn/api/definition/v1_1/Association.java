@@ -24,6 +24,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Label;
+import org.kie.workbench.common.dmn.api.rules.AcyclicDirectedGraphRule;
 import org.kie.workbench.common.dmn.api.validation.NoValidation;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
@@ -34,6 +35,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.La
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Title;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
+import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 
 @Portable
 @Bindable
@@ -43,10 +45,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 @CanConnect(startRole = "decision", endRole = "text-annotation")
 @CanConnect(startRole = "input-data", endRole = "text-annotation")
 @CanConnect(startRole = "knowledge-source", endRole = "text-annotation")
-@CanConnect(startRole = "text-annotation", endRole = "business-knowledge-model")
-@CanConnect(startRole = "text-annotation", endRole = "decision")
-@CanConnect(startRole = "text-annotation", endRole = "input-data")
-@CanConnect(startRole = "text-annotation", endRole = "knowledge-source")
+@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments = {Association.class})
 @NoValidation
 public class Association extends Artifact {
 

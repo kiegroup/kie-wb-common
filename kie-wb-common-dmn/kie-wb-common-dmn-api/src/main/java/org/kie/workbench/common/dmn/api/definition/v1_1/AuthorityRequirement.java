@@ -21,6 +21,7 @@ import java.util.Set;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.dmn.api.rules.AcyclicDirectedGraphRule;
 import org.kie.workbench.common.dmn.api.validation.NoValidation;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
@@ -31,6 +32,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.La
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Title;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
+import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 
 @Portable
 @Bindable
@@ -40,6 +42,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.CanConnect;
 @CanConnect(startRole = "knowledge-source", endRole = "business-knowledge-model")
 @CanConnect(startRole = "knowledge-source", endRole = "knowledge-source")
 @CanConnect(startRole = "input-data", endRole = "knowledge-source")
+@RuleExtension(handler = AcyclicDirectedGraphRule.class, typeArguments={AuthorityRequirement.class})
 @NoValidation
 public class AuthorityRequirement extends DMNModelInstrumentedBase {
 
