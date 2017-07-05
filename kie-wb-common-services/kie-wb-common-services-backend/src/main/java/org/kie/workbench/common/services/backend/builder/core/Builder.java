@@ -131,6 +131,10 @@ public class Builder implements Serializable {
 
     private final Predicate<String> classFilter;
 
+    private KieModule internalKieModule;
+
+    private boolean built = Boolean.FALSE;
+
 
     public Builder( final Project project,
                     final IOService ioService,
@@ -220,7 +224,9 @@ public class Builder implements Serializable {
 
     public BuildResults build() {
 
-        java.nio.file.Path mavenRepo = java.nio.file.Paths.get("");//where is the maven repo in the builder ?
+        BuildResults results = new BuildResults(projectGAV);
+
+        java.nio.file.Path mavenRepo = java.nio.file.Paths.get("/home/garfield/.m2/repository/");//where is the maven repo in the builder ?
         //converts from Uberfire nio impl to nio
         java.nio.file.Path prjPath = java.nio.file.Paths.get(projectRoot.toAbsolutePath().toString());
         NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
@@ -228,19 +234,23 @@ public class Builder implements Serializable {
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),workspaceCompilationInfo,
                                                                      new String[]{ MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Optional.of("log"));
         KieCompilationResponse res = compiler.compileSync(req);
-
-        if(res.isSuccessful() &&  res.getKieModule().isPresent() && res.getProjectDependencies().isPresent()){
+        built = Boolean.TRUE;
+        if(res.isSuccessful() &&  res.getKieModule().isPresent() && res.getProjectDependencies().isPresent()) {
             KieModule kieModule = res.getKieModule().get();
-            KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kieModule, res.getProjectDependencies().get());
+            internalKieModule = kieModule;
+            KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kieModule,
+                                                                            res.getProjectDependencies().get());
 
-            BuildResults results = new BuildResults( projectGAV );
-            results.addAllBuildMessages( verifyClasses( kieModuleMetaData ) );
+            results.addAllBuildMessages(verifyClasses(kieModuleMetaData));
             return results;
         }else{
-            return oldBEhaviour();
+            return results;
         }
+            /* }else{
+            return oldBEhaviour();
+        }*/
     }
 
     private BuildResults oldBEhaviour(){
@@ -609,9 +619,10 @@ public class Builder implements Serializable {
         if ( !isBuilt() ) {
             build();
         }
-        synchronized ( kieFileSystem ) {
+        /*synchronized ( kieFileSystem ) {
             return kieBuilder.getKieModule();
-        }
+        }*/
+        return internalKieModule;
     }
 
     public KieModule getKieModuleIgnoringErrors() {
@@ -664,9 +675,10 @@ public class Builder implements Serializable {
     }
 
     public boolean isBuilt() {
-        synchronized ( kieFileSystem ) {
+        /*synchronized ( kieFileSystem ) {
             return kieBuilder != null;
-        }
+        }*/
+        return built;
     }
 
     private void visitPaths( final DirectoryStream<org.uberfire.java.nio.file.Path> directoryStream ) {
