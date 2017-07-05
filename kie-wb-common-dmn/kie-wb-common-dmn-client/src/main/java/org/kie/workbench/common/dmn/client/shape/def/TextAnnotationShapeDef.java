@@ -15,21 +15,12 @@
  */
 package org.kie.workbench.common.dmn.client.shape.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
-import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
-import org.kie.workbench.common.stunner.svg.client.shape.def.SVGMutableShapeDef;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public class TextAnnotationShapeDef extends AbstractShapeDef<TextAnnotation>
-        implements SVGMutableShapeDef<TextAnnotation, DMNSVGViewFactory> {
+public class TextAnnotationShapeDef implements DMNSVGShapeDef<TextAnnotation> {
 
     @Override
     public double getAlpha(final TextAnnotation element) {
@@ -94,29 +85,6 @@ public class TextAnnotationShapeDef extends AbstractShapeDef<TextAnnotation>
     @Override
     public double getFontRotation(final TextAnnotation element) {
         return 0;
-    }
-
-    private static final PictureGlyphDef<TextAnnotation, DMNPictures> DECISION_GLYPH_DEF = new PictureGlyphDef<TextAnnotation, DMNPictures>() {
-
-        private final Map<Class<?>, DMNPictures> PICTURES = new HashMap<Class<?>, DMNPictures>() {{
-            put(TextAnnotation.class,
-                DMNPictures.TEXT_ANNOTATION);
-        }};
-
-        @Override
-        public String getGlyphDescription(final TextAnnotation element) {
-            return element.getStunnerDescription();
-        }
-
-        @Override
-        public DMNPictures getSource(final Class<?> type) {
-            return PICTURES.get(type);
-        }
-    };
-
-    @Override
-    public GlyphDef<TextAnnotation> getGlyphDef() {
-        return DECISION_GLYPH_DEF;
     }
 
     @Override

@@ -15,17 +15,19 @@
  */
 package org.kie.workbench.common.dmn.client;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
-import org.kie.workbench.common.dmn.client.shape.factory.DMNSVGShapeFactory;
+import org.kie.workbench.common.dmn.client.shape.factory.DMNShapeFactory;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.AbstractBindableShapeSet;
 
 @ApplicationScoped
-public class DMNShapeSet extends AbstractBindableShapeSet<DMNSVGShapeFactory> {
+public class DMNShapeSet extends AbstractBindableShapeSet<DMNShapeFactory> {
+
+    private final DefinitionManager definitionManager;
+    private final DMNShapeFactory factory;
 
     protected DMNShapeSet() {
         this(null,
@@ -34,18 +36,23 @@ public class DMNShapeSet extends AbstractBindableShapeSet<DMNSVGShapeFactory> {
 
     @Inject
     public DMNShapeSet(final DefinitionManager definitionManager,
-                       final DMNSVGShapeFactory factory) {
-        super(definitionManager,
-              factory);
-    }
-
-    @PostConstruct
-    public void init() {
-        super.doInit();
+                       final DMNShapeFactory factory) {
+        this.definitionManager = definitionManager;
+        this.factory = factory;
     }
 
     @Override
     protected Class<?> getDefinitionSetClass() {
         return DMNDefinitionSet.class;
+    }
+
+    @Override
+    protected DefinitionManager getDefinitionManager() {
+        return definitionManager;
+    }
+
+    @Override
+    public DMNShapeFactory getShapeFactory() {
+        return factory;
     }
 }

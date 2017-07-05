@@ -171,6 +171,10 @@ public class CaseManagementShapeFactoryTest {
         when(basicViewFactory.pictureFromUri(any(SafeUri.class),
                                              anyDouble(),
                                              anyDouble())).thenReturn(pictureShapeView);
+        when(basicViewFactory.connector(anyDouble(),
+                                        anyDouble(),
+                                        anyDouble(),
+                                        anyDouble())).thenReturn(connectorShapeView);
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
     }

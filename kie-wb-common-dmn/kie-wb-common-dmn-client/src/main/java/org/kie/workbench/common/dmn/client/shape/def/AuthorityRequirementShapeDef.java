@@ -18,12 +18,9 @@ package org.kie.workbench.common.dmn.client.shape.def;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorGlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorShapeDef;
 
 public final class AuthorityRequirementShapeDef
-        implements ConnectorShapeDef<AuthorityRequirement> {
+        implements DMNConnectorShapeDef<AuthorityRequirement> {
 
     @Override
     public double getAlpha(final AuthorityRequirement element) {
@@ -53,11 +50,6 @@ public final class AuthorityRequirementShapeDef
     @Override
     public double getBorderAlpha(final AuthorityRequirement element) {
         return 1;
-    }
-
-    @Override
-    public String getNamePropertyValue(final AuthorityRequirement element) {
-        return AuthorityRequirement.stunnerTitle;
     }
 
     @Override
@@ -96,20 +88,7 @@ public final class AuthorityRequirementShapeDef
     }
 
     @Override
-    public GlyphDef<AuthorityRequirement> getGlyphDef() {
-        return new BasicConnectorGlyphDef();
-    }
-
-    private static class BasicConnectorGlyphDef extends ConnectorGlyphDef<AuthorityRequirement> {
-
-        @Override
-        public String getColor() {
-            return "#000000";
-        }
-
-        @Override
-        public String getGlyphDescription(final AuthorityRequirement element) {
-            return AuthorityRequirement.stunnerTitle;
-        }
+    public Class<AuthorityRequirementShapeDef> getType() {
+        return AuthorityRequirementShapeDef.class;
     }
 }

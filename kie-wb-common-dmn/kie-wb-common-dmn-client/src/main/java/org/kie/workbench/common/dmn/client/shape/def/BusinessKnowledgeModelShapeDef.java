@@ -15,21 +15,12 @@
  */
 package org.kie.workbench.common.dmn.client.shape.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
-import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
-import org.kie.workbench.common.stunner.svg.client.shape.def.SVGMutableShapeDef;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public class BusinessKnowledgeModelShapeDef extends AbstractShapeDef<BusinessKnowledgeModel>
-        implements SVGMutableShapeDef<BusinessKnowledgeModel, DMNSVGViewFactory> {
+public class BusinessKnowledgeModelShapeDef implements DMNSVGShapeDef<BusinessKnowledgeModel> {
 
     @Override
     public double getAlpha(final BusinessKnowledgeModel element) {
@@ -94,29 +85,6 @@ public class BusinessKnowledgeModelShapeDef extends AbstractShapeDef<BusinessKno
     @Override
     public double getFontRotation(final BusinessKnowledgeModel element) {
         return 0;
-    }
-
-    private static final PictureGlyphDef<BusinessKnowledgeModel, DMNPictures> BUSINESS_KNOWLEDGE_MODEL_GLYPH_DEF = new PictureGlyphDef<BusinessKnowledgeModel, DMNPictures>() {
-
-        private final Map<Class<?>, DMNPictures> PICTURES = new HashMap<Class<?>, DMNPictures>() {{
-            put(BusinessKnowledgeModel.class,
-                DMNPictures.BUSINESS_KNOWLEDGE_MODEL);
-        }};
-
-        @Override
-        public String getGlyphDescription(final BusinessKnowledgeModel element) {
-            return element.getStunnerDescription();
-        }
-
-        @Override
-        public DMNPictures getSource(final Class<?> type) {
-            return PICTURES.get(type);
-        }
-    };
-
-    @Override
-    public GlyphDef<BusinessKnowledgeModel> getGlyphDef() {
-        return BUSINESS_KNOWLEDGE_MODEL_GLYPH_DEF;
     }
 
     @Override

@@ -15,21 +15,12 @@
  */
 package org.kie.workbench.common.dmn.client.shape.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
-import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
-import org.kie.workbench.common.stunner.svg.client.shape.def.SVGMutableShapeDef;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public class KnowledgeSourceShapeDef extends AbstractShapeDef<KnowledgeSource>
-        implements SVGMutableShapeDef<KnowledgeSource, DMNSVGViewFactory> {
+public class KnowledgeSourceShapeDef implements DMNSVGShapeDef<KnowledgeSource> {
 
     @Override
     public double getAlpha(final KnowledgeSource element) {
@@ -94,29 +85,6 @@ public class KnowledgeSourceShapeDef extends AbstractShapeDef<KnowledgeSource>
     @Override
     public double getFontRotation(final KnowledgeSource element) {
         return 0;
-    }
-
-    private static final PictureGlyphDef<KnowledgeSource, DMNPictures> KNOWLEDGE_SOURCE_GLYPH_DEF = new PictureGlyphDef<KnowledgeSource, DMNPictures>() {
-
-        private final Map<Class<?>, DMNPictures> PICTURES = new HashMap<Class<?>, DMNPictures>() {{
-            put(KnowledgeSource.class,
-                DMNPictures.KNOWLEDGE_SOURCE);
-        }};
-
-        @Override
-        public String getGlyphDescription(final KnowledgeSource element) {
-            return element.getStunnerDescription();
-        }
-
-        @Override
-        public DMNPictures getSource(final Class<?> type) {
-            return PICTURES.get(type);
-        }
-    };
-
-    @Override
-    public GlyphDef<KnowledgeSource> getGlyphDef() {
-        return KNOWLEDGE_SOURCE_GLYPH_DEF;
     }
 
     @Override

@@ -16,28 +16,14 @@
 package org.kie.workbench.common.dmn.client.shape.factory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.shape.view.AssociationView;
 import org.kie.workbench.common.dmn.client.shape.view.AuthorityRequirementView;
 import org.kie.workbench.common.dmn.client.shape.view.InformationRequirementView;
 import org.kie.workbench.common.dmn.client.shape.view.KnowledgeRequirementView;
-import org.kie.workbench.common.stunner.shapes.client.factory.PictureProvidersManager;
-import org.kie.workbench.common.stunner.shapes.client.view.ShapeViewFactory;
 
-@DMNEditor
 @ApplicationScoped
-public class DMNInterceptingShapeViewFactory extends ShapeViewFactory {
-
-    protected DMNInterceptingShapeViewFactory() {
-        this(null);
-    }
-
-    @Inject
-    public DMNInterceptingShapeViewFactory(PictureProvidersManager pictureProvidersManager) {
-        super(pictureProvidersManager);
-    }
+public class DMNConnectorShapeViewFactory {
 
     public AssociationView association(final double x1,
                                        final double y1,

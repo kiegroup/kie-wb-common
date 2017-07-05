@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.client.components.palette.factory;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
@@ -25,6 +26,7 @@ import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.components.palette.factory.BindableDefSetPaletteDefinitionFactory;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionSetPaletteBuilder;
 
+@Dependent
 public class DMNPaletteDefinitionFactory extends BindableDefSetPaletteDefinitionFactory {
 
     private static final Map<String, String> CAT_TITLES = new HashMap<String, String>() {{

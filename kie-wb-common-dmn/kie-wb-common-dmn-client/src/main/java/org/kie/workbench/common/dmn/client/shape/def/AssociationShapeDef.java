@@ -18,12 +18,9 @@ package org.kie.workbench.common.dmn.client.shape.def;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorGlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorShapeDef;
 
 public final class AssociationShapeDef
-        implements ConnectorShapeDef<Association> {
+        implements DMNConnectorShapeDef<Association> {
 
     @Override
     public double getAlpha(final Association element) {
@@ -53,11 +50,6 @@ public final class AssociationShapeDef
     @Override
     public double getBorderAlpha(final Association element) {
         return 1;
-    }
-
-    @Override
-    public String getNamePropertyValue(final Association element) {
-        return Association.stunnerTitle;
     }
 
     @Override
@@ -96,20 +88,7 @@ public final class AssociationShapeDef
     }
 
     @Override
-    public GlyphDef<Association> getGlyphDef() {
-        return new BasicConnectorGlyphDef();
-    }
-
-    private static class BasicConnectorGlyphDef extends ConnectorGlyphDef<Association> {
-
-        @Override
-        public String getColor() {
-            return "#000000";
-        }
-
-        @Override
-        public String getGlyphDescription(final Association element) {
-            return Association.stunnerTitle;
-        }
+    public Class<AssociationShapeDef> getType() {
+        return AssociationShapeDef.class;
     }
 }

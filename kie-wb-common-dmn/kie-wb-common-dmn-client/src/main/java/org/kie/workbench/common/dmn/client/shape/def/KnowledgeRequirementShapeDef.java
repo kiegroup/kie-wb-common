@@ -18,12 +18,9 @@ package org.kie.workbench.common.dmn.client.shape.def;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorGlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.ConnectorShapeDef;
 
 public final class KnowledgeRequirementShapeDef
-        implements ConnectorShapeDef<KnowledgeRequirement> {
+        implements DMNConnectorShapeDef<KnowledgeRequirement> {
 
     @Override
     public double getAlpha(final KnowledgeRequirement element) {
@@ -53,11 +50,6 @@ public final class KnowledgeRequirementShapeDef
     @Override
     public double getBorderAlpha(final KnowledgeRequirement element) {
         return 1;
-    }
-
-    @Override
-    public String getNamePropertyValue(final KnowledgeRequirement element) {
-        return KnowledgeRequirement.stunnerTitle;
     }
 
     @Override
@@ -96,20 +88,7 @@ public final class KnowledgeRequirementShapeDef
     }
 
     @Override
-    public GlyphDef<KnowledgeRequirement> getGlyphDef() {
-        return new BasicConnectorGlyphDef();
-    }
-
-    private static class BasicConnectorGlyphDef extends ConnectorGlyphDef<KnowledgeRequirement> {
-
-        @Override
-        public String getColor() {
-            return "#000000";
-        }
-
-        @Override
-        public String getGlyphDescription(final KnowledgeRequirement element) {
-            return KnowledgeRequirement.stunnerTitle;
-        }
+    public Class<KnowledgeRequirementShapeDef> getType() {
+        return KnowledgeRequirementShapeDef.class;
     }
 }

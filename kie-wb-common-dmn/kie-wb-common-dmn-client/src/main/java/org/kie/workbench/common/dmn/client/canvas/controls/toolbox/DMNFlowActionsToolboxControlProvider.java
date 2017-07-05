@@ -124,7 +124,7 @@ public class DMNFlowActionsToolboxControlProvider extends AbstractToolboxControl
                                                                                        10);
             if (null != allowedConnectorIds && !allowedConnectorIds.isEmpty()) {
                 for (final String allowedConnectorId : allowedConnectorIds) {
-                    final NewConnectorCommand<?> newConnectorCommand = defaultToolboxCommandFactory.newConnectorCommand();
+                    final NewConnectorCommand<?> newConnectorCommand = defaultToolboxCommandFactory.newConnectorToolboxCommand();
                     newConnectorCommand.setEdgeIdentifier(allowedConnectorId);
                     commands.add(newConnectorCommand);
 
@@ -137,7 +137,7 @@ public class DMNFlowActionsToolboxControlProvider extends AbstractToolboxControl
                     if (null != allowedTargetDefinitions && !allowedTargetDefinitions.isEmpty()) {
                         for (final Object allowedTargetDefinition : allowedTargetDefinitions) {
                             final String allowedTargetDefinitionId = definitionManager.adapters().forDefinition().getId(allowedTargetDefinition);
-                            final NewNodeCommand newNodeCommand = defaultToolboxCommandFactory.newNodeCommand();
+                            final NewNodeCommand newNodeCommand = defaultToolboxCommandFactory.newNodeToolboxCommand();
                             newNodeCommand.setEdgeIdentifier(allowedConnectorId);
                             newNodeCommand.setDefinitionIdentifier(allowedTargetDefinitionId);
                             commands.add(newNodeCommand);

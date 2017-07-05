@@ -161,7 +161,7 @@ public class DiagramsNavigatorScreen {
     }
 
     private void create(final ShapeSet shapeSet) {
-        final String shapeSetName = shapeSet.getName();
+        final String shapeSetName = shapeSet.getDescription();
         final String defSetId = shapeSet.getDefinitionSetId();
         final Map<String, String> params = new HashMap<String, String>();
         params.put("defSetId",

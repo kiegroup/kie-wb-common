@@ -15,21 +15,12 @@
  */
 package org.kie.workbench.common.dmn.client.shape.def;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.client.resources.DMNSVGViewFactory;
-import org.kie.workbench.common.dmn.client.shape.DMNPictures;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.definition.shape.AbstractShapeDef;
-import org.kie.workbench.common.stunner.core.definition.shape.GlyphDef;
-import org.kie.workbench.common.stunner.shapes.def.picture.PictureGlyphDef;
-import org.kie.workbench.common.stunner.svg.client.shape.def.SVGMutableShapeDef;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public class InputDataShapeDef extends AbstractShapeDef<InputData>
-        implements SVGMutableShapeDef<InputData, DMNSVGViewFactory> {
+public class InputDataShapeDef implements DMNSVGShapeDef<InputData> {
 
     @Override
     public double getAlpha(final InputData element) {
@@ -94,29 +85,6 @@ public class InputDataShapeDef extends AbstractShapeDef<InputData>
     @Override
     public double getFontRotation(final InputData element) {
         return 0;
-    }
-
-    private static final PictureGlyphDef<InputData, DMNPictures> INPUT_DATA_GLYPH_DEF = new PictureGlyphDef<InputData, DMNPictures>() {
-
-        private final Map<Class<?>, DMNPictures> PICTURES = new HashMap<Class<?>, DMNPictures>() {{
-            put(InputData.class,
-                DMNPictures.INPUT_DATA);
-        }};
-
-        @Override
-        public String getGlyphDescription(final InputData element) {
-            return element.getStunnerDescription();
-        }
-
-        @Override
-        public DMNPictures getSource(final Class<?> type) {
-            return PICTURES.get(type);
-        }
-    };
-
-    @Override
-    public GlyphDef<InputData> getGlyphDef() {
-        return INPUT_DATA_GLYPH_DEF;
     }
 
     @Override

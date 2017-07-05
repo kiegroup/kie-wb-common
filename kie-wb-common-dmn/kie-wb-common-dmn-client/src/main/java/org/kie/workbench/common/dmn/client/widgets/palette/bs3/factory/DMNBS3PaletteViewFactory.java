@@ -15,37 +15,31 @@
  */
 package org.kie.workbench.common.dmn.client.widgets.palette.bs3.factory;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Categories;
-import org.kie.workbench.common.dmn.client.resources.DMNImageResources;
-import org.kie.workbench.common.stunner.client.widgets.palette.factory.BindableBS3PaletteGlyphViewFactory;
-import org.kie.workbench.common.stunner.client.widgets.palette.factory.icons.IconRenderer;
-import org.kie.workbench.common.stunner.client.widgets.palette.factory.icons.IconResource;
-import org.kie.workbench.common.stunner.client.widgets.palette.factory.icons.svg.SVGIconRenderer;
-import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
+import org.kie.workbench.common.stunner.client.widgets.components.glyph.BS3IconTypeGlyph;
+import org.kie.workbench.common.stunner.client.widgets.palette.factory.AbstractBS3PaletteViewFactory;
+import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 
-public class DMNBS3PaletteViewFactory extends BindableBS3PaletteGlyphViewFactory {
+@ApplicationScoped
+public class DMNBS3PaletteViewFactory extends AbstractBS3PaletteViewFactory {
 
-    private final static Map<String, IconResource> CATEGORY_RENDERER_SETTINGS = new HashMap<String, IconResource>() {{
+    @SuppressWarnings("unchecked")
+    private final static Map<String, Glyph> CATEGORY_GLYPHS = new HashMap<String, Glyph>(2) {{
+        put(Categories.DIAGRAM,
+            BS3IconTypeGlyph.create(IconType.DIAMOND));
         put(Categories.NODES,
-            new IconResource<>(DMNImageResources.INSTANCE.nodes()));
+            BS3IconTypeGlyph.create(IconType.BOOK));
         put(Categories.CONNECTORS,
-            new IconResource<>(DMNImageResources.INSTANCE.connectors()));
+            BS3IconTypeGlyph.create(IconType.ANCHOR));
+        put(Categories.MISCELLANEOUS,
+            BS3IconTypeGlyph.create(IconType.AMBULANCE));
     }};
-
-    protected DMNBS3PaletteViewFactory() {
-        this(null);
-    }
-
-    @Inject
-    public DMNBS3PaletteViewFactory(final ShapeManager shapeManager) {
-        super(shapeManager);
-    }
 
     @Override
     protected Class<?> getDefinitionSetType() {
@@ -53,17 +47,7 @@ public class DMNBS3PaletteViewFactory extends BindableBS3PaletteGlyphViewFactory
     }
 
     @Override
-    protected Class<? extends IconRenderer> getPaletteIconRendererType() {
-        return SVGIconRenderer.class;
-    }
-
-    @Override
-    protected Map<String, IconResource> getCategoryIconResources() {
-        return CATEGORY_RENDERER_SETTINGS;
-    }
-
-    @Override
-    protected Map<String, IconResource> getDefinitionIconResources() {
-        return Collections.emptyMap();
+    protected Map<String, Glyph> getCategoryGlyphs() {
+        return CATEGORY_GLYPHS;
     }
 }

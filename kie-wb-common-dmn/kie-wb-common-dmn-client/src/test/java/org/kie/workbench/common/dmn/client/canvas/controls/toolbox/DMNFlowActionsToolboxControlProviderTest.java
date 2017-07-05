@@ -98,7 +98,7 @@ public class DMNFlowActionsToolboxControlProviderTest extends BaseDMNFlowActions
                                                 eq(node),
                                                 anyInt(),
                                                 anyInt())).thenReturn(Collections.singleton(Association.class.getName()));
-        when(defaultToolboxCommandFactory.newConnectorCommand()).thenReturn(newConnectorCommand);
+        when(defaultToolboxCommandFactory.newConnectorToolboxCommand()).thenReturn(newConnectorCommand);
 
         final List<ToolboxCommand<AbstractCanvasHandler, ?>> commands = provider.getCommands(context,
                                                                                              node);
@@ -121,7 +121,7 @@ public class DMNFlowActionsToolboxControlProviderTest extends BaseDMNFlowActions
                                                 eq(node),
                                                 anyInt(),
                                                 anyInt())).thenReturn(Collections.singleton(Association.class.getName()));
-        when(defaultToolboxCommandFactory.newConnectorCommand()).thenReturn(newConnectorCommand);
+        when(defaultToolboxCommandFactory.newConnectorToolboxCommand()).thenReturn(newConnectorCommand);
 
         final NewNodeCommand newNodeCommand = mock(NewNodeCommand.class);
         when(commonLookups.getAllowedTargetDefinitions(eq(DMNDefinitionSet.class.getName()),
@@ -130,7 +130,7 @@ public class DMNFlowActionsToolboxControlProviderTest extends BaseDMNFlowActions
                                                        eq(Association.class.getName()),
                                                        anyInt(),
                                                        anyInt())).thenReturn(Collections.singleton(new Decision.DecisionBuilder().build()));
-        when(defaultToolboxCommandFactory.newNodeCommand()).thenReturn(newNodeCommand);
+        when(defaultToolboxCommandFactory.newNodeToolboxCommand()).thenReturn(newNodeCommand);
 
         final List<ToolboxCommand<AbstractCanvasHandler, ?>> commands = provider.getCommands(context,
                                                                                              node);
@@ -151,5 +151,4 @@ public class DMNFlowActionsToolboxControlProviderTest extends BaseDMNFlowActions
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getDefinitionSetId()).thenReturn(DMNDefinitionSet.class.getName());
     }
-
 }

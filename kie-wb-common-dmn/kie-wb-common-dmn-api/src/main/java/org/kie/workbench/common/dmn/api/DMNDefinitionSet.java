@@ -33,7 +33,6 @@ import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.definition.annotation.DefinitionSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Description;
-import org.kie.workbench.common.stunner.core.definition.annotation.ShapeSet;
 import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanContain;
 import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
@@ -59,7 +58,6 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
 )
 @CanContain(roles = {"dmn_diagram"})
 @Occurrences(role = "dmn_diagram", max = 1)
-@ShapeSet
 public class DMNDefinitionSet {
 
     @Description
