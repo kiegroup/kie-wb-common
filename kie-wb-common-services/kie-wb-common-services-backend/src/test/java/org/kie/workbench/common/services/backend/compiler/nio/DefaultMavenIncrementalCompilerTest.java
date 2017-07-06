@@ -15,11 +15,15 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio;
 
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -131,4 +135,63 @@ public class DefaultMavenIncrementalCompilerTest {
 
         TestUtil.rm(tmpRoot.toFile());
     }
+
+    @Test
+    public void testCheckIncrementalWithDeleteClass() throws Exception {
+        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
+        TestUtil.copyTree(Paths.get("src/test/projects/dummy_incremental"),
+                          tmp);
+
+        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
+                Decorator.LOG_OUTPUT_AFTER);
+
+        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
+        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                     info,
+                                                                     new String[]{MavenArgs.COMPILE},
+                                                                     new HashMap<>(),
+                                                                     Optional.of("log"));
+        CompilationResponse res = compiler.compileSync(req);
+        Assert.assertTrue(res.isSuccessful());
+        List<String> fileNames = new ArrayList<>();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp+"/target/classes/dummy"))) {
+            for (Path path : directoryStream) {
+                fileNames.add(path.toString());
+            }
+        }
+        Assert.assertTrue(fileNames.size() == 2);
+
+        Assert.assertTrue(res.getMavenOutput().isPresent());
+        List<String> output = res.getMavenOutput().get();
+        Assert.assertTrue(isPresent(output, "Previous incremental build state does not exist, performing full build"));
+        Assert.assertTrue(isPresent(output, "Compiled 2 out of 2 sources "));
+
+        Files.delete(Paths.get(tmp+"/src/main/java/dummy/DummyA.java"));
+
+        res = compiler.compileSync(req);
+        Assert.assertTrue(res.isSuccessful());
+
+        fileNames = new ArrayList<>();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp+"/target/classes/dummy"))) {
+            for (Path path : directoryStream) {
+                fileNames.add(path.toString());
+            }
+        }
+
+        Assert.assertTrue(fileNames.size() == 1);
+        Assert.assertTrue(fileNames.get(0).endsWith("Dummy.class"));
+        Assert.assertTrue(res.getMavenOutput().isPresent());
+        output = res.getMavenOutput().get();
+        Assert.assertTrue(isPresent(output, "Performing incremental build"));
+        Assert.assertTrue(isPresent(output, "Compiled 1 out of 1 sources "));
+
+        TestUtil.rm(tmpRoot.toFile());
+    }
+
+    private boolean isPresent(List<String> output, String text){
+       return output.stream().anyMatch(s ->s.contains(text));
+    }
+
 }
