@@ -29,14 +29,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
-import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.NIOKieMavenCompilerFactory;
 
@@ -79,7 +76,6 @@ public class DefaultMavenKieIncrementalCompilerTest {
 
         TestUtil.rm(tmpRoot.toFile());
     }
-
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
@@ -141,16 +137,15 @@ public class DefaultMavenKieIncrementalCompilerTest {
     }
 
     @Test
-    public void testCheckIncrementalWithDeleteClass() throws Exception {
+    public void testCheckIncrementalWithChanges() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_incremental"),
                           tmp);
 
-        NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(
-                KieDecorator.LOG_OUTPUT_AFTER);
-
+        //compiler
+        NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
@@ -158,28 +153,44 @@ public class DefaultMavenKieIncrementalCompilerTest {
                                                                      new HashMap<>(),
                                                                      Optional.of("log"));
         CompilationResponse res = compiler.compileSync(req);
+
+        //checks
         Assert.assertTrue(res.isSuccessful());
         List<String> fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp+"/target/classes/dummy"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp + "/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
         }
         Assert.assertTrue(fileNames.size() == 2);
+        String dummyJava;
+        if (fileNames.get(0).endsWith("Dummy.class")) {
+            dummyJava = fileNames.get(0);
+        } else {
+            dummyJava = fileNames.get(1);
+        }
+        long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
         Assert.assertTrue(res.getMavenOutput().isPresent());
         List<String> output = res.getMavenOutput().get();
-        Assert.assertTrue(isPresent(output, "Previous incremental build state does not exist, performing full build"));
-        Assert.assertTrue(isPresent(output, "Compiled 2 out of 2 sources "));
+        Assert.assertTrue(isPresent(output,
+                                    "Previous incremental build state does not exist, performing full build"));
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 2 out of 2 sources "));
 
-        Files.delete(Paths.get(tmp+"/src/main/java/dummy/DummyA.java"));
+        Files.delete(Paths.get(tmp + "/src/main/java/dummy/DummyA.java"));
+        //overwrite the class with a new version with two additional methods and one int variable
+        Files.write(Paths.get(tmp + "/src/main/java/dummy/Dummy.java"),
+                    Files.readAllBytes(Paths.get("src/test/projects/Dummy.java")));
 
-
+        //second compilation
         res = compiler.compileSync(req);
+
+        //checks
         Assert.assertTrue(res.isSuccessful());
 
         fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp+"/target/classes/dummy"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp + "/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
@@ -187,15 +198,21 @@ public class DefaultMavenKieIncrementalCompilerTest {
 
         Assert.assertTrue(fileNames.size() == 1);
         Assert.assertTrue(fileNames.get(0).endsWith("Dummy.class"));
+        long dummyJavaSizeAfterChanges = Paths.get(dummyJava).toFile().length();
+        Assert.assertTrue(dummyJavaSize < dummyJavaSizeAfterChanges);
+
         Assert.assertTrue(res.getMavenOutput().isPresent());
         output = res.getMavenOutput().get();
-        Assert.assertTrue(isPresent(output, "Performing incremental build"));
-        Assert.assertTrue(isPresent(output, "Compiled 1 out of 1 sources "));
+        Assert.assertTrue(isPresent(output,
+                                    "Performing incremental build"));
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 1 out of 1 sources "));
 
         TestUtil.rm(tmpRoot.toFile());
     }
 
-    private boolean isPresent(List<String> output, String text){
-        return output.stream().anyMatch(s ->s.contains(text));
+    private boolean isPresent(List<String> output,
+                              String text) {
+        return output.stream().anyMatch(s -> s.contains(text));
     }
 }

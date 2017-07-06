@@ -79,7 +79,6 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
         InternalNIOTestUtil.rm(tmpRoot.toFile());
     }
 
-
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
@@ -149,7 +148,7 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
     }
 
     @Test
-    public void testCheckIncrementalWithDeleteClass() throws Exception {
+    public void testCheckIncrementalWithChanges() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
@@ -160,40 +159,55 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
                           temp);
         //end NIO
 
-        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(
-                Decorator.LOG_OUTPUT_AFTER);
-
+        //compiler
+        InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
                                                                                      new String[]{MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
                                                                                      Optional.of("log"));
-
         CompilationResponse res = compiler.compileSync(req);
+
+        //checks
         Assert.assertTrue(res.isSuccessful());
 
         List<String> fileNames = new ArrayList<>();
-        try (DirectoryStream<java.nio.file.Path> directoryStream = java.nio.file.Files.newDirectoryStream(java.nio.file.Paths.get(tmp+"/target/classes/dummy"))) {
+        try (DirectoryStream<java.nio.file.Path> directoryStream = java.nio.file.Files.newDirectoryStream(java.nio.file.Paths.get(tmp + "/target/classes/dummy"))) {
             for (java.nio.file.Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
         }
         Assert.assertTrue(fileNames.size() == 2);
+        String dummyJava;
+        if (fileNames.get(0).endsWith("Dummy.class")) {
+            dummyJava = fileNames.get(0);
+        } else {
+            dummyJava = fileNames.get(1);
+        }
+        long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
         Assert.assertTrue(res.getMavenOutput().isPresent());
         List<String> output = res.getMavenOutput().get();
-        Assert.assertTrue(isPresent(output, "Previous incremental build state does not exist, performing full build"));
-        Assert.assertTrue(isPresent(output, "Compiled 2 out of 2 sources "));
+        Assert.assertTrue(isPresent(output,
+                                    "Previous incremental build state does not exist, performing full build"));
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 2 out of 2 sources "));
 
-        Files.delete(Paths.get(tmp+"/src/main/java/dummy/DummyA.java"));
+        Files.delete(Paths.get(tmp + "/src/main/java/dummy/DummyA.java"));
+        //overwrite the class with a new version with two additional methods and one int variable
+        Files.write(Paths.get(tmp + "/src/main/java/dummy/Dummy.java"),
+                    Files.readAllBytes(Paths.get("src/test/projects/Dummy.java")));
 
+        //second compilation
         res = compiler.compileSync(req);
+
+        //checks
         Assert.assertTrue(res.isSuccessful());
 
         fileNames = new ArrayList<>();
         //nio
-        try (org.uberfire.java.nio.file.DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp+"/target/classes/dummy"))) {
+        try (org.uberfire.java.nio.file.DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp + "/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
@@ -201,16 +215,21 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
 
         Assert.assertTrue(fileNames.size() == 1);
         Assert.assertTrue(fileNames.get(0).endsWith("Dummy.class"));
+        long dummyJavaSizeAfterChanges = Paths.get(dummyJava).toFile().length();
+        Assert.assertTrue(dummyJavaSize < dummyJavaSizeAfterChanges);
+
         Assert.assertTrue(res.getMavenOutput().isPresent());
         output = res.getMavenOutput().get();
-        Assert.assertTrue(isPresent(output, "Performing incremental build"));
-        Assert.assertTrue(isPresent(output, "Compiled 1 out of 1 sources "));
-
+        Assert.assertTrue(isPresent(output,
+                                    "Performing incremental build"));
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 1 out of 1 sources "));
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
     }
 
-    private boolean isPresent(List<String> output, String text){
-        return output.stream().anyMatch(s ->s.contains(text));
+    private boolean isPresent(List<String> output,
+                              String text) {
+        return output.stream().anyMatch(s -> s.contains(text));
     }
 }

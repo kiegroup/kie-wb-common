@@ -35,10 +35,10 @@ import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
-import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOKieMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOTestUtil;
+import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.kie.InternalNIOKieMavenCompilerFactory;
 import org.uberfire.java.nio.file.Files;

@@ -11,14 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
-import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.NIOKieMavenCompilerFactory;
 

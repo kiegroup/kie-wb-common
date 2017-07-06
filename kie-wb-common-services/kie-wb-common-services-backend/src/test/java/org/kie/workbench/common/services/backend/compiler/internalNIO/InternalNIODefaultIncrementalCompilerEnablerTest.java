@@ -25,11 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
-
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultIncrementalCompilerEnabler;
-
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
