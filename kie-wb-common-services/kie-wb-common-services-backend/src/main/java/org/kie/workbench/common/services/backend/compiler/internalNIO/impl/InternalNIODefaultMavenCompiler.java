@@ -89,10 +89,12 @@ public class InternalNIODefaultMavenCompiler implements InternalNIOMavenCompiler
          problem:https://stackoverflow.com/questions/40587683/invocation-of-mavencli-fails-within-a-maven-plugin
          solution:https://dev.eclipse.org/mhonarc/lists/sisu-users/msg00063.html
          */
+
+        ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassWorld kieClassWorld = new ClassWorld("plexus.core",
                                                   getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(),
-                                  kieClassWorld);
+        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+        Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
             return new DefaultCompilationResponse(Boolean.TRUE);
         } else {
