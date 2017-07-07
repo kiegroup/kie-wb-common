@@ -17,7 +17,9 @@ package org.kie.workbench.common.services.backend.compiler.nio.impl;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
-
+/***
+ * Filter used with DirectoryStreams to avoid the load of hidden files
+ */
 public class DotFileFilter implements DirectoryStream.Filter<Path> {
 
     public DotFileFilter() {
