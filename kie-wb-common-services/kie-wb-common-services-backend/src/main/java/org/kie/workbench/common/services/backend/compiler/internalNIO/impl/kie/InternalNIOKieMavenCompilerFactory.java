@@ -24,7 +24,10 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieJGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieOutputLogAfterDecorator;
-
+/***
+ * Factory to create compilers based on the Internal Nio implementation with correct order of decorators to build Kie Projects
+ * working with the kie takari plugin
+ */
 public class InternalNIOKieMavenCompilerFactory {
 
     private static Map<String, InternalNIOKieMavenCompiler> compilers = new ConcurrentHashMap<>();

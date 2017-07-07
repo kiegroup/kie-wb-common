@@ -24,6 +24,9 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.InternalNIOJGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.InternalNIOOutputLogAfterDecorator;
 
+/***
+ * Factory to create compilers based on the Internal Nio implementation with correct order of decorators
+ */
 public class InternalNIOMavenCompilerFactory {
 
     private static Map<String, InternalNIOMavenCompiler> compilers = new ConcurrentHashMap<>();

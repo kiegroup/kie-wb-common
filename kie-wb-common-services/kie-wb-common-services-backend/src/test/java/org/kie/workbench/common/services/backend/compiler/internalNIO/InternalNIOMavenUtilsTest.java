@@ -32,7 +32,7 @@ public class InternalNIOMavenUtilsTest {
 
     @Test
     public void presenceOfDepInThePrj() throws Exception {
-        InternalNIODefaultIncrementalCompilerEnabler compiler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
+        InternalNIODefaultIncrementalCompilerEnabler enabler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         List<String> pomList = new ArrayList<>();
         InternalNIOMavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"),
                                          pomList);

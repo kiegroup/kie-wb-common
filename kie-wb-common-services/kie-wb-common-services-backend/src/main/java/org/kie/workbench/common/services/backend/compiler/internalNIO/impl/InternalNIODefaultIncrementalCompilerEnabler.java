@@ -35,8 +35,6 @@ import org.uberfire.java.nio.file.Paths;
 
 public class InternalNIODefaultIncrementalCompilerEnabler implements InternalNIOIncrementalCompilerEnabler {
 
-    private static final Logger logger = LoggerFactory.getLogger(InternalNIODefaultIncrementalCompilerEnabler.class);
-
     private final String POM_NAME = "pom.xml";
 
     private InternalNIODefaultPomEditor editor;

@@ -25,6 +25,10 @@ import org.kie.workbench.common.services.backend.compiler.nio.decorators.kie.NIO
 import org.kie.workbench.common.services.backend.compiler.nio.decorators.kie.NIOKieJGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.nio.decorators.kie.NIOKieOutputLogAfterDecorator;
 
+/***
+ * Factory to create compilers based on NIO2 implementation with correct order of decorators to build Kie Projects
+ * working with the kie takari plugin
+ */
 public class NIOKieMavenCompilerFactory {
 
     private static Map<String, NIOKieMavenCompiler> compilers = new ConcurrentHashMap<>();
