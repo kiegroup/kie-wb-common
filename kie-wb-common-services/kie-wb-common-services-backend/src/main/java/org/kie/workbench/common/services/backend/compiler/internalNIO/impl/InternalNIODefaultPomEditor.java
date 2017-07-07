@@ -26,7 +26,7 @@ import org.apache.maven.model.Model;
 import org.kie.workbench.common.services.backend.compiler.PluginPresents;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
@@ -36,6 +36,9 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.StandardOpenOption;
 
+/***
+ * Default NIO2 specialization of the generic DefaultPomEditor
+ */
 public class InternalNIODefaultPomEditor extends DefaultPomEditor {
 
     public InternalNIODefaultPomEditor(Set<PomPlaceHolder> history,

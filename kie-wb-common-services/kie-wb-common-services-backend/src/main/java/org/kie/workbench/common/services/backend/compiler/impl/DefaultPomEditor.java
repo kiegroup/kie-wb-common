@@ -40,6 +40,9 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * IS the main actor in the changes to the build tag in the poms , it contains the methods common to the NIO2 and NIO2Internal impl
+ */
 public class DefaultPomEditor implements PomEditor {
 
     public final String POM = "pom";
