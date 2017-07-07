@@ -18,9 +18,7 @@ package org.kie.workbench.common.services.backend.builder.core;
 
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.inject.Instance;
@@ -40,17 +38,6 @@ import org.guvnor.common.services.project.service.POMService;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.m2repo.backend.server.ExtendedM2RepoService;
 import org.jboss.errai.security.shared.api.identity.User;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
-import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.NIOKieMavenCompilerFactory;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.slf4j.Logger;
@@ -99,11 +86,6 @@ public class BuildHelper {
     }
 
     public BuildResult build( final Project project ) {
-        return oldBehaviour(project);
-    }
-
-    private BuildResult oldBehaviour(final Project project)
-    {
         try {
             cache.invalidateCache( project );
             Builder builder = cache.assertBuilder( project );
@@ -120,11 +102,10 @@ public class BuildHelper {
 
         } catch ( Exception e ) {
             logger.error( e.getMessage( ),
-                          e );
+                    e );
             return new BuildResult( null, buildExceptionResults( e, project.getPom( ).getGav( ) ) );
         }
     }
-
 
     public IncrementalBuildResults addPackageResource( final Path resource ) {
         try {
@@ -322,9 +303,10 @@ public class BuildHelper {
             final POM pom = pomService.load( project.getPomXMLPath( ) );
             if ( results.getErrorMessages( ).isEmpty( ) ) {
                 final Builder builder = cache.assertBuilder( project );
-                /*final InternalKieModule kieModule = ( InternalKieModule ) builder.getKieModule( );
-                final ByteArrayInputStream input = new ByteArrayInputStream( kieModule.getBytes( ) );//this return the resources folder
-                m2RepoService.deployJar( input,pom.getGav( ) ); thios is broken because the input points to a folder not a jar */
+                final InternalKieModule kieModule = ( InternalKieModule ) builder.getKieModule( );
+                final ByteArrayInputStream input = new ByteArrayInputStream( kieModule.getBytes( ) );
+                m2RepoService.deployJar( input,
+                        pom.getGav( ) );
                 message.append( " Maven: SUCCESSFUL" );
                 if ( !suppressHandlers ) {
                     for ( PostBuildHandler handler : handlers ) {
