@@ -16,7 +16,14 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+/***
+ * Used to validate a state of an object in different implementations
+ */
 public interface Valid {
 
+    /***
+     * Signals if is in a valid state using an internal algo to check a particular implementations
+     * @return
+     */
     Boolean isValid();
 }
