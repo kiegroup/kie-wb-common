@@ -25,6 +25,9 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * Class used to provides JGit functionalities to the JGIT compiler decorators
+ */
 public class JGitUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalNIOJGITCompilerBeforeDecorator.class);

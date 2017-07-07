@@ -16,8 +16,9 @@
 
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import java.util.Arrays;
-
+/***
+ * Used to store informations of each pom founded in a prj
+ */
 public class PomPlaceHolder {
 
     private String filePath;
@@ -26,7 +27,7 @@ public class PomPlaceHolder {
     private String version;
     private String packaging;
     private Boolean isValid;
-    private byte[] rawContent;
+
 
     public PomPlaceHolder() {
         this.isValid = Boolean.FALSE;
@@ -57,7 +58,6 @@ public class PomPlaceHolder {
         this.version = version;
         this.packaging = packaging;
         this.isValid = Boolean.TRUE;
-        this.rawContent = content.clone();
     }
 
     /**
@@ -88,10 +88,6 @@ public class PomPlaceHolder {
         return packaging;
     }
 
-    /*public byte[] getRawContent() {
-        return rawContent.clone();
-    }*/
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("PomPlaceHolder{");
@@ -101,7 +97,6 @@ public class PomPlaceHolder {
         sb.append(", version='").append(version).append('\'');
         sb.append(", packaging='").append(packaging).append('\'');
         sb.append(", isValid=").append(isValid);
-        sb.append(", rawContent=").append(Arrays.toString(rawContent));
         sb.append('}');
         return sb.toString();
     }
