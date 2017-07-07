@@ -17,6 +17,9 @@ package org.kie.workbench.common.services.backend.compiler.nio;
 
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
+/***
+ * It defines the behaviour of a NIO2 compiler on Kie projects
+ */
 public interface NIOKieMavenCompiler {
 
     /**
