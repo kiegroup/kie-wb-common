@@ -18,7 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
 import java.util.Optional;
 
-import org.kie.workbench.common.services.backend.compiler.external339.KieCliRequest;
+import org.kie.workbench.common.services.backend.compiler.external339.AFCliRequest;
 import org.uberfire.java.nio.file.Path;
 
 /**
@@ -28,7 +28,7 @@ public interface InternalNIOCompilationRequest {
 
     Optional<Path> getPomFile();
 
-    KieCliRequest getKieCliRequest();
+    AFCliRequest getKieCliRequest();
 
     InternalNIOWorkspaceCompilationInfo getInfo();
 

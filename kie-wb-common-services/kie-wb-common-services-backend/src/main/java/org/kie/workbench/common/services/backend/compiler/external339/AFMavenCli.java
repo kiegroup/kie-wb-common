@@ -108,14 +108,15 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 /**
  * Modified from Maven to permit builds without installations and var envs.
+ * original version https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/MavenCli.html
  */
-public class KieMavenCli {
+public class AFMavenCli {
 
     public static final String MULTIMODULE_PROJECT_DIRECTORY = "maven.multiModuleProjectDirectory";
     public static final String userHome = System.getProperty("user.home");
     public static final Path userMavenConfigurationHome = Paths.get(userHome,
                                                                     ".m2");
-    private static final Logger logger = LoggerFactory.getLogger(KieMavenCli.class);
+    private static final Logger logger = LoggerFactory.getLogger(AFMavenCli.class);
     private static final String EXT_CLASS_PATH = "maven.ext.class.path";
 
     private static final String EXTENSIONS_FILENAME = ".mvn/extensions.xml";
@@ -138,18 +139,18 @@ public class KieMavenCli {
 
     private DefaultSecDispatcher dispatcher;
 
-    private Map<String, KieConfigurationProcessor> configurationProcessors;
+    private Map<String, AFConfigurationProcessor> configurationProcessors;
 
     private PrintStream output;
 
     private FileSystemImpl fs;
 
-    public KieMavenCli(FileSystemImpl fs) {
+    public AFMavenCli(FileSystemImpl fs) {
         this.output = System.out;
         this.fs = fs;
     }
 
-    public KieMavenCli(PrintStream output) {
+    public AFMavenCli(PrintStream output) {
         this.output = output;
     }
 
@@ -210,13 +211,13 @@ public class KieMavenCli {
         // These override any corresponding properties set on the command line
         // ----------------------------------------------------------------------
 
-        Properties buildProperties = KieCLIReportingUtils.getBuildProperties();
+        Properties buildProperties = AFCLIReportingUtils.getBuildProperties();
 
-        String mavenVersion = buildProperties.getProperty(KieCLIReportingUtils.BUILD_VERSION_PROPERTY);
+        String mavenVersion = buildProperties.getProperty(AFCLIReportingUtils.BUILD_VERSION_PROPERTY);
         systemProperties.setProperty("maven.version",
                                      mavenVersion);
 
-        String mavenBuildVersion = KieCLIReportingUtils.createMavenVersionString(buildProperties);
+        String mavenBuildVersion = AFCLIReportingUtils.createMavenVersionString(buildProperties);
         systemProperties.setProperty("maven.build.version",
                                      mavenBuildVersion);
     }
@@ -247,7 +248,7 @@ public class KieMavenCli {
                            value);
     }
 
-    public int doMain(KieCliRequest cliRequest,
+    public int doMain(AFCliRequest cliRequest,
                       ClassWorld classWorld) {
 
         PlexusContainer localContainer = null;
@@ -273,17 +274,17 @@ public class KieMavenCli {
             return 1;
         } catch (BuildAbort e) {
             e.getStackTrace();
-            KieCLIReportingUtils.showError(slf4jLogger,
-                                           "ABORTED",
-                                           e,
-                                           cliRequest.isShowErrors());
+            AFCLIReportingUtils.showError(slf4jLogger,
+                                          "ABORTED",
+                                          e,
+                                          cliRequest.isShowErrors());
             return 2;
         } catch (Exception e) {
             e.getStackTrace();
-            KieCLIReportingUtils.showError(slf4jLogger,
-                                           "Error executing Maven.",
-                                           e,
-                                           cliRequest.isShowErrors());
+            AFCLIReportingUtils.showError(slf4jLogger,
+                                          "Error executing Maven.",
+                                          e,
+                                          cliRequest.isShowErrors());
 
             return 1;
         } finally {
@@ -294,7 +295,7 @@ public class KieMavenCli {
         }
     }
 
-    protected void initialize(KieCliRequest cliRequest)
+    protected void initialize(AFCliRequest cliRequest)
             throws ExitException {
 
         if (cliRequest.getWorkingDirectory() == null) {
@@ -314,7 +315,7 @@ public class KieMavenCli {
         }
     }
 
-    protected void cli(KieCliRequest cliRequest)
+    protected void cli(AFCliRequest cliRequest)
             throws Exception {
         //
         // Parsing errors can happen during the processing of the arguments and we prefer not having to check if
@@ -372,12 +373,12 @@ public class KieMavenCli {
         }
 
         if (cliRequest.getCommandLine().hasOption(CLIManager.VERSION)) {
-            System.out.println(KieCLIReportingUtils.showVersion());
+            System.out.println(AFCLIReportingUtils.showVersion());
             throw new ExitException(0);
         }
     }
 
-    protected void logging(KieCliRequest cliRequest) {
+    protected void logging(AFCliRequest cliRequest) {
         cliRequest.setDebug(cliRequest.getCommandLine().hasOption(CLIManager.DEBUG));
         cliRequest.setQuiet(!cliRequest.isDebug() && cliRequest.getCommandLine().hasOption(CLIManager.QUIET));
         cliRequest.setShowErrors(cliRequest.isDebug() || cliRequest.getCommandLine().hasOption(CLIManager.ERRORS));
@@ -413,13 +414,13 @@ public class KieMavenCli {
         slf4jLogger = slf4jLoggerFactory.getLogger(this.getClass().getName());
     }
 
-    protected void version(KieCliRequest cliRequest) {
+    protected void version(AFCliRequest cliRequest) {
         if (cliRequest.isDebug() || cliRequest.getCommandLine().hasOption(CLIManager.SHOW_VERSION)) {
-            System.out.println(KieCLIReportingUtils.showVersion());
+            System.out.println(AFCLIReportingUtils.showVersion());
         }
     }
 
-    protected void commands(KieCliRequest cliRequest) {
+    protected void commands(AFCliRequest cliRequest) {
         if (cliRequest.isShowErrors()) {
             slf4jLogger.info("Error stacktraces are turned on.");
         }
@@ -431,13 +432,13 @@ public class KieMavenCli {
         }
     }
 
-    protected void properties(KieCliRequest cliRequest) {
+    protected void properties(AFCliRequest cliRequest) {
         populateProperties(cliRequest.getCommandLine(),
                            cliRequest.getSystemProperties(),
                            cliRequest.getUserProperties());
     }
 
-    protected PlexusContainer container(KieCliRequest cliRequest,
+    protected PlexusContainer container(AFCliRequest cliRequest,
                                         ClassWorld classWorld)
             throws Exception {
 
@@ -525,7 +526,7 @@ public class KieMavenCli {
         data.put("userProperties",
                  cliRequest.getUserProperties());
         data.put("versionProperties",
-                 KieCLIReportingUtils.getBuildProperties());
+                 AFCLIReportingUtils.getBuildProperties());
 
         eventSpyDispatcher.init(eventSpyContext);
 
@@ -537,7 +538,7 @@ public class KieMavenCli {
 
         modelProcessor = createModelProcessor(container);
 
-        configurationProcessors = container.lookupMap(KieConfigurationProcessor.class);
+        configurationProcessors = container.lookupMap(AFConfigurationProcessor.class);
 
         toolchainsBuilder = container.lookup(ToolchainsBuilder.class);
 
@@ -546,7 +547,7 @@ public class KieMavenCli {
         return container;
     }
 
-    protected List<CoreExtensionEntry> loadCoreExtensions(KieCliRequest cliRequest,
+    protected List<CoreExtensionEntry> loadCoreExtensions(AFCliRequest cliRequest,
                                                           ClassRealm containerRealm,
                                                           Set<String> providedArtifacts) {
         if (cliRequest.getMultiModuleProjectDirectory() == null) {
@@ -591,7 +592,7 @@ public class KieMavenCli {
 
                 executionRequestPopulator = container.lookup(MavenExecutionRequestPopulator.class);
 
-                configurationProcessors = container.lookupMap(KieConfigurationProcessor.class);
+                configurationProcessors = container.lookupMap(AFConfigurationProcessor.class);
 
                 configure(cliRequest);
 
@@ -671,7 +672,7 @@ public class KieMavenCli {
         return coreRealm;
     }
 
-    protected List<File> parseExtClasspath(KieCliRequest cliRequest) {
+    protected List<File> parseExtClasspath(AFCliRequest cliRequest) {
         String extClassPath = cliRequest.getUserProperties().getProperty(EXT_CLASS_PATH);
         if (extClassPath == null) {
             extClassPath = cliRequest.getSystemProperties().getProperty(EXT_CLASS_PATH);
@@ -694,7 +695,7 @@ public class KieMavenCli {
         return jars;
     }
 
-    protected void repository(KieCliRequest cliRequest)
+    protected void repository(AFCliRequest cliRequest)
             throws Exception {
         if (cliRequest.getCommandLine().hasOption(CLIManager.LEGACY_LOCAL_REPOSITORY)
                 || Boolean.getBoolean("maven.legacyLocalRepo")) {
@@ -702,7 +703,7 @@ public class KieMavenCli {
         }
     }
 
-    protected int execute(KieCliRequest cliRequest) throws MavenExecutionRequestPopulationException {
+    protected int execute(AFCliRequest cliRequest) throws MavenExecutionRequestPopulationException {
         MavenExecutionRequest request = executionRequestPopulator.populateDefaults(cliRequest.getRequest());
 
         eventSpyDispatcher.onEvent(request);
@@ -818,7 +819,7 @@ public class KieMavenCli {
         }
     }
 
-    protected void configure(KieCliRequest cliRequest)
+    protected void configure(AFCliRequest cliRequest)
             throws Exception {
 
         cliRequest.getRequest().setEventSpyDispatcher(eventSpyDispatcher);
@@ -827,13 +828,13 @@ public class KieMavenCli {
 
         if (userSuppliedConfigurationProcessorCount == 0) {
 
-            configurationProcessors.get(KieConfigurationProcessor.HINT).process(cliRequest);
+            configurationProcessors.get(AFConfigurationProcessor.HINT).process(cliRequest);
         } else if (userSuppliedConfigurationProcessorCount == 1) {
 
-            for (Entry<String, KieConfigurationProcessor> entry : configurationProcessors.entrySet()) {
+            for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(KieConfigurationProcessor.HINT)) {
-                    KieConfigurationProcessor configurationProcessor = entry.getValue();
+                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                    AFConfigurationProcessor configurationProcessor = entry.getValue();
                     configurationProcessor.process(cliRequest);
                 }
             }
@@ -841,10 +842,10 @@ public class KieMavenCli {
             StringBuffer sb = new StringBuffer(
                     String.format("%nThere can only be one user supplied ConfigurationProcessor, there are %s:%n%n",
                                   userSuppliedConfigurationProcessorCount));
-            for (Entry<String, KieConfigurationProcessor> entry : configurationProcessors.entrySet()) {
+            for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(KieConfigurationProcessor.HINT)) {
-                    KieConfigurationProcessor configurationProcessor = entry.getValue();
+                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                    AFConfigurationProcessor configurationProcessor = entry.getValue();
                     sb.append(String.format("%s%n",
                                             configurationProcessor.getClass().getName()));
                 }
@@ -855,7 +856,7 @@ public class KieMavenCli {
     }
 
     @SuppressWarnings("checkstyle:methodlength")
-    protected void toolchains(KieCliRequest cliRequest)
+    protected void toolchains(AFCliRequest cliRequest)
             throws Exception {
 
         Path userToolchainsFile;
@@ -937,7 +938,7 @@ public class KieMavenCli {
         return defaultLocation.toString();
     }
 
-    protected MavenExecutionRequest populateRequest(KieCliRequest cliRequest) {
+    protected MavenExecutionRequest populateRequest(AFCliRequest cliRequest) {
         return populateRequest(cliRequest,
                                cliRequest.getRequest());
     }
@@ -946,7 +947,7 @@ public class KieMavenCli {
     // System properties handling
     // ----------------------------------------------------------------------
 
-    protected MavenExecutionRequest populateRequest(KieCliRequest cliRequest,
+    protected MavenExecutionRequest populateRequest(AFCliRequest cliRequest,
                                                     MavenExecutionRequest request) {
 
         CommandLine commandLine = cliRequest.getCommandLine();

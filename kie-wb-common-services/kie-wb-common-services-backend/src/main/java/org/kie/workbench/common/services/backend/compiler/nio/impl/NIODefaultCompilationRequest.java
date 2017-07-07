@@ -23,12 +23,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.kie.workbench.common.services.backend.compiler.external339.KieCliRequest;
+import org.kie.workbench.common.services.backend.compiler.external339.AFCliRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 
 public class NIODefaultCompilationRequest implements NIOCompilationRequest {
 
-    private KieCliRequest req;
+    private AFCliRequest req;
     private NIOWorkspaceCompilationInfo info;
     private String requestUUID;
     private Map map;
@@ -53,11 +53,11 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
         String[] internalArgs = getInternalArgs(args,
                                                 logFile);
 
-        this.req = new KieCliRequest(info.getPrjPath().toAbsolutePath().toString(),
-                                     internalArgs,
-                                     this.map,
-                                     this.requestUUID,
-                                     logFile);
+        this.req = new AFCliRequest(info.getPrjPath().toAbsolutePath().toString(),
+                                    internalArgs,
+                                    this.map,
+                                    this.requestUUID,
+                                    logFile);
     }
 
     /**
@@ -106,12 +106,12 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
         return info.getEnhancedMainPomFile();
     }
 
-    public KieCliRequest getReq() {
+    public AFCliRequest getReq() {
         return req;
     }
 
     @Override
-    public KieCliRequest getKieCliRequest() {
+    public AFCliRequest getKieCliRequest() {
         return req;
     }
 

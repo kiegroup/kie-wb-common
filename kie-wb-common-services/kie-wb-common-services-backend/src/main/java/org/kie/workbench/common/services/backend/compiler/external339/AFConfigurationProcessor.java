@@ -50,9 +50,10 @@ import org.slf4j.Logger;
 
 /**
  * Used to open the API of the maven embedder
+ * Original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/configuration/ConfigurationProcessor.html
  */
-@Component(role = ConfigurationProcessor.class, hint = KieConfigurationProcessor.HINT)
-public class KieConfigurationProcessor {
+@Component(role = ConfigurationProcessor.class, hint = AFConfigurationProcessor.HINT)
+public class AFConfigurationProcessor {
 
     public static final String HINT = "settings";
 
@@ -71,8 +72,8 @@ public class KieConfigurationProcessor {
     @Requirement
     private SettingsDecrypter settingsDecrypter;
 
-    public KieConfigurationProcessor(Path userHome,
-                                     Path mavenHome) {
+    public AFConfigurationProcessor(Path userHome,
+                                    Path mavenHome) {
         USER_HOME = userHome;
         MAVEN_HOME = mavenHome;
         USER_MAVEN_CONFIGURATION_HOME = Paths.get(USER_HOME.toString(),
@@ -112,7 +113,7 @@ public class KieConfigurationProcessor {
         return DEFAULT_GLOBAL_SETTINGS_FILE;
     }
 
-    public void process(KieCliRequest cliRequest) throws Exception {
+    public void process(AFCliRequest cliRequest) throws Exception {
         CommandLine commandLine = cliRequest.getCommandLine();
         String workingDirectory = cliRequest.getWorkingDirectory();
         MavenExecutionRequest request = cliRequest.getRequest();

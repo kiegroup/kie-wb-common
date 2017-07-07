@@ -21,14 +21,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.kie.workbench.common.services.backend.compiler.external339.KieCliRequest;
+import org.kie.workbench.common.services.backend.compiler.external339.AFCliRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
 import org.uberfire.java.nio.file.Path;
 
 public class InternalNIODefaultCompilationRequest implements InternalNIOCompilationRequest {
 
-    private KieCliRequest req;
+    private AFCliRequest req;
     private InternalNIOWorkspaceCompilationInfo info;
     private String requestUUID;
     private Map map;
@@ -53,11 +53,11 @@ public class InternalNIODefaultCompilationRequest implements InternalNIOCompilat
 
         String[] internalArgs = getInternalArgs(args,
                                                 logFile);
-        this.req = new KieCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                     internalArgs,
-                                     this.map,
-                                     this.requestUUID,
-                                     logFile);
+        this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
+                                    internalArgs,
+                                    this.map,
+                                    this.requestUUID,
+                                    logFile);
     }
 
     private String[] getInternalArgs(String[] args,
@@ -97,12 +97,12 @@ public class InternalNIODefaultCompilationRequest implements InternalNIOCompilat
         return info.getEnhancedMainPomFile();
     }
 
-    public KieCliRequest getReq() {
+    public AFCliRequest getReq() {
         return req;
     }
 
     @Override
-    public KieCliRequest getKieCliRequest() {
+    public AFCliRequest getKieCliRequest() {
         return req;
     }
 

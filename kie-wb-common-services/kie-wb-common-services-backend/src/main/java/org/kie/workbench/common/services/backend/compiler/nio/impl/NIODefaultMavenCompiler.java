@@ -21,7 +21,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.FileSystemImpl;
-import org.kie.workbench.common.services.backend.compiler.external339.KieMavenCli;
+import org.kie.workbench.common.services.backend.compiler.external339.AFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.ProcessedPoms;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
@@ -44,12 +44,12 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
 
     private static final Logger logger = LoggerFactory.getLogger(NIODefaultMavenCompiler.class);
 
-    private KieMavenCli cli;
+    private AFMavenCli cli;
 
     private NIOIncrementalCompilerEnabler enabler;
 
     public NIODefaultMavenCompiler() {
-        cli = new KieMavenCli(FileSystemImpl.NIO);
+        cli = new AFMavenCli(FileSystemImpl.NIO);
         enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
     }
 

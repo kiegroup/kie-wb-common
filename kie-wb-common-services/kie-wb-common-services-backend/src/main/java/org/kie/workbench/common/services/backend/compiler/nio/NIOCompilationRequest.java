@@ -19,7 +19,7 @@ package org.kie.workbench.common.services.backend.compiler.nio;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import org.kie.workbench.common.services.backend.compiler.external339.KieCliRequest;
+import org.kie.workbench.common.services.backend.compiler.external339.AFCliRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
 
 /**
@@ -29,7 +29,7 @@ public interface NIOCompilationRequest {
 
     Optional<Path> getPomFile();
 
-    KieCliRequest getKieCliRequest();
+    AFCliRequest getKieCliRequest();
 
     NIOWorkspaceCompilationInfo getInfo();
 

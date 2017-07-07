@@ -29,8 +29,9 @@ import org.slf4j.Logger;
 
 /**
  * Used to open the API of the maven embedder
+ * original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/CLIReportingUtils.html
  */
-public class KieCLIReportingUtils {
+public class AFCLIReportingUtils {
 
     // CHECKSTYLE_OFF: MagicNumber
     public static final long MB = 1024 * 1024;
@@ -99,7 +100,7 @@ public class KieCLIReportingUtils {
     static Properties getBuildProperties() {
         Properties properties = new Properties();
 
-        try (InputStream resourceAsStream = KieMavenCli.class.getResourceAsStream(
+        try (InputStream resourceAsStream = AFMavenCli.class.getResourceAsStream(
                 "/org/apache/maven/messages/build.properties")) {
 
             if (resourceAsStream != null) {

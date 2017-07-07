@@ -27,8 +27,9 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 
 /**
  * Used to open the API of Maven embedder
+ * original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/CliRequest.html
  */
-public class KieCliRequest {
+public class AFCliRequest {
 
     private String[] args;
     private CommandLine commandLine;
@@ -45,11 +46,11 @@ public class KieCliRequest {
     private String requestUUID;
     private Optional<String> logFile;
 
-    public KieCliRequest(String multiModuleProjectDirectory,
-                         String[] args,
-                         Map<String, Object> map,
-                         String requestUUID,
-                         Optional<String> logFile) {
+    public AFCliRequest(String multiModuleProjectDirectory,
+                        String[] args,
+                        Map<String, Object> map,
+                        String requestUUID,
+                        Optional<String> logFile) {
         this.multiModuleProjectDirectory = multiModuleProjectDirectory;
         this.workingDirectory = multiModuleProjectDirectory.toString();
         this.request = new DefaultMavenExecutionRequest();
