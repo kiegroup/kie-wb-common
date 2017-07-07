@@ -36,6 +36,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Compiler
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,9 +185,9 @@ public class DefaultPomEditor implements PomEditor {
         execution.setGoals(Arrays.asList(MavenArgs.COMPILE));
         execution.setPhase(MavenArgs.COMPILE);
 
-        Xpp3Dom compilerId = new Xpp3Dom(conf.get(ConfigurationKey.MAVEN_COMPILER_ID));
+        Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
         compilerId.setValue(compiler.name().toLowerCase());
-        Xpp3Dom configuration = new Xpp3Dom(conf.get(ConfigurationKey.MAVEN_PLUGIN_CONFIGURATION));
+        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
         configuration.addChild(compilerId);
 
         execution.setConfiguration(configuration);
@@ -196,20 +197,20 @@ public class DefaultPomEditor implements PomEditor {
     }
 
     protected void disableMavenCompilerAlreadyPresent(Plugin plugin) {
-        Xpp3Dom skipMain = new Xpp3Dom(conf.get(ConfigurationKey.MAVEN_SKIP_MAIN));
+        Xpp3Dom skipMain = new Xpp3Dom(MavenConfig.MAVEN_SKIP_MAIN);
         skipMain.setValue(TRUE);
-        Xpp3Dom skip = new Xpp3Dom(conf.get(ConfigurationKey.MAVEN_SKIP));
+        Xpp3Dom skip = new Xpp3Dom(MavenConfig.MAVEN_SKIP);
         skip.setValue(TRUE);
 
-        Xpp3Dom configuration = new Xpp3Dom(conf.get(ConfigurationKey.MAVEN_PLUGIN_CONFIGURATION));
+        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
         configuration.addChild(skipMain);
         configuration.addChild(skip);
 
         plugin.setConfiguration(configuration);
 
         PluginExecution exec = new PluginExecution();
-        exec.setId(conf.get(ConfigurationKey.MAVEN_DEFAULT_COMPILE));
-        exec.setPhase(conf.get(ConfigurationKey.MAVEN_PHASE_NONE));
+        exec.setId(MavenConfig.MAVEN_DEFAULT_COMPILE);
+        exec.setPhase(MavenConfig.MAVEN_PHASE_NONE);
         List<PluginExecution> executions = new ArrayList<>();
         executions.add(exec);
         plugin.setExecutions(executions);

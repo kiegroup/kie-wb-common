@@ -38,6 +38,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
@@ -83,10 +84,10 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
                                                                    String localRepo) {
         InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.NONE);
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(prjPath));
-        StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
+        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(localRepo,
                                                                                      info,
-                                                                                     new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
+                                                                                     new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                                      new HashMap<>(),
                                                                                      Optional.empty());
         CompilationResponse res = compiler.compileSync(req);
@@ -207,7 +208,7 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
 
     private Optional<ClassLoader> createClassloaderFromCpFiles(String prjPath) {
         List<URL> deps = readAllCpFilesAsUrls(prjPath,
-                                              MavenArgs.CLASSPATH_EXT);
+                                              MavenConfig.CLASSPATH_EXT);
         if (deps.isEmpty()) {
             return Optional.empty();
         } else {
@@ -317,7 +318,7 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         List<String> classPathFiles = new ArrayList<>();
         searchCPFiles(Paths.get(prjPath),
                       classPathFiles,
-                      MavenArgs.CLASSPATH_EXT,
+                      MavenConfig.CLASSPATH_EXT,
                       JAVA_ARCHIVE_RESOURCE_EXT);
         if (!classPathFiles.isEmpty()) {
             List<URI> deps = processScannedFiles(classPathFiles);
@@ -332,7 +333,7 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
     private List<URI> processScannedFiles(List<String> classPathFiles) {
         List<URI> deps = new ArrayList<>();
         for (String file : classPathFiles) {
-            if (file.endsWith(MavenArgs.CLASSPATH_EXT)) {
+            if (file.endsWith(MavenConfig.CLASSPATH_EXT)) {
                 //the .cpath will be processed to extract the deps of each module
                 deps.addAll(readFileAsURI(file));
             } else if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {

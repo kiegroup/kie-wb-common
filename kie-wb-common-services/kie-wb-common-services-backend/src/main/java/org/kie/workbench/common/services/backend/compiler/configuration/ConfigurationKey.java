@@ -18,11 +18,6 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 
 public enum ConfigurationKey {
 
-    MAVEN_PLUGIN_CONFIGURATION,
-    MAVEN_COMPILER_ID,
-    MAVEN_SKIP,
-    MAVEN_SKIP_MAIN,
-
     MAVEN_PLUGINS,
     MAVEN_COMPILER_PLUGIN,
     MAVEN_COMPILER_PLUGIN_VERSION,
@@ -30,9 +25,6 @@ public enum ConfigurationKey {
     ALTERNATIVE_COMPILER_PLUGINS,
     ALTERNATIVE_COMPILER_PLUGIN,
     ALTERNATIVE_COMPILER_PLUGIN_VERSION,
-
-    MAVEN_DEFAULT_COMPILE,
-    MAVEN_PHASE_NONE,
 
     KIE_MAVEN_PLUGINS,
     KIE_MAVEN_PLUGIN;

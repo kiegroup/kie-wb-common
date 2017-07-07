@@ -35,20 +35,6 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
     public ConfigurationStaticStrategy() {
         conf = new HashMap<>();
 
-        conf.put(ConfigurationKey.MAVEN_PLUGIN_CONFIGURATION,
-                 "configuration");
-        conf.put(ConfigurationKey.MAVEN_COMPILER_ID,
-                 "compilerId");
-        conf.put(ConfigurationKey.MAVEN_SKIP,
-                 "skip");
-        conf.put(ConfigurationKey.MAVEN_SKIP_MAIN,
-                 "skipMain");
-
-        conf.put(ConfigurationKey.MAVEN_DEFAULT_COMPILE,
-                 "default-compile");
-        conf.put(ConfigurationKey.MAVEN_PHASE_NONE,
-                 "none");
-
         conf.put(ConfigurationKey.MAVEN_PLUGINS,
                  "org.apache.maven.plugins");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN,

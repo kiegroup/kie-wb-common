@@ -31,6 +31,7 @@ import org.kie.workbench.common.services.backend.compiler.PluginPresents;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
@@ -112,10 +113,10 @@ public class NIODefaultPomEditor extends DefaultPomEditor {
     }
 
     private String[] addCreateClasspathMavenArgs(String[] args) {
-        StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
+        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         String[] newArgs = Arrays.copyOf(args,
                                          args.length + 2);
-        newArgs[args.length] = MavenArgs.DEPS_BUILD_CLASSPATH;
+        newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
         newArgs[args.length + 1] = sb.toString();
         return newArgs;
     }

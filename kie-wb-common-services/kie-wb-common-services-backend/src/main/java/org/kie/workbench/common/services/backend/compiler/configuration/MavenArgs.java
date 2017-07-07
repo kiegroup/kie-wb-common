@@ -44,11 +44,4 @@ public class MavenArgs {
 
     public static final String LOG = "-l";
 
-    public static final String DEPS_BUILD_CLASSPATH = "dependency:build-classpath";
-
-    public static String CLASSPATH_FILENAME = "module";
-
-    public static String CLASSPATH_EXT = ".cpath";
-
-    public static String MAVEN_DEP_PLUGING_OUTPUT_FILE = "-Dmdep.outputFile=";
 }
