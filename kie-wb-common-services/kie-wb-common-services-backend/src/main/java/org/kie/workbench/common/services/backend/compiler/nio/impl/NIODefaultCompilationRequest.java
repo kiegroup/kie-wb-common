@@ -26,6 +26,9 @@ import java.util.UUID;
 import org.kie.workbench.common.services.backend.compiler.external339.AFCliRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 
+/***
+ * NIO2 implementation of CompilationRequest, holds the information for the AFMavenCli
+ */
 public class NIODefaultCompilationRequest implements NIOCompilationRequest {
 
     private AFCliRequest req;

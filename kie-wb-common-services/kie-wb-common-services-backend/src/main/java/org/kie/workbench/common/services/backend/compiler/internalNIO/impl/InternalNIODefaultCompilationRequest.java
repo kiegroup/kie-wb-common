@@ -26,6 +26,9 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
 import org.uberfire.java.nio.file.Path;
 
+/***
+ * NIO2 internal implementation of CompilationRequest, holds the information for the AFMavenCli
+ */
 public class InternalNIODefaultCompilationRequest implements InternalNIOCompilationRequest {
 
     private AFCliRequest req;
