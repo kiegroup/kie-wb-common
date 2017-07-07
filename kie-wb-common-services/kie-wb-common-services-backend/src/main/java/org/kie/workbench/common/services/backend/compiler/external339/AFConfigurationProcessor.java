@@ -86,7 +86,6 @@ public class AFConfigurationProcessor {
                                                  "conf/settings.xml");
     }
 
-    //@TODO check if it's necessary with the nio2 impl
     static Path resolvePath(Path file,
                             String workingDirectory) {
         return file == null ? null : (file.isAbsolute() ? file : (file.getFileName().startsWith(File.separator) ? file.toAbsolutePath() : (Paths.get(workingDirectory,
