@@ -5,12 +5,12 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompila
 import org.kie.workbench.common.services.backend.compiler.impl.LogUtils;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+/***
+ * After decorator to read and store the maven output into a List<String> in the CompilationResponse with NIO2 on a Kie Project
+ */
 public class NIOKieOutputLogAfterDecorator implements NIOKieCompilerDecorator {
 
-    private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
     private NIOKieMavenCompiler compiler;
 
     public NIOKieOutputLogAfterDecorator(NIOKieMavenCompiler compiler) {
