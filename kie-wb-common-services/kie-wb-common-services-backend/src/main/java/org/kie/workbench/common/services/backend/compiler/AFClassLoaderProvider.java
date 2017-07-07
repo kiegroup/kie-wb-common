@@ -21,7 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * 
+ * It creates classloaders or List<URI> with all dependencies requested, in some methods with or without transitive
+ * and with the jars produced by maven during the build
  */
 public interface AFClassLoaderProvider {
 
