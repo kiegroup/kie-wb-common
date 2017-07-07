@@ -22,7 +22,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.LogUtils;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOKieMavenCompiler;
 
-public class InternalNIOKieOutputLogAfterDecorator extends InternalNIOKieCompilerDecorator {
+public class InternalNIOKieOutputLogAfterDecorator implements InternalNIOKieCompilerDecorator {
 
     private InternalNIOKieMavenCompiler compiler;
 

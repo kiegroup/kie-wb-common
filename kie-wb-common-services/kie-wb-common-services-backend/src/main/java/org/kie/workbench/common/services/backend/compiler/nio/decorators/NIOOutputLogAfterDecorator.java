@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /***
  * After decorator to read and store the maven output into a List<String> in the CompilationResponse with NIO2 impl
  */
-public class NIOOutputLogAfterDecorator extends NIOCompilerDecorator {
+public class NIOOutputLogAfterDecorator implements NIOCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
     private NIOMavenCompiler compiler;

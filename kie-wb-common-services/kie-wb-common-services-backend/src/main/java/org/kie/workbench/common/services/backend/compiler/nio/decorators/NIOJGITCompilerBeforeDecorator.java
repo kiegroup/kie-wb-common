@@ -26,8 +26,10 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequ
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-public class NIOJGITCompilerBeforeDecorator extends NIOCompilerDecorator {
+/***
+ * Before decorator to update a git repo before the build on a Project with NIO2
+ */
+public class NIOJGITCompilerBeforeDecorator implements NIOCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(NIOJGITCompilerBeforeDecorator.class);
     private final String COMPILED_EXTENSION = ".class";

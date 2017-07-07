@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 /***
  * After decorator working with the NIO2 Internal impl, to read and store the Object created by the Kie takari plugin and placed in the CompilationResponse
  */
-public class InternalNIOKieAfterDecorator extends InternalNIOKieCompilerDecorator implements InternalNIOKieMavenCompiler {
+public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecorator, InternalNIOKieMavenCompiler {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalNIOKieAfterDecorator.class);
     private InternalNIOKieMavenCompiler compiler;
