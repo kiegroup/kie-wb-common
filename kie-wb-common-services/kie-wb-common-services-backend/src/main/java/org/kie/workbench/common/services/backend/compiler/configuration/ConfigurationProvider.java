@@ -18,7 +18,14 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 
 import java.util.Map;
 
+/***
+ * Define the behaviour of a Configuration provider
+ */
 public interface ConfigurationProvider {
 
+    /***
+     * Return a Map with Configurations keys for a specific implementation
+     * @return
+     */
     Map<ConfigurationKey, String> loadConfiguration();
 }
