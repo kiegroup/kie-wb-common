@@ -33,6 +33,9 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
+/***
+ * It process all the poms founded into a prj changing the build tag accordingly to the internal algo
+ */
 public class InternalNIODefaultIncrementalCompilerEnabler implements InternalNIOIncrementalCompilerEnabler {
 
     private final String POM_NAME = "pom.xml";
