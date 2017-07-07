@@ -17,6 +17,9 @@ package org.kie.workbench.common.services.backend.compiler.internalNIO;
 
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
+/***
+ * Define the behaviour of a NIO2 Internal compiler on KieProjects
+ */
 public interface InternalNIOKieMavenCompiler {
 
     /**
