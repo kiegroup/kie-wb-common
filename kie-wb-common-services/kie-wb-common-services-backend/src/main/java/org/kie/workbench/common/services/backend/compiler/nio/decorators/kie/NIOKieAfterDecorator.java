@@ -24,7 +24,9 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompile
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOClassLoaderProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/***
+ * After decorator working with the NIO2 , to read and store the Object created by the Kie takari plugin and placed in the CompilationResponse
+ */
 public class NIOKieAfterDecorator extends NIOKieCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
