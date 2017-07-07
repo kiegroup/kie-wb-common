@@ -22,7 +22,7 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
 
 /***
- * After decorator to read and store the maven output into a List<String> in the CompilationResponse
+ * After decorator to read and store the maven output into a List<String> in the CompilationResponse with NIO2 internal impl
  */
 public class InternalNIOOutputLogAfterDecorator extends InternalNIOCompilerDecorator {
 

@@ -18,6 +18,9 @@ import org.kie.workbench.common.services.backend.compiler.nio.decorators.kie.NIO
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * After decorator to read and store the maven output into a List<String> in the CompilationResponse with NIO2 impl
+ */
 public class NIOOutputLogAfterDecorator extends NIOCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
