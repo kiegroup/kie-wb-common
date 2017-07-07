@@ -8,7 +8,7 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompile
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NIOKieOutputLogAfterDecorator extends NIOKieCompilerDecorator {
+public class NIOKieOutputLogAfterDecorator implements NIOKieCompilerDecorator {
 
     private static final Logger logger = LoggerFactory.getLogger(NIOKieAfterDecorator.class);
     private NIOKieMavenCompiler compiler;

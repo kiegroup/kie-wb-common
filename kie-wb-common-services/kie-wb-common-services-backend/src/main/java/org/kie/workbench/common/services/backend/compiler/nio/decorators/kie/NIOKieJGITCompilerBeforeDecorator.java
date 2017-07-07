@@ -22,7 +22,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
 
-public class NIOKieJGITCompilerBeforeDecorator extends NIOKieCompilerDecorator {
+public class NIOKieJGITCompilerBeforeDecorator implements NIOKieCompilerDecorator {
 
     private NIOKieMavenCompiler compiler;
 

@@ -24,7 +24,7 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 /***
  * Before decorator to update a git repo before the build
  */
-public class InternalNIOJGITCompilerBeforeDecorator extends InternalNIOCompilerDecorator {
+public class InternalNIOJGITCompilerBeforeDecorator implements InternalNIOCompilerDecorator {
 
     private InternalNIOMavenCompiler compiler;
 

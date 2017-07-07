@@ -24,7 +24,7 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 /***
  * After decorator to read and store the maven output into a List<String> in the CompilationResponse with NIO2 internal impl
  */
-public class InternalNIOOutputLogAfterDecorator extends InternalNIOCompilerDecorator {
+public class InternalNIOOutputLogAfterDecorator implements InternalNIOCompilerDecorator {
 
     private InternalNIOMavenCompiler compiler;
 

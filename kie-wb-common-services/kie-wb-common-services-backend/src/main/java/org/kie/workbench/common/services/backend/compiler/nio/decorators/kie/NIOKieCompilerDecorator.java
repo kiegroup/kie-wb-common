@@ -17,7 +17,9 @@
 package org.kie.workbench.common.services.backend.compiler.nio.decorators.kie;
 
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
-
-public abstract class NIOKieCompilerDecorator implements NIOKieMavenCompiler {
+/***
+ * Extends the NIO2 Kie Compiler behaviour to the decorators
+ */
+public interface NIOKieCompilerDecorator extends NIOKieMavenCompiler {
 
 }
