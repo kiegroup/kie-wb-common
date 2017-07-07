@@ -31,7 +31,7 @@ import org.drools.compiler.kie.builder.impl.FileKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.KieClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
@@ -69,7 +69,7 @@ public class InternalNIOKieAfterDecorator extends InternalNIOKieCompilerDecorato
         InternalNIOKieAfterDecorator.KieTuple kieModuleTuple = readKieModule(req);
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
 
-            KieClassLoaderProvider provider = new InternalNIOClassLoaderProviderImpl();
+            AFClassLoaderProvider provider = new InternalNIOClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
             return new DefaultKieCompilationResponse(Boolean.TRUE,
                                                      (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),

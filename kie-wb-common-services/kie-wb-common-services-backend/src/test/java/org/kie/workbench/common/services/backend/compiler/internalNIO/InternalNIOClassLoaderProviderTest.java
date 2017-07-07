@@ -27,7 +27,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.KieClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
@@ -82,7 +82,7 @@ public class InternalNIOClassLoaderProviderTest {
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
-        KieClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
+        AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();
         InternalNIOMavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_classloader/"),
                                          pomList);
@@ -133,7 +133,7 @@ public class InternalNIOClassLoaderProviderTest {
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
-        KieClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
+        AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
 
         Optional<ClassLoader> clazzLoader = kieClazzLoaderProvider.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                           mavenRepo.toAbsolutePath().toString());
@@ -182,7 +182,7 @@ public class InternalNIOClassLoaderProviderTest {
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
-        KieClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
+        AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();
         InternalNIOMavenUtils.searchPoms(uberfireTmp,
                                          pomList);
@@ -216,7 +216,7 @@ public class InternalNIOClassLoaderProviderTest {
 
     @Test
     public void getClassloaderFromAllDependenciesTestSimple() {
-        KieClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
+        AFClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
         Optional<ClassLoader> classloaderOptional = kieClazzLoaderProvider.getClassloaderFromAllDependencies("src/test/projects/dummy_deps_simple",
                                                                                                              mavenRepo.toAbsolutePath().toString());
         assertTrue(classloaderOptional.isPresent());
@@ -227,7 +227,7 @@ public class InternalNIOClassLoaderProviderTest {
 
     @Test
     public void getClassloaderFromAllDependenciesTestComplex() {
-        KieClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
+        AFClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
         Optional<ClassLoader> classloaderOptional = kieClazzLoaderProvider.getClassloaderFromAllDependencies("src/test/projects/dummy_deps_complex",
                                                                                                              mavenRepo.toAbsolutePath().toString());
         assertTrue(classloaderOptional.isPresent());

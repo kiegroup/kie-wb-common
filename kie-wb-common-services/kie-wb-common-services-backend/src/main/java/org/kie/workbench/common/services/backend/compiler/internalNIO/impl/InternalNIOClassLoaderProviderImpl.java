@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.KieClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
@@ -53,7 +53,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-public class InternalNIOClassLoaderProviderImpl implements KieClassLoaderProvider {
+public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider {
 
     protected static final Logger logger = LoggerFactory.getLogger(InternalNIOClassLoaderProviderImpl.class);
     protected final DirectoryStream.Filter<Path> dotFileFilter = new DotFileFilter();
@@ -405,37 +405,6 @@ public class InternalNIOClassLoaderProviderImpl implements KieClassLoaderProvide
         return deps;
     }
 
-    public Optional<List<URI>> getURISFromAllDependencies(String prjPath,
-                                                          String localRepo,
-                                                          NIOMavenCompiler compiler,
-                                                          NIOWorkspaceCompilationInfo info) {
-
-        StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(localRepo,
-                                                                     info,
-                                                                     new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
-                                                                     new HashMap<>(),
-                                                                     Optional.empty());
-        CompilationResponse res = compiler.compileSync(req);
-        if (res.isSuccessful()) {
-            /** Maven dependency plugin is not able to append the modules' classpath using an absolute path in -Dmdep.outputFile,
-             it override each time and at the end only the last writted is present in  the file,
-             for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
-             * */
-            List<String> classPathFiles = new ArrayList<>();
-            searchCPFiles(Paths.get(prjPath),
-                          classPathFiles,
-                          MavenArgs.CLASSPATH_EXT,
-                          JAVA_ARCHIVE_RESOURCE_EXT);
-            if (!classPathFiles.isEmpty()) {
-                List<URI> deps = processScannedFiles(classPathFiles);
-                if (!deps.isEmpty()) {
-                    return Optional.of(deps);
-                }
-            }
-        }
-        return Optional.empty();
-    }
 
     private List<URL> addFilesURL(List<URL> targetModulesUrls) {
         List<URL> targetFiles = new ArrayList<>(targetModulesUrls.size());
