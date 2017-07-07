@@ -18,6 +18,9 @@ package org.kie.workbench.common.services.backend.compiler.internalNIO.impl;
 import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Path;
 
+/***
+ * Filter used with DirectoryStreams to avoid the load of hidden files
+ */
 public class DotFileFilter implements DirectoryStream.Filter<Path> {
 
     public DotFileFilter() {
