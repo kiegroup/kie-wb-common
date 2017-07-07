@@ -18,6 +18,9 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 
 import java.util.List;
 
+/***
+ * Contains the list of founded poms in a prj and a boolean about the correctness
+ */
 public class ProcessedPoms {
 
     private Boolean result;

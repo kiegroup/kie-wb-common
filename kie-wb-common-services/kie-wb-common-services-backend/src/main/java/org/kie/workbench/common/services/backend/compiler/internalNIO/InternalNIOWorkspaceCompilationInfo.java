@@ -21,6 +21,9 @@ import java.util.Optional;
 import org.eclipse.jgit.api.Git;
 import org.uberfire.java.nio.file.Path;
 
+/***
+ * Holds informations shared with the Internal NIO and Internal NIO Kie compilers and the Compilation Request/Response
+ */
 public class InternalNIOWorkspaceCompilationInfo {
 
     protected Path prjPath;
