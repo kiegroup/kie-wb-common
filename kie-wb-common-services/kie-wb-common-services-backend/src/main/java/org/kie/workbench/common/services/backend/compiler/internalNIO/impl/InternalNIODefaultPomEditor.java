@@ -37,7 +37,7 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.StandardOpenOption;
 
 /***
- * Default NIO2 specialization of the generic DefaultPomEditor
+ * Default NIO2 Internal impl specialization of the generic DefaultPomEditor
  */
 public class InternalNIODefaultPomEditor extends DefaultPomEditor {
 
@@ -114,12 +114,4 @@ public class InternalNIODefaultPomEditor extends DefaultPomEditor {
         }
     }
 
-    private String[] addCreateClasspathMavenArgs(String[] args) {
-        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
-        String[] newArgs = Arrays.copyOf(args,
-                                         args.length + 2);
-        newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
-        newArgs[args.length + 1] = sb.toString();
-        return newArgs;
-    }
 }

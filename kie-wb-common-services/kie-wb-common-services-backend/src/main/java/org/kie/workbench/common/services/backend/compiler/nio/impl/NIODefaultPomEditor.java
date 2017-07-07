@@ -35,7 +35,9 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
-
+/***
+ * Default NIO2 impl specialization of the generic DefaultPomEditor
+ */
 public class NIODefaultPomEditor extends DefaultPomEditor {
 
     public NIODefaultPomEditor(Set<PomPlaceHolder> history,
@@ -112,12 +114,5 @@ public class NIODefaultPomEditor extends DefaultPomEditor {
         }
     }
 
-    private String[] addCreateClasspathMavenArgs(String[] args) {
-        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
-        String[] newArgs = Arrays.copyOf(args,
-                                         args.length + 2);
-        newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
-        newArgs[args.length + 1] = sb.toString();
-        return newArgs;
-    }
+
 }
