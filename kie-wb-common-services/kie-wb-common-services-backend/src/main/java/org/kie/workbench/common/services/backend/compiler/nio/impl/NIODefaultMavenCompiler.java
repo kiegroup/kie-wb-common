@@ -34,11 +34,6 @@ import org.slf4j.LoggerFactory;
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
  * <p>
- * <p>
- * MavenCompiler compiler = new DefaultMavenCompiler(Paths.get("<path_to_maven_repo>"));
- * WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get("path_to_prj"), URI.create("git://<address></>:<port></>/<repo>"), compiler, cloned);
- * CompilationRequest req = new DefaultCompilationRequest(info, new String[]{MavenArgs.COMPILE});
- * CompilationResponse res = compiler.compileSync(req);
  */
 public class NIODefaultMavenCompiler implements NIOMavenCompiler {
 
