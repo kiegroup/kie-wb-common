@@ -32,10 +32,10 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequ
 import org.kie.workbench.common.services.backend.compiler.nio.NIOIncrementalCompilerEnabler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/***
+ * It process all the poms founded into a prj changing the build tag accordingly to the internal algo
+ */
 public class NIODefaultIncrementalCompilerEnabler implements NIOIncrementalCompilerEnabler {
-
-    private static final Logger logger = LoggerFactory.getLogger(NIODefaultIncrementalCompilerEnabler.class);
 
     private final String POM_NAME = "pom.xml";
 
