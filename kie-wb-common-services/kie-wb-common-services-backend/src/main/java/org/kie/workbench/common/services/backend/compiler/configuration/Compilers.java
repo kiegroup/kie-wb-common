@@ -16,14 +16,12 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+/***
+ * Compilers supported in the maven build
+ */
 public enum Compilers {
 
-    JAVAC("javac"),
-    JDT("jdt");
+    JAVAC,
+    JDT;
 
-    private final String compiler;
-
-    Compilers(String compiler) {
-        this.compiler = compiler;
-    }
 }
