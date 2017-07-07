@@ -23,6 +23,12 @@ import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 
+/***
+ * Default implementation of a Kie Compilation response,
+ * it contains a boolean flag as a result of the build, an optional String error message,
+ *  and an optional List<String> with the maven output
+ *
+ */
 public class DefaultKieCompilationResponse implements KieCompilationResponse {
 
     private Optional<KieModuleMetaInfo> kieModuleMetaInfo;

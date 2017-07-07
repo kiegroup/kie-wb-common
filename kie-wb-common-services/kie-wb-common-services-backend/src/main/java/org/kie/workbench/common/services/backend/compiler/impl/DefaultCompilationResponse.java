@@ -22,7 +22,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 
 /***
  * Default implementation of a basic (Non Kie) Compilation response,
- * it contains a booleag flag as a result of the build, an optional String error message,
+ * it contains a boolean flag as a result of the build, an optional String error message,
  *  and an optional List<String> with the maven output
  *
  */
