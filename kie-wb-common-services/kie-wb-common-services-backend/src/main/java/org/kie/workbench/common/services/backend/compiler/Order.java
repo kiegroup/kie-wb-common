@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+/***
+ * Used to order execution of implementations of the same interface in 
+ */
 public interface Order {
 
     Integer getOrder();
