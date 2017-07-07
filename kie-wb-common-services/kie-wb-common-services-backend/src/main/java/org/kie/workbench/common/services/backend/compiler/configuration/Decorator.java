@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+/***
+ * It contains all the types of decorators of a MavenCompiler provided with java projects
+ */
 public enum Decorator {
 
     JGIT_BEFORE,

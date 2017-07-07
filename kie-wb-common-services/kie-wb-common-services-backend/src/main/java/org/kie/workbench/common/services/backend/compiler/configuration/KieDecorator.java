@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+/***
+ * It contains all the types of decorator of a MavenCompiler provided with Kie projects
+ */
 public enum KieDecorator {
 
     NONE,
