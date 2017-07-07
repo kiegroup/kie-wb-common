@@ -31,7 +31,11 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.Inter
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Run maven with NIO2 internal impl on Kie projects with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
+ * to use Takari plugins like a black box
+ * <p>
+ */
 public class InternalNIOKieDefaultMavenCompiler implements InternalNIOKieMavenCompiler {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalNIODefaultMavenCompiler.class);
