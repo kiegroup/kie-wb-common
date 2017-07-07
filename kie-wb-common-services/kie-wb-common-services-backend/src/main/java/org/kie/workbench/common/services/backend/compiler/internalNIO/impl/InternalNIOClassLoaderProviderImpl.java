@@ -116,20 +116,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return buildResult(urls);
     }
 
-    /**
-     * Load the dependencies from the Poms, transitive included
-     */
-    public Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
-                                                                        String localRepo,
-                                                                        ClassLoader parent) {
-        List<String> poms = new ArrayList<>();
-        InternalNIOMavenUtils.searchPoms(Paths.get(prjPath),
-                                         poms);
-        List<URL> urls = getDependenciesURL(poms,
-                                            localRepo);
-        return buildResult(urls,
-                           parent);
-    }
 
     /**
      * Load the dependencies from the Poms, transitive included
@@ -141,17 +127,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return buildResult(urls);
     }
 
-    /**
-     * Load the dependencies from the Poms, transitive included
-     */
-    public Optional<ClassLoader> loadDependenciesClassloaderFromProject(List<String> poms,
-                                                                        String localRepo,
-                                                                        ClassLoader parent) {
-        List<URL> urls = getDependenciesURL(poms,
-                                            localRepo);
-        return buildResult(urls,
-                           parent);
-    }
 
     /**
      * Load the dependencies from the Poms, transitive included
@@ -162,13 +137,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return buildResult(urls);
     }
 
-    public Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> pomsPaths,
-                                                                  Boolean loadIntoClassloader,
-                                                                  ClassLoader parent) {
-        List<URL> urls = loadIntoClassloader ? loadFiles(pomsPaths) : getTargetModulesURL(pomsPaths);
-        return buildResult(urls,
-                           parent);
-    }
 
     private List<URL> buildUrlsFromArtifacts(String localRepo,
                                              List<Artifact> artifacts) throws MalformedURLException {
@@ -360,36 +328,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return Optional.empty();
     }
 
-    public Optional<List<URI>> getURISFromAllDependencies(String prjPath,
-                                                          String localRepo) {
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.NONE);
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(java.nio.file.Paths.get(prjPath));
-        StringBuilder sb = new StringBuilder(MavenArgs.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenArgs.CLASSPATH_FILENAME).append(MavenArgs.CLASSPATH_EXT);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(localRepo,
-                                                                     info,
-                                                                     new String[]{MavenArgs.DEPS_BUILD_CLASSPATH, sb.toString()},
-                                                                     new HashMap<>(),
-                                                                     Optional.empty());
-        CompilationResponse res = compiler.compileSync(req);
-        if (res.isSuccessful()) {
-            /** Maven dependency plugin is not able to append the modules' classpath using an absolute path in -Dmdep.outputFile,
-             it override each time and at the end only the last writted is present in  the file,
-             for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
-             * */
-            List<String> classPathFiles = new ArrayList<>();
-            searchCPFiles(Paths.get(prjPath),
-                          classPathFiles,
-                          MavenArgs.CLASSPATH_EXT,
-                          JAVA_ARCHIVE_RESOURCE_EXT);
-            if (!classPathFiles.isEmpty()) {
-                List<URI> deps = processScannedFiles(classPathFiles);
-                if (!deps.isEmpty()) {
-                    return Optional.of(deps);
-                }
-            }
-        }
-        return Optional.empty();
-    }
 
     private List<URI> processScannedFiles(List<String> classPathFiles) {
         List<URI> deps = new ArrayList<>();

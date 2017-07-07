@@ -53,17 +53,6 @@ public interface AFClassLoaderProvider {
     Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> targets,
                                                            Boolean loadIntoClassloader);
 
-    Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
-                                                                 String localRepo,
-                                                                 ClassLoader parentClassloader);
-
-    Optional<ClassLoader> loadDependenciesClassloaderFromProject(List<String> deps,
-                                                                 String localRepo,
-                                                                 ClassLoader parentClassloader);
-
-    Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> targets,
-                                                           Boolean loadIntoClassloader,
-                                                           ClassLoader parentClassloader);
 
     /**
      * Build a classloader with all the dependencies (included transitive) present in all the prj modules
@@ -81,14 +70,6 @@ public interface AFClassLoaderProvider {
      */
     Optional<List<URI>> getURISFromAllDependencies(String prjPath);
 
-    /***
-     * Build a list of URL reading the cp file produced by the Maven dependency plugin
-     * @param prjPath path of the project compiled by Maven
-     * @param localRepo maven repo used
-     * @return list of URI with all dependencies, included transitive
-     */
-    Optional<List<URI>> getURISFromAllDependencies(String prjPath,
-                                                   String localRepo);
 
 }
 
