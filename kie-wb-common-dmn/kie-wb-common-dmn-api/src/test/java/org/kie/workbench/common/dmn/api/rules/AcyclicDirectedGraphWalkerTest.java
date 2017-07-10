@@ -125,7 +125,7 @@ public class AcyclicDirectedGraphWalkerTest {
                      edgeStartVisitCaptor.getAllValues().size());
         assertEquals(2,
                      edgeEndVisitCaptor.getAllValues().size());
-        assertEdgeVisits(edgeEndVisitCaptor.getAllValues(),
+        assertEdgeVisits(edgeStartVisitCaptor.getAllValues(),
                          "edge1:node1-node2",
                          "edge2:node2-node3");
         assertEdgeVisits(edgeEndVisitCaptor.getAllValues(),

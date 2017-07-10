@@ -83,7 +83,7 @@ public class AcyclicDirectedGraphRule extends RuleExtensionHandler<AcyclicDirect
             walker.traverse(graph,
                             new TreeTraverseCallback<Graph, Node, Edge>() {
 
-                                final Set<Node> inprogress = new HashSet<>();
+                                final Set<Node> inProgress = new HashSet<>();
 
                                 @Override
                                 public void startGraphTraversal(final Graph graph) {
@@ -91,10 +91,10 @@ public class AcyclicDirectedGraphRule extends RuleExtensionHandler<AcyclicDirect
 
                                 @Override
                                 public boolean startNodeTraversal(final Node node) {
-                                    if (inprogress.contains(node)) {
+                                    if (inProgress.contains(node)) {
                                         throw new DirectedAcrylicGraphViolationException();
                                     }
-                                    inprogress.add(node);
+                                    inProgress.add(node);
                                     return true;
                                 }
 
@@ -105,7 +105,7 @@ public class AcyclicDirectedGraphRule extends RuleExtensionHandler<AcyclicDirect
 
                                 @Override
                                 public void endNodeTraversal(final Node node) {
-                                    inprogress.remove(node);
+                                    inProgress.remove(node);
                                 }
 
                                 @Override
