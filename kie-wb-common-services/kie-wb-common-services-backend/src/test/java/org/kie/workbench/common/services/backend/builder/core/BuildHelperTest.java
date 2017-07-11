@@ -104,15 +104,6 @@ public class BuildHelperTest {
     private KieProject project;
 
     @Mock
-    private POM pom;
-
-    @Mock
-    private GAV gav;
-
-    @Mock
-    private Path repositoriesPath;
-
-    @Mock
     private ProjectRepositories projectRepositories;
 
     private Set<MavenRepositoryMetadata> repositories;
