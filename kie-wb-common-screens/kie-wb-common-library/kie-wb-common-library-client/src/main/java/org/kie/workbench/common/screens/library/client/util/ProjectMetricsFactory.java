@@ -187,7 +187,7 @@ public class ProjectMetricsFactory {
                 .column(COUNT, "#commits").format(translationService.getTranslation(LibraryConstants.NumberOfCommits), "#,##0")
                 .title(translationService.getTranslation(LibraryConstants.DayOfWeek))
                 .titleVisible(false)
-                .width(250).height(190)
+                .width(250).height(170)
                 .margins(10, 40, 70, 0)
                 .subType_Bar()
                 .xAxisTitle(translationService.getTranslation(LibraryConstants.NumberOfCommits))
