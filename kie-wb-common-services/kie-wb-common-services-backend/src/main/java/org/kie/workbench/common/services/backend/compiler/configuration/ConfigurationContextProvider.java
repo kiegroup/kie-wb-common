@@ -30,7 +30,7 @@ import java.util.Map;
  * <p>
  * ALTERNATIVE_COMPILER_PLUGINS =io.takari.maven.plugins
  * ALTERNATIVE_COMPILER_PLUGIN =takari-lifecycle-plugin
- * ALTERNATIVE_COMPILER_PLUGIN_VERSION =1.12.5
+ * ALTERNATIVE_COMPILER_PLUGIN_VERSION =1.12.6
  * <p>
  * KIE_MAVEN_PLUGINS=org.kie
  * KIE_MAVEN_PLUGIN=kie-takari-plugin
