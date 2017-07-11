@@ -68,6 +68,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
         Properties prop = new Properties();
         InputStream in = getClass().getClassLoader().getResourceAsStream(propertiesFile);
         if (in == null) {
+            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n", propertiesFile);
             valid = Boolean.FALSE;
         } else {
             try {
