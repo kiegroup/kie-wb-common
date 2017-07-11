@@ -25,8 +25,6 @@ import java.util.Set;
 import javax.enterprise.inject.Instance;
 
 import com.google.common.base.Charsets;
-import org.guvnor.common.services.project.builder.model.BuildMessage;
-import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.PostBuildHandler;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.MavenRepositoryMetadata;
@@ -104,6 +102,15 @@ public class BuildHelperTest {
     private KieProject project;
 
     @Mock
+    private POM pom;
+
+    @Mock
+    private GAV gav;
+
+    @Mock
+    private Path repositoriesPath;
+
+    @Mock
     private ProjectRepositories projectRepositories;
 
     private Set<MavenRepositoryMetadata> repositories;
@@ -157,9 +164,7 @@ public class BuildHelperTest {
 
     @After
     public void tearDown() throws Exception {
-        if(testFileSystem != null) {
-            testFileSystem.tearDown();
-        }
+        testFileSystem.tearDown();
     }
 
     @Test
@@ -171,16 +176,13 @@ public class BuildHelperTest {
                               gav,
                               false);
 
-        BuildResults results = buildHelper.buildAndDeploy(project);
-        results.getErrorMessages().isEmpty();
-        BuildMessage msg = results.getMessages().get(results.getMessages().size()-1);
-        msg.getText().endsWith("Build: SUCCESSFUL");
+        buildHelper.buildAndDeploy(project);
 
-        /*verify(buildHelper,
+        verify(buildHelper,
                times(1)).buildAndDeploy(eq(project),
                                         eq(DeploymentMode.VALIDATED));
         verifyBuildAndDeploy(project,
-                             gav);*/
+                             gav);
     }
 
     @Test
@@ -216,17 +218,13 @@ public class BuildHelperTest {
         prepareBuildAndDeploy(snapshotRootPath,
                               gav);
 
-        BuildResults results =buildHelper.buildAndDeploy(project);
+        buildHelper.buildAndDeploy(project);
 
-        results.getErrorMessages().isEmpty();
-        BuildMessage msg = results.getMessages().get(results.getMessages().size()-1);
-        msg.getText().endsWith("Build: SUCCESSFUL");
-
-        /*verify(buildHelper,
+        verify(buildHelper,
                times(1)).buildAndDeploy(eq(project),
                                         eq(DeploymentMode.VALIDATED));
         verifyBuildAndDeploySnapshot(project,
-                                     gav);*/
+                                     gav);
     }
 
     @Test
@@ -237,19 +235,15 @@ public class BuildHelperTest {
         prepareBuildAndDeploy(rootPath,
                               gav);
 
-        BuildResults results = buildHelper.buildAndDeploy(project,
-                                                          true);
-        results.getErrorMessages().isEmpty();
-        BuildMessage msg = results.getMessages().get(results.getMessages().size()-1);
-        msg.getText().endsWith("Build: SUCCESSFUL");
-        /*
-        Now isn't mocked
+        buildHelper.buildAndDeploy(project,
+                                   true);
+
         verify(buildHelper,
                times(1)).buildAndDeploy(eq(project),
                                         eq(true),
                                         eq(DeploymentMode.VALIDATED));
         verifyBuildAndDeploy(project,
-                             gav);*/
+                             gav);
     }
 
     @Test
@@ -260,18 +254,15 @@ public class BuildHelperTest {
         prepareBuildAndDeploy(snapshotRootPath,
                               gav);
 
-        BuildResults results = buildHelper.buildAndDeploy(project,
+        buildHelper.buildAndDeploy(project,
                                    true);
 
-        results.getErrorMessages().isEmpty();
-        BuildMessage msg = results.getMessages().get(results.getMessages().size()-1);
-        msg.getText().endsWith("Build: SUCCESSFUL");
-        /*verify(buildHelper,
+        verify(buildHelper,
                times(1)).buildAndDeploy(eq(project),
                                         eq(true),
                                         eq(DeploymentMode.VALIDATED));
         verifyBuildAndDeploySnapshot(project,
-                                     gav);*/
+                                     gav);
     }
 
     private void prepareBuildAndDeploy(Path rootPath,
