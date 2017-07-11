@@ -53,7 +53,7 @@ public class DefaultPluginPresents implements PluginPresents {
     }
 
     @Override
-    public Boolean overwritePOM() {
+    public Boolean pomOverwriteRequired() {
         return overwritePOM;
     }
 }

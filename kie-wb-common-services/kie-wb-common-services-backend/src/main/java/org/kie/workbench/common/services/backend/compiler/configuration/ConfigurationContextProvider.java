@@ -41,10 +41,10 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
     private Map<ConfigurationKey, String> conf;
 
     public ConfigurationContextProvider() {
-        getAWorkingConfig();
+        initializeWorkingConfig();
     }
 
-    private void getAWorkingConfig() {
+    private void initializeWorkingConfig() {
         List<ConfigurationStrategy> confs = new ArrayList<ConfigurationStrategy>(Arrays.asList(new ConfigurationEnvironmentStrategy(),
                                                                                                new ConfigurationPropertiesStrategy(),
                                                                                                new ConfigurationStaticStrategy()));

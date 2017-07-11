@@ -43,5 +43,5 @@ public interface PluginPresents {
      * Signals if needed overwrite the pom
      * @return
      */
-    Boolean overwritePOM();
+    Boolean pomOverwriteRequired();
 }

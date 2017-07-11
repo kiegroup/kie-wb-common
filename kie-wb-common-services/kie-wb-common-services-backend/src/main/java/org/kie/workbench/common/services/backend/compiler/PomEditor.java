@@ -21,7 +21,7 @@ import java.util.Set;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 
 /**
- * The PomEditor manage the pom changed in a prj
+ * The PomEditor manages the pom changed in a prj
  */
 public interface PomEditor {
 

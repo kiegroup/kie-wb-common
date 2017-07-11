@@ -23,15 +23,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.maven.model.Model;
 import org.kie.workbench.common.services.backend.compiler.PluginPresents;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
@@ -89,7 +86,7 @@ public class NIODefaultPomEditor extends DefaultPomEditor {
                     String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs());
                     request.getKieCliRequest().setArgs(args);
                 }
-                if (plugs.overwritePOM()) {
+                if (plugs.pomOverwriteRequired()) {
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     writer.write(baos,
                                  model);
