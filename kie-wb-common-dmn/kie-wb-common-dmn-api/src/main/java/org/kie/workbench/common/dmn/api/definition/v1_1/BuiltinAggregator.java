@@ -29,8 +29,8 @@ public enum BuiltinAggregator {
         return name();
     }
 
-    public static BuiltinAggregator fromValue(final String v) {
-        return valueOf(v);
+    public static BuiltinAggregator fromValue(final String value) {
+        return valueOf(value);
     }
 
 }

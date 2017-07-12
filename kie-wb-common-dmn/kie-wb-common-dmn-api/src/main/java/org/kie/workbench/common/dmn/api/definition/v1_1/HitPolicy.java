@@ -38,13 +38,13 @@ public enum HitPolicy {
         return value;
     }
 
-    public static HitPolicy fromValue(final String v) {
-        for (HitPolicy c : HitPolicy.values()) {
-            if (c.value.equals(v)) {
-                return c;
+    public static HitPolicy fromValue(final String value) {
+        for (HitPolicy hitPolicy : HitPolicy.values()) {
+            if (hitPolicy.value.equals(value)) {
+                return hitPolicy;
             }
         }
-        throw new IllegalArgumentException(v);
+        throw new IllegalArgumentException(value);
     }
 
     public boolean isMultiHit() {

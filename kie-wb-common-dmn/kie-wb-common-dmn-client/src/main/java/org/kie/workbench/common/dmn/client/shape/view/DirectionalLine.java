@@ -1,3 +1,18 @@
+/*
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.workbench.common.dmn.client.shape.view;
 
 import java.util.List;
@@ -69,22 +84,21 @@ public class DirectionalLine extends AbstractDirectionalMultiPointShape<Directio
     public boolean parse(final Attributes attr) {
         final Point2DArray points = attr.getControlPoints().noAdjacentPoints();
 
-        if (points.size() > 1) {
-            final Point2D p1 = points.get(0);
-            final double x1 = p1.getX();
-            final double y1 = p1.getY();
+        final Point2D p1 = points.get(0);
+        final double x1 = p1.getX();
+        final double y1 = p1.getY();
 
-            final Point2D p2 = points.get(1);
-            final double x2 = p2.getX();
-            final double y2 = p2.getY();
+        final Point2D p2 = points.get(1);
+        final double x2 = p2.getX();
+        final double y2 = p2.getY();
 
-            final PathPartList list = getPathPartList();
+        final PathPartList list = getPathPartList();
 
-            list.M(x1,
-                   y1);
-            list.L(x2,
-                   y2);
-        }
+        list.M(x1,
+               y1);
+        list.L(x2,
+               y2);
+
         return true;
     }
 
@@ -116,12 +130,10 @@ public class DirectionalLine extends AbstractDirectionalMultiPointShape<Directio
     @Override
     public BoundingBox getBoundingBox() {
         if (getPathPartList().size() < 1) {
-            if (!parse(getAttributes())) {
-                return new BoundingBox(0,
-                                       0,
-                                       0,
-                                       0);
-            }
+            return new BoundingBox(0,
+                                   0,
+                                   0,
+                                   0);
         }
         return getPathPartList().getBoundingBox();
     }

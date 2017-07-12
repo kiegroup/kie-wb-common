@@ -34,13 +34,13 @@ public enum DecisionTableOrientation {
         return value;
     }
 
-    public static DecisionTableOrientation fromValue(final String v) {
-        for (DecisionTableOrientation c : DecisionTableOrientation.values()) {
-            if (c.value.equals(v)) {
-                return c;
+    public static DecisionTableOrientation fromValue(final String value) {
+        for (DecisionTableOrientation orientation : DecisionTableOrientation.values()) {
+            if (orientation.value.equals(value)) {
+                return orientation;
             }
         }
-        throw new IllegalArgumentException(v);
+        throw new IllegalArgumentException(value);
     }
 
 }
