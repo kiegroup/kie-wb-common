@@ -21,6 +21,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Height;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
@@ -40,6 +42,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // TODO: Improve error handling.
 public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
@@ -47,10 +51,12 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
 
     protected final Class<?> definitionClass;
     protected Set<String> childNodeIds;
+    Logger logger;
 
     public AbstractNodeBuilder(final Class<?> definitionClass) {
         this.definitionClass = definitionClass;
         this.childNodeIds = new LinkedHashSet<String>();
+        logger = LoggerFactory.getLogger(AbstractNodeBuilder.class);
     }
 
     @Override
@@ -70,6 +76,7 @@ public abstract class AbstractNodeBuilder<W, T extends Node<View<W>, Edge>>
         FactoryManager factoryManager = context.getFactoryManager();
         // Build the graph node for the definition.
         String definitionId = getDefinitionToBuild(context);
+
         T result = (T) factoryManager.newElement(this.nodeId,
                                                  definitionId);
         // Set the def properties.

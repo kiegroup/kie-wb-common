@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn;
+package org.kie.workbench.common.stunner.bpmn.backend.legacy;
 
-import javax.annotation.PostConstruct;
+import java.util.Map;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.codehaus.jackson.JsonGenerator;
+import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.FlowElement;
 
-@EntryPoint
-@Bundle("resources/i18n/StunnerBPMNConstants.properties")
-public class StunnerBPMNEntryPoint {
-    @PostConstruct
-    public void initialize() {
-    }
+public interface DynamicDefinitionMarshaller {
+    void applyProperties(BaseElement baseElement, Map<String,String> properties);
+    void marshallProperties(FlowElement element, Map<String, Object> properties, JsonGenerator generator);
+    String getClassName();
 }

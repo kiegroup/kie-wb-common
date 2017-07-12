@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,6 +61,10 @@ public class BindableDefinitionSetAdapterGenerator extends AbstractBindableAdapt
                  processingDefinitionSetAnnotations.getDefinitionIds());
         root.put("definitionIdsSize",
                  processingDefinitionSetAnnotations.getDefinitionIds().size());
+        root.put("addonGroups",
+                 processingDefinitionSetAnnotations.getAddonGroups());
+        root.put("addonGroupsSize",
+                 processingDefinitionSetAnnotations.getAddonGroups().size());
         // Generate code from the template.
         return writeTemplate(packageName,
                              className,

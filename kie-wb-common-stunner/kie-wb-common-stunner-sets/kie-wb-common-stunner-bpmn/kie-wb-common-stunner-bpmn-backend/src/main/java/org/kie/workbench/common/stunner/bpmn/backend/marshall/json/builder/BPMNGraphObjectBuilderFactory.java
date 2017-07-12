@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,12 +29,15 @@ import org.kie.workbench.common.stunner.core.definition.morph.MorphDefinition;
 import org.kie.workbench.common.stunner.core.factory.graph.EdgeFactory;
 import org.kie.workbench.common.stunner.core.factory.graph.ElementFactory;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class BPMNGraphObjectBuilderFactory implements GraphObjectBuilderFactory {
 
     DefinitionManager definitionManager;
     OryxManager oryxManager;
+    Logger logger = LoggerFactory.getLogger(BPMNGraphObjectBuilderFactory.class);
 
     @Inject
     public BPMNGraphObjectBuilderFactory(final DefinitionManager definitionManager,

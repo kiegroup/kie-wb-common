@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.stunner.bpmn.definition;
+package org.kie.workbench.common.stunner.project.bpmn.resource.dynamic;
 
+import javax.enterprise.context.Dependent;
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
@@ -24,8 +25,8 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
@@ -49,7 +50,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @Definition(
         graphFactory = NodeFactory.class,
-        builder = BusinessRuleTask.BusinessRuleTaskBuilder.class,
+        builder = MyBusinessRuleTask.MyBusinessRuleTaskBuilder.class,
         addonGroups = {BPMN.class}
 )
 @CanDock(roles = {"IntermediateEventOnActivityBoundary"})
@@ -58,10 +59,11 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class BusinessRuleTask extends BaseTask implements DataIOModel {
+@Dependent
+public class MyBusinessRuleTask extends BaseTask {
 
     @Title
-    public static final transient String title = "Business Rule Task";
+    public static final transient String title = "My Business Rule Task";
 
     @PropertySet
     @FormField(
@@ -77,104 +79,107 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
     @Valid
     protected DataIOSet dataIOSet;
 
-    @NonPortable
-    public static class BusinessRuleTaskBuilder extends BaseTaskBuilder<BusinessRuleTask> {
-
-        @Override
-        public BusinessRuleTask build() {
-            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
-                                                           new Documentation("")),
-                                        new BusinessRuleTaskExecutionSet(),
-                                        new DataIOSet(),
-                                        new BackgroundSet(COLOR,
-                                                          BORDER_COLOR,
-                                                          BORDER_SIZE),
-                                        new FontSet(),
-                                        new RectangleDimensionsSet(WIDTH,
-                                                                   HEIGHT),
-                                        new SimulationSet(),
-                                        new TaskType(TaskTypes.BUSINESS_RULE)
-            );
-        }
-    }
-
-    public BusinessRuleTask() {
-        super(TaskTypes.BUSINESS_RULE);
-    }
-
-    public BusinessRuleTask(final @MapsTo("general") TaskGeneralSet general,
-                            final @MapsTo("executionSet") BusinessRuleTaskExecutionSet executionSet,
-                            final @MapsTo("dataIOSet") DataIOSet dataIOSet,
-                            final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
-                            final @MapsTo("fontSet") FontSet fontSet,
-                            final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
-                            final @MapsTo("simulationSet") SimulationSet simulationSet,
-                            final @MapsTo("taskType") TaskType taskType) {
-        super(general,
-              backgroundSet,
-              fontSet,
-              dimensionsSet,
-              simulationSet,
-              taskType);
-        this.executionSet = executionSet;
-        this.dataIOSet = dataIOSet;
-    }
-
-    @Override
-    public boolean hasInputVars() {
-        return true;
-    }
-
-    @Override
-    public boolean isSingleInputVar() {
-        return false;
-    }
-
-    @Override
-    public boolean hasOutputVars() {
-        return true;
-    }
-
-    @Override
-    public boolean isSingleOutputVar() {
-        return false;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
     public BusinessRuleTaskExecutionSet getExecutionSet() {
         return executionSet;
+    }
+
+    public void setExecutionSet(BusinessRuleTaskExecutionSet executionSet) {
+        this.executionSet = executionSet;
     }
 
     public DataIOSet getDataIOSet() {
         return dataIOSet;
     }
 
-    public void setExecutionSet(final BusinessRuleTaskExecutionSet executionSet) {
-        this.executionSet = executionSet;
+    public void setDataIOSet(DataIOSet dataIOSet) {
+        this.dataIOSet = dataIOSet;
     }
 
-    public void setDataIOSet(final DataIOSet dataIOSet) {
+    public DataIOSet getMyProperty() {
+        return myProperty;
+    }
+
+    public void setMyProperty(DataIOSet myProperty) {
+        this.myProperty = myProperty;
+    }
+
+    @PropertySet
+    @FormField(
+            afterElement = "dataIOSet"
+    )
+    @Valid
+    protected DataIOSet myProperty;
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+
+    @NonPortable
+    public static class MyBusinessRuleTaskBuilder extends BaseTaskBuilder<MyBusinessRuleTask> {
+
+        @Override
+        public MyBusinessRuleTask build() {
+            return new MyBusinessRuleTask(new TaskGeneralSet(new Name("Task"),
+                                                             new Documentation("")),
+                                          new BusinessRuleTaskExecutionSet(),
+                                          new DataIOSet(),
+                                          new DataIOSet(),
+                                          new BackgroundSet(COLOR,
+                                                            BORDER_COLOR,
+                                                            BORDER_SIZE),
+                                          new FontSet(),
+                                          new RectangleDimensionsSet(WIDTH,
+                                                                     HEIGHT),
+                                          new SimulationSet(),
+                                          new TaskType(TaskTypes.NONE)
+            );
+        }
+    }
+
+    public MyBusinessRuleTask() {
+        super(TaskTypes.NONE);
+    }
+
+    public MyBusinessRuleTask(final @MapsTo("general") TaskGeneralSet general,
+                              final @MapsTo("executionSet") BusinessRuleTaskExecutionSet executionSet,
+                              final @MapsTo("dataIOSet") DataIOSet dataIOSet,
+                              final @MapsTo("myProperty") DataIOSet myProperty,
+                              final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
+                              final @MapsTo("fontSet") FontSet fontSet,
+                              final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
+                              final @MapsTo("simulationSet") SimulationSet simulationSet,
+                              final @MapsTo("taskType") TaskType taskType) {
+
+        super(general,
+              backgroundSet,
+              fontSet,
+              dimensionsSet,
+              simulationSet,
+              taskType);
+
+        this.executionSet = executionSet;
         this.dataIOSet = dataIOSet;
+        this.myProperty = myProperty;
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
                                          executionSet.hashCode(),
-                                         dataIOSet.hashCode());
+                                         dataIOSet.hashCode(),
+                                         myProperty.hashCode());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof BusinessRuleTask) {
-            BusinessRuleTask other = (BusinessRuleTask) o;
+        if (o instanceof MyBusinessRuleTask) {
+            MyBusinessRuleTask other = (MyBusinessRuleTask) o;
             return super.equals(other) &&
-                    executionSet.equals(other.executionSet) &&
-                    dataIOSet.equals(other.dataIOSet);
+                    myProperty.equals(other.myProperty) &&
+                    dataIOSet.equals(other.dataIOSet) &&
+                    executionSet.equals(other.executionSet);
         }
         return false;
     }

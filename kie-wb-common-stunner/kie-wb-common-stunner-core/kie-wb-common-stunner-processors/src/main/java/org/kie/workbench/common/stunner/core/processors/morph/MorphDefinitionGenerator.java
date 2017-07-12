@@ -37,7 +37,8 @@ public class MorphDefinitionGenerator extends AbstractBindableAdapterGenerator {
                                  final String baseMorphType,
                                  final Collection<String> targetTypes,
                                  final String defaultMorphType,
-                                 final Messager messager) throws GenerationException {
+                                 final Messager messager,
+                                 final Collection<String> addonGroups) throws GenerationException {
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("packageName",
                  packageName);
@@ -55,6 +56,10 @@ public class MorphDefinitionGenerator extends AbstractBindableAdapterGenerator {
                  targetTypes.size());
         root.put("defaultTypeClassName",
                  defaultMorphType);
+        root.put("addonGroups",
+                 addonGroups);
+        root.put("addonGroupsSize",
+                 addonGroups.size());
 
         //Generate code
         return writeTemplate(packageName,

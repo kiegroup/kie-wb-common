@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ public class ProcessingDefinitionSetAnnotations {
 
     private final Map<String, String> descriptionFieldNames = new HashMap<>();
     private final Set<String> definitionIds = new HashSet<>();
+    private final Set<String> addonGroups = new HashSet<>();
     private final Map<String, String> builderFieldNames = new HashMap<>();
     private final Map<String, String> graphTypes = new HashMap<>();
     private final Map<String, String> qualifiers = new HashMap<>();
@@ -36,6 +37,10 @@ public class ProcessingDefinitionSetAnnotations {
 
     public Set<String> getDefinitionIds() {
         return definitionIds;
+    }
+
+    public Set<String> getAddonGroups() {
+        return addonGroups;
     }
 
     public Map<String, String> getBuilderFieldNames() {

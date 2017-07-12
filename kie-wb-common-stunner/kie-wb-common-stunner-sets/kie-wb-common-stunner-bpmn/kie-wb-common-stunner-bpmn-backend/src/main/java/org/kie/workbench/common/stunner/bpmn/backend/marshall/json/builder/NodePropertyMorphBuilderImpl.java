@@ -40,6 +40,9 @@ public class NodePropertyMorphBuilderImpl extends NodeBuilderImpl {
     @Override
     @SuppressWarnings("unchecked")
     protected String getDefinitionToBuild(final BuilderContext context) {
+        if (context.getOryxManager().getMappingsManager().getCustomMappings().containsKey(definitionClass)) {
+            return definitionClass.getName();
+        }
         final String defaultDefinitionId = propertyMorphDefinition.getDefault();
         final String definitionId = BindableAdapterUtils.getDefinitionId(definitionClass);
         Collection<MorphProperty> mps = new LinkedList<MorphProperty>();

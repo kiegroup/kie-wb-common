@@ -76,6 +76,10 @@ public class BindableDefinitionAdapterGenerator extends AbstractBindableAdapterG
         addSetFields("propertiesFieldNames",
                      root,
                      processingDefinitionAnnotations.getPropertyFieldNames());
+        root.put("addonGroups",
+                 processingDefinitionAnnotations.getAddonGroups());
+        root.put("addonGroupsSize",
+                 processingDefinitionAnnotations.getAddonGroups().size());
 
         // Meta-properties.
         final Map<String, String> metaMap = new LinkedHashMap<>();

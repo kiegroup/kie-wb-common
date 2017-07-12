@@ -196,6 +196,18 @@
           </filesets>
         </configuration>
       </plugin>
+
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <groupId>org.apache.maven.plugins</groupId>
+          <executions>
+            <execution>
+              <id>enforce-direct-dependencies</id>
+              <phase>none</phase>
+            </execution>
+
+          </executions>
+        </plugin>
     </plugins>
 
   </build>

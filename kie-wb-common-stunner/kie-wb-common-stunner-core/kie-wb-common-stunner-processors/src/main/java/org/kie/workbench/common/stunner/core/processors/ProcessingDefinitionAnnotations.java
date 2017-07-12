@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.processors;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,6 +33,7 @@ public class ProcessingDefinitionAnnotations {
     private final Map<String, String> descriptionFieldNames = new HashMap<>();
     private final Map<String, String> builderFieldNames = new HashMap<>();
     private final Map<String, String[]> shapeDefs = new HashMap<>();
+    private final Set<String> addonGroups = new HashSet<>();
 
     public Map<String, String> getBaseTypes() {
         return baseTypes;
@@ -71,5 +73,9 @@ public class ProcessingDefinitionAnnotations {
 
     public Map<String, String[]> getShapeDefinitions() {
         return shapeDefs;
+    }
+
+    public Set<String> getAddonGroups() {
+        return addonGroups;
     }
 }

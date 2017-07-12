@@ -17,23 +17,49 @@
 package ${packageName};
 
 import javax.annotation.Generated;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinition;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
+
 @Generated("${generatedByClassName}")
 @ApplicationScoped
-public class ${className} extends ${parentClassName}<Object> {
+public class ${className} extends ${parentClassName}<Object> implements DynamicDefinitions.DynamicDefinitionListener {
 
     private static final Set<Class<?>> SUPPORTED_DEF_CLASSES = new LinkedHashSet<Class<?>>() {{
 
         <#list builders as builder>
             add( ${builder.className}.class );
         </#list>
-
     }};
 
+    private static final Set<Class<?>> addonGroups = new LinkedHashSet<Class<?>>(${addonGroupsSize}) {{
+                <#list addonGroups as addonGroup>
+                    add( ${addonGroup} );
+                </#list>
+    }};
+
+    @Inject
+    private DynamicDefinitions dynamicDefinitions;
+
     public ${className}() {
+    }
+
+    @PostConstruct
+    private void addDynamicDefinitions() {
+        dynamicDefinitions.registerDynamicDefinitionListener(this);
+        SUPPORTED_DEF_CLASSES.addAll(dynamicDefinitions.getSupportedClasses(addonGroups));
+    }
+
+    @Override
+    public void onDynamicDefinitionAdded(DynamicDefinition def) {
+        if (DynamicDefinitions.inAddonGroups(def, addonGroups) && !SUPPORTED_DEF_CLASSES.contains(def.getType())) {
+            SUPPORTED_DEF_CLASSES.add(def.getType());
+        }
     }
 
     @Override
@@ -53,6 +79,10 @@ public class ${className} extends ${parentClassName}<Object> {
             }
 
         </#list>
+
+        if ( dynamicDefinitions.getSupportedClasses(addonGroups).contains(clazz) ) {
+            return dynamicDefinitions.getInstanceOf(clazz);
+        }
 
         throw new RuntimeException( "This factory [" + this.getClass().getName() + "] " +
             "should provide a definition for [" + clazz + "]" );

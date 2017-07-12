@@ -20,6 +20,7 @@ import ${parentAdapterClassName};
 import ${adapterFactoryClassName};
 
 import javax.annotation.Generated;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -29,10 +30,12 @@ import java.util.Set;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterFactory;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionAdapterProxy;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinition;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
 
 @Generated("${generatedByClassName}")
 @ApplicationScoped
-public class ${className} extends ${parentAdapterClassName}<Object> {
+public class ${className} extends ${parentAdapterClassName}<Object> implements DynamicDefinitions.DynamicDefinitionListener {
 
     private static final Map<Class, Class> baseTypes = new HashMap<Class, Class>(${baseTypesSize}) {{
         <#list baseTypes as baseType>
@@ -96,12 +99,51 @@ public class ${className} extends ${parentAdapterClassName}<Object> {
         </#list>
     }};
 
+    private static final Set<Class<?>> addonGroups = new HashSet<Class<?>>(${addonGroupsSize}) {{
+        <#list addonGroups as addonGroup>
+            add( ${addonGroup} );
+        </#list>
+    }};
+
+    @Inject
+    private DynamicDefinitions dynamicDefinitions;
+
     protected ${className}() {
     }
 
     @Inject
     public ${className}(${adapterFactoryClassName} adapterFactory) {
         super(adapterFactory);
+    }
+
+    @PostConstruct
+    private void addDynamicDefinitions()
+    {
+        dynamicDefinitions.registerDynamicDefinitionListener(this);
+        baseTypes.putAll(dynamicDefinitions.getBaseTypes(addonGroups));
+        categoryFieldNames.putAll(dynamicDefinitions.getCategoryFieldNames(addonGroups));
+        titleFieldNames.putAll(dynamicDefinitions.getTitleFieldNames(addonGroups));
+        descriptionFieldNames.putAll(dynamicDefinitions.getDescriptionFieldNames(addonGroups));
+        labelsFieldNames.putAll(dynamicDefinitions.getLabelsFieldNames(addonGroups));
+        graphFactoryFieldNames.putAll(dynamicDefinitions.getGraphFactoryFieldNames(addonGroups));
+        propertySetsFieldNames.putAll(dynamicDefinitions.getPropertySetsFieldNames(addonGroups));
+        propertiesFieldNames.putAll(dynamicDefinitions.getPropertiesFieldNames(addonGroups));
+        metaPropertyTypes.putAll(dynamicDefinitions.getMetaPropertyTypes(addonGroups));
+    }
+
+    @Override
+    public void onDynamicDefinitionAdded(DynamicDefinition def) {
+        if (DynamicDefinitions.inAddonGroups(def, addonGroups)) {
+            Class<?> clazz = def.getType();
+            baseTypes.put(clazz, def.getBaseType());
+            categoryFieldNames.put(clazz, "category");
+            titleFieldNames.put(clazz, "title");
+            descriptionFieldNames.put(clazz, "description");
+            labelsFieldNames.put(clazz, "labels");
+            graphFactoryFieldNames.put(clazz, def.getFactory());
+            propertySetsFieldNames.put(clazz, def.getSetProperties());
+            propertiesFieldNames.put(clazz, def.getProperties());
+        }
     }
 
     @Override

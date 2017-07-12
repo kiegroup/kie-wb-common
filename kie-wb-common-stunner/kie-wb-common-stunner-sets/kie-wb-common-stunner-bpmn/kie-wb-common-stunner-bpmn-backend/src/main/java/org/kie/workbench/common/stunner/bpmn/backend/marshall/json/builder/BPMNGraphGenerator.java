@@ -31,6 +31,7 @@ import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonStreamContext;
 import org.codehaus.jackson.ObjectCodec;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.DynamicDefinitionsBpmnMarshallerHelper;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -55,6 +56,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Support for a basic single process hierarchy
@@ -74,6 +77,7 @@ public class BPMNGraphGenerator extends JsonGenerator {
     private final Stack<GraphObjectBuilder> nodeBuilders = new Stack<>();
     private final Stack<GraphObjectParser> parsers = new Stack<GraphObjectParser>();
     private final Collection<GraphObjectBuilder<?, ?>> builders = new LinkedList<GraphObjectBuilder<?, ?>>();
+    private final Logger logger = LoggerFactory.getLogger(BPMNGraphGenerator.class);
     Graph<DefinitionSet, Node> graph;
     boolean isClosed;
 

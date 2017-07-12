@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.enterprise.context.ApplicationScoped;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
@@ -56,7 +55,6 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 NoneTask.class,
                 UserTask.class,
                 ScriptTask.class,
-                BusinessRuleTask.class,
                 StartNoneEvent.class,
                 StartSignalEvent.class,
                 StartTimerEvent.class,
@@ -69,7 +67,8 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 EmbeddedSubprocess.class,
                 SequenceFlow.class
         },
-        builder = BPMNDefinitionSet.BPMNDefinitionSetBuilder.class
+        builder = BPMNDefinitionSet.BPMNDefinitionSetBuilder.class,
+        addonGroups = {BPMN.class}
 )
 @CanContain(roles = {"diagram"})
 @Occurrences(role = "diagram", max = 1)
