@@ -1,0 +1,115 @@
+/*
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.kie.workbench.common.dmn.client.editors.expressions;
+
+import java.util.List;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
+import org.jboss.errai.common.client.dom.DOMUtil;
+import org.jboss.errai.common.client.dom.Div;
+import org.jboss.errai.common.client.dom.Document;
+import org.jboss.errai.common.client.dom.Option;
+import org.jboss.errai.common.client.dom.Select;
+import org.jboss.errai.ui.client.local.api.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+
+@Templated
+@Dependent
+public class ExpressionEditorViewImpl implements ExpressionEditorView {
+
+    private ExpressionEditorView.Presenter presenter;
+
+    @DataField("exitButton")
+    private Div exitButton;
+
+    @DataField("expressionEditor")
+    private Div expressionEditor;
+
+    @DataField("expressionType")
+    private Select expressionType;
+
+    private Document document;
+
+    private TranslationService ts;
+
+    public ExpressionEditorViewImpl() {
+        //CDI proxy
+    }
+
+    @Inject
+    public ExpressionEditorViewImpl(final Div exitButton,
+                                    final Div expressionEditor,
+                                    final Select expressionType,
+                                    final Document document,
+                                    final TranslationService ts) {
+        this.exitButton = exitButton;
+        this.expressionType = expressionType;
+        this.expressionEditor = expressionEditor;
+        this.document = document;
+        this.ts = ts;
+    }
+
+    @Override
+    public void init(final ExpressionEditorView.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void setExpressionTypes(final List<ExpressionType<Expression>> expressionTypes) {
+        expressionTypes.forEach(t -> expressionType.add(makeExpressionTypeWidget(t)));
+    }
+
+    @Override
+    public void selectExpressionType(final int index) {
+        expressionType.setSelectedIndex(index);
+    }
+
+    @Override
+    public void setSubEditor(final IsElement editor) {
+        DOMUtil.removeAllChildren(expressionEditor);
+        expressionEditor.appendChild(editor.getElement());
+    }
+
+    @SuppressWarnings("unchecked")
+    private Option makeExpressionTypeWidget(final ExpressionType<? extends Expression> type) {
+        final Option o = (Option) document.createElement("option");
+        o.setValue(type.getModelClass().map(c -> c.getClass().getName()).orElse(""));
+        o.setText(type.getName());
+        return o;
+    }
+
+    @SuppressWarnings("unused")
+    @EventHandler("exitButton")
+    void onClickExitButton(final ClickEvent event) {
+        presenter.exit();
+    }
+
+    @SuppressWarnings("unused")
+    @EventHandler("expressionType")
+    void onExpressionTypeSelectionChange(final ChangeEvent event) {
+        final Option o = (Option) expressionType.getOptions().item(expressionType.getSelectedIndex());
+        final String className = o.getValue();
+        presenter.onExpressionTypeChanged(className);
+    }
+}
