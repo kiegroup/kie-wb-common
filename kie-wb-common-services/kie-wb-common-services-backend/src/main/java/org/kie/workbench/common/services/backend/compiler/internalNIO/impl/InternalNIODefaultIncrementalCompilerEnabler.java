@@ -62,7 +62,7 @@ public class InternalNIODefaultIncrementalCompilerEnabler implements InternalNIO
             InternalNIOMavenUtils.searchPoms(Paths.get(req.getInfo().getPrjPath().toString()),
                                              pomsList);// recursive NIO search in all subfolders
             if (pomsList.size() > 0) {
-                processFoundedPoms(pomsList,
+                processFoundPoms(pomsList,
                                    req);
             }
             return new ProcessedPoms(Boolean.TRUE,
@@ -73,7 +73,7 @@ public class InternalNIODefaultIncrementalCompilerEnabler implements InternalNIO
         }
     }
 
-    private void processFoundedPoms(List<String> poms,
+    private void processFoundPoms(List<String> poms,
                                     InternalNIOCompilationRequest request) {
 
         for (String pom : poms) {
