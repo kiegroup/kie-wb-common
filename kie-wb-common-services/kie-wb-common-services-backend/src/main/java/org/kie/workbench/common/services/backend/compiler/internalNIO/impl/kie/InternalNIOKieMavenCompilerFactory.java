@@ -15,7 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.internalNIO.impl.kie;
 
+import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
@@ -47,6 +49,7 @@ public class InternalNIOKieMavenCompilerFactory {
     }
 
     private static InternalNIOKieMavenCompiler createAndAddNewCompiler(KieDecorator decorator) {
+
         InternalNIOKieMavenCompiler compiler;
         switch (decorator) {
             case NONE:
@@ -64,8 +67,13 @@ public class InternalNIOKieMavenCompilerFactory {
             case JGIT_BEFORE:
                 compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieDefaultMavenCompiler());
                 break;
+
             case JGIT_BEFORE_AND_LOG_AFTER:
                 compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler()));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AFTER:
+                compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieAfterDecorator(new InternalNIOKieDefaultMavenCompiler()));
                 break;
 
             case LOG_OUTPUT_AFTER:
@@ -75,8 +83,7 @@ public class InternalNIOKieMavenCompilerFactory {
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
                 compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieAfterDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler())));
                 break;
-
-
+            
             default:
                 compiler = new InternalNIOKieDefaultMavenCompiler();
         }
