@@ -17,7 +17,6 @@
 package org.kie.workbench.common.services.backend.compiler.external339;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -44,28 +43,24 @@ public class AFCliRequest {
     private MavenExecutionRequest request;
     private Map<String, Object> map;
     private String requestUUID;
-    private Optional<String> logFile;
+    private Boolean logRequested;
 
     public AFCliRequest(String multiModuleProjectDirectory,
                         String[] args,
                         Map<String, Object> map,
                         String requestUUID,
-                        Optional<String> logFile) {
+                        Boolean logRequested) {
         this.multiModuleProjectDirectory = multiModuleProjectDirectory;
         this.workingDirectory = multiModuleProjectDirectory.toString();
         this.request = new DefaultMavenExecutionRequest();
         this.args = args;
         this.map = map;
         this.requestUUID = requestUUID;
-        if (logFile.isPresent()) {
-            this.logFile = logFile;
-        } else {
-            this.logFile = Optional.empty();
-        }
+        this.logRequested = logRequested;
     }
 
-    public Optional<String> getLogFile() {
-        return logFile;
+    public Boolean isLogRequested() {
+        return logRequested;
     }
 
     public String getRequestUUID() {

@@ -43,5 +43,4 @@ public class MavenArgs {
     public static final String OFFLINE = "-o";
 
     public static final String LOG = "-l";
-
 }

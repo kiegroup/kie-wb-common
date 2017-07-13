@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,30 +38,36 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
     private DefaultCompilationResponse defaultResponse;
 
     public DefaultKieCompilationResponse(Boolean successful) {
+        this(successful,
+             null,
+             null);
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         List<String> mavenOutput) {
         defaultResponse = new DefaultCompilationResponse(successful,
-                                                         Optional.empty(),
-                                                         Optional.empty());
+                                                         null,
+                                                         mavenOutput);
         this.kieModuleMetaInfo = Optional.empty();
         this.kieModule = Optional.empty();
         this.projectDependencies = Optional.empty();
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
-                                         KieModuleMetaInfo kieModuleMetaInfo,
-                                         KieModule kieModule,
-                                         Optional<List<String>> mavenOutput,
-                                         Optional<List<URI>> projectDependencies) {
+                                         String errorMessage) {
 
         defaultResponse = new DefaultCompilationResponse(successful,
-                                                         mavenOutput);
-        this.kieModuleMetaInfo = Optional.of(kieModuleMetaInfo);
-        this.kieModule = Optional.of(kieModule);
-        this.projectDependencies = projectDependencies;
+                                                         errorMessage,
+                                                         Collections.emptyList());
+        this.kieModuleMetaInfo = Optional.empty();
+        this.kieModule = Optional.empty();
+        this.projectDependencies = Optional.empty();
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
-                                         Optional<String> errorMessage,
-                                         Optional<List<String>> mavenOutput) {
+                                         String errorMessage,
+                                         List<String> mavenOutput) {
+
         defaultResponse = new DefaultCompilationResponse(successful,
                                                          errorMessage,
                                                          mavenOutput);
@@ -70,13 +77,27 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
-                                         Optional<List<String>> mavenOutput) {
+                                         KieModuleMetaInfo kieModuleMetaInfo,
+                                         KieModule kieModule,
+                                         List<String> mavenOutput,
+                                         List<URI> projectDependencies) {
+
         defaultResponse = new DefaultCompilationResponse(successful,
-                                                         Optional.empty(),
                                                          mavenOutput);
-        this.kieModuleMetaInfo = Optional.empty();
-        this.kieModule = Optional.empty();
-        this.projectDependencies = Optional.empty();
+        this.kieModuleMetaInfo = Optional.ofNullable(kieModuleMetaInfo);
+        this.kieModule = Optional.ofNullable(kieModule);
+        this.projectDependencies = Optional.ofNullable(projectDependencies);
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         KieModuleMetaInfo kieModuleMetaInfo,
+                                         KieModule kieModule,
+                                         List<URI> projectDependencies) {
+
+        defaultResponse = new DefaultCompilationResponse(successful);
+        this.kieModuleMetaInfo = Optional.ofNullable(kieModuleMetaInfo);
+        this.kieModule = Optional.ofNullable(kieModule);
+        this.projectDependencies = Optional.ofNullable(projectDependencies);
     }
 
     @Override

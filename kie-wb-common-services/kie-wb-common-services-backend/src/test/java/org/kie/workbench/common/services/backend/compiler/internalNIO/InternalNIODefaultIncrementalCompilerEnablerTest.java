@@ -80,7 +80,7 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         InternalNIODefaultIncrementalCompilerEnabler enabler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         Assert.assertTrue(enabler.process(req).getResult());
 
@@ -128,7 +128,7 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, "-X"},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         InternalNIODefaultIncrementalCompilerEnabler enabler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         Assert.assertTrue(enabler.process(req).getResult());
 

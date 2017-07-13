@@ -15,9 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.internalNIO.impl.kie;
 
-import java.util.EnumSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
@@ -26,6 +24,7 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieJGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie.InternalNIOKieOutputLogAfterDecorator;
+
 /***
  * Factory to create compilers based on the Internal Nio implementation with correct order of decorators to build Kie Projects
  * working with the kie takari plugin
@@ -83,7 +82,7 @@ public class InternalNIOKieMavenCompilerFactory {
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
                 compiler = new InternalNIOKieJGITCompilerBeforeDecorator(new InternalNIOKieAfterDecorator(new InternalNIOKieOutputLogAfterDecorator(new InternalNIOKieDefaultMavenCompiler())));
                 break;
-            
+
             default:
                 compiler = new InternalNIOKieDefaultMavenCompiler();
         }

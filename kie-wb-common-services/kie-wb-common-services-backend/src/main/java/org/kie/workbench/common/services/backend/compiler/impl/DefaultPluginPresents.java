@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl;
 
 import org.kie.workbench.common.services.backend.compiler.PluginPresents;
+
 /***
  * Default implementation to signals the plugins present after the scan of the poms
  */

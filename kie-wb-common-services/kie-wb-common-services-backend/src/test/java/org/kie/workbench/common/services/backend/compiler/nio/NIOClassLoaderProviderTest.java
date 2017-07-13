@@ -77,7 +77,7 @@ public class NIOClassLoaderProviderTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -128,7 +128,7 @@ public class NIOClassLoaderProviderTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -175,7 +175,7 @@ public class NIOClassLoaderProviderTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 

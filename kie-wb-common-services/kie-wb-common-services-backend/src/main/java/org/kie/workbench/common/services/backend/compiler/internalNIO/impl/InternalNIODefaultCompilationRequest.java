@@ -42,34 +42,34 @@ public class InternalNIODefaultCompilationRequest implements InternalNIOCompilat
      * @param info
      * @param args param for maven
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present
-     * @param logFile if is not Optional.empty() the output of the build will be provided as a List<String> in the CompilationResponse you can use a simple Optional.of("log")
+     * @param logRequested if is true the output of the build will be provided as a List<String> in the CompilationResponse you can use a simple Optional.of("log")
      */
     public InternalNIODefaultCompilationRequest(String mavenRepo,
                                                 InternalNIOWorkspaceCompilationInfo info,
                                                 String[] args,
                                                 Map<String, Object> map,
-                                                Optional<String> logFile) {
+                                                Boolean logRequested) {
         this.mavenRepo = mavenRepo;
         this.info = info;
         this.requestUUID = UUID.randomUUID().toString();
         this.map = map;
 
         String[] internalArgs = getInternalArgs(args,
-                                                logFile);
+                                                logRequested);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     internalArgs,
                                     this.map,
                                     this.requestUUID,
-                                    logFile);
+                                    logRequested);
     }
 
     private String[] getInternalArgs(String[] args,
-                                     Optional<String> logFile) {
+                                     Boolean logRequested) {
         String[] internalArgs;
         StringBuilder sbCompilationID = new StringBuilder().append("-Dcompilation.ID=").append(requestUUID);
 
-        if (logFile.isPresent()) {
-            StringBuilder sbLogID = new StringBuilder().append("-l ").append(logFile.get()).append(".").append(requestUUID).append(".log");
+        if (logRequested) {
+            StringBuilder sbLogID = new StringBuilder().append("-l ").append("log").append(".").append(requestUUID).append(".log");
             internalArgs = Arrays.copyOf(args,
                                          args.length + 2);
             internalArgs[args.length + 1] = sbLogID.toString();

@@ -21,6 +21,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 import org.kie.workbench.common.services.backend.compiler.impl.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
+
 /***
  * Before decorator to update a git repo before the build
  */

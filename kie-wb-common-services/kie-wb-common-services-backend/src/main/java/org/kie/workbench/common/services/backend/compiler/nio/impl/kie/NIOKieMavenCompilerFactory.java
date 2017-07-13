@@ -59,7 +59,7 @@ public class NIOKieMavenCompilerFactory {
                 break;
 
             case KIE_AND_LOG_AFTER:
-                compiler = new  NIOKieAfterDecorator(new NIOKieOutputLogAfterDecorator(new NIOKieDefaultMavenCompiler()));
+                compiler = new NIOKieAfterDecorator(new NIOKieOutputLogAfterDecorator(new NIOKieDefaultMavenCompiler()));
                 break;
 
             case JGIT_BEFORE:

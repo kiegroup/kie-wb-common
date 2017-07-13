@@ -94,7 +94,7 @@ public class InternalNIOKieMetadataTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.INSTALL},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
 
         if (res.getErrorMessage().isPresent()) {
@@ -149,7 +149,7 @@ public class InternalNIOKieMetadataTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.INSTALL},
                                                                                      new HashMap<>(),
-                                                                                     Optional.of("log"));
+                                                                                     Boolean.TRUE);
         KieCompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.getMavenOutput().isPresent());
         if (res.getErrorMessage().isPresent()) {
@@ -195,7 +195,7 @@ public class InternalNIOKieMetadataTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.INSTALL},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());

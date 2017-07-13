@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio.impl;
 
-import java.util.Optional;
+import java.util.Collections;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -34,16 +34,16 @@ import org.slf4j.LoggerFactory;
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
  * <p>
- *
- *  NIOMavenCompiler compiler = new NIODefaultMavenCompiler();
- *
- *  or
- *
- *  NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
- *  <p>
- *  NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(<prj_folder>);
- *  NIOCompilationRequest req = new NIODefaultCompilationRequest(<mavenRepo>,info,new String[]{MavenArgs.COMPILE}, new HashMap(), Optional.of("log"));
- *  CompilationResponse res = compiler.compileSync(req);
+ * <p>
+ * NIOMavenCompiler compiler = new NIODefaultMavenCompiler();
+ * <p>
+ * or
+ * <p>
+ * NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+ * <p>
+ * NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(<prj_folder>);
+ * NIOCompilationRequest req = new NIODefaultCompilationRequest(<mavenRepo>,info,new String[]{MavenArgs.COMPILE}, new HashMap(), Optional.of("log"));
+ * CompilationResponse res = compiler.compileSync(req);
  */
 public class NIODefaultMavenCompiler implements NIOMavenCompiler {
 
@@ -70,8 +70,8 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
             ProcessedPoms processedPoms = enabler.process(req);
             if (!processedPoms.getResult()) {
                 return new DefaultCompilationResponse(Boolean.FALSE,
-                                                      Optional.of("Processing poms failed"),
-                                                      Optional.empty());
+                                                      "Processing poms failed",
+                                                      Collections.emptyList());
             }
         }
 
@@ -87,7 +87,8 @@ public class NIODefaultMavenCompiler implements NIOMavenCompiler {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassWorld kieClassWorld = new ClassWorld("plexus.core",
                                                   getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+        int exitCode = cli.doMain(req.getKieCliRequest(),
+                                  kieClassWorld);
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
             return new DefaultCompilationResponse(Boolean.TRUE);

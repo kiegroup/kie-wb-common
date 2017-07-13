@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
@@ -27,15 +26,10 @@ import org.uberfire.java.nio.file.Paths;
 
 public class LogUtils {
 
-    public static Optional<List<String>> getOutput(String prj,
-                                                   Optional<String> log,
-                                                   String uuid) {
-        if (log.isPresent()) {
-            StringBuilder sb = new StringBuilder(prj.trim()).append("/").append(log.get().trim()).append(".").append(uuid).append(".log");
-            return Optional.of(readTmpLog(sb.toString()));
-        } else {
-            return Optional.empty();
-        }
+    public static List<String> getOutput(String prj,
+                                         String uuid) {
+        StringBuilder sb = new StringBuilder(prj.trim()).append("/").append("log").append(".").append(uuid).append(".log");
+        return readTmpLog(sb.toString());
     }
 
     public static List<String> readTmpLog(String logFile) {

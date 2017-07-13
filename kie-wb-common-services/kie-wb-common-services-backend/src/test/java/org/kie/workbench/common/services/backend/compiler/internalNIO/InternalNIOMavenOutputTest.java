@@ -50,7 +50,7 @@ public class InternalNIOMavenOutputTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.of("log"));
+                                                                                     Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
         Assert.assertTrue(res.getMavenOutput().isPresent());

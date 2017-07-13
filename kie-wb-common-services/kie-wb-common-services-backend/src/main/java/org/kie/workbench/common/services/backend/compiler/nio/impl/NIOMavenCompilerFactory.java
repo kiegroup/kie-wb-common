@@ -23,6 +23,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Decorato
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOJGITCompilerBeforeDecorator;
 import org.kie.workbench.common.services.backend.compiler.nio.decorators.NIOOutputLogAfterDecorator;
+
 /***
  * Factory to create compilers based on the NIO2 implementation with correct order of decorators
  */

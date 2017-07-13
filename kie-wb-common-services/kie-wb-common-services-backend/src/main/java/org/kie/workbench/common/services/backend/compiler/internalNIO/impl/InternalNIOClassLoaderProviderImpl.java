@@ -34,19 +34,13 @@ import java.util.StringTokenizer;
 import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
@@ -89,7 +83,7 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
                                                                                      info,
                                                                                      new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.isSuccessful()) {
             /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
@@ -117,7 +111,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return buildResult(urls);
     }
 
-
     /**
      * Load the dependencies from the Poms, transitive included
      */
@@ -128,7 +121,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return buildResult(urls);
     }
 
-
     /**
      * Load the dependencies from the Poms, transitive included
      */
@@ -137,7 +129,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         List<URL> urls = loadIntoClassloader ? loadFiles(pomsPaths) : getTargetModulesURL(pomsPaths);
         return buildResult(urls);
     }
-
 
     private List<URL> buildUrlsFromArtifacts(String localRepo,
                                              List<Artifact> artifacts) throws MalformedURLException {
@@ -329,7 +320,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         return Optional.empty();
     }
 
-
     private List<URI> processScannedFiles(List<String> classPathFiles) {
         List<URI> deps = new ArrayList<>();
         for (String file : classPathFiles) {
@@ -343,7 +333,6 @@ public class InternalNIOClassLoaderProviderImpl implements AFClassLoaderProvider
         }
         return deps;
     }
-
 
     private List<URL> addFilesURL(List<URL> targetModulesUrls) {
         List<URL> targetFiles = new ArrayList<>(targetModulesUrls.size());

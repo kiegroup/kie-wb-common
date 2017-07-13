@@ -70,7 +70,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.VERSION},
                                                                      new HashMap(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -92,7 +92,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -119,7 +119,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -151,7 +151,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.of("log"));
+                                                                     Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
 
         //checks

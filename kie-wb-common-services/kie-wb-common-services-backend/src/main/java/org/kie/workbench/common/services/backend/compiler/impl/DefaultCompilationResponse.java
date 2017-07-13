@@ -39,18 +39,18 @@ public class DefaultCompilationResponse implements CompilationResponse {
     }
 
     public DefaultCompilationResponse(Boolean successful,
-                                      Optional<List<String>> mavenOutput) {
+                                      List<String> mavenOutput) {
         this.successful = successful;
         this.errorMessage = Optional.empty();
-        this.mavenOutput = mavenOutput;
+        this.mavenOutput = Optional.ofNullable(mavenOutput);
     }
 
     public DefaultCompilationResponse(Boolean successful,
-                                      Optional<String> errorMessage,
-                                      Optional<List<String>> mavenOutput) {
+                                      String errorMessage,
+                                      List<String> mavenOutput) {
         this.successful = successful;
-        this.errorMessage = errorMessage;
-        this.mavenOutput = mavenOutput;
+        this.errorMessage = Optional.ofNullable(errorMessage);
+        this.mavenOutput = Optional.ofNullable(mavenOutput);
     }
 
     public Boolean isSuccessful() {

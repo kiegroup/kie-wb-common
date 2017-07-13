@@ -23,16 +23,19 @@ public class NIOKieOutputLogAfterDecorator implements NIOKieCompilerDecorator {
         KieCompilationResponse res = compiler.compileSync(req);
 
         if (res.isSuccessful()) {
-
-            return new DefaultKieCompilationResponse(Boolean.TRUE,
-                                                     LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                        req.getKieCliRequest().getLogFile(),
-                                                                        req.getKieCliRequest().getRequestUUID()));
+            return getDefaultCompilationResponse(Boolean.TRUE,
+                                                 req);
         } else {
-            return new DefaultKieCompilationResponse(Boolean.FALSE,
-                                                     LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                        req.getKieCliRequest().getLogFile(),
-                                                                        req.getKieCliRequest().getRequestUUID()));
+            return getDefaultCompilationResponse(Boolean.FALSE,
+                                                 req);
         }
+    }
+
+    public DefaultKieCompilationResponse getDefaultCompilationResponse(Boolean result,
+                                                                       NIOCompilationRequest req) {
+        return new DefaultKieCompilationResponse(result,
+                                                 LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
+                                                                    req.getKieCliRequest().getRequestUUID())
+        );
     }
 }

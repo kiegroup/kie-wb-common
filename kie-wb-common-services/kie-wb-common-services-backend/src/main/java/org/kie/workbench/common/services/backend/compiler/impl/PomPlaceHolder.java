@@ -28,7 +28,6 @@ public class PomPlaceHolder {
     private String packaging;
     private Boolean isValid;
 
-
     public PomPlaceHolder() {
         this.isValid = Boolean.FALSE;
     }

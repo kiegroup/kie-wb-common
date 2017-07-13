@@ -21,6 +21,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompila
 import org.kie.workbench.common.services.backend.compiler.impl.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOKieMavenCompiler;
+
 /***
  * Before decorator to update a git repo before the build on a Kie Project with NIO2 Internal impl
  */

@@ -38,10 +38,9 @@ import java.util.StringTokenizer;
 import java.util.stream.Stream;
 
 import org.apache.maven.artifact.Artifact;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
@@ -88,7 +87,7 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
                                                                      info,
                                                                      new String[]{MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.isSuccessful()) {
             /** Maven dependency plugin is not able to append the modules' classpath using an absolute path in -Dmdep.outputFile,
@@ -116,8 +115,6 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
         return buildResult(urls);
     }
 
-
-
     /**
      * Load the dependencies from the Poms
      */
@@ -128,15 +125,11 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
         return buildResult(urls);
     }
 
-
-
     public Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> targets,
                                                                   Boolean loadIntoClassloader) {
         List<URL> urls = loadIntoClassloader ? getTargetModulesURL(targets) : getTargetModulesURL(targets);
         return buildResult(urls);
     }
-
-
 
     private List<URL> buildUrlsFromArtifacts(String localRepo,
                                              List<Artifact> artifacts) throws MalformedURLException {
@@ -236,7 +229,6 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
         }
         return Collections.emptyList();
     }
-
 
     private List<URL> loadFiles(List<String> pomsPaths) {
         List<URL> targetModulesUrls = getTargetModulesURL(pomsPaths);
@@ -342,7 +334,6 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
         }
         return deps;
     }
-
 
     private List<URL> addFilesURL(List<URL> targetModulesUrls) {
         List<URL> targetFiles = new ArrayList<>(targetModulesUrls.size());

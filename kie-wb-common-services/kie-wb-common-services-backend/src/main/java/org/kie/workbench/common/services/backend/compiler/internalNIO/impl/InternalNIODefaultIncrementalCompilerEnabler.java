@@ -27,8 +27,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.impl.ProcessedPoms;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOIncrementalCompilerEnabler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;

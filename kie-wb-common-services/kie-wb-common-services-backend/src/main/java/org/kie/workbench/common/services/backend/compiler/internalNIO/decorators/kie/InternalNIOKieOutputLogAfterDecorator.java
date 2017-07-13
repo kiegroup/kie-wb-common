@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.internalNIO.decorators.kie;
 
+import java.util.Collections;
+
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
@@ -35,16 +37,23 @@ public class InternalNIOKieOutputLogAfterDecorator implements InternalNIOKieComp
         CompilationResponse res = compiler.compileSync(req);
 
         if (res.isSuccessful()) {
+            return getResponse(Boolean.TRUE,
+                               req);
+        } else {
+            return getResponse(Boolean.FALSE,
+                               req);
+        }
+    }
 
-            return new DefaultKieCompilationResponse(Boolean.TRUE,
+    private DefaultKieCompilationResponse getResponse(Boolean result,
+                                                      InternalNIOCompilationRequest req) {
+        if (req.getKieCliRequest().isLogRequested()) {
+            return new DefaultKieCompilationResponse(result,
                                                      LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                        req.getKieCliRequest().getLogFile(),
                                                                         req.getKieCliRequest().getRequestUUID()));
         } else {
-            return new DefaultKieCompilationResponse(Boolean.FALSE,
-                                                     LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                        req.getKieCliRequest().getLogFile(),
-                                                                        req.getKieCliRequest().getRequestUUID()));
+            return new DefaultKieCompilationResponse(result,
+                                                     Collections.emptyList());
         }
     }
 }

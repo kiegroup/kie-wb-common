@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio.impl.kie;
 
-import java.util.Optional;
+import java.util.Collections;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
@@ -31,6 +31,7 @@ import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultInc
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Run maven on Kie projects with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
@@ -61,8 +62,8 @@ public class NIOKieDefaultMavenCompiler implements NIOKieMavenCompiler {
             ProcessedPoms processedPoms = enabler.process(req);
             if (!processedPoms.getResult()) {
                 return new DefaultKieCompilationResponse(Boolean.FALSE,
-                                                         Optional.of("Processing poms failed"),
-                                                         Optional.empty());
+                                                         "Processing poms failed",
+                                                         Collections.emptyList());
             }
         }
 
@@ -78,7 +79,8 @@ public class NIOKieDefaultMavenCompiler implements NIOKieMavenCompiler {
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassWorld kieClassWorld = new ClassWorld("plexus.core",
                                                   getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+        int exitCode = cli.doMain(req.getKieCliRequest(),
+                                  kieClassWorld);
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
             return new DefaultKieCompilationResponse(Boolean.TRUE);

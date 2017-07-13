@@ -35,7 +35,7 @@ public interface PluginPresents {
 
     /***
      * Signals ff the kie plugin is declared in the pom
-      * @return
+     * @return
      */
     Boolean isKiePluginPresent();
 

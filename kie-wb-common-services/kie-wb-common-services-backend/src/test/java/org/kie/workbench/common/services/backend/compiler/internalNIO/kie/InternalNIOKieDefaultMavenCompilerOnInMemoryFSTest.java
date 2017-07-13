@@ -173,7 +173,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.of("log"));
+                                                                                     Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.getMavenOutput().isPresent());
@@ -297,7 +297,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.of("log"));
+                                                                                     Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
         List<String> output = res.getMavenOutput().get();
@@ -385,7 +385,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.empty());
+                                                                                     Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
@@ -493,7 +493,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      info,
                                                                                      new String[]{MavenArgs.COMPILE},
                                                                                      new HashMap<>(),
-                                                                                     Optional.of("log"));
+                                                                                     Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.isSuccessful());

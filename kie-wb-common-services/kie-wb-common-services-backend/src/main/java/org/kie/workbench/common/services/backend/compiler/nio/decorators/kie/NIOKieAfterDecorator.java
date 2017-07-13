@@ -15,8 +15,8 @@ import java.util.Optional;
 import org.drools.compiler.kie.builder.impl.FileKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
@@ -24,6 +24,7 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompile
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOClassLoaderProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /***
  * After decorator working with the NIO2 , to read and store the Object created by the Kie takari plugin and placed in the CompilationResponse
  */
@@ -58,11 +59,18 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
 
             AFClassLoaderProvider provider = new NIOClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
-            return new DefaultKieCompilationResponse(Boolean.TRUE,
-                                                     (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
-                                                     (KieModule) kieModuleTuple.getOptionalObject().get(),
-                                                     res.getMavenOutput(),
-                                                     optionalDeps);
+            if (req.getKieCliRequest().isLogRequested()) {
+                return new DefaultKieCompilationResponse(Boolean.TRUE,
+                                                         (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
+                                                         (KieModule) kieModuleTuple.getOptionalObject().get(),
+                                                         res.getMavenOutput().get(),
+                                                         optionalDeps.get());
+            } else {
+                return new DefaultKieCompilationResponse(Boolean.TRUE,
+                                                         (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
+                                                         (KieModule) kieModuleTuple.getOptionalObject().get(),
+                                                         optionalDeps.get());
+            }
         } else {
             StringBuilder sb = new StringBuilder();
             if (kieModuleMetaInfoTuple.getErrorMsg().isPresent()) {
@@ -71,9 +79,14 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
             if (kieModuleTuple.getErrorMsg().isPresent()) {
                 sb.append(" Error in the kieModule:").append(kieModuleTuple.getErrorMsg().get());
             }
-            return new DefaultKieCompilationResponse(Boolean.FALSE,
-                                                     Optional.of(sb.toString()),
-                                                     res.getMavenOutput());
+            if (req.getKieCliRequest().isLogRequested()) {
+                return new DefaultKieCompilationResponse(Boolean.FALSE,
+                                                         sb.toString(),
+                                                         res.getMavenOutput().get());
+            } else {
+                return new DefaultKieCompilationResponse(Boolean.FALSE,
+                                                         sb.toString());
+            }
         }
     }
 

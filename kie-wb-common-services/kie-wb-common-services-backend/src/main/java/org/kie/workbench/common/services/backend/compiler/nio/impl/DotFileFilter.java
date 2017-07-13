@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.compiler.nio.impl;
 
 import java.nio.file.DirectoryStream;
 import java.nio.file.Path;
+
 /***
  * Filter used with DirectoryStreams to avoid the load of hidden files
  */

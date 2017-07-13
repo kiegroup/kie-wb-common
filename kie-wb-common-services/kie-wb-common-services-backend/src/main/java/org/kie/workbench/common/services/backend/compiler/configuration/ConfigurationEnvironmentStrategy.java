@@ -19,7 +19,6 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.kie.workbench.common.services.backend.compiler.Order;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,8 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy,
         for (ConfigurationKey key : keys) {
             String value = env.get(key.name());
             if (value == null) {
-                logger.info("Key {} not present in the Environment, skip to the next ConfigurationStrategy. \n", key.name());
+                logger.info("Key {} not present in the Environment, skip to the next ConfigurationStrategy. \n",
+                            key.name());
                 valid = Boolean.FALSE;
                 break;
             } else {

@@ -94,7 +94,7 @@ public class NioKieMetadataTest {
                                                                      info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());
@@ -147,7 +147,7 @@ public class NioKieMetadataTest {
                                                                      info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());
@@ -192,7 +192,7 @@ public class NioKieMetadataTest {
                                                                      info,
                                                                      new String[]{MavenArgs.INSTALL},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
             System.out.println(res.getErrorMessage().get());

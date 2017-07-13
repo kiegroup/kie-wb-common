@@ -71,7 +71,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         NIODefaultIncrementalCompilerEnabler enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         Assert.assertTrue(enabler.process(req).getResult());
 
@@ -114,7 +114,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                      info,
                                                                      new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
                                                                      new HashMap<>(),
-                                                                     Optional.empty());
+                                                                     Boolean.FALSE);
         NIODefaultIncrementalCompilerEnabler enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         Assert.assertTrue(enabler.process(req).getResult());
 

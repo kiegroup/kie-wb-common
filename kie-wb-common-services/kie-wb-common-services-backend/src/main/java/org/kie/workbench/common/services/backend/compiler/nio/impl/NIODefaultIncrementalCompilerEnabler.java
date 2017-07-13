@@ -30,8 +30,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.impl.ProcessedPoms;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOIncrementalCompilerEnabler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 /***
  * It process all the poms founded into a prj changing the build tag accordingly to the internal algo
  */

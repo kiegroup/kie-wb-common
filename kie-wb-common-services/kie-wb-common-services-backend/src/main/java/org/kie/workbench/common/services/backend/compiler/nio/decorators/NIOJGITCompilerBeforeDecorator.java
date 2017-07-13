@@ -26,6 +26,7 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequ
 import org.kie.workbench.common.services.backend.compiler.nio.NIOMavenCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /***
  * Before decorator to update a git repo before the build on a Project with NIO2
  */

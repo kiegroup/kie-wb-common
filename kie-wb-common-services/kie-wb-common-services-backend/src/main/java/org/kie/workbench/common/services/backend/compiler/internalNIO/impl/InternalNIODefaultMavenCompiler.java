@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.internalNIO.impl;
 
-import java.util.Optional;
+import java.util.Collections;
 
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -36,16 +36,16 @@ import org.uberfire.java.nio.file.Path;
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
  * <p>
- *
- *  InternalNIOMavenCompiler compiler = new InternalNIODefaultMavenCompiler();
- *
- *  or
- *
- *  InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
- *  <p>
- *  InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
- *  InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(<mavenRepo>, info,new String[]{MavenArgs.COMPILE},new HashMap<>(),Optional.of(log");
- *  CompilationResponse res = compiler.compileSync(req);
+ * <p>
+ * InternalNIOMavenCompiler compiler = new InternalNIODefaultMavenCompiler();
+ * <p>
+ * or
+ * <p>
+ * InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+ * <p>
+ * InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
+ * InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(<mavenRepo>, info,new String[]{MavenArgs.COMPILE},new HashMap<>(),Optional.of(log");
+ * CompilationResponse res = compiler.compileSync(req);
  */
 public class InternalNIODefaultMavenCompiler implements InternalNIOMavenCompiler {
 
@@ -83,8 +83,8 @@ public class InternalNIODefaultMavenCompiler implements InternalNIOMavenCompiler
             ProcessedPoms processedPoms = enabler.process(req);
             if (!processedPoms.getResult()) {
                 return new DefaultCompilationResponse(Boolean.FALSE,
-                                                      Optional.of("Processing poms failed"),
-                                                      Optional.empty());
+                                                      "Processing poms failed",
+                                                      Collections.emptyList());
             }
         }
         req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
@@ -98,7 +98,8 @@ public class InternalNIODefaultMavenCompiler implements InternalNIOMavenCompiler
         ClassLoader original = Thread.currentThread().getContextClassLoader();
         ClassWorld kieClassWorld = new ClassWorld("plexus.core",
                                                   getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(), kieClassWorld);
+        int exitCode = cli.doMain(req.getKieCliRequest(),
+                                  kieClassWorld);
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
             return new DefaultCompilationResponse(Boolean.TRUE);

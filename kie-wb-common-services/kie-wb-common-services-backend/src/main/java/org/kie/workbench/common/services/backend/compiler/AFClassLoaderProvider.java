@@ -53,7 +53,6 @@ public interface AFClassLoaderProvider {
     Optional<ClassLoader> getClassloaderFromProjectTargets(List<String> targets,
                                                            Boolean loadIntoClassloader);
 
-
     /**
      * Build a classloader with all the dependencies (included transitive) present in all the prj modules
      * @param prjPath
@@ -69,7 +68,5 @@ public interface AFClassLoaderProvider {
      * @return
      */
     Optional<List<URI>> getURISFromAllDependencies(String prjPath);
-
-
 }
 

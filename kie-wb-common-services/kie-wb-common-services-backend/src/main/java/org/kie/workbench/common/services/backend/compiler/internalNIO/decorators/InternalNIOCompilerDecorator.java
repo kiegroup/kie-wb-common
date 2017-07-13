@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.internalNIO.decorators;
 
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
+
 /***
  * Extends the NIO2 Internal impl Compiler behaviour to the decorators
  */

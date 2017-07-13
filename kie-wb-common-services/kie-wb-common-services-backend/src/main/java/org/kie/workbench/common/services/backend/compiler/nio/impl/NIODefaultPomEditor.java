@@ -32,6 +32,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Configur
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultPomEditor;
 import org.kie.workbench.common.services.backend.compiler.impl.PomPlaceHolder;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
+
 /***
  * Default NIO2 impl specialization of the generic DefaultPomEditor
  */
@@ -110,6 +111,4 @@ public class NIODefaultPomEditor extends DefaultPomEditor {
             logger.error(e.getMessage());
         }
     }
-
-
 }
