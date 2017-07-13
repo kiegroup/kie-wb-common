@@ -85,11 +85,7 @@ public class InternalNIOWorkspaceCompilationInfo {
     }
 
     public Optional<Git> getGitRepo() {
-        if (gitRepo != null) {
-            return Optional.of(gitRepo);
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(gitRepo);
     }
 
     public Path getPrjPath() {
@@ -97,19 +93,11 @@ public class InternalNIOWorkspaceCompilationInfo {
     }
 
     public Optional<Path> getEnhancedMainPomFile() {
-        if (enhancedMainPomFile != null) {
-            return Optional.of(enhancedMainPomFile);
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(enhancedMainPomFile);
     }
 
     public Optional<URI> getRemoteRepo() {
-        if (remoteRepo != null) {
-            return Optional.of(remoteRepo);
-        } else {
-            return Optional.empty();
-        }
+        return Optional.ofNullable(remoteRepo);
     }
 
     @Override

@@ -34,7 +34,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 /***
- * It process all the poms founded into a prj changing the build tag accordingly to the internal algo
+ * It process all the poms found into a prj changing the build tag accordingly to the internal algo
  */
 public class InternalNIODefaultIncrementalCompilerEnabler implements InternalNIOIncrementalCompilerEnabler {
 

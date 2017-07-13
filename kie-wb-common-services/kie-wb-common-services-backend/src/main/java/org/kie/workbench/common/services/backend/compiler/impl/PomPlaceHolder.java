@@ -17,7 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl;
 
 /***
- * Used to store informations of each pom founded in a prj
+ * Used to store informations of each pom found in a prj
  */
 public class PomPlaceHolder {
 
