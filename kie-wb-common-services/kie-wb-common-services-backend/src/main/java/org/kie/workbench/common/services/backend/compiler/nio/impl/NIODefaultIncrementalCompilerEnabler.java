@@ -59,7 +59,7 @@ public class NIODefaultIncrementalCompilerEnabler implements NIOIncrementalCompi
         PomPlaceHolder placeHolder = editor.readSingle(mainPom);
         Boolean isPresent = isPresent(placeHolder);   // check if the main pom is already scanned and edited
         if (placeHolder.isValid() && !isPresent) {
-            List<String> pomsList = new ArrayList();
+            List<String> pomsList = new ArrayList<>();
             NIOMavenUtils.searchPoms(Paths.get(req.getInfo().getPrjPath().toString()),
                                      pomsList);// recursive NIO search in all subfolders
             if (pomsList.size() > 0) {

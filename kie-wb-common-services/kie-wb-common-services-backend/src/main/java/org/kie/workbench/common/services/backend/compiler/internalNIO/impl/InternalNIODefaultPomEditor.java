@@ -98,10 +98,10 @@ public class InternalNIODefaultPomEditor extends DefaultPomEditor {
                                      new String(baos.toByteArray(),
                                                 StandardCharsets.UTF_8));
                     }
-                    Files.delete(Paths.get(pom.getParent().toAbsolutePath().toString(),
-                                           POM_NAME));
-                    Files.write(Paths.get(pom.getParent().toAbsolutePath().toString(),
-                                          POM_NAME),
+                    Path pomParent = Paths.get(pom.getParent().toAbsolutePath().toString(),
+                                               POM_NAME);
+                    Files.delete(pomParent);
+                    Files.write(pomParent,
                                 baos.toByteArray(),
                                 StandardOpenOption.CREATE_NEW);//enhanced pom
                 }

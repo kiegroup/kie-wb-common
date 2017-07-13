@@ -40,7 +40,7 @@ public class NIOKieMavenCompilerFactory {
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
     public static NIOKieMavenCompiler getCompiler(KieDecorator decorator) {
-        NIOKieMavenCompiler compiler = compilers.get(decorator);
+        NIOKieMavenCompiler compiler = compilers.get(decorator.name());
         if (compiler == null) {
             compiler = createAndAddNewCompiler(decorator);
         }

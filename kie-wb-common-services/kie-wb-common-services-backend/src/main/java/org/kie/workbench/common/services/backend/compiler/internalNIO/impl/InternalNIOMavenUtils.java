@@ -38,7 +38,7 @@ public class InternalNIOMavenUtils {
 
     public static List<Artifact> resolveDependenciesFromMultimodulePrj(List<String> pomsPaths) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        List<Artifact> deps = new ArrayList();
+        List<Artifact> deps = new ArrayList<>();
         try {
             for (String pomx : pomsPaths) {
                 org.uberfire.java.nio.file.Path pom = org.uberfire.java.nio.file.Paths.get(pomx);

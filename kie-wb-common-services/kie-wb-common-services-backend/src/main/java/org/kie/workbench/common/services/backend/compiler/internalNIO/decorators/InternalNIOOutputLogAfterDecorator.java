@@ -37,16 +37,15 @@ public class InternalNIOOutputLogAfterDecorator implements InternalNIOCompilerDe
         CompilationResponse res = compiler.compileSync(req);
 
         if (res.isSuccessful()) {
-
-            return new DefaultCompilationResponse(Boolean.TRUE,
-                                                  LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                     req.getKieCliRequest().getLogFile(),
-                                                                     req.getKieCliRequest().getRequestUUID()));
+            return getDefaultCompilationResponse(Boolean.TRUE,req);
         } else {
-            return new DefaultCompilationResponse(Boolean.FALSE,
-                                                  LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                     req.getKieCliRequest().getLogFile(),
-                                                                     req.getKieCliRequest().getRequestUUID()));
+            return getDefaultCompilationResponse(Boolean.FALSE,req);
         }
+    }
+
+    public  DefaultCompilationResponse getDefaultCompilationResponse(Boolean result, InternalNIOCompilationRequest req){
+        return new DefaultCompilationResponse(result, LogUtils.getOutput(req.getInfo().getPrjPath().toAbsolutePath().toString(),
+                                                                         req.getKieCliRequest().getLogFile(),
+                                                                         req.getKieCliRequest().getRequestUUID()));
     }
 }

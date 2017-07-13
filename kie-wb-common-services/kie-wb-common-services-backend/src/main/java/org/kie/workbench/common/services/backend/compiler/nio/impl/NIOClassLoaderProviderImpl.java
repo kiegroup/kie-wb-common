@@ -167,7 +167,7 @@ public class NIOClassLoaderProviderImpl implements AFClassLoaderProvider {
 
     private List<URL> getTargetModulesURL(List<String> pomsPaths) {
         if (pomsPaths != null && pomsPaths.size() > 0) {
-            List<URL> urls = new ArrayList();
+            List<URL> urls = new ArrayList<>();
             try {
                 for (String pomPath : pomsPaths) {
                     Path path = Paths.get(pomPath);

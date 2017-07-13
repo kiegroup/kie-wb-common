@@ -43,7 +43,7 @@ public class NIOMavenUtils {
 
     public static List<Artifact> resolveDependenciesFromMultimodulePrj(List<String> pomsPaths) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        List<Artifact> deps = new ArrayList();
+        List<Artifact> deps = new ArrayList<>();
         try {
             for (String pomx : pomsPaths) {
                 Path pom = Paths.get(pomx);

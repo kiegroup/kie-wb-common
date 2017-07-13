@@ -37,7 +37,7 @@ public class NIOMavenCompilerFactory {
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
     public static NIOMavenCompiler getCompiler(Decorator decorator) {
-        NIOMavenCompiler compiler = compilers.get(decorator);
+        NIOMavenCompiler compiler = compilers.get(decorator.name());
         if (compiler == null) {
             compiler = createAndAddNewCompiler(decorator);
         }
