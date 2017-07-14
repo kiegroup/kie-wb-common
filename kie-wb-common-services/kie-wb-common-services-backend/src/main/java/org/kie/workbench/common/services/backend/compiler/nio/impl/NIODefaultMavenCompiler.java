@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
  *
  * NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
  *
- * NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(<prj_folder>);
- * NIOCompilationRequest req = new NIODefaultCompilationRequest(<mavenRepo>,info,new String[]{MavenArgs.COMPILE}, new HashMap(), Optional.of("log"));
+ * NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prj_folder);
+ * NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo,info,new String[]{MavenArgs.COMPILE}, new HashMap(), Boolean.TRUE);
  * CompilationResponse res = compiler.compileSync(req);
  */
 public class NIODefaultMavenCompiler implements NIOMavenCompiler {

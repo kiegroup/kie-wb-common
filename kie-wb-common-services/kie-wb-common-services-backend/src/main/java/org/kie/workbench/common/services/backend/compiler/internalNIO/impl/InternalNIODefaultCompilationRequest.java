@@ -38,7 +38,7 @@ public class InternalNIODefaultCompilationRequest implements InternalNIOCompilat
     private String mavenRepo;
 
     /***
-     *
+     * @param mavenRepo a string representation of the Path
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present

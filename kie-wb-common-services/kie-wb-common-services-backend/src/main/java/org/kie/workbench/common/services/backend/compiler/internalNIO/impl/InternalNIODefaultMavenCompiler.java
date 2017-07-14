@@ -41,7 +41,7 @@ import org.uberfire.java.nio.file.Path;
  * InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
  *
  * InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
- * InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(<mavenRepo>, info,new String[]{MavenArgs.COMPILE},new HashMap<>(),Optional.of(log");
+ * InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE},new HashMap<>(), Boolean.TRUE );
  * CompilationResponse res = compiler.compileSync(req);
  */
 public class InternalNIODefaultMavenCompiler implements InternalNIOMavenCompiler {
