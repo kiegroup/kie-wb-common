@@ -17,6 +17,7 @@
 package org.kie.workbench.common.forms.editor.client.editor.rendering;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwtmockito.GwtMock;
@@ -230,7 +231,8 @@ public class EditorFieldLayoutComponentTest {
     public void testOpenFieldPropertiesBeforeDrop() {
         ModalConfigurationContext modalConfigurationContext = new ModalConfigurationContext(layoutComponent,
                                                                                             mock(Command.class),
-                                                                                            mock(Command.class));
+                                                                                            mock(Command.class),
+                                                                                            mock(Supplier.class));
 
         editorFieldLayoutComponent.getConfigurationModal(modalConfigurationContext);
 
@@ -248,7 +250,8 @@ public class EditorFieldLayoutComponentTest {
 
         ModalConfigurationContext modalConfigurationContext = new ModalConfigurationContext(layoutComponent,
                                                                                             mock(Command.class),
-                                                                                            mock(Command.class));
+                                                                                            mock(Command.class),
+                                                                                            mock(Supplier.class));
 
         editorFieldLayoutComponent.getConfigurationModal(modalConfigurationContext);
 
