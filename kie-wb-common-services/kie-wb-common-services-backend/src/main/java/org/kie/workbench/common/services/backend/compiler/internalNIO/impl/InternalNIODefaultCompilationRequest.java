@@ -42,7 +42,7 @@ public class InternalNIODefaultCompilationRequest implements InternalNIOCompilat
      * @param info
      * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present
-     * @param logRequested if is true the output of the build will be provided as a List<String> in the CompilationResponse you can use a simple Optional.of("log")
+     * @param logRequested if is true the output of the build will be provided as a List<String>
      */
     public InternalNIODefaultCompilationRequest(String mavenRepo,
                                                 InternalNIOWorkspaceCompilationInfo info,
