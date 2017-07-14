@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Run maven on Kie projects with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
- * <p>
+ *
  */
 public class NIOKieDefaultMavenCompiler implements NIOKieMavenCompiler {
 

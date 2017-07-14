@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +29,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
@@ -68,7 +67,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.VERSION},
+                                                                     new String[]{MavenCLIArgs.VERSION},
                                                                      new HashMap(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -90,7 +89,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -117,7 +116,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -149,7 +148,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

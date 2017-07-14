@@ -33,14 +33,13 @@ import org.slf4j.LoggerFactory;
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
- * <p>
- * <p>
+ *
  * NIOMavenCompiler compiler = new NIODefaultMavenCompiler();
- * <p>
+ *
  * or
- * <p>
+ *
  * NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
- * <p>
+ *
  * NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(<prj_folder>);
  * NIOCompilationRequest req = new NIODefaultCompilationRequest(<mavenRepo>,info,new String[]{MavenArgs.COMPILE}, new HashMap(), Optional.of("log"));
  * CompilationResponse res = compiler.compileSync(req);

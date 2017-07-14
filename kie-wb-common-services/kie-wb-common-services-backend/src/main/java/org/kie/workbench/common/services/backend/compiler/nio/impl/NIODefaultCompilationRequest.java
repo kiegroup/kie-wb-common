@@ -40,7 +40,7 @@ public class NIODefaultCompilationRequest implements NIOCompilationRequest {
     /***
      *
      * @param info
-     * @param args param for maven
+     * @param args param for maven, can be used {@link org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs}
      * @param map to retrieve KieMetaInfo and KieModule when a Kie Plugin is present
      * @param logRequested if true  the output of the build will be provided as a List<String> in the CompilationResponse
      */

@@ -21,14 +21,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
@@ -69,7 +68,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         NIODefaultIncrementalCompilerEnabler enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
@@ -112,7 +111,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         NIODefaultIncrementalCompilerEnabler enabler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);

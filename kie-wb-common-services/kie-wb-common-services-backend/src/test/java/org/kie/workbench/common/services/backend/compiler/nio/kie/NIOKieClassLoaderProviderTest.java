@@ -33,7 +33,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOClassLoaderProviderImpl;
@@ -77,7 +77,7 @@ public class NIOKieClassLoaderProviderTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -128,7 +128,7 @@ public class NIOKieClassLoaderProviderTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -175,7 +175,7 @@ public class NIOKieClassLoaderProviderTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);

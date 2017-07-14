@@ -18,7 +18,6 @@ package org.kie.workbench.common.services.backend.compiler.internalNIO.kie;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -27,7 +26,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOKieMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOMavenCompiler;
@@ -76,7 +75,7 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.VERSION},
+                                                                                     new String[]{MavenCLIArgs.VERSION},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -103,7 +102,7 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -134,7 +133,7 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -172,7 +171,7 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.COMPILE},
+                                                                                     new String[]{MavenCLIArgs.COMPILE},
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

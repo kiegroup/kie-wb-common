@@ -30,7 +30,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIOClassLoaderProviderImpl;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIOMavenCompilerFactory;
@@ -76,7 +76,7 @@ public class InternalNIOClassLoaderProviderTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(uberfireTmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
+                                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -127,7 +127,7 @@ public class InternalNIOClassLoaderProviderTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(uberfireTmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE, MavenArgs.INSTALL},
+                                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -176,7 +176,7 @@ public class InternalNIOClassLoaderProviderTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(uberfireTmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenArgs.CLEAN, MavenArgs.COMPILE},
+                                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);

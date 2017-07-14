@@ -37,7 +37,7 @@ import org.kie.scanner.KieModuleMetaDataImpl;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
@@ -92,7 +92,7 @@ public class NioKieMetadataTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
@@ -145,7 +145,7 @@ public class NioKieMetadataTest {
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
@@ -190,7 +190,7 @@ public class NioKieMetadataTest {
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);

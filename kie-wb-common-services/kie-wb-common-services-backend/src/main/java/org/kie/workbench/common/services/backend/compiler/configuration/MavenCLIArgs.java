@@ -16,9 +16,9 @@
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
 /**
- * Maven goals
+ * Constant with common maven cli args, used to avoid the creation of strings and mispelled args
  */
-public class MavenArgs {
+public class MavenCLIArgs {
 
     public static final String CLEAN = "clean";
 
@@ -43,4 +43,6 @@ public class MavenArgs {
     public static final String OFFLINE = "-o";
 
     public static final String LOG = "-l";
+
+    public static final String SKIP_TEST = "-DskipTests";
 }

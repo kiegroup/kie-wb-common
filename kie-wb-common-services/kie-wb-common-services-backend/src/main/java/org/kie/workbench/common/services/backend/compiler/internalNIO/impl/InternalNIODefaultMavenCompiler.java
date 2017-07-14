@@ -35,14 +35,11 @@ import org.uberfire.java.nio.file.Path;
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
  * to use Takari plugins like a black box
- * <p>
- * <p>
+
  * InternalNIOMavenCompiler compiler = new InternalNIODefaultMavenCompiler();
- * <p>
  * or
- * <p>
  * InternalNIOMavenCompiler compiler = InternalNIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
- * <p>
+ *
  * InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
  * InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(<mavenRepo>, info,new String[]{MavenArgs.COMPILE},new HashMap<>(),Optional.of(log");
  * CompilationResponse res = compiler.compileSync(req);

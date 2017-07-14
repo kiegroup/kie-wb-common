@@ -35,7 +35,7 @@ import org.kie.workbench.common.services.backend.compiler.PomEditor;
 import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -184,9 +184,9 @@ public class DefaultPomEditor implements PomEditor {
         newCompilerPlugin.setVersion(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION));
 
         PluginExecution execution = new PluginExecution();
-        execution.setId(MavenArgs.COMPILE);
-        execution.setGoals(Arrays.asList(MavenArgs.COMPILE));
-        execution.setPhase(MavenArgs.COMPILE);
+        execution.setId(MavenCLIArgs.COMPILE);
+        execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
+        execution.setPhase(MavenCLIArgs.COMPILE);
 
         Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
         compilerId.setValue(compiler.name().toLowerCase());
