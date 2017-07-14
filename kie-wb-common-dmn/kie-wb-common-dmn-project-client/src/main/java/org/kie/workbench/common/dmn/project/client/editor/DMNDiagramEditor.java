@@ -13,8 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.kie.workbench.common.stunner.cm.project.client.editor;
+package org.kie.workbench.common.dmn.project.client.editor;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -22,9 +21,9 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
-import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
+import org.kie.workbench.common.dmn.api.factory.DMNGraphFactory;
+import org.kie.workbench.common.dmn.project.client.type.DMNDiagramResourceType;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenterFactory;
-import org.kie.workbench.common.stunner.cm.project.client.type.CaseManagementDiagramResourceType;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
@@ -35,7 +34,6 @@ import org.kie.workbench.common.stunner.project.client.editor.ProjectDiagramEdit
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
-import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -56,25 +54,25 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.Menus;
 
 @Dependent
-@WorkbenchEditor(identifier = CaseManagementDiagramEditor.EDITOR_ID, supportedTypes = {CaseManagementDiagramResourceType.class})
-public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<CaseManagementDiagramResourceType> {
+@WorkbenchEditor(identifier = DMNDiagramEditor.EDITOR_ID, supportedTypes = {DMNDiagramResourceType.class})
+public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramResourceType> {
 
-    public static final String EDITOR_ID = "CaseManagementDiagramEditor";
+    public static final String EDITOR_ID = "DMNDiagramEditor";
 
     @Inject
-    public CaseManagementDiagramEditor(final AbstractProjectDiagramEditor.View view,
-                                       final PlaceManager placeManager,
-                                       final ErrorPopupPresenter errorPopupPresenter,
-                                       final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                                       final SavePopUpPresenter savePopUpPresenter,
-                                       final CaseManagementDiagramResourceType resourceType,
-                                       final ClientProjectDiagramService projectDiagramServices,
-                                       final SessionManager sessionManager,
-                                       final SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory,
-                                       final SessionCommandFactory sessionCommandFactory,
-                                       final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder,
-                                       final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
-                                       final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent) {
+    public DMNDiagramEditor(final View view,
+                            final PlaceManager placeManager,
+                            final ErrorPopupPresenter errorPopupPresenter,
+                            final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
+                            final SavePopUpPresenter savePopUpPresenter,
+                            final DMNDiagramResourceType resourceType,
+                            final ClientProjectDiagramService projectDiagramServices,
+                            final SessionManager sessionManager,
+                            final SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory,
+                            final SessionCommandFactory sessionCommandFactory,
+                            final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder,
+                            final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
+                            final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -99,28 +97,17 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
 
     @Override
     protected int getCanvasWidth() {
-        return (int) BPMNGraphFactory.GRAPH_DEFAULT_WIDTH;
+        return (int) DMNGraphFactory.GRAPH_DEFAULT_WIDTH;
     }
 
     @Override
     protected int getCanvasHeight() {
-        return (int) BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT;
-    }
-
-    @Override
-    protected String getEditorIdentifier() {
-        return CaseManagementDiagramEditor.EDITOR_ID;
+        return (int) DMNGraphFactory.GRAPH_DEFAULT_HEIGHT;
     }
 
     @OnOpen
     public void onOpen() {
         super.doOpen();
-    }
-
-    @Override
-    protected void open(final ProjectDiagram diagram) {
-        super.open(diagram);
-        presenter.displayNotifications(type -> false);
     }
 
     @OnClose
@@ -138,21 +125,25 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
         super.doLostFocus();
     }
 
+    @Override
     @WorkbenchPartTitleDecoration
     public IsWidget getTitle() {
         return super.getTitle();
     }
 
+    @Override
     @WorkbenchPartTitle
     public String getTitleText() {
         return super.getTitleText();
     }
 
+    @Override
     @WorkbenchMenu
     public Menus getMenus() {
         return super.getMenus();
     }
 
+    @Override
     @WorkbenchPartView
     public Widget getWidget() {
         return getView().asWidget();
@@ -161,5 +152,10 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
     @OnMayClose
     public boolean onMayClose() {
         return super.mayClose(getCurrentDiagramHash());
+    }
+
+    @Override
+    protected String getEditorIdentifier() {
+        return EDITOR_ID;
     }
 }
