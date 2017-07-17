@@ -103,16 +103,14 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject(),
-                                                         Optional.empty());
+                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
+                return new NIOKieAfterDecorator.KieTuple(
                                                          tuple.getErrorMsg());
             }
         } else {
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of("kieModuleMetaInfo not present in the map"));
+            return new NIOKieAfterDecorator.KieTuple("kieModuleMetaInfo not present in the map");
         }
     }
 
@@ -130,17 +128,15 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject(),
-                                                         Optional.empty());
+                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
+                return new NIOKieAfterDecorator.KieTuple(
                                                          tuple.getErrorMsg());
             }
         } else {
 
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of("kieModule not present in the map"));
+            return new NIOKieAfterDecorator.KieTuple("kieModule not present in the map");
         }
     }
 
@@ -160,25 +156,20 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
             bis = new ByteArrayInputStream(objBytes);
             in = new ObjectInputStream(bis);
             Object newObj = in.readObject();
-            return new NIOKieAfterDecorator.KieTuple(Optional.of(newObj),
-                                                     Optional.empty());
+            return new NIOKieAfterDecorator.KieTuple(newObj);
         } catch (NotSerializableException nse) {
             nse.printStackTrace();
             StringBuilder sb = new StringBuilder("NotSerializableException:").append(nse.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of(sb.toString()));
+            return new NIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (IOException ioe) {
             StringBuilder sb = new StringBuilder("IOException:").append(ioe.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of(sb.toString()));
+            return new NIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (ClassNotFoundException cnfe) {
             StringBuilder sb = new StringBuilder("ClassNotFoundException:").append(cnfe.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of(sb.toString()));
+            return new NIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (Exception e) {
             StringBuilder sb = new StringBuilder("Exception:").append(e.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                     Optional.of(sb.toString()));
+            return new NIOKieAfterDecorator.KieTuple(sb.toString());
         } finally {
             try {
                 if (bos != null) {
@@ -195,21 +186,24 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
 
     static class KieTuple {
 
-        private Optional<Object> optionalObj;
-        private Optional<String> errorMsg;
+        private Object optionalObj;
+        private String errorMsg;
 
-        public KieTuple(Optional<Object> optionalObj,
-                        Optional<String> errorMsg) {
+        public KieTuple(Object optionalObj) {
             this.optionalObj = optionalObj;
+        }
+
+        public KieTuple(String errorMsg) {
             this.errorMsg = errorMsg;
         }
 
+
         public Optional<Object> getOptionalObject() {
-            return optionalObj;
+            return Optional.ofNullable(optionalObj);
         }
 
         public Optional<String> getErrorMsg() {
-            return errorMsg;
+            return Optional.ofNullable(errorMsg);
         }
     }
 }

@@ -118,16 +118,14 @@ public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecor
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new InternalNIOKieAfterDecorator.KieTuple(tuple.getOptionalObject(),
-                                                                 Optional.empty());
+                return new InternalNIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
+                return new InternalNIOKieAfterDecorator.KieTuple(
                                                                  tuple.getErrorMsg());
             }
         } else {
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of("kieModuleMetaInfo not present in the map"));
+            return new InternalNIOKieAfterDecorator.KieTuple("kieModuleMetaInfo not present in the map");
         }
     }
 
@@ -144,17 +142,15 @@ public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecor
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new InternalNIOKieAfterDecorator.KieTuple(tuple.getOptionalObject(),
-                                                                 Optional.empty());
+                return new InternalNIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
+                return new InternalNIOKieAfterDecorator.KieTuple(
                                                                  tuple.getErrorMsg());
             }
         } else {
 
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of("kieModule not present in the map"));
+            return new InternalNIOKieAfterDecorator.KieTuple("kieModule not present in the map");
         }
     }
 
@@ -174,25 +170,20 @@ public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecor
             bis = new ByteArrayInputStream(objBytes);
             in = new ObjectInputStream(bis);
             Object newObj = in.readObject();
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.of(newObj),
-                                                             Optional.empty());
+            return new InternalNIOKieAfterDecorator.KieTuple(newObj);
         } catch (NotSerializableException nse) {
             nse.printStackTrace();
             StringBuilder sb = new StringBuilder("NotSerializableException:").append(nse.getMessage());
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of(sb.toString()));
+            return new InternalNIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (IOException ioe) {
             StringBuilder sb = new StringBuilder("IOException:").append(ioe.getMessage());
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of(sb.toString()));
+            return new InternalNIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (ClassNotFoundException cnfe) {
             StringBuilder sb = new StringBuilder("ClassNotFoundException:").append(cnfe.getMessage());
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of(sb.toString()));
+            return new InternalNIOKieAfterDecorator.KieTuple(sb.toString());
         } catch (Exception e) {
             StringBuilder sb = new StringBuilder("Exception:").append(e.getMessage());
-            return new InternalNIOKieAfterDecorator.KieTuple(Optional.empty(),
-                                                             Optional.of(sb.toString()));
+            return new InternalNIOKieAfterDecorator.KieTuple(sb.toString());
         } finally {
             try {
                 if (bos != null) {
@@ -209,21 +200,23 @@ public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecor
 
     static class KieTuple {
 
-        private Optional<Object> optionalObj;
-        private Optional<String> errorMsg;
+        private Object optionalObj;
+        private String errorMsg;
 
-        public KieTuple(Optional<Object> optionalObj,
-                        Optional<String> errorMsg) {
+        public KieTuple(Object optionalObj) {
             this.optionalObj = optionalObj;
+        }
+        
+        public KieTuple(String errorMsg) {
             this.errorMsg = errorMsg;
         }
 
         public Optional<Object> getOptionalObject() {
-            return optionalObj;
+            return Optional.ofNullable(optionalObj);
         }
 
         public Optional<String> getErrorMsg() {
-            return errorMsg;
+            return Optional.ofNullable(errorMsg);
         }
     }
 }
