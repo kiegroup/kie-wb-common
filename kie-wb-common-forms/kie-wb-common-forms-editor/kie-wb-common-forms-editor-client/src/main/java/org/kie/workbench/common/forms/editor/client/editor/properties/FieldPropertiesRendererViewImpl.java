@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.forms.editor.client.editor.properties;
 
-import java.util.Collection;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -78,16 +78,9 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
         modal.setClosable(false);
         modal.setBody(this);
         modal.add(new ModalFooterOKCancelButtons(
-                () -> {
-                    if (formRenderer.isValid()) {
-                        presenter.onPressOk();
-                        modal.hide();
-                    }
-                },
-                () -> {
-                    presenter.onPressCancel();
-                    modal.hide();
-                }));
+                this::maybeOk,
+                this::close));
+        modal.addHideHandler(evt -> presenter.onClose());
         formContent.add(formRenderer);
     }
 
@@ -113,17 +106,27 @@ public class FieldPropertiesRendererViewImpl extends Composite implements FieldP
         return modal;
     }
 
+    private void maybeOk() {
+        if (formRenderer.isValid()) {
+            presenter.onPressOk();
+            modal.hide();
+        }
+    }
+
+    private void close() {
+        modal.hide();
+    }
+
     protected void initFieldTypeList() {
         fieldType.clear();
-        Collection<String> types = helper.getCompatibleFieldTypes();
-        int i = 0;
-        for (String type : types) {
-            fieldType.addItem(type);
-            if (type.equals(helper.getCurrentField().getFieldType().getTypeName())) {
-                fieldType.setSelectedIndex(i);
-            }
-            i++;
-        }
+
+        List<String> types = presenter.getCompatibleFieldTypes();
+
+        types.forEach(fieldType::addItem);
+
+        String currentType = presenter.getCurrentField().getFieldType().getTypeName();
+
+        fieldType.setSelectedIndex(types.indexOf(currentType));
     }
 
     @EventHandler("fieldType")

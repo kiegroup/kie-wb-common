@@ -26,7 +26,8 @@ import org.kie.workbench.common.forms.dynamic.client.processing.engine.handling.
 import org.kie.workbench.common.forms.dynamic.service.shared.DynamicContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.validation.DynamicModelConstraints;
-import org.kie.workbench.common.forms.model.JavaModel;
+import org.kie.workbench.common.forms.model.JavaFormModel;
+import org.kie.workbench.common.forms.processing.engine.handling.FieldStateValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.FormHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.FieldChangeHandlerManagerImpl;
@@ -41,10 +42,14 @@ public class DynamicFormHandlerGenerator implements FormHandlerGenerator<MapMode
 
     private MapModelBindingHelper helper;
 
+    protected FieldStateValidator fieldStateValidator;
+
     @Inject
     public DynamicFormHandlerGenerator(DynamicValidator validator,
+                                       FieldStateValidator fieldStateValidator,
                                        MapModelBindingHelper helper) {
         this.validator = validator;
+        this.fieldStateValidator = fieldStateValidator;
         this.helper = helper;
     }
 
@@ -53,15 +58,16 @@ public class DynamicFormHandlerGenerator implements FormHandlerGenerator<MapMode
 
         DynamicModelValidator dynamicValidator = new DynamicModelValidator(validator);
 
-        if (context.getRootForm().getModel() instanceof JavaModel) {
-            DynamicModelConstraints constraints = context.getModelConstraints().get(((JavaModel) context.getRootForm().getModel()).getType());
+        if (context.getRootForm().getModel() instanceof JavaFormModel) {
+            DynamicModelConstraints constraints = context.getModelConstraints().get(((JavaFormModel) context.getRootForm().getModel()).getType());
 
             if (constraints != null) {
                 dynamicValidator.setModelConstraints(constraints);
             }
         }
 
-        FormValidator formValidator = new FormValidatorImpl(dynamicValidator);
+        FormValidator formValidator = new FormValidatorImpl(dynamicValidator,
+                                                            fieldStateValidator);
 
         FormHandler handler = new FormHandlerImpl(formValidator,
                                                   new FieldChangeHandlerManagerImpl());

@@ -18,7 +18,6 @@ package org.kie.workbench.common.forms.editor.client.editor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,25 +30,29 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextRequest;
-import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextResponse;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
+import org.kie.workbench.common.forms.editor.client.editor.test.TestFormEditorHelper;
 import org.kie.workbench.common.forms.editor.client.type.FormDefinitionResourceType;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingContext;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorService;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.definition.CheckBoxFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.definition.DatePickerFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.definition.TextAreaFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
 import org.kie.workbench.common.forms.fields.test.TestFieldManager;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
-import org.kie.workbench.common.forms.model.FormModel;
+import org.kie.workbench.common.forms.model.ModelProperty;
+import org.kie.workbench.common.forms.model.impl.ModelPropertyImpl;
+import org.kie.workbench.common.forms.model.impl.PortableJavaModel;
+import org.kie.workbench.common.forms.model.impl.TypeInfoImpl;
 import org.mockito.Mock;
+import org.mockito.Spy;
+import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
 import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent;
 import org.uberfire.mocks.CallerMock;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -59,14 +62,16 @@ public class FormEditorHelperTest {
 
     private List<FieldDefinition> employeeFields;
 
+    private List<ModelProperty> modelProperties;
+
     private FieldDefinition nameField;
 
     private FieldDefinition marriedField;
 
-    private FormEditorHelper formEditorHelper;
+    private TestFormEditorHelper formEditorHelper;
 
     @Mock
-    VersionRecordManager versionRecordManager;
+    private VersionRecordManager versionRecordManager;
 
     @Mock
     private FormEditorPresenter.FormEditorView view;
@@ -84,16 +89,13 @@ public class FormEditorHelperTest {
     private ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents;
 
     @Mock
-    protected EventSourceMock<FormEditorContextResponse> eventMock;
+    private FormEditorService formEditorService;
 
     @Mock
-    protected FormEditorService formEditorService;
+    private FormDefinition formDefinition;
 
-    @Mock
-    protected FormDefinition formDefinition;
-
-    @Mock
-    protected TestFieldManager testFieldManager;
+    @Spy
+    private TestFieldManager testFieldManager;
 
     private CallerMock<FormEditorService> editorServiceCallerMock;
 
@@ -105,7 +107,7 @@ public class FormEditorHelperTest {
         loadContent();
     }
 
-    protected void loadContent() {
+    private void loadContent() {
 
         when(editorFieldLayoutComponents.get()).thenAnswer(invocationOnMock -> {
             final EditorFieldLayoutComponent mocked = mock(EditorFieldLayoutComponent.class);
@@ -119,20 +121,18 @@ public class FormEditorHelperTest {
 
             content = new FormModelerContent();
 
-            employeeFields.forEach(fieldDefinition -> content.getModelProperties().add(fieldDefinition.getBinding()));
+            content.getModelProperties().addAll(modelProperties);
 
-            FormModel model = () -> "employee";
+            PortableJavaModel model = new PortableJavaModel("com.test.Employee");
+            model.getProperties().addAll(modelProperties);
 
             form.setModel(model);
 
-            Map<String, List<FieldDefinition>> availableFields = new HashMap<>();
-
-            availableFields.put("employee",
-                                employeeFields);
+            model.getProperties().addAll(modelProperties);
 
             content.setDefinition(form);
             content.setOverview(new Overview());
-            content.setAvailableFields(availableFields);
+            content.setAvailableFields(employeeFields);
 
             return content;
         });
@@ -144,24 +144,20 @@ public class FormEditorHelperTest {
             return baseFields;
         });
 
-        when(testFieldManager.getDefinitionByFieldTypeName("TextBox")).thenReturn(new TextBoxFieldDefinition());
-        when(testFieldManager.getDefinitionByFieldTypeName("CheckBox")).thenReturn(new CheckBoxFieldDefinition());
-
         editorServiceCallerMock = new CallerMock<>(formEditorService);
 
-        formEditorHelper = new FormEditorHelper(testFieldManager,
-                                                eventMock,
-                                                editorFieldLayoutComponents);
+        formEditorHelper = new TestFormEditorHelper(testFieldManager,
+                                                    editorFieldLayoutComponents);
 
         formEditorService.loadContent(null);
         formEditorHelper.initHelper(content);
     }
 
     @Test
-    public void testGenerateUnbindedFieldName() {
-        String fieldName = formEditorHelper.generateUnbindedFieldName(nameField);
+    public void testGenerateUnboundFieldName() {
+        String fieldName = formEditorHelper.generateUnboundFieldName(nameField);
         assertEquals(fieldName,
-                     FormEditorHelper.UNBINDED_FIELD_NAME_PREFFIX + nameField.getId());
+                     FormEditorHelper.UNBOUND_FIELD_NAME_PREFFIX + nameField.getId());
     }
 
     @Test
@@ -189,8 +185,8 @@ public class FormEditorHelperTest {
     public void testGetAvailableFields() {
         Map<String, FieldDefinition> availableFields = formEditorHelper.getAvailableFields();
         assertEquals("There should be no available field",
-                     availableFields.size(),
-                     0);
+                     employeeFields.size(),
+                     availableFields.size());
     }
 
     @Test
@@ -208,27 +204,39 @@ public class FormEditorHelperTest {
         formEditorHelper.getFormField(nameField.getId());
         assertEquals("If the field should be no more available!",
                      formEditorHelper.getAvailableFields().size(),
-                     0);
+                     employeeFields.size() - 1);
     }
 
     @Test
-    public void testGetFormFieldUnbinded() {
+    public void testGetFormFieldUnbound() {
+        List<Pair<EditorFieldLayoutComponent, FieldDefinition>> pairs = new ArrayList<>(formEditorHelper.getUnbindedFields().values());
 
-        when(testFieldManager.getDefinitionByFieldTypeName(anyString())).thenReturn(nameField);
-        FieldDefinition formField = formEditorHelper.getFormField(nameField.getId());
-        assertEquals("The unbinded field must have a generated name",
-                     formField.getName(),
-                     formEditorHelper.generateUnbindedFieldName(nameField));
-        assertEquals("The unbinded field must have label = the field type name",
-                     formField.getLabel(),
-                     nameField.getFieldType().getTypeName());
+        pairs.forEach(this::testUnboundField);
+    }
+
+    void testUnboundField(Pair<EditorFieldLayoutComponent, FieldDefinition> pair) {
+
+        FieldDefinition expectedField = pair.getK2();
+
+        assertNotNull(expectedField);
+
+        FieldDefinition resultField = formEditorHelper.getFormField(expectedField.getId());
+
+        assertNotNull(resultField);
+        assertSame(expectedField,
+                   resultField);
+        assertEquals(resultField.getFieldType().getTypeName(),
+                     resultField.getLabel());
+
+        assertNotNull(content.getDefinition().getFieldById(resultField.getId()));
+        assertNull(formEditorHelper.getUnbindedFields().get(resultField.getId()));
     }
 
     @Test
     public void testGetBaseFieldsDraggables() {
-        List<EditorFieldLayoutComponent> draggables = formEditorHelper.getBaseFieldsDraggables();
-        assertEquals(0,
-                     0);
+        Collection<EditorFieldLayoutComponent> draggables = formEditorHelper.getBaseFieldsDraggables();
+        assertNotNull(draggables);
+        assertFalse(draggables.isEmpty());
     }
 
     @Test
@@ -237,7 +245,7 @@ public class FormEditorHelperTest {
         Map<String, FieldDefinition> availableFields = formEditorHelper.getAvailableFields();
         assertEquals("The added field should be returned in available fields",
                      availableFields.size(),
-                     1);
+                     employeeFields.size());
     }
 
     @Test
@@ -273,11 +281,11 @@ public class FormEditorHelperTest {
                          false);
     }
 
-    protected void testRemoveFields(boolean addToAvailable,
-                                    boolean definitionHasFields) {
+    private void testRemoveFields(boolean addToAvailable,
+                                  boolean definitionHasFields) {
         if (definitionHasFields) {
-            when(formDefinition.getFields()).thenReturn(new ArrayList<>(employeeFields));
-            content.setDefinition(formDefinition);
+            content.getDefinition().getFields().addAll(employeeFields);
+            formEditorHelper.getAvailableFields().clear();
         }
         int prevAvailableSize = formEditorHelper.getAvailableFields().size();
         FieldDefinition removedField = formEditorHelper.removeField(nameField.getId(),
@@ -292,16 +300,15 @@ public class FormEditorHelperTest {
 
     @Test
     public void testGetCompatibleFieldCodes() {
-        List<String> fieldCodes = formEditorHelper.getCompatibleModelFields(nameField);
-        assertTrue(fieldCodes.size() > 0);
-        assertEquals(fieldCodes.get(0),
-                     nameField.getId());
+        List<String> compatibleFieldIds = formEditorHelper.getCompatibleModelFields(nameField);
+        assertTrue(compatibleFieldIds.size() > 0);
+        assertTrue(compatibleFieldIds.contains(nameField.getId()));
     }
 
     @Test
     public void testGetCompatibleFieldTypes() {
         Collection<String> fieldCodes = formEditorHelper.getCompatibleFieldTypes(nameField);
-        assertTrue(fieldCodes.size() == 0);
+        assertFalse(fieldCodes.isEmpty());
     }
 
     @Test
@@ -321,7 +328,7 @@ public class FormEditorHelperTest {
         FieldDefinition fieldDefinition = formEditorHelper.switchToField(nameField,
                                                                          fieldCode);
         String expectedFieldName = (StringUtils.isEmpty(fieldCode) ?
-                formEditorHelper.generateUnbindedFieldName(nameField) :
+                formEditorHelper.generateUnboundFieldName(nameField) :
                 nameField.getName());
 
         assertEquals(fieldDefinition.getName(),
@@ -330,32 +337,10 @@ public class FormEditorHelperTest {
 
     @Test
     public void testSwitchToFieldType() {
-        when(testFieldManager.getFieldFromProvider(any(),
-                                                   any())).thenReturn(marriedField);
         FieldDefinition fieldDefinition = formEditorHelper.switchToFieldType(nameField,
-                                                                             marriedField.getFieldType().getTypeName());
-        assertEquals(fieldDefinition.getStandaloneClassName(),
-                     nameField.getStandaloneClassName());
-        assertEquals(fieldDefinition.getName(),
-                     nameField.getName());
-        assertNotEquals(fieldDefinition.getClass(),
-                        nameField.getClass());
-    }
-
-    @Test
-    public void testOnFieldRequest() {
-        FormEditorContextRequest request = new FormEditorContextRequest(formEditorHelper.getFormDefinition().getId(),
-                                                                        nameField.getId());
-        formEditorHelper.onFieldRequest(request);
-        verify(eventMock,
-               times(1)).fire(any());
-    }
-
-    @Test
-    public void testGetDroppedField() {
-        formEditorHelper.getDroppedField(marriedField.getFieldType().getTypeName());
-        verify(eventMock,
-               times(1)).fire(any());
+                                                                             TextAreaFieldDefinition.FIELD_TYPE.getTypeName());
+        assertEquals(TextAreaFieldDefinition.class,
+                     fieldDefinition.getClass());
     }
 
     @Test
@@ -366,7 +351,7 @@ public class FormEditorHelperTest {
         assertFalse(formEditorHelper.getAvailableFields().containsKey(nameField.getId()));
     }
 
-    protected void initFields() {
+    void initFields() {
         TextBoxFieldDefinition name = new TextBoxFieldDefinition();
         name.setId("name");
         name.setName("employee_name");
@@ -404,5 +389,10 @@ public class FormEditorHelperTest {
         employeeFields.add(lastName);
         employeeFields.add(birthday);
         employeeFields.add(married);
+
+        modelProperties = new ArrayList<>();
+
+        employeeFields.forEach(fieldDefinition -> modelProperties.add(new ModelPropertyImpl(fieldDefinition.getBinding(),
+                                                                                            new TypeInfoImpl(fieldDefinition.getStandaloneClassName()))));
     }
 }

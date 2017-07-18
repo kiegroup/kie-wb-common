@@ -33,7 +33,7 @@ import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingC
 import org.kie.workbench.common.forms.model.DynamicModel;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
-import org.kie.workbench.common.forms.service.FieldManager;
+import org.kie.workbench.common.forms.service.shared.FieldManager;
 
 @Dependent
 public class FieldPropertiesRenderer implements IsWidget {
@@ -63,6 +63,8 @@ public class FieldPropertiesRenderer implements IsWidget {
 
     private FieldManager fieldManager;
 
+    private boolean acceptChanges = false;
+
     @Inject
     public FieldPropertiesRenderer(FieldPropertiesRendererView view,
                                    DynamicFormModelGenerator dynamicFormModelGenerator,
@@ -84,6 +86,7 @@ public class FieldPropertiesRenderer implements IsWidget {
     public void render(final FieldPropertiesRendererHelper helper) {
         this.helper = helper;
         this.fieldCopy = resetFieldCopy(helper.getCurrentField());
+        this.acceptChanges = false;
         render();
     }
 
@@ -108,7 +111,18 @@ public class FieldPropertiesRenderer implements IsWidget {
     }
 
     public void onPressOk() {
+        acceptChanges = true;
+    }
 
+    public void onClose() {
+        if (acceptChanges) {
+            doAcceptChanges();
+        } else {
+            doCancel();
+        }
+    }
+
+    private void doAcceptChanges() {
         // apply the changes to the current field
         List<FieldDefinition> fields = helper.getCurrentRenderingContext().getRootForm().getFields();
         fields.remove(helper.getCurrentField());
@@ -117,7 +131,7 @@ public class FieldPropertiesRenderer implements IsWidget {
         helper.onPressOk(fieldCopy);
     }
 
-    public void onPressCancel() {
+    private void doCancel() {
         helper.onClose();
     }
 
@@ -147,6 +161,14 @@ public class FieldPropertiesRenderer implements IsWidget {
 
     public FieldPropertiesRendererView getView() {
         return view;
+    }
+
+    public FieldDefinition getCurrentField() {
+        return fieldCopy;
+    }
+
+    public List<String> getCompatibleFieldTypes() {
+        return helper.getCompatibleFieldTypes(fieldCopy);
     }
 
     @Override

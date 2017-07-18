@@ -28,7 +28,7 @@ import org.kie.workbench.common.forms.editor.client.editor.properties.binding.st
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
-import org.kie.workbench.common.forms.service.FieldManager;
+import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.mockito.Mock;
 
 import static org.junit.Assert.*;
@@ -102,23 +102,28 @@ public class FieldPropertiesRendererTest {
     }
 
     @Test
-    public void testOnPressCancel() {
-        testRender();
-        renderer.onPressCancel();
-        verify(helper,
-               times(1)).onClose();
-    }
-
-    @Test
-    public void testOnPressOk() {
+    public void testOkAndClose() {
         testRender();
 
         renderer.onPressOk();
+        renderer.onClose();
 
         List<FieldDefinition> fields = helper.getCurrentRenderingContext().getRootForm().getFields();
         assertTrue(fields.contains(renderer.fieldCopy));
         verify(helper,
                times(1)).onPressOk(renderer.fieldCopy);
+    }
+
+    @Test
+    public void testCloseOrEsc() {
+        testRender();
+
+        renderer.onClose();
+
+        List<FieldDefinition> fields = helper.getCurrentRenderingContext().getRootForm().getFields();
+        assertFalse(fields.contains(renderer.fieldCopy));
+        verify(helper,
+               never()).onPressOk(renderer.fieldCopy);
     }
 
     @Test

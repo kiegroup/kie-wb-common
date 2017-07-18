@@ -23,15 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextRequest;
-import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorContextResponse;
 import org.kie.workbench.common.forms.editor.client.editor.rendering.EditorFieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingContext;
@@ -39,16 +36,17 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.HasPlaceHol
 import org.kie.workbench.common.forms.model.DynamicModel;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
-import org.kie.workbench.common.forms.service.FieldManager;
+import org.kie.workbench.common.forms.model.FormModel;
+import org.kie.workbench.common.forms.model.HasFormModelProperties;
+import org.kie.workbench.common.forms.service.shared.FieldManager;
+import org.uberfire.commons.data.Pair;
 
 @Dependent
 public class FormEditorHelper {
 
-    public static final String UNBINDED_FIELD_NAME_PREFFIX = "__unbinded_field_";
+    public static final String UNBOUND_FIELD_NAME_PREFFIX = "__unbound_field_";
 
     private FieldManager fieldManager;
-
-    private Event<FormEditorContextResponse> responseEvent;
 
     private ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents;
 
@@ -56,14 +54,12 @@ public class FormEditorHelper {
 
     private Map<String, FieldDefinition> availableFields = new HashMap<>();
 
-    private List<EditorFieldLayoutComponent> fieldLayoutComponents;
+    protected Map<String, Pair<EditorFieldLayoutComponent, FieldDefinition>> unbindedFields = new HashMap<>();
 
     @Inject
     public FormEditorHelper(FieldManager fieldManager,
-                            Event<FormEditorContextResponse> responseEvent,
                             ManagedInstance<EditorFieldLayoutComponent> editorFieldLayoutComponents) {
         this.fieldManager = fieldManager;
-        this.responseEvent = responseEvent;
         this.editorFieldLayoutComponents = editorFieldLayoutComponents;
     }
 
@@ -74,26 +70,33 @@ public class FormEditorHelper {
     public void initHelper(FormModelerContent content) {
         this.content = content;
 
-        if (fieldLayoutComponents != null && !fieldLayoutComponents.isEmpty()) {
+        if (unbindedFields != null && !unbindedFields.isEmpty()) {
             return;
         }
-        fieldLayoutComponents = new ArrayList<>();
 
         for (String baseType : fieldManager.getBaseFieldTypes()) {
             EditorFieldLayoutComponent layoutComponent = editorFieldLayoutComponents.get();
             if (layoutComponent != null) {
                 FieldDefinition field = fieldManager.getDefinitionByFieldTypeName(baseType);
-                field.setId(baseType);
+                field.setName(generateUnboundFieldName(field));
+
                 layoutComponent.init(content.getRenderingContext(),
                                      field);
-                layoutComponent.setDisabled(true);
-                fieldLayoutComponents.add(layoutComponent);
+
+                unbindedFields.put(field.getId(),
+                                   new Pair<>(layoutComponent,
+                                              field));
             }
         }
+        addAvailableFields(content.getAvailableFields());
     }
 
     public FormDefinition getFormDefinition() {
         return content.getDefinition();
+    }
+
+    public FormModel getFormModel() {
+        return getFormDefinition().getModel();
     }
 
     public void addAvailableFields(List<FieldDefinition> fields) {
@@ -103,7 +106,7 @@ public class FormEditorHelper {
     }
 
     public void addAvailableField(FieldDefinition field) {
-        if (content.getModelProperties().contains(field.getBinding())) {
+        if (modelContainsField(field)) {
             availableFields.put(field.getId(),
                                 field);
         }
@@ -111,17 +114,6 @@ public class FormEditorHelper {
 
     public void removeAvailableField(FieldDefinition field) {
         availableFields.remove(field.getId());
-    }
-
-    public FieldDefinition getDroppedField(String fieldId) {
-        FieldDefinition result = getFormField(fieldId);
-
-        if (result != null) {
-            responseEvent.fire(new FormEditorContextResponse(getFormDefinition().getId(),
-                                                             result.getId(),
-                                                             this));
-        }
-        return result;
     }
 
     public FieldDefinition getFormField(String fieldId) {
@@ -132,14 +124,29 @@ public class FormEditorHelper {
             if (result != null) {
                 availableFields.remove(fieldId);
             } else {
-                result = fieldManager.getDefinitionByFieldTypeName(fieldId);
+                if (unbindedFields.containsKey(fieldId)) {
+                    Pair<EditorFieldLayoutComponent, FieldDefinition> pair = unbindedFields.get(fieldId);
 
-                if (result != null) {
-                    result.setName(generateUnbindedFieldName(result));
+                    result = pair.getK2();
+
                     result.setLabel(result.getFieldType().getTypeName());
                     if (result instanceof HasPlaceHolder) {
                         ((HasPlaceHolder) result).setPlaceHolder(result.getFieldType().getTypeName());
                     }
+
+                    unbindedFields.remove(result.getId());
+
+                    FieldDefinition newField = fieldManager.getDefinitionByFieldType(result.getFieldType());
+                    newField.setName(generateUnboundFieldName(newField));
+
+                    EditorFieldLayoutComponent component = pair.getK1();
+
+                    component.init(content.getRenderingContext(),
+                                   newField);
+
+                    unbindedFields.put(newField.getId(),
+                                       new Pair<>(component,
+                                                  newField));
                 }
             }
             if (result != null) {
@@ -157,8 +164,9 @@ public class FormEditorHelper {
             FieldDefinition field = it.next();
             if (field.getId().equals(fieldId)) {
                 it.remove();
-                if (addToAvailables && content.getModelProperties().contains(field.getBinding())) {
-                    addAvailableField(field);
+                if (addToAvailables && modelContainsField(field)) {
+                    availableFields.put(field.getId(),
+                                        field);
                 }
                 return field;
             }
@@ -166,15 +174,13 @@ public class FormEditorHelper {
         return null;
     }
 
-    public void onFieldRequest(@Observes FormEditorContextRequest request) {
-        if (content == null) {
-            return;
+    public boolean modelContainsField(FieldDefinition fieldDefinition) {
+        FormModel formModel = getFormModel();
+
+        if (formModel instanceof HasFormModelProperties) {
+            return ((HasFormModelProperties) formModel).getProperty(fieldDefinition.getBinding()) != null;
         }
-        if (request.getFormId().equals(content.getDefinition().getId())) {
-            responseEvent.fire(new FormEditorContextResponse(request.getFormId(),
-                                                             request.getFieldId(),
-                                                             this));
-        }
+        return false;
     }
 
     public List<String> getCompatibleModelFields(FieldDefinition field) {
@@ -194,8 +200,8 @@ public class FormEditorHelper {
         return new ArrayList<>(result);
     }
 
-    public Collection<String> getCompatibleFieldTypes(FieldDefinition field) {
-        return fieldManager.getCompatibleFields(field);
+    public List<String> getCompatibleFieldTypes(FieldDefinition field) {
+        return new ArrayList<>(fieldManager.getCompatibleFields(field));
     }
 
     public FieldDefinition switchToField(FieldDefinition originalField,
@@ -204,7 +210,7 @@ public class FormEditorHelper {
         FieldDefinition resultField = fieldManager.getDefinitionByFieldTypeName(originalField.getFieldType().getTypeName());
 
         if (bindingExpression == null || bindingExpression.equals("") || content.getDefinition().getFieldByBinding(bindingExpression) != null) {
-            resultField.setName(generateUnbindedFieldName(resultField));
+            resultField.setName(generateUnboundFieldName(resultField));
             resultField.setBinding("");
         } else {
             // Search if there's an available field with the specified binding
@@ -235,7 +241,7 @@ public class FormEditorHelper {
         if (resultField.getName() == null) {
             String name = bindingExpression;
             if (name == null || name.isEmpty()) {
-                name = generateUnbindedFieldName(resultField);
+                name = generateUnboundFieldName(resultField);
             }
             resultField.setName(name);
         }
@@ -258,12 +264,12 @@ public class FormEditorHelper {
         return resultDefinition;
     }
 
-    public String generateUnbindedFieldName(FieldDefinition field) {
-        return UNBINDED_FIELD_NAME_PREFFIX + field.getId();
+    public String generateUnboundFieldName(FieldDefinition field) {
+        return UNBOUND_FIELD_NAME_PREFFIX + field.getId();
     }
 
-    public List<EditorFieldLayoutComponent> getBaseFieldsDraggables() {
-        return fieldLayoutComponents;
+    public Collection<EditorFieldLayoutComponent> getBaseFieldsDraggables() {
+        return unbindedFields.values().stream().map(Pair::getK1).collect(Collectors.toList());
     }
 
     public Map<String, FieldDefinition> getAvailableFields() {
