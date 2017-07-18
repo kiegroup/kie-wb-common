@@ -53,8 +53,8 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
     private KieCompilationResponse handleKieMavenPlugin(NIOCompilationRequest req,
                                                         CompilationResponse res) {
 
-        NIOKieAfterDecorator.KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
-        NIOKieAfterDecorator.KieTuple kieModuleTuple = readKieModule(req);
+        KieTuple kieModuleMetaInfoTuple = readKieModuleMetaInfo(req);
+        KieTuple kieModuleTuple = readKieModule(req);
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
 
             AFClassLoaderProvider provider = new NIOClassLoaderProviderImpl();
@@ -90,7 +90,7 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
         }
     }
 
-    private NIOKieAfterDecorator.KieTuple readKieModuleMetaInfo(NIOCompilationRequest req) {
+    private KieTuple readKieModuleMetaInfo(NIOCompilationRequest req) {
         /** This part is mandatory because the object loaded in the kie maven plugin is
          * loaded in a different classloader and every accessing cause a ClassCastException
          * Standard for the kieMap's keys -> compilationID + dot + classname
@@ -99,22 +99,22 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
         if (o != null) {
 
-            NIOKieAfterDecorator.KieTuple tuple = readObjectFromADifferentClassloader(o);
+            KieTuple tuple = readObjectFromADifferentClassloader(o);
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
+                return new KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new NIOKieAfterDecorator.KieTuple(
+                return new KieTuple(
                                                          tuple.getErrorMsg());
             }
         } else {
-            return new NIOKieAfterDecorator.KieTuple("kieModuleMetaInfo not present in the map");
+            return new KieTuple("kieModuleMetaInfo not present in the map");
         }
     }
 
-    private NIOKieAfterDecorator.KieTuple readKieModule(NIOCompilationRequest req) {
+    private KieTuple readKieModule(NIOCompilationRequest req) {
 
         /** This part is mandatory because the object loaded in the kie maven plugin is
          * loaded in a different classloader and every accessing cause a ClassCastException
@@ -124,23 +124,23 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
 
         if (o != null) {
-            NIOKieAfterDecorator.KieTuple tuple = readObjectFromADifferentClassloader(o);
+            KieTuple tuple = readObjectFromADifferentClassloader(o);
 
             if (tuple.getOptionalObject().isPresent()) {
 
-                return new NIOKieAfterDecorator.KieTuple(tuple.getOptionalObject().get());
+                return new KieTuple(tuple.getOptionalObject().get());
             } else {
 
-                return new NIOKieAfterDecorator.KieTuple(
+                return new KieTuple(
                                                          tuple.getErrorMsg());
             }
         } else {
 
-            return new NIOKieAfterDecorator.KieTuple("kieModule not present in the map");
+            return new KieTuple("kieModule not present in the map");
         }
     }
 
-    private NIOKieAfterDecorator.KieTuple readObjectFromADifferentClassloader(Object o) {
+    private KieTuple readObjectFromADifferentClassloader(Object o) {
 
         ObjectInput in = null;
         ObjectOutput out = null;
@@ -156,20 +156,20 @@ public class NIOKieAfterDecorator implements NIOKieCompilerDecorator {
             bis = new ByteArrayInputStream(objBytes);
             in = new ObjectInputStream(bis);
             Object newObj = in.readObject();
-            return new NIOKieAfterDecorator.KieTuple(newObj);
+            return new KieTuple(newObj);
         } catch (NotSerializableException nse) {
             nse.printStackTrace();
             StringBuilder sb = new StringBuilder("NotSerializableException:").append(nse.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(sb.toString());
+            return new KieTuple(sb.toString());
         } catch (IOException ioe) {
             StringBuilder sb = new StringBuilder("IOException:").append(ioe.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(sb.toString());
+            return new KieTuple(sb.toString());
         } catch (ClassNotFoundException cnfe) {
             StringBuilder sb = new StringBuilder("ClassNotFoundException:").append(cnfe.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(sb.toString());
+            return new KieTuple(sb.toString());
         } catch (Exception e) {
             StringBuilder sb = new StringBuilder("Exception:").append(e.getMessage());
-            return new NIOKieAfterDecorator.KieTuple(sb.toString());
+            return new KieTuple(sb.toString());
         } finally {
             try {
                 if (bos != null) {
