@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -59,9 +60,9 @@ public class InternalNIOKieMetadataTest {
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
-        System.out.println("mavenrepo+++++++++++++"+mavenRepo.toString());
-        System.out.println("System.getProperty(M2_REPO)+++++++++++++"+System.getProperty("M2_REPO"));
-        System.out.println("System.getProperty(M2_REPO)+++++++++++++"+System.getProperty("MAVEN_HOME"));
+        System.out.println("mavenrepo+++++++++++++" + mavenRepo.toString());
+        System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
+        System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("MAVEN_HOME"));
         if (System.getProperty("M2_REPO") == null) {
             if (!Files.exists(mavenRepo)) {
                 System.out.println("Creating a m2_repo into:" + mavenRepo.toString());
@@ -156,6 +157,14 @@ public class InternalNIOKieMetadataTest {
                                                                                          new HashMap<>(),
                                                                                          Boolean.TRUE);
             KieCompilationResponse res = compiler.compileSync(req);
+
+            if (res.getMavenOutput().isPresent()) {
+                List<String> mavenOutput = res.getMavenOutput().get();
+                for (String item : mavenOutput) {
+                    System.out.println("++++" + item);
+                }
+            }
+
             Assert.assertTrue(res.getMavenOutput().isPresent());
             if (res.getErrorMessage().isPresent()) {
                 System.out.println(res.getErrorMessage().get());
@@ -180,7 +189,7 @@ public class InternalNIOKieMetadataTest {
 
             //comment if you want read the log file after the test run
             TestUtil.rm(tmpRoot.toFile());
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
