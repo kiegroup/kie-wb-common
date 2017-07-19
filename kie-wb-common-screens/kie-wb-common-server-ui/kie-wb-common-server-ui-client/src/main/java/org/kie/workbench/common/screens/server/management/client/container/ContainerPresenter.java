@@ -287,20 +287,18 @@ public class ContainerPresenter {
     }
 
     public void stopContainer() {
-        specManagementService.call( new RemoteCallback<Void>() {
-            @Override
-            public void callback( final Void response ) {
-                updateStatus( KieContainerStatus.STOPPED );
-            }
-        }, new ErrorCallback<Object>() {
-            @Override
-            public boolean error( final Object o,
-                                  final Throwable throwable ) {
-                notification.fire( new NotificationEvent( view.getStopContainerErrorMessage(), NotificationEvent.NotificationType.ERROR ) );
-                updateStatus( KieContainerStatus.STARTED );
-                return false;
-            }
-        } ).stopContainer( containerSpec );
+        final RemoteCallback<Object> onSuccess = response -> refresh();
+        final ErrorCallback<Object> errorCallback = (o, throwable) -> {
+            notification.fire(new NotificationEvent(view.getStopContainerErrorMessage(),
+                                                    NotificationEvent.NotificationType.ERROR));
+
+            refresh();
+
+            return false;
+        };
+
+        specManagementService.call(onSuccess,
+                                   errorCallback).stopContainer(containerSpec);
     }
 
     public void startContainer() {
