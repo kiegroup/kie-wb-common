@@ -59,6 +59,9 @@ public class InternalNIOKieMetadataTest {
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
+        System.out.println("mavenrepo+++++++++++++"+mavenRepo.toString());
+        System.out.println("System.getProperty(M2_REPO)+++++++++++++"+System.getProperty("M2_REPO"));
+        System.out.println("System.getProperty(M2_REPO)+++++++++++++"+System.getProperty("MAVEN_HOME"));
         if (System.getProperty("M2_REPO") == null) {
             if (!Files.exists(mavenRepo)) {
                 System.out.println("Creating a m2_repo into:" + mavenRepo.toString());
@@ -130,51 +133,56 @@ public class InternalNIOKieMetadataTest {
     }
 
     @Test
-    public void compileAndloadKieJarSingleMetadata() throws Exception {
+    public void compileAndloadKieJarSingleMetadata() {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
-        java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
-                                                                                               "dummy"));
-        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
-                          tmp);
 
-        InternalNIOKieMavenCompiler compiler = InternalNIOKieMavenCompilerFactory.getCompiler(
-                KieDecorator.KIE_AND_LOG_AFTER);
+        try {
+            java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
+            java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
+                                                                                                   "dummy"));
+            TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+                              tmp);
 
-        InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+            InternalNIOKieMavenCompiler compiler = InternalNIOKieMavenCompilerFactory.getCompiler(
+                    KieDecorator.KIE_AND_LOG_AFTER);
 
-        InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                                     info,
-                                                                                     new String[]{MavenCLIArgs.INSTALL},
-                                                                                     new HashMap<>(),
-                                                                                     Boolean.TRUE);
-        KieCompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        if (res.getErrorMessage().isPresent()) {
-            System.out.println(res.getErrorMessage().get());
+            InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+
+            InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                                                         info,
+                                                                                         new String[]{MavenCLIArgs.INSTALL},
+                                                                                         new HashMap<>(),
+                                                                                         Boolean.TRUE);
+            KieCompilationResponse res = compiler.compileSync(req);
+            Assert.assertTrue(res.getMavenOutput().isPresent());
+            if (res.getErrorMessage().isPresent()) {
+                System.out.println(res.getErrorMessage().get());
+            }
+
+            Assert.assertTrue(res.isSuccessful());
+
+            Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
+            Assert.assertTrue(metaDataOptional.isPresent());
+            KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
+            Assert.assertNotNull(kieModuleMetaInfo);
+
+            Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
+            Assert.assertEquals(rulesBP.size(),
+                                1);
+
+            Optional<KieModule> kieModuleOptional = res.getKieModule();
+            Assert.assertTrue(kieModuleOptional.isPresent());
+
+            Assert.assertTrue(res.getProjectDependencies().isPresent());
+            Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
+
+            //comment if you want read the log file after the test run
+            TestUtil.rm(tmpRoot.toFile());
+        }catch (Exception e){
+            e.printStackTrace();
         }
-
-        Assert.assertTrue(res.isSuccessful());
-
-        Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        Assert.assertTrue(metaDataOptional.isPresent());
-        KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
-        Assert.assertNotNull(kieModuleMetaInfo);
-
-        Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        Assert.assertEquals(rulesBP.size(),
-                            1);
-
-        Optional<KieModule> kieModuleOptional = res.getKieModule();
-        Assert.assertTrue(kieModuleOptional.isPresent());
-
-        Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
-
-        //comment if you want read the log file after the test run
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
