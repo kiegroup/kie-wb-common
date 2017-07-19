@@ -15,9 +15,13 @@
  */
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
+import java.util.List;
+
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
 
 public abstract class DRGElement extends NamedElement {
 
@@ -30,5 +34,9 @@ public abstract class DRGElement extends NamedElement {
         super(id,
               description,
               name);
+    }
+    
+    public org.kie.dmn.model.v1_1.DRGElement asDMN(List<Edge<?, Node<?, ?>>> list) {
+        return null;
     }
 }

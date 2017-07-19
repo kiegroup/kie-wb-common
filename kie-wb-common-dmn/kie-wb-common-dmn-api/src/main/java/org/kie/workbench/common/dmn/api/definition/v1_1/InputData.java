@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
 
@@ -38,6 +39,8 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.Ca
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Title;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
 
 @Portable
 @Bindable
@@ -166,5 +169,28 @@ public class InputData extends DRGElement {
 
     public void setVariable(final InformationItem variable) {
         this.variable = variable;
+    }
+
+    @Override
+    public org.kie.dmn.model.v1_1.InputData asDMN( List<Edge<?, Node<?, ?>>> inEdges ) {
+        org.kie.dmn.model.v1_1.InputData id = new org.kie.dmn.model.v1_1.InputData();
+        id.setId( this.getId().getValue() );
+        id.setName( this.getName().getValue() );
+        return id;
+    }
+    
+    public static InputData from( org.kie.dmn.model.v1_1.InputData dmn ) {
+        Id id = new Id( dmn.getId() );
+        org.kie.workbench.common.dmn.api.property.dmn.Description description = new org.kie.workbench.common.dmn.api.property.dmn.Description( dmn.getDescription() );
+        Name name = new Name( dmn.getName() );
+        InformationItem informationItem = InformationItem.from( dmn.getVariable() );
+        InputData result = new InputData(id,
+                description,
+                name,
+                informationItem,
+                new BackgroundSet(),
+                new FontSet(),
+                new RectangleDimensionsSet());
+        return result;
     }
 }

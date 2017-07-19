@@ -152,7 +152,7 @@ public class BPMNGraphFactoryImpl
 
     @SuppressWarnings("unchecked")
     protected GraphCommandExecutionContext createGraphContext(final Graph graph) {
-        final Index<?, ?> index = indexBuilder.build(graph);
+        final Index<?, ?> index = (Index<?, ?>) indexBuilder.build(graph);
         return new EmptyRulesCommandExecutionContext(definitionManager,
                                                      factoryManager,
                                                      ruleManager,

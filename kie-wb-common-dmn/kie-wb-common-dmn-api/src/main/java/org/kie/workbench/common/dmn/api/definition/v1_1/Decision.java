@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.validation.Valid;
 
@@ -23,6 +24,8 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.dmn.model.v1_1.DMNElementReference;
+import org.kie.dmn.model.v1_1.InformationRequirement;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.AllowedAnswers;
@@ -41,6 +44,9 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.Ca
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Title;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
+import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 @Portable
 @Bindable
@@ -213,4 +219,45 @@ public class Decision extends DRGElement {
     public void setExpression(final Expression expression) {
         this.expression = expression;
     }
+
+    @Override
+    public org.kie.dmn.model.v1_1.Decision asDMN( List<Edge<?, Node<?, ?>>> inEdges ) {
+        org.kie.dmn.model.v1_1.Decision d = new org.kie.dmn.model.v1_1.Decision();
+        d.setId( this.getId().getValue() );
+        d.setName( this.getName().getValue() );
+        for ( Edge<?, ?> e : inEdges ) {
+            Node<?,?> sourceNode = e.getSourceNode();
+            if ( sourceNode.getContent() instanceof View<?> ) {
+                View<?> view = (View<?>) sourceNode.getContent();
+                if ( view.getDefinition() instanceof DRGElement ) {
+                    DRGElement drgElement = (DRGElement) view.getDefinition();
+                    InformationRequirement iReq = new InformationRequirement();
+                    DMNElementReference ri = new DMNElementReference();
+                    ri.setHref( new StringBuilder("#").append( drgElement.getId().getValue() ).toString() );
+                    iReq.setRequiredInput( ri );
+                    d.getInformationRequirement().add(iReq);
+                }
+            }
+        }
+        return d;
+    }
+    
+    public static Decision from( org.kie.dmn.model.v1_1.Decision dmn ) {
+        Id id = new Id( dmn.getId() );
+        org.kie.workbench.common.dmn.api.property.dmn.Description description = new org.kie.workbench.common.dmn.api.property.dmn.Description( dmn.getDescription() );
+        Name name = new Name( dmn.getName() );
+        InformationItem informationItem = InformationItem.from( dmn.getVariable() );
+        Decision result = new Decision(id,
+                description,
+                name,
+                new Question(),
+                new AllowedAnswers(),
+                informationItem,
+                new LiteralExpression(),
+                new BackgroundSet(),
+                new FontSet(),
+                new RectangleDimensionsSet());
+        return result;
+    }
+
 }
