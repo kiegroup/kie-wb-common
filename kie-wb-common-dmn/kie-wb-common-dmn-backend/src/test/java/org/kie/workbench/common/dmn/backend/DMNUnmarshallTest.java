@@ -204,7 +204,7 @@ public class DMNUnmarshallTest {
     public void test2() throws IOException {
         MappingContextSingleton.loadDynamicMarshallers();
         
-        MMMarshaller m = new MMMarshaller( new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager );
+        DMNMarshaller m = new DMNMarshaller( new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager );
         
         Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream( "/diamond.dmn" ));
         

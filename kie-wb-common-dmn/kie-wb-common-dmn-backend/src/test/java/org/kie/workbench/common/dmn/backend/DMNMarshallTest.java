@@ -39,7 +39,7 @@ public class DMNMarshallTest {
     public void testProva() throws IOException {
         MappingContextSingleton.loadDynamicMarshallers();
         
-        DMNMarshaller m = new DMNMarshaller( new XMLEncoderDiagramMetadataMarshaller() );
+        DMNMarshaller m = new DMNMarshaller( new XMLEncoderDiagramMetadataMarshaller(), null );
         
         Graph<?, Node<?, ?>> g = m.unmarshall(null, new ByteArrayInputStream( EXAMPLE_1.getBytes() ));
         
