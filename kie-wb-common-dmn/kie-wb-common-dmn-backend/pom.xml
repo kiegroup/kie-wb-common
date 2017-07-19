@@ -168,7 +168,6 @@
     <dependency>
       <groupId>org.kie</groupId>
       <artifactId>kie-dmn-backend</artifactId>
-      <version>${version.org.kie}</version>
     </dependency>
 
     <!-- Testing scope. -->
