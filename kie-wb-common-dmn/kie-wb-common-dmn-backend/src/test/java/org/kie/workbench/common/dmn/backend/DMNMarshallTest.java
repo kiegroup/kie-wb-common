@@ -41,7 +41,7 @@ public class DMNMarshallTest {
         
         DMNMarshaller m = new DMNMarshaller( new XMLEncoderDiagramMetadataMarshaller(), null );
         
-        Graph<?, Node<?, ?>> g = m.unmarshall(null, new ByteArrayInputStream( EXAMPLE_1.getBytes() ));
+        Graph<?, Node<?, ?>> g = m.unmarshallFromStunnerJSON(null, new ByteArrayInputStream( EXAMPLE_1.getBytes() ));
         
         Map<String, DMNModelInstrumentedBase> nodes = new HashMap<>();
         

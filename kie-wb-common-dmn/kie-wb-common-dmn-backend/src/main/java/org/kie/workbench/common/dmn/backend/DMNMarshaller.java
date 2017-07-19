@@ -67,13 +67,12 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.factoryManager = factoryManager;
     }
     
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public Graph unmarshall(final Metadata metadata,
-//                            final InputStream input) throws IOException {
-//        Graph result = (Graph) ServerMarshalling.fromJSON(input);
-//        return result;
-//    }
+    @Deprecated
+    public Graph unmarshallFromStunnerJSON(final Metadata metadata,
+                            final InputStream input) throws IOException {
+        Graph result = (Graph) ServerMarshalling.fromJSON(input);
+        return result;
+    }
 
     @Override
     public Graph unmarshall(final Metadata metadata,
