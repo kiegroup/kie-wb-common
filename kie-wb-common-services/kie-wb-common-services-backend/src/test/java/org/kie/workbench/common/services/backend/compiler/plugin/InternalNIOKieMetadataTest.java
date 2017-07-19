@@ -42,6 +42,8 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNI
 import org.kie.workbench.common.services.backend.compiler.internalNIO.InternalNIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.kie.InternalNIOKieMavenCompilerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
@@ -49,6 +51,8 @@ import org.uberfire.java.nio.file.Paths;
 public class InternalNIOKieMetadataTest {
 
     private Path mavenRepo;
+
+    private Logger logger = LoggerFactory.getLogger(InternalNIOKieMetadataTest.class);
 
     @After
     public void tearDown() {
@@ -63,6 +67,10 @@ public class InternalNIOKieMetadataTest {
         System.out.println("mavenrepo+++++++++++++" + mavenRepo.toString());
         System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
         System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("MAVEN_HOME"));
+
+        logger.info("mavenrepo+++++++++++++" + mavenRepo.toString());
+        logger.info("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
+        logger.info("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("MAVEN_HOME"));
         if (System.getProperty("M2_REPO") == null) {
             if (!Files.exists(mavenRepo)) {
                 System.out.println("Creating a m2_repo into:" + mavenRepo.toString());
@@ -162,11 +170,13 @@ public class InternalNIOKieMetadataTest {
                 List<String> mavenOutput = res.getMavenOutput().get();
                 for (String item : mavenOutput) {
                     System.out.println("++++" + item);
+                    logger.info("++++" + item);
                 }
             }
 
             Assert.assertTrue(res.getMavenOutput().isPresent());
             if (res.getErrorMessage().isPresent()) {
+                logger.info(res.getErrorMessage().get());
                 System.out.println(res.getErrorMessage().get());
             }
 
