@@ -27,6 +27,8 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Compiler
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultIncrementalCompilerEnabler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
@@ -36,6 +38,7 @@ import org.uberfire.java.nio.file.spi.FileSystemProvider;
 public class InternalNIODefaultIncrementalCompilerEnablerTest {
 
     private Path mavenRepo;
+    private Logger logger = LoggerFactory.getLogger(InternalNIODefaultIncrementalCompilerEnablerTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -43,7 +46,7 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
                               "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
-            System.out.println("Creating a m2_repo into " + mavenRepo);
+            logger.info("Creating a m2_repo into " + mavenRepo);
             if (!Files.exists(Files.createDirectories(mavenRepo))) {
                 throw new Exception("Folder not writable in the project");
             }

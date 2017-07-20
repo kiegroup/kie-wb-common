@@ -98,7 +98,7 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
                               "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
-            System.out.println("Creating a m2_repo into " + mavenRepo);
+            logger.info("Creating a m2_repo into " + mavenRepo);
             if (!Files.exists(Files.createDirectories(mavenRepo))) {
                 throw new Exception("Folder not writable in the project");
             }
@@ -562,16 +562,16 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
                 treeWalk.setFilter(PathFilter.create(filename));
                 while (treeWalk.next()) {
                     if (treeWalk.isSubtree()) {
-                        System.out.println("dir: " + treeWalk.getPathString());
+                        logger.info("dir: " + treeWalk.getPathString());
                         treeWalk.enterSubtree();
                     } else {
-                        System.out.println("\n");
-                        System.out.println("file: " + treeWalk.getPathString());
+                        logger.info("\n");
+                        logger.info("file: " + treeWalk.getPathString());
                         ObjectId objectId = treeWalk.getObjectId(0);
                         ObjectLoader loader = gitRepoCloned.open(objectId);
                         ByteArrayOutputStream out = new ByteArrayOutputStream();
                         loader.copyTo(out);
-                        System.out.println(out.toString());
+                        logger.info(out.toString());
                     }
                 }
             }

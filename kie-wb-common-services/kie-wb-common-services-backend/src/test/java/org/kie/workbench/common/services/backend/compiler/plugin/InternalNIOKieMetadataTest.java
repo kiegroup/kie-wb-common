@@ -62,7 +62,7 @@ public class InternalNIOKieMetadataTest {
     @Before
     public void setUp() throws Exception {
         mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+                              ".m2/repository");
 
         System.out.println("mavenrepo+++++++++++++" + mavenRepo.toString());
         System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
@@ -70,15 +70,13 @@ public class InternalNIOKieMetadataTest {
 
         logger.info("mavenrepo+++++++++++++" + mavenRepo.toString());
         logger.info("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
-        logger.info("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("MAVEN_HOME"));
-        if (System.getProperty("M2_REPO") == null) {
+        logger.info("System.getProperty(MAVEN_HOME)+++++++++++++" + System.getProperty("MAVEN_HOME"));
             if (!Files.exists(mavenRepo)) {
                 System.out.println("Creating a m2_repo into:" + mavenRepo.toString());
                 if (!Files.exists(Files.createDirectories(mavenRepo))) {
                     throw new Exception("Folder not writable in the project");
                 }
             }
-        }
     }
 
     @Test
@@ -110,7 +108,7 @@ public class InternalNIOKieMetadataTest {
         KieCompilationResponse res = compiler.compileSync(req);
 
         if (res.getErrorMessage().isPresent()) {
-            System.out.println("Error:" + res.getErrorMessage().get());
+            logger.info("Error:" + res.getErrorMessage().get());
         }
 
         Assert.assertTrue(res.isSuccessful());
@@ -225,7 +223,7 @@ public class InternalNIOKieMetadataTest {
                                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
-            System.out.println(res.getErrorMessage().get());
+            logger.info(res.getErrorMessage().get());
         }
 
         Assert.assertTrue(res.isSuccessful());

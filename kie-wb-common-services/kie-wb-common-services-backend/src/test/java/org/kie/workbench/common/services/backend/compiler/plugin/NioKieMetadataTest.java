@@ -43,14 +43,16 @@ import org.kie.workbench.common.services.backend.compiler.nio.NIOKieMavenCompile
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.NIOKieMavenCompilerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.api.FileSystemProviders;
 import org.uberfire.java.nio.file.spi.FileSystemProvider;
 
 public class NioKieMetadataTest {
 
     private Path mavenRepo;
-
     private Path tmpRoot;
+    private Logger logger = LoggerFactory.getLogger(NioKieMetadataTest.class);
 
     @After
     public void tearDown() {
@@ -66,14 +68,13 @@ public class NioKieMetadataTest {
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
-        if (System.getProperty("M2_REPO") == null) {
             if (!Files.exists(mavenRepo)) {
-                System.out.println("Creating a m2_repo into" + mavenRepo);
+                logger.info("Creating a m2_repo into" + mavenRepo);
                 if (!Files.exists(Files.createDirectories(mavenRepo))) {
                     throw new Exception("Folder not writable in the project");
                 }
             }
-        }
+
     }
 
     @Test
@@ -97,7 +98,7 @@ public class NioKieMetadataTest {
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
-            System.out.println(res.getErrorMessage().get());
+            logger.info(res.getErrorMessage().get());
         }
 
         Assert.assertTrue(res.isSuccessful());
@@ -150,7 +151,7 @@ public class NioKieMetadataTest {
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
-            System.out.println(res.getErrorMessage().get());
+            logger.info(res.getErrorMessage().get());
         }
 
         Assert.assertTrue(res.isSuccessful());
@@ -195,7 +196,7 @@ public class NioKieMetadataTest {
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
         if (res.getErrorMessage().isPresent()) {
-            System.out.println(res.getErrorMessage().get());
+            logger.info(res.getErrorMessage().get());
         }
 
         Assert.assertTrue(res.isSuccessful());

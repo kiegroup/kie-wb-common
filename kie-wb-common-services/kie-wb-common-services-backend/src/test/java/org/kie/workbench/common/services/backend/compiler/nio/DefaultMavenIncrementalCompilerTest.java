@@ -33,10 +33,13 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultMavenIncrementalCompilerTest {
 
     private Path mavenRepo;
+    private Logger logger = LoggerFactory.getLogger(DefaultMavenIncrementalCompilerTest.class);
 
     @Before
     public void setUp() throws Exception {
@@ -44,7 +47,7 @@ public class DefaultMavenIncrementalCompilerTest {
                               "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
-            System.out.println("Creating a m2_repo into " + mavenRepo);
+            logger.info("Creating a m2_repo into " + mavenRepo);
             if (!Files.exists(Files.createDirectories(mavenRepo))) {
                 throw new Exception("Folder not writable in the project");
             }

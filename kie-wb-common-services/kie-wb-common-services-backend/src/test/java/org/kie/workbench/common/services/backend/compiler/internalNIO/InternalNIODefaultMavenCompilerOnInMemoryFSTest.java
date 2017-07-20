@@ -85,7 +85,7 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
                               "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
-            System.out.println("Creating a m2_repo into " + mavenRepo);
+            logger.info("Creating a m2_repo into " + mavenRepo);
             if (!Files.exists(Files.createDirectories(mavenRepo))) {
                 throw new Exception("Folder not writable in the project");
             }
