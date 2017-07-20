@@ -72,6 +72,10 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                      new HashMap(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         TestUtil.rm(tmpRoot.toFile());
@@ -94,6 +98,10 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
@@ -121,6 +129,10 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeBuild");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         res = compiler.compileSync(req);
@@ -153,7 +165,10 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                      new HashMap<>(),
                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
+        }
         //checks
         Assert.assertTrue(res.isSuccessful());
         List<String> fileNames = new ArrayList<>();

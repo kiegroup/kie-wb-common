@@ -68,13 +68,12 @@ public class NioKieMetadataTest {
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
-            if (!Files.exists(mavenRepo)) {
-                logger.info("Creating a m2_repo into" + mavenRepo);
-                if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                    throw new Exception("Folder not writable in the project");
-                }
+        if (!Files.exists(mavenRepo)) {
+            logger.info("Creating a m2_repo into" + mavenRepo);
+            if (!Files.exists(Files.createDirectories(mavenRepo))) {
+                throw new Exception("Folder not writable in the project");
             }
-
+        }
     }
 
     @Test
@@ -97,6 +96,10 @@ public class NioKieMetadataTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NioKieMetadataTest.compileAndLoadKieJarMetadataAllResourcesWithPackagedJar");
+        }
         if (res.getErrorMessage().isPresent()) {
             logger.info(res.getErrorMessage().get());
         }
@@ -150,6 +153,10 @@ public class NioKieMetadataTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NioKieMetadataTest.compileAndLoadKieJarSingleMetadata");
+        }
         if (res.getErrorMessage().isPresent()) {
             logger.info(res.getErrorMessage().get());
         }
@@ -195,6 +202,10 @@ public class NioKieMetadataTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NioKieMetadataTest.compileAndLoadKieJarSingleMetadataWithPackagedJar");
+        }
         if (res.getErrorMessage().isPresent()) {
             logger.info(res.getErrorMessage().get());
         }

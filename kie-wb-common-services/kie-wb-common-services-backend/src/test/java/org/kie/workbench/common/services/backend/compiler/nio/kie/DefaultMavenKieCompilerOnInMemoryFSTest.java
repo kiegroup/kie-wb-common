@@ -122,7 +122,7 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithCloneTest() throws IOException {
+    public void buildWithCloneTest() throws Exception {
 
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
@@ -171,7 +171,7 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
         byte[] encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(prjFolder);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -181,15 +181,19 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
                                                                      Boolean.FALSE);
 
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenKieCompilerOnInMemoryFSTest.buildWithCloneTest");
+        }
+        assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
         cloned.close();
         origin.close();
@@ -300,6 +304,10 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
                                                                      Boolean.FALSE);
 
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenKieCompilerOnInMemoryFSTest.buildWithPullRebaseNIOTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -382,7 +390,11 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenKieCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+        }
+        assertTrue(res.isSuccessful());
 
         lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
                                             MASTER_BRANCH);
@@ -515,6 +527,10 @@ public class DefaultMavenKieCompilerOnInMemoryFSTest {
 
         //recompile
         res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenKieCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+        }
         Assert.assertTrue(res.isSuccessful());
         Assert.assertTrue(res.getMavenOutput().isPresent());
 

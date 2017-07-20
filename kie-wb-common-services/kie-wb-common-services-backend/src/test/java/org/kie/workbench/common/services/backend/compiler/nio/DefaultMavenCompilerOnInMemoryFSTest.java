@@ -119,7 +119,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithCloneTest() throws IOException {
+    public void buildWithCloneTest() throws Exception {
 
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
@@ -178,6 +178,10 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                                                      Boolean.FALSE);
 
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -297,6 +301,10 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                                                      Boolean.FALSE);
 
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseNIOTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
@@ -379,6 +387,10 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
@@ -512,6 +524,10 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
         //recompile
         res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+        }
         Assert.assertTrue(res.isSuccessful());
         Assert.assertTrue(res.getMavenOutput().isPresent());
 

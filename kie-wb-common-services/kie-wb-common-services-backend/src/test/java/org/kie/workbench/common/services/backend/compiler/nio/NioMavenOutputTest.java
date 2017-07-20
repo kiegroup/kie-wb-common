@@ -48,7 +48,12 @@ public class NioMavenOutputTest {
                                                                      new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                      new HashMap<>(),
                                                                      Boolean.TRUE);
+
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NioMavenOutputTest.testOutputWithTakari");
+        }
         Assert.assertTrue(res.isSuccessful());
         Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.getMavenOutput().get().size() > 0);

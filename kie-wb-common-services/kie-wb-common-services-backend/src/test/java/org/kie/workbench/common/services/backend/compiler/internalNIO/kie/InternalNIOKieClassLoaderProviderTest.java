@@ -23,11 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -81,7 +80,11 @@ public class InternalNIOKieClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieClassLoaderProviderTest.loadProjectClassloaderTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();
@@ -132,7 +135,11 @@ public class InternalNIOKieClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
 
@@ -181,7 +188,11 @@ public class InternalNIOKieClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieClassLoaderProviderTest.loadTargetFolderClassloaderTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();

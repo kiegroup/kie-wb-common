@@ -35,6 +35,9 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.api.FileSystemProviders;
 import org.uberfire.java.nio.file.spi.FileSystemProvider;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.jgroups.util.Util.assertFalse;
+
 public class InternalNIODefaultIncrementalCompilerEnablerTest {
 
     private Path mavenRepo;
@@ -115,15 +118,15 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        Assert.assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
-        Assert.assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
+        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
 
         byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
                                                             "/dummyB/pom.xml"));
 
         String pomAsAstringDummyB = new String(encodedDummyB,
                                                StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstringDummyB.contains("<packaging>kjar</packaging>"));
+        assertTrue(pomAsAstringDummyB.contains("<packaging>kjar</packaging>"));
 
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -132,15 +135,15 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         InternalNIODefaultIncrementalCompilerEnabler enabler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
-        Assert.assertTrue(enabler.process(req).getResult());
+        assertTrue(enabler.process(req).getResult());
 
-        Assert.assertTrue(info.isKiePluginPresent());
+        assertTrue(info.isKiePluginPresent());
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
 
-        Assert.assertTrue(pomAsAstring.contains("kie-takari-plugin"));
+        assertTrue(pomAsAstring.contains("kie-takari-plugin"));
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
     }

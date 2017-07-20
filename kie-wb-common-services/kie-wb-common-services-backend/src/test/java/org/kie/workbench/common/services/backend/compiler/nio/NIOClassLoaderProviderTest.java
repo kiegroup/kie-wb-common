@@ -29,8 +29,8 @@ import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -81,6 +81,10 @@ public class NIOClassLoaderProviderTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NIOClassLoaderProviderTest.loadProjectClassloaderTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         //Path mavenRepo = Paths.get("src/test/resources/.ignore/m2_repo/");
@@ -132,6 +136,10 @@ public class NIOClassLoaderProviderTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NIOClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
@@ -179,7 +187,11 @@ public class NIOClassLoaderProviderTest {
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "NIOClassLoaderProviderTest.loadTargetFolderClassloaderTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new NIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();

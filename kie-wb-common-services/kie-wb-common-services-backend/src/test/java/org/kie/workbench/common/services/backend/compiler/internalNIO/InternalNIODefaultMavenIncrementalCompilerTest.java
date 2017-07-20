@@ -76,6 +76,10 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
@@ -103,6 +107,10 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
@@ -134,6 +142,10 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         res = compiler.compileSync(req);
@@ -170,6 +182,10 @@ public class InternalNIODefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
+        }
 
         //checks
         Assert.assertTrue(res.isSuccessful());

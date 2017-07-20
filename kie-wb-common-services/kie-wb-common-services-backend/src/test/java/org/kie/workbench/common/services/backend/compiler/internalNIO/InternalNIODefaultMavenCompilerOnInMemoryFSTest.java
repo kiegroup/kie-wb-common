@@ -109,7 +109,7 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithCloneTest() throws IOException {
+    public void buildWithCloneTest() throws Exception {
 
         Path tmpRoot = Files.createTempDirectory("repo");
 
@@ -171,16 +171,20 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
                                                                                      Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
+        }
+        assertTrue(res.getMavenOutput().isPresent());
+        assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
         cloned.close();
         origin.close();
@@ -295,6 +299,10 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
                                                                                      Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
+        }
         List<String> output = res.getMavenOutput().get();
         Assert.assertTrue(res.isSuccessful());
 
@@ -382,6 +390,10 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
@@ -490,6 +502,10 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIODefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+        }
         Assert.assertTrue(res.getMavenOutput().isPresent());
         Assert.assertTrue(res.isSuccessful());
 

@@ -82,6 +82,10 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
@@ -109,6 +113,10 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
@@ -140,6 +148,10 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
+        }
         Assert.assertTrue(res.isSuccessful());
 
         res = compiler.compileSync(req);
@@ -178,6 +190,10 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
+        }
 
         //checks
         Assert.assertTrue(res.isSuccessful());
@@ -212,6 +228,10 @@ public class InternalNIOKieDefaultMavenIncrementalCompilerTest {
 
         //second compilation
         res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
+        }
 
         //checks
         Assert.assertTrue(res.isSuccessful());

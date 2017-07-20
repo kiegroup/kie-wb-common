@@ -2,7 +2,6 @@ package org.kie.workbench.common.services.backend.compiler.internalNIO.kie;
 
 import java.util.HashMap;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -18,6 +17,8 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.kie.I
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
+
+import static junit.framework.TestCase.assertTrue;
 
 public class InternalNIOKieMavenOutputTest {
 
@@ -55,9 +56,13 @@ public class InternalNIOKieMavenOutputTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        Assert.assertTrue(res.getMavenOutput().get().size() > 0);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieMavenOutputTest.testOutputWithTakari");
+        }
+        assertTrue(res.isSuccessful());
+        assertTrue(res.getMavenOutput().isPresent());
+        assertTrue(res.getMavenOutput().get().size() > 0);
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
     }

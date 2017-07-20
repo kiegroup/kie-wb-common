@@ -23,11 +23,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.AFClassLoaderProvider;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -35,7 +34,6 @@ import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.Inter
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIODefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIOMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.internalNIO.impl.InternalNIOMavenUtils;
-import org.kie.workbench.common.services.backend.compiler.nio.DefaultMavenIncrementalCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOClassLoaderProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +81,11 @@ public class InternalNIOClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOClassLoaderProviderTest.loadProjectClassloaderTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();
@@ -134,7 +136,11 @@ public class InternalNIOClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
 
@@ -183,7 +189,11 @@ public class InternalNIOClassLoaderProviderTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOClassLoaderProviderTest.loadTargetFolderClassloaderTest");
+        }
+        assertTrue(res.isSuccessful());
 
         AFClassLoaderProvider kieClazzLoaderProvider = new InternalNIOClassLoaderProviderImpl();
         List<String> pomList = new ArrayList<>();

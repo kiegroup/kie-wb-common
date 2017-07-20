@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.kie.workbench.common.services.backend.compiler.nio.CopyFileVisitor;
 
@@ -40,6 +44,22 @@ public class TestUtil {
         }
         if (!f.delete()) {
             System.err.println("Couldn't delete file " + f);
+        }
+    }
+
+    public static void writeMavenOutputIntoTargetFolder(List<String> mavenOutput,
+                                                        String testName) throws Exception {
+        if (mavenOutput.size() > 0) {
+            StringBuffer sb = new StringBuffer("target/").append(testName).append(".test.log");
+
+            File fout = new File(sb.toString());
+            FileOutputStream fos = new FileOutputStream(fout);
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
+            for (String item : mavenOutput) {
+                bw.write(item);
+                bw.newLine();
+            }
+            bw.close();
         }
     }
 }

@@ -22,7 +22,6 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
@@ -113,7 +112,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
     }
 
     @Test
-    public void buildWithCloneTest() throws IOException {
+    public void buildWithCloneTest() throws Exception {
 
         Path tmpRoot = Files.createTempDirectory("repo");
 
@@ -175,16 +174,20 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
+        }
+        assertTrue(res.getMavenOutput().isPresent());
+        assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
         cloned.close();
         origin.close();
@@ -299,16 +302,20 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      Boolean.TRUE);
 
         CompilationResponse res = compiler.compileSync(req);
-        List<String> output = res.getMavenOutput().get();
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
+        }
+
+        assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        Assert.assertTrue(incrementalConfiguration.toFile().exists());
+        assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
-        Assert.assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertTrue(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
         InternalNIOTestUtil.rm(tmpRootCloned.toFile());
@@ -386,7 +393,11 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+        }
+        assertTrue(res.isSuccessful());
 
         lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
                                             MASTER_BRANCH);
@@ -415,7 +426,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
 
         //recompile
         res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
+        assertTrue(res.isSuccessful());
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
         InternalNIOTestUtil.rm(tmpRootCloned.toFile());
@@ -494,8 +505,12 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        Assert.assertTrue(res.isSuccessful());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+        }
+        assertTrue(res.getMavenOutput().isPresent());
+        assertTrue(res.isSuccessful());
 
         lastCommit = JGitUtil.getLastCommit(origin.gitRepo(),
                                             MASTER_BRANCH);
@@ -524,8 +539,12 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
 
         //recompile
         res = compiler.compileSync(req);
-        Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().isPresent());
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+        }
+        assertTrue(res.isSuccessful());
+        assertTrue(res.getMavenOutput().isPresent());
 
         InternalNIOTestUtil.rm(tmpRoot.toFile());
         InternalNIOTestUtil.rm(tmpRootCloned.toFile());

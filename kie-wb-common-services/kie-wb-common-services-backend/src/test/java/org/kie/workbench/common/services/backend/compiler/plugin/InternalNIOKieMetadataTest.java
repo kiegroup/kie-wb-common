@@ -17,7 +17,6 @@
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -64,19 +63,12 @@ public class InternalNIOKieMetadataTest {
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               ".m2/repository");
 
-        System.out.println("mavenrepo+++++++++++++" + mavenRepo.toString());
-        System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
-        System.out.println("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("MAVEN_HOME"));
-
-        logger.info("mavenrepo+++++++++++++" + mavenRepo.toString());
-        logger.info("System.getProperty(M2_REPO)+++++++++++++" + System.getProperty("M2_REPO"));
-        logger.info("System.getProperty(MAVEN_HOME)+++++++++++++" + System.getProperty("MAVEN_HOME"));
-            if (!Files.exists(mavenRepo)) {
-                System.out.println("Creating a m2_repo into:" + mavenRepo.toString());
-                if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                    throw new Exception("Folder not writable in the project");
-                }
+        if (!Files.exists(mavenRepo)) {
+            logger.info("Creating a m2_repo into:" + mavenRepo.toString());
+            if (!Files.exists(Files.createDirectories(mavenRepo))) {
+                throw new Exception("Folder not writable in the project");
             }
+        }
     }
 
     @Test
@@ -106,6 +98,11 @@ public class InternalNIOKieMetadataTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
+
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieMetadataTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
+        }
 
         if (res.getErrorMessage().isPresent()) {
             logger.info("Error:" + res.getErrorMessage().get());
@@ -164,18 +161,14 @@ public class InternalNIOKieMetadataTest {
                                                                                          Boolean.TRUE);
             KieCompilationResponse res = compiler.compileSync(req);
 
-            if (res.getMavenOutput().isPresent()) {
-                List<String> mavenOutput = res.getMavenOutput().get();
-                for (String item : mavenOutput) {
-                    System.out.println("++++" + item);
-                    logger.info("++++" + item);
-                }
+            if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                          "InternalNIOKieMetadataTest.compileAndloadKieJarSingleMetadata");
             }
 
             Assert.assertTrue(res.getMavenOutput().isPresent());
             if (res.getErrorMessage().isPresent()) {
                 logger.info(res.getErrorMessage().get());
-                System.out.println(res.getErrorMessage().get());
             }
 
             Assert.assertTrue(res.isSuccessful());
@@ -222,6 +215,10 @@ public class InternalNIOKieMetadataTest {
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "InternalNIOKieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
+        }
         if (res.getErrorMessage().isPresent()) {
             logger.info(res.getErrorMessage().get());
         }
