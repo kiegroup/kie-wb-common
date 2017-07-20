@@ -76,13 +76,4 @@ public class InformationItem extends NamedElement implements DMNPropertySet {
     public void setTypeRef(final QName typeRef) {
         this.typeRef = typeRef;
     }
-    
-    public static InformationItem from( org.kie.dmn.model.v1_1.InformationItem dmn ) {
-        Id id = new Id( dmn.getId() );
-        Description description = new Description( dmn.getDescription() );
-        Name name = new Name( dmn.getName() );
-        QName qname = new QName( dmn.getTypeRef().toString() );
-        InformationItem result = new InformationItem(id, description, name, qname);
-        return result;
-    }
 }

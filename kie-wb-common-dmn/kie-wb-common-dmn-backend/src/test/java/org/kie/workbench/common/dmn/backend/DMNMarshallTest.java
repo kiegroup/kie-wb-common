@@ -25,6 +25,11 @@ import java.util.Map;
 import org.jboss.errai.marshalling.server.MappingContextSingleton;
 import org.junit.Test;
 import org.kie.dmn.model.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -50,7 +55,7 @@ public class DMNMarshallTest {
                 View<?> view = (View<?>) node.getContent();
                 if ( view.getDefinition() instanceof org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement ) {
                     org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
-                    nodes.put( n.getId().getValue() , n.asDMN( (List<Edge<?, Node<?, ?>>>) node.getInEdges() ) );
+                    nodes.put( n.getId().getValue() , convertNodeToDMN(node) );
                 }
             }
             System.out.println( node );
@@ -64,6 +69,22 @@ public class DMNMarshallTest {
             System.out.println("---");
         }
         nodes.forEach( (k, v) -> System.out.println(k+": "+v) );
+    }
+
+    @Deprecated
+    private DMNModelInstrumentedBase convertNodeToDMN(Node<?, ?> node) {
+        DecisionConverter dc = new DecisionConverter(null);
+        InputDataConverter idc = new InputDataConverter(null);
+        if ( node.getContent() instanceof View<?> ) {
+            View<?> view = (View<?>) node.getContent();
+            if ( view.getDefinition() instanceof InputData ) {
+                return idc.dmnFromNode((Node<View<InputData>, ?>) node);
+            }
+            if ( view.getDefinition() instanceof Decision ) {
+                return dc.dmnFromNode((Node<View<Decision>, ?>) node);
+            }
+        }
+        return null;
     }
     
 }

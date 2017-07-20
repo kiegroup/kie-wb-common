@@ -36,6 +36,8 @@ import org.kie.dmn.model.v1_1.InformationRequirement;
 import org.kie.dmn.model.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -56,6 +58,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
     private XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller;
     private FactoryManager factoryManager;
+    private InputDataConverter inputDataConverter;
+    private DecisionConverter decisionConverter;
 
     protected DMNMarshaller() {
         this(null, null);
@@ -65,6 +69,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     public DMNMarshaller(final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller, FactoryManager factoryManager) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.factoryManager = factoryManager;
+        this.inputDataConverter = new InputDataConverter(factoryManager);
+        this.decisionConverter = new DecisionConverter(factoryManager);
     }
     
     @Deprecated
@@ -122,15 +128,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     
     private Node dmnToStunner(DRGElement dmn) {
         if ( dmn instanceof InputData ) {
-            Node node = factoryManager.newElement(UUID.uuid(), org.kie.workbench.common.dmn.api.definition.v1_1.InputData.class)
-                    .asNode();
-            ((View) node.getContent()).setDefinition( org.kie.workbench.common.dmn.api.definition.v1_1.InputData.from( (InputData) dmn ) );
-            return node;
+            return inputDataConverter.nodeFromDMN((InputData) dmn);
         } else if ( dmn instanceof Decision ) {
-            Node node = factoryManager.newElement(UUID.uuid(), org.kie.workbench.common.dmn.api.definition.v1_1.InputData.class)
-                    .asNode();
-            ((View) node.getContent()).setDefinition( org.kie.workbench.common.dmn.api.definition.v1_1.Decision.from( (Decision) dmn ) );
-            return node;
+            return decisionConverter.nodeFromDMN((Decision) dmn);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO 
         }
