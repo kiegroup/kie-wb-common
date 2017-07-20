@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -123,7 +123,7 @@ public abstract class AbstractBPMNFormGeneratorServiceTest<SERVICE extends Abstr
                      form.getLayoutTemplate().getRows().size());
     }
 
-    protected void launchNestedFormsTest() {
+    protected FormGenerationResult launchNestedFormsTest() {
         List<ModelProperty> variableList = new ArrayList<>();
 
         variableList.add(new ModelPropertyImpl(EXPENSE_VARIABLE,
@@ -146,6 +146,12 @@ public abstract class AbstractBPMNFormGeneratorServiceTest<SERVICE extends Abstr
         checkRootForm(model,
                       result,
                       variableList);
+
+        return result;
+    }
+
+    protected void launchNestedFormTestWithGeneratedFormsValidation() {
+        FormGenerationResult result = launchNestedFormsTest();
 
         assertFalse(result.getNestedForms().isEmpty());
         assertEquals(3,

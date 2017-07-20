@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *       http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -95,33 +95,37 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         void setWidget(IsWidget widget);
     }
 
-    private final PlaceManager placeManager;
-    private final ErrorPopupPresenter errorPopupPresenter;
-    private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
-    private final R resourceType;
-    private final ClientProjectDiagramService projectDiagramServices;
-    private final SessionManager sessionManager;
-    private final SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory;
-    private final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder;
+    private PlaceManager placeManager;
+    private ErrorPopupPresenter errorPopupPresenter;
+    private Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
+    private R resourceType;
+    private ClientProjectDiagramService projectDiagramServices;
+    private SessionManager sessionManager;
+    private SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory;
+    private ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder;
 
-    private final ClearStatesSessionCommand sessionClearStatesCommand;
-    private final VisitGraphSessionCommand sessionVisitGraphCommand;
-    private final SwitchGridSessionCommand sessionSwitchGridCommand;
-    private final ClearSessionCommand sessionClearCommand;
-    private final DeleteSelectionSessionCommand sessionDeleteSelectionCommand;
-    private final UndoSessionCommand sessionUndoCommand;
-    private final RedoSessionCommand sessionRedoCommand;
-    private final ValidateSessionCommand sessionValidateCommand;
-    private final RefreshSessionCommand sessionRefreshCommand;
-    private final ExportToPngSessionCommand sessionExportImagePNGCommand;
-    private final ExportToJpgSessionCommand sessionExportImageJPGCommand;
-    private final ExportToPdfSessionCommand sessionExportPDFCommand;
+    private ClearStatesSessionCommand sessionClearStatesCommand;
+    private VisitGraphSessionCommand sessionVisitGraphCommand;
+    private SwitchGridSessionCommand sessionSwitchGridCommand;
+    private ClearSessionCommand sessionClearCommand;
+    private DeleteSelectionSessionCommand sessionDeleteSelectionCommand;
+    private UndoSessionCommand sessionUndoCommand;
+    private RedoSessionCommand sessionRedoCommand;
+    private ValidateSessionCommand sessionValidateCommand;
+    private RefreshSessionCommand sessionRefreshCommand;
+    private ExportToPngSessionCommand sessionExportImagePNGCommand;
+    private ExportToJpgSessionCommand sessionExportImageJPGCommand;
+    private ExportToPdfSessionCommand sessionExportPDFCommand;
     private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
     private Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
 
     protected SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
 
     private String title = "Project Diagram Editor";
+
+    AbstractProjectDiagramEditor() {
+
+    }
 
     @Inject
     public AbstractProjectDiagramEditor(final View view,
@@ -355,14 +359,18 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         if (menuItemsBuilder.isDevItemsEnabled()) {
             fileMenuBuilder.addNewTopLevelMenu(menuItemsBuilder.newDevItems());
         }
+
+        if (canUpdateProject()) {
+            fileMenuBuilder
+                    .addSave(versionRecordManager.newSaveMenuItem(() -> onSave()))
+                    .addCopy(versionRecordManager.getCurrentPath(),
+                             fileNameValidator)
+                    .addRename(versionRecordManager.getPathToLatest(),
+                               fileNameValidator)
+                    .addDelete(versionRecordManager.getPathToLatest());
+        }
+
         fileMenuBuilder
-                // Project editor menus.
-                .addSave(versionRecordManager.newSaveMenuItem(() -> onSave()))
-                .addCopy(versionRecordManager.getCurrentPath(),
-                         fileNameValidator)
-                .addRename(versionRecordManager.getPathToLatest(),
-                           fileNameValidator)
-                .addDelete(versionRecordManager.getPathToLatest())
                 .addNewTopLevelMenu(versionRecordManager.buildMenu());
     }
 
