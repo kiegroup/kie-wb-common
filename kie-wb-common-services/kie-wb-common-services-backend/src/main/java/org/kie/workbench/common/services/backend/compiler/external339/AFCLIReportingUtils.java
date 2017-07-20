@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 /**
  * Used to open the API of the maven embedder
  * original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/CLIReportingUtils.html
+ * IMPORTANT: Preserve the structure for an easy update when the maven version will be updated
  */
 public class AFCLIReportingUtils {
 

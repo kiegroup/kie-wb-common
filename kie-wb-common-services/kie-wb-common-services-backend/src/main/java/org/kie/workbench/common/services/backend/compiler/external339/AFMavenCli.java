@@ -109,6 +109,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 /**
  * Modified from Maven to permit builds without installations and var envs.
  * original version https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/MavenCli.html
+ * IMPORTANT: Preserve the structure for an easy update when the maven version will be updated
  */
 public class AFMavenCli {
 

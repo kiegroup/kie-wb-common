@@ -27,6 +27,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 /**
  * Used to open the API of Maven embedder
  * original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/CliRequest.html
+ * IMPORTANT: Preserve the structure for an easy update when the maven version will be updated
  */
 public class AFCliRequest {
 
