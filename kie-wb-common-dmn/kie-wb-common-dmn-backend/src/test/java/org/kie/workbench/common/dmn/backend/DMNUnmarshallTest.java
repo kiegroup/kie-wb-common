@@ -16,14 +16,8 @@
 
 package org.kie.workbench.common.dmn.backend;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.UUID;
-
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.jboss.errai.marshalling.server.MappingContextSingleton;
@@ -72,11 +66,15 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DMNUnmarshallTest {
-    
+
     private static final String DMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class);
-    
+
     @Mock
     DefinitionManager definitionManager;
 
@@ -142,7 +140,14 @@ public class DMNUnmarshallTest {
             String uuid = (String) invocationOnMock.getArguments()[0];
             String id = (String) invocationOnMock.getArguments()[1];
             if (DMNDefinitionSet.class.getName().equals(id)) {
-                Graph graph = (Graph) dmnGraphFactory.build(uuid, DMN_DEF_SET_ID);
+                // TODO this is different from the stunner jbpm test which this dmn test is based on
+                //Emulate DMNGraphFactoryImpl, that adds a DMNDiagram to new Graphs
+                Graph graph = (Graph) dmnGraphFactory.build(uuid,
+                                                            DMN_DEF_SET_ID);
+                DMNDiagram model = new DMNDiagram.DMNDiagramBuilder().build();
+                Node node = viewNodeFactory.build(uuid,
+                                                  model);
+                graph.addNode(node);
                 return graph;
             }
             Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
@@ -166,7 +171,8 @@ public class DMNUnmarshallTest {
             Class type = (Class) invocationOnMock.getArguments()[1];
             String id = BindableAdapterUtils.getGenericClassName(type);
             if (DMNDefinitionSet.class.equals(type)) {
-                Graph graph = (Graph) dmnGraphFactory.build(uuid, DMN_DEF_SET_ID);
+                Graph graph = (Graph) dmnGraphFactory.build(uuid,
+                                                            DMN_DEF_SET_ID);
                 return graph;
             }
             Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
@@ -203,52 +209,75 @@ public class DMNUnmarshallTest {
     @Test
     public void test2() throws IOException {
         MappingContextSingleton.loadDynamicMarshallers();
-        
-        DMNMarshaller m = new DMNMarshaller( new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager );
-        
-        Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream( "/diamond.dmn" ));
-        
-        System.out.println( g );
+
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                            applicationFactoryManager);
+
+        Graph<?, Node<?, ?>> g = m.unmarshall(null,
+                                              this.getClass().getResourceAsStream("/diamond.dmn"));
+
+        //TODO
+        // - Assert graph contains root Node content DMNDiagram
+        // - Assert DMNDiagram node has outgoing Child Edges to each Decision and InputData
+        // - Assert Decisions and InputData have outgoing and incoming edges set
+        // - Assert Decisions and InputData edges have source and target magnets set
+
+        System.out.println(g);
     }
-    
+
     @Ignore("hard coded test")
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     @Deprecated
     public void test1() {
-        Element elementInputData = applicationFactoryManager.newElement(UUID.randomUUID().toString(), InputData.class);
+        Element elementInputData = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
+                                                                        InputData.class);
         Node nodeInputData = elementInputData.asNode();
-        
-        Element elemDecision = applicationFactoryManager.newElement(UUID.randomUUID().toString(), Decision.class);
+
+        Element elemDecision = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
+                                                                    Decision.class);
         Node nodeDecision = elemDecision.asNode();
-        
-        Element elemInformationRequirement = applicationFactoryManager.newElement(UUID.randomUUID().toString(), InformationRequirement.class);
+
+        Element elemInformationRequirement = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
+                                                                                  InformationRequirement.class);
         Edge myEdge = elemInformationRequirement.asEdge();
-        connectEdge( myEdge, nodeInputData, nodeDecision );
-        
-        Node dmnDiagramRoot = applicationFactoryManager.newElement(UUID.randomUUID().toString(), DMNDiagram.class).asNode();
-        connectRootWithChild(dmnDiagramRoot, nodeInputData);
-        connectRootWithChild(dmnDiagramRoot, nodeDecision);
-        
-        Diagram newDiagram = applicationFactoryManager.newDiagram("prova", DMN_DEF_SET_ID, null);
+        connectEdge(myEdge,
+                    nodeInputData,
+                    nodeDecision);
+
+        Node dmnDiagramRoot = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
+                                                                   DMNDiagram.class).asNode();
+        connectRootWithChild(dmnDiagramRoot,
+                             nodeInputData);
+        connectRootWithChild(dmnDiagramRoot,
+                             nodeDecision);
+
+        Diagram newDiagram = applicationFactoryManager.newDiagram("prova",
+                                                                  DMN_DEF_SET_ID,
+                                                                  null);
         newDiagram.getGraph().addNode(nodeInputData);
         newDiagram.getGraph().addNode(nodeDecision);
-        
-        System.out.println( newDiagram );
+
+        System.out.println(newDiagram);
     }
-    
-    private void connectRootWithChild(Node dmnDiagramRoot, Node child) {
+
+    private void connectRootWithChild(Node dmnDiagramRoot,
+                                      Node child) {
         final String uuid = org.kie.workbench.common.stunner.core.util.UUID.uuid();
         final Edge<Child, Node> edge = new EdgeImpl<>(uuid);
         edge.setContent(new Child());
-        connectEdge(edge, dmnDiagramRoot, child);
+        connectEdge(edge,
+                    dmnDiagramRoot,
+                    child);
     }
-    
+
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private void connectEdge( Edge edge, Node source, Node target ) {
-        edge.setSourceNode( source );
-        edge.setTargetNode( target );
-        source.getOutEdges().add( edge );
-        target.getInEdges().add( edge );
+    private void connectEdge(Edge edge,
+                             Node source,
+                             Node target) {
+        edge.setSourceNode(source);
+        edge.setTargetNode(target);
+        source.getOutEdges().add(edge);
+        target.getInEdges().add(edge);
     }
 }
