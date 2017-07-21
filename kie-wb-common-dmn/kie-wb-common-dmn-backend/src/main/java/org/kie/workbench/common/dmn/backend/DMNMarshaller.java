@@ -113,12 +113,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                                     requiredNode,
                                     currentNode);
                         setConnectionMagnets(myEdge);
-
-                        Magnet sourceMagnet = MagnetImpl.Builder.build(Magnet.MagnetType.OUTGOING);
-                        Magnet targetMagnet = MagnetImpl.Builder.build(Magnet.MagnetType.INCOMING);
-                        ViewConnector connectionContent = (ViewConnector) myEdge.getContent();
-                        connectionContent.setSourceMagnet(sourceMagnet);
-                        connectionContent.setTargetMagnet(targetMagnet);
                     }
                     if (ir.getRequiredDecision() != null) {
                         String reqInputID = getId(ir.getRequiredDecision());
