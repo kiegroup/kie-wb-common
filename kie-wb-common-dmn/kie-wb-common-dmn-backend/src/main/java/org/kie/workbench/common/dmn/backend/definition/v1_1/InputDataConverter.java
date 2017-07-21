@@ -13,7 +13,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
-public class InputDataConverter implements Converter<org.kie.dmn.model.v1_1.InputData, org.kie.workbench.common.dmn.api.definition.v1_1.InputData> {
+public class InputDataConverter implements NodeConverter<org.kie.dmn.model.v1_1.InputData, org.kie.workbench.common.dmn.api.definition.v1_1.InputData> {
     
     private FactoryManager factoryManager;
     
@@ -30,7 +30,7 @@ public class InputDataConverter implements Converter<org.kie.dmn.model.v1_1.Inpu
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );
         Name name = new Name( dmn.getName() );
-        InformationItem informationItem = InformationItemPropertyConverter.from( dmn.getVariable() );
+        InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN( dmn.getVariable() );
         InputData inputData = new InputData(id,
                 description,
                 name,
@@ -47,7 +47,9 @@ public class InputDataConverter implements Converter<org.kie.dmn.model.v1_1.Inpu
         InputData source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.InputData result = new org.kie.dmn.model.v1_1.InputData();
         result.setId( source.getId().getValue() );
+        result.setDescription( source.getDescription().getValue() );
         result.setName( source.getName().getValue() );
+        result.setVariable( InformationItemPropertyConverter.dmnFromWB( source.getVariable() ));
         return result;
     }
 

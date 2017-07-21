@@ -9,6 +9,7 @@ import org.kie.dmn.model.v1_1.DMNElementReference;
 import org.kie.dmn.model.v1_1.InformationRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
 import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.dmn.api.property.dmn.AllowedAnswers;
@@ -23,7 +24,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
-public class DecisionConverter implements Converter<org.kie.dmn.model.v1_1.Decision, org.kie.workbench.common.dmn.api.definition.v1_1.Decision> {
+public class DecisionConverter implements NodeConverter<org.kie.dmn.model.v1_1.Decision, org.kie.workbench.common.dmn.api.definition.v1_1.Decision> {
     
     private FactoryManager factoryManager;
     
@@ -40,14 +41,15 @@ public class DecisionConverter implements Converter<org.kie.dmn.model.v1_1.Decis
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );
         Name name = new Name( dmn.getName() );
-        InformationItem informationItem = InformationItemPropertyConverter.from( dmn.getVariable() );
+        InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN( dmn.getVariable() );
+        Expression expression = ExpressionPropertyConverter.wbFromDMN( dmn.getExpression() );
         Decision decision = new Decision(id,
                 description,
                 name,
                 new Question(),
                 new AllowedAnswers(),
                 informationItem,
-                new LiteralExpression(),
+                expression,
                 new BackgroundSet(),
                 new FontSet(),
                 new RectangleDimensionsSet());
@@ -60,7 +62,10 @@ public class DecisionConverter implements Converter<org.kie.dmn.model.v1_1.Decis
         Decision source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.Decision d = new org.kie.dmn.model.v1_1.Decision();
         d.setId( source.getId().getValue() );
+        d.setDescription( source.getDescription().getValue() );
         d.setName( source.getName().getValue() );
+        d.setVariable( InformationItemPropertyConverter.dmnFromWB( source.getVariable() ) );
+        d.setExpression( ExpressionPropertyConverter.dmnFromWB( source.getExpression() ) );
         List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
         for ( Edge<?, ?> e : inEdges ) {
             Node<?,?> sourceNode = e.getSourceNode();

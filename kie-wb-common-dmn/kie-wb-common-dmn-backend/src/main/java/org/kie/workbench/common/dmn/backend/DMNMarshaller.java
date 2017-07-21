@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,14 +30,13 @@ import javax.inject.Inject;
 
 import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.dmn.backend.marshalling.v1_1.DMNMarshallerFactory;
-import org.kie.dmn.model.v1_1.DMNElementReference;
-import org.kie.dmn.model.v1_1.DRGElement;
-import org.kie.dmn.model.v1_1.Decision;
 import org.kie.dmn.model.v1_1.Definitions;
-import org.kie.dmn.model.v1_1.InformationRequirement;
-import org.kie.dmn.model.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -64,6 +64,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private FactoryManager factoryManager;
     private InputDataConverter inputDataConverter;
     private DecisionConverter decisionConverter;
+    private org.kie.dmn.api.marshalling.v1_1.DMNMarshaller marshaller;
 
     protected DMNMarshaller() {
         this(null,
@@ -77,6 +78,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.factoryManager = factoryManager;
         this.inputDataConverter = new InputDataConverter(factoryManager);
         this.decisionConverter = new DecisionConverter(factoryManager);
+        this.marshaller = DMNMarshallerFactory.newDefaultMarshaller();
     }
 
     @Deprecated
@@ -89,21 +91,19 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     @Override
     public Graph unmarshall(final Metadata metadata,
                             final InputStream input) throws IOException {
+        org.kie.dmn.model.v1_1.Definitions dmnXml = marshaller.unmarshal(new InputStreamReader(input));
 
-        org.kie.dmn.api.marshalling.v1_1.DMNMarshaller marshaller = DMNMarshallerFactory.newDefaultMarshaller();
-        Definitions dmnXml = marshaller.unmarshal(new InputStreamReader(input));
-
-        Map<String, Entry<DRGElement, Node>> elems =
-                dmnXml.getDrgElement().stream().collect(Collectors.toMap(DRGElement::getId,
+        Map<String, Entry<org.kie.dmn.model.v1_1.DRGElement, Node>> elems =
+                dmnXml.getDrgElement().stream().collect(Collectors.toMap(org.kie.dmn.model.v1_1.DRGElement::getId,
                                                                          dmn -> new SimpleEntry<>(dmn,
                                                                                                   dmnToStunner(dmn))));
 
-        for (Entry<DRGElement, Node> kv : elems.values()) {
-            DRGElement elem = kv.getKey();
+        for (Entry<org.kie.dmn.model.v1_1.DRGElement, Node> kv : elems.values()) {
+            org.kie.dmn.model.v1_1.DRGElement elem = kv.getKey();
             Node currentNode = kv.getValue();
-            if (elem instanceof Decision) {
-                Decision decision = (Decision) elem;
-                for (InformationRequirement ir : decision.getInformationRequirement()) {
+            if (elem instanceof org.kie.dmn.model.v1_1.Decision) {
+                org.kie.dmn.model.v1_1.Decision decision = (org.kie.dmn.model.v1_1.Decision) elem;
+                for (org.kie.dmn.model.v1_1.InformationRequirement ir : decision.getInformationRequirement()) {
                     if (ir.getRequiredInput() != null) {
                         String reqInputID = getId(ir.getRequiredInput());
                         Node requiredNode = elems.get(reqInputID).getValue();
@@ -147,16 +147,16 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return nodes.stream().filter(n -> n.getContent().getDefinition() instanceof DMNDiagram).findFirst().orElseThrow(() -> new UnsupportedOperationException("TODO"));
     }
 
-    private String getId(DMNElementReference er) {
+    private String getId(org.kie.dmn.model.v1_1.DMNElementReference er) {
         String href = er.getHref();
         return href.contains("#") ? href.substring(href.indexOf('#') + 1) : href;
     }
 
-    private Node dmnToStunner(DRGElement dmn) {
-        if (dmn instanceof InputData) {
-            return inputDataConverter.nodeFromDMN((InputData) dmn);
-        } else if (dmn instanceof Decision) {
-            return decisionConverter.nodeFromDMN((Decision) dmn);
+    private Node dmnToStunner(org.kie.dmn.model.v1_1.DRGElement dmn) {
+        if (dmn instanceof org.kie.dmn.model.v1_1.InputData) {
+            return inputDataConverter.nodeFromDMN((org.kie.dmn.model.v1_1.InputData) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1_1.Decision) {
+            return decisionConverter.nodeFromDMN((org.kie.dmn.model.v1_1.Decision) dmn);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO 
         }
@@ -190,12 +190,51 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         connectionContent.setSourceMagnet(sourceMagnet);
         connectionContent.setTargetMagnet(targetMagnet);
     }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public String marshall(final Diagram<Graph, Metadata> diagram) throws IOException {
+    
+    @Deprecated
+    public String marshallFromStunnerToJSON(final Diagram<Graph, Metadata> diagram) throws IOException {
         String result = ServerMarshalling.toJSON(diagram.getGraph());
         return result;
+    }
+
+    @Override
+    public String marshall(final Diagram<Graph, Metadata> diagram) throws IOException {
+        Graph<?, Node<?, ?>> g = diagram.getGraph();
+
+        Map<String, org.kie.dmn.model.v1_1.DRGElement> nodes = new HashMap<>();
+        
+        for ( Node<?, ?> node : g.nodes()) {
+            if ( node.getContent() instanceof View<?> ) {
+                View<?> view = (View<?>) node.getContent();
+                if ( view.getDefinition() instanceof DRGElement ) {
+                    DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
+                    nodes.put( n.getId().getValue() , stunnerToDMN(node) );
+                }
+            }
+        }
+        
+        org.kie.dmn.model.v1_1.Definitions definitions = new Definitions();
+        definitions.setName( "TODO" ); // TODO where to extract name and namespace etc info ?
+        definitions.setNamespace( "TODO" );
+        nodes.values().forEach( definitions.getDrgElement()::add );
+        
+        String marshalled = marshaller.marshal(definitions);
+        
+        return marshalled;
+    }
+    
+    private org.kie.dmn.model.v1_1.DRGElement stunnerToDMN(Node<?, ?> node) {
+        if ( node.getContent() instanceof View<?> ) {
+            View<?> view = (View<?>) node.getContent();
+            if ( view.getDefinition() instanceof InputData ) {
+                return inputDataConverter.dmnFromNode((Node<View<InputData>, ?>) node);
+            } else if ( view.getDefinition() instanceof Decision ) {
+                return decisionConverter.dmnFromNode((Node<View<Decision>, ?>) node);
+            } else {
+                throw new UnsupportedOperationException("TODO"); // TODO 
+            }
+        }
+        throw new RuntimeException("wrong diagram structure to marshall");
     }
 
     @Override

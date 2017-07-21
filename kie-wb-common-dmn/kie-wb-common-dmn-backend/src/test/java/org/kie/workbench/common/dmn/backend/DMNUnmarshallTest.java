@@ -223,6 +223,12 @@ public class DMNUnmarshallTest {
         // - Assert Decisions and InputData edges have source and target magnets set
 
         System.out.println(g);
+        
+        DiagramImpl diagram = new DiagramImpl("", null);
+        diagram.setGraph(g);
+        
+        String mString = m.marshall(diagram);
+        System.out.println(mString);
     }
 
     @Ignore("hard coded test")
