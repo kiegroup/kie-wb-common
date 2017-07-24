@@ -24,21 +24,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import com.google.common.base.Functions;
 import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.dmn.backend.marshalling.v1_1.DMNMarshallerFactory;
+import org.kie.dmn.model.v1_1.Artifact;
 import org.kie.dmn.model.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
+import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.KnowledgeSourceConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConverter;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -64,6 +72,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     private FactoryManager factoryManager;
     private InputDataConverter inputDataConverter;
     private DecisionConverter decisionConverter;
+    private BusinessKnowledgeModelConverter bkmConverter;
+    private KnowledgeSourceConverter knowledgeSourceConverter;
+    private TextAnnotationConverter textAnnotationConverter;
     private org.kie.dmn.api.marshalling.v1_1.DMNMarshaller marshaller;
 
     protected DMNMarshaller() {
@@ -78,6 +89,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         this.factoryManager = factoryManager;
         this.inputDataConverter = new InputDataConverter(factoryManager);
         this.decisionConverter = new DecisionConverter(factoryManager);
+        this.bkmConverter = new BusinessKnowledgeModelConverter(factoryManager);
+        this.knowledgeSourceConverter = new KnowledgeSourceConverter(factoryManager);
+        this.textAnnotationConverter = new TextAnnotationConverter(factoryManager);
         this.marshaller = DMNMarshallerFactory.newDefaultMarshaller();
     }
 
@@ -128,10 +142,16 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             }
         }
 
+        Map<String, Node<View<TextAnnotation>, ?>> textAnnotations = dmnXml.getArtifact().stream()
+                .filter( org.kie.dmn.model.v1_1.TextAnnotation.class::isInstance )
+                .map( org.kie.dmn.model.v1_1.TextAnnotation.class::cast )
+                .collect( Collectors.toMap( org.kie.dmn.model.v1_1.TextAnnotation::getId, textAnnotationConverter::nodeFromDMN ) );
+        
         Graph graph = factoryManager.newDiagram("prova",
                                                 BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class),
                                                 metadata).getGraph();
-        elems.values().stream().map(kv -> kv.getValue()).forEach(graph::addNode);
+        elems.values().stream().map(kv -> kv.getValue()).forEach( graph::addNode );
+        textAnnotations.values().forEach( graph::addNode );
 
         Node dmnDiagramRoot = findDMNDiagramRoot(graph);
         elems.values().stream().map(kv -> kv.getValue()).forEach(node -> connectRootWithChild(dmnDiagramRoot,
@@ -157,6 +177,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             return inputDataConverter.nodeFromDMN((org.kie.dmn.model.v1_1.InputData) dmn);
         } else if (dmn instanceof org.kie.dmn.model.v1_1.Decision) {
             return decisionConverter.nodeFromDMN((org.kie.dmn.model.v1_1.Decision) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1_1.BusinessKnowledgeModel) {
+            return bkmConverter.nodeFromDMN((org.kie.dmn.model.v1_1.BusinessKnowledgeModel) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1_1.KnowledgeSource) {
+            return knowledgeSourceConverter.nodeFromDMN((org.kie.dmn.model.v1_1.KnowledgeSource) dmn);
         } else {
             throw new UnsupportedOperationException("TODO"); // TODO 
         }
@@ -202,6 +226,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         Graph<?, Node<?, ?>> g = diagram.getGraph();
 
         Map<String, org.kie.dmn.model.v1_1.DRGElement> nodes = new HashMap<>();
+        Map<String, org.kie.dmn.model.v1_1.TextAnnotation> textAnnotations = new HashMap<>();
         
         for ( Node<?, ?> node : g.nodes()) {
             if ( node.getContent() instanceof View<?> ) {
@@ -209,6 +234,9 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 if ( view.getDefinition() instanceof DRGElement ) {
                     DRGElement n = (org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement) view.getDefinition();
                     nodes.put( n.getId().getValue() , stunnerToDMN(node) );
+                } else if ( view.getDefinition() instanceof TextAnnotation ) {
+                    TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
+                    textAnnotations.put( textAnnotation.getId().getValue() , textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node) );
                 }
             }
         }
@@ -217,6 +245,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         definitions.setName( "TODO" ); // TODO where to extract name and namespace etc info ?
         definitions.setNamespace( "TODO" );
         nodes.values().forEach( definitions.getDrgElement()::add );
+        textAnnotations.values().forEach( definitions.getArtifact()::add );
         
         String marshalled = marshaller.marshal(definitions);
         
@@ -230,6 +259,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 return inputDataConverter.dmnFromNode((Node<View<InputData>, ?>) node);
             } else if ( view.getDefinition() instanceof Decision ) {
                 return decisionConverter.dmnFromNode((Node<View<Decision>, ?>) node);
+            } else if ( view.getDefinition() instanceof BusinessKnowledgeModel ) {
+                return bkmConverter.dmnFromNode((Node<View<BusinessKnowledgeModel>, ?>) node);
+            } else if ( view.getDefinition() instanceof KnowledgeSource ) {
+                return knowledgeSourceConverter.dmnFromNode((Node<View<KnowledgeSource>, ?>) node);
             } else {
                 throw new UnsupportedOperationException("TODO"); // TODO 
             }

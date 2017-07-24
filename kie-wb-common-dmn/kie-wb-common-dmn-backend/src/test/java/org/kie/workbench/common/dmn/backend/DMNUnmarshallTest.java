@@ -230,6 +230,32 @@ public class DMNUnmarshallTest {
         String mString = m.marshall(diagram);
         System.out.println(mString);
     }
+    
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Test
+    public void test3() throws IOException {
+        MappingContextSingleton.loadDynamicMarshallers();
+
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                            applicationFactoryManager);
+
+        Graph<?, Node<?, ?>> g = m.unmarshall(null,
+                                              this.getClass().getResourceAsStream("/potpourri_drawing.dmn"));
+
+        //TODO
+        // - Assert graph contains root Node content DMNDiagram
+        // - Assert DMNDiagram node has outgoing Child Edges to each Decision and InputData
+        // - Assert Decisions and InputData have outgoing and incoming edges set
+        // - Assert Decisions and InputData edges have source and target magnets set
+
+        System.out.println(g);
+        
+        DiagramImpl diagram = new DiagramImpl("", null);
+        diagram.setGraph(g);
+        
+        String mString = m.marshall(diagram);
+        System.out.println(mString);
+    }
 
     @Ignore("hard coded test")
     @SuppressWarnings({"rawtypes", "unchecked"})
