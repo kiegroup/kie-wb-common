@@ -63,7 +63,6 @@ public class ProjectMetricsFactory {
         settings.setChartMarginBottom(5);
         settings.setTitleVisible(false);
         settings.setYAxisTitle(null);
-        settings.setRefreshInterval(5);
         return displayerLocator.lookupDisplayer(settings);
     }
 

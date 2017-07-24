@@ -160,6 +160,7 @@ public class OrgUnitsMetricsScreen {
 
     @OnClose
     public void onClose() {
+        displayerCoordinator.closeAll();
         view.clear();
     }
 
