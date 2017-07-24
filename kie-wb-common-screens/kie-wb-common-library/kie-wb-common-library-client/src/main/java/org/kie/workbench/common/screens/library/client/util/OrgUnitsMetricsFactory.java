@@ -47,6 +47,7 @@ public class OrgUnitsMetricsFactory {
                                   TranslationUtils translationUtils,
                                   DisplayerLocator displayerLocator) {
         this.translationService = translationService;
+        this.translationUtils = translationUtils;
         this.displayerLocator = displayerLocator;
     }
 
