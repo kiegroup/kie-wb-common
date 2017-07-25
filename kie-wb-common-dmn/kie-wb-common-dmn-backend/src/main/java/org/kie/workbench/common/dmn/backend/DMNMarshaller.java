@@ -23,18 +23,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Map.Entry;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import com.google.common.base.Functions;
 import org.jboss.errai.marshalling.server.ServerMarshalling;
 import org.kie.dmn.backend.marshalling.v1_1.DMNMarshallerFactory;
-import org.kie.dmn.model.v1_1.Artifact;
-import org.kie.dmn.model.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
@@ -42,6 +41,9 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.dmn.api.property.dmn.Description;
+import org.kie.workbench.common.dmn.api.property.dmn.Id;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
@@ -115,6 +117,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         for (Entry<org.kie.dmn.model.v1_1.DRGElement, Node> kv : elems.values()) {
             org.kie.dmn.model.v1_1.DRGElement elem = kv.getKey();
             Node currentNode = kv.getValue();
+            // DMN spec table 2: Requirements connection rules
             if (elem instanceof org.kie.dmn.model.v1_1.Decision) {
                 org.kie.dmn.model.v1_1.Decision decision = (org.kie.dmn.model.v1_1.Decision) elem;
                 for (org.kie.dmn.model.v1_1.InformationRequirement ir : decision.getInformationRequirement()) {
@@ -139,6 +142,82 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                         setConnectionMagnets(myEdge);
                     }
                 }
+                for ( org.kie.dmn.model.v1_1.KnowledgeRequirement kr : decision.getKnowledgeRequirement() ) {
+                    String reqInputID = getId( kr.getRequiredKnowledge() );
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                            org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement.class).asEdge();
+                    connectEdge(myEdge,
+                                requiredNode,
+                                currentNode);
+                    setConnectionMagnets(myEdge);
+                }
+                for ( org.kie.dmn.model.v1_1.AuthorityRequirement kr : decision.getAuthorityRequirement() ) {
+                    String reqInputID = getId( kr.getRequiredAuthority() );
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                            org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
+                    connectEdge(myEdge,
+                                requiredNode,
+                                currentNode);
+                    setConnectionMagnets(myEdge);
+                }
+            } else if (elem instanceof org.kie.dmn.model.v1_1.BusinessKnowledgeModel) {
+                org.kie.dmn.model.v1_1.BusinessKnowledgeModel bkm = (org.kie.dmn.model.v1_1.BusinessKnowledgeModel) elem;
+                for ( org.kie.dmn.model.v1_1.KnowledgeRequirement kr : bkm.getKnowledgeRequirement() ) {
+                    String reqInputID = getId( kr.getRequiredKnowledge() );
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                            org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement.class).asEdge();
+                    connectEdge(myEdge,
+                                requiredNode,
+                                currentNode);
+                    setConnectionMagnets(myEdge);
+                }
+                for ( org.kie.dmn.model.v1_1.AuthorityRequirement kr : bkm.getAuthorityRequirement() ) {
+                    String reqInputID = getId( kr.getRequiredAuthority() );
+                    Node requiredNode = elems.get(reqInputID).getValue();
+                    Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                            org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement.class).asEdge();
+                    connectEdge(myEdge,
+                                requiredNode,
+                                currentNode);
+                    setConnectionMagnets(myEdge);
+                }
+            } else if (elem instanceof org.kie.dmn.model.v1_1.KnowledgeSource) {
+                org.kie.dmn.model.v1_1.KnowledgeSource ks = (org.kie.dmn.model.v1_1.KnowledgeSource) elem;
+                for (org.kie.dmn.model.v1_1.AuthorityRequirement ir : ks.getAuthorityRequirement()) {
+                    if (ir.getRequiredInput() != null) {
+                        String reqInputID = getId(ir.getRequiredInput());
+                        Node requiredNode = elems.get(reqInputID).getValue();
+                        Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                                org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
+                        connectEdge(myEdge,
+                                    requiredNode,
+                                    currentNode);
+                        setConnectionMagnets(myEdge);
+                    }
+                    if (ir.getRequiredDecision() != null) {
+                        String reqInputID = getId(ir.getRequiredDecision());
+                        Node requiredNode = elems.get(reqInputID).getValue();
+                        Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                                org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
+                        connectEdge(myEdge,
+                                    requiredNode,
+                                    currentNode);
+                        setConnectionMagnets(myEdge);
+                    }
+                    if (ir.getRequiredAuthority() != null) {
+                        String reqInputID = getId(ir.getRequiredAuthority());
+                        Node requiredNode = elems.get(reqInputID).getValue();
+                        Edge myEdge = factoryManager.newElement(UUID.uuid(),
+                                                                org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement.class).asEdge();
+                        connectEdge(myEdge,
+                                    requiredNode,
+                                    currentNode);
+                        setConnectionMagnets(myEdge);
+                    }
+                }
             }
         }
 
@@ -146,6 +225,32 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 .filter( org.kie.dmn.model.v1_1.TextAnnotation.class::isInstance )
                 .map( org.kie.dmn.model.v1_1.TextAnnotation.class::cast )
                 .collect( Collectors.toMap( org.kie.dmn.model.v1_1.TextAnnotation::getId, textAnnotationConverter::nodeFromDMN ) );
+        
+        List<org.kie.dmn.model.v1_1.Association> associations = dmnXml.getArtifact().stream()
+                .filter( org.kie.dmn.model.v1_1.Association.class::isInstance )
+                .map( org.kie.dmn.model.v1_1.Association.class::cast )
+                .collect( Collectors.toList() );
+        for ( org.kie.dmn.model.v1_1.Association a : associations ) {
+            String sourceId = getId( a.getSourceRef() );
+            Node sourceNode = Optional.ofNullable( elems.get(sourceId) ).map(Entry::getValue).orElse( textAnnotations.get(sourceId) );
+            
+            String targetId = getId( a.getTargetRef() );
+            Node targetNode = Optional.ofNullable( elems.get(targetId) ).map(Entry::getValue).orElse( textAnnotations.get(targetId) );
+            
+            @SuppressWarnings("unchecked")
+            Edge<View<Association>, ?> myEdge = (Edge<View<Association>, ?>) factoryManager.newElement(UUID.uuid(),
+                                                                                                       Association.class).asEdge();
+            
+            Id id = new Id( a.getId() );
+            Description description = new Description( a.getDescription() );
+            Association definition = new Association(id, description);
+            myEdge.getContent().setDefinition( definition );
+            
+            connectEdge(myEdge,
+                        sourceNode,
+                        targetNode);
+            setConnectionMagnets(myEdge);
+        }
         
         Graph graph = factoryManager.newDiagram("prova",
                                                 BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class),
@@ -156,6 +261,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         Node dmnDiagramRoot = findDMNDiagramRoot(graph);
         elems.values().stream().map(kv -> kv.getValue()).forEach(node -> connectRootWithChild(dmnDiagramRoot,
                                                                                               node));
+        textAnnotations.values().stream().forEach(node -> connectRootWithChild(dmnDiagramRoot,
+                                                                               node));
 
         return graph;
     }
@@ -227,6 +334,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
         Map<String, org.kie.dmn.model.v1_1.DRGElement> nodes = new HashMap<>();
         Map<String, org.kie.dmn.model.v1_1.TextAnnotation> textAnnotations = new HashMap<>();
+
+        org.kie.dmn.model.v1_1.Definitions definitions = new org.kie.dmn.model.v1_1.Definitions();
+        definitions.setName( "TODO" ); // TODO where to extract name and namespace etc info ?
+        definitions.setNamespace( "TODO" );
         
         for ( Node<?, ?> node : g.nodes()) {
             if ( node.getContent() instanceof View<?> ) {
@@ -237,13 +348,14 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                 } else if ( view.getDefinition() instanceof TextAnnotation ) {
                     TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put( textAnnotation.getId().getValue() , textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node) );
+                    
+                    // TODO no way to query graph for Edges?
+                    List<org.kie.dmn.model.v1_1.Association> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
+                    definitions.getArtifact().addAll( associations );
                 }
             }
         }
         
-        org.kie.dmn.model.v1_1.Definitions definitions = new Definitions();
-        definitions.setName( "TODO" ); // TODO where to extract name and namespace etc info ?
-        definitions.setNamespace( "TODO" );
         nodes.values().forEach( definitions.getDrgElement()::add );
         textAnnotations.values().forEach( definitions.getArtifact()::add );
         

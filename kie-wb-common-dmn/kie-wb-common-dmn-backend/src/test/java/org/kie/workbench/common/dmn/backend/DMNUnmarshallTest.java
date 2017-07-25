@@ -242,12 +242,6 @@ public class DMNUnmarshallTest {
         Graph<?, Node<?, ?>> g = m.unmarshall(null,
                                               this.getClass().getResourceAsStream("/potpourri_drawing.dmn"));
 
-        //TODO
-        // - Assert graph contains root Node content DMNDiagram
-        // - Assert DMNDiagram node has outgoing Child Edges to each Decision and InputData
-        // - Assert Decisions and InputData have outgoing and incoming edges set
-        // - Assert Decisions and InputData edges have source and target magnets set
-
         System.out.println(g);
         
         DiagramImpl diagram = new DiagramImpl("", null);

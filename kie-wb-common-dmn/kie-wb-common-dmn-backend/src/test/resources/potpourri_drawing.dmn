@@ -1,94 +1,95 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <semantic:definitions xmlns:semantic="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns="http://www.trisotech.com/definitions/_2e97904b-9740-4cba-9584-d09c236f93ce" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:triso="http://www.trisotech.com/2015/triso/modeling" xmlns:trisofeed="http://trisotech.com/feed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" exporter="DMN Modeler" exporterVersion="5.2.2" id="_2e97904b-9740-4cba-9584-d09c236f93ce" name="potpourri drawing" namespace="http://www.trisotech.com/definitions/_2e97904b-9740-4cba-9584-d09c236f93ce" triso:logoChoice="Default">
   <semantic:extensionElements/>
-  <semantic:inputData id="_a6f25e6c-37be-4199-9ff7-7e4702320530" name="My Input Data" triso:displayName="My Input Data">
+  <semantic:inputData id="_My_Input_Data" name="My Input Data" triso:displayName="My Input Data">
     <semantic:variable id="_4943690a-e5a3-41f7-bdcf-ead4b24cb258" name="My Input Data" typeRef="feel:string"/>
   </semantic:inputData>
-  <semantic:decision id="_40d3c5cf-09e8-44e0-bcdd-aec7c270f0f2" name="My Decision 1" triso:displayName="My Decision 1">
+  <semantic:decision id="_My_Decision_1" name="My Decision 1" triso:displayName="My Decision 1">
     <semantic:variable id="_1549fb27-d79c-49b3-a583-adbdfcb78eb1" name="My Decision 1"/>
     <semantic:informationRequirement>
-      <semantic:requiredInput href="#_a6f25e6c-37be-4199-9ff7-7e4702320530"/>
+      <semantic:requiredInput href="#_My_Input_Data"/>
     </semantic:informationRequirement>
     <semantic:informationRequirement>
-      <semantic:requiredDecision href="#_9071daa5-daf7-44e9-a3ed-da9092436574"/>
+      <semantic:requiredDecision href="#_My_Decision_2"/>
     </semantic:informationRequirement>
     <semantic:knowledgeRequirement>
-      <semantic:requiredKnowledge href="#_b2091003-efd0-4600-b164-a36ecd60d0a7"/>
+      <semantic:requiredKnowledge href="#_My_BKM_1_of_Decision_1"/>
     </semantic:knowledgeRequirement>
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_7a5c9889-3e24-4336-81e3-0bc310bdd212"/>
+      <semantic:requiredAuthority href="#_KS_of_Decision_1"/>
     </semantic:authorityRequirement>
   </semantic:decision>
-  <semantic:businessKnowledgeModel id="_b2091003-efd0-4600-b164-a36ecd60d0a7" name="My BKM 1 of Decision 1" triso:displayName="My BKM 1 of Decision 1">
+  <semantic:businessKnowledgeModel id="_My_BKM_1_of_Decision_1" name="My BKM 1 of Decision 1" triso:displayName="My BKM 1 of Decision 1">
     <semantic:variable id="_eb5a129b-b2af-494f-8c1d-27d3e2d56739" name="My BKM 1 of Decision 1"/>
     <semantic:knowledgeRequirement>
-      <semantic:requiredKnowledge href="#_4c307618-2790-4524-a2c6-001efedeb1fe"/>
+      <semantic:requiredKnowledge href="#_My_BKM_2_of_BKM_1"/>
     </semantic:knowledgeRequirement>
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_0697ab09-fc4f-4714-b722-50e701ff4a67"/>
+      <semantic:requiredAuthority href="#_KS_of_BKM_1"/>
     </semantic:authorityRequirement>
   </semantic:businessKnowledgeModel>
-  <semantic:knowledgeSource id="_0697ab09-fc4f-4714-b722-50e701ff4a67" name="KS of BKM 1 " triso:displayName="KS of BKM 1 ">
+  <semantic:knowledgeSource id="_KS_of_BKM_1" name="KS of BKM 1 " triso:displayName="KS of BKM 1 ">
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_1a1a257d-c9dc-4a96-87e6-3d0734630dc5"/>
+      <semantic:requiredAuthority href="#_KS_of_KS_of_BKM_1"/>
     </semantic:authorityRequirement>
   </semantic:knowledgeSource>
-  <semantic:knowledgeSource id="_7a5c9889-3e24-4336-81e3-0bc310bdd212" name="KS of Decision 1" triso:displayName="KS of Decision 1">
+  <semantic:knowledgeSource id="_KS_of_Decision_1" name="KS of Decision 1" triso:displayName="KS of Decision 1">
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_12df3cd6-ea7a-49b5-ab24-01ff65351e89"/>
+      <semantic:requiredAuthority href="#_KS_of_KS_of_Decision_1"/>
     </semantic:authorityRequirement>
   </semantic:knowledgeSource>
-  <semantic:businessKnowledgeModel id="_4c307618-2790-4524-a2c6-001efedeb1fe" name="My BKM 2 of BKM 1" triso:displayName="My BKM 2 of BKM 1">
+  <semantic:businessKnowledgeModel id="_My_BKM_2_of_BKM_1" name="My BKM 2 of BKM 1" triso:displayName="My BKM 2 of BKM 1">
     <semantic:variable id="_fc39193f-a6a5-422e-abd1-f9e8e60d6c1a" name="My BKM 2 of BKM 1"/>
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_8093b95b-f852-46c7-84a9-bd6321c7a6f3"/>
+      <semantic:requiredAuthority href="#_KS_of_BKM_2"/>
     </semantic:authorityRequirement>
   </semantic:businessKnowledgeModel>
-  <semantic:knowledgeSource id="_8093b95b-f852-46c7-84a9-bd6321c7a6f3" name="KS of BKM 2" triso:displayName="KS of BKM 2"/>
-  <semantic:knowledgeSource id="_f5866dbd-de6e-4469-8d47-2957d530bcbe" name="KS of Input Data" triso:displayName="KS of Input Data">
+  <semantic:knowledgeSource id="_KS_of_BKM_2" name="KS of BKM 2" triso:displayName="KS of BKM 2"/>
+  <semantic:knowledgeSource id="_KS_of_Input_Data" name="KS of Input Data" triso:displayName="KS of Input Data">
     <semantic:authorityRequirement>
-      <semantic:requiredInput href="#_a6f25e6c-37be-4199-9ff7-7e4702320530"/>
+      <semantic:requiredAuthority href="#_KS_of_KS_of_InputData"/>
     </semantic:authorityRequirement>
     <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_868e3284-2e59-4a05-862c-b8fe71da136f"/>
+      <semantic:requiredInput href="#_My_Input_Data"/>
     </semantic:authorityRequirement>
   </semantic:knowledgeSource>
-  <semantic:decision id="_9071daa5-daf7-44e9-a3ed-da9092436574" name="My Decision 2" triso:displayName="My Decision 2">
+  <semantic:decision id="_My_Decision_2" name="My Decision 2" triso:displayName="My Decision 2">
     <semantic:variable id="_00f89fe8-9f6c-450e-93fb-7b8f6a035b9c" name="My Decision 2"/>
-    <semantic:authorityRequirement>
-      <semantic:requiredAuthority href="#_310eb4c0-0e8e-429a-a0a6-b523eab36113"/>
-    </semantic:authorityRequirement>
   </semantic:decision>
-  <semantic:knowledgeSource id="_310eb4c0-0e8e-429a-a0a6-b523eab36113" name="KS of Decision 2" triso:displayName="KS of Decision 2"/>
-  <semantic:knowledgeSource id="_868e3284-2e59-4a05-862c-b8fe71da136f" name="KS of KS of InputData" triso:displayName="KS of KS of InputData"/>
-  <semantic:knowledgeSource id="_12df3cd6-ea7a-49b5-ab24-01ff65351e89" name="KS of KS of Decision 1" triso:displayName="KS of KS of Decision 1"/>
-  <semantic:knowledgeSource id="_1a1a257d-c9dc-4a96-87e6-3d0734630dc5" name="KS of KS of BKM 1" triso:displayName="KS of KS of BKM 1"/>
-  <semantic:textAnnotation id="_fe5a0f8c-961a-4453-8bcf-93e7ec689d76">
+  <semantic:knowledgeSource id="_KS_of_Decision_2" name="KS of Decision 2" triso:displayName="KS of Decision 2">
+    <semantic:authorityRequirement>
+      <semantic:requiredDecision href="#_My_Decision_2"/>
+    </semantic:authorityRequirement>
+  </semantic:knowledgeSource>
+  <semantic:knowledgeSource id="_KS_of_KS_of_InputData" name="KS of KS of InputData" triso:displayName="KS of KS of InputData"/>
+  <semantic:knowledgeSource id="_KS_of_KS_of_Decision_1" name="KS of KS of Decision 1" triso:displayName="KS of KS of Decision 1"/>
+  <semantic:knowledgeSource id="_KS_of_KS_of_BKM_1" name="KS of KS of BKM 1" triso:displayName="KS of KS of BKM 1"/>
+  <semantic:textAnnotation id="_Annotation_for_Decision_2">
     <semantic:text>Annotation for Decision 2</semantic:text>
   </semantic:textAnnotation>
   <semantic:association id="_c7ad04c9-2b0c-468f-bcf1-2caa3279dcc9">
-    <semantic:sourceRef href="#_9071daa5-daf7-44e9-a3ed-da9092436574"/>
-    <semantic:targetRef href="#_fe5a0f8c-961a-4453-8bcf-93e7ec689d76"/>
+    <semantic:sourceRef href="#_My_Decision_2"/>
+    <semantic:targetRef href="#_Annotation_for_Decision_2"/>
   </semantic:association>
-  <semantic:textAnnotation id="_fae1af7a-4817-48a2-a15e-d663f806c39f">
+  <semantic:textAnnotation id="_Annotation_for_BKM_1">
     <semantic:text>Annotation for BKM 1</semantic:text>
   </semantic:textAnnotation>
   <semantic:association id="_47583d83-2d3d-4dab-bf6d-ae9315615b61">
-    <semantic:sourceRef href="#_fae1af7a-4817-48a2-a15e-d663f806c39f"/>
-    <semantic:targetRef href="#_b2091003-efd0-4600-b164-a36ecd60d0a7"/>
+    <semantic:sourceRef href="#_Annotation_for_BKM_1"/>
+    <semantic:targetRef href="#_My_BKM_1_of_Decision_1"/>
   </semantic:association>
-  <semantic:textAnnotation id="_a0218ad0-2934-450c-a33c-da8684e04972">
+  <semantic:textAnnotation id="_Annotation_for_Input_Data">
     <semantic:text>Annotation for Input Data</semantic:text>
   </semantic:textAnnotation>
   <semantic:association id="_5f188772-3fb4-44d2-98e4-0be41146c760">
-    <semantic:sourceRef href="#_a6f25e6c-37be-4199-9ff7-7e4702320530"/>
-    <semantic:targetRef href="#_a0218ad0-2934-450c-a33c-da8684e04972"/>
+    <semantic:sourceRef href="#_My_Input_Data"/>
+    <semantic:targetRef href="#_Annotation_for_Input_Data"/>
   </semantic:association>
-  <semantic:textAnnotation id="_530b3887-5c17-426c-9491-d8e146e28aa2">
+  <semantic:textAnnotation id="_Annotation_for_KS_of_BKM_2">
     <semantic:text>Annotation for KS of BKM 2</semantic:text>
   </semantic:textAnnotation>
   <semantic:association id="_4b8a467a-1429-4fdd-a75d-5c4a00ae5c00">
-    <semantic:sourceRef href="#_8093b95b-f852-46c7-84a9-bd6321c7a6f3"/>
-    <semantic:targetRef href="#_530b3887-5c17-426c-9491-d8e146e28aa2"/>
+    <semantic:sourceRef href="#_KS_of_BKM_2"/>
+    <semantic:targetRef href="#_Annotation_for_KS_of_BKM_2"/>
   </semantic:association>
 </semantic:definitions>

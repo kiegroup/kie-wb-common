@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<semantic:definitions xmlns:semantic="http://www.omg.org/spec/DMN/20151101/dmn.xsd" xmlns="http://www.trisotech.com/definitions/_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2" xmlns:feel="http://www.omg.org/spec/FEEL/20140401" xmlns:triso="http://www.trisotech.com/2015/triso/modeling" xmlns:trisofeed="http://trisotech.com/feed" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" exporter="DMN Modeler" exporterVersion="5.2.1" id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2" name="three decisions in a diamond shape" namespace="http://www.trisotech.com/definitions/_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2" triso:logoChoice="Default">
+<semantic:definitions xmlns:semantic="http://www.omg.org/spec/DMN/20151101/dmn.xsd"
+					  xmlns="http://www.trisotech.com/definitions/_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2"
+					  xmlns:feel="http://www.omg.org/spec/FEEL/20140401"
+					  xmlns:triso="http://www.trisotech.com/2015/triso/modeling"
+					  xmlns:trisofeed="http://trisotech.com/feed"
+					  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+					  exporter="DMN Modeler" exporterVersion="5.2.1"
+					  id="_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2" name="three decisions in a diamond shape"
+					  namespace="http://www.trisotech.com/definitions/_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2"
+					  triso:logoChoice="Default">
   <semantic:extensionElements/>
   <semantic:inputData id="_4cd17e52-6253-41d6-820d-5824bf5197f3" name="My Name" triso:displayName="My Name">
     <semantic:variable id="_4843aaec-2707-4b24-92a4-17a522b27bec" name="My Name" typeRef="feel:string"/>
