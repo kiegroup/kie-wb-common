@@ -25,7 +25,7 @@ public class TextAnnotationConverter implements NodeConverter<org.kie.dmn.model.
     @Override
     public Node<View<TextAnnotation>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.TextAnnotation dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<TextAnnotation>, ?> node = (Node<View<TextAnnotation>, ?>) factoryManager.newElement(UUID.uuid(), TextAnnotation.class)
+        Node<View<TextAnnotation>, ?> node = (Node<View<TextAnnotation>, ?>) factoryManager.newElement( dmn.getId(), TextAnnotation.class)
                                              .asNode();
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );

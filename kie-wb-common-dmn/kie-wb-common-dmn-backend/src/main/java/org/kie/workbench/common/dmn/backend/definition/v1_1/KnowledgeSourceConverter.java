@@ -33,7 +33,7 @@ public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model
     @Override
     public Node<View<KnowledgeSource>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.KnowledgeSource dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement(UUID.uuid(), KnowledgeSource.class)
+        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement( dmn.getId(), KnowledgeSource.class)
                                               .asNode();
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );

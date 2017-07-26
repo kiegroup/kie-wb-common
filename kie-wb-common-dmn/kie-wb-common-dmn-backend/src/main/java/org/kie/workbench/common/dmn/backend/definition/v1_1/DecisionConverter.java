@@ -37,7 +37,7 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.v1_1.D
     @Override
     public Node<View<Decision>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.Decision dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<Decision>, ?> node = (Node<View<Decision>, ?>) factoryManager.newElement(UUID.uuid(), Decision.class)
+        Node<View<Decision>, ?> node = (Node<View<Decision>, ?>) factoryManager.newElement( dmn.getId(), Decision.class)
                                        .asNode();
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );

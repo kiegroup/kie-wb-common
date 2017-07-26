@@ -25,7 +25,7 @@ public class InputDataConverter implements NodeConverter<org.kie.dmn.model.v1_1.
     @Override
     public Node<View<InputData>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.InputData dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement(UUID.uuid(), InputData.class)
+        Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement( dmn.getId(), InputData.class)
                                         .asNode();
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );

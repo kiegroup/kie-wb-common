@@ -33,7 +33,7 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
     @Override
     public Node<View<BusinessKnowledgeModel>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.BusinessKnowledgeModel dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement(UUID.uuid(), BusinessKnowledgeModel.class)
+        Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement( dmn.getId(), BusinessKnowledgeModel.class)
                                                      .asNode();
         Id id = new Id( dmn.getId() );
         Description description = new Description( dmn.getDescription() );
