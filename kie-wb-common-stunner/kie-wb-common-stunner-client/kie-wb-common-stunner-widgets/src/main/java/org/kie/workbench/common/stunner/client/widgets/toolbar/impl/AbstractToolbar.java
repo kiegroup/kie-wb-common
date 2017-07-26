@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
@@ -29,7 +32,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 public abstract class AbstractToolbar<S extends ClientSession> implements Toolbar<S> {
 
     private final List<ToolbarCommand<? super S>> commands = new LinkedList<>();
-    private final List<AbstractToolbarItem<S>> items = new LinkedList<>();
+    private final Map<ToolbarCommand<? super S>, AbstractToolbarItem<S>> items = new HashMap<>();
     private final ToolbarView<AbstractToolbar> view;
 
     protected AbstractToolbar(final ToolbarView<AbstractToolbar> view) {
@@ -46,7 +49,8 @@ public abstract class AbstractToolbar<S extends ClientSession> implements Toolba
                     final AbstractToolbarItem<S> toolbarItem = newToolbarItem();
                     toolbarItem.setUUID(((AbstractToolbarCommand) command).getUuid());
                     getView().addItem(toolbarItem.asWidget());
-                    items.add(toolbarItem);
+                    items.put(command,
+                              toolbarItem);
                     toolbarItem.show(this,
                                      session,
                                      (AbstractToolbarCommand<S, ?>) command,
@@ -77,6 +81,15 @@ public abstract class AbstractToolbar<S extends ClientSession> implements Toolba
     }
 
     @Override
+    public boolean isEnabled(final ToolbarCommand<S> command) {
+        final AbstractToolbarItem<S> item = getItem(command);
+        if (null != item) {
+            return item.isEnabled();
+        }
+        return false;
+    }
+
+    @Override
     public void clear() {
         commands.clear();
         items.clear();
@@ -101,10 +114,15 @@ public abstract class AbstractToolbar<S extends ClientSession> implements Toolba
 
     @SuppressWarnings("unchecked")
     protected AbstractToolbarItem<S> getItem(final ToolbarCommand<?> command) {
-        return items.stream()
-                .filter(command::equals)
-                .findFirst()
-                .orElse(null);
+        final Optional<Map.Entry<ToolbarCommand<? super S>, AbstractToolbarItem<S>>> item = items
+                .entrySet()
+                .stream()
+                .filter(e -> e.getKey().equals(command))
+                .findFirst();
+        if (item.isPresent()) {
+            return item.get().getValue();
+        }
+        return null;
     }
 
     private void afterDraw() {
