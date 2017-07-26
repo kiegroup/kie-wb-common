@@ -16,21 +16,36 @@
 
 package org.kie.workbench.common.dmn.backend;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.tools.ant.filters.StringInputStream;
 import org.jboss.errai.marshalling.server.MappingContextSingleton;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.api.KieServices;
+import org.kie.api.runtime.KieContainer;
+import org.kie.dmn.api.core.DMNContext;
+import org.kie.dmn.api.core.DMNModel;
+import org.kie.dmn.api.core.DMNResult;
+import org.kie.dmn.api.core.DMNRuntime;
+import org.kie.dmn.core.util.KieHelper;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
@@ -52,7 +67,6 @@ import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotati
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimePropertySetAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
@@ -64,7 +78,6 @@ import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
 import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
@@ -74,17 +87,11 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.Magnet.MagnetType;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
-import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DMNMarshallerTest {
@@ -219,11 +226,35 @@ public class DMNMarshallerTest {
         }).when(applicationFactoryManager).newDiagram(anyString(),
                                                       anyString(),
                                                       any(Metadata.class));
+        
+        MappingContextSingleton.loadDynamicMarshallers();
     }
 
     @Test
     public void test_diamond() throws IOException {
         roundTripUnmarshalThenMarshalUnmarshal( this.getClass().getResourceAsStream("/diamond.dmn"), this::checkDiamongGraph );
+        
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                applicationFactoryManager);
+        Graph<?, ?> g = m.unmarshall(null, this.getClass().getResourceAsStream("/diamond.dmn"));
+        DiagramImpl diagram = new DiagramImpl("", null);
+        diagram.setGraph(g);
+        String mString = m.marshall( diagram );
+        
+        final KieServices ks = KieServices.Factory.get();
+        final KieContainer kieContainer = KieHelper.getKieContainer(
+                ks.newReleaseId("org.kie", "dmn-test_diamond", "1.0"),
+                ks.getResources().newByteArrayResource(mString.getBytes()).setTargetPath("src/main/resources/diamond.dmn"));
+
+        final DMNRuntime runtime = kieContainer.newKieSession().getKieRuntime(DMNRuntime.class);
+        Assert.assertNotNull(runtime);
+        DMNModel diamondModel = runtime.getModel("http://www.trisotech.com/definitions/_8afa6c24-55c8-43cf-8a02-fdde7fc5d1f2", "three decisions in a diamond shape");
+        DMNContext dmnContext = runtime.newContext();
+        dmnContext.set("My Name", "John Doe");
+        DMNResult dmnResult = runtime.evaluateAll(diamondModel, dmnContext);
+        assertFalse( dmnResult.getMessages().toString(), dmnResult.hasErrors() );
+        DMNContext result = dmnResult.getContext();
+        assertEquals( "Hello, John Doe.", result.get( "My Decision" ) );
     }
     
     @Test
@@ -232,8 +263,6 @@ public class DMNMarshallerTest {
     }
     
     public void roundTripUnmarshalThenMarshalUnmarshal(InputStream dmnXmlInputStream, Consumer<Graph<?, Node<?, ?>>> checkGraphConsumer) throws IOException {
-        MappingContextSingleton.loadDynamicMarshallers();
-        
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                             applicationFactoryManager);
 
@@ -273,7 +302,7 @@ public class DMNMarshallerTest {
         Node<?, ?> myDecisionNode = g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" );
         assertNodeContentDefinitionIs( myDecisionNode, Decision.class );
         
-        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph<?, ? extends Node<View, ?>>) g); 
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot( (Graph)g ); 
         assertNotNull( rootNode );
         assertRootNodeConnectedTo( rootNode, idNode );
         assertRootNodeConnectedTo( rootNode, prefixDecisionNode );
@@ -348,7 +377,7 @@ public class DMNMarshallerTest {
         Node<?, ?> _My_Decision_1 = g.getNode( "_My_Decision_1" );
         assertNodeContentDefinitionIs( _My_Decision_1, Decision.class );
         
-        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph<?, ? extends Node<View, ?>>) g); 
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot( (Graph)g ); 
         assertNotNull( rootNode );
         assertRootNodeConnectedTo( rootNode, _My_Input_Data );
         assertRootNodeConnectedTo( rootNode, _Annotation_for_Input_Data );

@@ -273,7 +273,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return graph;
     }
 
-    public static Node<?, ?> findDMNDiagramRoot(final Graph<?, ? extends Node<View, ?>> graph) {
+    public static Node<?, ?> findDMNDiagramRoot(final Graph<?, Node<View, ?>> graph) {
         return StreamSupport.stream(graph.nodes().spliterator(), false).filter(n -> n.getContent().getDefinition() instanceof DMNDiagram).findFirst().orElseThrow(() -> new UnsupportedOperationException("TODO"));
     }
 
@@ -333,13 +333,13 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
 
     @Override
     public String marshall(final Diagram<Graph, Metadata> diagram) throws IOException {
-        Graph<?, Node<?, ?>> g = diagram.getGraph();
+        Graph<?, Node<View, ?>> g = diagram.getGraph();
 
         Map<String, org.kie.dmn.model.v1_1.DRGElement> nodes = new HashMap<>();
         Map<String, org.kie.dmn.model.v1_1.TextAnnotation> textAnnotations = new HashMap<>();
 
         @SuppressWarnings("unchecked")
-        Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot( (Graph<?, ? extends Node<View, ?>>) g);
+        Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot( g );
         Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
         org.kie.dmn.model.v1_1.Definitions definitions = DefinitionsConverter.dmnFromWB( definitionsStunnerPojo );
         
