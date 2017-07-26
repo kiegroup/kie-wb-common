@@ -39,6 +39,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
@@ -47,6 +48,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.AssociationConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.BusinessKnowledgeModelConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.DecisionConverter;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.DefinitionsConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.InputDataConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.KnowledgeSourceConverter;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConverter;
@@ -259,7 +261,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         elems.values().stream().map(kv -> kv.getValue()).forEach( graph::addNode );
         textAnnotations.values().forEach( graph::addNode );
 
-        Node dmnDiagramRoot = findDMNDiagramRoot(graph);
+        @SuppressWarnings("unchecked")
+        Node<View<DMNDiagram>, ?> dmnDiagramRoot = findDMNDiagramRoot(graph);
+        Definitions definitionsStunnerPojo = DefinitionsConverter.wbFromDMN( dmnXml );
+        dmnDiagramRoot.getContent().getDefinition().setDefinitions( definitionsStunnerPojo );
         elems.values().stream().map(kv -> kv.getValue()).forEach(node -> connectRootWithChild(dmnDiagramRoot,
                                                                                               node));
         textAnnotations.values().stream().forEach(node -> connectRootWithChild(dmnDiagramRoot,
@@ -268,8 +273,7 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         return graph;
     }
 
-    @SuppressWarnings("unchecked")
-    public static Node findDMNDiagramRoot(final Graph<?, ? extends Node<View, ?>> graph) {
+    public static Node<?, ?> findDMNDiagramRoot(final Graph<?, ? extends Node<View, ?>> graph) {
         return StreamSupport.stream(graph.nodes().spliterator(), false).filter(n -> n.getContent().getDefinition() instanceof DMNDiagram).findFirst().orElseThrow(() -> new UnsupportedOperationException("TODO"));
     }
 
@@ -334,9 +338,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         Map<String, org.kie.dmn.model.v1_1.DRGElement> nodes = new HashMap<>();
         Map<String, org.kie.dmn.model.v1_1.TextAnnotation> textAnnotations = new HashMap<>();
 
-        org.kie.dmn.model.v1_1.Definitions definitions = new org.kie.dmn.model.v1_1.Definitions();
-        definitions.setName( "TODO" ); // TODO where to extract name and namespace etc info ?
-        definitions.setNamespace( "TODO" );
+        @SuppressWarnings("unchecked")
+        Node<View<DMNDiagram>, ?> dmnDiagramRoot = (Node<View<DMNDiagram>, ?>) findDMNDiagramRoot( (Graph<?, ? extends Node<View, ?>>) g);
+        Definitions definitionsStunnerPojo = dmnDiagramRoot.getContent().getDefinition().getDefinitions();
+        org.kie.dmn.model.v1_1.Definitions definitions = DefinitionsConverter.dmnFromWB( definitionsStunnerPojo );
         
         for ( Node<?, ?> node : g.nodes()) {
             if ( node.getContent() instanceof View<?> ) {
