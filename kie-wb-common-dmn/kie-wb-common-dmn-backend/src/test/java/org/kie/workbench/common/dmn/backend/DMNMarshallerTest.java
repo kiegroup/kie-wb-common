@@ -17,9 +17,11 @@
 package org.kie.workbench.common.dmn.backend;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 import javax.enterprise.inject.spi.BeanManager;
 
@@ -85,7 +87,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DMNUnmarshallTest {
+public class DMNMarshallerTest {
 
     private static final String DMN_DEF_SET_ID = BindableAdapterUtils.getDefinitionSetId(DMNDefinitionSet.class);
 
@@ -219,38 +221,26 @@ public class DMNUnmarshallTest {
                                                       any(Metadata.class));
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
-    public void test2() throws IOException {
-        MappingContextSingleton.loadDynamicMarshallers();
-
-        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
-                                            applicationFactoryManager);
-
-        Graph<?, Node<?, ?>> g = m.unmarshall(null,
-                                              this.getClass().getResourceAsStream("/diamond.dmn"));
-
-        System.out.println(g);
-        
-        DiagramImpl diagram = new DiagramImpl("", null);
-        diagram.setGraph(g);
-        
-        String mString = m.marshall(diagram);
-        System.out.println(mString);
+    public void test_diamond() throws IOException {
+        roundTripUnmarshalThenMarshalUnmarshal( this.getClass().getResourceAsStream("/diamond.dmn"), this::checkDiamongGraph );
     }
     
     @Test
-    public void test3() throws IOException {
+    public void test_potpourri_drawing() throws IOException {
+        roundTripUnmarshalThenMarshalUnmarshal( this.getClass().getResourceAsStream("/potpourri_drawing.dmn"), this::checkPotpourryGraph );
+    }
+    
+    public void roundTripUnmarshalThenMarshalUnmarshal(InputStream dmnXmlInputStream, Consumer<Graph<?, Node<?, ?>>> checkGraphConsumer) throws IOException {
         MappingContextSingleton.loadDynamicMarshallers();
         
         DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                             applicationFactoryManager);
 
         // first unmarshal from DMN XML to Stunner DMN Graph
-        
         @SuppressWarnings("unchecked")
-        Graph<?, Node<?, ?>> g = m.unmarshall(null, this.getClass().getResourceAsStream("/potpourri_drawing.dmn"));
-        checkPotpourryGraph(g);
+        Graph<?, Node<?, ?>> g = m.unmarshall(null, dmnXmlInputStream);
+        checkGraphConsumer.accept( g );
         
         // round trip to Stunner DMN Graph back to DMN XML
         DiagramImpl diagram = new DiagramImpl("", null);
@@ -259,11 +249,36 @@ public class DMNUnmarshallTest {
         String mString = m.marshall(diagram);
         System.out.println(mString);
         
-        // now unmarshal again from the marshalled above back again to Stunner DMN Graph to complete check for round-trip
+        // now unmarshal once more, from the marshalled just done above, back again to Stunner DMN Graph to complete check for round-trip
         @SuppressWarnings("unchecked")
         Graph<?, Node<?, ?>> g2 = m.unmarshall(null, new StringInputStream( mString ) );
-        checkPotpourryGraph(g2);
+        checkGraphConsumer.accept( g2 );
+    }
+    
+    private void checkDiamongGraph(Graph<?, Node<?, ?>> g) {
+        Node<?, ?> idNode = g.getNode( "_4cd17e52-6253-41d6-820d-5824bf5197f3" );
+        assertNodeContentDefinitionIs( idNode, InputData.class );
+        assertNodeEdgesTo( idNode, g.getNode( "_e920f38a-293c-41b8-adb3-69d0dc184fab" ), InformationRequirement.class );
+        assertNodeEdgesTo( idNode, g.getNode( "_f49f9c34-29d5-4e72-91d2-f4f92117c8da" ), InformationRequirement.class );
+        assertNodeEdgesTo( idNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
         
+        Node<?, ?> prefixDecisionNode = g.getNode( "_e920f38a-293c-41b8-adb3-69d0dc184fab" );
+        assertNodeContentDefinitionIs( prefixDecisionNode, Decision.class );
+        assertNodeEdgesTo( prefixDecisionNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
+        
+        Node<?, ?> postfixDecisionNode = g.getNode( "_f49f9c34-29d5-4e72-91d2-f4f92117c8da" );
+        assertNodeContentDefinitionIs( postfixDecisionNode, Decision.class );
+        assertNodeEdgesTo( postfixDecisionNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
+        
+        Node<?, ?> myDecisionNode = g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" );
+        assertNodeContentDefinitionIs( myDecisionNode, Decision.class );
+        
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph<?, ? extends Node<View, ?>>) g); 
+        assertNotNull( rootNode );
+        assertRootNodeConnectedTo( rootNode, idNode );
+        assertRootNodeConnectedTo( rootNode, prefixDecisionNode );
+        assertRootNodeConnectedTo( rootNode, postfixDecisionNode );
+        assertRootNodeConnectedTo( rootNode, myDecisionNode );
     }
 
     private void checkPotpourryGraph(Graph<?, Node<?, ?>> g) {
@@ -354,7 +369,7 @@ public class DMNUnmarshallTest {
         assertRootNodeConnectedTo( rootNode, _My_Decision_1 );
     }
 
-    private void assertRootNodeConnectedTo(Node<?, ?> rootNode, Node<?, ?> to) {
+    private static void assertRootNodeConnectedTo(Node<?, ?> rootNode, Node<?, ?> to) {
         @SuppressWarnings("unchecked")
         List<Edge<?,?>> outEdges = (List<Edge<?, ?>>) rootNode.getOutEdges();
         Optional<Edge<?, ?>> optEdge = outEdges.stream().filter( e -> e.getTargetNode().equals( to ) ).findFirst();
@@ -366,7 +381,7 @@ public class DMNUnmarshallTest {
         assertTrue( to.getInEdges().contains( edge ) );
     }
 
-    private void assertNodeEdgesTo(Node<?, ?> from, Node<?, ?> to, Class<?> clazz) {
+    private static void assertNodeEdgesTo(Node<?, ?> from, Node<?, ?> to, Class<?> clazz) {
         @SuppressWarnings("unchecked")
         List<Edge<?,?>> outEdges = (List<Edge<?, ?>>) from.getOutEdges();
         Optional<Edge<?, ?>> optEdge = outEdges.stream().filter( e -> e.getTargetNode().equals( to ) ).findFirst();
@@ -385,64 +400,9 @@ public class DMNUnmarshallTest {
         assertEquals( MagnetType.INCOMING, connectionContent.getTargetMagnet().get().getMagnetType() );
     }
 
-    private void assertNodeContentDefinitionIs(Node<?, ?> node, Class<?> clazz) {
+    private static void assertNodeContentDefinitionIs(Node<?, ?> node, Class<?> clazz) {
         assertTrue( node.getContent() instanceof View );
         assertTrue( clazz.isInstance( ((View<?>)node.getContent()).getDefinition() ) );
     }
 
-    @Ignore("hard coded test")
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    @Test
-    @Deprecated
-    public void test1() {
-        Element elementInputData = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
-                                                                        InputData.class);
-        Node nodeInputData = elementInputData.asNode();
-
-        Element elemDecision = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
-                                                                    Decision.class);
-        Node nodeDecision = elemDecision.asNode();
-
-        Element elemInformationRequirement = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
-                                                                                  InformationRequirement.class);
-        Edge myEdge = elemInformationRequirement.asEdge();
-        connectEdge(myEdge,
-                    nodeInputData,
-                    nodeDecision);
-
-        Node dmnDiagramRoot = applicationFactoryManager.newElement(UUID.randomUUID().toString(),
-                                                                   DMNDiagram.class).asNode();
-        connectRootWithChild(dmnDiagramRoot,
-                             nodeInputData);
-        connectRootWithChild(dmnDiagramRoot,
-                             nodeDecision);
-
-        Diagram newDiagram = applicationFactoryManager.newDiagram("prova",
-                                                                  DMN_DEF_SET_ID,
-                                                                  null);
-        newDiagram.getGraph().addNode(nodeInputData);
-        newDiagram.getGraph().addNode(nodeDecision);
-
-        System.out.println(newDiagram);
-    }
-
-    private void connectRootWithChild(Node dmnDiagramRoot,
-                                      Node child) {
-        final String uuid = org.kie.workbench.common.stunner.core.util.UUID.uuid();
-        final Edge<Child, Node> edge = new EdgeImpl<>(uuid);
-        edge.setContent(new Child());
-        connectEdge(edge,
-                    dmnDiagramRoot,
-                    child);
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private void connectEdge(Edge edge,
-                             Node source,
-                             Node target) {
-        edge.setSourceNode(source);
-        edge.setTargetNode(target);
-        source.getOutEdges().add(edge);
-        target.getInEdges().add(edge);
-    }
 }
