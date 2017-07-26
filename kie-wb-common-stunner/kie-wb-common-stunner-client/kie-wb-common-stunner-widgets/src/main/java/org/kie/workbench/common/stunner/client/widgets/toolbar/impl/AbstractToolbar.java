@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
@@ -114,15 +113,13 @@ public abstract class AbstractToolbar<S extends ClientSession> implements Toolba
 
     @SuppressWarnings("unchecked")
     protected AbstractToolbarItem<S> getItem(final ToolbarCommand<?> command) {
-        final Optional<Map.Entry<ToolbarCommand<? super S>, AbstractToolbarItem<S>>> item = items
+        return items
                 .entrySet()
                 .stream()
                 .filter(e -> e.getKey().equals(command))
-                .findFirst();
-        if (item.isPresent()) {
-            return item.get().getValue();
-        }
-        return null;
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(null);
     }
 
     private void afterDraw() {
