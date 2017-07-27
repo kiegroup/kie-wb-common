@@ -75,6 +75,7 @@ public class AsyncPackageDataModelOracleImplTest {
         oracle.addMethodInformation( createProjectMethodInformation() );
         oracle.addSuperTypes( createSuperTypes() );
         oracle.addPackageNames( createPackageNames() );
+        oracle.addCollectionTypes(createCollectionTypes());
 
         oracle.filter( createImports() );
 
@@ -152,6 +153,9 @@ public class AsyncPackageDataModelOracleImplTest {
         imports.addImport( new Import( "org.test.Person" ) );
         imports.addImport( new Import( "java.lang.String" ) );
         imports.addImport( new Import( "org.globals.GiantContainerOfInformation" ) );
+        imports.addImport(new Import("java.util.List"));
+        imports.addImport(new Import("java.util.HashSet"));
+        imports.addImport(new Import("org.SeemsAsCollection"));
         return imports;
     }
 
@@ -272,6 +276,41 @@ public class AsyncPackageDataModelOracleImplTest {
         packageNames.add( "com.test" );
 
         return packageNames;
+    }
+
+    private Map<String, Boolean> createCollectionTypes() {
+        Map<String, Boolean> collectionTypes = new HashMap<>();
+        collectionTypes.put("java.util.List",
+                            true);
+        collectionTypes.put("java.util.ArrayList",
+                            true);
+        collectionTypes.put("java.util.Set",
+                            true);
+        collectionTypes.put("java.util.HashSet",
+                            true);
+        collectionTypes.put("org.CustomCollectionOne",
+                            true);
+        collectionTypes.put("com.CustomCollectionTwo",
+                            true);
+        collectionTypes.put("org.SeemsAsCollection",
+                            false);
+
+        return collectionTypes;
+    }
+
+    @Test
+    public void testGetAvailableCollectionTypes() throws Exception {
+        assertEquals(3,
+                     oracle.getAvailableCollectionTypes().size());
+
+        // List is imported and it is between project Collection types
+        assertTrue(oracle.getAvailableCollectionTypes().contains("List"));
+        // HashSet is imported and it is between project Collection types
+        assertTrue(oracle.getAvailableCollectionTypes().contains("HashSet"));
+        // CustomCollection is not imported but it is between project Collection types and it is in the current package
+        assertTrue(oracle.getAvailableCollectionTypes().contains("CustomCollectionOne"));
+        // SeemsAsCollection is imported but it is not Collection type
+        assertFalse(oracle.getAvailableCollectionTypes().contains("SeemsAsCollection"));
     }
 
     @Test

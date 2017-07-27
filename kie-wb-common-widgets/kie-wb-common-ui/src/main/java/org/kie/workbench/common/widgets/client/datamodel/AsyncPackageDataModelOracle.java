@@ -159,6 +159,11 @@ public interface AsyncPackageDataModelOracle {
 
     String[] getGlobalCollections();
 
+    /**
+     * @return List of collection types (i.e. java.util.Collection subtypes) that can be used in the current package.
+     */
+    List<String> getAvailableCollectionTypes();
+
     // DSL related methods
     List<DSLSentence> getDSLConditions();
 

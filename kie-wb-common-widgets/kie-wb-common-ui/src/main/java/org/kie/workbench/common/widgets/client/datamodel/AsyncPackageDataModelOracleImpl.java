@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -1071,6 +1072,15 @@ public class AsyncPackageDataModelOracleImpl implements AsyncPackageDataModelOra
             }
         }
         return OracleUtils.toStringArray( globalCollections );
+    }
+
+    @Override
+    public List<String> getAvailableCollectionTypes() {
+        return Collections.unmodifiableList(filteredCollectionTypes.entrySet()
+                                                                   .stream()
+                                                                   .filter(entry -> entry.getValue())
+                                                                   .map(entry -> entry.getKey())
+                                                                   .collect(Collectors.toList()));
     }
 
     // ####################################
