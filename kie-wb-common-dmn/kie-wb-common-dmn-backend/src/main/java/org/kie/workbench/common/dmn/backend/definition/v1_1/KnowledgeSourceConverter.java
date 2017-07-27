@@ -18,7 +18,6 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 
 import java.util.List;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DRGElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
@@ -35,12 +34,11 @@ import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model.v1_1.KnowledgeSource, org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource> {
-    
+
     private FactoryManager factoryManager;
-    
+
     public KnowledgeSourceConverter(FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
@@ -49,23 +47,14 @@ public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model
     @Override
     public Node<View<KnowledgeSource>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.KnowledgeSource dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement( dmn.getId(), KnowledgeSource.class)
-                                              .asNode();
-        Id id = new Id( dmn.getId() );
-        Description description = new Description( dmn.getDescription() );
-        Name name = new Name( dmn.getName() );
-        KnowledgeSourceType ksType = new KnowledgeSourceType( dmn.getType() );
-        LocationURI locationURI = new LocationURI( dmn.getLocationURI() );
-        KnowledgeSource ks = new KnowledgeSource(
-                id,
-                description,
-                name,
-                ksType,
-                locationURI,
-                new BackgroundSet(),
-                new FontSet(),
-                new RectangleDimensionsSet());
-        node.getContent().setDefinition( ks );
+        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement(dmn.getId(), KnowledgeSource.class).asNode();
+        Id id = new Id(dmn.getId());
+        Description description = new Description(dmn.getDescription());
+        Name name = new Name(dmn.getName());
+        KnowledgeSourceType ksType = new KnowledgeSourceType(dmn.getType());
+        LocationURI locationURI = new LocationURI(dmn.getLocationURI());
+        KnowledgeSource ks = new KnowledgeSource(id, description, name, ksType, locationURI, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        node.getContent().setDefinition(ks);
         return node;
     }
 
@@ -73,37 +62,37 @@ public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model
     public org.kie.dmn.model.v1_1.KnowledgeSource dmnFromNode(Node<View<KnowledgeSource>, ?> node) {
         KnowledgeSource source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.KnowledgeSource result = new org.kie.dmn.model.v1_1.KnowledgeSource();
-        result.setId( source.getId().getValue() );
-        result.setDescription( source.getDescription().getValue() );
-        result.setName( source.getName().getValue() );
-        result.setType( source.getType().getValue() );
-        result.setLocationURI( source.getLocationURI().getValue() );
+        result.setId(source.getId().getValue());
+        result.setDescription(source.getDescription().getValue());
+        result.setName(source.getName().getValue());
+        result.setType(source.getType().getValue());
+        result.setLocationURI(source.getLocationURI().getValue());
         // DMN spec table 2: Requirements connection rules
         List<Edge<?, ?>> inEdges = (List<Edge<?, ?>>) node.getInEdges();
-        for ( Edge<?, ?> e : inEdges ) {
-            Node<?,?> sourceNode = e.getSourceNode();
-            if ( sourceNode.getContent() instanceof View<?> ) {
+        for (Edge<?, ?> e : inEdges) {
+            Node<?, ?> sourceNode = e.getSourceNode();
+            if (sourceNode.getContent() instanceof View<?>) {
                 View<?> view = (View<?>) sourceNode.getContent();
-                if ( view.getDefinition() instanceof DRGElement ) {
+                if (view.getDefinition() instanceof DRGElement) {
                     DRGElement drgElement = (DRGElement) view.getDefinition();
-                    if ( drgElement instanceof Decision ) {
+                    if (drgElement instanceof Decision) {
                         org.kie.dmn.model.v1_1.AuthorityRequirement iReq = new org.kie.dmn.model.v1_1.AuthorityRequirement();
                         org.kie.dmn.model.v1_1.DMNElementReference ri = new org.kie.dmn.model.v1_1.DMNElementReference();
-                        ri.setHref( new StringBuilder("#").append( drgElement.getId().getValue() ).toString() );
-                        iReq.setRequiredDecision( ri );
-                        result.getAuthorityRequirement().add(iReq);                         
-                    } else if ( drgElement instanceof KnowledgeSource ) {
+                        ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
+                        iReq.setRequiredDecision(ri);
+                        result.getAuthorityRequirement().add(iReq);
+                    } else if (drgElement instanceof KnowledgeSource) {
                         org.kie.dmn.model.v1_1.AuthorityRequirement iReq = new org.kie.dmn.model.v1_1.AuthorityRequirement();
                         org.kie.dmn.model.v1_1.DMNElementReference ri = new org.kie.dmn.model.v1_1.DMNElementReference();
-                        ri.setHref( new StringBuilder("#").append( drgElement.getId().getValue() ).toString() );
-                        iReq.setRequiredAuthority( ri );
-                        result.getAuthorityRequirement().add(iReq);     
-                    } else if ( drgElement instanceof InputData ) {
+                        ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
+                        iReq.setRequiredAuthority(ri);
+                        result.getAuthorityRequirement().add(iReq);
+                    } else if (drgElement instanceof InputData) {
                         org.kie.dmn.model.v1_1.AuthorityRequirement iReq = new org.kie.dmn.model.v1_1.AuthorityRequirement();
                         org.kie.dmn.model.v1_1.DMNElementReference ri = new org.kie.dmn.model.v1_1.DMNElementReference();
-                        ri.setHref( new StringBuilder("#").append( drgElement.getId().getValue() ).toString() );
-                        iReq.setRequiredInput( ri );
-                        result.getAuthorityRequirement().add(iReq);  
+                        ri.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
+                        iReq.setRequiredInput(ri);
+                        result.getAuthorityRequirement().add(iReq);
                     } else {
                         throw new UnsupportedOperationException("wrong model definition.");
                     }

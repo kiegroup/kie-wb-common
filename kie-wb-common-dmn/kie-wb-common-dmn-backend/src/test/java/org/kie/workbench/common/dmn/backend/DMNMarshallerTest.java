@@ -132,8 +132,7 @@ public class DMNMarshallerTest {
         // Graph utils.
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
-        definitionUtils = new DefinitionUtils(definitionManager,
-                                              applicationFactoryManager);
+        definitionUtils = new DefinitionUtils(definitionManager, applicationFactoryManager);
         testScopeModelFactory = new TestScopeModelFactory(new DMNDefinitionSet.DMNDefinitionSetBuilder().build());
         // Definition manager.
         final RuntimeDefinitionAdapter definitionAdapter = new RuntimeDefinitionAdapter(definitionUtils);
@@ -148,9 +147,7 @@ public class DMNMarshallerTest {
         when(adapterRegistry.getDefinitionAdapter(any(Class.class))).thenReturn(definitionAdapter);
         when(adapterRegistry.getPropertySetAdapter(any(Class.class))).thenReturn(propertySetAdapter);
         when(adapterRegistry.getPropertyAdapter(any(Class.class))).thenReturn(propertyAdapter);
-        commandManager = new GraphCommandManagerImpl(null,
-                                                     null,
-                                                     null);
+        commandManager = new GraphCommandManagerImpl(null, null, null);
         commandFactory = new GraphCommandFactory();
         connectionEdgeFactory = new EdgeFactoryImpl(definitionManager);
         viewNodeFactory = new NodeFactoryImpl(definitionUtils);
@@ -165,11 +162,9 @@ public class DMNMarshallerTest {
             if (DMNDefinitionSet.class.getName().equals(id)) {
                 // Emulate DMNGraphFactoryImpl, that adds a DMNDiagram to new Graphs
                 // Please note this is different from the stunner jbpm test which this dmn test is based on
-                Graph graph = (Graph) dmnGraphFactory.build(uuid,
-                                                            DMN_DEF_SET_ID);
+                Graph graph = (Graph) dmnGraphFactory.build(uuid, DMN_DEF_SET_ID);
                 DMNDiagram model = new DMNDiagram.DMNDiagramBuilder().build();
-                Node node = viewNodeFactory.build(uuid,
-                                                  model);
+                Node node = viewNodeFactory.build(uuid, model);
                 graph.addNode(node);
                 return graph;
             }
@@ -177,74 +172,60 @@ public class DMNMarshallerTest {
             if (null != model) {
                 Class<? extends ElementFactory> element = RuntimeDefinitionAdapter.getGraphFactory(model.getClass());
                 if (element.isAssignableFrom(NodeFactory.class)) {
-                    Node node = viewNodeFactory.build(uuid,
-                                                      model);
+                    Node node = viewNodeFactory.build(uuid, model);
                     return node;
                 } else if (element.isAssignableFrom(EdgeFactory.class)) {
-                    Edge edge = connectionEdgeFactory.build(uuid,
-                                                            model);
+                    Edge edge = connectionEdgeFactory.build(uuid, model);
                     return edge;
                 }
             }
             return null;
-        }).when(applicationFactoryManager).newElement(anyString(),
-                                                      anyString());
+        }).when(applicationFactoryManager).newElement(anyString(), anyString());
         doAnswer(invocationOnMock -> {
             String uuid = (String) invocationOnMock.getArguments()[0];
             Class type = (Class) invocationOnMock.getArguments()[1];
             String id = BindableAdapterUtils.getGenericClassName(type);
             if (DMNDefinitionSet.class.equals(type)) {
-                Graph graph = (Graph) dmnGraphFactory.build(uuid,
-                                                            DMN_DEF_SET_ID);
+                Graph graph = (Graph) dmnGraphFactory.build(uuid, DMN_DEF_SET_ID);
                 return graph;
             }
             Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
             if (null != model) {
                 Class<? extends ElementFactory> element = RuntimeDefinitionAdapter.getGraphFactory(model.getClass());
                 if (element.isAssignableFrom(NodeFactory.class)) {
-                    Node node = viewNodeFactory.build(uuid,
-                                                      model);
+                    Node node = viewNodeFactory.build(uuid, model);
                     return node;
                 } else if (element.isAssignableFrom(EdgeFactory.class)) {
-                    Edge edge = connectionEdgeFactory.build(uuid,
-                                                            model);
+                    Edge edge = connectionEdgeFactory.build(uuid, model);
                     return edge;
                 }
             }
             return null;
-        }).when(applicationFactoryManager).newElement(anyString(),
-                                                      any(Class.class));
+        }).when(applicationFactoryManager).newElement(anyString(), any(Class.class));
         doAnswer(invocationOnMock -> {
             String uuid = (String) invocationOnMock.getArguments()[0];
             String defSetId = (String) invocationOnMock.getArguments()[1];
-            final Graph graph = (Graph) applicationFactoryManager.newElement(uuid,
-                                                                             defSetId);
-            final DiagramImpl result = new DiagramImpl(uuid,
-                                                       new MetadataImpl.MetadataImplBuilder(defSetId).build());
+            final Graph graph = (Graph) applicationFactoryManager.newElement(uuid, defSetId);
+            final DiagramImpl result = new DiagramImpl(uuid, new MetadataImpl.MetadataImplBuilder(defSetId).build());
             result.setGraph(graph);
             return result;
-        }).when(applicationFactoryManager).newDiagram(anyString(),
-                                                      anyString(),
-                                                      any(Metadata.class));
-        
+        }).when(applicationFactoryManager).newDiagram(anyString(), anyString(), any(Metadata.class));
+
         MappingContextSingleton.loadDynamicMarshallers();
     }
 
     @Test
     public void test_diamond() throws IOException {
-        roundTripUnmarshalThenMarshalUnmarshal( this.getClass().getResourceAsStream("/diamond.dmn"), this::checkDiamongGraph );
-        
-        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
-                applicationFactoryManager);
+        roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/diamond.dmn"), this::checkDiamongGraph);
+
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager);
         Graph<?, ?> g = m.unmarshall(null, this.getClass().getResourceAsStream("/diamond.dmn"));
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
-        String mString = m.marshall( diagram );
-        
+        String mString = m.marshall(diagram);
+
         final KieServices ks = KieServices.Factory.get();
-        final KieContainer kieContainer = KieHelper.getKieContainer(
-                ks.newReleaseId("org.kie", "dmn-test_diamond", "1.0"),
-                ks.getResources().newByteArrayResource(mString.getBytes()).setTargetPath("src/main/resources/diamond.dmn"));
+        final KieContainer kieContainer = KieHelper.getKieContainer(ks.newReleaseId("org.kie", "dmn-test_diamond", "1.0"), ks.getResources().newByteArrayResource(mString.getBytes()).setTargetPath("src/main/resources/diamond.dmn"));
 
         final DMNRuntime runtime = kieContainer.newKieSession().getKieRuntime(DMNRuntime.class);
         Assert.assertNotNull(runtime);
@@ -252,186 +233,185 @@ public class DMNMarshallerTest {
         DMNContext dmnContext = runtime.newContext();
         dmnContext.set("My Name", "John Doe");
         DMNResult dmnResult = runtime.evaluateAll(diamondModel, dmnContext);
-        assertFalse( dmnResult.getMessages().toString(), dmnResult.hasErrors() );
+        assertFalse(dmnResult.getMessages().toString(), dmnResult.hasErrors());
         DMNContext result = dmnResult.getContext();
-        assertEquals( "Hello, John Doe.", result.get( "My Decision" ) );
+        assertEquals("Hello, John Doe.", result.get("My Decision"));
     }
-    
+
     @Test
     public void test_potpourri_drawing() throws IOException {
-        roundTripUnmarshalThenMarshalUnmarshal( this.getClass().getResourceAsStream("/potpourri_drawing.dmn"), this::checkPotpourryGraph );
+        roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/potpourri_drawing.dmn"), this::checkPotpourryGraph);
     }
-    
+
     public void roundTripUnmarshalThenMarshalUnmarshal(InputStream dmnXmlInputStream, Consumer<Graph<?, Node<?, ?>>> checkGraphConsumer) throws IOException {
-        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
-                                            applicationFactoryManager);
+        DMNMarshaller m = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(), applicationFactoryManager);
 
         // first unmarshal from DMN XML to Stunner DMN Graph
         @SuppressWarnings("unchecked")
         Graph<?, Node<?, ?>> g = m.unmarshall(null, dmnXmlInputStream);
-        checkGraphConsumer.accept( g );
-        
+        checkGraphConsumer.accept(g);
+
         // round trip to Stunner DMN Graph back to DMN XML
         DiagramImpl diagram = new DiagramImpl("", null);
         diagram.setGraph(g);
-        
+
         String mString = m.marshall(diagram);
         System.out.println(mString);
-        
+
         // now unmarshal once more, from the marshalled just done above, back again to Stunner DMN Graph to complete check for round-trip
         @SuppressWarnings("unchecked")
-        Graph<?, Node<?, ?>> g2 = m.unmarshall(null, new StringInputStream( mString ) );
-        checkGraphConsumer.accept( g2 );
+        Graph<?, Node<?, ?>> g2 = m.unmarshall(null, new StringInputStream(mString));
+        checkGraphConsumer.accept(g2);
     }
-    
+
     private void checkDiamongGraph(Graph<?, Node<?, ?>> g) {
-        Node<?, ?> idNode = g.getNode( "_4cd17e52-6253-41d6-820d-5824bf5197f3" );
-        assertNodeContentDefinitionIs( idNode, InputData.class );
-        assertNodeEdgesTo( idNode, g.getNode( "_e920f38a-293c-41b8-adb3-69d0dc184fab" ), InformationRequirement.class );
-        assertNodeEdgesTo( idNode, g.getNode( "_f49f9c34-29d5-4e72-91d2-f4f92117c8da" ), InformationRequirement.class );
-        assertNodeEdgesTo( idNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
-        
-        Node<?, ?> prefixDecisionNode = g.getNode( "_e920f38a-293c-41b8-adb3-69d0dc184fab" );
-        assertNodeContentDefinitionIs( prefixDecisionNode, Decision.class );
-        assertNodeEdgesTo( prefixDecisionNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
-        
-        Node<?, ?> postfixDecisionNode = g.getNode( "_f49f9c34-29d5-4e72-91d2-f4f92117c8da" );
-        assertNodeContentDefinitionIs( postfixDecisionNode, Decision.class );
-        assertNodeEdgesTo( postfixDecisionNode, g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" ), InformationRequirement.class );
-        
-        Node<?, ?> myDecisionNode = g.getNode( "_9b061fc3-8109-42e2-9fe4-fc39c90b654e" );
-        assertNodeContentDefinitionIs( myDecisionNode, Decision.class );
-        
-        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot( (Graph)g ); 
-        assertNotNull( rootNode );
-        assertRootNodeConnectedTo( rootNode, idNode );
-        assertRootNodeConnectedTo( rootNode, prefixDecisionNode );
-        assertRootNodeConnectedTo( rootNode, postfixDecisionNode );
-        assertRootNodeConnectedTo( rootNode, myDecisionNode );
+        Node<?, ?> idNode = g.getNode("_4cd17e52-6253-41d6-820d-5824bf5197f3");
+        assertNodeContentDefinitionIs(idNode, InputData.class);
+        assertNodeEdgesTo(idNode, g.getNode("_e920f38a-293c-41b8-adb3-69d0dc184fab"), InformationRequirement.class);
+        assertNodeEdgesTo(idNode, g.getNode("_f49f9c34-29d5-4e72-91d2-f4f92117c8da"), InformationRequirement.class);
+        assertNodeEdgesTo(idNode, g.getNode("_9b061fc3-8109-42e2-9fe4-fc39c90b654e"), InformationRequirement.class);
+
+        Node<?, ?> prefixDecisionNode = g.getNode("_e920f38a-293c-41b8-adb3-69d0dc184fab");
+        assertNodeContentDefinitionIs(prefixDecisionNode, Decision.class);
+        assertNodeEdgesTo(prefixDecisionNode, g.getNode("_9b061fc3-8109-42e2-9fe4-fc39c90b654e"), InformationRequirement.class);
+
+        Node<?, ?> postfixDecisionNode = g.getNode("_f49f9c34-29d5-4e72-91d2-f4f92117c8da");
+        assertNodeContentDefinitionIs(postfixDecisionNode, Decision.class);
+        assertNodeEdgesTo(postfixDecisionNode, g.getNode("_9b061fc3-8109-42e2-9fe4-fc39c90b654e"), InformationRequirement.class);
+
+        Node<?, ?> myDecisionNode = g.getNode("_9b061fc3-8109-42e2-9fe4-fc39c90b654e");
+        assertNodeContentDefinitionIs(myDecisionNode, Decision.class);
+
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph) g);
+        assertNotNull(rootNode);
+        assertRootNodeConnectedTo(rootNode, idNode);
+        assertRootNodeConnectedTo(rootNode, prefixDecisionNode);
+        assertRootNodeConnectedTo(rootNode, postfixDecisionNode);
+        assertRootNodeConnectedTo(rootNode, myDecisionNode);
     }
 
     private void checkPotpourryGraph(Graph<?, Node<?, ?>> g) {
-        Node<?, ?> _My_Input_Data = g.getNode( "_My_Input_Data" );
-        assertNodeContentDefinitionIs( _My_Input_Data, InputData.class );
-        assertNodeEdgesTo( _My_Input_Data, g.getNode( "_My_Decision_1" ), InformationRequirement.class );
-        assertNodeEdgesTo( _My_Input_Data, g.getNode( "_KS_of_Input_Data" ), AuthorityRequirement.class );
-        assertNodeEdgesTo( _My_Input_Data, g.getNode( "_Annotation_for_Input_Data" ), Association.class );
-        
-        Node<?, ?> _Annotation_for_Input_Data = g.getNode( "_Annotation_for_Input_Data" );
-        assertNodeContentDefinitionIs( _Annotation_for_Input_Data, TextAnnotation.class );
-        
-        Node<?, ?> _KS_of_Input_Data = g.getNode( "_KS_of_Input_Data" );
-        assertNodeContentDefinitionIs( _KS_of_Input_Data, KnowledgeSource.class );
-        
-        Node<?, ?> _KS_of_KS_of_InputData = g.getNode( "_KS_of_KS_of_InputData" );
-        assertNodeContentDefinitionIs( _KS_of_KS_of_InputData, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_KS_of_InputData, g.getNode( "_KS_of_Input_Data" ), AuthorityRequirement.class );
-        
-        Node<?, ?> _KS_of_KS_of_Decision_1 = g.getNode( "_KS_of_KS_of_Decision_1" );
-        assertNodeContentDefinitionIs( _KS_of_KS_of_Decision_1, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_KS_of_Decision_1, g.getNode( "_KS_of_Decision_1" ), AuthorityRequirement.class );
-        
-        Node<?, ?> _KS_of_Decision_1 = g.getNode( "_KS_of_Decision_1" );
-        assertNodeContentDefinitionIs( _KS_of_Decision_1, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_Decision_1, g.getNode( "_My_Decision_1" ), AuthorityRequirement.class );
-        
-        Node<?, ?> _My_Decision_2 = g.getNode( "_My_Decision_2" );
-        assertNodeContentDefinitionIs( _My_Decision_2, Decision.class );
-        assertNodeEdgesTo( _My_Decision_2, g.getNode( "_KS_of_Decision_2" ), AuthorityRequirement.class );
-        assertNodeEdgesTo( _My_Decision_2, g.getNode( "_Annotation_for_Decision_2" ), Association.class );
-        
-        Node<?, ?> _KS_of_Decision_2 = g.getNode( "_KS_of_Decision_2" );
-        assertNodeContentDefinitionIs( _KS_of_Decision_2, KnowledgeSource.class );
-        
-        Node<?, ?> _Annotation_for_Decision_2 = g.getNode( "_Annotation_for_Decision_2" );
-        assertNodeContentDefinitionIs( _Annotation_for_Decision_2, TextAnnotation.class );
-        
-        Node<?, ?> _Annotation_for_BKM_1 = g.getNode( "_Annotation_for_BKM_1" );
-        assertNodeContentDefinitionIs( _Annotation_for_BKM_1, TextAnnotation.class );
-        assertNodeEdgesTo( _Annotation_for_BKM_1, g.getNode( "_My_BKM_1_of_Decision_1" ), Association.class );
-        
-        Node<?, ?> _My_BKM_1_of_Decision_1 = g.getNode( "_My_BKM_1_of_Decision_1" );
-        assertNodeContentDefinitionIs( _My_BKM_1_of_Decision_1, BusinessKnowledgeModel.class );
-        assertNodeEdgesTo( _My_BKM_1_of_Decision_1, g.getNode( "_My_Decision_1" ), KnowledgeRequirement.class );
+        Node<?, ?> _My_Input_Data = g.getNode("_My_Input_Data");
+        assertNodeContentDefinitionIs(_My_Input_Data, InputData.class);
+        assertNodeEdgesTo(_My_Input_Data, g.getNode("_My_Decision_1"), InformationRequirement.class);
+        assertNodeEdgesTo(_My_Input_Data, g.getNode("_KS_of_Input_Data"), AuthorityRequirement.class);
+        assertNodeEdgesTo(_My_Input_Data, g.getNode("_Annotation_for_Input_Data"), Association.class);
 
-        Node<?, ?> _KS_of_BKM_1 = g.getNode( "_KS_of_BKM_1" );
-        assertNodeContentDefinitionIs( _KS_of_BKM_1, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_BKM_1, g.getNode( "_My_BKM_1_of_Decision_1" ), AuthorityRequirement.class );
-        
-        Node<?, ?> _KS_of_KS_of_BKM_1 = g.getNode( "_KS_of_KS_of_BKM_1" );
-        assertNodeContentDefinitionIs( _KS_of_KS_of_BKM_1, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_KS_of_BKM_1, g.getNode( "_KS_of_BKM_1" ), AuthorityRequirement.class );
-        
-        Node<?, ?> _My_BKM_2_of_BKM_1 = g.getNode( "_My_BKM_2_of_BKM_1" );
-        assertNodeContentDefinitionIs( _My_BKM_2_of_BKM_1, BusinessKnowledgeModel.class );
-        assertNodeEdgesTo( _My_BKM_2_of_BKM_1, g.getNode( "_My_BKM_1_of_Decision_1" ), KnowledgeRequirement.class );
-        
-        Node<?, ?> _KS_of_BKM_2 = g.getNode( "_KS_of_BKM_2" );
-        assertNodeContentDefinitionIs( _KS_of_BKM_2, KnowledgeSource.class );
-        assertNodeEdgesTo( _KS_of_BKM_2, g.getNode( "_My_BKM_2_of_BKM_1" ), AuthorityRequirement.class );
-        assertNodeEdgesTo( _KS_of_BKM_2, g.getNode( "_Annotation_for_KS_of_BKM_2" ), Association.class );
-        
-        Node<?, ?> _Annotation_for_KS_of_BKM_2 = g.getNode( "_Annotation_for_KS_of_BKM_2" );
-        assertNodeContentDefinitionIs( _Annotation_for_KS_of_BKM_2, TextAnnotation.class );
-        
-        Node<?, ?> _My_Decision_1 = g.getNode( "_My_Decision_1" );
-        assertNodeContentDefinitionIs( _My_Decision_1, Decision.class );
-        
-        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot( (Graph)g ); 
-        assertNotNull( rootNode );
-        assertRootNodeConnectedTo( rootNode, _My_Input_Data );
-        assertRootNodeConnectedTo( rootNode, _Annotation_for_Input_Data );
-        assertRootNodeConnectedTo( rootNode, _KS_of_Input_Data );
-        assertRootNodeConnectedTo( rootNode, _KS_of_KS_of_InputData );
-        assertRootNodeConnectedTo( rootNode, _KS_of_KS_of_Decision_1 );
-        assertRootNodeConnectedTo( rootNode, _KS_of_Decision_1 );
-        assertRootNodeConnectedTo( rootNode, _My_Decision_2 );
-        assertRootNodeConnectedTo( rootNode, _KS_of_Decision_2 );
-        assertRootNodeConnectedTo( rootNode, _Annotation_for_Decision_2 );
-        assertRootNodeConnectedTo( rootNode, _Annotation_for_BKM_1 );
-        assertRootNodeConnectedTo( rootNode, _My_BKM_1_of_Decision_1 );
-        assertRootNodeConnectedTo( rootNode, _KS_of_BKM_1 );
-        assertRootNodeConnectedTo( rootNode, _KS_of_KS_of_BKM_1 );
-        assertRootNodeConnectedTo( rootNode, _My_BKM_2_of_BKM_1 );
-        assertRootNodeConnectedTo( rootNode, _KS_of_BKM_2 );
-        assertRootNodeConnectedTo( rootNode, _Annotation_for_KS_of_BKM_2 );
-        assertRootNodeConnectedTo( rootNode, _My_Decision_1 );
+        Node<?, ?> _Annotation_for_Input_Data = g.getNode("_Annotation_for_Input_Data");
+        assertNodeContentDefinitionIs(_Annotation_for_Input_Data, TextAnnotation.class);
+
+        Node<?, ?> _KS_of_Input_Data = g.getNode("_KS_of_Input_Data");
+        assertNodeContentDefinitionIs(_KS_of_Input_Data, KnowledgeSource.class);
+
+        Node<?, ?> _KS_of_KS_of_InputData = g.getNode("_KS_of_KS_of_InputData");
+        assertNodeContentDefinitionIs(_KS_of_KS_of_InputData, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_KS_of_InputData, g.getNode("_KS_of_Input_Data"), AuthorityRequirement.class);
+
+        Node<?, ?> _KS_of_KS_of_Decision_1 = g.getNode("_KS_of_KS_of_Decision_1");
+        assertNodeContentDefinitionIs(_KS_of_KS_of_Decision_1, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_KS_of_Decision_1, g.getNode("_KS_of_Decision_1"), AuthorityRequirement.class);
+
+        Node<?, ?> _KS_of_Decision_1 = g.getNode("_KS_of_Decision_1");
+        assertNodeContentDefinitionIs(_KS_of_Decision_1, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_Decision_1, g.getNode("_My_Decision_1"), AuthorityRequirement.class);
+
+        Node<?, ?> _My_Decision_2 = g.getNode("_My_Decision_2");
+        assertNodeContentDefinitionIs(_My_Decision_2, Decision.class);
+        assertNodeEdgesTo(_My_Decision_2, g.getNode("_KS_of_Decision_2"), AuthorityRequirement.class);
+        assertNodeEdgesTo(_My_Decision_2, g.getNode("_Annotation_for_Decision_2"), Association.class);
+
+        Node<?, ?> _KS_of_Decision_2 = g.getNode("_KS_of_Decision_2");
+        assertNodeContentDefinitionIs(_KS_of_Decision_2, KnowledgeSource.class);
+
+        Node<?, ?> _Annotation_for_Decision_2 = g.getNode("_Annotation_for_Decision_2");
+        assertNodeContentDefinitionIs(_Annotation_for_Decision_2, TextAnnotation.class);
+
+        Node<?, ?> _Annotation_for_BKM_1 = g.getNode("_Annotation_for_BKM_1");
+        assertNodeContentDefinitionIs(_Annotation_for_BKM_1, TextAnnotation.class);
+        assertNodeEdgesTo(_Annotation_for_BKM_1, g.getNode("_My_BKM_1_of_Decision_1"), Association.class);
+
+        Node<?, ?> _My_BKM_1_of_Decision_1 = g.getNode("_My_BKM_1_of_Decision_1");
+        assertNodeContentDefinitionIs(_My_BKM_1_of_Decision_1, BusinessKnowledgeModel.class);
+        assertNodeEdgesTo(_My_BKM_1_of_Decision_1, g.getNode("_My_Decision_1"), KnowledgeRequirement.class);
+
+        Node<?, ?> _KS_of_BKM_1 = g.getNode("_KS_of_BKM_1");
+        assertNodeContentDefinitionIs(_KS_of_BKM_1, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_BKM_1, g.getNode("_My_BKM_1_of_Decision_1"), AuthorityRequirement.class);
+
+        Node<?, ?> _KS_of_KS_of_BKM_1 = g.getNode("_KS_of_KS_of_BKM_1");
+        assertNodeContentDefinitionIs(_KS_of_KS_of_BKM_1, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_KS_of_BKM_1, g.getNode("_KS_of_BKM_1"), AuthorityRequirement.class);
+
+        Node<?, ?> _My_BKM_2_of_BKM_1 = g.getNode("_My_BKM_2_of_BKM_1");
+        assertNodeContentDefinitionIs(_My_BKM_2_of_BKM_1, BusinessKnowledgeModel.class);
+        assertNodeEdgesTo(_My_BKM_2_of_BKM_1, g.getNode("_My_BKM_1_of_Decision_1"), KnowledgeRequirement.class);
+
+        Node<?, ?> _KS_of_BKM_2 = g.getNode("_KS_of_BKM_2");
+        assertNodeContentDefinitionIs(_KS_of_BKM_2, KnowledgeSource.class);
+        assertNodeEdgesTo(_KS_of_BKM_2, g.getNode("_My_BKM_2_of_BKM_1"), AuthorityRequirement.class);
+        assertNodeEdgesTo(_KS_of_BKM_2, g.getNode("_Annotation_for_KS_of_BKM_2"), Association.class);
+
+        Node<?, ?> _Annotation_for_KS_of_BKM_2 = g.getNode("_Annotation_for_KS_of_BKM_2");
+        assertNodeContentDefinitionIs(_Annotation_for_KS_of_BKM_2, TextAnnotation.class);
+
+        Node<?, ?> _My_Decision_1 = g.getNode("_My_Decision_1");
+        assertNodeContentDefinitionIs(_My_Decision_1, Decision.class);
+
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph) g);
+        assertNotNull(rootNode);
+        assertRootNodeConnectedTo(rootNode, _My_Input_Data);
+        assertRootNodeConnectedTo(rootNode, _Annotation_for_Input_Data);
+        assertRootNodeConnectedTo(rootNode, _KS_of_Input_Data);
+        assertRootNodeConnectedTo(rootNode, _KS_of_KS_of_InputData);
+        assertRootNodeConnectedTo(rootNode, _KS_of_KS_of_Decision_1);
+        assertRootNodeConnectedTo(rootNode, _KS_of_Decision_1);
+        assertRootNodeConnectedTo(rootNode, _My_Decision_2);
+        assertRootNodeConnectedTo(rootNode, _KS_of_Decision_2);
+        assertRootNodeConnectedTo(rootNode, _Annotation_for_Decision_2);
+        assertRootNodeConnectedTo(rootNode, _Annotation_for_BKM_1);
+        assertRootNodeConnectedTo(rootNode, _My_BKM_1_of_Decision_1);
+        assertRootNodeConnectedTo(rootNode, _KS_of_BKM_1);
+        assertRootNodeConnectedTo(rootNode, _KS_of_KS_of_BKM_1);
+        assertRootNodeConnectedTo(rootNode, _My_BKM_2_of_BKM_1);
+        assertRootNodeConnectedTo(rootNode, _KS_of_BKM_2);
+        assertRootNodeConnectedTo(rootNode, _Annotation_for_KS_of_BKM_2);
+        assertRootNodeConnectedTo(rootNode, _My_Decision_1);
     }
 
     private static void assertRootNodeConnectedTo(Node<?, ?> rootNode, Node<?, ?> to) {
         @SuppressWarnings("unchecked")
-        List<Edge<?,?>> outEdges = (List<Edge<?, ?>>) rootNode.getOutEdges();
-        Optional<Edge<?, ?>> optEdge = outEdges.stream().filter( e -> e.getTargetNode().equals( to ) ).findFirst();
-        assertTrue( optEdge.isPresent() );
-        
+        List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) rootNode.getOutEdges();
+        Optional<Edge<?, ?>> optEdge = outEdges.stream().filter(e -> e.getTargetNode().equals(to)).findFirst();
+        assertTrue(optEdge.isPresent());
+
         Edge<?, ?> edge = optEdge.get();
-        assertTrue( edge.getContent() instanceof Child );
-        
-        assertTrue( to.getInEdges().contains( edge ) );
+        assertTrue(edge.getContent() instanceof Child);
+
+        assertTrue(to.getInEdges().contains(edge));
     }
 
     private static void assertNodeEdgesTo(Node<?, ?> from, Node<?, ?> to, Class<?> clazz) {
         @SuppressWarnings("unchecked")
-        List<Edge<?,?>> outEdges = (List<Edge<?, ?>>) from.getOutEdges();
-        Optional<Edge<?, ?>> optEdge = outEdges.stream().filter( e -> e.getTargetNode().equals( to ) ).findFirst();
-        assertTrue( optEdge.isPresent() );
-        
+        List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) from.getOutEdges();
+        Optional<Edge<?, ?>> optEdge = outEdges.stream().filter(e -> e.getTargetNode().equals(to)).findFirst();
+        assertTrue(optEdge.isPresent());
+
         Edge<?, ?> edge = optEdge.get();
-        assertTrue( edge.getContent() instanceof View );
-        assertTrue( clazz.isInstance( ((View<?>)edge.getContent()).getDefinition() ) );
-        
-        assertTrue( to.getInEdges().contains( edge ) );
-        
+        assertTrue(edge.getContent() instanceof View);
+        assertTrue(clazz.isInstance(((View<?>) edge.getContent()).getDefinition()));
+
+        assertTrue(to.getInEdges().contains(edge));
+
         ViewConnector<?> connectionContent = (ViewConnector<?>) edge.getContent();
-        assertTrue( connectionContent.getSourceMagnet().isPresent() );
-        assertEquals( MagnetType.OUTGOING, connectionContent.getSourceMagnet().get().getMagnetType() );
-        assertTrue( connectionContent.getTargetMagnet().isPresent() );
-        assertEquals( MagnetType.INCOMING, connectionContent.getTargetMagnet().get().getMagnetType() );
+        assertTrue(connectionContent.getSourceMagnet().isPresent());
+        assertEquals(MagnetType.OUTGOING, connectionContent.getSourceMagnet().get().getMagnetType());
+        assertTrue(connectionContent.getTargetMagnet().isPresent());
+        assertEquals(MagnetType.INCOMING, connectionContent.getTargetMagnet().get().getMagnetType());
     }
 
     private static void assertNodeContentDefinitionIs(Node<?, ?> node, Class<?> clazz) {
-        assertTrue( node.getContent() instanceof View );
-        assertTrue( clazz.isInstance( ((View<?>)node.getContent()).getDefinition() ) );
+        assertTrue(node.getContent() instanceof View);
+        assertTrue(clazz.isInstance(((View<?>) node.getContent()).getDefinition()));
     }
 
 }

@@ -27,15 +27,15 @@ public class QNamePropertyConverter {
      * @return maybe null
      */
     public static QName wbFromDMN(javax.xml.namespace.QName qName) {
-        return ( qName != null ) ? new QName( MarshallingUtils.formatQName( qName ) ) : null;
+        return (qName != null) ? new QName(MarshallingUtils.formatQName(qName)) : null;
     }
-    
+
     /*
      * Handles setting QName as appropriate back on DMN node
      */
     public static void setDMNfromWB(QName qname, Consumer<javax.xml.namespace.QName> setter) {
-        if ( qname != null ) { 
-            setter.accept( MarshallingUtils.parseQNameString( qname.getValue() ) );
+        if (qname != null) {
+            setter.accept(MarshallingUtils.parseQNameString(qname.getValue()));
         }
     }
 }
