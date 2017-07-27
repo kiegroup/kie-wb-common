@@ -34,7 +34,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
     private WorkspaceCompilationInfo info;
     private String requestUUID;
     private String[] originalArgs;
-    private Map map;
+    private Map<String, Object> map;
     private String mavenRepo;
     private Boolean logRequested;
 
@@ -120,7 +120,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
     }
 
     @Override
-    public Map getMap() {
+    public Map<String, Object> getMap() {
         return map;
     }
 

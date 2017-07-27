@@ -39,7 +39,7 @@ public interface CompilationRequest {
 
     Boolean getLogRequested();
 
-    Map getMap();
+    Map<String, Object> getMap();
 
     String getRequestUUID();
 }
