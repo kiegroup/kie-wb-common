@@ -15,22 +15,11 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio.impl;
 
-import java.util.Collections;
 import java.util.List;
 
-import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
-import org.kie.workbench.common.services.backend.compiler.external339.AFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.ProcessedPoms;
-import org.kie.workbench.common.services.backend.compiler.nio.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.IncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.nio.MavenCompiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Files;
-import org.uberfire.java.nio.file.Path;
 
 /**
  * Run maven with https://maven.apache.org/ref/3.3.9/maven-embedder/xref/index.html
@@ -44,66 +33,7 @@ import org.uberfire.java.nio.file.Path;
  * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE},new HashMap<>(), Boolean.TRUE );
  * CompilationResponse res = compiler.compileSync(req);
  */
-public class DefaultMavenCompiler implements MavenCompiler {
-
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompiler.class);
-
-    private AFMavenCli cli;
-
-    private IncrementalCompilerEnabler enabler;
-
-    public DefaultMavenCompiler() {
-        cli = new AFMavenCli();
-        enabler = new DefaultIncrementalCompilerEnabler(Compilers.JAVAC);
-    }
-
-    /**
-     * Check if the folder exists and if it's writable and readable
-     * @param mavenRepo
-     * @return
-     */
-    public static Boolean isValidMavenRepo(Path mavenRepo) {
-        if (mavenRepo.getParent() == null) {
-            return Boolean.FALSE;// used because Path("") is considered for Files.exists...
-        }
-        return Files.exists(mavenRepo) && Files.isDirectory(mavenRepo) && Files.isWritable(mavenRepo) && Files.isReadable(mavenRepo);
-    }
-
-    @Override
-    public CompilationResponse compileSync(CompilationRequest req) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("KieCompilationRequest:{}",
-                         req);
-        }
-
-        if (!req.getInfo().getEnhancedMainPomFile().isPresent()) {
-            ProcessedPoms processedPoms = enabler.process(req);
-            if (!processedPoms.getResult()) {
-                return new DefaultCompilationResponse(Boolean.FALSE,
-                                                      "Processing poms failed",
-                                                      Collections.emptyList());
-            }
-        }
-        req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
-        /**
-         The classworld is now Created in the NioMavenCompiler and in the DefaultMaven compielr for this reasons:
-         problem: https://stackoverflow.com/questions/22410706/error-when-execute-mavencli-in-the-loop-maven-embedder
-         problem:https://stackoverflow.com/questions/40587683/invocation-of-mavencli-fails-within-a-maven-plugin
-         solution:https://dev.eclipse.org/mhonarc/lists/sisu-users/msg00063.html
-         */
-
-        ClassLoader original = Thread.currentThread().getContextClassLoader();
-        ClassWorld kieClassWorld = new ClassWorld("plexus.core",
-                                                  getClass().getClassLoader());
-        int exitCode = cli.doMain(req.getKieCliRequest(),
-                                  kieClassWorld);
-        Thread.currentThread().setContextClassLoader(original);
-        if (exitCode == 0) {
-            return new DefaultCompilationResponse(Boolean.TRUE);
-        } else {
-            return new DefaultCompilationResponse(Boolean.FALSE);
-        }
-    }
+public class DefaultMavenCompiler extends BaseMavenCompiler<CompilationResponse> implements MavenCompiler {
 
     @Override
     public CompilationResponse buildDefaultCompilationResponse(final Boolean value) {
@@ -114,6 +44,15 @@ public class DefaultMavenCompiler implements MavenCompiler {
     public CompilationResponse buildDefaultCompilationResponse(final Boolean value,
                                                                final List<String> output) {
         return new DefaultCompilationResponse(value,
+                                              output);
+    }
+
+    @Override
+    protected CompilationResponse buildDefaultCompilationResponse(Boolean value,
+                                                                  String message,
+                                                                  List<String> output) {
+        return new DefaultCompilationResponse(value,
+                                              message,
                                               output);
     }
 }

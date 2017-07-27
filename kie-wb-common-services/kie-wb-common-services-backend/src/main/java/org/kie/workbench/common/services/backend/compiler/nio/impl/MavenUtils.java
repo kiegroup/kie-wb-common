@@ -29,6 +29,10 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uberfire.java.nio.file.DirectoryStream;
+import org.uberfire.java.nio.file.Files;
+import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 
 public class MavenUtils {
 
@@ -41,8 +45,8 @@ public class MavenUtils {
         List<Artifact> deps = new ArrayList<>();
         try {
             for (String pomx : pomsPaths) {
-                org.uberfire.java.nio.file.Path pom = org.uberfire.java.nio.file.Paths.get(pomx);
-                Model model = reader.read(new ByteArrayInputStream(org.uberfire.java.nio.file.Files.readAllBytes(pom)));
+                Path pom = Paths.get(pomx);
+                Model model = reader.read(new ByteArrayInputStream(Files.readAllBytes(pom)));
                 if (model.getDependencyManagement() != null && model.getDependencyManagement().getDependencies() != null) {
                     createArtifacts(model.getDependencyManagement().getDependencies(),
                                     deps);
@@ -75,11 +79,11 @@ public class MavenUtils {
         }
     }
 
-    public static void searchPoms(org.uberfire.java.nio.file.Path file,
+    public static void searchPoms(Path file,
                                   List<String> pomsList) {
-        try (org.uberfire.java.nio.file.DirectoryStream<org.uberfire.java.nio.file.Path> ds = org.uberfire.java.nio.file.Files.newDirectoryStream(file.toAbsolutePath())) {
-            for (org.uberfire.java.nio.file.Path p : ds) {
-                if (org.uberfire.java.nio.file.Files.isDirectory(p)) {
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
+            for (Path p : ds) {
+                if (Files.isDirectory(p)) {
                     searchPoms(p,
                                pomsList);
                 } else if (p.endsWith(POM_NAME)) {

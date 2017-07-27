@@ -40,7 +40,6 @@ import org.kie.workbench.common.services.backend.compiler.configuration.Decorato
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.nio.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.MavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.nio.WorkspaceCompilationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -349,7 +348,7 @@ public class ClassLoaderProviderImpl implements AFClassLoaderProvider {
 
     private List<URL> visitFolders(final DirectoryStream<Path> directoryStream) {
         List<URL> urls = new ArrayList<>();
-        for (final org.uberfire.java.nio.file.Path path : directoryStream) {
+        for (final Path path : directoryStream) {
             if (Files.isDirectory(path)) {
                 visitFolders(Files.newDirectoryStream(path));
             } else {
