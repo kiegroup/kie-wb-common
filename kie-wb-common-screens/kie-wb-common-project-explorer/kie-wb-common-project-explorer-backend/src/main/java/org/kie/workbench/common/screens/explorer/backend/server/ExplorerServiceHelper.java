@@ -64,7 +64,7 @@ public class ExplorerServiceHelper {
 
     private LinkedDotFileFilter dotFileFilter = new LinkedDotFileFilter();
     private LinkedRegularFileFilter regularFileFilter = new LinkedRegularFileFilter( dotFileFilter );
-    private XStream xs = new XStream();
+    private XStream xs;
 
     private KieProjectService projectService;
     private FolderListingResolver folderListingResolver;
@@ -78,8 +78,11 @@ public class ExplorerServiceHelper {
     private RenameService renameService;
     private CopyService copyService;
 
+    //WELD proxy support
     public ExplorerServiceHelper() {
-        //WELD proxy support
+        xs = new XStream();
+        String[] voidDeny = {"void.class", "Void.class"};
+        xs.denyTypes(voidDeny);
     }
 
     @Inject
@@ -93,6 +96,7 @@ public class ExplorerServiceHelper {
                                   final DeleteService deleteService,
                                   final RenameService renameService,
                                   final CopyService copyService ) {
+        this();
         this.projectService = projectService;
         this.folderListingResolver = folderListingResolver;
         this.ioService = ioService;
