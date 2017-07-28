@@ -300,7 +300,6 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
                     TextAnnotation textAnnotation = (TextAnnotation) view.getDefinition();
                     textAnnotations.put(textAnnotation.getId().getValue(), textAnnotationConverter.dmnFromNode((Node<View<TextAnnotation>, ?>) node));
 
-                    // TODO no way to query graph for Edges?
                     List<org.kie.dmn.model.v1_1.Association> associations = AssociationConverter.dmnFromWB((Node<View<TextAnnotation>, ?>) node);
                     definitions.getArtifact().addAll(associations);
                 }

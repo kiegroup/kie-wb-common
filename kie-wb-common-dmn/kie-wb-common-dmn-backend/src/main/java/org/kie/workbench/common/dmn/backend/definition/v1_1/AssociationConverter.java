@@ -65,7 +65,6 @@ public class AssociationConverter {
                     targetRef.setHref(new StringBuilder("#").append(drgElement.getId().getValue()).toString());
 
                     org.kie.dmn.model.v1_1.Association adding = new org.kie.dmn.model.v1_1.Association();
-                    // TODO missing id, name
                     adding.setId(((View<Association>) e.getContent()).getDefinition().getId().getValue());
                     adding.setDescription(((View<Association>) e.getContent()).getDefinition().getDescription().getValue());
                     adding.setSourceRef(ta_elementReference);

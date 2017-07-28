@@ -32,8 +32,8 @@ public class LiteralExpressionPropertyConverter {
         QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
         Text text = new Text(dmn.getText());
         ExpressionLanguage expressionLanguage = new ExpressionLanguage(dmn.getExpressionLanguage());
-        // TODO missing importedValues
-        LiteralExpression result = new LiteralExpression(id, description, typeRef, text, new ImportedValues(), expressionLanguage);
+        ImportedValues importedValues = ImportedValuesConverter.wbFromDMN(dmn.getImportedValues());
+        LiteralExpression result = new LiteralExpression(id, description, typeRef, text, importedValues, expressionLanguage);
         return result;
     }
 
@@ -44,7 +44,7 @@ public class LiteralExpressionPropertyConverter {
         QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
         result.setText(wb.getText().getValue());
         result.setExpressionLanguage(wb.getExpressionLanguage().getValue());
-        // TODO missing importedValues
+        result.setImportedValues(ImportedValuesConverter.wbFromDMN(wb.getImportedValues()));
         return result;
     }
 }

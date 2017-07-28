@@ -63,9 +63,6 @@ public class BusinessKnowledgeModel extends DRGElement {
     @FormField(afterElement = "name")
     protected InformationItem variable;
 
-    // TODO this was disabled during marshaller work task.
-    //    @PropertySet
-    //    @FormField(afterElement = "variable")
     protected FunctionDefinition encapsulatedLogic;
 
     @PropertySet
