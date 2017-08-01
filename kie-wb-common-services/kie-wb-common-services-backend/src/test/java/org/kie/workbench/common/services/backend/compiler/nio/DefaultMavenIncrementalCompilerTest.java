@@ -15,10 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio;
 
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,11 +26,14 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIODefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOMavenCompilerFactory;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.NIOWorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.DefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.nio.impl.MavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.uberfire.java.nio.file.DirectoryStream;
+import org.uberfire.java.nio.file.Files;
+import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 
 public class DefaultMavenIncrementalCompilerTest {
 
@@ -43,6 +42,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Before
     public void setUp() throws Exception {
+
         mavenRepo = Paths.get(System.getProperty("user.home"),
                               "/.m2/repository");
 
@@ -57,20 +57,21 @@ public class DefaultMavenIncrementalCompilerTest {
     @Test
     public void testIsValidMavenHome() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          tmp);
+                          temp);
+        //end NIO
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenCLIArgs.VERSION},
-                                                                     new HashMap(),
-                                                                     Boolean.FALSE);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.VERSION},
+                                                               new HashMap<>(),
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
@@ -84,19 +85,21 @@ public class DefaultMavenIncrementalCompilerTest {
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          tmp);
+                          temp);
+        //end NIO
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.NONE);
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Boolean.FALSE);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new HashMap<>(),
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
@@ -104,7 +107,7 @@ public class DefaultMavenIncrementalCompilerTest {
         }
         Assert.assertTrue(res.isSuccessful());
 
-        Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
+        Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
         Assert.assertTrue(incrementalConfiguration.toFile().exists());
 
@@ -112,26 +115,27 @@ public class DefaultMavenIncrementalCompilerTest {
     }
 
     @Test
-    public void testIncrementalWithPluginEnabledThreeBuild() throws Exception {
+    public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy"),
-                          tmp);
+                          temp);
+        //end NIO
 
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
-                Decorator.NONE);
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
 
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Boolean.FALSE);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new HashMap<>(),
+                                                               Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeBuild");
+                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
         Assert.assertTrue(res.isSuccessful());
 
@@ -141,7 +145,7 @@ public class DefaultMavenIncrementalCompilerTest {
         res = compiler.compileSync(req);
         Assert.assertTrue(res.isSuccessful());
 
-        Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
+        Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
         Assert.assertTrue(incrementalConfiguration.toFile().exists());
 
@@ -151,33 +155,36 @@ public class DefaultMavenIncrementalCompilerTest {
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
-                                                     "dummy"));
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
         TestUtil.copyTree(Paths.get("src/test/projects/dummy_incremental"),
-                          tmp);
+                          temp);
+        //end NIO
 
         //compiler
-        NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
-        NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
-        NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
-                                                                     info,
-                                                                     new String[]{MavenCLIArgs.COMPILE},
-                                                                     new HashMap<>(),
-                                                                     Boolean.TRUE);
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE},
+                                                               new HashMap<>(),
+                                                               Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
                                                       "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
         }
+
         //checks
         Assert.assertTrue(res.isSuccessful());
+
         List<String> fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp + "/target/classes/dummy"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
         }
-
         Assert.assertTrue(fileNames.size() == 2);
         String dummyJava;
         if (fileNames.get(0).endsWith("Dummy.class")) {
@@ -194,9 +201,9 @@ public class DefaultMavenIncrementalCompilerTest {
         Assert.assertTrue(isPresent(output,
                                     "Compiled 2 out of 2 sources "));
 
-        Files.delete(Paths.get(tmp + "/src/main/java/dummy/DummyA.java"));
+        Files.delete(Paths.get(temp + "/src/main/java/dummy/DummyA.java"));
         //overwrite the class with a new version with two additional methods and one int variable
-        Files.write(Paths.get(tmp + "/src/main/java/dummy/Dummy.java"),
+        Files.write(Paths.get(temp + "/src/main/java/dummy/Dummy.java"),
                     Files.readAllBytes(Paths.get("src/test/projects/Dummy.java")));
 
         //second compilation
@@ -206,7 +213,8 @@ public class DefaultMavenIncrementalCompilerTest {
         Assert.assertTrue(res.isSuccessful());
 
         fileNames = new ArrayList<>();
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(tmp + "/target/classes/dummy"))) {
+        //nio
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/target/classes/dummy"))) {
             for (Path path : directoryStream) {
                 fileNames.add(path.toString());
             }
