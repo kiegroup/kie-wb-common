@@ -38,27 +38,35 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
 
     private FactoryManager factoryManager;
 
-    public BusinessKnowledgeModelConverter(FactoryManager factoryManager) {
+    public BusinessKnowledgeModelConverter(final FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
     }
 
     @Override
-    public Node<View<BusinessKnowledgeModel>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.BusinessKnowledgeModel dmn) {
+    public Node<View<BusinessKnowledgeModel>, ?> nodeFromDMN(final org.kie.dmn.model.v1_1.BusinessKnowledgeModel dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement(dmn.getId(), BusinessKnowledgeModel.class).asNode();
+        Node<View<BusinessKnowledgeModel>, ?> node = (Node<View<BusinessKnowledgeModel>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                                                       BusinessKnowledgeModel.class).asNode();
         Id id = new Id(dmn.getId());
         Description description = new Description(dmn.getDescription());
         Name name = new Name(dmn.getName());
         InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable());
         FunctionDefinition functionDefinition = FunctionDefinitionConverter.wbFromDMN(dmn.getEncapsulatedLogic());
-        BusinessKnowledgeModel bkm = new BusinessKnowledgeModel(id, description, name, informationItem, functionDefinition, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        BusinessKnowledgeModel bkm = new BusinessKnowledgeModel(id,
+                                                                description,
+                                                                name,
+                                                                informationItem,
+                                                                functionDefinition,
+                                                                new BackgroundSet(),
+                                                                new FontSet(),
+                                                                new RectangleDimensionsSet());
         node.getContent().setDefinition(bkm);
         return node;
     }
 
     @Override
-    public org.kie.dmn.model.v1_1.BusinessKnowledgeModel dmnFromNode(Node<View<BusinessKnowledgeModel>, ?> node) {
+    public org.kie.dmn.model.v1_1.BusinessKnowledgeModel dmnFromNode(final Node<View<BusinessKnowledgeModel>, ?> node) {
         BusinessKnowledgeModel source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.BusinessKnowledgeModel result = new org.kie.dmn.model.v1_1.BusinessKnowledgeModel();
         result.setId(source.getId().getValue());
@@ -94,5 +102,4 @@ public class BusinessKnowledgeModelConverter implements NodeConverter<org.kie.dm
         }
         return result;
     }
-
 }

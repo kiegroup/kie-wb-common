@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class AssociationConverter {
 
-    public static List<org.kie.dmn.model.v1_1.Association> dmnFromWB(Node<View<TextAnnotation>, ?> node) {
+    public static List<org.kie.dmn.model.v1_1.Association> dmnFromWB(final Node<View<TextAnnotation>, ?> node) {
         TextAnnotation ta = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.DMNElementReference ta_elementReference = new org.kie.dmn.model.v1_1.DMNElementReference();
         ta_elementReference.setHref(new StringBuilder("#").append(ta.getId().getValue()).toString());
@@ -76,5 +76,4 @@ public class AssociationConverter {
 
         return result;
     }
-
 }

@@ -42,27 +42,37 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.v1_1.D
 
     private FactoryManager factoryManager;
 
-    public DecisionConverter(FactoryManager factoryManager) {
+    public DecisionConverter(final FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
     }
 
     @Override
-    public Node<View<Decision>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.Decision dmn) {
+    public Node<View<Decision>, ?> nodeFromDMN(final org.kie.dmn.model.v1_1.Decision dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<Decision>, ?> node = (Node<View<Decision>, ?>) factoryManager.newElement(dmn.getId(), Decision.class).asNode();
+        Node<View<Decision>, ?> node = (Node<View<Decision>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                           Decision.class).asNode();
         Id id = new Id(dmn.getId());
         Description description = new Description(dmn.getDescription());
         Name name = new Name(dmn.getName());
         InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable());
         Expression expression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression());
-        Decision decision = new Decision(id, description, name, new Question(), new AllowedAnswers(), informationItem, expression, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        Decision decision = new Decision(id,
+                                         description,
+                                         name,
+                                         new Question(),
+                                         new AllowedAnswers(),
+                                         informationItem,
+                                         expression,
+                                         new BackgroundSet(),
+                                         new FontSet(),
+                                         new RectangleDimensionsSet());
         node.getContent().setDefinition(decision);
         return node;
     }
 
     @Override
-    public org.kie.dmn.model.v1_1.Decision dmnFromNode(Node<View<Decision>, ?> node) {
+    public org.kie.dmn.model.v1_1.Decision dmnFromNode(final Node<View<Decision>, ?> node) {
         Decision source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.Decision d = new org.kie.dmn.model.v1_1.Decision();
         d.setId(source.getId().getValue());
@@ -110,5 +120,4 @@ public class DecisionConverter implements NodeConverter<org.kie.dmn.model.v1_1.D
         }
         return d;
     }
-
 }

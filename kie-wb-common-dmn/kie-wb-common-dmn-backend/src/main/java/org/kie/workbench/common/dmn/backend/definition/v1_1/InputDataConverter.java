@@ -32,26 +32,33 @@ public class InputDataConverter implements NodeConverter<org.kie.dmn.model.v1_1.
 
     private FactoryManager factoryManager;
 
-    public InputDataConverter(FactoryManager factoryManager) {
+    public InputDataConverter(final FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
     }
 
     @Override
-    public Node<View<InputData>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.InputData dmn) {
+    public Node<View<InputData>, ?> nodeFromDMN(final org.kie.dmn.model.v1_1.InputData dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement(dmn.getId(), InputData.class).asNode();
+        Node<View<InputData>, ?> node = (Node<View<InputData>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                             InputData.class).asNode();
         Id id = new Id(dmn.getId());
         Description description = new Description(dmn.getDescription());
         Name name = new Name(dmn.getName());
         InformationItem informationItem = InformationItemPropertyConverter.wbFromDMN(dmn.getVariable());
-        InputData inputData = new InputData(id, description, name, informationItem, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        InputData inputData = new InputData(id,
+                                            description,
+                                            name,
+                                            informationItem,
+                                            new BackgroundSet(),
+                                            new FontSet(),
+                                            new RectangleDimensionsSet());
         node.getContent().setDefinition(inputData);
         return node;
     }
 
     @Override
-    public org.kie.dmn.model.v1_1.InputData dmnFromNode(Node<View<InputData>, ?> node) {
+    public org.kie.dmn.model.v1_1.InputData dmnFromNode(final Node<View<InputData>, ?> node) {
         InputData source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.InputData result = new org.kie.dmn.model.v1_1.InputData();
         result.setId(source.getId().getValue());
@@ -60,5 +67,4 @@ public class InputDataConverter implements NodeConverter<org.kie.dmn.model.v1_1.
         result.setVariable(InformationItemPropertyConverter.dmnFromWB(source.getVariable()));
         return result;
     }
-
 }

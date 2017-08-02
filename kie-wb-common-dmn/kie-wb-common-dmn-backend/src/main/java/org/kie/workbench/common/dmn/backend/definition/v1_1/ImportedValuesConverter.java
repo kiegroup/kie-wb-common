@@ -25,7 +25,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Namespace;
 
 public class ImportedValuesConverter {
 
-    public static ImportedValues wbFromDMN(org.kie.dmn.model.v1_1.ImportedValues dmn) {
+    public static ImportedValues wbFromDMN(final org.kie.dmn.model.v1_1.ImportedValues dmn) {
         if (dmn == null) {
             return null;
         }
@@ -34,11 +34,15 @@ public class ImportedValuesConverter {
         ImportType importType = new ImportType(dmn.getImportType());
         ImportedElement importedElement = new ImportedElement(dmn.getImportedElement());
         ExpressionLanguage expressionLanguage = new ExpressionLanguage(dmn.getExpressionLanguage());
-        ImportedValues wb = new ImportedValues(namespace, locationURI, importType, importedElement, expressionLanguage);
+        ImportedValues wb = new ImportedValues(namespace,
+                                               locationURI,
+                                               importType,
+                                               importedElement,
+                                               expressionLanguage);
         return wb;
     }
 
-    public static org.kie.dmn.model.v1_1.ImportedValues wbFromDMN(ImportedValues wb) {
+    public static org.kie.dmn.model.v1_1.ImportedValues wbFromDMN(final ImportedValues wb) {
         if (wb == null) {
             return null;
         }

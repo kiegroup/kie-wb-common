@@ -32,26 +32,33 @@ public class TextAnnotationConverter implements NodeConverter<org.kie.dmn.model.
 
     private FactoryManager factoryManager;
 
-    public TextAnnotationConverter(FactoryManager factoryManager) {
+    public TextAnnotationConverter(final FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
     }
 
     @Override
-    public Node<View<TextAnnotation>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.TextAnnotation dmn) {
+    public Node<View<TextAnnotation>, ?> nodeFromDMN(final org.kie.dmn.model.v1_1.TextAnnotation dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<TextAnnotation>, ?> node = (Node<View<TextAnnotation>, ?>) factoryManager.newElement(dmn.getId(), TextAnnotation.class).asNode();
+        Node<View<TextAnnotation>, ?> node = (Node<View<TextAnnotation>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                                       TextAnnotation.class).asNode();
         Id id = new Id(dmn.getId());
         Description description = new Description(dmn.getDescription());
         Text text = new Text(dmn.getText());
         TextFormat textFormat = new TextFormat(dmn.getTextFormat());
-        TextAnnotation textAnnotation = new TextAnnotation(id, description, text, textFormat, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        TextAnnotation textAnnotation = new TextAnnotation(id,
+                                                           description,
+                                                           text,
+                                                           textFormat,
+                                                           new BackgroundSet(),
+                                                           new FontSet(),
+                                                           new RectangleDimensionsSet());
         node.getContent().setDefinition(textAnnotation);
         return node;
     }
 
     @Override
-    public org.kie.dmn.model.v1_1.TextAnnotation dmnFromNode(Node<View<TextAnnotation>, ?> node) {
+    public org.kie.dmn.model.v1_1.TextAnnotation dmnFromNode(final Node<View<TextAnnotation>, ?> node) {
         TextAnnotation source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.TextAnnotation result = new org.kie.dmn.model.v1_1.TextAnnotation();
         result.setId(source.getId().getValue());
@@ -60,5 +67,4 @@ public class TextAnnotationConverter implements NodeConverter<org.kie.dmn.model.
         result.setTextFormat(source.getTextFormat().getValue());
         return result;
     }
-
 }

@@ -24,7 +24,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
 public class FunctionDefinitionConverter {
 
-    public static FunctionDefinition wbFromDMN(org.kie.dmn.model.v1_1.FunctionDefinition dmn) {
+    public static FunctionDefinition wbFromDMN(final org.kie.dmn.model.v1_1.FunctionDefinition dmn) {
         if (dmn == null) {
             return null;
         }
@@ -32,20 +32,23 @@ public class FunctionDefinitionConverter {
         Description description = new Description(dmn.getDescription());
         QName typeRef = QNamePropertyConverter.wbFromDMN(dmn.getTypeRef());
         Expression expression = ExpressionPropertyConverter.wbFromDMN(dmn.getExpression());
-        FunctionDefinition result = new FunctionDefinition(id, description, typeRef, expression);
+        FunctionDefinition result = new FunctionDefinition(id,
+                                                           description,
+                                                           typeRef,
+                                                           expression);
         return result;
     }
 
-    public static org.kie.dmn.model.v1_1.FunctionDefinition dmnFromWB(FunctionDefinition wb) {
+    public static org.kie.dmn.model.v1_1.FunctionDefinition dmnFromWB(final FunctionDefinition wb) {
         if (wb == null) {
             return null;
         }
         org.kie.dmn.model.v1_1.FunctionDefinition result = new org.kie.dmn.model.v1_1.FunctionDefinition();
         result.setId(wb.getId().getValue());
         result.setDescription(wb.getDescription().getValue());
-        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(), result::setTypeRef);
+        QNamePropertyConverter.setDMNfromWB(wb.getTypeRef(),
+                                            result::setTypeRef);
         result.setExpression(ExpressionPropertyConverter.dmnFromWB(wb.getExpression()));
         return result;
     }
-
 }

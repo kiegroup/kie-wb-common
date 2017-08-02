@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.core.util.UUID;
 
 public class DefinitionsConverter {
 
-    public static Definitions wbFromDMN(org.kie.dmn.model.v1_1.Definitions dmn) {
+    public static Definitions wbFromDMN(final org.kie.dmn.model.v1_1.Definitions dmn) {
         if (dmn == null) {
             return null;
         }
@@ -41,17 +41,17 @@ public class DefinitionsConverter {
         return result;
     }
 
-    public static org.kie.dmn.model.v1_1.Definitions dmnFromWB(Definitions wb) {
+    public static org.kie.dmn.model.v1_1.Definitions dmnFromWB(final Definitions wb) {
         if (wb == null) {
             return null;
         }
         org.kie.dmn.model.v1_1.Definitions result = new org.kie.dmn.model.v1_1.Definitions();
-        
+
         // TODO currently DMN wb UI does not offer feature to set these required DMN properties, setting some hardcoded defaults for now.
         String defaultId = (wb.getId() != null) ? wb.getId().getValue() : UUID.uuid();
         String defaulName = (wb.getName() != null) ? wb.getName().getValue() : UUID.uuid(8);
-        String defaultNamespace = (wb.getNamespace() != null) ? wb.getNamespace() : "https://github.com/kiegroup/drools/kie-dmn" ;
-        
+        String defaultNamespace = (wb.getNamespace() != null) ? wb.getNamespace() : "https://github.com/kiegroup/drools/kie-dmn";
+
         result.setId(defaultId);
         result.setName(defaulName);
         result.setNamespace(defaultNamespace);
@@ -59,5 +59,4 @@ public class DefinitionsConverter {
         result.getNsContext().putAll(wb.getNsContext());
         return result;
     }
-
 }

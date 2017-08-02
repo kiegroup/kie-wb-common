@@ -39,27 +39,35 @@ public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model
 
     private FactoryManager factoryManager;
 
-    public KnowledgeSourceConverter(FactoryManager factoryManager) {
+    public KnowledgeSourceConverter(final FactoryManager factoryManager) {
         super();
         this.factoryManager = factoryManager;
     }
 
     @Override
-    public Node<View<KnowledgeSource>, ?> nodeFromDMN(org.kie.dmn.model.v1_1.KnowledgeSource dmn) {
+    public Node<View<KnowledgeSource>, ?> nodeFromDMN(final org.kie.dmn.model.v1_1.KnowledgeSource dmn) {
         @SuppressWarnings("unchecked")
-        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement(dmn.getId(), KnowledgeSource.class).asNode();
+        Node<View<KnowledgeSource>, ?> node = (Node<View<KnowledgeSource>, ?>) factoryManager.newElement(dmn.getId(),
+                                                                                                         KnowledgeSource.class).asNode();
         Id id = new Id(dmn.getId());
         Description description = new Description(dmn.getDescription());
         Name name = new Name(dmn.getName());
         KnowledgeSourceType ksType = new KnowledgeSourceType(dmn.getType());
         LocationURI locationURI = new LocationURI(dmn.getLocationURI());
-        KnowledgeSource ks = new KnowledgeSource(id, description, name, ksType, locationURI, new BackgroundSet(), new FontSet(), new RectangleDimensionsSet());
+        KnowledgeSource ks = new KnowledgeSource(id,
+                                                 description,
+                                                 name,
+                                                 ksType,
+                                                 locationURI,
+                                                 new BackgroundSet(),
+                                                 new FontSet(),
+                                                 new RectangleDimensionsSet());
         node.getContent().setDefinition(ks);
         return node;
     }
 
     @Override
-    public org.kie.dmn.model.v1_1.KnowledgeSource dmnFromNode(Node<View<KnowledgeSource>, ?> node) {
+    public org.kie.dmn.model.v1_1.KnowledgeSource dmnFromNode(final Node<View<KnowledgeSource>, ?> node) {
         KnowledgeSource source = node.getContent().getDefinition();
         org.kie.dmn.model.v1_1.KnowledgeSource result = new org.kie.dmn.model.v1_1.KnowledgeSource();
         result.setId(source.getId().getValue());
@@ -101,5 +109,4 @@ public class KnowledgeSourceConverter implements NodeConverter<org.kie.dmn.model
         }
         return result;
     }
-
 }
