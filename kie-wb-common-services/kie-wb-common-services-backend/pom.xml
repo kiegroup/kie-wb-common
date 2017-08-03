@@ -26,7 +26,7 @@
     </resources>
     <testResources>
       <testResource>
-        <directory>src/test/projects</directory>
+        <directory>src/test/projects/**/pom.xml</directory>
         <filtering>true</filtering>
       </testResource>
     </testResources>
