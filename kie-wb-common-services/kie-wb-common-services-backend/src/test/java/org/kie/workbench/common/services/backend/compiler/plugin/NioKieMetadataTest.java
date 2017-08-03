@@ -83,7 +83,7 @@ public class NioKieMetadataTest {
          * */
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-all-resources"),
+        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"),
                           tmp);
 
         NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(
@@ -139,7 +139,7 @@ public class NioKieMetadataTest {
          * */
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
+        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
                           tmp);
 
         NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(
@@ -188,7 +188,7 @@ public class NioKieMetadataTest {
          * */
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
+        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
                           tmp);
 
         NIOKieMavenCompiler compiler = NIOKieMavenCompilerFactory.getCompiler(
