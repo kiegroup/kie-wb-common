@@ -85,14 +85,14 @@ public class KieMetadataTest {
         //end NIO
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(
-                KieDecorator.KIE_AFTER);
+                KieDecorator.KIE_AND_LOG_AFTER);
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                new HashMap<>(),
-                                                               Boolean.FALSE);
+                                                               Boolean.TRUE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
