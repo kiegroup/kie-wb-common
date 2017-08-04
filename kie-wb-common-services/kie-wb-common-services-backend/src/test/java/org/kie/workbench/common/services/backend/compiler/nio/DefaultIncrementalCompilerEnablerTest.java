@@ -92,7 +92,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_untouched"),
+        TestUtil.copyTree(Paths.get("target/test-classes/dummy_kie_multimodule_untouched"),
                           tmp);
         Path mainPom = Paths.get(tmp.toAbsolutePath().toString(),
                                  "pom.xml");

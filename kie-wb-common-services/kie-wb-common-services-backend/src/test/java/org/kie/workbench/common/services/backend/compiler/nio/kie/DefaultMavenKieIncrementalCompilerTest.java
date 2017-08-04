@@ -143,7 +143,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_incremental"),
+        TestUtil.copyTree(Paths.get("target/test-classes/dummy_kie_incremental"),
                           tmp);
 
         //compiler

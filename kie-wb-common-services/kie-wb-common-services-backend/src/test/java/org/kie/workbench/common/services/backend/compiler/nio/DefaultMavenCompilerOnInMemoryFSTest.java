@@ -454,7 +454,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
         File temp = tmp.toFile();
-        copyTree(Paths.get("src/test/projects/kjar-2-single-resources"),
+        copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
                  Paths.get(temp.toString()));
 
         JGitUtil.commit(origin.gitRepo(),

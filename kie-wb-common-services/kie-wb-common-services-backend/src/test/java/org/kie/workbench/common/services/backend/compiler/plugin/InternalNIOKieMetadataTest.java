@@ -84,7 +84,7 @@ public class InternalNIOKieMetadataTest {
         //NIO creation and copy content
         java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                 "dummy"));
-        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-all-resources"),
+        TestUtil.copyTree(java.nio.file.Paths.get("target/test-classes/kjar-2-all-resources"),
                           temp);
         //end NIO
 
@@ -146,7 +146,7 @@ public class InternalNIOKieMetadataTest {
             java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
             java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                    "dummy"));
-            TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+            TestUtil.copyTree(java.nio.file.Paths.get("target/test-classes/kjar-2-single-resources"),
                               tmp);
 
             InternalNIOKieMavenCompiler compiler = InternalNIOKieMavenCompilerFactory.getCompiler(
@@ -203,7 +203,7 @@ public class InternalNIOKieMetadataTest {
         java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
         java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                "dummy"));
-        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+        TestUtil.copyTree(java.nio.file.Paths.get("target/test-classes/kjar-2-single-resources"),
                           tmp);
 
         InternalNIOKieMavenCompiler compiler = InternalNIOKieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);

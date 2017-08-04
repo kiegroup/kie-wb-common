@@ -460,7 +460,7 @@ public class InternalNIODefaultMavenCompilerOnInMemoryFSTest {
         //NIO creation and copy content
         java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                 "dummy"));
-        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/kjar-2-single-resources"),
+        TestUtil.copyTree(java.nio.file.Paths.get("target/test-classes/kjar-2-single-resources"),
                           temp);
         //end NIO
 

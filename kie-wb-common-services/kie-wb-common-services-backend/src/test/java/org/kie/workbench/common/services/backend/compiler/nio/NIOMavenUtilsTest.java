@@ -34,7 +34,7 @@ public class NIOMavenUtilsTest {
     public void presenceOfDepInThePrj() throws Exception {
         NIODefaultIncrementalCompilerEnabler compiler = new NIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         List<String> pomList = new ArrayList<>();
-        NIOMavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"),
+        NIOMavenUtils.searchPoms(Paths.get("target/test-classes/dummy_kie_multimodule_untouched/"),
                                  pomList);
         assertTrue(pomList.size() == 3);
         List<Artifact> deps = NIOMavenUtils.resolveDependenciesFromMultimodulePrj(pomList);

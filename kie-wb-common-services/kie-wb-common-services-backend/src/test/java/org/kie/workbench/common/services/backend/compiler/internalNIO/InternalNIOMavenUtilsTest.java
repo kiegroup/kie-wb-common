@@ -34,7 +34,7 @@ public class InternalNIOMavenUtilsTest {
     public void presenceOfDepInThePrj() throws Exception {
         InternalNIODefaultIncrementalCompilerEnabler enabler = new InternalNIODefaultIncrementalCompilerEnabler(Compilers.JAVAC);
         List<String> pomList = new ArrayList<>();
-        InternalNIOMavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"),
+        InternalNIOMavenUtils.searchPoms(Paths.get("target/test-classes/dummy_kie_multimodule_untouched/"),
                                          pomList);
         assertTrue(pomList.size() == 3);
         List<Artifact> deps = InternalNIOMavenUtils.resolveDependenciesFromMultimodulePrj(pomList);

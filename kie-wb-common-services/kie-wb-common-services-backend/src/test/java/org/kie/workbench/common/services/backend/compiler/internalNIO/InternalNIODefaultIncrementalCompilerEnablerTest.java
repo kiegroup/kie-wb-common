@@ -106,7 +106,7 @@ public class InternalNIODefaultIncrementalCompilerEnablerTest {
         //NIO creation and copy content
         java.nio.file.Path temp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                 "dummy"));
-        TestUtil.copyTree(java.nio.file.Paths.get("src/test/projects/dummy_kie_multimodule_untouched"),
+        TestUtil.copyTree(java.nio.file.Paths.get("target/test-classes/dummy_kie_multimodule_untouched"),
                           temp);
         //end NIO
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString(),
