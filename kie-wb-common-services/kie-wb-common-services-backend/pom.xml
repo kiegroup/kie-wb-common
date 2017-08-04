@@ -41,7 +41,28 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.0.2</version>
+        <configuration>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>bpmn2</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dmn</nonFilteredFileExtension>
+            <nonFilteredFileExtension>drl</nonFilteredFileExtension>
+            <nonFilteredFileExtension>drt</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dsl</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dslr</nonFilteredFileExtension>
+            <nonFilteredFileExtension>gdst</nonFilteredFileExtension>
+            <nonFilteredFileExtension>java</nonFilteredFileExtension>
+            <nonFilteredFileExtension>pmml</nonFilteredFileExtension>
+            <nonFilteredFileExtension>sxls</nonFilteredFileExtension>
+            <nonFilteredFileExtension>template</nonFilteredFileExtension>
+            <nonFilteredFileExtension>txls</nonFilteredFileExtension>
+            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
+        </configuration>
+      </plugin>   
     </plugins>
   </build>
 
