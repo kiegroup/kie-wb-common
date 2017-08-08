@@ -328,6 +328,11 @@ public class ExamplesServiceImpl implements ExamplesService {
             description = pom.getDescription();
         }
 
+        if (description != null) {
+            return description.replaceAll("[\\s]+",
+                                          " ");
+        }
+
         return description;
     }
 
