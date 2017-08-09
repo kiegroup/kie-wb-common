@@ -310,7 +310,7 @@ public class ExpressionEditorTest {
     public void checkSetExpressionForUndefined() {
         editor.setExpression(Optional.empty());
 
-        verify(view).selectExpressionEditorType(eq(0));
+        verify(view).selectExpressionEditorType(eq(ExpressionType.UNDEFINED));
         verify(view).setSubEditor(eq(undefinedExpressionEditorView));
     }
 
@@ -319,37 +319,31 @@ public class ExpressionEditorTest {
         final LiteralExpression expression = new LiteralExpression();
         editor.setExpression(Optional.of(expression));
 
-        verify(view).selectExpressionEditorType(eq(1));
+        verify(view).selectExpressionEditorType(eq(ExpressionType.LITERAL_EXPRESSION));
         verify(view).setSubEditor(eq(literalExpressionEditorView));
         verify(literalExpressionEditor).setExpression(eq(expression));
     }
 
     @Test
-    public void checkOnExpressionTypeChangedForUnknown() {
-        verifyOnExpressionChange(String.class,
-                                 e -> !e.isPresent());
-    }
-
-    @Test
     public void checkOnExpressionTypeChangedForUndefined() {
-        verifyOnExpressionChange(Expression.class,
+        verifyOnExpressionChange(ExpressionType.UNDEFINED,
                                  e -> !e.isPresent());
     }
 
     @Test
     public void checkOnExpressionTypeChangedForLiteralExpression() {
-        verifyOnExpressionChange(LiteralExpression.class,
+        verifyOnExpressionChange(ExpressionType.LITERAL_EXPRESSION,
                                  Optional::isPresent);
     }
 
-    private void verifyOnExpressionChange(final Class<?> clazz,
+    private void verifyOnExpressionChange(final ExpressionType type,
                                           final Function<Optional<Expression>, Boolean> assertion) {
         editor.setHasExpression(hasExpression);
 
         //setHasExpression() also calls setExpression() so reset mock for test
         reset(editor);
 
-        editor.onExpressionTypeChanged(clazz.getName());
+        editor.onExpressionTypeChanged(type);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               setExpressionTypeCommandArgumentCaptor.capture());

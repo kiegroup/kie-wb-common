@@ -18,9 +18,6 @@ package org.kie.workbench.common.dmn.client.editors.expressions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
@@ -32,6 +29,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.commands.SetExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.impl.EditorToolbar;
@@ -103,32 +101,26 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
     @Override
     public void setExpression(final Optional<Expression> expression) {
-        OptionalInt index = OptionalInt.empty();
-
         if (!expression.isPresent()) {
-            index = IntStream.range(0,
-                                    expressionEditorDefinitions.size())
-                    .filter(i -> !expressionEditorDefinitions.get(i).getModelClass().isPresent())
-                    .findFirst();
-
-            index.ifPresent(i -> {
-                view.selectExpressionEditorType(i);
-                view.setSubEditor(expressionEditorDefinitions.get(i).getEditor().getView());
-            });
+            expressionEditorDefinitions.stream()
+                    .filter(ed -> !ed.getModelClass().isPresent())
+                    .findFirst()
+                    .ifPresent(ed -> {
+                        view.selectExpressionEditorType(ed.getType());
+                        view.setSubEditor(ed.getEditor().getView());
+                    });
         } else {
-            index = IntStream.range(0,
-                                    expressionEditorDefinitions.size())
-                    .filter(i -> expressionEditorDefinitions.get(i).getModelClass().isPresent())
-                    .filter(i -> expressionEditorDefinitions.get(i).getModelClass().get().getClass().equals(expression.get().getClass()))
-                    .findFirst();
-
-            index.ifPresent(i -> {
-                view.selectExpressionEditorType(i);
-                final BaseExpressionEditorView.Editor<Expression> editor = expressionEditorDefinitions.get(i).getEditor();
-                view.setSubEditor(editor.getView());
-                editor.setHasName(hasName);
-                editor.setExpression(expression.get());
-            });
+            expressionEditorDefinitions.stream()
+                    .filter(ed -> ed.getModelClass().isPresent())
+                    .filter(ed -> ed.getModelClass().get().getClass().equals(expression.get().getClass()))
+                    .findFirst()
+                    .ifPresent(ed -> {
+                        view.selectExpressionEditorType(ed.getType());
+                        final BaseExpressionEditorView.Editor<Expression> editor = ed.getEditor();
+                        view.setSubEditor(editor.getView());
+                        editor.setHasName(hasName);
+                        editor.setExpression(expression.get());
+                    });
         }
     }
 
@@ -146,13 +138,13 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     }
 
     @Override
-    public void onExpressionTypeChanged(final String className) {
+    public void onExpressionTypeChanged(final ExpressionType type) {
         final Optional<Expression> expression = expressionEditorDefinitions
                 .stream()
+                .filter(e -> e.getType().equals(type))
                 .map(ExpressionEditorDefinition::getModelClass)
-                .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
-                .filter(e -> e.getClass().getName().equals(className))
-                .findFirst();
+                .findFirst()
+                .get();
 
         sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                       new SetExpressionTypeCommand(hasExpression,

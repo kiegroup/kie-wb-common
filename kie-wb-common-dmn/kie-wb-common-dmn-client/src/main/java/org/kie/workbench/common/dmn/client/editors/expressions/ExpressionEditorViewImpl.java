@@ -33,6 +33,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 
 @Templated
 @Dependent
@@ -81,8 +82,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     @Override
-    public void selectExpressionEditorType(final int index) {
-        expressionEditorDefinition.setSelectedIndex(index);
+    public void selectExpressionEditorType(final ExpressionType type) {
+        expressionEditorDefinition.setSelectedIndex(type.ordinal());
     }
 
     @Override
@@ -94,7 +95,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @SuppressWarnings("unchecked")
     private Option makeExpressionDefinitionWidget(final ExpressionEditorDefinition<? extends Expression> definition) {
         final Option o = (Option) document.createElement("option");
-        o.setValue(definition.getModelClass().map(c -> c.getClass().getName()).orElse(""));
+        o.setValue(definition.getType().name());
         o.setText(definition.getName());
         return o;
     }
@@ -109,7 +110,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @EventHandler("expressionEditorDefinition")
     void onExpressionTypeSelectionChange(final ChangeEvent event) {
         final Option o = (Option) expressionEditorDefinition.getOptions().item(expressionEditorDefinition.getSelectedIndex());
-        final String className = o.getValue();
-        presenter.onExpressionTypeChanged(className);
+        final String type = o.getValue();
+        presenter.onExpressionTypeChanged(ExpressionType.valueOf(type));
     }
 }
