@@ -41,6 +41,7 @@ public class NavigateToDRGEditorCommandTest extends BaseNavigationCommandTest {
     }
 
     @Test
+    @Override
     public void executeCanvasCommand() {
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      command.getCanvasCommand(canvasHandler).execute(canvasHandler));
@@ -52,6 +53,7 @@ public class NavigateToDRGEditorCommandTest extends BaseNavigationCommandTest {
     }
 
     @Test
+    @Override
     public void undoCanvasCommand() {
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      command.getCanvasCommand(canvasHandler).undo(canvasHandler));
