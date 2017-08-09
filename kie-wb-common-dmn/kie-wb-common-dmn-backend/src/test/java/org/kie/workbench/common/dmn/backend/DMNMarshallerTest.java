@@ -74,7 +74,6 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
-import org.kie.workbench.common.stunner.core.graph.content.view.Magnet.MagnetType;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
@@ -502,9 +501,9 @@ public class DMNMarshallerTest {
         assertTrue(to.getInEdges().contains(edge));
     }
 
-    private static void assertNodeEdgesTo(Node<?, ?> from,
-                                          Node<?, ?> to,
-                                          Class<?> clazz) {
+    private static Edge<?, ?> assertNodeEdgesTo(Node<?, ?> from,
+                                                Node<?, ?> to,
+                                                Class<?> clazz) {
         @SuppressWarnings("unchecked")
         List<Edge<?, ?>> outEdges = (List<Edge<?, ?>>) from.getOutEdges();
         Optional<Edge<?, ?>> optEdge = outEdges.stream().filter(e -> e.getTargetNode().equals(to)).findFirst();
@@ -517,12 +516,9 @@ public class DMNMarshallerTest {
         assertTrue(to.getInEdges().contains(edge));
 
         ViewConnector<?> connectionContent = (ViewConnector<?>) edge.getContent();
-        assertTrue(connectionContent.getSourceMagnet().isPresent());
-        assertEquals(MagnetType.OUTGOING,
-                     connectionContent.getSourceMagnet().get().getMagnetType());
-        assertTrue(connectionContent.getTargetMagnet().isPresent());
-        assertEquals(MagnetType.INCOMING,
-                     connectionContent.getTargetMagnet().get().getMagnetType());
+        assertTrue(connectionContent.getSourceConnection().isPresent());
+        assertTrue(connectionContent.getTargetConnection().isPresent());
+        return edge;
     }
 
     private static void assertNodeContentDefinitionIs(Node<?, ?> node,
