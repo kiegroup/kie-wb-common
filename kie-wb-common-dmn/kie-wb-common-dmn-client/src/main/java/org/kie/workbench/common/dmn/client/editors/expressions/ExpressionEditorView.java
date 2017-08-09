@@ -22,7 +22,7 @@ import org.jboss.errai.common.client.api.IsElement;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -49,9 +49,9 @@ public interface ExpressionEditorView extends org.jboss.errai.ui.client.local.ap
         void onExpressionTypeChanged(final String className);
     }
 
-    void setExpressionTypes(final List<ExpressionType<Expression>> expressionTypes);
+    void setExpressionEditorTypes(final List<ExpressionEditorDefinition<Expression>> expressionEditorDefinitions);
 
-    void selectExpressionType(final int index);
+    void selectExpressionEditorType(final int index);
 
     void setSubEditor(final org.jboss.errai.ui.client.local.api.IsElement editor);
 }

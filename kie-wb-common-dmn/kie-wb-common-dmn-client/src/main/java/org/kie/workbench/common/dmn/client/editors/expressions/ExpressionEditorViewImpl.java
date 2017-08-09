@@ -32,7 +32,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 
 @Templated
 @Dependent
@@ -46,8 +46,8 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @DataField("expressionEditor")
     private Div expressionEditor;
 
-    @DataField("expressionType")
-    private Select expressionType;
+    @DataField("expressionEditorDefinition")
+    private Select expressionEditorDefinition;
 
     private Document document;
 
@@ -60,11 +60,11 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @Inject
     public ExpressionEditorViewImpl(final Div exitButton,
                                     final Div expressionEditor,
-                                    final Select expressionType,
+                                    final Select expressionEditorDefinition,
                                     final Document document,
                                     final TranslationService ts) {
         this.exitButton = exitButton;
-        this.expressionType = expressionType;
+        this.expressionEditorDefinition = expressionEditorDefinition;
         this.expressionEditor = expressionEditor;
         this.document = document;
         this.ts = ts;
@@ -76,13 +76,13 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     @Override
-    public void setExpressionTypes(final List<ExpressionType<Expression>> expressionTypes) {
-        expressionTypes.forEach(t -> expressionType.add(makeExpressionTypeWidget(t)));
+    public void setExpressionEditorTypes(final List<ExpressionEditorDefinition<Expression>> expressionEditorDefinitions) {
+        expressionEditorDefinitions.forEach(t -> expressionEditorDefinition.add(makeExpressionDefinitionWidget(t)));
     }
 
     @Override
-    public void selectExpressionType(final int index) {
-        expressionType.setSelectedIndex(index);
+    public void selectExpressionEditorType(final int index) {
+        expressionEditorDefinition.setSelectedIndex(index);
     }
 
     @Override
@@ -92,10 +92,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     @SuppressWarnings("unchecked")
-    private Option makeExpressionTypeWidget(final ExpressionType<? extends Expression> type) {
+    private Option makeExpressionDefinitionWidget(final ExpressionEditorDefinition<? extends Expression> definition) {
         final Option o = (Option) document.createElement("option");
-        o.setValue(type.getModelClass().map(c -> c.getClass().getName()).orElse(""));
-        o.setText(type.getName());
+        o.setValue(definition.getModelClass().map(c -> c.getClass().getName()).orElse(""));
+        o.setText(definition.getName());
         return o;
     }
 
@@ -106,9 +106,9 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     }
 
     @SuppressWarnings("unused")
-    @EventHandler("expressionType")
+    @EventHandler("expressionEditorDefinition")
     void onExpressionTypeSelectionChange(final ChangeEvent event) {
-        final Option o = (Option) expressionType.getOptions().item(expressionType.getSelectedIndex());
+        final Option o = (Option) expressionEditorDefinition.getOptions().item(expressionEditorDefinition.getSelectedIndex());
         final String className = o.getValue();
         presenter.onExpressionTypeChanged(className);
     }

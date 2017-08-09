@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SetExpressionTypeCommandTest {
+public class SetExpressionEditorDefinitionCommandTest {
 
     @Mock
     private HasExpression hasExpression;

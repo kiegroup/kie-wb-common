@@ -22,25 +22,26 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 
 @ApplicationScoped
-public class LiteralExpressionType implements ExpressionType<LiteralExpression> {
+public class LiteralExpressionEditorDefinition implements ExpressionEditorDefinition<LiteralExpression> {
 
     private LiteralExpressionEditor editor;
 
-    public LiteralExpressionType() {
+    public LiteralExpressionEditorDefinition() {
         //CDI proxy
     }
 
     @Inject
-    public LiteralExpressionType(final LiteralExpressionEditor editor) {
+    public LiteralExpressionEditorDefinition(final LiteralExpressionEditor editor) {
         this.editor = editor;
     }
 
     @Override
-    public int getIndex() {
-        return 1;
+    public ExpressionType getType() {
+        return ExpressionType.LITERAL_EXPRESSION;
     }
 
     @Override

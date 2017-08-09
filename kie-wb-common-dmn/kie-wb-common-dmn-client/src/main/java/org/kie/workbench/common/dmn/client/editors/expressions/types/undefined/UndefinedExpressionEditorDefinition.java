@@ -25,29 +25,30 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 
 @ApplicationScoped
-public class UndefinedExpressionType implements ExpressionType<Expression> {
+public class UndefinedExpressionEditorDefinition implements ExpressionEditorDefinition<Expression> {
 
     private TranslationService ts;
     private UndefinedExpressionEditorView view;
 
-    public UndefinedExpressionType() {
+    public UndefinedExpressionEditorDefinition() {
         //CDI proxy
     }
 
     @Inject
-    public UndefinedExpressionType(final TranslationService ts,
-                                   final UndefinedExpressionEditorView view) {
+    public UndefinedExpressionEditorDefinition(final TranslationService ts,
+                                               final UndefinedExpressionEditorView view) {
         this.ts = ts;
         this.view = view;
     }
 
     @Override
-    public int getIndex() {
-        return 0;
+    public ExpressionType getType() {
+        return ExpressionType.UNDEFINED;
     }
 
     @Override

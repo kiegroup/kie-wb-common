@@ -22,39 +22,40 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LiteralExpressionTypeTest {
+public class LiteralExpressionEditorDefinitionTest {
 
     @Mock
     private LiteralExpressionEditor editor;
 
-    private LiteralExpressionType type;
+    private LiteralExpressionEditorDefinition definition;
 
     @Before
     public void setup() {
-        this.type = new LiteralExpressionType(editor);
+        this.definition = new LiteralExpressionEditorDefinition(editor);
     }
 
     @Test
-    public void checkGetIndex() {
-        assertEquals(1,
-                     type.getIndex());
+    public void checkGetType() {
+        assertEquals(ExpressionType.LITERAL_EXPRESSION,
+                     definition.getType());
     }
 
     @Test
     public void checkGetName() {
         assertEquals(LiteralExpression.class.getSimpleName(),
-                     type.getName());
+                     definition.getName());
     }
 
     @Test
     public void checkGetModelClass() {
-        final Optional<LiteralExpression> oExpression = type.getModelClass();
+        final Optional<LiteralExpression> oExpression = definition.getModelClass();
         assertTrue(oExpression.isPresent());
         assertEquals(LiteralExpression.class,
                      oExpression.get().getClass());
@@ -63,6 +64,6 @@ public class LiteralExpressionTypeTest {
     @Test
     public void checkGetEditor() {
         assertEquals(editor,
-                     type.getEditor());
+                     definition.getEditor());
     }
 }

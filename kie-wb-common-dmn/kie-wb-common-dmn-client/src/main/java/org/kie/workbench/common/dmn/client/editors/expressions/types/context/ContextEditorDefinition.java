@@ -22,25 +22,26 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 
 @ApplicationScoped
-public class ContextType implements ExpressionType<Context> {
+public class ContextEditorDefinition implements ExpressionEditorDefinition<Context> {
 
     private ContextEditor editor;
 
-    public ContextType() {
+    public ContextEditorDefinition() {
         //CDI proxy
     }
 
     @Inject
-    public ContextType(final ContextEditor editor) {
+    public ContextEditorDefinition(final ContextEditor editor) {
         this.editor = editor;
     }
 
     @Override
-    public int getIndex() {
-        return 2;
+    public ExpressionType getType() {
+        return ExpressionType.CONTEXT;
     }
 
     @Override

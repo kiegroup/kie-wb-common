@@ -24,25 +24,26 @@ import org.jboss.errai.ui.client.local.api.IsElement;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 
 @ApplicationScoped
-public class DecisionTableType implements ExpressionType<DecisionTable> {
+public class DecisionTableEditorDefinition implements ExpressionEditorDefinition<DecisionTable> {
 
     private DecisionTableEditorView view;
 
-    public DecisionTableType() {
+    public DecisionTableEditorDefinition() {
         //CDI proxy
     }
 
     @Inject
-    public DecisionTableType(final DecisionTableEditorView view) {
+    public DecisionTableEditorDefinition(final DecisionTableEditorView view) {
         this.view = view;
     }
 
     @Override
-    public int getIndex() {
-        return 3;
+    public ExpressionType getType() {
+        return ExpressionType.DECISION_TABLE;
     }
 
     @Override

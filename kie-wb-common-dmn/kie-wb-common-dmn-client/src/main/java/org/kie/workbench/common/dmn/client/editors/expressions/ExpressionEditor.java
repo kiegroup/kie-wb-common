@@ -31,7 +31,7 @@ import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.commands.SetExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.impl.EditorToolbar;
@@ -56,7 +56,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
     private ToolbarCommandStateHandler toolbarCommandStateHandler;
 
-    private List<ExpressionType<Expression>> expressionTypes = new ArrayList<>();
+    private List<ExpressionEditorDefinition<Expression>> expressionEditorDefinitions = new ArrayList<>();
 
     public ExpressionEditor() {
         //CDI proxy
@@ -67,15 +67,15 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     public ExpressionEditor(final ExpressionEditorView view,
                             final SessionManager sessionManager,
                             final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                            final Instance<ExpressionType> expressionTypeBeans) {
+                            final Instance<ExpressionEditorDefinition> expressionEditorDefinitionBeans) {
         this.view = view;
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
         this.view.init(this);
 
-        expressionTypeBeans.forEach(t -> this.expressionTypes.add(t));
-        this.expressionTypes.sort((o1, o2) -> o1.getIndex() - o2.getIndex());
-        this.view.setExpressionTypes(expressionTypes);
+        expressionEditorDefinitionBeans.forEach(t -> this.expressionEditorDefinitions.add(t));
+        this.expressionEditorDefinitions.sort((o1, o2) -> o1.getType().ordinal() - o2.getType().ordinal());
+        this.view.setExpressionEditorTypes(expressionEditorDefinitions);
     }
 
     @Override
@@ -107,24 +107,24 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
         if (!expression.isPresent()) {
             index = IntStream.range(0,
-                                    expressionTypes.size())
-                    .filter(i -> !expressionTypes.get(i).getModelClass().isPresent())
+                                    expressionEditorDefinitions.size())
+                    .filter(i -> !expressionEditorDefinitions.get(i).getModelClass().isPresent())
                     .findFirst();
 
             index.ifPresent(i -> {
-                view.selectExpressionType(i);
-                view.setSubEditor(expressionTypes.get(i).getEditor().getView());
+                view.selectExpressionEditorType(i);
+                view.setSubEditor(expressionEditorDefinitions.get(i).getEditor().getView());
             });
         } else {
             index = IntStream.range(0,
-                                    expressionTypes.size())
-                    .filter(i -> expressionTypes.get(i).getModelClass().isPresent())
-                    .filter(i -> expressionTypes.get(i).getModelClass().get().getClass().equals(expression.get().getClass()))
+                                    expressionEditorDefinitions.size())
+                    .filter(i -> expressionEditorDefinitions.get(i).getModelClass().isPresent())
+                    .filter(i -> expressionEditorDefinitions.get(i).getModelClass().get().getClass().equals(expression.get().getClass()))
                     .findFirst();
 
             index.ifPresent(i -> {
-                view.selectExpressionType(i);
-                final BaseExpressionEditorView.Editor<Expression> editor = expressionTypes.get(i).getEditor();
+                view.selectExpressionEditorType(i);
+                final BaseExpressionEditorView.Editor<Expression> editor = expressionEditorDefinitions.get(i).getEditor();
                 view.setSubEditor(editor.getView());
                 editor.setHasName(hasName);
                 editor.setExpression(expression.get());
@@ -147,9 +147,9 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
 
     @Override
     public void onExpressionTypeChanged(final String className) {
-        final Optional<Expression> expression = expressionTypes
+        final Optional<Expression> expression = expressionEditorDefinitions
                 .stream()
-                .map(ExpressionType::getModelClass)
+                .map(ExpressionEditorDefinition::getModelClass)
                 .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
                 .filter(e -> e.getClass().getName().equals(className))
                 .findFirst();

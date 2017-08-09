@@ -151,7 +151,7 @@ public class ExpressionEditorTest {
     private HasExpression hasExpression;
 
     @Captor
-    private ArgumentCaptor<List<ExpressionType<Expression>>> expressionTypesArgumentCaptor;
+    private ArgumentCaptor<List<org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition<Expression>>> expressionTypesArgumentCaptor;
 
     @Captor
     private ArgumentCaptor<SetExpressionTypeCommand> setExpressionTypeCommandArgumentCaptor;
@@ -167,14 +167,14 @@ public class ExpressionEditorTest {
     @SuppressWarnings("unchecked")
     public void setup() {
         //These are deliberately added in reverse order to test sorting before passing to the View
-        final Instance<ExpressionType> expressionTypeBeans = new MockInstanceImpl<>(new ExpressionEditorType<>(1,
-                                                                                                               LiteralExpression.class.getName(),
-                                                                                                               Optional.of(new LiteralExpression()),
-                                                                                                               literalExpressionEditor),
-                                                                                    new ExpressionEditorType<>(0,
-                                                                                                               Expression.class.getName(),
-                                                                                                               Optional.empty(),
-                                                                                                               undefinedExpressionEditor));
+        final Instance<org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition> expressionTypeBeans = new MockInstanceImpl<>(new MockExpressionEditorDefinition(ExpressionType.LITERAL_EXPRESSION,
+                                                                                                                                                                                                 LiteralExpression.class.getName(),
+                                                                                                                                                                                                 Optional.of(new LiteralExpression()),
+                                                                                                                                                                                                 literalExpressionEditor),
+                                                                                                                                                              new MockExpressionEditorDefinition(ExpressionType.UNDEFINED,
+                                                                                                                                                                                                 Expression.class.getName(),
+                                                                                                                                                                                                 Optional.empty(),
+                                                                                                                                                                                                 undefinedExpressionEditor));
         editor = spy(new ExpressionEditor(view,
                                           sessionManager,
                                           sessionCommandManager,
@@ -210,20 +210,20 @@ public class ExpressionEditorTest {
     }
 
     @Test
-    public void checkViewIsPopulatedWithOrderedExpressionTypes() {
-        verify(view).setExpressionTypes(expressionTypesArgumentCaptor.capture());
+    public void checkViewIsPopulatedWithOrderedExpressionDefinitions() {
+        verify(view).setExpressionEditorTypes(expressionTypesArgumentCaptor.capture());
 
-        final List<ExpressionType<Expression>> expressionTypes = expressionTypesArgumentCaptor.getValue();
+        final List<org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition<Expression>> expressionEditorDefinitions = expressionTypesArgumentCaptor.getValue();
         assertEquals(2,
-                     expressionTypes.size());
-        assertEquals(0,
-                     expressionTypes.get(0).getIndex());
+                     expressionEditorDefinitions.size());
+        assertEquals(ExpressionType.UNDEFINED,
+                     expressionEditorDefinitions.get(0).getType());
         assertEquals(undefinedExpressionEditor,
-                     expressionTypes.get(0).getEditor());
-        assertEquals(1,
-                     expressionTypes.get(1).getIndex());
+                     expressionEditorDefinitions.get(0).getEditor());
+        assertEquals(ExpressionType.LITERAL_EXPRESSION,
+                     expressionEditorDefinitions.get(1).getType());
         assertEquals(literalExpressionEditor,
-                     expressionTypes.get(1).getEditor());
+                     expressionEditorDefinitions.get(1).getEditor());
     }
 
     @Test
@@ -310,7 +310,7 @@ public class ExpressionEditorTest {
     public void checkSetExpressionForUndefined() {
         editor.setExpression(Optional.empty());
 
-        verify(view).selectExpressionType(eq(0));
+        verify(view).selectExpressionEditorType(eq(0));
         verify(view).setSubEditor(eq(undefinedExpressionEditorView));
     }
 
@@ -319,7 +319,7 @@ public class ExpressionEditorTest {
         final LiteralExpression expression = new LiteralExpression();
         editor.setExpression(Optional.of(expression));
 
-        verify(view).selectExpressionType(eq(1));
+        verify(view).selectExpressionEditorType(eq(1));
         verify(view).setSubEditor(eq(literalExpressionEditorView));
         verify(literalExpressionEditor).setExpression(eq(expression));
     }
@@ -366,26 +366,26 @@ public class ExpressionEditorTest {
         assertTrue(assertion.apply(setExpressionArgument));
     }
 
-    private static class ExpressionEditorType<T extends Expression> implements ExpressionType<T> {
+    private static class MockExpressionEditorDefinition<T extends Expression> implements org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition<T> {
 
-        private int index;
+        private ExpressionType type;
         private String name;
         private Optional<T> modelClass;
         private BaseExpressionEditorView.Editor<T> editor;
 
-        public ExpressionEditorType(final int index,
-                                    final String name,
-                                    final Optional<T> modelClass,
-                                    final BaseExpressionEditorView.Editor<T> editor) {
-            this.index = index;
+        public MockExpressionEditorDefinition(final ExpressionType type,
+                                              final String name,
+                                              final Optional<T> modelClass,
+                                              final BaseExpressionEditorView.Editor<T> editor) {
+            this.type = type;
             this.name = name;
             this.modelClass = modelClass;
             this.editor = editor;
         }
 
         @Override
-        public int getIndex() {
-            return index;
+        public ExpressionType getType() {
+            return type;
         }
 
         @Override

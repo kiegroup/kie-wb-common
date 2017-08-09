@@ -16,11 +16,17 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types;
 
-public enum ExpressionType {
+import java.util.Optional;
 
-    UNDEFINED,
-    LITERAL_EXPRESSION,
-    CONTEXT,
-    DECISION_TABLE
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 
+public interface ExpressionEditorDefinition<T extends Expression> {
+
+    ExpressionType getType();
+
+    String getName();
+
+    Optional<T> getModelClass();
+
+    BaseExpressionEditorView.Editor<T> getEditor();
 }

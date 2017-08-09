@@ -24,13 +24,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseExpressionEditorView;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UndefinedExpressionTypeTest {
+public class UndefinedExpressionEditorDefinitionTest {
 
     @Mock
     private TranslationService ts;
@@ -38,34 +39,34 @@ public class UndefinedExpressionTypeTest {
     @Mock
     private UndefinedExpressionEditorView view;
 
-    private UndefinedExpressionType type;
+    private UndefinedExpressionEditorDefinition definition;
 
     @Before
     public void setup() {
-        this.type = new UndefinedExpressionType(ts,
-                                                view);
+        this.definition = new UndefinedExpressionEditorDefinition(ts,
+                                                                  view);
     }
 
     @Test
-    public void checkGetIndex() {
-        assertEquals(0,
-                     type.getIndex());
+    public void checkGetType() {
+        assertEquals(ExpressionType.UNDEFINED,
+                     definition.getType());
     }
 
     @Test
     public void checkGetName() {
-        assertNull(type.getName());
+        assertNull(definition.getName());
     }
 
     @Test
     public void checkGetModelClass() {
-        final Optional<Expression> oExpression = type.getModelClass();
+        final Optional<Expression> oExpression = definition.getModelClass();
         assertFalse(oExpression.isPresent());
     }
 
     @Test
     public void checkGetEditor() {
-        final BaseExpressionEditorView.Editor<Expression> editor = type.getEditor();
+        final BaseExpressionEditorView.Editor<Expression> editor = definition.getEditor();
         assertEquals(view,
                      editor.getView());
     }
