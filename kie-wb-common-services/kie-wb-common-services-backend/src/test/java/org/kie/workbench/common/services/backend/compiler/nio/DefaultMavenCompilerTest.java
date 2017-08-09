@@ -135,7 +135,7 @@ public class DefaultMavenCompilerTest {
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
+                                                      "DefaultMavenCompilerTest.buildWithCloneTest");
         }
         assertTrue(res.getMavenOutput().isPresent());
         assertTrue(res.isSuccessful());
@@ -216,7 +216,7 @@ public class DefaultMavenCompilerTest {
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
+                                                      "DefaultMavenCompilerTest.buildWithPullRebaseUberfireTest");
         }
 
         assertTrue(res.isSuccessful());
@@ -280,7 +280,7 @@ public class DefaultMavenCompilerTest {
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
+                                                      "DefaultMavenCompilerTest.buildWithJGitDecoratorTest");
         }
         assertTrue(res.isSuccessful());
 
@@ -356,7 +356,7 @@ public class DefaultMavenCompilerTest {
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+                                                      "DefaultMavenCompilerTest.buildWithAllDecoratorsTest");
         }
         assertTrue(res.getMavenOutput().isPresent());
         assertTrue(res.isSuccessful());
@@ -376,7 +376,7 @@ public class DefaultMavenCompilerTest {
         res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
+                                                      "DefaultMavenCompilerTest.buildWithAllDecoratorsTest");
         }
         assertTrue(res.isSuccessful());
         assertTrue(res.getMavenOutput().isPresent());
