@@ -52,7 +52,7 @@ public class ButtonGridItemImpl
         extends WrappedItem<ButtonGridItem>
         implements ButtonGridItem {
 
-    private static final int TIMER_DELAY_MILLIS = 500;
+    static final int TIMER_DELAY_MILLIS = 500;
 
     private final HandlerRegistration[] decoratorHandlers = new HandlerRegistration[2];
     private final ButtonItemImpl button;
@@ -63,10 +63,12 @@ public class ButtonGridItemImpl
                 @Override
                 public void run() {
                     hideGrid(() -> {
-                        immediateUnFocus();
-                        showArrow();
-                        batch();
-                    });
+                             },
+                             () -> {
+                                 immediateUnFocus();
+                                 showArrow();
+                                 batch();
+                             });
                 }
             };
 
@@ -80,6 +82,14 @@ public class ButtonGridItemImpl
     protected ButtonGridItemImpl(final Group group) {
         this.button = new ButtonItemImpl(group);
         this.toolbox = new ToolboxImpl(new DecoratedButtonBoundingBoxSupplier());
+        this.arrow = buildArrow();
+        init();
+    }
+
+    ButtonGridItemImpl(final ButtonItemImpl buttonItem,
+                       final ToolboxImpl toolbox) {
+        this.button = buttonItem;
+        this.toolbox = toolbox;
         this.arrow = buildArrow();
         init();
     }
@@ -132,10 +142,12 @@ public class ButtonGridItemImpl
     @Override
     public ButtonGridItemImpl hide(final Command before,
                                    final Command after) {
-        hideGrid(() -> {
-            button.hide();
-            batch();
-        });
+        hideGrid(before,
+                 () -> {
+                     button.hide();
+                     after.execute();
+                     batch();
+                 });
         return this;
     }
 
@@ -147,14 +159,15 @@ public class ButtonGridItemImpl
 
     @Override
     public ButtonGridItemImpl hideGrid() {
-        hideGrid(() -> {
-        });
-        return this;
+        return hideGrid(() -> {
+                        },
+                        () -> {
+                        });
     }
 
-    private ButtonGridItemImpl hideGrid(final Command after) {
-        toolbox.hide(() -> {
-                     },
+    private ButtonGridItemImpl hideGrid(final Command before,
+                                        final Command after) {
+        toolbox.hide(before,
                      after);
         return this;
     }
@@ -221,13 +234,17 @@ public class ButtonGridItemImpl
     }
 
     public ButtonGridItemImpl useShowExecutor(final BiConsumer<Group, Command> executor) {
-        toolbox.getWrapped().getWrapped().useShowExecutor(executor);
+        toolbox.getWrapped().useShowExecutor(executor);
         return this;
     }
 
     public ButtonGridItemImpl useHideExecutor(final BiConsumer<Group, Command> executor) {
-        toolbox.getWrapped().getWrapped().useHideExecutor(executor);
+        toolbox.getWrapped().useHideExecutor(executor);
         return this;
+    }
+
+    MultiPath getArrow() {
+        return arrow;
     }
 
     private void init() {
@@ -267,7 +284,7 @@ public class ButtonGridItemImpl
                 .registrations();
     }
 
-    private ButtonGridItemImpl focus() {
+    ButtonGridItemImpl focus() {
         stopTimer();
         button.getWrapped().focus();
         hideArrow();
@@ -275,14 +292,14 @@ public class ButtonGridItemImpl
         return this;
     }
 
-    private ButtonGridItemImpl immediateUnFocus() {
+    ButtonGridItemImpl immediateUnFocus() {
         button.getWrapped().setUnFocusDelay(0);
         button.getWrapped().unFocus();
         button.getWrapped().setUnFocusDelay(TIMER_DELAY_MILLIS);
         return this;
     }
 
-    private ButtonGridItemImpl unFocus() {
+    ButtonGridItemImpl unFocus() {
         scheduleTimer();
         return this;
     }

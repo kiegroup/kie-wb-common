@@ -46,21 +46,27 @@ public class ToolboxImpl
     private Point2D offset;
     private Command refreshCallback;
 
+    private final Command refreshExecutor = new Command() {
+        @Override
+        public void execute() {
+            if (null != items.getPrimitive().getLayer()) {
+                items.getPrimitive().getLayer().batch();
+            }
+        }
+    };
+
     public ToolboxImpl(final Supplier<BoundingBox> shapeBoundingBoxSupplier) {
+        this(shapeBoundingBoxSupplier,
+             new ItemGridImpl());
+    }
+
+    ToolboxImpl(final Supplier<BoundingBox> shapeBoundingBoxSupplier,
+                final ItemGridImpl items) {
         this.shapeBoundingBoxSupplier = shapeBoundingBoxSupplier;
+        this.items = items.onRefresh(refreshCallback);
         this.at = Direction.NORTH_EAST;
         this.offset = new Point2D(0d,
                                   0d);
-        this.refreshCallback = new Command() {
-            @Override
-            public void execute() {
-                if (null != items.getPrimitive().getLayer()) {
-                    items.getPrimitive().getLayer().batch();
-                }
-            }
-        };
-        this.items = new ItemGridImpl()
-                .onRefresh(refreshCallback);
     }
 
     @Override
@@ -157,11 +163,10 @@ public class ToolboxImpl
 
     @Override
     public void destroy() {
-        items.destroy();
+        super.destroy();
         at = null;
         refreshCallback = null;
         this.shapeBoundingBoxSupplier = null;
-        super.destroy();
     }
 
     @Override

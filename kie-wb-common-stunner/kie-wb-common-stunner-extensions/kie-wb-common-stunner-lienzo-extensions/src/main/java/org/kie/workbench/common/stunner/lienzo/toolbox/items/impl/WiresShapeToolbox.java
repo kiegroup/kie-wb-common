@@ -49,17 +49,26 @@ import org.uberfire.mvp.Command;
 public class WiresShapeToolbox
         implements LayerToolbox {
 
-    private final HandlerRegistrationManager registrations = new HandlerRegistrationManager();
+    private final HandlerRegistrationManager registrations;
     private final ToolboxImpl toolbox;
     private final Point2D toolboxOffset;
     private final Point2D gridOffset;
 
     public WiresShapeToolbox(final WiresShape shape) {
+        this(shape,
+             new ToolboxImpl(() -> shape.getPath().getBoundingBox()),
+             new HandlerRegistrationManager());
+    }
+
+    WiresShapeToolbox(final WiresShape shape,
+                      final ToolboxImpl toolbox,
+                      final HandlerRegistrationManager registrations) {
         this.gridOffset = new Point2D(0,
                                       0);
         this.toolboxOffset = new Point2D(0,
                                          0);
-        this.toolbox = new ToolboxImpl(() -> shape.getPath().getBoundingBox());
+        this.toolbox = toolbox;
+        this.registrations = registrations;
         initHandlers(shape);
         shapeOffset(shape);
         hide();
@@ -197,13 +206,13 @@ public class WiresShapeToolbox
         );
     }
 
-    private WiresShapeToolbox reposition() {
+    WiresShapeToolbox reposition() {
         toolbox.offset(toolboxOffset.offset(gridOffset));
         return this;
     }
 
-    private void resize(final double width,
-                        final double height) {
+    void resize(final double width,
+                final double height) {
         toolbox
                 .setGridSize(width,
                              height)
