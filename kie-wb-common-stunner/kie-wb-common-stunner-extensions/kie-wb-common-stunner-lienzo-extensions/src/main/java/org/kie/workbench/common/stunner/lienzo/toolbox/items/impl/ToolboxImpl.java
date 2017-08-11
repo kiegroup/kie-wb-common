@@ -44,7 +44,6 @@ public class ToolboxImpl
     private Supplier<BoundingBox> shapeBoundingBoxSupplier;
     private Direction at;
     private Point2D offset;
-    private Command refreshCallback;
 
     private final Command refreshExecutor = new Command() {
         @Override
@@ -63,7 +62,7 @@ public class ToolboxImpl
     ToolboxImpl(final Supplier<BoundingBox> shapeBoundingBoxSupplier,
                 final ItemGridImpl items) {
         this.shapeBoundingBoxSupplier = shapeBoundingBoxSupplier;
-        this.items = items.onRefresh(refreshCallback);
+        this.items = items.onRefresh(refreshExecutor);
         this.at = Direction.NORTH_EAST;
         this.offset = new Point2D(0d,
                                   0d);
@@ -165,7 +164,6 @@ public class ToolboxImpl
     public void destroy() {
         super.destroy();
         at = null;
-        refreshCallback = null;
         this.shapeBoundingBoxSupplier = null;
     }
 
@@ -199,8 +197,6 @@ public class ToolboxImpl
     }
 
     private void fireRefresh() {
-        if (null != refreshCallback) {
-            refreshCallback.execute();
-        }
+        refreshExecutor.execute();
     }
 }
