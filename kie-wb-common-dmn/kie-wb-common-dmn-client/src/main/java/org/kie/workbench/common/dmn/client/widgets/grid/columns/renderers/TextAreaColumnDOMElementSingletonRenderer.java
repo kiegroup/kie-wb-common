@@ -52,13 +52,7 @@ public class TextAreaColumnDOMElementSingletonRenderer extends BaseGridColumnSin
                 .setX(5)
                 .setY(5)
                 .setTextAlign(TextAlign.LEFT);
-        t.setWrapper(new TextLineBreakWrap(t::getText,
-                                           t::getFontSize,
-                                           t::getFontStyle,
-                                           t::getFontFamily,
-                                           t::getTextUnit,
-                                           t::getTextBaseLine,
-                                           t::getTextAlign));
+        t.setWrapper(new TextLineBreakWrap(t));
         g.add(t);
         return g;
     }
