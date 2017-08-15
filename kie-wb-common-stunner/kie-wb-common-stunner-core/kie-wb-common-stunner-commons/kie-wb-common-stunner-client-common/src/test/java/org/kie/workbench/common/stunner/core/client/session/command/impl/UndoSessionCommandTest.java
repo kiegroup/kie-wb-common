@@ -19,74 +19,44 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
-import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
-import org.kie.workbench.common.stunner.core.client.session.ClientSession;
-import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UndoSessionCommandTest {
+public class UndoSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     @Mock
-    private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-
-    @Mock
-    private CommandRegistry commandRegistry;
-
-    @Mock
-    private KeyboardControl<AbstractCanvas, ClientSession> keyboardControl;
-
-    @Mock
-    private ClientFullSession session;
-
-    @Captor
-    private ArgumentCaptor<KeyboardControl.KeyShortcutCallback> keyShortcutCallbackCaptor;
-
-    private UndoSessionCommand command;
+    private CommandRegistry<Command<AbstractCanvasHandler, CanvasViolation>> commandRegistry;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setup() {
-        this.command = spy(new UndoSessionCommand(sessionCommandManager));
-        when(session.getKeyboardControl()).thenReturn(keyboardControl);
+        super.setup();
         when(sessionCommandManager.getRegistry()).thenReturn(commandRegistry);
         when(commandRegistry.getCommandHistory()).thenReturn(Collections.emptyList());
     }
 
-    @Test
-    public void checkBindAttachesKeyHandler() {
-        command.bind(session);
-
-        verify(keyboardControl,
-               times(1)).addKeyShortcutCallback(any(KeyboardControl.KeyShortcutCallback.class));
+    @Override
+    protected AbstractClientSessionCommand<ClientFullSession> getCommand() {
+        return new UndoSessionCommand(sessionCommandManager);
     }
 
-    @Test
-    @SuppressWarnings("unchecked")
-    public void checkRespondsToCtrlZKey() {
-        command.bind(session);
+    @Override
+    protected KeyboardEvent.Key[] getExpectedKeys() {
+        return new KeyboardEvent.Key[]{KeyboardEvent.Key.CONTROL, KeyboardEvent.Key.Z};
+    }
 
-        verify(keyboardControl,
-               times(1)).addKeyShortcutCallback(keyShortcutCallbackCaptor.capture());
-
-        final KeyboardControl.KeyShortcutCallback keyShortcutCallback = keyShortcutCallbackCaptor.getValue();
-        keyShortcutCallback.onKeyShortcut(KeyboardEvent.Key.CONTROL,
-                                          KeyboardEvent.Key.Z);
-
-        verify(command,
-               times(1)).execute(any(ClientSessionCommand.Callback.class));
+    @Override
+    protected KeyboardEvent.Key[] getUnexpectedKeys() {
+        return new KeyboardEvent.Key[]{KeyboardEvent.Key.ESC};
     }
 }
