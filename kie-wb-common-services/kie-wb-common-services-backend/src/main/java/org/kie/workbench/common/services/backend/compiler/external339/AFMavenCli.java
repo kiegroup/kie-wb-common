@@ -121,6 +121,9 @@ public class AFMavenCli {
 
     private static final String EXTENSIONS_FILENAME = ".mvn/extensions.xml";
 
+    public static final File DEFAULT_USER_SETTINGS_FILE = AFSettingsXmlConfigurationProcessor.DEFAULT_USER_SETTINGS_FILE;
+    public static final File DEFAULT_GLOBAL_SETTINGS_FILE = AFSettingsXmlConfigurationProcessor.DEFAULT_GLOBAL_SETTINGS_FILE;
+
     private LoggerManager plexusLoggerManager;
 
     private ILoggerFactory slf4jLoggerFactory;
@@ -394,7 +397,7 @@ public class AFMavenCli {
         if (cliRequest.getCommandLine().hasOption(CLIManager.LOG_FILE)) {
             File logFile = new File(cliRequest.getCommandLine().getOptionValue(CLIManager.LOG_FILE).trim());
             logFile = resolveFile(logFile,
-                                  cliRequest.getWorkingDirectory()); //@MAX
+                                  cliRequest.getWorkingDirectory());
 
             try {
                 PrintStream ps = new PrintStream(new FileOutputStream(logFile));
@@ -534,6 +537,12 @@ public class AFMavenCli {
         executionRequestPopulator = container.lookup(MavenExecutionRequestPopulator.class);
 
         modelProcessor = createModelProcessor(container);
+
+        /*container.addComponent(slf4jLogger, Logger.class, "logger");*/
+       /*container.addComponent(new AFSettingsXmlConfigurationProcessor(),
+                               AFConfigurationProcessor.class,
+                               "settings");*/
+
 
         configurationProcessors = container.lookupMap(AFConfigurationProcessor.class);
 
@@ -745,7 +754,7 @@ public class AFMavenCli {
                 slf4jLogger.error("For more information about the errors and possible solutions"
                                           + ", please read the following articles:");
 
-                for (Map.Entry<String, String> entry : references.entrySet()) {
+                for (Entry<String, String> entry : references.entrySet()) {
                     slf4jLogger.error(entry.getValue() + " " + entry.getKey());
                 }
             }
@@ -825,12 +834,12 @@ public class AFMavenCli {
 
         if (userSuppliedConfigurationProcessorCount == 0) {
 
-            configurationProcessors.get(AFConfigurationProcessor.HINT).process(cliRequest);
+            configurationProcessors.get(AFSettingsXmlConfigurationProcessor.HINT).process(cliRequest);
         } else if (userSuppliedConfigurationProcessorCount == 1) {
 
             for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                if (!hint.equals(AFSettingsXmlConfigurationProcessor.HINT)) {
                     AFConfigurationProcessor configurationProcessor = entry.getValue();
                     configurationProcessor.process(cliRequest);
                 }
@@ -841,7 +850,7 @@ public class AFMavenCli {
                                   userSuppliedConfigurationProcessorCount));
             for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                if (!hint.equals(AFSettingsXmlConfigurationProcessor.HINT)) {
                     AFConfigurationProcessor configurationProcessor = entry.getValue();
                     sb.append(String.format("%s%n",
                                             configurationProcessor.getClass().getName()));
