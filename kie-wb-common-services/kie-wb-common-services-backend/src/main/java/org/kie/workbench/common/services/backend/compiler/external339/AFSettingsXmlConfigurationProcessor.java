@@ -1,9 +1,23 @@
+/*
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.kie.workbench.common.services.backend.compiler.external339;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
-
 import javax.inject.Named;
 
 import org.apache.commons.cli.CommandLine;
@@ -11,7 +25,6 @@ import org.apache.maven.artifact.InvalidRepositoryException;
 import org.apache.maven.bridge.MavenRepositorySystem;
 import org.apache.maven.building.Source;
 import org.apache.maven.cli.CLIManager;
-import org.apache.maven.cli.configuration.ConfigurationProcessor;
 import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenExecutionRequestPopulationException;
 import org.apache.maven.settings.Mirror;
@@ -30,6 +43,11 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.slf4j.Logger;
 
+/**
+ * Used to open the API of Maven embedder
+ * original version: https://maven.apache.org/ref/3.3.9/maven-embedder/xref/org/apache/maven/cli/configuration/SettingsXmlConfigurationProcessor.html
+ * IMPORTANT: Preserve the structure for an easy update when the maven version will be updated
+ */
 @Named
 @Component(role = AFConfigurationProcessor.class, hint = AFSettingsXmlConfigurationProcessor.HINT)
 public class AFSettingsXmlConfigurationProcessor implements AFConfigurationProcessor {
@@ -38,11 +56,16 @@ public class AFSettingsXmlConfigurationProcessor implements AFConfigurationProce
 
     public static final String USER_HOME = System.getProperty("user.home");
 
-    public static final File USER_MAVEN_CONFIGURATION_HOME = new File(USER_HOME,".m2");
+    public static final File USER_MAVEN_CONFIGURATION_HOME = new File(USER_HOME,
+                                                                      ".m2");
 
-    public static final File DEFAULT_USER_SETTINGS_FILE = new File(USER_MAVEN_CONFIGURATION_HOME,"settings.xml");
+    public static final File DEFAULT_USER_SETTINGS_FILE = new File(USER_MAVEN_CONFIGURATION_HOME,
+                                                                   "settings.xml");
 
-    public static final File DEFAULT_GLOBAL_SETTINGS_FILE = new File(System.getProperty("maven.home",System.getProperty("user.dir","")),"conf/settings.xml");
+    public static final File DEFAULT_GLOBAL_SETTINGS_FILE = new File(System.getProperty("maven.home",
+                                                                                        System.getProperty("user.dir",
+                                                                                                           "")),
+                                                                     "conf/settings.xml");
 
     @Requirement
     private Logger logger;

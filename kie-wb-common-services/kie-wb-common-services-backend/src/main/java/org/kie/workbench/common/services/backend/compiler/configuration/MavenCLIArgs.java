@@ -45,4 +45,6 @@ public class MavenCLIArgs {
     public static final String LOG = "-l";
 
     public static final String SKIP_TEST = "-DskipTests";
+
+    public static final String SETTINGS_XML = "-s";
 }

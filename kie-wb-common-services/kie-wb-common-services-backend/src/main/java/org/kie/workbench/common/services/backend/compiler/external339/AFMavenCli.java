@@ -116,14 +116,11 @@ public class AFMavenCli {
     public static final String userHome = System.getProperty("user.home");
     public static final Path userMavenConfigurationHome = Paths.get(userHome,
                                                                     ".m2");
-    private static final Logger logger = LoggerFactory.getLogger(AFMavenCli.class);
-    private static final String EXT_CLASS_PATH = "maven.ext.class.path";
-
-    private static final String EXTENSIONS_FILENAME = ".mvn/extensions.xml";
-
     public static final File DEFAULT_USER_SETTINGS_FILE = AFSettingsXmlConfigurationProcessor.DEFAULT_USER_SETTINGS_FILE;
     public static final File DEFAULT_GLOBAL_SETTINGS_FILE = AFSettingsXmlConfigurationProcessor.DEFAULT_GLOBAL_SETTINGS_FILE;
-
+    private static final Logger logger = LoggerFactory.getLogger(AFMavenCli.class);
+    private static final String EXT_CLASS_PATH = "maven.ext.class.path";
+    private static final String EXTENSIONS_FILENAME = ".mvn/extensions.xml";
     private LoggerManager plexusLoggerManager;
 
     private ILoggerFactory slf4jLoggerFactory;
@@ -542,7 +539,6 @@ public class AFMavenCli {
        /*container.addComponent(new AFSettingsXmlConfigurationProcessor(),
                                AFConfigurationProcessor.class,
                                "settings");*/
-
 
         configurationProcessors = container.lookupMap(AFConfigurationProcessor.class);
 
