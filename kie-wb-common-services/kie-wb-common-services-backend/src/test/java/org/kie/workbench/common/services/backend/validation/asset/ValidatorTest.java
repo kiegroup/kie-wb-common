@@ -141,8 +141,7 @@ public class ValidatorTest {
         List<ValidationMessage> errors = validator.validate( path,
                                                              Resources.toString( urlToValidate,
                                                                                  Charsets.UTF_8 ) );
-
-        assertTrue( errors.isEmpty() );
+        assertFalse( errors.isEmpty() );
     }
 
     @Test
