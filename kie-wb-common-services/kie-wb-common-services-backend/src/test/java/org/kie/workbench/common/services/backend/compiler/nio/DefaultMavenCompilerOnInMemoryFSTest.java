@@ -428,6 +428,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         NIOMavenCompiler compiler = NIOMavenCompilerFactory.getCompiler(
                 Decorator.JGIT_BEFORE_AND_LOG_AFTER);
 
@@ -490,7 +491,7 @@ public class DefaultMavenCompilerOnInMemoryFSTest {
                                                                            cloned);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);

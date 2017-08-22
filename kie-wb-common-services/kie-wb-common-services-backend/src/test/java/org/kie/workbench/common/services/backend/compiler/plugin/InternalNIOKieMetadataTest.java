@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -76,6 +77,7 @@ public class InternalNIOKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         //compile and install
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
@@ -94,7 +96,7 @@ public class InternalNIOKieMetadataTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(tmp);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenCLIArgs.INSTALL},
+                                                                                     new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
@@ -141,7 +143,7 @@ public class InternalNIOKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         try {
             java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
             java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
@@ -156,7 +158,7 @@ public class InternalNIOKieMetadataTest {
 
             InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                          info,
-                                                                                         new String[]{MavenCLIArgs.INSTALL},
+                                                                                         new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                                          new HashMap<>(),
                                                                                          Boolean.TRUE);
             KieCompilationResponse res = compiler.compileSync(req);
@@ -200,6 +202,7 @@ public class InternalNIOKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         java.nio.file.Path tmpRoot = java.nio.file.Files.createTempDirectory("repo");
         java.nio.file.Path tmp = java.nio.file.Files.createDirectories(java.nio.file.Paths.get(tmpRoot.toString(),
                                                                                                "dummy"));
@@ -211,7 +214,7 @@ public class InternalNIOKieMetadataTest {
         InternalNIOWorkspaceCompilationInfo info = new InternalNIOWorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenCLIArgs.INSTALL},
+                                                                                     new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                                      new HashMap<>(),
                                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);

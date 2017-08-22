@@ -829,12 +829,12 @@ public class AFMavenCli {
 
         if (userSuppliedConfigurationProcessorCount == 0) {
 
-            configurationProcessors.get(AFConfigurationProcessor.HINT).process(cliRequest);
+            configurationProcessors.get(AFSettingsXmlConfigurationProcessor.HINT).process(cliRequest);
         } else if (userSuppliedConfigurationProcessorCount == 1) {
 
             for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                if (!hint.equals(AFSettingsXmlConfigurationProcessor.HINT)) {
                     AFConfigurationProcessor configurationProcessor = entry.getValue();
                     configurationProcessor.process(cliRequest);
                 }
@@ -845,7 +845,7 @@ public class AFMavenCli {
                                   userSuppliedConfigurationProcessorCount));
             for (Entry<String, AFConfigurationProcessor> entry : configurationProcessors.entrySet()) {
                 String hint = entry.getKey();
-                if (!hint.equals(AFConfigurationProcessor.HINT)) {
+                if (!hint.equals(AFSettingsXmlConfigurationProcessor.HINT)) {
                     AFConfigurationProcessor configurationProcessor = entry.getValue();
                     sb.append(String.format("%s%n",
                                             configurationProcessor.getClass().getName()));
