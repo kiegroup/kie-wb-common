@@ -535,11 +535,6 @@ public class AFMavenCli {
 
         modelProcessor = createModelProcessor(container);
 
-        /*container.addComponent(slf4jLogger, Logger.class, "logger");*/
-       /*container.addComponent(new AFSettingsXmlConfigurationProcessor(),
-                               AFConfigurationProcessor.class,
-                               "settings");*/
-
         configurationProcessors = container.lookupMap(AFConfigurationProcessor.class);
 
         toolchainsBuilder = container.lookup(ToolchainsBuilder.class);

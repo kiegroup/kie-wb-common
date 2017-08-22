@@ -46,5 +46,5 @@ public class MavenCLIArgs {
 
     public static final String SKIP_TEST = "-DskipTests";
 
-    public static final String SETTINGS_XML = "-s";
+    public static final String ALTERNATE_USER_SETTINGS = "-s";
 }
