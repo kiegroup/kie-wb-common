@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,17 +76,21 @@ public class InternalNIOKieAfterDecorator implements InternalNIOKieCompilerDecor
 
             AFClassLoaderProvider provider = new InternalNIOClassLoaderProviderImpl();
             Optional<List<URI>> optionalDeps = provider.getURISFromAllDependencies(req.getInfo().getPrjPath().toAbsolutePath().toString());
+            List<URI> uris = Collections.emptyList();
+            if(optionalDeps.isPresent()){
+                uris = optionalDeps.get();
+            }
             if (req.getKieCliRequest().isLogRequested()) {
                 return new DefaultKieCompilationResponse(Boolean.TRUE,
                                                          (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
                                                          (KieModule) kieModuleTuple.getOptionalObject().get(),
                                                          res.getMavenOutput().get(),
-                                                         optionalDeps.get());
+                                                         uris);
             } else {
                 return new DefaultKieCompilationResponse(Boolean.TRUE,
                                                          (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
                                                          (KieModule) kieModuleTuple.getOptionalObject().get(),
-                                                         optionalDeps.get());
+                                                         uris);
             }
         } else {
             StringBuilder sb = new StringBuilder();
