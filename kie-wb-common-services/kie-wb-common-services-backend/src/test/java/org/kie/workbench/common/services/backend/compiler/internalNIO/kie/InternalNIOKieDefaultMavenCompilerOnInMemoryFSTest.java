@@ -434,6 +434,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         InternalNIOKieMavenCompiler compiler = InternalNIOKieMavenCompilerFactory.getCompiler(
                 KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
 
@@ -501,7 +502,7 @@ public class InternalNIOKieDefaultMavenCompilerOnInMemoryFSTest {
                                                                                            cloned);
         InternalNIOCompilationRequest req = new InternalNIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                                      info,
-                                                                                     new String[]{MavenCLIArgs.COMPILE},
+                                                                                     new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                                      new HashMap<>(),
                                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

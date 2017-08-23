@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio.kie;
 
+import java.io.File;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -140,6 +141,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
@@ -151,7 +153,7 @@ public class DefaultMavenKieIncrementalCompilerTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenCLIArgs.COMPILE},
+                                                                     new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                      new HashMap<>(),
                                                                      Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

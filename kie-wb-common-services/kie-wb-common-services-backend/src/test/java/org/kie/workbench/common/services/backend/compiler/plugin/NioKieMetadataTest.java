@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,6 +82,7 @@ public class NioKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-all-resources"),
@@ -92,7 +94,7 @@ public class NioKieMetadataTest {
         NIOWorkspaceCompilationInfo info = new NIOWorkspaceCompilationInfo(tmp);
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenCLIArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
@@ -137,6 +139,7 @@ public class NioKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
@@ -149,7 +152,7 @@ public class NioKieMetadataTest {
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenCLIArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
@@ -186,6 +189,7 @@ public class NioKieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
                                                      "dummy"));
         TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources"),
@@ -198,7 +202,7 @@ public class NioKieMetadataTest {
 
         NIOCompilationRequest req = new NIODefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                      info,
-                                                                     new String[]{MavenCLIArgs.INSTALL},
+                                                                     new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                      new HashMap<>(),
                                                                      Boolean.FALSE);
         KieCompilationResponse res = compiler.compileSync(req);
