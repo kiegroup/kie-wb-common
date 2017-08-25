@@ -288,6 +288,6 @@ public class BpmnFileIndexerTest extends BaseIndexingTest<BPMNDefinitionSetResou
 
     @Override
     protected String getRepositoryName() {
-        return this.getClass().getSimpleName();
+        return testName.getMethodName();
     }
 }
