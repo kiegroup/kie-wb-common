@@ -151,6 +151,9 @@ public class FormEditorHelperTest {
 
         formEditorService.loadContent(null);
         formEditorHelper.initHelper(content);
+
+        assertEquals(formEditorHelper.getEditorFieldTypes().size(),
+                     formEditorHelper.getBaseFieldsDraggables().size());
     }
 
     @Test
