@@ -16,15 +16,16 @@
 
 package org.kie.workbench.common.forms.editor.client.editor.properties.binding;
 
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.jboss.errai.common.client.api.IsElement;
-import org.kie.workbench.common.forms.editor.client.editor.properties.FieldPropertiesRendererHelper;
-import org.uberfire.mvp.Command;
+import org.kie.workbench.common.forms.model.FieldDefinition;
 
 public interface DataBindingEditor extends IsElement {
 
-    void init(FieldPropertiesRendererHelper helper,
-              String binding,
-              Command onChangeCallback);
-
-    String getBinding();
+    void init(FieldDefinition fieldDefinition,
+              Supplier<Collection<String>> bindingsSupplier,
+              Consumer<String> bindingChangeConsumer);
 }

@@ -16,15 +16,18 @@
 
 package org.kie.workbench.common.forms.editor.client.editor.properties.binding.statik;
 
+import java.util.Collection;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.HTMLElement;
-import org.kie.workbench.common.forms.editor.client.editor.properties.FieldPropertiesRendererHelper;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DataBindingEditor;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.StaticFormModel;
-import org.uberfire.mvp.Command;
+import org.kie.workbench.common.forms.model.FieldDefinition;
+import org.uberfire.commons.validation.PortablePreconditions;
 
 @StaticFormModel
 @Dependent
@@ -35,7 +38,7 @@ public class StaticDataBinderEditor implements DataBindingEditor,
 
     private boolean hasSelectedValue;
 
-    protected Command onChangeCallback;
+    private Consumer<String> bindingChangeConsumer;
 
     @Inject
     public StaticDataBinderEditor(StaticDataBinderEditorView view) {
@@ -48,20 +51,27 @@ public class StaticDataBinderEditor implements DataBindingEditor,
     }
 
     @Override
-    public void init(FieldPropertiesRendererHelper helper,
-                     String binding,
-                     Command onChangeCallback) {
+    public void init(FieldDefinition fieldDefinition,
+                     Supplier<Collection<String>> bindingsSupplier,
+                     Consumer<String> bindingChangeConsumer) {
+
+        PortablePreconditions.checkNotNull("fieldDefinition",
+                                           fieldDefinition);
+        PortablePreconditions.checkNotNull("bindingsSupplier",
+                                           bindingsSupplier);
+        PortablePreconditions.checkNotNull("bindingChangeConsumer",
+                                           bindingChangeConsumer);
+
+        this.bindingChangeConsumer = bindingChangeConsumer;
 
         view.clear();
 
-        this.onChangeCallback = onChangeCallback;
-
         hasSelectedValue = false;
 
-        helper.getAvailableModelFields().forEach(property -> {
+        bindingsSupplier.get().forEach(property -> {
             if (property != null) {
 
-                boolean isSelected = property.equals(binding);
+                boolean isSelected = property.equals(fieldDefinition.getBinding());
 
                 view.addModelField(property,
                                    isSelected);
@@ -77,15 +87,8 @@ public class StaticDataBinderEditor implements DataBindingEditor,
     }
 
     @Override
-    public String getBinding() {
-        return view.getFieldBinding();
-    }
-
-    @Override
     public void onBindingChange() {
-        if (onChangeCallback != null) {
-            onChangeCallback.execute();
-        }
+        bindingChangeConsumer.accept(view.getFieldBinding());
     }
 
     @Override

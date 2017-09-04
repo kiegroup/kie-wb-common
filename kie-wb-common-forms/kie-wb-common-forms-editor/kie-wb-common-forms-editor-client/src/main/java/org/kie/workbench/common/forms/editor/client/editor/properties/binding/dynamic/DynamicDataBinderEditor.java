@@ -16,15 +16,19 @@
 
 package org.kie.workbench.common.forms.editor.client.editor.properties.binding.dynamic;
 
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.HTMLElement;
-import org.kie.workbench.common.forms.editor.client.editor.properties.FieldPropertiesRendererHelper;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DataBindingEditor;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DynamicFormModel;
-import org.uberfire.mvp.Command;
+import org.kie.workbench.common.forms.model.FieldDefinition;
+import org.uberfire.commons.validation.PortablePreconditions;
 
 @DynamicFormModel
 @Dependent
@@ -33,7 +37,7 @@ public class DynamicDataBinderEditor implements DataBindingEditor,
 
     private DynamicDataBinderEditorView view;
 
-    protected Command onChangeCallback;
+    private Consumer<String> bindingChangeConsumer;
 
     @Inject
     public DynamicDataBinderEditor(DynamicDataBinderEditorView view) {
@@ -46,31 +50,27 @@ public class DynamicDataBinderEditor implements DataBindingEditor,
     }
 
     @Override
-    public void init(FieldPropertiesRendererHelper helper,
-                     String binding,
-                     Command onChangeCallback) {
+    public void init(FieldDefinition fieldDefinition,
+                     Supplier<Collection<String>> bindingsSupplier,
+                     Consumer<String> bindingChangeConsumer) {
+
+        PortablePreconditions.checkNotNull("fieldDefinition",
+                                           fieldDefinition);
+        PortablePreconditions.checkNotNull("bindingsSupplier",
+                                           bindingsSupplier);
+        PortablePreconditions.checkNotNull("bindingChangeConsumer",
+                                           bindingChangeConsumer);
+
+        this.bindingChangeConsumer = bindingChangeConsumer;
 
         view.clear();
 
-        this.onChangeCallback = onChangeCallback;
-
-        if (binding == null) {
-            binding = "";
-        }
-
-        view.setFieldBinding(binding);
-    }
-
-    @Override
-    public String getBinding() {
-        return view.getFieldBinding();
+        view.setFieldBinding(Optional.ofNullable(fieldDefinition.getBinding()).orElse(""));
     }
 
     @Override
     public void onBindingChange() {
-        if (onChangeCallback != null) {
-            onChangeCallback.execute();
-        }
+        bindingChangeConsumer.accept(view.getFieldBinding());
     }
 
     @Override
