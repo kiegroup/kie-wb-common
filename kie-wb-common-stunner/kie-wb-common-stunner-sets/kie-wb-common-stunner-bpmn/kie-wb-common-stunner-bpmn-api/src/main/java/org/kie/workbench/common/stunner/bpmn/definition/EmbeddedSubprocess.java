@@ -151,14 +151,15 @@ public class EmbeddedSubprocess extends BaseSubprocess implements DataIOModel {
                               final @MapsTo("isAsync") IsAsync isAsync,
                               final @MapsTo("processData") ProcessData processData) {
         super(general,
-              backgroundSet,
-              fontSet,
-              dimensionsSet,
-              simulationSet);
+                backgroundSet,
+                fontSet,
+                dimensionsSet,
+                simulationSet);
         this.onEntryAction = onEntryAction;
         this.onExitAction = onExitAction;
         this.scriptLanguage = scriptLanguage;
-        this.isAsync = isAsync;this.processData = processData;
+        this.isAsync = isAsync;
+        this.processData = processData;
     }
 
     @Override
