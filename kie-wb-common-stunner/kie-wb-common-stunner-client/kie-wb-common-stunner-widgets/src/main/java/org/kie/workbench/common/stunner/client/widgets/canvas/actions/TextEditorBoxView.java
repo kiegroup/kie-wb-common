@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 
+import com.google.gwt.user.client.Event;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.actions.TextEditorBox;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -24,10 +25,9 @@ import org.uberfire.client.mvp.UberElement;
 public interface TextEditorBoxView extends UberElement<TextEditorBoxView.Presenter> {
 
     interface Presenter extends TextEditorBox<AbstractCanvasHandler, Element> {
-
         void onSave();
 
-        void onKeyPress(int keyCode,
+        void onKeyPress(Event event,
                         String value);
 
         void onClose();

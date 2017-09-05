@@ -42,7 +42,7 @@ public class BPMNGeneralSet implements BPMNPropertySet, BPMNBaseInfo {
     public static final transient String propertySetName = "General";
 
     @Property
-    @FormField
+    @FormField(type = TextAreaFieldType.class)
     private Name name;
 
     @Property

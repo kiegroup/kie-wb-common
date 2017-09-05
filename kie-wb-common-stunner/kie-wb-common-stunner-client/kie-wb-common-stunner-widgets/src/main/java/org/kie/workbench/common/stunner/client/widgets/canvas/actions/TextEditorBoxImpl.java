@@ -20,6 +20,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Event;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.TextPropertyProvider;
@@ -99,9 +100,9 @@ public class TextEditorBoxImpl implements TextEditorBoxView.Presenter {
     }
 
     @Override
-    public void onKeyPress(final int keyCode,
+    public void onKeyPress(final Event event,
                            final String value) {
-        processKey(keyCode,
+        processKey(event,
                    value);
     }
 
@@ -111,11 +112,11 @@ public class TextEditorBoxImpl implements TextEditorBoxView.Presenter {
         fireCloseCallback();
     }
 
-    private void processKey(final int keyCode,
+    private void processKey(final Event event,
                             final String value) {
         this.value = value;
-        // Enter key produces save.
-        if (13 == keyCode) {
+        //Enter key w/o shift/ctrl produces save.
+        if (13 == event.getKeyCode() && !(event.getCtrlKey() || event.getShiftKey())) {
             onSave();
         }
     }

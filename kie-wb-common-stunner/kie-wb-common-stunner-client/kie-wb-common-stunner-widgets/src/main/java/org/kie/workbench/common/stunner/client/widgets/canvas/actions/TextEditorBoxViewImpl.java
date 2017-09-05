@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import javax.inject.Named;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.Event;
 import org.jboss.errai.common.client.dom.HTMLElement;
-import org.jboss.errai.common.client.dom.TextInput;
+import org.jboss.errai.common.client.dom.TextArea;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -39,7 +39,7 @@ public class TextEditorBoxViewImpl implements TextEditorBoxView,
 
     @Inject
     @DataField
-    private TextInput nameBox;
+    private TextArea nameBox;
 
     @Inject
     @Named("i")
@@ -91,11 +91,11 @@ public class TextEditorBoxViewImpl implements TextEditorBoxView,
         if (event.getTypeInt() == Event.ONCHANGE) {
             presenter.onChangeName(nameBox.getValue());
         } else if (event.getTypeInt() == Event.ONKEYPRESS) {
-            presenter.onKeyPress(event.getKeyCode(),
+            presenter.onKeyPress(event,
                                  nameBox.getValue());
         }
     }
-
+    
     @EventHandler("saveButton")
     public void onSave(ClickEvent clickEvent) {
         presenter.onSave();
