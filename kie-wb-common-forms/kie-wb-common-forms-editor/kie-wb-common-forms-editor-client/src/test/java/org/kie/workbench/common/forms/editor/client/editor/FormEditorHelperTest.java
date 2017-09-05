@@ -23,7 +23,7 @@ import java.util.Map;
 
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.apache.deltaspike.core.util.StringUtils;
+import org.assertj.core.api.Assertions;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -48,7 +48,6 @@ import org.kie.workbench.common.forms.model.impl.ModelPropertyImpl;
 import org.kie.workbench.common.forms.model.impl.PortableJavaModel;
 import org.kie.workbench.common.forms.model.impl.TypeInfoImpl;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.editor.commons.client.history.VersionRecordManager;
 import org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent;
@@ -60,11 +59,15 @@ import static org.mockito.Mockito.*;
 @RunWith(GwtMockitoTestRunner.class)
 public class FormEditorHelperTest {
 
+    public static final String DYNAMIC_BINDING = "dynamicBinding";
+
     private List<FieldDefinition> employeeFields;
 
     private List<ModelProperty> modelProperties;
 
     private FieldDefinition nameField;
+
+    private FieldDefinition lastNameField;
 
     private FieldDefinition marriedField;
 
@@ -94,7 +97,6 @@ public class FormEditorHelperTest {
     @Mock
     private FormDefinition formDefinition;
 
-    @Spy
     private TestFieldManager testFieldManager;
 
     private CallerMock<FormEditorService> editorServiceCallerMock;
@@ -108,6 +110,8 @@ public class FormEditorHelperTest {
     }
 
     private void loadContent() {
+
+        testFieldManager = spy(new TestFieldManager());
 
         when(editorFieldLayoutComponents.get()).thenAnswer(invocationOnMock -> {
             final EditorFieldLayoutComponent mocked = mock(EditorFieldLayoutComponent.class);
@@ -312,27 +316,45 @@ public class FormEditorHelperTest {
     }
 
     @Test
-    public void testSwitchToFieldNull() {
-        testSwitchToField(null);
+    public void testSwitchToNullBinding() {
+        FieldDefinition result = formEditorHelper.switchToField(nameField,
+                                                                null);
+
+        Assertions.assertThat(result.getId()).isNotEqualTo(nameField.getId());
+        Assertions.assertThat(result.getName()).isNotEqualTo(nameField.getName());
+        Assertions.assertThat(result.getBinding()).isNullOrEmpty();
+        Assertions.assertThat(result.getBinding()).isNotEqualTo(nameField.getBinding());
+        Assertions.assertThat(result.getStandaloneClassName()).isEqualTo(nameField.getStandaloneClassName());
     }
 
     @Test
-    public void testSwitchToFieldNotNull() {
-        testSwitchToField(nameField.getBinding());
+    public void testSwitchToFieldBinding() {
+        testSwitchToField(nameField,
+                          lastNameField);
+        testSwitchToField(nameField,
+                          marriedField);
     }
 
-    public void testSwitchToField(String fieldCode) {
-        when(testFieldManager.getDefinitionByFieldTypeName(anyString()))
-                .thenReturn(nameField);
-        formEditorHelper.addAvailableFields(employeeFields);
-        FieldDefinition fieldDefinition = formEditorHelper.switchToField(nameField,
-                                                                         fieldCode);
-        String expectedFieldName = (StringUtils.isEmpty(fieldCode) ?
-                formEditorHelper.generateUnboundFieldName(nameField) :
-                nameField.getName());
+    @Test
+    public void testSwitchToDynamicBinding() {
+        FieldDefinition result = formEditorHelper.switchToField(nameField,
+                                                                DYNAMIC_BINDING);
 
-        assertEquals(fieldDefinition.getName(),
-                     expectedFieldName);
+        Assertions.assertThat(result.getId()).isNotEqualTo(nameField.getId());
+        Assertions.assertThat(result.getName()).isEqualTo(DYNAMIC_BINDING);
+        Assertions.assertThat(result.getBinding()).isEqualTo(DYNAMIC_BINDING);
+        Assertions.assertThat(result.getStandaloneClassName()).isEqualTo(nameField.getStandaloneClassName());
+    }
+
+    protected void testSwitchToField(FieldDefinition originalField,
+                                     FieldDefinition expectedField) {
+        FieldDefinition result = formEditorHelper.switchToField(originalField,
+                                                                expectedField.getBinding());
+
+        Assertions.assertThat(result.getId()).isEqualTo(expectedField.getId());
+        Assertions.assertThat(result.getName()).isEqualTo(expectedField.getName());
+        Assertions.assertThat(result.getBinding()).isEqualTo(expectedField.getBinding());
+        Assertions.assertThat(result.getStandaloneClassName()).isEqualTo(expectedField.getStandaloneClassName());
     }
 
     @Test
@@ -368,6 +390,7 @@ public class FormEditorHelperTest {
         lastName.setPlaceHolder("Last Name");
         lastName.setBinding("lastName");
         lastName.setStandaloneClassName(String.class.getName());
+        lastNameField = lastName;
 
         DatePickerFieldDefinition birthday = new DatePickerFieldDefinition();
         birthday.setId("birthday");
