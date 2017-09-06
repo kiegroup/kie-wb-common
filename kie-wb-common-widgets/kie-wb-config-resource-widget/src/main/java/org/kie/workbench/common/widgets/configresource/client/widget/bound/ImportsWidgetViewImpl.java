@@ -17,11 +17,11 @@
 package org.kie.workbench.common.widgets.configresource.client.widget.bound;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -50,6 +50,7 @@ import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
 import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.mvp.ParameterizedCommand;
 
 public class ImportsWidgetViewImpl
         extends Composite
@@ -66,24 +67,47 @@ public class ImportsWidgetViewImpl
     Button addImportButton;
 
     @UiField(provided = true)
-    CellTable<Import> table = new CellTable<Import>();
+    CellTable<Import> table = new CellTable<>();
 
-    @Inject
     private AddImportPopup addImportPopup;
 
-    @Inject
-    private javax.enterprise.event.Event<LockRequiredEvent> lockRequired;
+    private Event<LockRequiredEvent> lockRequired;
 
-    private List<Import> internalFactTypes = new ArrayList<Import>();
-    private List<Import> externalFactTypes = new ArrayList<Import>();
-    private ListDataProvider<Import> dataProvider = new ListDataProvider<Import>();
+    private List<Import> externalFactTypes = new ArrayList<>();
+    private ListDataProvider<Import> dataProvider = new ListDataProvider<>();
+
     private final Command addImportCommand = makeAddImportCommand();
+    private final ParameterizedCommand<Import> removeImportCommand = makeRemoveImportCommand();
 
     private ImportsWidgetView.Presenter presenter;
+
+    private final Comparator<Import> IMPORT_COMPARATOR = (o1, o2) -> {
+        final boolean isO1internal = presenter.isInternalImport(o1);
+        final boolean isO2internal = presenter.isInternalImport(o2);
+        if (isO1internal) {
+            if (isO2internal) {
+                return o1.getType().compareTo(o2.getType());
+            }
+            return -1;
+        }
+        if (isO2internal) {
+            return 1;
+        }
+        return o1.getType().compareTo(o2.getType());
+    };
 
     private boolean isReadOnly = false;
 
     public ImportsWidgetViewImpl() {
+        //CDI proxy
+    }
+
+    @Inject
+    public ImportsWidgetViewImpl(final AddImportPopup addImportPopup,
+                                 final Event<LockRequiredEvent> lockRequired) {
+        this.addImportPopup = addImportPopup;
+        this.lockRequired = lockRequired;
+
         setup();
         initWidget(uiBinder.createAndBindUi(this));
 
@@ -115,7 +139,7 @@ public class ImportsWidgetViewImpl
                                final SafeHtml data,
                                final SafeHtmlBuilder sb) {
                 //Don't render a "Delete" button for "internal" Fact Types
-                if (!presenter.isInternalImport(dataProvider.getList().get(context.getIndex()))) {
+                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
                     super.render(context,
                                  data,
                                  sb);
@@ -129,7 +153,7 @@ public class ImportsWidgetViewImpl
                                        final NativeEvent event,
                                        final ValueUpdater<String> valueUpdater) {
                 //Don't act on cell interactions for "internal" Fact Types
-                if (!presenter.isInternalImport(dataProvider.getList().get(context.getIndex()))) {
+                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
                     super.onBrowserEvent(context,
                                          parent,
                                          value,
@@ -145,7 +169,7 @@ public class ImportsWidgetViewImpl
                                           final NativeEvent event,
                                           final ValueUpdater<String> valueUpdater) {
                 //Don't act on cell interactions for "internal" Fact Types
-                if (!presenter.isInternalImport(dataProvider.getList().get(context.getIndex()))) {
+                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
                     super.onEnterKeyDown(context,
                                          parent,
                                          value,
@@ -160,17 +184,14 @@ public class ImportsWidgetViewImpl
                 return ImportConstants.INSTANCE.remove();
             }
         };
-        deleteImportColumn.setFieldUpdater(new FieldUpdater<Import, String>() {
-            public void update(final int index,
-                               final Import importType,
-                               final String value) {
-                if (isReadOnly) {
-                    return;
-                }
-                if (Window.confirm(ImportConstants.INSTANCE.promptForRemovalOfImport0(importType.getType()))) {
-                    dataProvider.getList().remove(index);
-                    presenter.onRemoveImport(importType);
-                }
+        deleteImportColumn.setFieldUpdater((index,
+                                            importType,
+                                            value) -> {
+            if (isReadOnly) {
+                return;
+            }
+            if (Window.confirm(ImportConstants.INSTANCE.promptForRemovalOfImport0(importType.getType()))) {
+                getRemoveImportCommand().execute(importType);
             }
         });
 
@@ -180,11 +201,7 @@ public class ImportsWidgetViewImpl
                         ImportConstants.INSTANCE.remove());
 
         //Link display
-        dataProvider.addDataDisplay(table);
-    }
-
-    private boolean isActionableRow(final Cell.Context context) {
-        return context.getIndex() >= internalFactTypes.size();
+        getDataProvider().addDataDisplay(table);
     }
 
     @Override
@@ -195,35 +212,52 @@ public class ImportsWidgetViewImpl
     @Override
     public void setContent(final List<Import> internalFactTypes,
                            final List<Import> externalFactTypes,
-                           final List<Import> importTypes,
+                           final List<Import> modelFactTypes,
                            final boolean isReadOnly) {
-        this.internalFactTypes = internalFactTypes;
         this.externalFactTypes = externalFactTypes;
-        this.dataProvider.setList(new ArrayList<Import>() {{
+        this.getDataProvider().setList(new ArrayList<Import>() {{
             addAll(internalFactTypes);
-            addAll(importTypes);
+            addAll(modelFactTypes);
         }});
+        getDataProvider().getList().sort(IMPORT_COMPARATOR);
         this.addImportButton.setEnabled(!isReadOnly);
         this.isReadOnly = isReadOnly;
     }
 
     @UiHandler("addImportButton")
     public void onClickAddImportButton(final ClickEvent event) {
-        addImportPopup.setContent(addImportCommand,
+        addImportPopup.setContent(getAddImportCommand(),
                                   externalFactTypes);
         addImportPopup.show();
     }
 
-    private Command makeAddImportCommand() {
-        return new Command() {
-
-            @Override
-            public void execute() {
-                final Import importType = new Import(addImportPopup.getImportType());
-                dataProvider.getList().add(importType);
-                lockRequired.fire(new LockRequiredEvent());
-                presenter.onAddImport(importType);
-            }
+    ParameterizedCommand<Import> makeRemoveImportCommand() {
+        return (i) -> {
+            getDataProvider().getList().remove(i);
+            getDataProvider().getList().sort(IMPORT_COMPARATOR);
+            presenter.onRemoveImport(i);
         };
+    }
+
+    Command getAddImportCommand() {
+        return addImportCommand;
+    }
+
+    Command makeAddImportCommand() {
+        return () -> {
+            final Import importType = new Import(addImportPopup.getImportType());
+            getDataProvider().getList().add(importType);
+            getDataProvider().getList().sort(IMPORT_COMPARATOR);
+            lockRequired.fire(new LockRequiredEvent());
+            presenter.onAddImport(importType);
+        };
+    }
+
+    ParameterizedCommand<Import> getRemoveImportCommand() {
+        return removeImportCommand;
+    }
+
+    ListDataProvider<Import> getDataProvider() {
+        return dataProvider;
     }
 }

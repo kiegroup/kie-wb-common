@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.widgets.configresource.client.widget.bound;
 
+import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -42,7 +43,9 @@ public class AddImportPopup extends BaseModal {
 
     }
 
-    private static AddGlobalPopupBinder uiBinder = GWT.create( AddGlobalPopupBinder.class );
+    private static final Comparator<Import> IMPORT_COMPARATOR = (o1, o2) -> o1.getType().compareTo(o2.getType());
+
+    private static AddGlobalPopupBinder uiBinder = GWT.create(AddGlobalPopupBinder.class);
 
     @UiField
     FormGroup importTypeGroup;
@@ -52,45 +55,35 @@ public class AddImportPopup extends BaseModal {
 
     private Command callbackCommand;
 
-    private final Command okCommand = new Command() {
-        @Override
-        public void execute() {
-            onOKButtonClick();
-        }
-    };
+    private final Command okCommand = this::onOKButtonClick;
 
-    private final Command cancelCommand = new Command() {
-        @Override
-        public void execute() {
-            hide();
-        }
-    };
+    private final Command cancelCommand = this::hide;
 
-    private final ModalFooterOKCancelButtons footer = new ModalFooterOKCancelButtons( okCommand,
-                                                                                      cancelCommand );
+    private final ModalFooterOKCancelButtons footer = new ModalFooterOKCancelButtons(okCommand,
+                                                                                     cancelCommand);
 
     public AddImportPopup() {
-        setTitle( ImportConstants.INSTANCE.addImportPopupTitle() );
+        setTitle(ImportConstants.INSTANCE.addImportPopupTitle());
 
-        add( new ModalBody() {{
-            add( uiBinder.createAndBindUi( AddImportPopup.this ) );
-        }} );
-        add( footer );
+        add(new ModalBody() {{
+            add(uiBinder.createAndBindUi(AddImportPopup.this));
+        }});
+        add(footer);
 
-        importTypeListBox.getElement().getStyle().setWidth( 100.0,
-                                                            Style.Unit.PCT );
-        importTypeListBox.addChangeHandler( new ChangeHandler() {
+        importTypeListBox.getElement().getStyle().setWidth(100.0,
+                                                           Style.Unit.PCT);
+        importTypeListBox.addChangeHandler(new ChangeHandler() {
 
             @Override
-            public void onChange( ChangeEvent event ) {
+            public void onChange(ChangeEvent event) {
                 final boolean enable = importTypeListBox.getSelectedIndex() > 0;
-                footer.enableOkButton( enable );
+                footer.enableOkButton(enable);
             }
-        } );
+        });
     }
 
     private void onOKButtonClick() {
-        if ( callbackCommand != null ) {
+        if (callbackCommand != null) {
             callbackCommand.execute();
         }
         hide();
@@ -100,27 +93,25 @@ public class AddImportPopup extends BaseModal {
         return importTypeListBox.getSelectedValue();
     }
 
-    public void setContent( final Command callbackCommand,
-                            final List<Import> allAvailableImportTypes ) {
+    public void setContent(final Command callbackCommand,
+                           final List<Import> allAvailableImportTypes) {
         this.callbackCommand = callbackCommand;
         this.importTypeListBox.clear();
 
-        if ( allAvailableImportTypes.size() > 0 ) {
-            importTypeListBox.addItem( ImportConstants.INSTANCE.ChooseAFactType() );
-            for ( Import importType : allAvailableImportTypes ) {
-                importTypeListBox.addItem( importType.getType() );
+        if (allAvailableImportTypes.size() > 0) {
+            allAvailableImportTypes.sort(IMPORT_COMPARATOR);
+            importTypeListBox.addItem(ImportConstants.INSTANCE.ChooseAFactType());
+            for (Import importType : allAvailableImportTypes) {
+                importTypeListBox.addItem(importType.getType());
             }
-            footer.enableOkButton( false );
-            importTypeListBox.setSelectedIndex( 0 );
-            importTypeListBox.setEnabled( true );
-
+            footer.enableOkButton(false);
+            importTypeListBox.setSelectedIndex(0);
+            importTypeListBox.setEnabled(true);
         } else {
-            importTypeListBox.addItem( ImportConstants.INSTANCE.noTypesAvailable() );
-            footer.enableOkButton( false );
-            importTypeListBox.setSelectedIndex( 0 );
-            importTypeListBox.setEnabled( false );
+            importTypeListBox.addItem(ImportConstants.INSTANCE.noTypesAvailable());
+            footer.enableOkButton(false);
+            importTypeListBox.setSelectedIndex(0);
+            importTypeListBox.setEnabled(false);
         }
-
     }
-
 }
