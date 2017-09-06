@@ -26,7 +26,7 @@ public class FontSetPropertyConverter {
         FontSet result = new FontSet();
         result.getFontFamily().setValue( dmn.getFontName() );
         result.getFontSize().setValue( dmn.getFontSize() );
-        result.getFontColour().setValue( ColorUtils.ddToWB( dmn.getFontColor() ) );
+        result.getFontColour().setValue( ColorUtils.wbFromDMN( dmn.getFontColor() ) );
         result.getFontBorderSize().setValue( dmn.getFontBorderSize() );
         return result;
     }
@@ -35,7 +35,7 @@ public class FontSetPropertyConverter {
         DMNStyle result = new DMNStyle();
         result.setFontName( wb.getFontFamily().getValue() );
         result.setFontSize( wb.getFontSize().getValue());
-        result.setFontColor( ColorUtils.wbToDD( wb.getFontColour().getValue() ) );
+        result.setFontColor( ColorUtils.dmnFromWB( wb.getFontColour().getValue() ) );
         result.setFontBorderSize( wb.getFontBorderSize().getValue() );
         return result;
     }

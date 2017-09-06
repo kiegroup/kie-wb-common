@@ -67,6 +67,7 @@ import org.kie.workbench.common.dmn.backend.definition.v1_1.TextAnnotationConver
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.ColorUtils;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DDExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNShape;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Bounds;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
@@ -85,7 +86,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
-import org.omg.spec.CMMN_20151109_DC.Bounds;
 
 @ApplicationScoped
 public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> {
@@ -460,8 +460,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
         ((BoundImpl) lr).setX( drgShape.getBounds().getX() + drgShape.getBounds().getWidth() );
         ((BoundImpl) lr).setY( drgShape.getBounds().getY() + drgShape.getBounds().getHeight() );
         
-        bgset.setBgColour(new BgColour(ColorUtils.ddToWB(drgShape.getBgColor())));
-        bgset.setBorderColour(new BorderColour(ColorUtils.ddToWB(drgShape.getBorderColor())));
+        bgset.setBgColour(new BgColour(ColorUtils.wbFromDMN(drgShape.getBgColor())));
+        bgset.setBorderColour(new BorderColour(ColorUtils.wbFromDMN(drgShape.getBorderColor())));
         bgset.setBorderSize(new BorderSize(drgShape.getBorderSize().getValue()));
         
         fontSetSetter.accept( FontSetPropertyConverter.wbFromDMN(drgShape.getFontStyle()) );
@@ -481,8 +481,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             bounds.setHeight( d.getDimensionsSet().getHeight().getValue() );
             
             BackgroundSet bgset = d.getBackgroundSet();
-            result.setBgColor(ColorUtils.wbToDD(bgset.getBgColour().getValue()));
-            result.setBorderColor(ColorUtils.wbToDD(bgset.getBorderColour().getValue()));
+            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
             result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
             
             result.setFontStyle( FontSetPropertyConverter.dmnFromWB(d.getFontSet()) );
@@ -492,8 +492,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             bounds.setHeight( d.getDimensionsSet().getHeight().getValue() );
             
             BackgroundSet bgset = d.getBackgroundSet();
-            result.setBgColor(ColorUtils.wbToDD(bgset.getBgColour().getValue()));
-            result.setBorderColor(ColorUtils.wbToDD(bgset.getBorderColour().getValue()));
+            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
             result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
             
             result.setFontStyle( FontSetPropertyConverter.dmnFromWB(d.getFontSet()) );
@@ -503,8 +503,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             bounds.setHeight( d.getDimensionsSet().getHeight().getValue() );
             
             BackgroundSet bgset = d.getBackgroundSet();
-            result.setBgColor(ColorUtils.wbToDD(bgset.getBgColour().getValue()));
-            result.setBorderColor(ColorUtils.wbToDD(bgset.getBorderColour().getValue()));
+            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
             result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
             
             result.setFontStyle( FontSetPropertyConverter.dmnFromWB(d.getFontSet()) );
@@ -514,8 +514,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             bounds.setHeight( d.getDimensionsSet().getHeight().getValue() );
             
             BackgroundSet bgset = d.getBackgroundSet();
-            result.setBgColor(ColorUtils.wbToDD(bgset.getBgColour().getValue()));
-            result.setBorderColor(ColorUtils.wbToDD(bgset.getBorderColour().getValue()));
+            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
             result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
             
             result.setFontStyle( FontSetPropertyConverter.dmnFromWB(d.getFontSet()) );
@@ -525,8 +525,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             bounds.setHeight( d.getDimensionsSet().getHeight().getValue() );
             
             BackgroundSet bgset = d.getBackgroundSet();
-            result.setBgColor(ColorUtils.wbToDD(bgset.getBgColour().getValue()));
-            result.setBorderColor(ColorUtils.wbToDD(bgset.getBorderColour().getValue()));
+            result.setBgColor(ColorUtils.dmnFromWB(bgset.getBgColour().getValue()));
+            result.setBorderColor(ColorUtils.dmnFromWB(bgset.getBorderColour().getValue()));
             result.setBorderSize(new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.BorderSize(bgset.getBorderSize().getValue()));
             
             result.setFontStyle( FontSetPropertyConverter.dmnFromWB(d.getFontSet()) );

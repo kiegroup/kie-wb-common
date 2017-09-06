@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omg.spec.CMMN_20151109_DI;
+package org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DI;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.omg.spec.CMMN_20151109_DC.Bounds;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Bounds;
 
 
 /**

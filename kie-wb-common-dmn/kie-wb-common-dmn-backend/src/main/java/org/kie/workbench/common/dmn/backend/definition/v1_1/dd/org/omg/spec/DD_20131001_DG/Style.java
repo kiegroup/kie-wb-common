@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.omg.spec.DD_20131001_DG;
+package org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.DD_20131001_DG;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.omg.spec.CMMN_20151109_DC.Color;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Color;
 
 @XStreamAlias("Style")
 public class Style {

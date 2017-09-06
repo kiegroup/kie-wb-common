@@ -18,7 +18,7 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.omg.spec.DD_20131001_DG.Style;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.DD_20131001_DG.Style;
 
 @XStreamAlias("DMNStyle")
 public class DMNStyle extends Style {

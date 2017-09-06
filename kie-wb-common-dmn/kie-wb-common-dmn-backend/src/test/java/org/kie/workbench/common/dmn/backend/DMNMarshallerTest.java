@@ -63,6 +63,8 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DDExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNShape;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNStyle;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Bounds;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Color;
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -97,8 +99,6 @@ import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.omg.spec.CMMN_20151109_DC.Bounds;
-import org.omg.spec.CMMN_20151109_DC.Color;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DMNMarshallerTest {

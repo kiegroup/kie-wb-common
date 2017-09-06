@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-import org.omg.spec.CMMN_20151109_DI.Shape;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DI.Shape;
 
 @XStreamAlias("DMNDiagram")
 public class DMNDiagram extends Shape {

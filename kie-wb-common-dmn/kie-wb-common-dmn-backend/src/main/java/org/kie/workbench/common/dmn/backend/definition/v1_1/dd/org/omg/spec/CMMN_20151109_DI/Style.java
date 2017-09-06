@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omg.spec.CMMN_20151109_DI;
+package org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DI;
 
 import java.util.ArrayList;
 import java.util.HashMap;

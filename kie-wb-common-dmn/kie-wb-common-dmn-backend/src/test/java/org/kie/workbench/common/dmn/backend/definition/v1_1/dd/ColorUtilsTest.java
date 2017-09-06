@@ -19,19 +19,19 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.omg.spec.CMMN_20151109_DC.Color;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Color;
 
 public class ColorUtilsTest {
     
     @Test
     public void test_roundtrip() {
-        Color x = ColorUtils.wbToDD("#FFAA00");
+        Color x = ColorUtils.dmnFromWB("#FFAA00");
                 
         assertEquals(255, x.getRed());
         assertEquals(170, x.getGreen());
         assertEquals(0,   x.getBlue());
         
-        String x2 = ColorUtils.ddToWB(x);
+        String x2 = ColorUtils.wbFromDMN(x);
         
         assertEquals("#FFAA00", x2);
     }

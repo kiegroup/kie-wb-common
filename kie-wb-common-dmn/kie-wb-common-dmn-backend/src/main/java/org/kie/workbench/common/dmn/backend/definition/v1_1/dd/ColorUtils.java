@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
-import org.omg.spec.CMMN_20151109_DC.Color;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Color;
 
 public class ColorUtils {
-    public static Color wbToDD(String colorString) {
+    public static Color dmnFromWB(String colorString) {
         Color result = new Color();
         
         java.awt.Color decode = java.awt.Color.decode(colorString);
@@ -31,7 +31,7 @@ public class ColorUtils {
         return result;
     }
     
-    public static String ddToWB(Color color) {
+    public static String wbFromDMN(Color color) {
         return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());  
     }
 }

@@ -18,8 +18,8 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1.dd;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamAsAttribute;
-import org.omg.spec.CMMN_20151109_DC.Color;
-import org.omg.spec.CMMN_20151109_DI.Shape;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC.Color;
+import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DI.Shape;
 
 @XStreamAlias("DMNShape")
 public class DMNShape extends Shape {

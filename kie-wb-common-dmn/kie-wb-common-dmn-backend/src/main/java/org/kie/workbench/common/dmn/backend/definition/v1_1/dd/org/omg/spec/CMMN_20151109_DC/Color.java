@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.omg.spec.CMMN_20151109_DC;
+package org.kie.workbench.common.dmn.backend.definition.v1_1.dd.org.omg.spec.CMMN_20151109_DC;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
