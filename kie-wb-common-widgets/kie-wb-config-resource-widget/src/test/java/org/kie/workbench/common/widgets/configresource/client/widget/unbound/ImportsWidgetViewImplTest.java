@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.widgets.configresource.client.widget.bound;
+package org.kie.workbench.common.widgets.configresource.client.widget.unbound;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +44,11 @@ public class ImportsWidgetViewImplTest {
     @Mock
     private EventSourceMock<LockRequiredEvent> lockRequired;
 
-    private List<Import> internalFactTypes = new ArrayList<>();
-    private List<Import> externalFactTypes = new ArrayList<>();
-    private List<Import> modelFactTypes = new ArrayList<>();
+    private List<Import> imports = new ArrayList<>();
 
-    private Import internal1 = new Import("zInternal");
-    private Import internal2 = new Import("yInternal");
-    private Import model1 = new Import("zModel");
-    private Import model2 = new Import("yModel");
+    private Import import1 = new Import("zImport");
+    private Import import2 = new Import("yImport");
+    private Import import3 = new Import("xImport");
 
     private ImportsWidgetViewImpl view;
 
@@ -61,86 +58,72 @@ public class ImportsWidgetViewImplTest {
                                               lockRequired);
         this.view.init(presenter);
 
-        internalFactTypes.add(internal1);
-        internalFactTypes.add(internal2);
-        modelFactTypes.add(model1);
-        modelFactTypes.add(model2);
+        imports.add(import1);
+        imports.add(import2);
+        imports.add(import3);
 
-        when(presenter.isInternalImport(eq(internal1))).thenReturn(true);
-        when(presenter.isInternalImport(eq(internal2))).thenReturn(true);
-
-        view.setContent(internalFactTypes,
-                        externalFactTypes,
-                        modelFactTypes,
+        view.setContent(imports,
                         false);
     }
 
     @Test
-    public void setContentSortsImportsByInternalThenExternalAlphabetically() {
+    public void setContentSortsAlphabetically() {
         final List<Import> imports = view.getDataProvider().getList();
-        assertEquals(4,
+        assertEquals(3,
                      imports.size());
 
-        assertEquals(internal2,
+        assertEquals(import3,
                      imports.get(0));
-        assertEquals(internal1,
+        assertEquals(import2,
                      imports.get(1));
-        assertEquals(model2,
+        assertEquals(import1,
                      imports.get(2));
-        assertEquals(model1,
-                     imports.get(3));
     }
 
     @Test
     public void checkAddImportSortsAlphabetically() {
         final Import newImport = new Import("new1");
         when(addImportPopup.getImportType()).thenReturn(newImport.getType());
-        when(presenter.isInternalImport(eq(newImport))).thenReturn(false);
 
         view.makeAddImportCommand().execute();
 
         verify(lockRequired).fire(any(LockRequiredEvent.class));
 
         final List<Import> imports = view.getDataProvider().getList();
-        assertEquals(5,
+        assertEquals(4,
                      imports.size());
 
-        assertEquals(internal2,
-                     imports.get(0));
-        assertEquals(internal1,
-                     imports.get(1));
         assertEquals(newImport,
+                     imports.get(0));
+        assertEquals(import3,
+                     imports.get(1));
+        assertEquals(import2,
                      imports.get(2));
-        assertEquals(model2,
+        assertEquals(import1,
                      imports.get(3));
-        assertEquals(model1,
-                     imports.get(4));
     }
 
     @Test
     public void checkRemoveImportSortsAlphabetically() {
-        view.makeRemoveImportCommand().execute(internal1);
+        view.makeRemoveImportCommand().execute(import2);
 
         verify(lockRequired).fire(any(LockRequiredEvent.class));
 
         final List<Import> imports = view.getDataProvider().getList();
-        assertEquals(3,
+        assertEquals(2,
                      imports.size());
 
-        assertEquals(internal2,
+        assertEquals(import3,
                      imports.get(0));
-        assertEquals(model2,
+        assertEquals(import1,
                      imports.get(1));
-        assertEquals(model1,
-                     imports.get(2));
     }
 
     @Test
     public void checkAddPopupInitialisation() {
         view.onClickAddImportButton(mock(ClickEvent.class));
 
-        verify(addImportPopup).setContent(eq(view.getAddImportCommand()),
-                                          eq(externalFactTypes));
+        verify(addImportPopup).setCommand(eq(view.getAddImportCommand()));
         verify(addImportPopup).show();
     }
 }

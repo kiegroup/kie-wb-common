@@ -17,7 +17,6 @@
 package org.kie.workbench.common.widgets.configresource.client.widget.bound;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -36,7 +35,6 @@ import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.cellview.client.TextHeader;
 import com.google.gwt.user.client.Command;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
@@ -49,7 +47,9 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
 import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
+import org.kie.workbench.common.widgets.configresource.client.widget.Sorters;
 import org.uberfire.client.mvp.LockRequiredEvent;
+import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.ParameterizedCommand;
 
 public class ImportsWidgetViewImpl
@@ -80,21 +80,6 @@ public class ImportsWidgetViewImpl
     private final ParameterizedCommand<Import> removeImportCommand = makeRemoveImportCommand();
 
     private ImportsWidgetView.Presenter presenter;
-
-    private final Comparator<Import> IMPORT_COMPARATOR = (o1, o2) -> {
-        final boolean isO1internal = presenter.isInternalImport(o1);
-        final boolean isO2internal = presenter.isInternalImport(o2);
-        if (isO1internal) {
-            if (isO2internal) {
-                return o1.getType().compareTo(o2.getType());
-            }
-            return -1;
-        }
-        if (isO2internal) {
-            return 1;
-        }
-        return o1.getType().compareTo(o2.getType());
-    };
 
     private boolean isReadOnly = false;
 
@@ -139,7 +124,7 @@ public class ImportsWidgetViewImpl
                                final SafeHtml data,
                                final SafeHtmlBuilder sb) {
                 //Don't render a "Delete" button for "internal" Fact Types
-                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
+                if (isExternalImport(context.getIndex())) {
                     super.render(context,
                                  data,
                                  sb);
@@ -153,7 +138,7 @@ public class ImportsWidgetViewImpl
                                        final NativeEvent event,
                                        final ValueUpdater<String> valueUpdater) {
                 //Don't act on cell interactions for "internal" Fact Types
-                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
+                if (isExternalImport(context.getIndex())) {
                     super.onBrowserEvent(context,
                                          parent,
                                          value,
@@ -169,7 +154,7 @@ public class ImportsWidgetViewImpl
                                           final NativeEvent event,
                                           final ValueUpdater<String> valueUpdater) {
                 //Don't act on cell interactions for "internal" Fact Types
-                if (!presenter.isInternalImport(getDataProvider().getList().get(context.getIndex()))) {
+                if (isExternalImport(context.getIndex())) {
                     super.onEnterKeyDown(context,
                                          parent,
                                          value,
@@ -190,9 +175,12 @@ public class ImportsWidgetViewImpl
             if (isReadOnly) {
                 return;
             }
-            if (Window.confirm(ImportConstants.INSTANCE.promptForRemovalOfImport0(importType.getType()))) {
-                getRemoveImportCommand().execute(importType);
-            }
+            final YesNoCancelPopup confirm = YesNoCancelPopup.newYesNoCancelPopup(ImportConstants.INSTANCE.remove(),
+                                                                                  ImportConstants.INSTANCE.promptForRemovalOfImport0(importType.getType()),
+                                                                                  () -> getRemoveImportCommand().execute(importType),
+                                                                                  () -> {/*Nothing*/},
+                                                                                  null);
+            confirm.show();
         });
 
         table.addColumn(importTypeColumn,
@@ -202,6 +190,14 @@ public class ImportsWidgetViewImpl
 
         //Link display
         getDataProvider().addDataDisplay(table);
+    }
+
+    private boolean isExternalImport(final Import i) {
+        return !presenter.isInternalImport(i);
+    }
+
+    private boolean isExternalImport(final int index) {
+        return isExternalImport(getDataProvider().getList().get(index));
     }
 
     @Override
@@ -219,7 +215,7 @@ public class ImportsWidgetViewImpl
             addAll(internalFactTypes);
             addAll(modelFactTypes);
         }});
-        getDataProvider().getList().sort(IMPORT_COMPARATOR);
+        getDataProvider().getList().sort(Sorters.sortBySourceThenFQCN(this::isExternalImport));
         this.addImportButton.setEnabled(!isReadOnly);
         this.isReadOnly = isReadOnly;
     }
@@ -231,11 +227,13 @@ public class ImportsWidgetViewImpl
         addImportPopup.show();
     }
 
-    ParameterizedCommand<Import> makeRemoveImportCommand() {
-        return (i) -> {
-            getDataProvider().getList().remove(i);
-            getDataProvider().getList().sort(IMPORT_COMPARATOR);
-            presenter.onRemoveImport(i);
+    Command makeAddImportCommand() {
+        return () -> {
+            final Import importType = new Import(addImportPopup.getImportType());
+            getDataProvider().getList().add(importType);
+            getDataProvider().getList().sort(Sorters.sortBySourceThenFQCN(this::isExternalImport));
+            lockRequired.fire(new LockRequiredEvent());
+            presenter.onAddImport(importType);
         };
     }
 
@@ -243,13 +241,12 @@ public class ImportsWidgetViewImpl
         return addImportCommand;
     }
 
-    Command makeAddImportCommand() {
-        return () -> {
-            final Import importType = new Import(addImportPopup.getImportType());
-            getDataProvider().getList().add(importType);
-            getDataProvider().getList().sort(IMPORT_COMPARATOR);
+    ParameterizedCommand<Import> makeRemoveImportCommand() {
+        return (i) -> {
+            getDataProvider().getList().remove(i);
+            getDataProvider().getList().sort(Sorters.sortBySourceThenFQCN(this::isExternalImport));
             lockRequired.fire(new LockRequiredEvent());
-            presenter.onAddImport(importType);
+            presenter.onRemoveImport(i);
         };
     }
 

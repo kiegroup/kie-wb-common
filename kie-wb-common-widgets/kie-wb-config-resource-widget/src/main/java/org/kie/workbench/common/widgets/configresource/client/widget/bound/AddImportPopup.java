@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.widgets.configresource.client.widget.bound;
 
-import java.util.Comparator;
 import java.util.List;
 
 import com.google.gwt.core.client.GWT;
@@ -32,6 +31,7 @@ import org.gwtbootstrap3.client.ui.FormGroup;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.ModalBody;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
+import org.kie.workbench.common.widgets.configresource.client.widget.Sorters;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 import org.uberfire.ext.widgets.common.client.common.popups.footers.ModalFooterOKCancelButtons;
 
@@ -42,8 +42,6 @@ public class AddImportPopup extends BaseModal {
             UiBinder<Widget, AddImportPopup> {
 
     }
-
-    private static final Comparator<Import> IMPORT_COMPARATOR = (o1, o2) -> o1.getType().compareTo(o2.getType());
 
     private static AddGlobalPopupBinder uiBinder = GWT.create(AddGlobalPopupBinder.class);
 
@@ -99,7 +97,7 @@ public class AddImportPopup extends BaseModal {
         this.importTypeListBox.clear();
 
         if (allAvailableImportTypes.size() > 0) {
-            allAvailableImportTypes.sort(IMPORT_COMPARATOR);
+            allAvailableImportTypes.sort(Sorters.sortByFQCN());
             importTypeListBox.addItem(ImportConstants.INSTANCE.ChooseAFactType());
             for (Import importType : allAvailableImportTypes) {
                 importTypeListBox.addItem(importType.getType());

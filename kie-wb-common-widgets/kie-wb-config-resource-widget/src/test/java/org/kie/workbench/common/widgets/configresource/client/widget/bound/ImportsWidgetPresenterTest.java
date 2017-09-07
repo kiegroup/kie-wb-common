@@ -38,16 +38,16 @@ import static org.mockito.Mockito.*;
 public class ImportsWidgetPresenterTest {
 
     @Mock
-    ImportsWidgetView view;
+    private ImportsWidgetView view;
 
     @Mock
-    Event<ImportAddedEvent> importAddedEvent;
+    private Event<ImportAddedEvent> importAddedEvent;
 
     @Mock
-    Event<ImportRemovedEvent> importRemovedEvent;
+    private Event<ImportRemovedEvent> importRemovedEvent;
 
     @Mock
-    AsyncPackageDataModelOracle dmo;
+    private AsyncPackageDataModelOracle dmo;
 
     @Captor
     private ArgumentCaptor<List<Import>> internalFactTypesCaptor;
@@ -199,7 +199,7 @@ public class ImportsWidgetPresenterTest {
                              imports,
                              false);
 
-        assertFalse(presenter.isInternalImport(mock(Import.class)));
+        assertFalse(presenter.isInternalImport(importType));
     }
 
     @Test
