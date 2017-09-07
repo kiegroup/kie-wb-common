@@ -469,8 +469,8 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
     
     private static DMNShape stunnerToDDExt(View<? extends DMNElement> v) {
         DMNShape result = new DMNShape();
-        result.setId( "dmnshape-"+v.getDefinition().getId().getValue() );
-        result.setDmnElementRef( v.getDefinition().getId().getValue() );
+        result.setId("dmnshape-" + v.getDefinition().getId().getValue());
+        result.setDmnElementRef(v.getDefinition().getId().getValue());
         Bounds bounds = new Bounds();
         result.setBounds(bounds);
         bounds.setX( v.getBounds().getUpperLeft().getX() );
