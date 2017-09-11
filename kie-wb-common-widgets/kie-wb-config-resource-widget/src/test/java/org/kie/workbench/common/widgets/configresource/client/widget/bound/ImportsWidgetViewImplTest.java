@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.appformer.project.datamodel.imports.Import;
+import org.drools.workbench.models.datamodel.imports.Import;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -24,7 +24,7 @@ import com.google.gwt.user.client.Element;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
-import org.appformer.project.datamodel.imports.Import;
+import org.drools.workbench.models.datamodel.imports.Import;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.gwtbootstrap3.client.ui.html.Text;
 import org.junit.Before;

@@ -17,7 +17,7 @@ package org.kie.workbench.common.widgets.configresource.client.widget.unbound;
 
 import java.util.List;
 
-import org.appformer.project.datamodel.imports.Import;
+import org.drools.workbench.models.datamodel.imports.Import;
 import org.guvnor.common.services.project.model.ProjectImports;
 import org.junit.Before;
 import org.junit.Test;
