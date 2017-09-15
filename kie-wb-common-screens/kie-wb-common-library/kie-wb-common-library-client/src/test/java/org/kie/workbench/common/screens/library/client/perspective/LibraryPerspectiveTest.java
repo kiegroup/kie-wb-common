@@ -21,7 +21,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.mockito.Mock;
+import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.uberfire.workbench.model.PerspectiveDefinitionOption;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
@@ -49,5 +52,12 @@ public class LibraryPerspectiveTest {
         perspective.onClose();
 
         verify(libraryPlaces).hideDocks();
+    }
+
+    @Test
+    public void maximizationIsDisabledForLibrary() {
+        final PerspectiveDefinition perspectiveDefinition = perspective.buildPerspective();
+
+        assertTrue(perspectiveDefinition.hasOption(PerspectiveDefinitionOption.MAXIMIZATION_DISABLED));
     }
 }
