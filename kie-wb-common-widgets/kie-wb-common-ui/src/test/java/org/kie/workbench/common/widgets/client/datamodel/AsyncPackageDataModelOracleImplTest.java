@@ -420,8 +420,8 @@ public class AsyncPackageDataModelOracleImplTest {
         Callback<String[]> callback = spy(new Callback<String[]>() {
             @Override
             public void callback(String[] result) {
-                assertArrayEquals( new String[] { "==", "!=", "<", ">", "<=", ">=", "matches", "soundslike", "== null", "!= null",  "in", "not in" },
-                                   result );
+                assertArrayEquals(new String[]{"==", "!=", "<", ">", "<=", ">=", "matches", "not matches", "soundslike", "not soundslike", "== null", "!= null", "in", "not in"},
+                                  result);
             }
         });
 

@@ -33,8 +33,10 @@ import org.mockito.Mock;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.callbacks.Callback;
 
-import static org.junit.Assert.*;
-import static org.kie.workbench.common.widgets.client.datamodel.PackageDataModelOracleTestUtils.*;
+import javax.enterprise.inject.Instance;
+
+import static org.junit.Assert.assertEquals;
+import static org.kie.workbench.common.widgets.client.datamodel.PackageDataModelOracleTestUtils.assertContains;
 import static org.mockito.Mockito.*;
 
 /**
@@ -338,7 +340,7 @@ public class PackageDataModelOracleCompletionsTest {
         Callback<String[]> personNameCallback = spy( new Callback<String[]>() {
             @Override
             public void callback( final String[] personNameOperators ) {
-                assertEquals( 12,
+                assertEquals( 14,
                               personNameOperators.length );
                 assertEquals( "==",
                               personNameOperators[ 0 ] );
@@ -353,17 +355,21 @@ public class PackageDataModelOracleCompletionsTest {
                 assertEquals( ">=",
                               personNameOperators[ 5 ] );
                 assertEquals( "matches",
-                              personNameOperators[ 6 ] );
+                              personNameOperators[ 6 ]);
+                assertEquals( "not matches",
+                              personNameOperators[ 7 ]);
                 assertEquals( "soundslike",
-                              personNameOperators[ 7 ] );
+                              personNameOperators[ 8 ]);
+                assertEquals( "not soundslike",
+                              personNameOperators[ 9 ]);
                 assertEquals( "== null",
-                              personNameOperators[ 8 ] );
+                              personNameOperators[ 10 ]);
                 assertEquals( "!= null",
-                              personNameOperators[ 9 ] );
-                assertEquals( "in",
-                              personNameOperators[ 10 ] );
-                assertEquals( "not in",
                               personNameOperators[ 11 ] );
+                assertEquals( "in",
+                              personNameOperators[ 12 ] );
+                assertEquals( "not in",
+                              personNameOperators[ 13 ] );
             }
         } );
         oracle.getOperatorCompletions( "Person",
