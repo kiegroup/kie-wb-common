@@ -29,6 +29,7 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.PerspectiveDefinition;
+import org.uberfire.workbench.model.PerspectiveDefinitionOption;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
 
 @ApplicationScoped
@@ -53,6 +54,7 @@ public class LibraryPerspective {
     public PerspectiveDefinition buildPerspective() {
         perspectiveDefinition = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
         perspectiveDefinition.setName("Library Perspective");
+        perspectiveDefinition.setOptions(PerspectiveDefinitionOption.MAXIMIZATION_DISABLED);
 
         return perspectiveDefinition;
     }
