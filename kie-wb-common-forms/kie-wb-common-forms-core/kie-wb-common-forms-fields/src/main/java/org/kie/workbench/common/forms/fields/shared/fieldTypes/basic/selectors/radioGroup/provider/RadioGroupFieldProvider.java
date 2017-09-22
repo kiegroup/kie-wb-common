@@ -21,6 +21,9 @@ import java.math.BigInteger;
 import javax.enterprise.context.Dependent;
 
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.SelectorFieldProvider;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.definition.CharacterRadioGroupFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.definition.DecimalRadioGroupFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.definition.IntegerRadioGroupFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.definition.RadioGroupBaseDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.definition.StringRadioGroupFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.radioGroup.type.RadioGroupFieldType;
@@ -45,7 +48,6 @@ public class RadioGroupFieldProvider extends SelectorFieldProvider<RadioGroupBas
         registerPropertyType(Character.class);
         registerPropertyType(char.class);
 
-// TODO: implement this fieldTypes
         registerPropertyType(BigDecimal.class);
         registerPropertyType(BigInteger.class);
         registerPropertyType(Byte.class);
@@ -75,6 +77,29 @@ public class RadioGroupFieldProvider extends SelectorFieldProvider<RadioGroupBas
     @Override
     public RadioGroupBaseDefinition createFieldByType(TypeInfo typeInfo) {
         if (isSupported(typeInfo)) {
+            String className = typeInfo.getClassName();
+            if (Byte.class.getName().equals(className) ||
+                    byte.class.getName().equals(className) ||
+                    Short.class.getName().equals(className) ||
+                    short.class.getName().equals(className) ||
+                    Integer.class.getName().equals(className) ||
+                    int.class.getName().equals(className) ||
+                    Long.class.getName().equals(className) ||
+                    long.class.getName().equals(className) ||
+                    BigInteger.class.getName().equals(className)) {
+                return new IntegerRadioGroupFieldDefinition();
+            }
+            if (Float.class.getName().equals(className) ||
+                    float.class.getName().equals(className) ||
+                    Double.class.getName().equals(className) ||
+                    double.class.getName().equals(className) ||
+                    BigDecimal.class.getName().equals(className)) {
+                return new DecimalRadioGroupFieldDefinition();
+            }
+            if (Character.class.getName().equals(className) ||
+                    char.class.getName().equals(className)) {
+                return new CharacterRadioGroupFieldDefinition();
+            }
             return getDefaultField();
         }
         return null;
