@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn;
+package org.kie.workbench.common.forms.adf.definitions.settings;
 
-import javax.annotation.PostConstruct;
+import org.kie.workbench.common.forms.adf.service.definitions.FormDefinitionSettings;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+public interface DynamicFormDefinition {
 
-@EntryPoint
-@Bundle("resources/i18n/StunnerBPMNConstants.properties")
-public class StunnerBPMNEntryPoint {
-    @PostConstruct
-    public void initialize() {
-    }
+    /**
+     * Returns the class name this form definition is for.
+     * @return The full class name of this form definition.
+     */
+    String getClassName();
+
+    /**
+     * Returns the definition of the form.
+     * @return The definition of the form.
+     */
+    FormDefinitionSettings getFormDefinition();
 }

@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn;
+package org.kie.workbench.common.stunner.core.client;
 
-import javax.annotation.PostConstruct;
+import java.util.function.Supplier;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
-import org.jboss.errai.ui.shared.api.annotations.Bundle;
+import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeDefFactory;
+import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
 
-@EntryPoint
-@Bundle("resources/i18n/StunnerBPMNConstants.properties")
-public class StunnerBPMNEntryPoint {
-    @PostConstruct
-    public void initialize() {
-    }
+public interface DynamicShapeDefinition<W> extends ShapeDef<W> {
+    Class<? extends W> getDefinitionClass();
+    Supplier<? extends ShapeDefFactory> getShapeDefFactory();
 }

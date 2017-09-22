@@ -16,12 +16,16 @@
 
 package org.kie.workbench.common.stunner.core.processors;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
@@ -403,6 +407,25 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             }
             processingContext.getDefSetAnnotations().getQualifiers().put(defSetClassName,
                                                                          mirror.toString());
+
+            // Definition's addons groups
+            try {
+                Collection<String> addonGroups = Arrays.stream(definitionSetAnn.addonGroups())
+                        .map((a) -> a.getName() + ".class")
+                        .collect(Collectors.toList());
+                processingContext.getDefSetAnnotations().getAddonGroups().addAll(addonGroups);
+            } catch (MirroredTypesException mte) {
+                mirrors = mte.getTypeMirrors();
+                if (null == mirrors) {
+                    throw new RuntimeException("No addon groups specified for the @DefinitionSet.");
+                }
+                Set<String> addonGroups = new LinkedHashSet<>();
+                for (TypeMirror t : mirrors) {
+                    String group = t.toString();
+                    addonGroups.add(group + ".class");
+                }
+                processingContext.getDefSetAnnotations().getAddonGroups().addAll(addonGroups);
+            }
         }
         return true;
     }
@@ -485,14 +508,52 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             } else {
                 note("Definition for tye [" + defintionClassName + "] have no Property members.");
             }
+
+            // Definition's addons groups
+            try {
+                Collection<String> addonGroups = addonGroups =
+                        Arrays.stream(definitionAnn.addonGroups())
+                        .map((a) -> a.getName() + ".class")
+                        .collect(Collectors.toList());
+                processingContext.getDefinitionAnnotations().getAddonGroups().addAll(addonGroups);
+                processingContext.getMorphingAnnotations().getAddonGroups().addAll(addonGroups);
+            } catch (MirroredTypesException mte) {
+                List<? extends TypeMirror> mirrors = null;
+                mirrors = mte.getTypeMirrors();
+                if (null == mirrors) {
+                    throw new RuntimeException("No addon groups specified for the @Definition.");
+                }
+                Set<String> addonGroups = new LinkedHashSet<>();
+                for (TypeMirror t : mirrors) {
+                    String group = t.toString();
+                    addonGroups.add(group + ".class");
+                }
+                processingContext.getDefinitionAnnotations().getAddonGroups().addAll(addonGroups);
+                processingContext.getMorphingAnnotations().getAddonGroups().addAll(addonGroups);
+            }
+
             // -- Morphing annotations --
             MorphBase morphBaseAnn = e.getAnnotation(MorphBase.class);
             Morph morphAnn = e.getAnnotation(Morph.class);
             if (null != morphBaseAnn && null != morphAnn) {
                 TypeElement superElement = getAnnotationInTypeInheritance(classElement,
                                                                           MorphBase.class.getName());
-                final String packageName = packageElement.getQualifiedName().toString();
-                String morphBaseClassName = packageName + "." + superElement.getSimpleName().toString();
+                String morphBaseClassName;
+                if (null == superElement) {
+                    String superClassName;
+                    try {
+                        superClassName = morphAnn.base().getCanonicalName();
+                    }
+                    catch (MirroredTypeException me) {
+                        superClassName = me.getTypeMirror().toString();
+                    }
+                    superElement = processingEnv.getElementUtils().getTypeElement(superClassName);
+                    morphBaseClassName = superClassName;
+                }
+                else {
+                    final String packageName = packageElement.getQualifiedName().toString();
+                    morphBaseClassName = packageName + "." + superElement.getSimpleName().toString();
+                }
                 Map<String, String> defaultTypesMap = processingContext.getMorphingAnnotations().getBaseDefaultTypes();
                 if (null == defaultTypesMap.get(morphBaseClassName)) {
                     TypeMirror morphDefaultTypeMirror = null;
@@ -1014,7 +1075,10 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                                                                                          baseType,
                                                                                          targets,
                                                                                          defaultType,
-                                                                                         messager);
+                                                                                         messager,
+                                                                                         processingContext
+                                                                                                 .getMorphingAnnotations()
+                                                                                                 .getAddonGroups());
                     writeCode(packageName,
                               className,
                               ruleClassCode);
@@ -1196,6 +1260,19 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 if (!processingContext.getDefSetAnnotations().getBuilderFieldNames().isEmpty()) {
                     buildersMap.putAll(processingContext.getDefSetAnnotations().getBuilderFieldNames());
                 }
+                Set<String> addonGroups = new HashSet<>();
+                if (!processingContext.getDefinitionAnnotations().getBuilderFieldNames().isEmpty()) {
+                    buildersMap.putAll(processingContext.getDefinitionAnnotations().getBuilderFieldNames());
+                }
+                if (!processingContext.getDefSetAnnotations().getBuilderFieldNames().isEmpty()) {
+                    buildersMap.putAll(processingContext.getDefSetAnnotations().getBuilderFieldNames());
+                }
+                if (!processingContext.getDefinitionAnnotations().getAddonGroups().isEmpty()) {
+                    addonGroups.addAll(processingContext.getDefinitionAnnotations().getAddonGroups());
+                }
+                if (!processingContext.getDefSetAnnotations().getAddonGroups().isEmpty()) {
+                    addonGroups.addAll(processingContext.getDefSetAnnotations().getAddonGroups());
+                }
                 // Ensure visible on both backend and client sides.
                 final String packageName = getGeneratedPackageName() + ".definition.factory";
                 final String className = getSetClassPrefix() + DEFINITION_FACTORY_CLASSNAME;
@@ -1205,7 +1282,8 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 final StringBuffer ruleClassCode = generatedDefinitionFactoryGenerator.generate(packageName,
                                                                                                 className,
                                                                                                 buildersMap,
-                                                                                                messager);
+                                                                                                messager,
+                                                                                                addonGroups);
                 writeCode(packageName,
                           className,
                           ruleClassCode);

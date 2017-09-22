@@ -20,9 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.forms.adf.definitions.settings.ColSpan;
+import org.kie.workbench.common.forms.adf.definitions.settings.DynamicFormDefinition;
+import org.kie.workbench.common.forms.adf.definitions.settings.DynamicFormDefinitions;
 import org.kie.workbench.common.forms.adf.service.building.FieldStatusModifier;
 import org.kie.workbench.common.forms.adf.service.building.FormGenerationResourcesProvider;
 import org.kie.workbench.common.forms.adf.service.definitions.FormDefinitionSettings;
@@ -37,13 +41,17 @@ import org.kie.workbench.common.forms.model.impl.TypeInfoImpl;
 
 @Generated("${generatedByClassName}")
 @ApplicationScoped
-public class ModuleFormGenerationResourcesProvider implements FormGenerationResourcesProvider {
+public class ModuleFormGenerationResourcesProvider implements FormGenerationResourcesProvider,
+                                                              DynamicFormDefinitions.DynamicFormDefinitionListener {
 
     private Map<String, FormDefinitionSettings> definitionSettings = new HashMap<>();
 
     private Map<String, FieldStatusModifier> fieldStatusModifiers = new HashMap<>();
 
     private Map<String, String> fieldStatusModifiersReferences = new HashMap<>();
+
+    @Inject
+    private DynamicFormDefinitions dynamicFormDefinitions;
 
     public ModuleFormGenerationResourcesProvider() {
         <#list forms as form>
@@ -53,6 +61,19 @@ public class ModuleFormGenerationResourcesProvider implements FormGenerationReso
         fieldStatusModifiers.put( "${fieldModifier.fieldModifierName}", new ${fieldModifier.fieldModifierName}() );
         </#list>
     }
+
+    @PostConstruct
+    private void addDynamicFormDefinitions() {
+        dynamicFormDefinitions.registerDynamicFormDefinitionListener(this);
+        definitionSettings.putAll(dynamicFormDefinitions.getFormDefinitions());
+    }
+
+    @Override
+    public void onDynamicFormDefinitionAdded(DynamicFormDefinition def) {
+        definitionSettings.put(def.getClassName(),
+                               def.getFormDefinition());
+    }
+
 
     @Override
     public Map<String, FormDefinitionSettings> getDefinitionSettings() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonUnmarshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
@@ -73,13 +79,18 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinition;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains the mappings for the different stencil identifiers that are different from
  * the patterns used in this tool.
  */
-public abstract class BaseOryxIdMappings implements OryxIdMappings {
+public abstract class BaseOryxIdMappings implements OryxIdMappings,
+                                                    DynamicDefinitions.DynamicDefinitionListener {
 
     private final DefinitionManager definitionManager;
 
@@ -87,11 +98,17 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
 
     private final Map<Class<?>, String> globalMappings = getGlobalMappings();
 
-    private final Map<Class<?>, String> customMappings = getCustomMappings();
+    private final Map<Class<?>, String> customMappings = new HashMap<>();
 
     private final Map<Class<?>, Set<String>> skippedProperties = getSkippedProperties();
 
     private final Map<Class<?>, Map<Class<?>, String>> definitionMappings = getDefinitionMappings();
+
+    @Inject
+    private DynamicDefinitions dynamicDefinitions;
+
+    @Inject
+    private Logger logger;
 
     protected BaseOryxIdMappings() {
         this(null);
@@ -105,7 +122,8 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
 
     @Override
     public void init(final List<Class<?>> definitions) {
-        // Load default & custom mappings for BPMN definitions.
+        dynamicDefinitions.registerDynamicDefinitionListener(this);
+        initCustomMappings();
         for (final Class<?> defClass : definitions) {
             String customMapping = customMappings.get(defClass);
             customMapping = customMapping != null ? customMapping : globalMappings.get(defClass);
@@ -200,10 +218,13 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
         return globalMappings;
     }
 
+    private void initCustomMappings() {
+        dynamicDefinitions.getDynamicDefinitions().forEach((k) -> customMappings.put(k.getType(), "$" + k.getType().getName()));
+    }
+
     @Override
     public Map<Class<?>, String> getCustomMappings() {
-        // No custom mappings, for now.
-        return Collections.emptyMap();
+        return customMappings;
     }
 
     @Override
@@ -302,7 +323,8 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
 
     @Override
     public String getOryxDefinitionId(final Class<?> clazz) {
-        return defMappings.get(clazz);
+        String out = defMappings.get(clazz);
+        return (null != out) ? out : customMappings.get(clazz);
     }
 
     @Override
@@ -362,8 +384,10 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
 
     @Override
     public Class<?> getDefinition(final String oryxId) {
-        return get(oryxId,
-                   defMappings);
+        Class<?> out = get(oryxId,
+                           defMappings);
+        return (null != out) ? out : get(oryxId,
+                                         customMappings);
     }
 
     @Override
@@ -427,5 +451,10 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
 
     private String getDefaultOryxPropertyId(final Class<?> clazz) {
         return StringUtils.uncapitalize(clazz.getSimpleName());
+    }
+
+    @Override
+    public void onDynamicDefinitionAdded(DynamicDefinition def) {
+        customMappings.put(def.getType(), "$" + def.getType().getName());
     }
 }

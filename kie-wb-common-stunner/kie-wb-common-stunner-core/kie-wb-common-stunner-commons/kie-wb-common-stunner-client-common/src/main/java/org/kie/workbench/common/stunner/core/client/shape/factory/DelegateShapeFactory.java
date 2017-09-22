@@ -19,17 +19,32 @@ package org.kie.workbench.common.stunner.core.client.shape.factory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.core.client.DynamicShapeDefinition;
+import org.kie.workbench.common.stunner.core.client.DynamicShapeDefinitions;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
 
 @Dependent
-public class DelegateShapeFactory<W, S extends Shape> extends AbstractShapeFactory<W, S> {
+public class DelegateShapeFactory<W, S extends Shape> extends AbstractShapeFactory<W, S> implements DynamicShapeDefinitions.DynamicShapeDefinitionListener<W> {
 
     private final Map<String, DefinitionTypeBindings> definitionTypeBindings = new HashMap<>();
+
+    @Inject
+    private DynamicShapeDefinitions<W> dynamicShapeDefinitions;
+
+    @PostConstruct
+    private void init() {
+        dynamicShapeDefinitions.registerDynamicShapeDefinitionListener(this);
+        for (DynamicShapeDefinition<? extends W> def : dynamicShapeDefinitions.getShapeDefinitions()) {
+            delegate(def.getDefinitionClass(), def, def.getShapeDefFactory());
+        }
+    }
 
     public DelegateShapeFactory<W, S> delegate(final Class<? extends W> definitionType,
                                                final ShapeDef<? extends W> shapeDef,
@@ -57,6 +72,13 @@ public class DelegateShapeFactory<W, S extends Shape> extends AbstractShapeFacto
         final DefinitionTypeBindings bindings = definitionTypeBindings.get(definitionId);
         final Class defType = bindings.defType;
         return bindings.shapeDef.getGlyph(defType);
+    }
+
+    @Override
+    public void onDynamicShapeDefinitionAdded(DynamicShapeDefinition<? extends W> def) {
+        delegate(def.getDefinitionClass(),
+                 def,
+                 def.getShapeDefFactory());
     }
 
     private class DefinitionTypeBindings {

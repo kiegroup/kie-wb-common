@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,10 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.xml.namespace.QName;
 
 import bpsim.BPSimDataType;
 import bpsim.BpsimFactory;
@@ -89,6 +93,8 @@ import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.EventSubprocess;
 import org.eclipse.bpmn2.ExclusiveGateway;
+import org.eclipse.bpmn2.Extension;
+import org.eclipse.bpmn2.ExtensionAttributeDefinition;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.FlowElementsContainer;
@@ -139,6 +145,7 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.bpmn2.di.BpmnDiFactory;
+import org.eclipse.bpmn2.impl.ExtensionAttributeDefinitionImpl;
 import org.eclipse.bpmn2.util.Bpmn2Resource;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.DcFactory;
@@ -165,6 +172,7 @@ import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.Bpmn2OryxManager;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleReference;
 import org.osgi.framework.InvalidSyntaxException;
@@ -221,6 +229,9 @@ public class Bpmn2JsonUnmarshaller {
     private Map<String, List<EObject>> _simulationElementParameters = new HashMap<String, List<EObject>>();
     private ScenarioParameters _simulationScenarioParameters = BpsimFactory.eINSTANCE.createScenarioParameters();
 
+    @Inject
+    private DynamicDefinitions dynamicDefinitions;
+
     private boolean zOrderEnabled;
 
     private static final Logger _logger = LoggerFactory.getLogger(Bpmn2JsonUnmarshaller.class);
@@ -243,6 +254,9 @@ public class Bpmn2JsonUnmarshaller {
                 }
             } catch (InvalidSyntaxException e) {
             }
+        }
+        if (!_helpers.stream().anyMatch(e ->  e instanceof DynamicDefinitionsBpmnMarshallerHelper)) {
+            _helpers.add(new DynamicDefinitionsBpmnMarshallerHelper());
         }
     }
 
@@ -3370,10 +3384,17 @@ public class Bpmn2JsonUnmarshaller {
         properties.put("resourceId",
                        resourceId);
         boolean customElement = isCustomElement(properties.get("tasktype"),
-                                                preProcessingData);
+                                                preProcessingData)
+                || stencil.startsWith("$");
         BaseElement baseElt = this.createBaseElement(stencil,
                                                      properties.get("tasktype"),
                                                      customElement);
+
+        if (stencil.startsWith("$")) {
+            stencil = stencil.substring(1);
+            properties.put(DynamicDefinitionsBpmnMarshallerHelper.DYNAMIC_DEFINITION_PROPERTY, stencil);
+        }
+
         // register the sequence flow targets.
         if (baseElt instanceof SequenceFlow) {
             _sequenceFlowTargets.addAll(outgoing);
@@ -3824,6 +3845,19 @@ public class Bpmn2JsonUnmarshaller {
             helper.applyProperties(baseElement,
                                    properties);
         }
+    }
+
+    protected void applyCustomElementProperties(BaseElement baseElement, String className) {
+        _logger.info("Adding custom element properties...");
+        Extension ext = Bpmn2Factory.eINSTANCE.createExtension();
+        ext.setXsdDefinition(new QName(className));
+        ext.getDefinition().setName("dynamic_definition_type");
+        ExtensionAttributeDefinition attr = Bpmn2Factory.eINSTANCE.createExtensionAttributeDefinition();
+        attr.setName("dynamic_definition_type");
+        attr.setType(className);
+        ext.getDefinition().getExtensionAttributeDefinitions().add(attr);
+        baseElement.getExtensionDefinitions().add(ext.getDefinition());
+        _logger.info("Finished adding custom element properties...");
     }
 
     protected void applySubProcessProperties(SubProcess sp,
@@ -6960,6 +6994,7 @@ public class Bpmn2JsonUnmarshaller {
 
     private boolean isCustomElement(String taskType,
                                     String preProcessingData) {
+        _logger.info("Checking if \"" + taskType + "\" is a DynamicDefinition");
         if (taskType != null && taskType.length() > 0 && preProcessingData != null && preProcessingData.length() > 0) {
             String[] preProcessingDataElements = preProcessingData.split(",\\s*");
             for (String preProcessingDataElement : preProcessingDataElements) {
@@ -6974,6 +7009,10 @@ public class Bpmn2JsonUnmarshaller {
     protected BaseElement createBaseElement(String stencil,
                                             String taskType,
                                             boolean customElement) {
+        _logger.info("Creating element \""
+                             + ((taskType == null) ? stencil : stencil + "_"
+                + taskType.replaceAll(" ",
+                                          "_")) + "\"");
         return Bpmn20Stencil.createElement(stencil,
                                            taskType,
                                            customElement);

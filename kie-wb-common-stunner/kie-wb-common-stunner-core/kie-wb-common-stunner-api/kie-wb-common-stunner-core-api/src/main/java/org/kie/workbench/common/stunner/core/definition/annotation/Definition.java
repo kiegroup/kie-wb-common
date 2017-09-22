@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,4 +33,6 @@ public @interface Definition {
     Class<? extends ElementFactory> graphFactory();
 
     Class<? extends Builder<?>> builder() default VoidBuilder.class;
+
+    Class<?>[] addonGroups() default {};
 }

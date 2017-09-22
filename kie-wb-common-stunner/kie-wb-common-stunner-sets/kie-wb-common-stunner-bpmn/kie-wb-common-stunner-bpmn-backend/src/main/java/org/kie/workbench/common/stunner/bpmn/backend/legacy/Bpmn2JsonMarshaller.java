@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 import bpsim.BPSimDataType;
 import bpsim.BpsimPackage;
@@ -155,6 +157,7 @@ import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.profile.IDiagramProfile;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.Bpmn2OryxManager;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -263,12 +266,15 @@ public class Bpmn2JsonMarshaller {
                                                                        "List",
                                                                        "String");
 
+    private DynamicDefinitionsBpmnMarshallerHelper dynamicDefinitionsMarshaller = new DynamicDefinitionsBpmnMarshallerHelper();
+
     private Map<String, DiagramElement> _diagramElements = new HashMap<String, DiagramElement>();
     private Map<String, Association> _diagramAssociations = new HashMap<String, Association>();
     private Scenario _simulationScenario = null;
     private static final Logger _logger = LoggerFactory.getLogger(Bpmn2JsonMarshaller.class);
     private IDiagramProfile profile;
     private boolean coordianteManipulation = true;
+
 
     public void setProfile(IDiagramProfile profile) {
         this.profile = profile;
@@ -1158,6 +1164,11 @@ public class Bpmn2JsonMarshaller {
                 flowElementProperties.put(ISSELECTABLE,
                                           entry.getValue());
                 foundSelectable = true;
+            }
+            if (entry.getEStructuralFeature().getName()
+                    .equals(DynamicDefinitionsBpmnMarshallerHelper.DYNAMIC_DEFINITION_PROPERTY)) {
+                flowElementProperties.put(DynamicDefinitionsBpmnMarshallerHelper.DYNAMIC_DEFINITION_PROPERTY,
+                                          entry.getValue());
             }
         }
         if (!foundBgColor) {
@@ -2748,8 +2759,13 @@ public class Bpmn2JsonMarshaller {
         marshallProperties(properties,
                            generator);
         generator.writeObjectFieldStart("stencil");
-        generator.writeObjectField("id",
-                                   stencil);
+        if (properties.containsKey(DynamicDefinitionsBpmnMarshallerHelper.DYNAMIC_DEFINITION_PROPERTY)) {
+            generator.writeObjectField("id",
+                                       "$" + properties.get(DynamicDefinitionsBpmnMarshallerHelper.DYNAMIC_DEFINITION_PROPERTY));
+        } else {
+            generator.writeObjectField("id",
+                                       stencil);
+        }
         generator.writeEndObject();
         generator.writeArrayFieldStart("childShapes");
         generator.writeEndArray();
@@ -2850,6 +2866,10 @@ public class Bpmn2JsonMarshaller {
                                    bounds.getY() - yOffset);
         generator.writeEndObject();
         generator.writeEndObject();
+
+        dynamicDefinitionsMarshaller.marshallProperties(node, properties, generator);
+
+
     }
 
     private void correctEventNodeSize(BPMNShape shape) {

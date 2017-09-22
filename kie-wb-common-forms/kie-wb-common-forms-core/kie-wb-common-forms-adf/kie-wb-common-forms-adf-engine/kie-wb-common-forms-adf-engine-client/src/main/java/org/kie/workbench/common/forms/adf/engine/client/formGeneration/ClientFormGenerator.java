@@ -34,7 +34,6 @@ import org.kie.workbench.common.forms.adf.service.definitions.I18nSettings;
 
 @ApplicationScoped
 public class ClientFormGenerator extends AbstractFormGenerator {
-
     protected TranslationService translationService;
 
     @Inject
@@ -46,6 +45,7 @@ public class ClientFormGenerator extends AbstractFormGenerator {
 
     @PostConstruct
     public void initialize() {
+
         SyncBeanManager beanManager = IOC.getBeanManager();
 
         Collection<SyncBeanDef<FormElementProcessor>> processors = beanManager.lookupBeans(FormElementProcessor.class);

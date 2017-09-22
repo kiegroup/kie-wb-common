@@ -19,6 +19,7 @@ package ${packageName};
 import ${parentAdapterClassName};
 
 import javax.annotation.Generated;
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -29,10 +30,12 @@ import javax.inject.Inject;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterFactory;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableDefinitionSetAdapterProxy;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinition;
+import org.kie.workbench.common.stunner.core.definition.DynamicDefinitions;
 
 @Generated("${generatedByClassName}")
 @ApplicationScoped
-public class ${className} extends ${parentAdapterClassName}<Object> {
+public class ${className} extends ${parentAdapterClassName}<Object> implements DynamicDefinitions.DynamicDefinitionListener {
 
     private static final Map<Class, String> descriptionFieldNames = new HashMap<Class, String>(${valuePropNamesSize}) {{
         <#list valuePropNames as valuePropName>
@@ -62,7 +65,16 @@ public class ${className} extends ${parentAdapterClassName}<Object> {
     <#list graphFactoryTypes as graphFactoryType>
         put( ${graphFactoryType.className}.class, ${graphFactoryType.methodName}.class );
     </#list>
-        }};
+    }};
+
+    private static final Set<Class<?>> addonGroups = new HashSet<Class<?>>(${addonGroupsSize}) {{
+                    <#list addonGroups as addonGroup>
+                        add( ${addonGroup} );
+                    </#list>
+    }};
+
+    @Inject
+    private DynamicDefinitions dynamicDefinitions;
 
     protected ${className}() {
     }
@@ -70,6 +82,19 @@ public class ${className} extends ${parentAdapterClassName}<Object> {
     @Inject
     public ${className}(${adapterFactoryClassName} adapterFactory) {
         super(adapterFactory);
+    }
+
+    @PostConstruct
+    private void addDynamicDefinitions() {
+        dynamicDefinitions.registerDynamicDefinitionListener(this);
+        definitionIds.addAll(dynamicDefinitions.getDefinitionIds(addonGroups));
+    }
+
+    @Override
+    public void onDynamicDefinitionAdded(DynamicDefinition def) {
+        if (DynamicDefinitions.inAddonGroups(def, addonGroups)) {
+            definitionIds.add(def.getType().getName());
+        }
     }
 
     @Override

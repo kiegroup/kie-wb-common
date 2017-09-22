@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.processors.factory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.processing.Messager;
 
 import org.kie.workbench.common.stunner.core.factory.definition.AbstractTypeDefinitionFactory;
@@ -34,7 +35,8 @@ public class ModelFactoryGenerator extends AbstractBindableAdapterGenerator {
     public StringBuffer generate(final String packageName,
                                  final String className,
                                  final Map<String, String> buildersMap,
-                                 final Messager messager) throws GenerationException {
+                                 final Messager messager,
+                                 final Set<String> addonGroups) throws GenerationException {
         Map<String, Object> root = new HashMap<String, Object>();
         root.put("packageName",
                  packageName);
@@ -44,6 +46,10 @@ public class ModelFactoryGenerator extends AbstractBindableAdapterGenerator {
                  AbstractTypeDefinitionFactory.class.getName());
         root.put("generatedByClassName",
                  ModelFactoryGenerator.class.getName());
+        root.put("addonGroups",
+                 addonGroups);
+        root.put("addonGroupsSize",
+                 addonGroups.size());
         addFields("builders",
                   root,
                   buildersMap);
