@@ -21,6 +21,7 @@ import java.util.List;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
@@ -45,11 +46,11 @@ import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.ButtonCell;
-import org.gwtbootstrap3.client.ui.gwt.CellTable;
 import org.kie.workbench.common.widgets.configresource.client.resources.i18n.ImportConstants;
 import org.kie.workbench.common.widgets.configresource.client.widget.Sorters;
 import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
+import org.uberfire.ext.widgets.common.client.tables.PagedTable;
 import org.uberfire.mvp.ParameterizedCommand;
 
 public class ImportsWidgetViewImpl
@@ -67,7 +68,7 @@ public class ImportsWidgetViewImpl
     Button addImportButton;
 
     @UiField(provided = true)
-    CellTable<Import> table = new CellTable<>();
+    PagedTable<Import> table = new PagedTable<>(5);
 
     private AddImportPopup addImportPopup;
 
@@ -98,15 +99,13 @@ public class ImportsWidgetViewImpl
 
         //Disable until content is loaded
         addImportButton.setEnabled(false);
+        
     }
 
     private void setup() {
         //Setup table
-        table.setStriped(true);
-        table.setCondensed(true);
-        table.setBordered(true);
-        table.setEmptyTableWidget(new Label(ImportConstants.INSTANCE.noImportsDefined()));
-
+        table.setEmptyTableCaption(ImportConstants.INSTANCE.noImportsDefined());
+       
         //Columns
         final TextColumn<Import> importTypeColumn = new TextColumn<Import>() {
 
@@ -184,12 +183,13 @@ public class ImportsWidgetViewImpl
         });
 
         table.addColumn(importTypeColumn,
-                        new TextHeader(ImportConstants.INSTANCE.importType()));
+                        ImportConstants.INSTANCE.importType());
         table.addColumn(deleteImportColumn,
                         ImportConstants.INSTANCE.remove());
 
-        //Link display
+        //Link display  
         getDataProvider().addDataDisplay(table);
+
     }
 
     private boolean isExternalImport(final Import i) {
@@ -218,6 +218,9 @@ public class ImportsWidgetViewImpl
         getDataProvider().getList().sort(Sorters.sortBySourceThenFQCN(this::isExternalImport));
         this.addImportButton.setEnabled(!isReadOnly);
         this.isReadOnly = isReadOnly;
+        
+        table.refresh();
+        table.redraw();
     }
 
     @UiHandler("addImportButton")
