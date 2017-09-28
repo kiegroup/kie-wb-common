@@ -43,7 +43,6 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FieldType;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
-import org.kie.workbench.common.forms.model.HasFormModelProperties;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.uberfire.commons.data.Pair;
 
@@ -104,7 +103,7 @@ public class FormEditorHelper {
                                               field));
             }
         }
-        addAvailableFields(content.getAvailableFields());
+        addAvailableFields();
     }
 
     public FormDefinition getFormDefinition() {
@@ -115,10 +114,15 @@ public class FormEditorHelper {
         return getFormDefinition().getModel();
     }
 
-    public void addAvailableFields(List<FieldDefinition> fields) {
-        for (FieldDefinition field : fields) {
-            addAvailableField(field);
-        }
+    public void addAvailableFields() {
+        FormModel model = getFormModel();
+        FormDefinition formDefinition = getFormDefinition();
+
+        model.getProperties().forEach(modelProperty -> {
+            if(formDefinition.getFieldByBinding(modelProperty.getName()) == null) {
+                addAvailableField(fieldManager.getDefinitionByModelProperty(modelProperty));
+            }
+        });
     }
 
     public void addAvailableField(FieldDefinition field) {
@@ -189,10 +193,7 @@ public class FormEditorHelper {
     public boolean modelContainsField(FieldDefinition fieldDefinition) {
         FormModel formModel = getFormModel();
 
-        if (formModel instanceof HasFormModelProperties) {
-            return ((HasFormModelProperties) formModel).getProperty(fieldDefinition.getBinding()) != null;
-        }
-        return false;
+        return formModel.getProperty(fieldDefinition.getBinding()) != null;
     }
 
     public List<String> getCompatibleModelFields(FieldDefinition field) {
