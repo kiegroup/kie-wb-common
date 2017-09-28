@@ -24,7 +24,7 @@ import static org.junit.Assert.*;
 
 public abstract class AbstractConverterTest<MODEL_VALUE, WIDGET_VALUE> {
 
-    Converter converter;
+    protected Converter converter;
 
     @Before
     public void init() {
