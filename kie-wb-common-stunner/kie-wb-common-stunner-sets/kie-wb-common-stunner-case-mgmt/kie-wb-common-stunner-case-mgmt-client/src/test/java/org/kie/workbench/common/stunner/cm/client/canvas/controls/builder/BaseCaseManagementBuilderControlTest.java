@@ -18,11 +18,14 @@ package org.kie.workbench.common.stunner.cm.client.canvas.controls.builder;
 
 import java.util.Optional;
 
+import javax.enterprise.event.Event;
+
 import org.junit.Test;
 import org.kie.workbench.common.stunner.cm.client.canvas.CaseManagementCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.api.ClientDefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.builder.impl.AbstractElementBuilderControl;
+import org.kie.workbench.common.stunner.core.client.canvas.event.CancelCanvasAction;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
@@ -32,7 +35,10 @@ import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.mockito.Mock;
 
 import static org.mockito.AdditionalMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyDouble;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public abstract class BaseCaseManagementBuilderControlTest {
 

@@ -42,6 +42,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -49,9 +50,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class CreateNodeActionTest {
@@ -203,7 +209,8 @@ public class CreateNodeActionTest {
         when(canvasLayoutUtils.getNext(eq(canvasHandler),
                                        eq(element),
                                        eq(targetNode)))
-                .thenReturn(new double[]{100d, 500d});
+                .thenReturn(new Point2D(100d,
+                                        500d));
         final MouseClickEvent event = mock(MouseClickEvent.class);
         when(event.getX()).thenReturn(100d);
         when(event.getY()).thenReturn(500d);

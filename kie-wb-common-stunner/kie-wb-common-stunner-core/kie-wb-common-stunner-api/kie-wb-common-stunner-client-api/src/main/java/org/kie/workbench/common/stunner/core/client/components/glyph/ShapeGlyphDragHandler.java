@@ -16,23 +16,19 @@
 
 package org.kie.workbench.common.stunner.core.client.components.glyph;
 
+import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
+import org.kie.workbench.common.stunner.core.client.components.drag.DragProxy;
+import org.kie.workbench.common.stunner.core.client.components.drag.DragProxyCallback;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 
-public interface ShapeGlyphDragHandler {
+public interface ShapeGlyphDragHandler<C extends Canvas> extends DragProxy<C, ShapeGlyphDragHandler.Item, DragProxyCallback> {
 
-    interface Callback {
+    interface Item {
 
-        void onMove(final double x,
-                    final double y);
+        Glyph getShape();
 
-        void onComplete(final double x,
-                        final double y);
+        int getWidth();
+
+        int getHeight();
     }
-
-    void show(final Glyph shapeGlyph,
-              final double x,
-              final double y,
-              final double width,
-              final double height,
-              final Callback callback);
 }
