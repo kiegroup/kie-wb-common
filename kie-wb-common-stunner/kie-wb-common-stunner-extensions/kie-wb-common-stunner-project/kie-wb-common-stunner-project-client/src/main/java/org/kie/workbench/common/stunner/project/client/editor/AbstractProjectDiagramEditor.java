@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.Sessio
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenterFactory;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
+import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
 import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
@@ -123,6 +124,8 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
     private Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
     protected SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
+    private final DiagramClientErrorHandler diagramClientErrorHandler;
+
     private String title = "Project Diagram Editor";
 
     @Inject
@@ -139,7 +142,8 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                         final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder,
                                         final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
                                         final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
-                                        final ProjectMessagesListener projectMessagesListener) {
+                                        final ProjectMessagesListener projectMessagesListener,
+                                        final DiagramClientErrorHandler diagramClientErrorHandler) {
         super(view);
         this.placeManager = placeManager;
         this.errorPopupPresenter = errorPopupPresenter;
@@ -151,6 +155,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         this.sessionPresenterFactory = sessionPresenterFactory;
         this.menuItemsBuilder = menuItemsBuilder;
         this.projectMessagesListener = projectMessagesListener;
+        this.diagramClientErrorHandler = diagramClientErrorHandler;
 
         this.sessionClearStatesCommand = sessionCommandFactory.newClearStatesCommand();
         this.sessionVisitGraphCommand = sessionCommandFactory.newVisitGraphCommand();
@@ -631,7 +636,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     private void onSaveError(final ClientRuntimeError error) {
-        showError(error.toString());
+        showError(error);
     }
 
     private void onValidationSuccess() {
@@ -646,12 +651,11 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     private void showError(final ClientRuntimeError error) {
-        showError(error.toString());
+        diagramClientErrorHandler.handleError(error, message -> showError(message));
+        log(Level.SEVERE, error.toString());
     }
 
     private void showError(final String message) {
-        log(Level.SEVERE,
-            message);
         errorPopupPresenter.showMessage(message);
         hideLoadingViews();
     }
