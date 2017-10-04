@@ -165,7 +165,7 @@ public class OrgUnitsMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 10, 5)
                 .legendOn(RIGHT)
-                .filterOff(false)
+                .filterOff(true)
                 .buildSettings();
     }
 
@@ -180,7 +180,7 @@ public class OrgUnitsMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 10, 5)
                 .legendOn(RIGHT)
-                .filterOff(false)
+                .filterOff(true)
                 .buildSettings();
     }
 
@@ -197,7 +197,7 @@ public class OrgUnitsMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 10, 5)
                 .legendOn(RIGHT)
-                .filterOn(false, true, false)
+                .filterOn(false, true, true)
                 .buildSettings();
     }
 
@@ -213,7 +213,7 @@ public class OrgUnitsMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 5, 5)
                 .legendOn(RIGHT)
-                .filterOn(false, true, false)
+                .filterOn(false, true, true)
                 .buildSettings();
     }
 
