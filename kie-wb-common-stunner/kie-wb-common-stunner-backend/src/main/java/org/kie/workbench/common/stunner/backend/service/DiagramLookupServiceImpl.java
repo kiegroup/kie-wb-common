@@ -30,6 +30,8 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.lookup.criteria.AbstractCriteriaLookupManager;
 import org.kie.workbench.common.stunner.core.lookup.diagram.DiagramLookupRequest;
+import org.kie.workbench.common.stunner.core.lookup.diagram.DiagramRepresentation;
+import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
@@ -42,6 +44,8 @@ public class DiagramLookupServiceImpl
 
     private static final Logger LOG = LoggerFactory.getLogger(DiagramLookupServiceImpl.class.getName());
 
+    private DiagramService diagramService;
+
     protected DiagramLookupServiceImpl() {
         this(null,
              null);
@@ -52,6 +56,7 @@ public class DiagramLookupServiceImpl
                                     final DiagramServiceImpl diagramService) {
         super(ioService,
               diagramService);
+        this.diagramService = diagramService;
     }
 
     protected org.uberfire.java.nio.file.Path parseCriteriaPath(final DiagramLookupRequest request) {
@@ -80,6 +85,12 @@ public class DiagramLookupServiceImpl
         String m = "Criteria [" + criteria + "] not supported.";
         LOG.error(m);
         throw new IllegalArgumentException(m);
+    }
+
+    @Override
+    public LookupResponse<DiagramRepresentation> lookup(DiagramLookupRequest request) {
+        diagramService.registryDiagrams();
+        return super.lookup(request);
     }
 
     private DiagramServiceImpl getServiceImpl() {

@@ -97,6 +97,10 @@ public class DiagramServiceImpl
         initFileSystem();
         // Register packaged diagrams into VFS.
         registerAppDefinitions();
+
+    }
+
+    public void registryDiagrams() {
         // Load vfs diagrams and put into the parent registry.
         final Collection<Diagram<Graph, Metadata>> diagrams = getAllDiagrams();
         if (null != diagrams) {

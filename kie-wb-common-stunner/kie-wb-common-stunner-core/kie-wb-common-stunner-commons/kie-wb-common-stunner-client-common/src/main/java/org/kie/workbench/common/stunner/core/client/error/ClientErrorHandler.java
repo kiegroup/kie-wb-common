@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.service;
+package org.kie.workbench.common.stunner.core.client.error;
 
-import org.jboss.errai.bus.server.annotations.Remote;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
+import java.util.function.Consumer;
 
-/**
- * Default Stunner's diagram service implementation.
- */
-@Remote
-public interface DiagramService extends BaseDiagramService<Metadata, Diagram<Graph, Metadata>> {
-    void registryDiagrams();
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
+
+public abstract class ClientErrorHandler {
+
+    protected ClientTranslationService translationService;
+
+    public ClientErrorHandler(ClientTranslationService translationService) {
+        this.translationService = translationService;
+    }
+
+    public abstract void handleError(ClientRuntimeError error, Consumer<String> showError);
+
 }
