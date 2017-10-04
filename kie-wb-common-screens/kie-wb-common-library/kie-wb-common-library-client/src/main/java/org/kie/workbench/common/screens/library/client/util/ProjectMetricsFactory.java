@@ -214,7 +214,7 @@ public class ProjectMetricsFactory {
         return DisplayerSettingsFactory.newSelectorSettings()
                 .dataset(GIT_CONTRIB)
                 .filter(createProjectFilter(projectInfo))
-                .column(COLUMN_DATE).format(translationService.getTranslation(LibraryConstants.Date), "dd MMM, yyyy")
+                .column(COLUMN_DATE).format(translationService.getTranslation(LibraryConstants.Date), "dd MMM, yyyy HH:mm")
                 .subtype(DisplayerSubType.SELECTOR_SLIDER)
                 .titleVisible(false)
                 .width(420)

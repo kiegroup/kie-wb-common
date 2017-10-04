@@ -263,6 +263,12 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
     }
 
     @Test
+    public void dateSelectorFormatTest() {
+        DisplayerSettings settings = metricsFactory.buildDateSelectorSettings(projectInfo);
+        assertEquals(settings.getColumnSettings(COLUMN_DATE).getValuePattern(), "dd MMM, yyyy HH:mm");
+    }
+
+    @Test
     public void displayersListenOthersTest() {
         assertTrue(metricsFactory.buildAllCommitsSettings(projectInfo).isFilterListeningEnabled());
         assertTrue(metricsFactory.buildCommitsByDayOfWeekSettings(projectInfo).isFilterListeningEnabled());
