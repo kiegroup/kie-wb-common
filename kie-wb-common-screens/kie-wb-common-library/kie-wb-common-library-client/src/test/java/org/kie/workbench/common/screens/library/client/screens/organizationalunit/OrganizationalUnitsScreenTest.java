@@ -262,6 +262,12 @@ public class OrganizationalUnitsScreenTest {
     }
 
     @Test
+    public void dateSelectorFormatTest() {
+        DisplayerSettings settings = orgUnitsMetricsFactory.buildDateSelectorSettings();
+        assertEquals(settings.getColumnSettings(COLUMN_DATE).getValuePattern(), "dd MMM, yyyy HH:mm");
+    }
+
+    @Test
     public void displayersListenOthersTest() {
         assertTrue(orgUnitsMetricsFactory.buildAllCommitsSettings().isFilterListeningEnabled());
         assertTrue(orgUnitsMetricsFactory.buildCommitsByDayOfWeekSettings().isFilterListeningEnabled());
