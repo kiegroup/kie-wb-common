@@ -155,7 +155,7 @@ public class ProjectMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 10, 5)
                 .legendOn(RIGHT)
-                .filterOn(false, true, false)
+                .filterOn(false, true, true)
                 .buildSettings();
     }
 
@@ -172,7 +172,7 @@ public class ProjectMetricsFactory {
                 .width(250).height(170)
                 .margins(10, 0, 5, 5)
                 .legendOn(RIGHT)
-                .filterOn(false, true, false)
+                .filterOn(false, true, true)
                 .buildSettings();
     }
 
