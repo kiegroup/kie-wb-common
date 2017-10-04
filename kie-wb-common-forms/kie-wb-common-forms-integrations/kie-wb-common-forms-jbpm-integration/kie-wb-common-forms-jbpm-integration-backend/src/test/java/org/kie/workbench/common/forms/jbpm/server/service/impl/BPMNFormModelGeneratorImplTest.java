@@ -69,7 +69,7 @@ public class BPMNFormModelGeneratorImplTest {
         put("_float",
             Float.class.getName());
         put("_object",
-            String.class.getName());
+            Object.class.getName());
         put("_dataObject",
             DATA_OBJECT_TYPE);
         put("_customType",
@@ -86,7 +86,7 @@ public class BPMNFormModelGeneratorImplTest {
         put("float_",
             Float.class.getName());
         put("object_",
-            String.class.getName());
+            Object.class.getName());
         put("dataObject_",
             DATA_OBJECT_TYPE);
         put("customType_",
@@ -161,7 +161,7 @@ public class BPMNFormModelGeneratorImplTest {
             put("float",
                 Float.class.getName());
             put("object",
-                String.class.getName());
+                Object.class.getName());
             put("dataObject",
                 DATA_OBJECT_TYPE);
             put("customType",
@@ -233,7 +233,7 @@ public class BPMNFormModelGeneratorImplTest {
             put("_float_",
                 Float.class.getName());
             put("_object_",
-                String.class.getName());
+                Object.class.getName());
             put("_dataObject_",
                 DATA_OBJECT_TYPE);
             put("_customType_",

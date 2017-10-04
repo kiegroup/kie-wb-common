@@ -37,13 +37,13 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class LocalDateFieldValueProcessorTest {
 
-    LocalDateFieldValueProcessor processor = new LocalDateFieldValueProcessor();
+    private LocalDateFieldValueProcessor processor = new LocalDateFieldValueProcessor();
 
     @Mock
-    DatePickerFieldDefinition field;
+    private DatePickerFieldDefinition field;
 
     @Mock
-    BackendFormRenderingContext context;
+    private BackendFormRenderingContext context;
 
     @Before
     public void init() {
