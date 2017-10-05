@@ -35,7 +35,6 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarFactory;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.palette.model.PaletteDefinition;
-import org.kie.workbench.common.stunner.core.client.components.palette.model.definition.DefinitionsPalette;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
