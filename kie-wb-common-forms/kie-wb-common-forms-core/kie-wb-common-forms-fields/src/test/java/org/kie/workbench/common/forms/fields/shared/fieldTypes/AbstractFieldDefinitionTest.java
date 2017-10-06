@@ -22,7 +22,9 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.HasPlaceHol
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.HasRows;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractFieldDefinitionTest<FIELD extends FieldDefinition> {
 
@@ -57,7 +59,62 @@ public abstract class AbstractFieldDefinitionTest<FIELD extends FieldDefinition>
         assertTrue(originalFieldDefinition.equals(newFieldDefinition));
     }
 
-    private FIELD getNewFieldDefinition() {
+    @Test
+    public void testRequired() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setRequired(true);
+        assertTrue(newFieldDefinition.getRequired());
+        newFieldDefinition.setRequired(false);
+        assertFalse(newFieldDefinition.getRequired());
+    }
+
+    @Test
+    public void testReadOnly() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setReadOnly(true);
+        assertTrue(newFieldDefinition.getReadOnly());
+        newFieldDefinition.setReadOnly(false);
+        assertFalse(newFieldDefinition.getReadOnly());
+    }
+
+    @Test
+    public void testValidateOnChange() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setValidateOnChange(true);
+        assertTrue(newFieldDefinition.getValidateOnChange());
+        newFieldDefinition.setValidateOnChange(false);
+        assertFalse(newFieldDefinition.getValidateOnChange());
+    }
+
+    @Test
+    public void testBinding() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setBinding(BINDING);
+        assertEquals(BINDING, newFieldDefinition.getBinding());
+    }
+
+    @Test
+    public void testName() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setName(NAME);
+        assertEquals(NAME, newFieldDefinition.getName());
+    }
+
+    @Test
+    public void testLabel() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setLabel(LABEL);
+        assertEquals(LABEL, newFieldDefinition.getLabel());
+    }
+
+    @Test
+    public void testStandaloneClassName() {
+        FIELD newFieldDefinition = getEmptyFieldDefinition();
+        newFieldDefinition.setStandaloneClassName(STANDALONE_CLASS_NAME);
+        assertEquals(STANDALONE_CLASS_NAME, newFieldDefinition.getStandaloneClassName());
+    }
+
+    protected FIELD getNewFieldDefinition() {
         FIELD field = getFullFieldDefinition();
 
         field.setId(ID);
