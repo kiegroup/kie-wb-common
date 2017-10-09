@@ -34,7 +34,6 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.SliderF
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.TextAreaFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.TextBoxFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.date.DatePickerFieldRenderer;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.picture.PictureFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.multipleSubform.MultipleSubFormFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.selector.ObjectSelectorFieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.subform.SubFormFieldRenderer;
@@ -47,8 +46,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.type.DatePickerFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.decimalBox.definition.DecimalBoxFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.decimalBox.type.DecimalBoxFieldType;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.image.definition.PictureFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.image.type.PictureFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.definition.IntegerBoxFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.type.IntegerBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.definition.EnumListBoxFieldDefinition;
@@ -131,9 +128,6 @@ public class FieldRendererManagerImplTest {
         registerRenderer(IntegerBoxFieldRenderer.class,
                          IntegerBoxFieldType.NAME,
                          null);
-        registerRenderer(PictureFieldRenderer.class,
-                         PictureFieldType.NAME,
-                         null);
 
         Collection<SyncBeanDef<FieldRenderer>> renderers = new ArrayList<>();
 
@@ -176,7 +170,6 @@ public class FieldRendererManagerImplTest {
         testRendererFor(new TextBoxFieldDefinition());
         testRendererFor(new DecimalBoxFieldDefinition());
         testRendererFor(new IntegerBoxFieldDefinition());
-        testRendererFor(new PictureFieldDefinition());
     }
 
     protected void testRendererFor(FieldDefinition field) {
