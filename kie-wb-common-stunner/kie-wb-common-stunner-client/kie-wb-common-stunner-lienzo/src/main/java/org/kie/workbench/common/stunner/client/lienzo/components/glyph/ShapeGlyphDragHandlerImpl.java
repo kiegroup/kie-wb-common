@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,11 +54,11 @@ public class ShapeGlyphDragHandlerImpl implements ShapeGlyphDragHandler {
         final Group dragShape = glyphLienzoGlyphRenderer.render(shapeGlyph,
                                                                 width,
                                                                 height);
-        dragShape.setX(width / 2);
-        dragShape.setY(height / 2);
+        dragShape.setX(0);
+        dragShape.setY(0);
         final LienzoPanel dragProxyPanel = new LienzoPanel(((int) width * 2),
                                                            ((int) height * 2));
-        dragProxyPanel.getElement().getStyle().setCursor(Style.Cursor.MOVE);
+        dragProxyPanel.getElement().getStyle().setCursor(Style.Cursor.AUTO);
         final Layer dragProxyLayer = new Layer();
         dragProxyLayer.add(dragShape);
         dragProxyPanel.add(dragProxyLayer);
@@ -80,9 +80,9 @@ public class ShapeGlyphDragHandlerImpl implements ShapeGlyphDragHandler {
                                       final double y) {
         Style style = dragProxyPanel.getElement().getStyle();
         style.setPosition(Style.Position.ABSOLUTE);
-        style.setLeft(x - (proxyWidth / 2),
+        style.setLeft(x,
                       Style.Unit.PX);
-        style.setTop(y - (proxyHeight / 2),
+        style.setTop(y,
                      Style.Unit.PX);
         style.setZIndex(ZINDEX);
     }
@@ -96,9 +96,9 @@ public class ShapeGlyphDragHandlerImpl implements ShapeGlyphDragHandler {
 
                                                            @Override
                                                            public void onMouseMove(final MouseMoveEvent mouseMoveEvent) {
-                                                               style.setLeft(mouseMoveEvent.getX() - (floatingPanel.getWidth() / 2),
+                                                               style.setLeft(mouseMoveEvent.getX(),
                                                                              Style.Unit.PX);
-                                                               style.setTop(mouseMoveEvent.getY() - (floatingPanel.getHeight() / 2),
+                                                               style.setTop(mouseMoveEvent.getY(),
                                                                             Style.Unit.PX);
                                                                final double x = mouseMoveEvent.getX();
                                                                final double y = mouseMoveEvent.getY();
