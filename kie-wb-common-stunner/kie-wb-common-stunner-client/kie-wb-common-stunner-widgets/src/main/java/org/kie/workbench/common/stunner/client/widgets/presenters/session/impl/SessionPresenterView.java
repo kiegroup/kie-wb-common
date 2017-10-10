@@ -20,6 +20,8 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
@@ -29,9 +31,12 @@ import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
 import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
 import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.stunner.client.widgets.palette.PaletteWidget;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
+import org.kie.workbench.common.stunner.core.client.components.palette.model.PaletteDefinition;
 
 // TODO: i18n.
 @Dependent
@@ -67,6 +72,11 @@ public class SessionPresenterView extends Composite
         settings.setAllowDismiss(true);
         settings.setDelay(DELAY);
         settings.setTimer(TIMER);
+        addDomHandler((e) -> {
+                          e.preventDefault();
+                          e.stopPropagation();
+                      },
+                      ContextMenuEvent.getType());
         showLoading(false);
     }
 
@@ -78,9 +88,9 @@ public class SessionPresenterView extends Composite
     }
 
     @Override
-    public SessionPresenterView setPaletteWidget(final IsWidget widget) {
+    public SessionPresenterView setPaletteWidget(final PaletteWidget<PaletteDefinition> paletteWidget) {
         setWidgetForPanel(palettePanel,
-                          widget);
+                          ElementWrapperWidget.getWidget(paletteWidget.getElement()));
         return this;
     }
 
@@ -88,7 +98,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenterView showError(final String message) {
         settings.setType(NotifyType.DANGER);
         showNotification("Error",
-                         message,
+                         buildHtmlEscapedText(message),
                          IconType.CLOSE);
         return this;
     }
@@ -97,7 +107,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenter.View showWarning(final String message) {
         settings.setType(NotifyType.WARNING);
         showNotification("Warning",
-                         message,
+                         buildHtmlEscapedText(message),
                          IconType.CLOSE);
         return this;
     }
@@ -106,7 +116,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenterView showMessage(final String message) {
         settings.setType(NotifyType.SUCCESS);
         showNotification("Info",
-                         message,
+                         buildHtmlEscapedText(message),
                          IconType.STICKY_NOTE);
         return this;
     }
@@ -115,7 +125,7 @@ public class SessionPresenterView extends Composite
                                   final String message,
                                   final IconType icon) {
         Notify.notify(title,
-                      message,
+                      buildHtmlEscapedText(message),
                       icon,
                       settings);
     }
@@ -141,5 +151,9 @@ public class SessionPresenterView extends Composite
 
     public void destroy() {
         this.removeFromParent();
+    }
+
+    private String buildHtmlEscapedText(final String message) {
+        return new SafeHtmlBuilder().appendEscapedLines(message).toSafeHtml().asString();
     }
 }
