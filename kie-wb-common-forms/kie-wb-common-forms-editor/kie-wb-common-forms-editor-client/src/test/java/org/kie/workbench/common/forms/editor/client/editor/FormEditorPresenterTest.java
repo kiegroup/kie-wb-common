@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorSyncPaletteEvent;
+import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.definition.TextAreaFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
@@ -298,6 +299,8 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         Collection<FieldDefinition> availableFieldsValues = editorHelper.getAvailableFields().values();
 
+        verify(translationService, atLeastOnce())
+                .getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
         verify(presenterSpy,
                count).removeAllDraggableGroupComponent(presenter.getFormDefinition().getFields());
         verify(presenterSpy,
@@ -315,6 +318,9 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         List<FieldDefinition> fieldList = presenter.getFormDefinition().getFields();
 
         presenter.removeAllDraggableGroupComponent(fieldList);
+
+        verify(translationService,
+               times(2)).getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
 
         verify(layoutEditorMock,
                times(fieldList.size())).removeDraggableGroupComponent(anyString(),
