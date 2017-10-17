@@ -17,6 +17,9 @@
 package org.kie.workbench.common.stunner.core.graph.processing.traverse.content;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -102,5 +106,20 @@ public class ChildrenTraverseProcessorImplTest {
                      endNodeParents.size());
         assertEquals(result.parentNode,
                      endNodeParents.get(0));
+    }
+
+    @Test
+    public void testConsume() {
+        final TestingGraphInstanceBuilder.TestGraph2 graphInstance =
+                TestingGraphInstanceBuilder.newGraph2(graphTestHandler);
+        List<Node> remainingNodes = (List<Node>) StreamSupport.stream(graphInstance.graph.nodes().spliterator(), false)
+                .collect(Collectors.toList());
+        //first remove the parent
+        remainingNodes.remove(graphInstance.parentNode);
+
+        //then remove all the children
+        tested.consume(graphInstance.graph, graphInstance.parentNode, remainingNodes::remove);
+        //assert all children were processed
+        assertTrue(remainingNodes.isEmpty());
     }
 }

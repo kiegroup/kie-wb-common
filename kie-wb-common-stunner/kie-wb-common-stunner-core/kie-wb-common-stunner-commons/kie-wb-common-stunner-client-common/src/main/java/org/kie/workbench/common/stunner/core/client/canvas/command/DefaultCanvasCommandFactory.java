@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.function.Consumer;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -195,6 +197,11 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
     @Override
     public CanvasCommand<AbstractCanvasHandler> clearCanvas() {
         return new ClearCommand();
+    }
+
+    @Override
+    public CanvasCommand<AbstractCanvasHandler> cloneNode(Node candidate, String parentUuid, Point2D cloneLocation, Consumer<Node> cloneNodeCallback) {
+        return new CloneNodeCommand(candidate, parentUuid, cloneLocation, cloneNodeCallback);
     }
 
     protected ChildrenTraverseProcessor newChildrenTraverseProcessor() {
