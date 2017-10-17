@@ -33,7 +33,6 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.model.JavaFormModel;
 import org.kie.workbench.common.forms.model.TypeKind;
-import org.kie.workbench.common.forms.model.impl.DefaultFormModel;
 import org.kie.workbench.common.forms.model.impl.PortableJavaModel;
 import org.kie.workbench.common.forms.model.impl.TypeInfoImpl;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -317,7 +316,7 @@ public class MultipleSubformBackendFormRenderingContextManagerTest extends Abstr
 
     @Override
     protected FormDefinition getRootForm() {
-        FormDefinition form = new FormDefinition(new DefaultFormModel());
+        FormDefinition form = new FormDefinition(new PortableJavaModel(Person.class.getName()));
         form.setId("form");
 
         FieldDefinition field = fieldManager.getDefinitionByDataType(new TypeInfoImpl(TypeKind.OBJECT,
@@ -332,8 +331,6 @@ public class MultipleSubformBackendFormRenderingContextManagerTest extends Abstr
         multpleSubForm.setEditionForm("person-edition");
 
         form.getFields().add(field);
-
-        form.setModel(new DefaultFormModel());
 
         return form;
     }
