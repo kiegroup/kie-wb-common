@@ -363,12 +363,13 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
         if (canUpdateProject()) {
             fileMenuBuilder
-                    .addSave(versionRecordManager.newSaveMenuItem(() -> onSave()))
+                    .addSave(versionRecordManager.newSaveMenuItem(() -> saveAction()))
                     .addCopy(versionRecordManager.getCurrentPath(),
-                             fileNameValidator)
+                             assetUpdateValidator)
                     .addRename(versionRecordManager.getPathToLatest(),
-                               fileNameValidator)
-                    .addDelete(versionRecordManager.getPathToLatest());
+                               assetUpdateValidator)
+                    .addDelete(versionRecordManager.getPathToLatest(),
+                               assetUpdateValidator);
         }
 
         fileMenuBuilder
@@ -559,16 +560,16 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
      * @return formatted title
      */
     protected String formatTitle(final String title) {
-        if(Objects.isNull(resourceType)){
+        if (Objects.isNull(resourceType)) {
             return title;
         }
         return TITLE_FORMAT_TEMPLATE
-            .replace("#title",
-                     title)
-            .replace("#suffix",
-                     resourceType.getSuffix())
-            .replace("#type",
-                     resourceType.getShortName());
+                .replace("#title",
+                         title)
+                .replace("#suffix",
+                         resourceType.getSuffix())
+                .replace("#type",
+                         resourceType.getShortName());
     }
 
     private AbstractClientFullSession getSession() {
