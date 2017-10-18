@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.thoughtworks.xstream.XStream;
+import org.kie.internal.xstream.XStreamUtils;
 import org.kie.server.controller.api.model.spec.ServerTemplate;
 import org.kie.server.controller.api.model.spec.ServerTemplateKey;
 import org.kie.server.controller.api.storage.KieServerTemplateStorage;
@@ -49,9 +50,7 @@ public class ServerTemplateVFSStorage implements KieServerTemplateStorage {
 
     //enable proxy
     public ServerTemplateVFSStorage() {
-        xs = new XStream();
-        String[] voidDeny = {"void.class", "Void.class"};
-        xs.denyTypes(voidDeny);
+        xs = XStreamUtils.createTrustingXStream();
     }
 
     @Inject
@@ -77,7 +76,7 @@ public class ServerTemplateVFSStorage implements KieServerTemplateStorage {
             } finally {
                 ioService.endBatch();
             }
-            logger.debug("Server template {} stored successfully");
+            logger.debug("Server template {} stored successfully", serverTemplate.getId());
             return serverTemplate;
         } else {
             throw new IllegalArgumentException("Server template with id " + serverTemplate.getId() + " is already stored");
@@ -194,8 +193,7 @@ public class ServerTemplateVFSStorage implements KieServerTemplateStorage {
     protected ServerTemplate readServerTemplate(final Path registeredServer) {
         try {
             if (ioService.exists(registeredServer)) {
-                final ServerTemplate serverTemplate = (ServerTemplate) xs.fromXML(ioService.readAllString(registeredServer));
-                return serverTemplate;
+                return (ServerTemplate) xs.fromXML(ioService.readAllString(registeredServer));
             }
         } catch ( Exception ex ) {
             logger.error("Error reading KieServerInstance definition from path {}", registeredServer, ex);
