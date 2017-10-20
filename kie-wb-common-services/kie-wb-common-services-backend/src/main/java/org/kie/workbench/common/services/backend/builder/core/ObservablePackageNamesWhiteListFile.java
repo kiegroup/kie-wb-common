@@ -16,13 +16,16 @@
 package org.kie.workbench.common.services.backend.builder.core;
 
 import org.guvnor.common.services.builder.ResourceChangeObservableFile;
+import org.uberfire.backend.vfs.Path;
 
 /**
  * Changes to package-names-white-list.txt invalidates the DMO cache
  */
 public class ObservablePackageNamesWhiteListFile implements ResourceChangeObservableFile {
 
-    public boolean accept( final String fileName ) {
+    @Override
+    public boolean accept( final Path path ) {
+        final String fileName=path.getFileName();
         return fileName.equals( "package-names-white-list" );
     }
 
