@@ -58,28 +58,28 @@ public class ObservableDRLFileTest {
 
     @Test
     public void testAcceptWithDRLFileDeclaringTypeSingleLine() {
-        doReturn("cheese.drl").when(path).getFileName();
+        doReturn("cheese." + ObservableDRLFile.EXTENSION).when(path).getFileName();
         doReturn("declare MyType end").when(ioService).readAllString(eq(nioPath));
         assertTrue(observer.accept(path));
     }
 
     @Test
     public void testAcceptWithDRLFileDeclaringTypeMultipleLines() {
-        doReturn("cheese.drl").when(path).getFileName();
+        doReturn("cheese." + ObservableDRLFile.EXTENSION).when(path).getFileName();
         doReturn("declare MyType\nend").when(ioService).readAllString(eq(nioPath));
         assertTrue(observer.accept(path));
     }
 
     @Test
     public void testAcceptWithDRLFileDeclaringTypeMidFile() {
-        doReturn("cheese.drl").when(path).getFileName();
+        doReturn("cheese." + ObservableDRLFile.EXTENSION).when(path).getFileName();
         doReturn("MyType declaration \ndeclare MyType\nend").when(ioService).readAllString(eq(nioPath));
         assertTrue(observer.accept(path));
     }
 
     @Test
     public void testAcceptWithDRLFileNotDeclaringType() {
-        doReturn("cheese.drl").when(path).getFileName();
+        doReturn("cheese." + ObservableDRLFile.EXTENSION).when(path).getFileName();
         doReturn("rule test when then end").when(ioService).readAllString(eq(nioPath));
         assertFalse(observer.accept(path));
     }

@@ -23,10 +23,11 @@ import org.uberfire.backend.vfs.Path;
  */
 public class ObservableProjectImportsFile implements ResourceChangeObservableFile {
 
-    @Override
-    public boolean accept( final Path path ) {
-        final String fileName=path.getFileName();
-        return fileName.equals( "project.imports" );
-    }
+    static final String FILENAME = "project.imports";
 
+    @Override
+    public boolean accept(final Path path) {
+        final String fileName = path.getFileName();
+        return fileName.equals(FILENAME);
+    }
 }

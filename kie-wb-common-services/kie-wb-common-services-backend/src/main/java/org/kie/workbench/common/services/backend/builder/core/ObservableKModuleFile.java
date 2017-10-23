@@ -23,9 +23,11 @@ import org.uberfire.backend.vfs.Path;
  */
 public class ObservableKModuleFile implements ResourceChangeObservableFile {
 
+    static final String FILENAME = "kmodule.xml";
+
     @Override
     public boolean accept(final Path path) {
         final String fileName = path.getFileName();
-        return fileName.equals("kmodule.xml");
+        return fileName.equals(FILENAME);
     }
 }

@@ -23,10 +23,11 @@ import org.uberfire.backend.vfs.Path;
  */
 public class ObservablePackageNamesWhiteListFile implements ResourceChangeObservableFile {
 
-    @Override
-    public boolean accept( final Path path ) {
-        final String fileName=path.getFileName();
-        return fileName.equals( "package-names-white-list" );
-    }
+    static final String FILENAME = "package-names-white-list";
 
+    @Override
+    public boolean accept(final Path path) {
+        final String fileName = path.getFileName();
+        return fileName.equals(FILENAME);
+    }
 }

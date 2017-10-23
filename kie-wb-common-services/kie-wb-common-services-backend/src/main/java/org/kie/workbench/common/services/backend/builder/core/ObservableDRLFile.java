@@ -32,6 +32,8 @@ import org.uberfire.io.IOService;
 @ApplicationScoped
 public class ObservableDRLFile implements ResourceChangeObservableFile {
 
+    static final String EXTENSION = "drl";
+
     //Naive match for type declarations
     private static final String REGEX = "^.*declare\\s.+\\send.*$";
     private static final Pattern PATTERN = Pattern.compile(REGEX, Pattern.DOTALL);
@@ -50,7 +52,7 @@ public class ObservableDRLFile implements ResourceChangeObservableFile {
     @Override
     public boolean accept(final Path path) {
         final String fileName = path.getFileName();
-        if (!fileName.endsWith(".drl")) {
+        if (!fileName.endsWith("." + EXTENSION)) {
             return false;
         }
         final String drl = ioService.readAllString(convert(path));
