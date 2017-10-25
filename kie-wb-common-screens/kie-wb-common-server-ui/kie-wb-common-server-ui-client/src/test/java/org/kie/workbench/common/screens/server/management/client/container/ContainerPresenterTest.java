@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+
 import javax.enterprise.event.Event;
 
 import org.jboss.errai.common.client.api.Caller;
@@ -34,6 +35,7 @@ import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
 import org.kie.server.controller.api.model.spec.Capability;
 import org.kie.server.controller.api.model.spec.ContainerConfig;
 import org.kie.server.controller.api.model.spec.ContainerSpec;
+import org.kie.server.controller.api.model.spec.ContainerSpecKey;
 import org.kie.server.controller.api.model.spec.ProcessConfig;
 import org.kie.server.controller.api.model.spec.RuleConfig;
 import org.kie.server.controller.api.model.spec.ServerTemplateKey;
@@ -398,5 +400,17 @@ public class ContainerPresenterTest {
                                                         NotificationEvent.NotificationType.ERROR));
         verify(serverTemplateSelectedEvent,
                times(2)).fire(new ServerTemplateSelected(containerSpec.getServerTemplateKey()));
+    }
+
+    @Test //Reproducer for GUVNOR-3579
+    public void loadContainerSpecDataWithNullContainerSpec_doesntCauseNpe() {
+        ContainerSpecData badData = new ContainerSpecData(null, null);
+        when(runtimeManagementService.getContainersByContainerSpec(anyObject(), anyObject())).thenReturn(badData);
+
+        ContainerSpecKey lookupKey = new ContainerSpecKey("dummyId", "dummyName", new ServerTemplateKey("keyId", "keyName"));
+
+        presenter.load(lookupKey); // Doesn't throw NPE when ContainerSpecData contain nulls
+
+        verify(view, never()).setContainerName(anyString());
     }
 }

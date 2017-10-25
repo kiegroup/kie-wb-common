@@ -16,9 +16,10 @@
 
 package org.kie.workbench.common.screens.server.management.backend.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -44,28 +45,28 @@ public class RuntimeManagementServiceCDI extends RuntimeManagementServiceImpl
 
     @Inject
     @Override
-    public void setKieServerInstanceManager( KieServerInstanceManager kieServerInstanceManager ) {
-        super.setKieServerInstanceManager( kieServerInstanceManager );
+    public void setKieServerInstanceManager(KieServerInstanceManager kieServerInstanceManager) {
+        super.setKieServerInstanceManager(kieServerInstanceManager);
     }
 
     @Inject
     @Override
-    public void setTemplateStorage( KieServerTemplateStorage templateStorage ) {
-        super.setTemplateStorage( templateStorage );
+    public void setTemplateStorage(KieServerTemplateStorage templateStorage) {
+        super.setTemplateStorage(templateStorage);
     }
 
     @Override
-    public Collection<Container> getContainersByServerInstance( final String serverTemplateId,
-                                                                final String serverInstanceId ) {
-        final ServerTemplate serverTemplate = getTemplateStorage().load( serverTemplateId );   // best to pass both serverTemplateId and serverInstanceId
-        if ( serverTemplate == null ) {
-            throw new RuntimeException( "No server template found for server instance id " + serverInstanceId );
+    public Collection<Container> getContainersByServerInstance(final String serverTemplateId,
+                                                               final String serverInstanceId) {
+        final ServerTemplate serverTemplate = getTemplateStorage().load(serverTemplateId);   // best to pass both serverTemplateId and serverInstanceId
+        if (serverTemplate == null) {
+            throw new RuntimeException("No server template found for server instance id " + serverInstanceId);
         }
 
-        for ( final ServerInstanceKey serverInstance : serverTemplate.getServerInstanceKeys() ) {
+        for (final ServerInstanceKey serverInstance : serverTemplate.getServerInstanceKeys()) {
 
-            if ( serverInstance.getServerInstanceId().equals( serverInstanceId ) ) {
-                return getContainers( serverInstance );
+            if (serverInstance.getServerInstanceId().equals(serverInstanceId)) {
+                return getContainers(serverInstance);
             }
         }
 
@@ -73,22 +74,17 @@ public class RuntimeManagementServiceCDI extends RuntimeManagementServiceImpl
     }
 
     @Override
-    public ContainerSpecData getContainersByContainerSpec( final String serverTemplateId,
-                                                           final String containerSpecId ) {
-        final Collection<Container> containers = new ArrayList<Container>();
-
-        final ServerTemplate serverTemplate = getTemplateStorage().load( serverTemplateId );
-        if ( serverTemplate == null ) {
-            throw new RuntimeException( "No server template found for container spec " + containerSpecId );
+    public ContainerSpecData getContainersByContainerSpec(final String serverTemplateId,
+                                                          final String containerSpecId) {
+        final ServerTemplate serverTemplate = getTemplateStorage().load(serverTemplateId);
+        if (serverTemplate == null) {
+            throw new RuntimeException("No server template found for container spec " + containerSpecId);
         }
 
-        ContainerSpec containerSpec = serverTemplate.getContainerSpec( containerSpecId );
+        ContainerSpec containerSpec = serverTemplate.getContainerSpec(containerSpecId);
 
-        getKieServerInstanceManager().getContainers(serverTemplate, containerSpec);
+        List<Container> containers = getKieServerInstanceManager().getContainers(serverTemplate, containerSpec);
 
-        return new ContainerSpecData( serverTemplate.getContainerSpec( containerSpecId ),
-                                      containers );
-
+        return new ContainerSpecData(containerSpec, containers);
     }
-
 }
