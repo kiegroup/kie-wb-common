@@ -19,6 +19,8 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.util.List;
 import java.util.Optional;
 
+import org.uberfire.java.nio.file.Path;
+
 /**
  * Wrapper of the result of a compilation
  */
@@ -27,12 +29,12 @@ public interface CompilationResponse {
     Boolean isSuccessful();
 
     /**
-     * Provides error messages
-     */
-    Optional<String> getErrorMessage();
-
-    /**
      * Provides Maven output
      */
     Optional<List<String>> getMavenOutput();
+
+    /**
+     * Provides the Path of the working directory
+     */
+    Optional<Path> getWorkingDir();
 }

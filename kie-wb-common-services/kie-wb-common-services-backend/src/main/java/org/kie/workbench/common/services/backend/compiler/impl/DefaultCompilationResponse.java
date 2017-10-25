@@ -19,49 +19,46 @@ import java.util.List;
 import java.util.Optional;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.uberfire.java.nio.file.Path;
 
 /***
  * Default implementation of a basic (Non Kie) Compilation response,
  * it contains a boolean flag as a result of the build, an optional String error message,
- *  and an optional List of String with the maven output
- *
+ * and an optional List of String with the maven output
  */
 public class DefaultCompilationResponse implements CompilationResponse {
 
     private Boolean successful;
-    private Optional<String> errorMessage;
-    private Optional<List<String>> mavenOutput;
+    private List<String> mavenOutput;
+    private Path workingDir;
 
     public DefaultCompilationResponse(Boolean successful) {
         this.successful = successful;
-        this.errorMessage = Optional.empty();
-        this.mavenOutput = Optional.empty();
     }
 
     public DefaultCompilationResponse(Boolean successful,
                                       List<String> mavenOutput) {
         this.successful = successful;
-        this.errorMessage = Optional.empty();
-        this.mavenOutput = Optional.ofNullable(mavenOutput);
+        this.mavenOutput = mavenOutput;
     }
 
     public DefaultCompilationResponse(Boolean successful,
-                                      String errorMessage,
-                                      List<String> mavenOutput) {
+                                      List<String> mavenOutput,
+                                      Path workingDir) {
         this.successful = successful;
-        this.errorMessage = Optional.ofNullable(errorMessage);
-        this.mavenOutput = Optional.ofNullable(mavenOutput);
+        this.mavenOutput = mavenOutput;
+        this.workingDir = workingDir;
     }
 
     public Boolean isSuccessful() {
         return successful;
     }
 
-    public Optional<String> getErrorMessage() {
-        return errorMessage;
+    public Optional<List<String>> getMavenOutput() {
+        return Optional.ofNullable(mavenOutput);
     }
 
-    public Optional<List<String>> getMavenOutput() {
-        return mavenOutput;
+    public Optional<Path> getWorkingDir() {
+        return Optional.ofNullable(workingDir);
     }
 }

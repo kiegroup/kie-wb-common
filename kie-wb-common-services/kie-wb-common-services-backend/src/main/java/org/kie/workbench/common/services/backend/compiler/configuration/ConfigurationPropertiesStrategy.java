@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.kie.workbench.common.services.backend.compiler.Order;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
-                                                        Order {
+        Order {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPropertiesStrategy.class);
 
@@ -61,6 +63,11 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
                      props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGINS.name()));
             conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN,
                      props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGIN.name()));
+            conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN,
+                     props.getProperty(ConfigurationKey.KIE_TAKARI_PLUGIN.name()));
+
+            conf.put(ConfigurationKey.KIE_VERSION,
+                    props.getProperty(ConfigurationKey.KIE_VERSION.name()));
         }
     }
 

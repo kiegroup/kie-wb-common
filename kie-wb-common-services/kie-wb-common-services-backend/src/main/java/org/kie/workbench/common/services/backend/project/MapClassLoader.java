@@ -26,6 +26,7 @@ import java.security.ProtectionDomain;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 /**
  * Class taken from drools utility classes. (ClassUtils)
@@ -129,6 +130,10 @@ public class MapClassLoader extends ClassLoader {
     public static String convertClassToResourcePath(final String pName) {
         return pName.replace( '.',
                 '/' ) + ".class";
+    }
+
+    public Set<String> getKeys(){
+        return map.keySet();
     }
 
 }

@@ -16,79 +16,131 @@
 
 package org.kie.workbench.common.services.backend.builder.core;
 
+import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.*;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.guvnor.common.services.backend.cache.LRUCache;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfoService;
+import org.guvnor.m2repo.backend.server.GuvnorM2Repository;
+import org.jboss.errai.security.shared.api.identity.User;
+import org.kie.workbench.common.services.backend.builder.af.KieAfBuilderClassloaderUtil;
+import org.guvnor.common.services.backend.cache.BuilderCache;
+import org.guvnor.common.services.backend.cache.ClassLoaderCache;
+import org.guvnor.common.services.backend.cache.DependenciesCache;
+import org.guvnor.common.services.backend.cache.GitCache;
+import org.guvnor.common.services.backend.cache.KieModuleMetaDataCache;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.KieAFBuilderUtil;
+import org.kie.workbench.common.services.backend.project.MapClassLoader;
 import org.kie.workbench.common.services.shared.project.KieProject;
+import org.uberfire.java.nio.file.Path;
 
 @ApplicationScoped
 @Named("LRUProjectDependenciesClassLoaderCache")
-public class LRUProjectDependenciesClassLoaderCache extends LRUCache<KieProject, ClassLoader> {
+public class LRUProjectDependenciesClassLoaderCache extends LRUCache<Path, ClassLoader> {
 
-    private BuildInfoService buildInfoService;
+    private GuvnorM2Repository guvnorM2Repository;
+    private Instance< User > identity;
+    private GitCache gitCache;
+    private BuilderCache builderCache;
+    private DependenciesCache dependenciesCache;
+    private KieModuleMetaDataCache kieModuleMetaDataCache;
+    private ClassLoaderCache classLoaderCache;
 
-    public LRUProjectDependenciesClassLoaderCache( ) {
+    public LRUProjectDependenciesClassLoaderCache() {
     }
 
     @Inject
-    public LRUProjectDependenciesClassLoaderCache( BuildInfoService buildInfoService ) {
-        this.buildInfoService = buildInfoService;
+    public LRUProjectDependenciesClassLoaderCache(GuvnorM2Repository guvnorM2Repository,
+                                                  Instance< User > identity, GitCache gitCache, BuilderCache builderCache,
+                                                  KieModuleMetaDataCache kieModuleMetaDataCache, DependenciesCache dependenciesCache, ClassLoaderCache classLoaderCache) {
+        this.guvnorM2Repository = guvnorM2Repository;
+        this.identity = identity;
+        this.gitCache = gitCache;
+        this.builderCache = builderCache;
+        this.kieModuleMetaDataCache = kieModuleMetaDataCache;
+        this.dependenciesCache = dependenciesCache;
+        this.classLoaderCache = classLoaderCache;
     }
 
-    protected void setBuildInfoService( final BuildInfoService buildInfoService ) {
-        this.buildInfoService = buildInfoService;
-    }
 
-    public synchronized ClassLoader assertDependenciesClassLoader(final KieProject project) {
-        ClassLoader classLoader = getEntry(project);
-        if (classLoader == null) {
-            classLoader = buildClassLoader(project);
-            setEntry(project,
-                     classLoader);
+    public synchronized ClassLoader assertDependenciesClassLoader(final KieProject project, String identity) {
+        Optional<Path> nioFsPath = KieAFBuilderUtil.getFSPath(project, gitCache, builderCache, guvnorM2Repository, identity);
+        if(nioFsPath.isPresent()){
+            ClassLoader classLoader = getEntry(nioFsPath.get());
+            if (classLoader == null) {
+                Optional<MapClassLoader> opClassloader = buildClassLoader(project, identity);
+                if(opClassloader.isPresent()) {
+                    setEntry(nioFsPath.get(), opClassloader.get());
+                    classLoader = opClassloader.get();
+                }
+            }
+            return classLoader;
+        }else{
+            List<URL> urls = new ArrayList<>(1);
+            URLClassLoader urlClassLoader = new URLClassLoader(urls.toArray(new URL[1]));
+            return urlClassLoader;
         }
-        return classLoader;
     }
 
     public synchronized void setDependenciesClassLoader(final KieProject project,
-                                                        ClassLoader classLoader) {
-        setEntry(project,
-                 classLoader);
-    }
-
-    private ClassLoader buildClassLoader(final KieProject project) {
-        final KieModule module = buildInfoService.getBuildInfo(project).getKieModuleIgnoringErrors();
-        return buildClassLoader(project,
-                                KieModuleMetaData.Factory.newKieModuleMetaData(module));
-    }
-
-    /**
-     * This method and the subsequent caching was added for performance reasons, since the dependencies calculation and
-     * project class loader calculation tends to be time consuming when we manage project with transitives dependencies.
-     * Since the project ClassLoader may change with ever incremental build it's better to store in the cache the
-     * ClassLoader part that has the project dependencies. And the project ClassLoader can be easily calculated using
-     * this ClassLoader as parent. Since current project classes are quickly calculated on each incremental build, etc.
-     */
-    public static ClassLoader buildClassLoader(final KieProject project,
-                                               final KieModuleMetaData kieModuleMetaData) {
-        //By construction the parent class loader for the KieModuleMetadata.getClassLoader() is an URLClass loader
-        //that has the project dependencies. So this implementation relies on this. BUT can easily be changed to
-        //calculate this URL class loader given that we have the pom.xml and we can use maven libraries classes
-        //to calculate project maven dependencies. This is basically what the KieModuleMetaData already does. The
-        //optimization was added to avoid the maven transitive calculation on complex projects.
-        final ClassLoader classLoader = kieModuleMetaData.getClassLoader().getParent();
-        if (classLoader instanceof URLClassLoader) {
-            return classLoader;
-        } else {
-            //this case should never happen. But if ProjectClassLoader calculation for KieModuleMetadata changes at
-            //the error will be notified for implementation review.
-            throw new RuntimeException("It was not posible to calculate project dependencies class loader for project: "
-                                               + project.getKModuleXMLPath());
+                                                        ClassLoader classLoader, String identity) {
+        Optional<Path> nioFsPAth = KieAFBuilderUtil.getFSPath(project,  gitCache, builderCache,  guvnorM2Repository, identity);
+        if(nioFsPAth.isPresent()){
+            setEntry(nioFsPAth.get(), classLoader);
         }
+    }
+
+    protected Optional<MapClassLoader> buildClassLoader(final KieProject project, String identity) {
+        Optional<MapClassLoader> classLoader = KieAfBuilderClassloaderUtil.getProjectClassloader(project,
+                                                                                                 gitCache, builderCache,
+                                                                                                 kieModuleMetaDataCache,
+                                                                                                 dependenciesCache,
+                                                                                                 guvnorM2Repository,
+                                                                                                 classLoaderCache,
+                                                                                                 identity);
+        return  classLoader;
+    }
+
+    @Override
+    public void invalidateCache(Path path) {
+        dependenciesCache.removeDependenciesRaw(path);
+        kieModuleMetaDataCache.removeKieModuleMetaData(path);
+        classLoaderCache.removeTargetMapClassloader(path);
+        if(path.endsWith("pom.xml")){
+            classLoaderCache.removeDependenciesClassloader(path);
+        }
+    }
+
+    private String getKey(String projectRootPath){
+        return  new StringBuilder().append(projectRootPath.toString()).append("-").append(KieAFBuilderUtil.getIdentifier(identity)).toString();
+    }
+
+    public List<Class<?>> getClazz(Path projectRootPath, String packageName, Set<String> declaredTypes) {
+        List<Class<?>> clazzes = Collections.EMPTY_LIST;
+        ClassLoader classLoader = getEntry(projectRootPath);
+        if (classLoader!= null && classLoader instanceof MapClassLoader) {
+            MapClassLoader mapClassLoader  = (MapClassLoader) classLoader;
+                if(!mapClassLoader.getKeys().isEmpty()){
+                    clazzes = new ArrayList<>();
+                    for(String key: mapClassLoader.getKeys()){
+                        if (key.contains(packageName) && declaredTypes.contains(key)){
+                            try{
+                                Class clazz = mapClassLoader.loadClass(key.substring(0,key.lastIndexOf(".")).replace("/","."));
+                                if(clazz != null) {
+                                    clazzes.add(clazz);
+                                }
+                            }catch (Exception e){
+                            //nothing to do
+                            }
+                        }
+                    }
+                }
+
+        }
+        return clazzes;
     }
 }

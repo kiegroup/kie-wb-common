@@ -20,11 +20,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kie.workbench.common.services.backend.compiler.Order;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.LoggerFactory;
 
-public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy,
-                                                         Order {
+public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy, Order {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(ConfigurationEnvironmentStrategy.class);
 

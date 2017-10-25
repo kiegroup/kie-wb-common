@@ -31,6 +31,7 @@
       </testResource>
       <testResource>
          <directory>src/test/resources</directory>
+        <filtering>true</filtering>
        </testResource>
     </testResources>
     <plugins>
@@ -78,6 +79,12 @@
     <dependency>
       <groupId>org.drools</groupId>
       <artifactId>drools-compiler</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>org.uberfire</artifactId>
+          <groupId>uberfire-maven-support</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.kie.soup</groupId>
@@ -425,6 +432,11 @@
       <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <!--<dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+    </dependency>-->
 
     <dependency>
       <groupId>org.uberfire</groupId>
