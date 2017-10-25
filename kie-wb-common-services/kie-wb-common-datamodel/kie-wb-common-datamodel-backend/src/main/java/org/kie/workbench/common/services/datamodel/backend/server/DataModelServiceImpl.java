@@ -27,6 +27,7 @@ import org.kie.soup.project.datamodel.commons.oracle.PackageDataModelOracleImpl;
 import org.kie.soup.project.datamodel.commons.oracle.ProjectDataModelOracleImpl;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.backend.builder.core.LRUProjectDependenciesClassLoaderCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUProjectDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
@@ -44,13 +45,17 @@ public class DataModelServiceImpl
 
     private KieProjectService projectService;
 
+    private LRUProjectDependenciesClassLoaderCache lruProjectDependenciesClassLoaderCache;
+
     @Inject
     public DataModelServiceImpl(final @Named("PackageDataModelOracleCache") LRUDataModelOracleCache cachePackages,
                                 final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
-                                final KieProjectService projectService) {
+                                final KieProjectService projectService,
+                                final LRUProjectDependenciesClassLoaderCache lruProjectDependenciesClassLoaderCache) {
         this.cachePackages = cachePackages;
         this.cacheProjects = cacheProjects;
         this.projectService = projectService;
+        this.lruProjectDependenciesClassLoaderCache = lruProjectDependenciesClassLoaderCache;
     }
 
     @Override
@@ -77,10 +82,16 @@ public class DataModelServiceImpl
 
     @Override
     public ProjectDataModelOracle getProjectDataModel(final Path resourcePath) {
+        return getProjectDataModel(resourcePath, Boolean.TRUE);
+    }
+
+    @Override
+    public ProjectDataModelOracle getProjectDataModel(final Path resourcePath, boolean indexing) {
         try {
-            PortablePreconditions.checkNotNull("resourcePath",
-                                               resourcePath);
+            PortablePreconditions.checkNotNull("resourcePath", resourcePath);
             final KieProject project = resolveProject(resourcePath);
+            //this call is used to load the classloader and the correct KieMetaData
+            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
 
             //Resource was not within a Project structure
             if (project == null) {
@@ -103,4 +114,5 @@ public class DataModelServiceImpl
     private Package resolvePackage(final Path resourcePath) {
         return projectService.resolvePackage(resourcePath);
     }
+
 }

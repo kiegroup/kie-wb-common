@@ -30,7 +30,8 @@ public class TestUtil {
 
     public static void copyTree(Path source,
                                 Path target) throws IOException {
-        FileUtils.copyDirectory(source.toFile(), target.toFile());
+        FileUtils.copyDirectory(source.toFile(),
+                                target.toFile());
     }
 
     public static void rm(File f) {

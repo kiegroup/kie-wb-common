@@ -93,8 +93,6 @@ public class ProjectDataModelConcurrencyTest {
         assertNotNull( buildResults );
         assertEquals( 0,
                       buildResults.getErrorMessages().size() );
-        assertEquals( 1,
-                      buildResults.getInformationMessages().size() );
 
         //Perform incremental build
         final int THREADS = 200;

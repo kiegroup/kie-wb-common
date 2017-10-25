@@ -9,11 +9,19 @@
     </encoder>
   </appender>
 
+  <!--<logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="true">
+    <appender-ref ref="consoleAppender"/>
+  </logger>-->
+
+  <logger name="org.apache.maven" level="INFO" additivity="false">
+    <appender-ref ref="consoleAppender"/>
+  </logger>
+
   <logger name="org.drools" level="INFO"/>
   <logger name="org.kie" level="INFO"/>
   <logger name="org.guvnor" level="INFO"/>
 
-  <root level="INFO">
+  <root level="info">
     <appender-ref ref="consoleAppender" />
   </root>
 

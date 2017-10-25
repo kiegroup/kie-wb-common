@@ -42,6 +42,7 @@ public class DataModelerServiceWeldTest extends AbstractDataModelerServiceWeldTe
         final Path packagePath = paths.convert( nioPackagePath );
 
         KieProject project = projectService.resolveProject( packagePath );
+        lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
 
         DataModel dataModelOriginal = new DataModelTestUtil( systemAnnotations ).createModel( Pojo1.class,
                                                                                               Pojo2.class );

@@ -61,7 +61,6 @@ public class PackageNameWhiteListLoader
     protected String loadContent( final Path packageNamesWhiteListPath ) {
 
         final org.uberfire.java.nio.file.Path path = Paths.convert( packageNamesWhiteListPath );
-
         if ( Files.exists( path ) ) {
             return ioService.readAllString( path );
         } else {

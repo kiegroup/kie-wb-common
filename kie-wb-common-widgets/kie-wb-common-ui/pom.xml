@@ -293,7 +293,6 @@
     </dependency>
 
   </dependencies>
-
   <build>
     <resources>
       <!-- Include module descriptors from src/main/resources in order not to break the Intellij GWT plug-in -->
@@ -301,6 +300,12 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <filtering>true</filtering>
+      </testResource>
+    </testResources>
 
     <plugins>
       <plugin>

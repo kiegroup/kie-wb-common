@@ -172,6 +172,7 @@ public class BpmnFileIndexer extends AbstractFileIndexer {
         return classLoaderHelper.getProjectClassLoader(project);
     }
 
+
     private List<BpmnProcessDataEventListener> buildProcessDefinition(String bpmn2Content,
                                                                       ClassLoader projectClassLoader) throws IllegalArgumentException {
         if (StringUtils.isEmpty(bpmn2Content)) {

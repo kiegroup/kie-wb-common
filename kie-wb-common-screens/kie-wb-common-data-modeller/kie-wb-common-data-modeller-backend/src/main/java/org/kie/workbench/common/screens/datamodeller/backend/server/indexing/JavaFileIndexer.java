@@ -25,9 +25,9 @@ import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.kie.workbench.common.screens.javaeditor.type.JavaResourceTypeDefinition;
 import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.refactoring.Resource;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.AbstractFileIndexer;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.DefaultIndexBuilder;
-import org.kie.workbench.common.services.refactoring.Resource;
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.slf4j.Logger;
@@ -68,68 +68,76 @@ import org.uberfire.java.nio.file.Path;
 @ApplicationScoped
 public class JavaFileIndexer extends AbstractFileIndexer {
 
-    private static final Logger logger = LoggerFactory.getLogger( JavaFileIndexer.class );
+    private static final Logger logger = LoggerFactory.getLogger(JavaFileIndexer.class);
 
     @Inject
     protected JavaResourceTypeDefinition javaResourceTypeDefinition;
 
-    @Inject @Any
+    @Inject
+    @Any
     protected Instance<JavaFileIndexerExtension> javaFileIndexerExtensions;
 
     @Inject
-    ProjectClassLoaderHelper classLoaderHelper;
+    protected ProjectClassLoaderHelper classLoaderHelper;
 
     @Override
-    public boolean supportsPath( final Path path ) {
-        return javaResourceTypeDefinition.accept( Paths.convert( path ) );
-   }
+    public boolean supportsPath(final Path path) {
+        return javaResourceTypeDefinition.accept(Paths.convert(path));
+    }
 
     @Override
-    public DefaultIndexBuilder fillIndexBuilder( final Path path ) throws Exception {
+    public DefaultIndexBuilder fillIndexBuilder(final Path path) throws Exception {
         // create indexbuilder
         final KieProject project = getProject(path);
 
-        if ( project == null ) {
-            logger.error( "Unable to index " + path.toUri().toString() + ": project could not be resolved." );
+        if (project == null) {
+            logger.error("Unable to index " + path.toUri().toString() + ": project could not be resolved.");
             return null;
         }
 
         final Package pkg = getPackage(path);
-        if ( pkg == null ) {
-            logger.error( "Unable to index " + path.toUri().toString() + ": package could not be resolved." );
+        if (pkg == null) {
+            logger.error("Unable to index " + path.toUri().toString() + ": package could not be resolved.");
             return null;
         }
 
         // responsible for basic index info: project name, branch, etc
-        final DefaultIndexBuilder builder = new DefaultIndexBuilder(Paths.convert(path).getFileName(), project, pkg);
+        final DefaultIndexBuilder builder = new DefaultIndexBuilder(Paths.convert(path).getFileName(),
+                                                                    project,
+                                                                    pkg);
 
         // visit/index java source
-        final String javaSource = ioService.readAllString( path );
-        org.jboss.forge.roaster.model.JavaType<?> javaType = Roaster.parse( javaSource );
-        if ( javaType.getSyntaxErrors() == null || javaType.getSyntaxErrors().isEmpty() ) {
+        final String javaSource = ioService.readAllString(path);
+        org.jboss.forge.roaster.model.JavaType<?> javaType = Roaster.parse(javaSource);
+        if (javaType.getSyntaxErrors() == null || javaType.getSyntaxErrors().isEmpty()) {
 
-            if ( javaFileIndexerExtensions != null ) {
-                for ( JavaFileIndexerExtension javaFileIndexerExtension : javaFileIndexerExtensions ) {
-                    javaFileIndexerExtension.process( builder, javaType );
+            if (javaFileIndexerExtensions != null) {
+                for (JavaFileIndexerExtension javaFileIndexerExtension : javaFileIndexerExtensions) {
+                    javaFileIndexerExtension.process(builder,
+                                                     javaType);
                 }
             }
 
             String pkgName = pkg.getPackageName();
             pkgName = javaType.getPackage();
-            if( pkgName == null ) {
+            if (pkgName == null) {
                 pkgName = "";
             }
             // use Java class package name, not Package name
             builder.setPackageName(pkgName);
 
             String javaTypeName = javaType.getQualifiedName();
-            Resource resParts = new Resource(javaTypeName, ResourceType.JAVA);
+            Resource resParts = new Resource(javaTypeName,
+                                             ResourceType.JAVA);
 
-            if( javaType instanceof JavaSource ) {
+            if (javaType instanceof JavaSource) {
                 ClassLoader projectClassLoader = getProjectClassLoader(project);
-                JavaSourceVisitor visitor = new JavaSourceVisitor((JavaSource) javaType, projectClassLoader, resParts);
+                JavaSourceVisitor visitor = new JavaSourceVisitor((JavaSource) javaType,
+                                                                  projectClassLoader,
+                                                                  resParts);
                 visitor.visit((JavaSource) javaType);
-                addReferencedResourcesToIndexBuilder( builder, visitor );
+                addReferencedResourcesToIndexBuilder(builder,
+                                                     visitor);
             }
 
             builder.addGenerator(resParts);
@@ -139,23 +147,23 @@ public class JavaFileIndexer extends AbstractFileIndexer {
     }
 
     /*
-     * Present in order to be overridden in tests
-     */
-    protected ClassLoader getProjectClassLoader( final KieProject project ) {
+   * Present in order to be overridden in tests
+   */
+    protected ClassLoader getProjectClassLoader(final KieProject project) {
         return classLoaderHelper.getProjectClassLoader(project);
     }
 
     /*
      * Present in order to be overridden in tests
      */
-    protected KieProject getProject( final Path path ) {
-        return projectService.resolveProject( Paths.convert( path ) );
+    protected KieProject getProject(final Path path) {
+        return projectService.resolveProject(Paths.convert(path));
     }
 
     /*
      * Present in order to be overridden in tests
      */
-    protected Package getPackage( final Path path ) {
-        return projectService.resolvePackage( Paths.convert( path ) );
+    protected Package getPackage(final Path path) {
+        return projectService.resolvePackage(Paths.convert(path));
     }
 }
