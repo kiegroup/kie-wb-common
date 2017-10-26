@@ -16,6 +16,20 @@
 
 package org.kie.workbench.common.screens.server.management.client.container;
 
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,10 +76,6 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContainerPresenterTest {
@@ -402,8 +412,8 @@ public class ContainerPresenterTest {
                times(2)).fire(new ServerTemplateSelected(containerSpec.getServerTemplateKey()));
     }
 
-    @Test //Reproducer for GUVNOR-3579
-    public void loadContainerSpecDataWithNullContainerSpec_doesntCauseNpe() {
+    @Test //Test fix for GUVNOR-3579
+    public void testLoadWhenRuntimeManagementServiceReturnsInvalidData() {
         ContainerSpecData badData = new ContainerSpecData(null, null);
         when(runtimeManagementService.getContainersByContainerSpec(anyObject(), anyObject())).thenReturn(badData);
 
