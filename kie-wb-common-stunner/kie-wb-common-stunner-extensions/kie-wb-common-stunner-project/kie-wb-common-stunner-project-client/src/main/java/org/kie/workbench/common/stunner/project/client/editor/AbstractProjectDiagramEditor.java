@@ -82,6 +82,7 @@ import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -201,7 +202,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
                                              @Override
                                              public void onError(final ClientRuntimeError error) {
-                                                 showError(error);
+                                                 onLoadError(error);
                                              }
                                          });
     }
@@ -238,7 +239,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
                           @Override
                           public void onError(final ClientRuntimeError error) {
-                              showError(error);
+                              onLoadError(error);
                           }
                       });
     }
@@ -544,8 +545,10 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     private void destroySession() {
         unbindCommands();
-        presenter.clear();
-        presenter.destroy();
+        if(Objects.nonNull(presenter)) {
+            presenter.clear();
+            presenter.destroy();
+        }
     }
 
     private void updateTitle(final String title) {
@@ -649,6 +652,14 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         log(Level.WARNING,
             "Validation FAILED [violations=" + violations.toString() + "]");
         hideLoadingViews();
+    }
+
+    private void onLoadError(final ClientRuntimeError error) {
+        showError(error);
+
+        //close editor in case of error when opening the editor
+        placeManager.forceClosePlace(new PathPlaceRequest(versionRecordManager.getCurrentPath(),
+                                                          getEditorIdentifier()));
     }
 
     private void showError(final ClientRuntimeError error) {
