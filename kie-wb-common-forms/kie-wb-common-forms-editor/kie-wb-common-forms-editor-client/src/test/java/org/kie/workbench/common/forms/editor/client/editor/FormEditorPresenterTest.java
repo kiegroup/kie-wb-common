@@ -25,11 +25,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
 import org.kie.workbench.common.forms.editor.client.editor.events.FormEditorSyncPaletteEvent;
+import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.definition.TextAreaFieldDefinition;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
+import org.kie.workbench.common.widgets.metadata.client.validation.AssetUpdateValidator;
 import org.mockito.verification.VerificationMode;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
@@ -298,6 +300,8 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         Collection<FieldDefinition> availableFieldsValues = editorHelper.getAvailableFields().values();
 
+        verify(translationService, atLeastOnce())
+                .getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
         verify(presenterSpy,
                count).removeAllDraggableGroupComponent(presenter.getFormDefinition().getFields());
         verify(presenterSpy,
@@ -315,6 +319,9 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         List<FieldDefinition> fieldList = presenter.getFormDefinition().getFields();
 
         presenter.removeAllDraggableGroupComponent(fieldList);
+
+        verify(translationService,
+               times(2)).getTranslation(FormEditorConstants.FormEditorPresenterModelFields);
 
         verify(layoutEditorMock,
                times(fieldList.size())).removeDraggableGroupComponent(anyString(),
@@ -368,6 +375,24 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
     }
 
     @Test
+    public void testOnRemoveComponentWithoutLayoutComponent() {
+        loadContent();
+        loadAvailableFields();
+        addAllFields();
+
+        FormEditorPresenter presenterSpy = spy(presenter);
+
+        ComponentRemovedEvent event = new ComponentRemovedEvent(null);
+        presenterSpy.onRemoveComponent(event);
+
+        verify(presenterSpy,
+               never()).onSyncPalette(anyString());
+        verify(editorHelper,
+               never()).removeField(anyString(),
+                                    anyBoolean());
+    }
+
+    @Test
     public void testDestroy() {
         loadContent();
         presenter.destroy();
@@ -414,7 +439,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         verify(menuBuilderMock).addSave(any(MenuItem.class));
         verify(menuBuilderMock).addCopy(any(Path.class),
-                                        any(DefaultFileNameValidator.class));
+                                        any(AssetUpdateValidator.class));
         verify(menuBuilderMock).addRename(any(Command.class));
         verify(menuBuilderMock).addDelete(any(Command.class));
 
@@ -434,12 +459,13 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
                never()).addSave(any(MenuItem.class));
         verify(menuBuilderMock,
                never()).addCopy(any(Path.class),
-                                any(DefaultFileNameValidator.class));
+                                any(AssetUpdateValidator.class));
         verify(menuBuilderMock,
                never()).addRename(any(Path.class),
-                                  any(DefaultFileNameValidator.class));
+                                  any(AssetUpdateValidator.class));
         verify(menuBuilderMock,
-               never()).addDelete(any(Path.class));
+               never()).addDelete(any(Path.class),
+                                  any(AssetUpdateValidator.class));
 
         assertNotNull(presenter.getMenus());
         verify(menuBuilderMock,
@@ -452,13 +478,20 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         presenter.safeDelete();
 
-        verify(showAssetUsagesDisplayer).showAssetUsages(anyString(), any(), any(), any(), any(), any());
+        verify(showAssetUsagesDisplayer).showAssetUsages(anyString(),
+                                                         any(),
+                                                         any(),
+                                                         any(),
+                                                         any(),
+                                                         any());
 
-        verify(deletePopUpPresenter).show(any());
+        verify(deletePopUpPresenter).show(any(AssetUpdateValidator.class),
+                                          any());
 
         deletePopUpPresenter.delete();
 
-        verify(formEditorService).delete(any(), any());
+        verify(formEditorService).delete(any(),
+                                         any());
         verify(view).hideBusyIndicator();
         verify(notificationEvent).fire(any());
     }
@@ -471,46 +504,65 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         presenter.safeDelete();
 
-        verify(showAssetUsagesDisplayer).showAssetUsages(anyString(), any(), any(), any(), any(), any());
+        verify(showAssetUsagesDisplayer).showAssetUsages(anyString(),
+                                                         any(),
+                                                         any(),
+                                                         any(),
+                                                         any(),
+                                                         any());
 
-        verify(deletePopUpPresenter, never()).show(any());
+        verify(deletePopUpPresenter,
+               never()).show(any());
 
         showAssetUsagesDisplayer.onOk();
         showAssetUsagesDisplayer.onClose();
 
-        verify(deletePopUpPresenter).show(any());
+        verify(deletePopUpPresenter).show(any(AssetUpdateValidator.class),
+                                          any());
 
         deletePopUpPresenter.delete();
 
-        verify(formEditorService).delete(any(), any());
+        verify(formEditorService).delete(any(),
+                                         any());
         verify(view).hideBusyIndicator();
         verify(notificationEvent).fire(any());
     }
 
     @Test
     public void testSafeRenameDirtySaving() {
-        FormEditorPresenter presenterSpy = triggerSafeRename(true, true);
-        verify(view).showSavePopup(any(Path.class), any(Command.class), any(Command.class));
+        FormEditorPresenter presenterSpy = triggerSafeRename(true,
+                                                             true);
+        verify(view).showSavePopup(any(Path.class),
+                                   any(Command.class),
+                                   any(Command.class));
         verify(presenterSpy).rename(eq(true));
     }
 
     @Test
     public void testSafeRenameDirtyNotSaving() {
-        FormEditorPresenter presenterSpy = triggerSafeRename(true, false);
+        FormEditorPresenter presenterSpy = triggerSafeRename(true,
+                                                             false);
 
-        verify(view).showSavePopup(any(Path.class), any(Command.class), any(Command.class));
+        verify(view).showSavePopup(any(Path.class),
+                                   any(Command.class),
+                                   any(Command.class));
         verify(presenterSpy).rename(eq(false));
     }
 
     @Test
     public void testSafeRenameNotDirty() {
-        FormEditorPresenter presenterSpy = triggerSafeRename(false, false);
+        FormEditorPresenter presenterSpy = triggerSafeRename(false,
+                                                             false);
 
-        verify(view, never()).showSavePopup(any(Path.class), any(Command.class), any(Command.class));
+        verify(view,
+               never()).showSavePopup(any(Path.class),
+                                      any(Command.class),
+                                      any(Command.class));
         verify(presenterSpy).rename(eq(false));
     }
 
-    private FormEditorPresenter triggerSafeRename(boolean dirty, boolean saving) {
+    private FormEditorPresenter triggerSafeRename(boolean dirty,
+                                                  boolean saving) {
         loadContent();
         FormEditorPresenter presenterSpy = spy(presenter);
         doNothing().when(presenterSpy).rename(anyBoolean());
@@ -537,7 +589,9 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
     private void testRename(boolean saving) {
         loadContent();
         presenter.rename(saving);
-        verify(renamePopUpPresenter).show(any(Path.class), any(DefaultFileNameValidator.class), any(CommandWithFileNameAndCommitMessage.class));
+        verify(renamePopUpPresenter).show(any(Path.class),
+                                          any(DefaultFileNameValidator.class),
+                                          any(CommandWithFileNameAndCommitMessage.class));
     }
 
     @Test
@@ -548,7 +602,8 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         when(renamePopUpPresenter.getView()).thenReturn(mock(RenamePopUpPresenter.View.class));
         doNothing().when(presenterSpy).doLoadContent(any(FormModelerContent.class));
 
-        presenterSpy.renameCommand(details, true);
+        presenterSpy.renameCommand(details,
+                                   true);
 
         verify(view).showBusyIndicator(anyString());
         verify(presenterSpy).getRenameErrorCallback(any(RenamePopUpPresenter.View.class));

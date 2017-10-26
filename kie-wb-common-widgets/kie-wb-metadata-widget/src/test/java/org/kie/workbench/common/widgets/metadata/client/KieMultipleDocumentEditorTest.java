@@ -22,7 +22,6 @@ import java.util.List;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
-import org.appformer.project.datamodel.imports.Imports;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.Repository;
@@ -31,6 +30,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
@@ -70,12 +70,13 @@ public class KieMultipleDocumentEditorTest
                times(1)).addSave(any(MenuItem.class));
         verify(fileMenuBuilder,
                times(1)).addCopy(any(BasicFileMenuBuilder.PathProvider.class),
-                                 eq(fileNameValidator));
+                                 eq(assetUpdateValidator));
         verify(fileMenuBuilder,
                times(1)).addRename(any(BasicFileMenuBuilder.PathProvider.class),
-                                   eq(fileNameValidator));
+                                   eq(assetUpdateValidator));
         verify(fileMenuBuilder,
-               times(1)).addDelete(any(BasicFileMenuBuilder.PathProvider.class));
+               times(1)).addDelete(any(BasicFileMenuBuilder.PathProvider.class),
+                                   eq(assetUpdateValidator));
         verify(fileMenuBuilder,
                times(1)).addValidate(any(Command.class));
         verify(fileMenuBuilder,
@@ -93,12 +94,13 @@ public class KieMultipleDocumentEditorTest
                never()).addSave(any(MenuItem.class));
         verify(fileMenuBuilder,
                never()).addCopy(any(BasicFileMenuBuilder.PathProvider.class),
-                                eq(fileNameValidator));
+                                eq(assetUpdateValidator));
         verify(fileMenuBuilder,
                never()).addRename(any(BasicFileMenuBuilder.PathProvider.class),
-                                  eq(fileNameValidator));
+                                  eq(assetUpdateValidator));
         verify(fileMenuBuilder,
-               never()).addDelete(any(BasicFileMenuBuilder.PathProvider.class));
+               never()).addDelete(any(BasicFileMenuBuilder.PathProvider.class),
+                                  eq(assetUpdateValidator));
         verify(fileMenuBuilder,
                times(1)).addValidate(any(Command.class));
         verify(fileMenuBuilder,
@@ -663,6 +665,9 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSave() {
+        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(true).when(projectController).canUpdateProject(any());
+
         final TestDocument document = createTestDocument();
         registerDocument(document);
         activateDocument(document);
