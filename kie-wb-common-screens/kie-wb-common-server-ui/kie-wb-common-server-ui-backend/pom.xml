@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-server-ui</artifactId>
-    <version>8.0.0-SNAPSHOT</version>
+    <version>7.5.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-server-ui-backend</artifactId>
@@ -16,8 +16,8 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.guvnor</groupId>
-      <artifactId>guvnor-project-api</artifactId>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-project-api</artifactId>
       <exclusions>
         <exclusion>
           <groupId>org.uberfire</groupId>
@@ -32,6 +32,10 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.soup</groupId>
+      <artifactId>kie-soup-commons</artifactId>
     </dependency>
     <dependency>
       <groupId>org.uberfire</groupId>
@@ -82,6 +86,11 @@
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
       <artifactId>xstream</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-internal</artifactId>
     </dependency>
 
     <dependency>
