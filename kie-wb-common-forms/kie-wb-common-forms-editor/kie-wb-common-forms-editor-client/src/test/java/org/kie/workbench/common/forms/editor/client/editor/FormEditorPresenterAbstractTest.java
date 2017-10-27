@@ -36,16 +36,11 @@ import org.kie.workbench.common.forms.editor.client.type.FormDefinitionResourceT
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.model.impl.FormModelSynchronizationResultImpl;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorService;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.definition.CheckBoxFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.datePicker.definition.DatePickerFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
 import org.kie.workbench.common.forms.fields.test.TestFieldManager;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.model.ModelProperty;
-import org.kie.workbench.common.forms.model.impl.ModelPropertyImpl;
 import org.kie.workbench.common.forms.model.impl.PortableJavaModel;
-import org.kie.workbench.common.forms.model.impl.TypeInfoImpl;
 import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsagesDisplayer;
 import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsagesDisplayerView;
 import org.kie.workbench.common.services.refactoring.service.AssetsUsageService;
@@ -73,9 +68,12 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class FormEditorPresenterAbstractTest {
 

@@ -41,7 +41,6 @@ import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorService;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
-import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.services.refactoring.client.usages.ShowAssetUsagesDisplayer;
 import org.kie.workbench.common.services.refactoring.service.ResourceType;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;

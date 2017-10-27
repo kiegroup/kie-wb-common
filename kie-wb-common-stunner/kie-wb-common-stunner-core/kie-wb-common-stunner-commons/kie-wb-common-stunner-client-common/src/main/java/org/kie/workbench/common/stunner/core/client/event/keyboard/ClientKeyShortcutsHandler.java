@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.client.event.keyboard;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Observes;
 
