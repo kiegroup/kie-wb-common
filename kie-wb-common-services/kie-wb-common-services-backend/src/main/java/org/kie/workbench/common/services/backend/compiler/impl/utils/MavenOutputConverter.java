@@ -44,7 +44,7 @@ public class MavenOutputConverter {
                     }else{
                         msg = getValidationMessageWithoutLineAndColumn(partToCut, item);
                     }
-                    if (!inserted.contains(msg)) {
+                    if (msg.getText() != null && !inserted.contains(msg)) {
                         inserted.add(msg);
                     }
                 }
@@ -78,7 +78,7 @@ public class MavenOutputConverter {
                 }else {
                     msg = getBuildMessageWithoutLineAndColumn(partToCut, item);
                 }
-                if(!inserted.contains(msg)){
+                if(msg.getText() != null && !inserted.contains(msg)){
                     inserted.add(msg);
                 }
             }
