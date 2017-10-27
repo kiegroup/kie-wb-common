@@ -23,27 +23,35 @@ import javax.inject.Named;
 
 import org.drools.compiler.kproject.xml.PomModel;
 import org.guvnor.common.services.backend.cache.LRUCache;
-import org.guvnor.common.services.builder.ObservablePOMFile;
 import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.model.Project;
+import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.commons.validation.PortablePreconditions;
 
 @ApplicationScoped
 @Named("LRUPomModelCache")
 public class LRUPomModelCache extends LRUCache<Project, PomModel> {
 
-    @Inject
-    private ObservablePOMFile observablePOMFile;
+    private KieProjectService projectService;
 
-    public synchronized void invalidateProjectCache( @Observes final InvalidateDMOProjectCacheEvent event ) {
-        PortablePreconditions.checkNotNull( "event",
-                                            event );
-
-        if ( event.getResourcePath() != null
-                && event.getProject() != null
-                && observablePOMFile.accept( event.getResourcePath().getFileName() ) ) {
-            invalidateCache( event.getProject() );
-        }
+    public LRUPomModelCache() {
+        //CDI proxy
     }
 
+    @Inject
+    public LRUPomModelCache(final KieProjectService projectService) {
+        this.projectService = projectService;
+    }
+
+    public synchronized void invalidateProjectCache(@Observes final InvalidateDMOProjectCacheEvent event) {
+        PortablePreconditions.checkNotNull("event",
+                                           event);
+        final Path resourcePath = event.getResourcePath();
+        final KieProject project = projectService.resolveProject(resourcePath);
+        if (project != null) {
+            invalidateCache(project);
+        }
+    }
 }
