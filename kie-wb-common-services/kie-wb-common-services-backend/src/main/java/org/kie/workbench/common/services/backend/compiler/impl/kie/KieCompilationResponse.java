@@ -59,12 +59,6 @@ public interface KieCompilationResponse extends CompilationResponse {
     Optional<Map<String, byte[]>> getProjectClassLoaderStore();
 
     /**
-     * Provides the Path of the working dir
-     * @return
-     */
-    Optional<Path> getWorkingDir();
-
-    /**
      * Provides the List of project dependencies from target folders as List of String
      * @return
      */
