@@ -56,7 +56,6 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
@@ -73,14 +72,12 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentCaptor.forClass;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -196,7 +193,7 @@ public class ProjectDiagramEditorTest {
 
         when(placeRequest.getIdentifier()).thenReturn(ProjectDiagramEditorStub.EDITOR_ID);
 
-        ClientProjectDiagramService mock = Mockito.mock(ClientProjectDiagramService.class);
+        ClientProjectDiagramService mock = mock(ClientProjectDiagramService.class);
 
         this.tested = new ProjectDiagramEditorStub(view,
                                                    placeManager,
@@ -273,12 +270,12 @@ public class ProjectDiagramEditorTest {
 
         callbackArgumentCaptor.getValue().onError(new ClientRuntimeError(new DefinitionNotFoundException()));
 
-        verify(placeManager, times( 1)).forceClosePlace(any(PathPlaceRequest.class));
+        verify(placeManager, times(1)).forceClosePlace(any(PathPlaceRequest.class));
 
         ArgumentCaptor<Consumer> consumerArgumentCaptor = forClass(Consumer.class);
         verify(diagramClientErrorHandler, times(1)).handleError(any(ClientRuntimeError.class), consumerArgumentCaptor.capture());
         consumerArgumentCaptor.getValue().accept("error message");
-        verify(errorPopupPresenter, times( 1)).showMessage(anyString());
+        verify(errorPopupPresenter, times(1)).showMessage("error message");
     }
 
     @Test
