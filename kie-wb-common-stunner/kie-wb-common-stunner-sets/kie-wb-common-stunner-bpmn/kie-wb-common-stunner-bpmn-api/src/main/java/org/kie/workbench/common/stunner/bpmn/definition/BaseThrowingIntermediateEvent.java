@@ -38,7 +38,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @MorphBase(defaultType = IntermediateSignalEventThrowing.class)
 public abstract class BaseThrowingIntermediateEvent
-        implements BPMNDefinition,
+        implements BPMNViewDefinition,
                    DataIOModel {
 
     @Category

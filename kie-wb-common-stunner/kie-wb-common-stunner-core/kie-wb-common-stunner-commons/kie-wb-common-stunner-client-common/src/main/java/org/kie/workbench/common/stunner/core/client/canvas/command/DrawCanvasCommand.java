@@ -93,7 +93,7 @@ public class DrawCanvasCommand extends AbstractCanvasCommand {
                                   return true;
                               }
 
-                              private void addNode(final Node<View, Edge> node) {
+                              private void addNode(final Node node) {
                                   commandBuilder.addCommand(new AddCanvasNodeCommand(node,
                                                                                      shapeSetId));
                               }

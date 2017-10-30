@@ -94,7 +94,7 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
     public boolean allows(final NodeBuildRequest request) {
         final double x = request.getX();
         final double y = request.getY();
-        final Node<View<?>, Edge> node = request.getNode();
+        final Node<? extends View<?>, Edge> node = request.getNode();
         if (null != node) {
             final ElementBuildRequest<AbstractCanvasHandler> request1 = new ElementBuildRequestImpl(x,
                                                                                                     y,
@@ -110,8 +110,8 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
                       final BuildCallback buildCallback) {
         final double x = request.getX();
         final double y = request.getY();
-        final Node<View<?>, Edge> node = request.getNode();
-        final Edge<View<?>, Node> inEdge = request.getInEdge();
+        final Node<? extends View<?>, Edge> node = request.getNode();
+        final Edge<? extends ViewConnector<?>, Node> inEdge = request.getInEdge();
         final Connection sourceConnection = request.getSourceConnection();
         final Connection targetConnection = request.getTargetConnection();
         if (null != node) {
@@ -145,8 +145,10 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
                                                                                                       inEdge,
                                                                                                       targetConnection));
                                            }
-                                           final CommandResult<CanvasViolation> results = elementBuilderControl.getCommandManager().execute(canvasHandler,
-                                                                                                                                            commandBuilder.build());
+                                           final CommandResult<CanvasViolation> results = elementBuilderControl
+                                                   .getCommandManager().execute(canvasHandler,
+                                                                                commandBuilder.build());
+
                                            if (!CommandUtils.isError(results)) {
                                                updateConnectorShape(inEdge,
                                                                     node,
@@ -165,7 +167,7 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
     }
 
     @SuppressWarnings("unchecked")
-    protected void updateConnectorShape(final Edge<View<?>, Node> inEdge,
+    protected void updateConnectorShape(final Edge<? extends ViewConnector<?>, Node> inEdge,
                                         final Node targetNode,
                                         final Connection sourceConnection,
                                         final Connection targetConnection) {

@@ -255,7 +255,7 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
             final CanvasViolation cv = CanvasViolationImpl.Builder.build(new BoundsExceededViolation(newBounds)
                                                                                  .setUUID(canvasHandler.getUuid()));
 
-            return new CommandResultImpl<CanvasViolation>(
+            return new CommandResultImpl<>(
                     CommandResult.Type.ERROR,
                     Collections.singleton(cv)
             );
@@ -292,7 +292,7 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
     private List<Command<AbstractCanvasHandler, CanvasViolation>> getResizeCommands(final Element<? extends Definition<?>> element,
                                                                                     final double w,
                                                                                     final double h) {
-        final Definition content = (Definition) element.getContent();
+        final Definition content = element.getContent();
         final Object def = content.getDefinition();
         final DefinitionAdapter<Object> adapter =
                 canvasHandler.getDefinitionManager()

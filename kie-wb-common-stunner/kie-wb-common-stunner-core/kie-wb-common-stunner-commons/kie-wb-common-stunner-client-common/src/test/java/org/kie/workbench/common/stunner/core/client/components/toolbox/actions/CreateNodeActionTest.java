@@ -44,6 +44,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.ArgumentCaptor;
@@ -119,7 +120,7 @@ public class CreateNodeActionTest {
     private View elementContent;
 
     @Mock
-    private Edge<View<?>, Node> edge;
+    private Edge<ViewConnector<?>, Node> edge;
 
     @Mock
     private Node<View<?>, Edge> targetNode;
@@ -128,7 +129,7 @@ public class CreateNodeActionTest {
     private View targetNodeContent;
 
     @Mock
-    private Index<?, ?> graphIndex;
+    private Index<Node<View<?>, Edge>, Edge<ViewConnector<?>, Node>> graphIndex;
 
     private CreateNodeAction tested;
 

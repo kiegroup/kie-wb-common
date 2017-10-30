@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.core.util.UUID;
@@ -126,8 +127,8 @@ public class CreateNodeAction extends AbstractToolboxAction {
         final Element<View<?>> element = (Element<View<?>>) getElement(canvasHandler,
                                                                        uuid);
         final Node<View<?>, Edge> sourceNode = element.asNode();
-        final Edge<View<?>, Node> connector =
-                (Edge<View<?>, Node>) clientFactoryManager
+        final Edge<? extends ViewConnector<?>, Node> connector =
+                (Edge<? extends ViewConnector<?>, Node>) clientFactoryManager
                         .newElement(UUID.uuid(),
                                     edgeId)
                         .asEdge();

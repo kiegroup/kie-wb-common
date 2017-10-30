@@ -85,14 +85,6 @@ public class MagnetConnectionTest {
         assertTrue(m1.isAuto());
     }
 
-    @Test(expected = AssertionError.class)
-    public void testBuilderEmptyLocation() {
-        new MagnetConnection.Builder()
-                .magnet(4)
-                .auto(true)
-                .build();
-    }
-
     @Test
     public void testChangeLocationAndResetMagnet() {
         MagnetConnection m1 = new MagnetConnection.Builder()

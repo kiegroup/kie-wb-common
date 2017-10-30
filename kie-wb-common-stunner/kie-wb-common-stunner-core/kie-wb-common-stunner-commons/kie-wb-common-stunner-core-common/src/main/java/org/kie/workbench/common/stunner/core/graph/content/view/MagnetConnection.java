@@ -36,8 +36,6 @@ public class MagnetConnection extends DiscreteConnection {
 
     private MagnetConnection(final @MapsTo("location") Point2D location,
                              final @MapsTo("auto") Boolean auto) {
-        checkNotNull("location",
-                     location);
         checkNotNull("auto",
                      auto);
         this.location = location;
@@ -125,9 +123,11 @@ public class MagnetConnection extends DiscreteConnection {
         }
 
         public MagnetConnection build() {
-            assert null != x && null != y;
-            final MagnetConnection connection = new MagnetConnection(new Point2D(x,
-                                                                                 y),
+            final Point2D p = null != x && null != y ?
+                    new Point2D(x,
+                                y) :
+                    null;
+            final MagnetConnection connection = new MagnetConnection(p,
                                                                      auto);
             if (null != magnet) {
                 connection.setIndex(magnet);
@@ -146,8 +146,11 @@ public class MagnetConnection extends DiscreteConnection {
             final BoundsImpl bounds = (BoundsImpl) element.getContent().getBounds();
             final double width = bounds.getWidth();
             final double height = bounds.getHeight();
-            final MagnetConnection center = new MagnetConnection(new Point2D(width / 2,
-                                                                             height / 2),
+            final Point2D at = width > 0 && height > 0 ?
+                    new Point2D(width / 2,
+                                height / 2) :
+                    null;
+            final MagnetConnection center = new MagnetConnection(at,
                                                                  false);
             center.setIndex(MAGNET_CENTER);
             return center;

@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SafeDeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
@@ -80,8 +81,8 @@ public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
         }
 
         @Override
-        public void setEdgeTargetNode(final Node<?, Edge> targetNode,
-                                      Edge<? extends View<?>, Node> candidate) {
+        public void setEdgeTargetNode(final Node<? extends View<?>, Edge> targetNode,
+                                      Edge<? extends ViewConnector<?>, Node> candidate) {
             log("SetCanvasConnectionCommand [candidate=" + candidate.getUUID() + "]");
             getCommand().addCommand(new SetCanvasConnectionCommand(candidate));
         }

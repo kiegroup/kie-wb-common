@@ -24,6 +24,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
 public interface CanvasCommandFactory<H extends CanvasHandler> {
 
@@ -73,11 +74,11 @@ public interface CanvasCommandFactory<H extends CanvasHandler> {
                                final String shapeSetId);
 
     CanvasCommand<H> setSourceNode(final Node<? extends View<?>, Edge> node,
-                                   final Edge<? extends View<?>, Node> edge,
+                                   final Edge<? extends ViewConnector<?>, Node> edge,
                                    final Connection connection);
 
     CanvasCommand<H> setTargetNode(final Node<? extends View<?>, Edge> node,
-                                   final Edge<? extends View<?>, Node> edge,
+                                   final Edge<? extends ViewConnector<?>, Node> edge,
                                    final Connection connection);
 
     CanvasCommand<H> updatePosition(final Node<View<?>, Edge> element,

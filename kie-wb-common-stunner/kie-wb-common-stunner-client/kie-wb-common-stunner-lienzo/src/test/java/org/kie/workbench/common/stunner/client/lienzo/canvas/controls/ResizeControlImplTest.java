@@ -36,6 +36,7 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeViewExtStub;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
+import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ResizeEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ResizeHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
@@ -123,7 +124,7 @@ public class ResizeControlImplTest {
     private View elementContent;
 
     @Mock
-    private Shape<?> shape;
+    private Shape<ShapeView> shape;
 
     @Mock
     private HasEventHandlers<ShapeViewExtStub, Object> shapeEventHandler;
