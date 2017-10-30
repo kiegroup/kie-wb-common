@@ -24,7 +24,6 @@ import org.kie.workbench.common.forms.editor.model.FormModelSynchronizationResul
 import org.kie.workbench.common.forms.editor.model.impl.FormModelSynchronizationResultImpl;
 import org.kie.workbench.common.forms.editor.model.impl.TypeConflictImpl;
 import org.kie.workbench.common.forms.editor.service.backend.FormModelHandler;
-import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.service.backend.util.ModelPropertiesGenerator;
