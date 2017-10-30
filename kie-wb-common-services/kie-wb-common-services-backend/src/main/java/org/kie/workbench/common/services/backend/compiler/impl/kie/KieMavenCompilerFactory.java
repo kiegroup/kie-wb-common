@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCompilerBeforeDecorator;
@@ -39,7 +40,7 @@ public class KieMavenCompilerFactory {
     /**
      * Provides a Maven compiler decorated with a Decorator Behaviour
      */
-    public static AFCompiler getCompiler(KieDecorator decorator) {
+    public static <T extends CompilationResponse> AFCompiler<T> getCompiler(KieDecorator decorator) {
         AFCompiler compiler = compilers.get(decorator.name());
         if (compiler == null) {
             compiler = createAndAddNewCompiler(decorator);
@@ -47,7 +48,7 @@ public class KieMavenCompilerFactory {
         return compiler;
     }
 
-    private static AFCompiler createAndAddNewCompiler(KieDecorator decorator) {
+    private static <T extends CompilationResponse> AFCompiler<T> createAndAddNewCompiler(KieDecorator decorator) {
 
         AFCompiler compiler;
         switch (decorator) {

@@ -97,7 +97,7 @@ public class BuildServiceImpl implements BuildService {
 
     private BuildResults buildInternal(final Project project) {
 
-        KieAFBuilder kieAfBuilder = KieAFBuilderUtil.getKieAFBuilder(project.getRootPath().toURI().toString(), PathConverter.getNioPath(project),
+        KieAFBuilder kieAfBuilder = KieAFBuilderUtil.getKieAFBuilder(project.getRootPath().toURI(), PathConverter.getNioPath(project),
                                                                      gitCache, builderCache, guvnorM2Repository,
                                                                      KieAFBuilderUtil.getIdentifier(identity));
         if (kieAfBuilder != null) {
@@ -114,7 +114,7 @@ public class BuildServiceImpl implements BuildService {
         } else {
             BuildResults buildRs = new BuildResults();
             BuildMessage msg = new BuildMessage();
-            msg.setText("[ERROR] Isn't possible build the project " + project.getRootPath().toURI().toString() + " because isn't a Git FS project");
+            msg.setText("[ERROR] Isn't possible build the project " + project.getRootPath().toURI() + " because isn't a Git FS project");
             buildRs.addBuildMessage(msg);
             return buildRs;
         }
@@ -165,7 +165,7 @@ public class BuildServiceImpl implements BuildService {
 
     @Override
     public boolean isBuilt(final Project project) {
-        return builderCache.getKieAFBuilder(project.getRootPath().toURI().toString()) != null;//@TODO check if could be better the classloaderHolder
+        return builderCache.getKieAFBuilder(project.getRootPath().toURI()) != null;//@TODO check if could be better the classloaderHolder
     }
 
     @Override

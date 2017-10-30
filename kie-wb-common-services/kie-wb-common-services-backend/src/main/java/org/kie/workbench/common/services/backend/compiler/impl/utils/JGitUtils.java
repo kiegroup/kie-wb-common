@@ -18,9 +18,9 @@ package org.kie.workbench.common.services.backend.compiler.impl.utils;
 import java.io.File;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.RebaseResult;
+import org.eclipse.jgit.api.ResetCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCompilerBeforeDecorator;
 import org.slf4j.Logger;
@@ -39,9 +39,8 @@ public class JGitUtils {
     public static Boolean pullAndRebase(final Git git) {
         Boolean result = Boolean.FALSE;
         try {
-            PullCommand pc = git.pull().setRemote(REMOTE).setRebase(Boolean.TRUE);
-            PullResult pullRes = pc.call();
-            RebaseResult rr = pullRes.getRebaseResult();
+            git.reset().setMode(ResetCommand.ResetType.HARD).call();
+            final RebaseResult rr = git.pull().setRemote(REMOTE).setRebase(Boolean.TRUE).call().getRebaseResult();
 
             if (rr.getStatus().equals(RebaseResult.Status.UP_TO_DATE) || rr.getStatus().equals(RebaseResult.Status.FAST_FORWARD)) {
                 result = Boolean.TRUE;
