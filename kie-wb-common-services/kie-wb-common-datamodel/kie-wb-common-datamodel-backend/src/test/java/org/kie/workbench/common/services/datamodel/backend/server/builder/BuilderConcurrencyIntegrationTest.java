@@ -16,11 +16,6 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
@@ -33,7 +28,6 @@ import org.guvnor.common.services.backend.cache.BuilderCache;
 import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.junit.Test;
-
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.slf4j.Logger;
@@ -41,33 +35,38 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.rpc.SessionInfo;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.uberfire.backend.server.util.Paths.convert;
+
 public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegrationTest {
 
     private static final Logger logger = LoggerFactory.getLogger(BuilderConcurrencyIntegrationTest.class);
 
     @Inject
-    private BuilderCache builderCache;
-
+    private BuilderCache<?> builderCache;
 
     @Test
     //https://bugzilla.redhat.com/show_bug.cgi?id=1145105
     public void testBuilderConcurrency() throws URISyntaxException {
-        final URL pomUrl = this.getClass().getResource( "/BuilderConcurrencyRepo/pom.xml" );
-        final org.uberfire.java.nio.file.Path nioPomPath = fs.getPath( pomUrl.toURI() );
-        final Path pomPath = paths.convert( nioPomPath );
+        final URL pomUrl = this.getClass().getResource("/BuilderConcurrencyRepo/pom.xml");
+        final org.uberfire.java.nio.file.Path nioPomPath = fs.getPath(pomUrl.toURI());
+        final Path pomPath = convert(nioPomPath);
 
-        final URL resourceUrl = this.getClass().getResource( "/BuilderConcurrencyRepo/src/main/resources/update.drl" );
-        final org.uberfire.java.nio.file.Path nioResourcePath = fs.getPath( resourceUrl.toURI() );
-        final Path resourcePath = paths.convert( nioResourcePath );
+        final URL resourceUrl = this.getClass().getResource("/BuilderConcurrencyRepo/src/main/resources/update.drl");
+        final org.uberfire.java.nio.file.Path nioResourcePath = fs.getPath(resourceUrl.toURI());
+        final Path resourcePath = convert(nioResourcePath);
 
-        final SessionInfo sessionInfo = mock( SessionInfo.class );
+        final SessionInfo sessionInfo = mock(SessionInfo.class);
 
         //Force full build before attempting incremental changes
-        final KieProject project = projectService.resolveProject( resourcePath );
-        final BuildResults buildResults = buildService.build( project );
-        assertNotNull( buildResults );
-        assertEquals( 0,
-                      buildResults.getErrorMessages().size() );
+        final KieProject project = projectService.resolveProject(resourcePath);
+        final BuildResults buildResults = buildService.build(project);
+        assertNotNull(buildResults);
+        assertEquals(0,
+                     buildResults.getErrorMessages().size());
         /*assertEquals( 1,
                       buildResults.getInformationMessages().size() );*/
 
@@ -75,69 +74,69 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
         final int THREADS = 200;
         final Result result = new Result();
         ExecutorService es = Executors.newCachedThreadPool();
-        for ( int i = 0; i < THREADS; i++ ) {
-            switch ( i % 3 ) {
+        for (int i = 0; i < THREADS; i++) {
+            switch (i % 3) {
                 case 0:
-                    es.execute( new Runnable() {
+                    es.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has started: BuildService.build( project )" );
-                                buildService.build( project );
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has completed." );
-                            } catch ( Throwable e ) {
-                                result.setFailed( true );
-                                result.setMessage( e.getMessage() );
-                                logger.debug( e.getMessage() );
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has started: BuildService.build( project )");
+                                buildService.build(project);
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
+                            } catch (Throwable e) {
+                                result.setFailed(true);
+                                result.setMessage(e.getMessage());
+                                logger.debug(e.getMessage());
                             }
                         }
-                    } );
+                    });
                     break;
                 case 1:
-                    es.execute( new Runnable() {
+                    es.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has started: LRUProjectDataModelOracleCache.invalidateProjectCache(...)" );
-                                projectDMOCache.invalidateProjectCache( new InvalidateDMOProjectCacheEvent( sessionInfo,
-                                                                                                            project,
-                                                                                                            pomPath ) );
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has completed." );
-                            } catch ( Throwable e ) {
-                                result.setFailed( true );
-                                result.setMessage( e.getMessage() );
-                                logger.debug( e.getMessage() );
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUProjectDataModelOracleCache.invalidateProjectCache(...)");
+                                projectDMOCache.invalidateProjectCache(new InvalidateDMOProjectCacheEvent(sessionInfo,
+                                                                                                          project,
+                                                                                                          pomPath));
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
+                            } catch (Throwable e) {
+                                result.setFailed(true);
+                                result.setMessage(e.getMessage());
+                                logger.debug(e.getMessage());
                             }
                         }
-                    } );
+                    });
                     break;
                 default:
                     //@MAXWasHere
-                    es.execute( new Runnable() {
+                    es.execute(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has started: LRUBuilderCache.assertBuilder( project ).getKieModuleIgnoringErrors();" );
-                                ((KieAFBuilder)builderCache.getKieAFBuilder( project.getRootPath().toURI() )).build();//@TODO is ti correct a simple build ?
-                                logger.debug( "Thread " + Thread.currentThread().getName() + " has completed." );
-                            } catch ( Throwable e ) {
-                                result.setFailed( true );
-                                result.setMessage( e.getMessage() );
-                                logger.debug( e.getMessage() );
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUBuilderCache.assertBuilder( project ).getKieModuleIgnoringErrors();");
+                                ((KieAFBuilder) builderCache.getKieAFBuilder(convert(project.getRootPath()))).build();//@TODO is ti correct a simple build ?
+                                logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
+                            } catch (Throwable e) {
+                                result.setFailed(true);
+                                result.setMessage(e.getMessage());
+                                logger.debug(e.getMessage());
                             }
                         }
-                    } );
+                    });
             }
         }
 
         es.shutdown();
         try {
-            es.awaitTermination( 5,
-                                 TimeUnit.MINUTES );
-        } catch ( InterruptedException e ) {
+            es.awaitTermination(5,
+                                TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
         }
-        if ( result.isFailed() ) {
-            fail( result.getMessage() );
+        if (result.isFailed()) {
+            fail(result.getMessage());
         }
     }
 
@@ -150,7 +149,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
             return failed;
         }
 
-        public synchronized void setFailed( boolean failed ) {
+        public synchronized void setFailed(boolean failed) {
             this.failed = failed;
         }
 
@@ -158,9 +157,8 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
             return message;
         }
 
-        public synchronized void setMessage( String message ) {
+        public synchronized void setMessage(String message) {
             this.message = message;
         }
     }
-
 }

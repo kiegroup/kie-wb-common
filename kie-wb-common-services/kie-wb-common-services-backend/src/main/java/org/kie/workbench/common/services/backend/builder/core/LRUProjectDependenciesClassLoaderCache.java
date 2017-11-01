@@ -16,36 +16,32 @@
 
 package org.kie.workbench.common.services.backend.builder.core;
 
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.guvnor.common.services.backend.cache.LRUCache;
-import org.guvnor.m2repo.backend.server.GuvnorM2Repository;
-import org.jboss.errai.security.shared.api.identity.User;
-import org.kie.workbench.common.services.backend.builder.af.KieAfBuilderClassloaderUtil;
-import org.guvnor.common.services.backend.cache.BuilderCache;
 import org.guvnor.common.services.backend.cache.ClassLoaderCache;
 import org.guvnor.common.services.backend.cache.DependenciesCache;
-import org.guvnor.common.services.backend.cache.GitCache;
 import org.guvnor.common.services.backend.cache.KieModuleMetaDataCache;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.KieAFBuilderUtil;
+import org.guvnor.common.services.backend.cache.LRUCache;
+import org.kie.workbench.common.services.backend.builder.af.KieAfBuilderClassloaderUtil;
 import org.kie.workbench.common.services.backend.project.MapClassLoader;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.uberfire.java.nio.file.Path;
+
+import static org.uberfire.backend.server.util.Paths.convert;
 
 @ApplicationScoped
 @Named("LRUProjectDependenciesClassLoaderCache")
 public class LRUProjectDependenciesClassLoaderCache extends LRUCache<Path, ClassLoader> {
 
-    private GuvnorM2Repository guvnorM2Repository;
-    private Instance< User > identity;
-    private GitCache gitCache;
-    private BuilderCache builderCache;
+    private KieAfBuilderClassloaderUtil kieAfBuilderClassloaderUtil;
     private DependenciesCache dependenciesCache;
     private KieModuleMetaDataCache kieModuleMetaDataCache;
     private ClassLoaderCache classLoaderCache;
@@ -54,55 +50,40 @@ public class LRUProjectDependenciesClassLoaderCache extends LRUCache<Path, Class
     }
 
     @Inject
-    public LRUProjectDependenciesClassLoaderCache(GuvnorM2Repository guvnorM2Repository,
-                                                  Instance< User > identity, GitCache gitCache, BuilderCache builderCache,
-                                                  KieModuleMetaDataCache kieModuleMetaDataCache, DependenciesCache dependenciesCache, ClassLoaderCache classLoaderCache) {
-        this.guvnorM2Repository = guvnorM2Repository;
-        this.identity = identity;
-        this.gitCache = gitCache;
-        this.builderCache = builderCache;
+    public LRUProjectDependenciesClassLoaderCache(final KieAfBuilderClassloaderUtil kieAfBuilderClassloaderUtil,
+                                                  final KieModuleMetaDataCache kieModuleMetaDataCache,
+                                                  final DependenciesCache dependenciesCache,
+                                                  final ClassLoaderCache classLoaderCache) {
+        this.kieAfBuilderClassloaderUtil = kieAfBuilderClassloaderUtil;
         this.kieModuleMetaDataCache = kieModuleMetaDataCache;
         this.dependenciesCache = dependenciesCache;
         this.classLoaderCache = classLoaderCache;
     }
 
-
-    public synchronized ClassLoader assertDependenciesClassLoader(final KieProject project, String identity) {
-        Optional<Path> nioFsPath = KieAFBuilderUtil.getFSPath(project, gitCache, builderCache, guvnorM2Repository, identity);
-        if(nioFsPath.isPresent()){
-            ClassLoader classLoader = getEntry(nioFsPath.get());
-            if (classLoader == null) {
-                Optional<MapClassLoader> opClassloader = buildClassLoader(project, identity);
-                if(opClassloader.isPresent()) {
-                    setEntry(nioFsPath.get(), opClassloader.get());
-                    classLoader = opClassloader.get();
-                }
+    public synchronized ClassLoader assertDependenciesClassLoader(final KieProject project) {
+        final Path nioFsPath = convert(project.getRootPath());
+        ClassLoader classLoader = getEntry(nioFsPath);
+        if (classLoader == null) {
+            Optional<MapClassLoader> opClassloader = buildClassLoader(project);
+            if (opClassloader.isPresent()) {
+                setEntry(nioFsPath, opClassloader.get());
+                classLoader = opClassloader.get();
             }
-            return classLoader;
-        }else{
-            List<URL> urls = new ArrayList<>(1);
-            URLClassLoader urlClassLoader = new URLClassLoader(urls.toArray(new URL[1]));
-            return urlClassLoader;
         }
+        return classLoader;
     }
 
     public synchronized void setDependenciesClassLoader(final KieProject project,
-                                                        ClassLoader classLoader, String identity) {
-        Optional<Path> nioFsPAth = KieAFBuilderUtil.getFSPath(project,  gitCache, builderCache,  guvnorM2Repository, identity);
-        if(nioFsPAth.isPresent()){
-            setEntry(nioFsPAth.get(), classLoader);
-        }
+                                                        final ClassLoader classLoader) {
+        final Path nioFsPath = convert(project.getRootPath());
+        setEntry(nioFsPath, classLoader);
     }
 
-    protected Optional<MapClassLoader> buildClassLoader(final KieProject project, String identity) {
-        Optional<MapClassLoader> classLoader = KieAfBuilderClassloaderUtil.getProjectClassloader(project,
-                                                                                                 gitCache, builderCache,
-                                                                                                 kieModuleMetaDataCache,
-                                                                                                 dependenciesCache,
-                                                                                                 guvnorM2Repository,
-                                                                                                 classLoaderCache,
-                                                                                                 identity);
-        return  classLoader;
+    protected Optional<MapClassLoader> buildClassLoader(final KieProject project) {
+        return kieAfBuilderClassloaderUtil.getProjectClassloader(project,
+                                                                 kieModuleMetaDataCache,
+                                                                 dependenciesCache,
+                                                                 classLoaderCache);
     }
 
     @Override
@@ -110,36 +91,31 @@ public class LRUProjectDependenciesClassLoaderCache extends LRUCache<Path, Class
         dependenciesCache.removeDependenciesRaw(path);
         kieModuleMetaDataCache.removeKieModuleMetaData(path);
         classLoaderCache.removeTargetMapClassloader(path);
-        if(path.endsWith("pom.xml")){
+        if (path.endsWith("pom.xml")) {
             classLoaderCache.removeDependenciesClassloader(path);
         }
     }
 
-    private String getKey(String projectRootPath){
-        return  new StringBuilder().append(projectRootPath.toString()).append("-").append(KieAFBuilderUtil.getIdentifier(identity)).toString();
-    }
-
     public List<Class<?>> getClazz(Path projectRootPath, String packageName, Set<String> declaredTypes) {
-        List<Class<?>> clazzes = Collections.EMPTY_LIST;
+        List<Class<?>> clazzes = Collections.emptyList();
         ClassLoader classLoader = getEntry(projectRootPath);
-        if (classLoader!= null && classLoader instanceof MapClassLoader) {
-            MapClassLoader mapClassLoader  = (MapClassLoader) classLoader;
-                if(!mapClassLoader.getKeys().isEmpty()){
-                    clazzes = new ArrayList<>();
-                    for(String key: mapClassLoader.getKeys()){
-                        if (key.contains(packageName) && declaredTypes.contains(key)){
-                            try{
-                                Class clazz = mapClassLoader.loadClass(key.substring(0,key.lastIndexOf(".")).replace("/","."));
-                                if(clazz != null) {
-                                    clazzes.add(clazz);
-                                }
-                            }catch (Exception e){
-                            //nothing to do
+        if (classLoader != null && classLoader instanceof MapClassLoader) {
+            MapClassLoader mapClassLoader = (MapClassLoader) classLoader;
+            if (!mapClassLoader.getKeys().isEmpty()) {
+                clazzes = new ArrayList<>();
+                for (String key : mapClassLoader.getKeys()) {
+                    if (key.contains(packageName) && declaredTypes.contains(key)) {
+                        try {
+                            Class clazz = mapClassLoader.loadClass(key.substring(0, key.lastIndexOf(".")).replace("/", "."));
+                            if (clazz != null) {
+                                clazzes.add(clazz);
                             }
+                        } catch (Exception e) {
+                            //nothing to do
                         }
                     }
                 }
-
+            }
         }
         return clazzes;
     }

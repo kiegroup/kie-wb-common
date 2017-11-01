@@ -15,9 +15,16 @@
  */
 package org.kie.workbench.common.services.backend.builder.af.impl;
 
-import java.net.URI;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.ResetCommand;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -25,22 +32,54 @@ import org.kie.workbench.common.services.backend.compiler.configuration.KieDecor
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
+import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieDefaultMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.PathConverter;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
+import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 
 public class DefaultKieAFBuilder implements KieAFBuilder {
 
+    private final Path originalProjectRootPath;
+    private final Git git;
     private AFCompiler<KieCompilationResponse> compiler;
     private WorkspaceCompilationInfo info;
     private CompilationRequest req;
     private String mavenRepo;
     private String FILE_URI = "file://";
-    private Path GIT_URI;
     private AtomicBoolean isBuilding = new AtomicBoolean(false);
     private KieCompilationResponse lastResponse = null;
+
+    public DefaultKieAFBuilder(final Path projectRootPath,
+                               final String mavenRepo,
+                               final String userId) {
+        this.originalProjectRootPath = projectRootPath;
+        this.mavenRepo = mavenRepo;
+        this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new KieDefaultMavenCompiler()));
+        final Path projectRepo;
+        if (originalProjectRootPath.getFileSystem() instanceof JGitFileSystem) {
+            this.git = JGitUtils.tempClone((JGitFileSystem) originalProjectRootPath.getFileSystem(), getFolderName(userId));
+            projectRepo = Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(originalProjectRootPath.getFileName().toString()).toUri());
+        } else {
+            git = null;
+            projectRepo = projectRootPath;
+        }
+
+        info = new WorkspaceCompilationInfo(projectRepo);
+        req = new DefaultCompilationRequest(mavenRepo,
+                                            info,
+                                            new String[]{MavenCLIArgs.COMPILE},
+                                            Boolean.TRUE, Boolean.FALSE);
+    }
+
+    private String getFolderName(final String user) {
+        return user + "-" + UUID.randomUUID().toString();
+    }
 
     @Override
     public void cleanInternalCache() {
@@ -48,133 +87,54 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         lastResponse = null;
     }
 
-    public DefaultKieAFBuilder(Path projectRepo,
-                               String mavenRepo) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-        info = new WorkspaceCompilationInfo(projectRepo);
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, Boolean.FALSE);
-    }
+    @Override
+    public KieCompilationResponse validate(final Path path,
+                                           final InputStream inputStream) {
+        if (path.getFileSystem() instanceof JGitFileSystem) {
+            final java.nio.file.Path convertedToCheckedPath = git.getRepository().getDirectory().toPath().getParent().resolve(path.toString().substring(1));
 
-    public DefaultKieAFBuilder(Path projectRepo,
-                               String mavenRepo, AFCompiler compiler, Path gitUri) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        this.compiler = compiler;
-        this.GIT_URI = gitUri;
-        info = new WorkspaceCompilationInfo(projectRepo);
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, Boolean.FALSE);
-    }
+            try {
+                Files.copy(inputStream, convertedToCheckedPath, StandardCopyOption.REPLACE_EXISTING);
+                return doBuild(Boolean.TRUE, Boolean.FALSE);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } finally {
+                try {
+                    git.reset().setMode(ResetCommand.ResetType.HARD).call();
+                } catch (GitAPIException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
 
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-        info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + projectRepo)));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, Boolean.FALSE);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-        info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + projectRepo)));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo,
-                               String[] args) {
-        /**In the  construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-        info = new WorkspaceCompilationInfo(Paths.get(projectRepo));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            args,
-                                            Boolean.TRUE, Boolean.FALSE);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo,
-                               String[] args, Boolean skipPrjDependenciesCreationList) {
-        /**In the  construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-        info = new WorkspaceCompilationInfo(Paths.get(projectRepo));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            args,
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo,
-                               AFCompiler compiler) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        this.compiler = compiler;
-        info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + projectRepo)));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, Boolean.FALSE);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo,
-                               AFCompiler compiler, Boolean skipPrjDependenciesCreationList) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        this.compiler = compiler;
-        info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + projectRepo)));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            new String[]{MavenCLIArgs.COMPILE},
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
-    }
-
-    public DefaultKieAFBuilder(String projectRepo,
-                               String mavenRepo,
-                               String[] mavenArgs,
-                               AFCompiler compiler, Boolean skipPrjDependenciesCreationList) {
-        /**In the construct we create the objects ready for a call to the build() without params to reuse all the internal objects,
-         * only in the internal maven compilation new objects will be created in the compileSync */
-        this.mavenRepo = mavenRepo;
-        this.compiler = compiler;
-        info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + projectRepo)));
-        req = new DefaultCompilationRequest(mavenRepo,
-                                            info,
-                                            mavenArgs,
-                                            Boolean.TRUE, skipPrjDependenciesCreationList);
+        java.nio.file.Path _path = java.nio.file.Paths.get(path.toUri());
+        final byte[] content;
+        try {
+            content = Files.readAllBytes(_path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            Files.copy(inputStream, _path, StandardCopyOption.REPLACE_EXISTING);
+            return doBuild(true, false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                Files.write(_path, content);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
     public KieCompilationResponse build() {
+        if (lastResponse != null) {
+            return lastResponse;
+        }
         if (isBuilding.compareAndSet(false, true)) {
+            gitPullAndRebase();
             req.getKieCliRequest().getMap().clear();
             lastResponse = compiler.compileSync(req);
             return lastResponse;
@@ -189,14 +149,14 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     }
 
     @Override
-    public KieCompilationResponse build(Boolean logRequested, Boolean skipPrjDependenciesCreationList) {
+    public KieCompilationResponse build(final Boolean logRequested,
+                                        final Boolean skipPrjDependenciesCreationList) {
+        if (lastResponse != null) {
+            return lastResponse;
+        }
         if (isBuilding.compareAndSet(false, true)) {
-            req.getKieCliRequest().getMap().clear();
-            req = new DefaultCompilationRequest(mavenRepo,
-                                                info,
-                                                new String[]{MavenCLIArgs.COMPILE},
-                                                logRequested, skipPrjDependenciesCreationList);
-            lastResponse = compiler.compileSync(req);
+            gitPullAndRebase();
+            lastResponse = doBuild(logRequested, skipPrjDependenciesCreationList);
             isBuilding.set(false);
             return lastResponse;
         }
@@ -209,8 +169,26 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         return lastResponse;
     }
 
+    private void gitPullAndRebase() {
+        if (git != null) {
+            JGitUtils.pullAndRebase(git);
+        }
+    }
+
+    private KieCompilationResponse doBuild(final Boolean logRequested,
+                                           final Boolean skipPrjDependenciesCreationList) {
+        req.getKieCliRequest().getMap().clear();
+        req = new DefaultCompilationRequest(mavenRepo,
+                                            info,
+                                            new String[]{MavenCLIArgs.COMPILE},
+                                            logRequested,
+                                            skipPrjDependenciesCreationList);
+        return compiler.compileSync(req);
+    }
+
     @Override
     public KieCompilationResponse buildAndPackage() {
+        gitPullAndRebase();
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
@@ -221,6 +199,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     @Override
     public KieCompilationResponse buildAndPackage(Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
@@ -231,6 +210,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     @Override
     public KieCompilationResponse buildAndInstall() {
+        gitPullAndRebase();
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
@@ -241,6 +221,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     @Override
     public KieCompilationResponse buildAndInstall(Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.INSTALL},
@@ -251,6 +232,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     @Override
     public KieCompilationResponse build(String mavenRepo) {
+        gitPullAndRebase();
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
@@ -261,6 +243,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     @Override
     public KieCompilationResponse build(String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
@@ -272,6 +255,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse build(String projectPath,
                                         String mavenRepo) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -284,6 +268,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse build(String projectPath,
                                         String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -296,6 +281,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse buildAndPackage(String projectPath,
                                                   String mavenRepo) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -308,6 +294,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse buildAndPackage(String projectPath,
                                                   String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -320,6 +307,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse buildAndInstall(String projectPath,
                                                   String mavenRepo) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -332,6 +320,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     @Override
     public KieCompilationResponse buildAndInstall(String projectPath,
                                                   String mavenRepo, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -345,6 +334,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     public KieCompilationResponse buildSpecialized(String projectPath,
                                                    String mavenRepo,
                                                    String[] args) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -358,6 +348,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     public KieCompilationResponse buildSpecialized(String projectPath,
                                                    String mavenRepo,
                                                    String[] args, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -372,6 +363,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                    String mavenRepo,
                                                    String[] args,
                                                    KieDecorator decorator) {
+        gitPullAndRebase();
         AFCompiler<KieCompilationResponse> compiler = KieMavenCompilerFactory.getCompiler(decorator);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
@@ -387,6 +379,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                                    String mavenRepo,
                                                    String[] args,
                                                    KieDecorator decorator, Boolean skipPrjDependenciesCreationList) {
+        gitPullAndRebase();
         AFCompiler<KieCompilationResponse> compiler = KieMavenCompilerFactory.getCompiler(decorator);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(PathConverter.createPathFromString(projectPath));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
@@ -414,6 +407,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     }
 
     public Path getGITURI() {
-        return GIT_URI;
+        return originalProjectRootPath;
     }
 }

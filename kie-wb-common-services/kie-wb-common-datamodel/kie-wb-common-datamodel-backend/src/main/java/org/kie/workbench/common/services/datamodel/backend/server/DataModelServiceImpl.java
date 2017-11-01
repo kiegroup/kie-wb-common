@@ -91,7 +91,7 @@ public class DataModelServiceImpl
             PortablePreconditions.checkNotNull("resourcePath", resourcePath);
             final KieProject project = resolveProject(resourcePath);
             //this call is used to load the classloader and the correct KieMetaData
-            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project, "system");
+            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project);
 
             //Resource was not within a Project structure
             if (project == null) {
@@ -114,5 +114,4 @@ public class DataModelServiceImpl
     private Package resolvePackage(final Path resourcePath) {
         return projectService.resolvePackage(resourcePath);
     }
-
 }

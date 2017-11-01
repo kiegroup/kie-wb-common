@@ -15,8 +15,11 @@
  */
 package org.kie.workbench.common.services.backend.builder.af;
 
+import java.io.InputStream;
+
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.uberfire.java.nio.file.Path;
 
 /***
  * Defines the behaviours available in the AppFormer Builder on Kie Projects
@@ -27,6 +30,12 @@ public interface KieAFBuilder {
      * Clean internal poms cached
      */
     void cleanInternalCache();
+
+    /**
+     * Run a mvn compile and create the output and the prj dependencies in the response
+     */
+    KieCompilationResponse validate(final Path path,
+                                    final InputStream inputStream);
 
     /**
      * Run a mvn compile if is used the contructor with no []args or run the maven tasks declared in the []args passed with

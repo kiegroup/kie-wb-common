@@ -15,45 +15,43 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server.cache;
 
-import org.guvnor.common.services.backend.cache.LRUCache;
-import org.guvnor.common.services.backend.file.FileDiscoveryService;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCacheEvent;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
-import org.guvnor.common.services.project.model.Package;
-import org.guvnor.m2repo.backend.server.GuvnorM2Repository;
-import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
-import org.kie.soup.commons.validation.PortablePreconditions;
-import org.kie.soup.project.datamodel.commons.util.MVELEvaluator;
-import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
-import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
-import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
-import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.file.EnumerationsFileFilter;
-import org.kie.workbench.common.services.backend.file.GlobalsFileFilter;
-import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
-import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
-import org.kie.workbench.common.services.shared.project.KieProject;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
-import org.uberfire.backend.server.util.Paths;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.io.IOService;
-import org.uberfire.java.nio.file.DirectoryStream;
-import org.uberfire.java.nio.file.DirectoryStream.Filter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
+import org.guvnor.common.services.backend.cache.ClassLoaderCache;
+import org.guvnor.common.services.backend.cache.LRUCache;
+import org.guvnor.common.services.backend.file.FileDiscoveryService;
+import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCacheEvent;
+import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
+import org.guvnor.common.services.project.model.Package;
+import org.kie.soup.commons.validation.PortablePreconditions;
+import org.kie.soup.project.datamodel.commons.util.MVELEvaluator;
+import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
+import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
+import org.kie.workbench.common.services.backend.file.EnumerationsFileFilter;
+import org.kie.workbench.common.services.backend.file.GlobalsFileFilter;
+import org.kie.workbench.common.services.datamodel.backend.server.builder.packages.PackageDataModelOracleBuilder;
+import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
+import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.services.shared.project.KieProjectService;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.io.IOService;
+import org.uberfire.java.nio.file.DirectoryStream;
+import org.uberfire.java.nio.file.DirectoryStream.Filter;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
+import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
  * A simple LRU cache for Package DataModelOracles
@@ -74,7 +72,9 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
 
     private KieProjectService projectService;
 
-    private GuvnorM2Repository guvnorM2Repository;
+    private BuilderUtils builderUtils;
+
+    private ClassLoaderCache classLoaderCache;
 
     private Instance<DataModelExtension> dataModelExtensionsProvider;
 
@@ -89,21 +89,23 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
                                    final FileDiscoveryService fileDiscoveryService,
                                    final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
                                    final KieProjectService projectService,
-                                   final GuvnorM2Repository guvnorM2Repository,
+                                   final BuilderUtils builderUtils,
+                                   final ClassLoaderCache classLoaderCache,
                                    final Instance<DataModelExtension> dataModelExtensionsProvider,
-                                   final MVELEvaluator evaluator){
-            this.ioService = ioService;
-            this.fileDiscoveryService = fileDiscoveryService;
-            this.cacheProjects = cacheProjects;
-            this.projectService = projectService;
-            this.guvnorM2Repository = guvnorM2Repository;
-            this.dataModelExtensionsProvider = dataModelExtensionsProvider;
-            this.evaluator = evaluator;
-        }
+                                   final MVELEvaluator evaluator) {
+        this.ioService = ioService;
+        this.fileDiscoveryService = fileDiscoveryService;
+        this.cacheProjects = cacheProjects;
+        this.projectService = projectService;
+        this.builderUtils = builderUtils;
+        this.classLoaderCache = classLoaderCache;
+        this.dataModelExtensionsProvider = dataModelExtensionsProvider;
+        this.evaluator = evaluator;
+    }
 
     public synchronized void invalidatePackageCache(@Observes final InvalidateDMOPackageCacheEvent event) {
         PortablePreconditions.checkNotNull("event",
-                event);
+                                           event);
         final Path resourcePath = event.getResourcePath();
         final Package pkg = projectService.resolvePackage(resourcePath);
 
@@ -115,7 +117,7 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
 
     public synchronized void invalidateProjectPackagesCache(@Observes final InvalidateDMOProjectCacheEvent event) {
         PortablePreconditions.checkNotNull("event",
-                event);
+                                           event);
         final Path resourcePath = event.getResourcePath();
         final KieProject project = projectService.resolveProject(resourcePath);
 
@@ -152,9 +154,9 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
         PackageDataModelOracle oracle = getEntry(pkg);
         if (oracle == null) {
             oracle = makePackageDataModelOracle(project,
-                    pkg);
+                                                pkg);
             setEntry(pkg,
-                    oracle);
+                     oracle);
         }
         return oracle;
     }
@@ -163,22 +165,18 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
                                                               final Package pkg) {
         final String packageName = pkg.getPackageName();
         final PackageDataModelOracleBuilder dmoBuilder = PackageDataModelOracleBuilder.newPackageOracleBuilder(evaluator,
-                packageName);
+                                                                                                               packageName);
         final ProjectDataModelOracle projectOracle = cacheProjects.assertProjectDataModelOracle(project);
         dmoBuilder.setProjectOracle(projectOracle);
 
         //Add Guvnor enumerations
-        loadEnumsForPackage(dmoBuilder,
-                project,
-                pkg);
+        loadEnumsForPackage(dmoBuilder, project, pkg);
 
         //Add DSLs
-        loadExtensionsForPackage(dmoBuilder,
-                pkg);
+        loadExtensionsForPackage(dmoBuilder, pkg);
 
         //Add Globals
-        loadGlobalsForPackage(dmoBuilder,
-                pkg);
+        loadGlobalsForPackage(dmoBuilder, pkg);
 
         return dmoBuilder.build();
     }
@@ -193,42 +191,38 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
     private void loadEnumsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                      final KieProject project,
                                      final Package pkg) {
-        KieAFBuilder builder = new DefaultKieAFBuilder(project.getRootPath().toURI().toString(),
-                guvnorM2Repository.getM2RepositoryDir(ArtifactRepositoryService.LOCAL_M2_REPO_NAME));
-        KieCompilationResponse res = builder.build(Boolean.TRUE, Boolean.FALSE);//@TODO check if is readed by the UI
+        final KieAFBuilder builder = builderUtils.getBuilder(project);
+        final KieCompilationResponse res = builder.build(Boolean.TRUE, Boolean.FALSE); //@TODO check if is readed by the UI
         if (res.isSuccessful() && res.getKieModule().isPresent()) {
-
-            final KieModule module = res.getKieModule().get();
-            final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData(module).getClassLoader();
-            final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+            final ClassLoader classLoader = classLoaderCache.getTargetMapClassLoader(convert(project.getRootPath())).get();
+            final org.uberfire.java.nio.file.Path nioPackagePath = convert(pkg.getPackageMainResourcesPath());
             final Collection<org.uberfire.java.nio.file.Path> enumFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                    FILTER_ENUMERATIONS);
+                                                                                                             FILTER_ENUMERATIONS);
             for (final org.uberfire.java.nio.file.Path path : enumFiles) {
                 final String enumDefinition = ioService.readAllString(path);
                 dmoBuilder.addEnum(enumDefinition,
-                        classLoader);
+                                   classLoader);
             }
         }
     }
 
-
     private void loadExtensionsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                           final Package pkg) {
-        final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+        final org.uberfire.java.nio.file.Path nioPackagePath = convert(pkg.getPackageMainResourcesPath());
         List<DataModelExtension> extensions = stream(dataModelExtensionsProvider.spliterator(),
-                false)
+                                                     false)
                 .collect(toList());
 
         for (final DataModelExtension extension : extensions) {
             Filter<org.uberfire.java.nio.file.Path> filter = extension.getFilter();
             final Collection<org.uberfire.java.nio.file.Path> extensionFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                    filter);
+                                                                                                                  filter);
             extensionFiles
                     .stream()
                     .map(file -> extension.getExtensions(file,
-                            ioService.readAllString(file)))
+                                                         ioService.readAllString(file)))
                     .forEach(mappings -> mappings.forEach(mapping -> dmoBuilder.addExtension(mapping.getKind(),
-                            mapping.getValues())));
+                                                                                             mapping.getValues())));
         }
     }
 
@@ -245,9 +239,9 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
 
     private void loadGlobalsForPackage(final PackageDataModelOracleBuilder dmoBuilder,
                                        final Package pkg) {
-        final org.uberfire.java.nio.file.Path nioPackagePath = Paths.convert(pkg.getPackageMainResourcesPath());
+        final org.uberfire.java.nio.file.Path nioPackagePath = convert(pkg.getPackageMainResourcesPath());
         final Collection<org.uberfire.java.nio.file.Path> globalFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
-                FILTER_GLOBALS);
+                                                                                                           FILTER_GLOBALS);
         for (final org.uberfire.java.nio.file.Path path : globalFiles) {
             final String definition = ioService.readAllString(path);
             dmoBuilder.addGlobals(definition);

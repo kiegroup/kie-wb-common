@@ -15,14 +15,12 @@
  */
 package org.kie.workbench.common.services.backend.project;
 
-import org.jboss.errai.security.shared.api.identity.User;
-import org.kie.workbench.common.services.backend.builder.core.LRUProjectDependenciesClassLoaderCache;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.KieAFBuilderUtil;
-import org.kie.workbench.common.services.shared.project.KieProject;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.kie.workbench.common.services.backend.builder.core.LRUProjectDependenciesClassLoaderCache;
+import org.kie.workbench.common.services.shared.project.KieProject;
 
 /**
  *
@@ -34,11 +32,7 @@ public class ProjectClassLoaderHelper {
     @Named("LRUProjectDependenciesClassLoaderCache")
     private LRUProjectDependenciesClassLoaderCache dependenciesClassLoaderCache;
 
-    @Inject
-    private Instance< User > identity;
-
-    public ClassLoader getProjectClassLoader(KieProject project) {
-        return dependenciesClassLoaderCache.assertDependenciesClassLoader(project,
-                                                                          KieAFBuilderUtil.getIdentifier(identity));
+    public ClassLoader getProjectClassLoader(final KieProject project) {
+        return dependenciesClassLoaderCache.assertDependenciesClassLoader(project);
     }
 }

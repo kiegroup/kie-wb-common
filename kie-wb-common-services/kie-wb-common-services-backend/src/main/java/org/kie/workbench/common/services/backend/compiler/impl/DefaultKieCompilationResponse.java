@@ -17,7 +17,11 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 
 import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
@@ -54,7 +58,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
         this(successful,
              null,
              null,
-                null,
+             null,
              mavenOutput,
              null,
              null,
@@ -73,7 +77,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
     public DefaultKieCompilationResponse(Boolean successful,
                                          KieModuleMetaInfo kieModuleMetaInfo,
                                          KieModule kieModule,
-                                         Map<String,byte[]> projectClassLoaderStore,
+                                         Map<String, byte[]> projectClassLoaderStore,
                                          List<String> mavenOutput,
                                          List<String> projectDependenciesRaw,
                                          Path workingDir,
@@ -170,21 +174,21 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
         if (projectDependenciesAsURL != null) {
             return projectDependenciesAsURL;
         }
-        if (projectDependenciesAsURL == null && projectDependenciesRaw != null) {
+        if (projectDependenciesRaw != null) {
             projectDependenciesAsURL = CompilerClassloaderUtils.processScannedFilesAsURLs(projectDependenciesRaw);
             return projectDependenciesAsURL;
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private List<URI> getRawAsURIs() {
         if (projectDependenciesAsURI != null) {
             return projectDependenciesAsURI;
         }
-        if (projectDependenciesAsURI == null && projectDependenciesRaw != null) {
+        if (projectDependenciesRaw != null) {
             projectDependenciesAsURI = CompilerClassloaderUtils.processScannedFilesAsURIs(projectDependenciesRaw);
             return projectDependenciesAsURI;
         }
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

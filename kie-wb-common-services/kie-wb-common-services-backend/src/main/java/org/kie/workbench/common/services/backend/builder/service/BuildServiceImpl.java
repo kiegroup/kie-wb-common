@@ -20,10 +20,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.eclipse.jgit.api.Git;
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.model.IncrementalBuildResults;
@@ -33,19 +31,13 @@ import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.m2repo.backend.server.GuvnorM2Repository;
 import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.guvnor.common.services.backend.cache.BuilderCache;
-import org.guvnor.common.services.backend.cache.GitCache;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.KieAFBuilderUtil;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenOutputConverter;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.PathConverter;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
-import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.workbench.events.ResourceChange;
 
 @Service
@@ -56,11 +48,7 @@ public class BuildServiceImpl implements BuildService {
 
     private GuvnorM2Repository guvnorM2Repository;
 
-    private Instance<User> identity;
-
-    private GitCache gitCache;
-
-    private BuilderCache builderCache;
+    private BuilderUtils builderUtils;
 
     private String ERROR_LEVEL = "ERROR";
 
@@ -71,14 +59,10 @@ public class BuildServiceImpl implements BuildService {
     @Inject
     public BuildServiceImpl(final KieProjectService projectService,
                             final GuvnorM2Repository guvnorM2Repository,
-                            final Instance<User> identity,
-                            final GitCache gitCache,
-                            final BuilderCache builderCache) {
+                            final BuilderUtils builderUtils) {
         this.projectService = projectService;
         this.guvnorM2Repository = guvnorM2Repository;
-        this.identity = identity;
-        this.gitCache = gitCache;
-        this.builderCache = builderCache;
+        this.builderUtils = builderUtils;
     }
 
     @Override
@@ -87,28 +71,21 @@ public class BuildServiceImpl implements BuildService {
     }
 
     private BuildResults buildAndDeployInternal(final Project project) {
-        KieAFBuilder kieAfBuilder = KieAFBuilderUtil.getKieAFBuilder(project.getRootPath().toURI().toString(), PathConverter.getNioPath(project),
-                                                                     gitCache, builderCache,
-                                                                     guvnorM2Repository, KieAFBuilderUtil.getIdentifier(identity));
-        gitPullAndRebase(project);
+        final KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
         KieCompilationResponse res = kieAfBuilder.buildAndInstall(((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().toString(), guvnorM2Repository.getM2RepositoryRootDir(ArtifactRepositoryService.GLOBAL_M2_REPO_NAME));
         return MavenOutputConverter.convertIntoBuildResults(res.getMavenOutput().get());
     }
 
     private BuildResults buildInternal(final Project project) {
-
-        KieAFBuilder kieAfBuilder = KieAFBuilderUtil.getKieAFBuilder(project.getRootPath().toURI(), PathConverter.getNioPath(project),
-                                                                     gitCache, builderCache, guvnorM2Repository,
-                                                                     KieAFBuilderUtil.getIdentifier(identity));
+        KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
         if (kieAfBuilder != null) {
-            gitPullAndRebase(project);
             KieCompilationResponse res = kieAfBuilder.build(Boolean.TRUE,
                                                             Boolean.FALSE);
             BuildResults br =
-             MavenOutputConverter.convertIntoBuildResults(res.getMavenOutput().get(),
-                    ERROR_LEVEL,
-                    ((DefaultKieAFBuilder)kieAfBuilder).getGITURI(),
-                    ((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
+                    MavenOutputConverter.convertIntoBuildResults(res.getMavenOutput().get(),
+                                                                 ERROR_LEVEL,
+                                                                 ((DefaultKieAFBuilder) kieAfBuilder).getGITURI(),
+                                                                 ((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
 
             return br;
         } else {
@@ -121,22 +98,9 @@ public class BuildServiceImpl implements BuildService {
     }
 
     private IncrementalBuildResults buildIncrementallyInternal(final Project project) {
-
-        KieAFBuilder kieAfBuilder = KieAFBuilderUtil.getKieAFBuilder(project.getRootPath().toURI().toString(), PathConverter.getNioPath(project),
-                                                                     gitCache, builderCache,
-                                                                     guvnorM2Repository, KieAFBuilderUtil.getIdentifier(identity));
-
-        gitPullAndRebase(project);
-        KieCompilationResponse res = kieAfBuilder.build(Boolean.TRUE, Boolean.FALSE);
-        return MavenOutputConverter.convertIntoIncrementalBuildResults(res.getMavenOutput().get(),ERROR_LEVEL,((DefaultKieAFBuilder)kieAfBuilder).getGITURI(),((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
-    }
-
-    private void gitPullAndRebase(Project project) {
-        org.uberfire.java.nio.file.Path nioPath = PathConverter.getNioPath(project);
-        if(nioPath.getFileSystem() instanceof JGitFileSystem){
-           Git git = (Git)gitCache.getGit(nioPath.getFileSystem());
-                JGitUtils.pullAndRebase(git);
-        }
+        final KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
+        final KieCompilationResponse res = kieAfBuilder.build(Boolean.TRUE, Boolean.FALSE);
+        return MavenOutputConverter.convertIntoIncrementalBuildResults(res.getMavenOutput().get(), ERROR_LEVEL, ((DefaultKieAFBuilder) kieAfBuilder).getGITURI(), ((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
     }
 
     @Override
@@ -165,7 +129,7 @@ public class BuildServiceImpl implements BuildService {
 
     @Override
     public boolean isBuilt(final Project project) {
-        return builderCache.getKieAFBuilder(project.getRootPath().toURI()) != null;//@TODO check if could be better the classloaderHolder
+        return builderUtils.getBuilder(project) != null;
     }
 
     @Override
