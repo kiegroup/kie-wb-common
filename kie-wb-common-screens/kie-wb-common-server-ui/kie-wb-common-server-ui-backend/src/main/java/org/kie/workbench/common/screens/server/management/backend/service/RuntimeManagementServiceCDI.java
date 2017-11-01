@@ -68,15 +68,15 @@ public class RuntimeManagementServiceCDI extends RuntimeManagementServiceImpl
     public ContainerSpecData getContainersByContainerSpec(final String serverTemplateId, final String containerSpecId) {
         final ServerTemplate serverTemplate = loadServerTemplate(serverTemplateId);
 
-        ContainerSpec containerSpec = serverTemplate.getContainerSpec(containerSpecId);
+        final ContainerSpec containerSpec = serverTemplate.getContainerSpec(containerSpecId);
 
-        List<Container> containers = getKieServerInstanceManager().getContainers(serverTemplate, containerSpec);
+        final List<Container> containers = getKieServerInstanceManager().getContainers(serverTemplate, containerSpec);
 
         return new ContainerSpecData(containerSpec, containers);
     }
 
     private ServerTemplate loadServerTemplate(String serverTemplateId) {
-        ServerTemplate template = getTemplateStorage().load(serverTemplateId);
+        final ServerTemplate template = getTemplateStorage().load(serverTemplateId);
         if (template == null) {
             throw new RuntimeException("No server template found for id " + serverTemplateId);
         }

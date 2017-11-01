@@ -98,12 +98,9 @@ public class RuntimeManagementServiceCDITest {
         );
         final List<Container> containersInServerInstance = Arrays.asList(new Container(), new Container());
 
-        //Template storage has one Template, which has 1 server instance
-        KieServerTemplateStorage templateStorageMock = mock(KieServerTemplateStorage.class);
-        when(templateStorageMock.load(eq(templateId)))
-                .thenReturn(serverTemplate);
+        KieServerTemplateStorage templateStorageMock = createMockStorageWithOneTemplate(serverTemplate);
 
-        // Instance has 2 dummy containers
+        // Instance with 2 dummy containers
         KieServerInstanceManager instanceMangerMock = mock(KieServerInstanceManager.class);
         when(instanceMangerMock.getContainers(eq(serverInstanceKey)))
                 .thenReturn(containersInServerInstance);
@@ -162,15 +159,13 @@ public class RuntimeManagementServiceCDITest {
                 templateName,
                 Collections.emptyList(),
                 Collections.emptyMap(),
-                Arrays.asList(containerSpec)
+                Collections.singletonList(containerSpec)
         );
 
         final List<Container> containersInServerInstance = Collections.singletonList(container);
 
         // Setup mocks
-        KieServerTemplateStorage templateStorageMock = mock(KieServerTemplateStorage.class);
-        when(templateStorageMock.load(eq(templateId)))
-                .thenReturn(serverTemplate);
+        KieServerTemplateStorage templateStorageMock = createMockStorageWithOneTemplate(serverTemplate);
 
         KieServerInstanceManager instanceMangerMock = mock(KieServerInstanceManager.class);
         when(instanceMangerMock.getContainers(eq(serverTemplate), eq(containerSpec)))
@@ -186,5 +181,12 @@ public class RuntimeManagementServiceCDITest {
 
         assertThat(containerSpecData.getContainers()).contains(container);
         assertThat(containerSpecData.getContainerSpec()).isEqualTo(containerSpec);
+    }
+
+    private KieServerTemplateStorage createMockStorageWithOneTemplate(ServerTemplate serverTemplate) {
+        KieServerTemplateStorage templateStorageMock = mock(KieServerTemplateStorage.class);
+        when(templateStorageMock.load(eq(serverTemplate.getId())))
+                .thenReturn(serverTemplate);
+        return templateStorageMock;
     }
 }
