@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
@@ -39,6 +40,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpression;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpressionLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
@@ -48,10 +51,13 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Process
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimeCycle;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimeCycleLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimeDate;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimeDuration;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.DistributionType;
@@ -187,6 +193,20 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
                 "signalref");
             put(CancelActivity.class,
                 "boundarycancelactivity");
+            put(SignalScope.class,
+                "signalscope");
+
+            // Color properties
+            put(BgColor.class,
+                "bgcolor");
+            put(BorderColor.class,
+                "bordercolor");
+
+            // Font properties
+            put(FontColor.class,
+                "fontcolor");
+            put(FontSize.class,
+                "fontsize");
 
             // Simulation properties
             put(TimeUnit.class,
@@ -278,6 +298,12 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
             put(IntermediateSignalEventCatching.class,
                 intermediateSignalEventCatchingPropertiesMap);
             intermediateSignalEventCatchingPropertiesMap.put(AssignmentsInfo.class,
+                                                             "assignmentsinfo");
+
+            Map<Class<?>, String> intermediateSignalEventThrowingPropertiesMap = new HashMap<Class<?>, String>();
+            put(IntermediateSignalEventThrowing.class,
+                intermediateSignalEventThrowingPropertiesMap);
+            intermediateSignalEventThrowingPropertiesMap.put(AssignmentsInfo.class,
                                                              "assignmentsinfo");
 
             Map<Class<?>, String> endEventPropertiesMap = new HashMap<Class<?>, String>();
