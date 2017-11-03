@@ -20,28 +20,11 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.backend.cache.KieModuleMetaDataCache;
 import org.guvnor.common.services.backend.cache.LRUCache;
+import org.guvnor.common.services.project.model.Project;
 import org.kie.scanner.KieModuleMetaData;
-import org.uberfire.java.nio.file.Path;
 
 @ApplicationScoped
 @Named("LRUKieModuleMetaDataCache")
-public class KieModuleMetaDataCacheLRU extends LRUCache<Path, KieModuleMetaData> implements KieModuleMetaDataCache {
+public class KieModuleMetaDataCacheLRU extends LRUCache<Project, KieModuleMetaData> implements KieModuleMetaDataCache<Project, KieModuleMetaData> {
 
-    public synchronized Object getKieModuleMetaData(Path projectRootPath) {
-        return getEntry(projectRootPath);
-    }
-
-    public synchronized void addKieModuleMetaData(Path projectRootPath,
-                                                  Object metadata) {
-        setEntry(projectRootPath, (KieModuleMetaData)metadata);
-    }
-
-    public synchronized void removeKieModuleMetaData(Path projectRootPath) {
-        invalidateCache(projectRootPath);
-    }
-
-    @Override
-    public synchronized void clearKieModuleMetaDataCache() {
-        invalidateCache();
-    }
 }

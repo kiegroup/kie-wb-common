@@ -20,37 +20,17 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.backend.cache.BuilderCache;
 import org.guvnor.common.services.backend.cache.LRUCache;
+import org.guvnor.common.services.project.model.Project;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
-import org.uberfire.java.nio.file.Path;
 
 @ApplicationScoped
 @Named("LRUBuilderCache")
-public class BuilderCacheLRU extends LRUCache<Path, KieAFBuilder> implements BuilderCache<KieAFBuilder> {
-
-    public synchronized void addKieAFBuilder(Path uri, KieAFBuilder builder) {
-        setEntry(uri, builder);
-    }
-
-    public synchronized KieAFBuilder getKieAFBuilder(Path uri) {
-        return getEntry(uri);
-    }
-
-    public synchronized void removeBuilder(Path uri) {
-        invalidateCache(uri);
-    }
-
-    public synchronized boolean containsBuilder(Path uri) {
-        return getKeys().contains(uri);
-    }
-
-    public synchronized void clearBuilderCache() {
-        invalidateCache();
-    }
+public class BuilderCacheLRU extends LRUCache<Project, KieAFBuilder> implements BuilderCache<Project, KieAFBuilder> {
 
     @Override
-    public void cleanInternalCache(Path uri) {
+    public void invalidateCache(final Project uri) {
         final KieAFBuilder result = getEntry(uri);
-        if (result != null){
+        if (result != null) {
             result.cleanInternalCache();
         }
     }

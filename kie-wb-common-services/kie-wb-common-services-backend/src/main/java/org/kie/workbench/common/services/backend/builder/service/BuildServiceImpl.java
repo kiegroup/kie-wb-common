@@ -16,15 +16,11 @@
 
 package org.kie.workbench.common.services.backend.builder.service;
 
-import java.util.Collection;
-import java.util.Map;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
-import org.guvnor.common.services.project.builder.model.IncrementalBuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
@@ -36,15 +32,10 @@ import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBui
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenOutputConverter;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.workbench.events.ResourceChange;
 
 @Service
 @ApplicationScoped
 public class BuildServiceImpl implements BuildService {
-
-    private KieProjectService projectService;
 
     private GuvnorM2Repository guvnorM2Repository;
 
@@ -57,10 +48,8 @@ public class BuildServiceImpl implements BuildService {
     }
 
     @Inject
-    public BuildServiceImpl(final KieProjectService projectService,
-                            final GuvnorM2Repository guvnorM2Repository,
+    public BuildServiceImpl(final GuvnorM2Repository guvnorM2Repository,
                             final BuilderUtils builderUtils) {
-        this.projectService = projectService;
         this.guvnorM2Repository = guvnorM2Repository;
         this.builderUtils = builderUtils;
     }
@@ -97,12 +86,6 @@ public class BuildServiceImpl implements BuildService {
         }
     }
 
-    private IncrementalBuildResults buildIncrementallyInternal(final Project project) {
-        final KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
-        final KieCompilationResponse res = kieAfBuilder.build(Boolean.TRUE, Boolean.FALSE);
-        return MavenOutputConverter.convertIntoIncrementalBuildResults(res.getMavenOutput().get(), ERROR_LEVEL, ((DefaultKieAFBuilder) kieAfBuilder).getGITURI(), ((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
-    }
-
     @Override
     public BuildResults buildAndDeploy(final Project project) {
         return buildAndDeployInternal(project);
@@ -130,32 +113,5 @@ public class BuildServiceImpl implements BuildService {
     @Override
     public boolean isBuilt(final Project project) {
         return builderUtils.getBuilder(project) != null;
-    }
-
-    @Override
-    public IncrementalBuildResults addPackageResource(final Path resource) {
-        Project project = projectService.resolveProject(resource);
-        return buildIncrementallyInternal(project);
-    }
-
-    @Override
-    public IncrementalBuildResults deletePackageResource(final Path resource) {
-        Project project = projectService.resolveProject(resource);
-        return buildIncrementallyInternal(project);
-    }
-
-    @Override
-    public IncrementalBuildResults updatePackageResource(final Path resource) {
-        Project project = projectService.resolveProject(resource);
-        return buildIncrementallyInternal(project);
-    }
-
-    @Override
-    public IncrementalBuildResults applyBatchResourceChanges(final Project project,
-                                                             final Map<Path, Collection<ResourceChange>> changes) {
-        if (project == null) {
-            return new IncrementalBuildResults();
-        }
-        return buildIncrementallyInternal(project);
     }
 }

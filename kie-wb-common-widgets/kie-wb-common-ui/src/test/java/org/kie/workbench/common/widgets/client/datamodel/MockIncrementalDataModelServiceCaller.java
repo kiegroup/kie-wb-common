@@ -22,7 +22,7 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.workbench.common.services.datamodel.backend.server.IncrementalDataModelServiceImpl;
-import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUDataModelOracleCache;
+import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUPackageDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleIncrementalPayload;
 import org.kie.workbench.common.services.datamodel.service.IncrementalDataModelService;
 import org.kie.workbench.common.services.shared.project.KieProject;
@@ -49,7 +49,7 @@ public class MockIncrementalDataModelServiceCaller implements Caller<Incremental
                                         packageLoader.getPackageName(),
                                         packageLoader.getPackageName(),
                                         packageLoader.getPackageName());
-        final LRUDataModelOracleCache cachePackages = mock(LRUDataModelOracleCache.class);
+        final LRUPackageDataModelOracleCache cachePackages = mock(LRUPackageDataModelOracleCache.class);
         when(cachePackages.assertPackageDataModelOracle(project,
                                                         pkg)).thenReturn(packageLoader);
 
@@ -83,7 +83,7 @@ public class MockIncrementalDataModelServiceCaller implements Caller<Incremental
 
         private RemoteCallback<?> remoteCallback;
 
-        public IncrementalDataModelServiceImplWrapper(final LRUDataModelOracleCache cachePackages,
+        public IncrementalDataModelServiceImplWrapper(final LRUPackageDataModelOracleCache cachePackages,
                                                       final KieProjectService projectService) {
             super(cachePackages,
                   projectService);

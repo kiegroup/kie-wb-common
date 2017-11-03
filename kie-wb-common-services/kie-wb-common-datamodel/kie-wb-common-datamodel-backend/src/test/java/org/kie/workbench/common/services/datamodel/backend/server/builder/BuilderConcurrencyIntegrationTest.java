@@ -25,8 +25,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.backend.cache.BuilderCache;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.builder.model.BuildResults;
+import org.guvnor.common.services.project.model.Project;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.shared.project.KieProject;
@@ -46,7 +46,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
     private static final Logger logger = LoggerFactory.getLogger(BuilderConcurrencyIntegrationTest.class);
 
     @Inject
-    private BuilderCache<?> builderCache;
+    private BuilderCache<Project, KieAFBuilder> builderCache;
 
     @Test
     //https://bugzilla.redhat.com/show_bug.cgi?id=1145105
@@ -98,9 +98,6 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
                         public void run() {
                             try {
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUProjectDataModelOracleCache.invalidateProjectCache(...)");
-                                projectDMOCache.invalidateProjectCache(new InvalidateDMOProjectCacheEvent(sessionInfo,
-                                                                                                          project,
-                                                                                                          pomPath));
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
                             } catch (Throwable e) {
                                 result.setFailed(true);
@@ -117,7 +114,7 @@ public class BuilderConcurrencyIntegrationTest extends AbstractWeldBuilderIntegr
                         public void run() {
                             try {
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has started: LRUBuilderCache.assertBuilder( project ).getKieModuleIgnoringErrors();");
-                                ((KieAFBuilder) builderCache.getKieAFBuilder(convert(project.getRootPath()))).build();//@TODO is ti correct a simple build ?
+                                builderCache.getEntry(project).build();//@TODO is ti correct a simple build ?
                                 logger.debug("Thread " + Thread.currentThread().getName() + " has completed.");
                             } catch (Throwable e) {
                                 result.setFailed(true);

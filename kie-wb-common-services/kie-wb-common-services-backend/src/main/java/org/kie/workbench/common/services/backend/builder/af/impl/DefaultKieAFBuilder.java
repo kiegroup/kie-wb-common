@@ -51,7 +51,6 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     private WorkspaceCompilationInfo info;
     private CompilationRequest req;
     private String mavenRepo;
-    private String FILE_URI = "file://";
     private AtomicBoolean isBuilding = new AtomicBoolean(false);
     private KieCompilationResponse lastResponse = null;
 

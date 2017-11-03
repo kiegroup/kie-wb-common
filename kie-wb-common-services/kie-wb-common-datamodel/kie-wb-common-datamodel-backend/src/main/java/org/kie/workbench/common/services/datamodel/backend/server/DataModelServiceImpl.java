@@ -16,65 +16,65 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server;
 
+import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.project.model.Package;
-import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.soup.project.datamodel.commons.oracle.PackageDataModelOracleImpl;
 import org.kie.soup.project.datamodel.commons.oracle.ProjectDataModelOracleImpl;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
-import org.kie.workbench.common.services.backend.builder.core.LRUProjectDependenciesClassLoaderCache;
-import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUDataModelOracleCache;
+import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUPackageDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUProjectDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
 
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
+
 @ApplicationScoped
 public class DataModelServiceImpl
         implements DataModelService {
 
-    private LRUDataModelOracleCache cachePackages;
+    private static final ProjectDataModelOracle EMPTY_PROJECT_MODEL = new ProjectDataModelOracleImpl();
+    private static final PackageDataModelOracle EMPTY_PKG_MODEL = new PackageDataModelOracleImpl();
+
+    private LRUPackageDataModelOracleCache cachePackages;
 
     private LRUProjectDataModelOracleCache cacheProjects;
 
     private KieProjectService projectService;
 
-    private LRUProjectDependenciesClassLoaderCache lruProjectDependenciesClassLoaderCache;
+    public DataModelServiceImpl() {
+    }
 
     @Inject
-    public DataModelServiceImpl(final @Named("PackageDataModelOracleCache") LRUDataModelOracleCache cachePackages,
+    public DataModelServiceImpl(final @Named("PackageDataModelOracleCache") LRUPackageDataModelOracleCache cachePackages,
                                 final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
-                                final KieProjectService projectService,
-                                final LRUProjectDependenciesClassLoaderCache lruProjectDependenciesClassLoaderCache) {
+                                final KieProjectService projectService) {
         this.cachePackages = cachePackages;
         this.cacheProjects = cacheProjects;
         this.projectService = projectService;
-        this.lruProjectDependenciesClassLoaderCache = lruProjectDependenciesClassLoaderCache;
     }
 
     @Override
     public PackageDataModelOracle getDataModel(final Path resourcePath) {
         try {
-            PortablePreconditions.checkNotNull("resourcePath",
-                                               resourcePath);
-            final KieProject project = resolveProject(resourcePath);
-            final Package pkg = resolvePackage(resourcePath);
+            final Optional<KieProject> project = resolveProject(checkNotNull("resourcePath", resourcePath));
+            final Optional<Package> pkg = resolvePackage(resourcePath);
 
             //Resource was not within a Project structure
-            if (project == null) {
-                return new PackageDataModelOracleImpl();
+            if (!project.isPresent()) {
+                return EMPTY_PKG_MODEL;
             }
 
             //Retrieve (or build) oracle
-            final PackageDataModelOracle oracle = cachePackages.assertPackageDataModelOracle(project,
-                                                                                             pkg);
-            return oracle;
+            return cachePackages.assertPackageDataModelOracle(project.get(), pkg.get());
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);
         }
@@ -82,36 +82,25 @@ public class DataModelServiceImpl
 
     @Override
     public ProjectDataModelOracle getProjectDataModel(final Path resourcePath) {
-        return getProjectDataModel(resourcePath, Boolean.TRUE);
-    }
-
-    @Override
-    public ProjectDataModelOracle getProjectDataModel(final Path resourcePath, boolean indexing) {
         try {
-            PortablePreconditions.checkNotNull("resourcePath", resourcePath);
-            final KieProject project = resolveProject(resourcePath);
-            //this call is used to load the classloader and the correct KieMetaData
-            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project);
+            final Optional<KieProject> project = resolveProject(checkNotNull("resourcePath", resourcePath));
 
             //Resource was not within a Project structure
-            if (project == null) {
-                return new ProjectDataModelOracleImpl();
+            if (!project.isPresent()) {
+                return EMPTY_PROJECT_MODEL;
             }
-
             //Retrieve (or build) oracle
-            final ProjectDataModelOracle oracle = cacheProjects.assertProjectDataModelOracle(project);
-            return oracle;
+            return cacheProjects.assertProjectDataModelOracle(project.get());
         } catch (Exception e) {
-            e.printStackTrace();
             throw ExceptionUtilities.handleException(e);
         }
     }
 
-    private KieProject resolveProject(final Path resourcePath) {
-        return projectService.resolveProject(resourcePath);
+    private Optional<KieProject> resolveProject(final Path resourcePath) {
+        return Optional.ofNullable(projectService.resolveProject(resourcePath));
     }
 
-    private Package resolvePackage(final Path resourcePath) {
-        return projectService.resolvePackage(resourcePath);
+    private Optional<Package> resolvePackage(final Path resourcePath) {
+        return Optional.ofNullable(projectService.resolvePackage(resourcePath));
     }
 }

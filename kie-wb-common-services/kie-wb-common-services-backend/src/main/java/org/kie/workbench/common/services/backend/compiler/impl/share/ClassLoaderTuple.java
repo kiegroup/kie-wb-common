@@ -15,50 +15,63 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.share;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.kie.workbench.common.services.backend.project.MapClassLoader;
-import org.uberfire.java.nio.file.Path;
 
 class ClassLoaderTuple {
 
-    private Map<String, byte[]> declaredTypes;
+    private final Map<String, byte[]> declaredTypes = new HashMap<>();
 
-    private List<String> targetProjectDependencies;
+    private final List<String> targetProjectDependencies = new ArrayList<>();
+
+    private final Set<String> eventTypes = new HashSet<>();
 
     private MapClassLoader targetClassloader;
 
     private ClassLoader dependenciesClassloader;
 
-    private Set<String> eventTypes;
+    /**
+     * Event types
+     */
 
-    public ClassLoaderTuple() {
-        targetProjectDependencies = new ArrayList<>();
+    public void addEventTypes(Set<String> eventTypes) {
+        this.eventTypes.addAll(eventTypes);
     }
 
-    /** Event types*/
-
-    public void addEventTypes(Set<String> eventTypes){
-        this.eventTypes = eventTypes;
+    public Set<String> getEventTypes() {
+        return eventTypes;
     }
 
-    public Set<String> getEventTypes(Path project) { return eventTypes;}
-
-    public void removeEventTypes(Path projectPath){ this.eventTypes = null; }
-
-
-    /** Declared types*/
-
-    public void addDeclaredTypes(Map<String, byte[]> declaredTypes){
-        this.declaredTypes = declaredTypes;
+    public void removeEventTypes() {
+        this.eventTypes.clear();
     }
 
-    public Map<String, byte[]> getDeclaredTypes(){ return declaredTypes; }
+    /**
+     * Declared types
+     */
 
-    public void removeDeclaredTypes(Path projectPath){ this.declaredTypes = null; }
+    public void addDeclaredTypes(Map<String, byte[]> declaredTypes) {
+        this.declaredTypes.putAll(declaredTypes);
+    }
 
+    public Map<String, byte[]> getDeclaredTypes() {
+        return declaredTypes;
+    }
 
-    /** Target classloader*/
+    public void removeDeclaredTypes() {
+        this.declaredTypes.clear();
+    }
+
+    /**
+     * Target classloader
+     */
 
     public Optional<ClassLoader> getTargetMapClassloader() {
         return Optional.ofNullable(targetClassloader);
@@ -68,12 +81,13 @@ class ClassLoaderTuple {
         this.targetClassloader = targetClassloader;
     }
 
-    public void removeTargetMapClassloader(Path project) {
+    public void removeTargetMapClassloader() {
         this.targetClassloader = null;
     }
 
-
-    /** Dependencies classloader*/
+    /**
+     * Dependencies classloader
+     */
 
     public void addDependenciesClassloader(ClassLoader dependenciesClassloader) {
         this.dependenciesClassloader = dependenciesClassloader;
@@ -87,18 +101,19 @@ class ClassLoaderTuple {
         this.dependenciesClassloader = null;
     }
 
+    /**
+     * Target Project dependencies
+     */
 
-
-    /** Target Project dependencies*/
-
-
-    public List<String> getTargetProjectDependencies() { return targetProjectDependencies; }
+    public List<String> getTargetProjectDependencies() {
+        return targetProjectDependencies;
+    }
 
     public void addTargetProjectDependencies(List<String> resources) {
         targetProjectDependencies.addAll(resources);
     }
 
-    public void removeTargetProjectDependencies(){
-        this.targetProjectDependencies = null;
+    public void removeTargetProjectDependencies() {
+        this.targetProjectDependencies.clear();
     }
 }

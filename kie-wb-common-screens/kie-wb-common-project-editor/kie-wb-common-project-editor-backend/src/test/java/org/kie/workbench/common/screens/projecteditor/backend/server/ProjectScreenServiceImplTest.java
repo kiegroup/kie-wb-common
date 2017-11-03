@@ -40,7 +40,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.services.backend.builder.core.LRUPomModelCache;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieProject;
@@ -129,9 +128,6 @@ public class ProjectScreenServiceImplTest {
     @Mock
     private CommentedOptionFactory commentedOptionFactory;
 
-    @Mock
-    private LRUPomModelCache pomModelCache;
-
     private ProjectScreenService service;
     private ProjectScreenModelLoader loader;
     private ProjectScreenModelSaver saver;
@@ -180,8 +176,7 @@ public class ProjectScreenServiceImplTest {
                                             ioService,
                                             projectService,
                                             repositoryResolver,
-                                            commentedOptionFactory,
-                                            pomModelCache);
+                                            commentedOptionFactory);
         service = new ProjectScreenServiceImpl(projectService,
                                                loader,
                                                saver);

@@ -33,7 +33,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.services.backend.builder.core.LRUPomModelCache;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieProject;
@@ -86,9 +85,6 @@ public class ProjectScreenModelSaverTest {
     private CommentedOptionFactory commentedOptionFactory;
 
     @Mock
-    private LRUPomModelCache pomModelCache;
-
-    @Mock
     private KieProject project;
 
     @Mock
@@ -123,8 +119,7 @@ public class ProjectScreenModelSaverTest {
                                             ioService,
                                             projectService,
                                             repositoryResolver,
-                                            commentedOptionFactory,
-                                            pomModelCache);
+                                            commentedOptionFactory);
 
         pathToPom = testFileSystem.createTempFile("testproject/pom.xml");
     }
@@ -189,8 +184,6 @@ public class ProjectScreenModelSaverTest {
                    model,
                    DeploymentMode.FORCED,
                    "message");
-
-        verify(pomModelCache).invalidateCache(project);
     }
 
     @Test

@@ -22,16 +22,18 @@ import javax.inject.Named;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.project.model.Package;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
-import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUDataModelOracleCache;
+import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUPackageDataModelOracleCache;
 import org.kie.workbench.common.services.datamodel.model.PackageDataModelOracleIncrementalPayload;
 import org.kie.workbench.common.services.datamodel.service.IncrementalDataModelService;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
+
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
+import static org.kie.workbench.common.services.datamodel.backend.server.DataModelOracleUtilities.populateDataModel;
 
 /**
  *
@@ -40,32 +42,27 @@ import org.uberfire.backend.vfs.Path;
 @ApplicationScoped
 public class IncrementalDataModelServiceImpl implements IncrementalDataModelService {
 
-    private LRUDataModelOracleCache cachePackages;
+    private LRUPackageDataModelOracleCache cachePackages;
 
     private KieProjectService projectService;
 
-    @Inject
-    public IncrementalDataModelServiceImpl(@Named("PackageDataModelOracleCache") final LRUDataModelOracleCache cachePackages,
-                                           final KieProjectService projectService) {
-        this.cachePackages = PortablePreconditions.checkNotNull("cachePackages",
-                                                                cachePackages);
-        this.projectService = PortablePreconditions.checkNotNull("projectService",
-                                                                 projectService);
+    public IncrementalDataModelServiceImpl() {
     }
 
-    public IncrementalDataModelServiceImpl() {
+    @Inject
+    public IncrementalDataModelServiceImpl(@Named("PackageDataModelOracleCache") final LRUPackageDataModelOracleCache cachePackages,
+                                           final KieProjectService projectService) {
+        this.cachePackages = checkNotNull("cachePackages", cachePackages);
+        this.projectService = checkNotNull("projectService", projectService);
     }
 
     @Override
     public PackageDataModelOracleIncrementalPayload getUpdates(final Path resourcePath,
                                                                final Imports imports,
                                                                final String factType) {
-        PortablePreconditions.checkNotNull("resourcePath",
-                                           resourcePath);
-        PortablePreconditions.checkNotNull("imports",
-                                           imports);
-        PortablePreconditions.checkNotNull("factType",
-                                           factType);
+        checkNotNull("resourcePath", resourcePath);
+        checkNotNull("imports", imports);
+        checkNotNull("factType", factType);
 
         final PackageDataModelOracleIncrementalPayload dataModel = new PackageDataModelOracleIncrementalPayload();
 
@@ -108,9 +105,8 @@ public class IncrementalDataModelServiceImpl implements IncrementalDataModelServ
                 return dataModel;
             }
 
-            DataModelOracleUtilities.populateDataModel(oracle,
-                                                       dataModel,
-                                                       fullyQualifiedClassName);
+            populateDataModel(oracle, dataModel, fullyQualifiedClassName);
+
             return dataModel;
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);

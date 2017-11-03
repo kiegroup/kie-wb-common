@@ -22,26 +22,10 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.backend.cache.DependenciesCache;
 import org.guvnor.common.services.backend.cache.LRUCache;
-import org.uberfire.java.nio.file.Path;
+import org.guvnor.common.services.project.model.Project;
 
 @ApplicationScoped
 @Named("LRUDependenciesCache")
-public class DependenciesCacheLRU extends LRUCache<Path, List<String>> implements DependenciesCache {
+public class DependenciesCacheLRU extends LRUCache<Project, List<String>> implements DependenciesCache<Project> {
 
-    public synchronized List<String> getDependenciesRaw(Path projectRootPath) {
-        return getEntry(projectRootPath);
-    }
-
-    public synchronized void addDependenciesRaw(Path projectRootPath, List<String> depsRaw) {
-        setEntry(projectRootPath, depsRaw);
-    }
-
-    public synchronized void removeDependenciesRaw(Path projectRootPath) {
-        invalidateCache(projectRootPath);
-    }
-
-    @Override
-    public synchronized void clearDependenciesCache() {
-        invalidateCache();
-    }
 }

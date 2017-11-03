@@ -24,7 +24,6 @@ import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.backend.server.AbstractProjectService;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.events.DeleteProjectEvent;
 import org.guvnor.common.services.project.events.NewPackageEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
@@ -92,7 +91,6 @@ public class ProjectServiceImplNewProjectTest {
         final Event<NewProjectEvent> newProjectEvent = mock( Event.class );
         final Event<NewPackageEvent> newPackageEvent = mock( Event.class );
         final Event<RenameProjectEvent> renameProjectEvent = mock( Event.class );
-        final Event<InvalidateDMOProjectCacheEvent> invalidateDMOCache = mock( Event.class );
 
         projectService = new KieProjectServiceImpl( ioService,
                                                     saver,
@@ -102,7 +100,6 @@ public class ProjectServiceImplNewProjectTest {
                                                     newProjectEvent,
                                                     newPackageEvent,
                                                     renameProjectEvent,
-                                                    invalidateDMOCache,
                                                     mock( SessionInfo.class ),
                                                     mock( AuthorizationManager.class ),
                                                     mock( BackwardCompatibleUtil.class ),

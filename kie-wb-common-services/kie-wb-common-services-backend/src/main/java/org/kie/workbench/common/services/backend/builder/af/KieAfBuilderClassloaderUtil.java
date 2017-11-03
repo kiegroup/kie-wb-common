@@ -30,6 +30,7 @@ import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.guvnor.common.services.backend.cache.ClassLoaderCache;
 import org.guvnor.common.services.backend.cache.DependenciesCache;
 import org.guvnor.common.services.backend.cache.KieModuleMetaDataCache;
+import org.guvnor.common.services.project.model.Project;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
@@ -37,25 +38,24 @@ import org.kie.workbench.common.services.backend.compiler.impl.classloader.Compi
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
 import org.kie.workbench.common.services.backend.project.MapClassLoader;
-import org.kie.workbench.common.services.shared.project.KieProject;
 import org.uberfire.java.nio.file.Path;
-
-import static org.uberfire.backend.server.util.Paths.convert;
 
 @ApplicationScoped
 public class KieAfBuilderClassloaderUtil {
 
     @Inject
     private BuilderUtils builderUtils;
+    @Inject
+    private KieModuleMetaDataCache<Project, KieModuleMetaData> kieModuleMetaDataCache;
+    @Inject
+    private DependenciesCache<Project> dependenciesCache;
+    @Inject
+    private ClassLoaderCache<Project> classLoaderCache;
 
     /**
      * This method return the classloader with the .class founded in the target folder and the UrlClassloader with all .jsrs declared and transitives from poms
      */
-    public Optional<MapClassLoader> getProjectClassloader(final KieProject project,
-                                                          final KieModuleMetaDataCache kieModuleMetaDataCache,
-                                                          final DependenciesCache dependenciesCache,
-                                                          final ClassLoaderCache classLoaderCache) {
-
+    public Optional<MapClassLoader> getProjectClassloader(final Project project) {
         final KieAFBuilder builder = builderUtils.getBuilder(project);
 
         if (builder == null) {
@@ -66,44 +66,37 @@ public class KieAfBuilderClassloaderUtil {
         final KieCompilationResponse res = builder.build(Boolean.TRUE, Boolean.FALSE);//Here the log is not required during the indexing startup
 
         if (res.isSuccessful() && res.getKieModule().isPresent() && res.getWorkingDir().isPresent()) {
-
-            /* absolute path on the fs */
-            final Path projectRootPath = convert(project.getRootPath());
-//            Path workingDir = res.getWorkingDir().get();
             /* we collects all the thing produced in the target/classes folders */
             List<String> artifactsFromTargets = getArtifactFromTargets(res, res.getWorkingDir().get());
             if (artifactsFromTargets.size() > 0) {
-                classLoaderCache.addTargetProjectDependencies(projectRootPath, artifactsFromTargets);
+                classLoaderCache.addTargetProjectDependencies(project, artifactsFromTargets);
             } else {
                 Optional<List<String>> targetClassesOptional = CompilerClassloaderUtils.getStringsFromTargets(res.getWorkingDir().get());
                 // check this add
-                targetClassesOptional.ifPresent(strings -> classLoaderCache.addTargetProjectDependencies(projectRootPath, strings));
+                targetClassesOptional.ifPresent(strings -> classLoaderCache.addTargetProjectDependencies(project, strings));
             }
             MapClassLoader projectClassLoader = null;
             final KieModule module = res.getKieModule().get();
             if (module instanceof InternalKieModule) {
 
-                ClassLoader dependenciesClassLoader = addToHolderAndGetDependenciesClassloader(projectRootPath,
-                                                                                               kieModuleMetaDataCache,
-                                                                                               dependenciesCache,
-                                                                                               classLoaderCache,
+                ClassLoader dependenciesClassLoader = addToHolderAndGetDependenciesClassloader(project,
                                                                                                res);
 
                 Map<String, byte[]> store = Collections.emptyMap();
                 if (res.getProjectClassLoaderStore().isPresent()) {
                     store = res.getProjectClassLoaderStore().get();
-                    classLoaderCache.addDeclaredTypes(projectRootPath, store);
+                    classLoaderCache.addDeclaredTypes(project, store);
                 }
                 Set<String> eventTypeClasses = Collections.emptySet();
                 if (res.getEventTypeClasses().isPresent()) {
                     eventTypeClasses = res.getEventTypeClasses().get();
-                    classLoaderCache.addEventTypes(projectRootPath, eventTypeClasses);
+                    classLoaderCache.addEventTypes(project, eventTypeClasses);
                 }
-                /** The integration works with CompilerClassloaderUtils.getMapClasses
+                /* The integration works with CompilerClassloaderUtils.getMapClasses
                  * This MapClassloader needs the .class from the target folders in a prj produced by the build, as a Map
                  * with a key like this "curriculumcourse/curriculumcourse/Curriculum.class" and the byte[] as a value */
                 projectClassLoader = new MapClassLoader(CompilerClassloaderUtils.getMapClasses(res.getWorkingDir().get().toString(), store), dependenciesClassLoader);
-                classLoaderCache.addTargetMapClassLoader(projectRootPath, projectClassLoader);
+                classLoaderCache.addTargetMapClassLoader(project, projectClassLoader);
             }
             return Optional.ofNullable(projectClassLoader);
         }
@@ -124,15 +117,12 @@ public class KieAfBuilderClassloaderUtil {
         return artifactsFromTargets;
     }
 
-    private ClassLoader addToHolderAndGetDependenciesClassloader(final Path projectRootPath,
-                                                                 final KieModuleMetaDataCache kieModuleMetaDataCache,
-                                                                 final DependenciesCache dependenciesCache,
-                                                                 final ClassLoaderCache classLoaderCache,
+    private ClassLoader addToHolderAndGetDependenciesClassloader(final Project project,
                                                                  final KieCompilationResponse res) {
 
         Optional<ClassLoader> opDependenciesClassLoader = Optional.empty();
         if (res.getWorkingDir().isPresent()) {
-            opDependenciesClassLoader = classLoaderCache.getDependenciesClassLoader(projectRootPath);
+            opDependenciesClassLoader = classLoaderCache.getDependenciesClassLoader(project);
         }
 
         ClassLoader dependenciesClassLoader;
@@ -141,15 +131,15 @@ public class KieAfBuilderClassloaderUtil {
         } else {
             dependenciesClassLoader = opDependenciesClassLoader.get();
         }
-        classLoaderCache.addDependenciesClassLoader(projectRootPath, dependenciesClassLoader);
+        classLoaderCache.addDependenciesClassLoader(project, dependenciesClassLoader);
 
         if (res.getProjectDependenciesRaw().isPresent()) {
-            dependenciesCache.addDependenciesRaw(projectRootPath, res.getProjectDependenciesRaw().get());
+            dependenciesCache.setEntry(project, res.getProjectDependenciesRaw().get());
         }
         if (res.getProjectDependenciesAsURI().isPresent()) {
             KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) res.getKieModule().get(),
                                                                             res.getProjectDependenciesAsURI().get());
-            kieModuleMetaDataCache.addKieModuleMetaData(projectRootPath, kieModuleMetaData);
+            kieModuleMetaDataCache.setEntry(project, kieModuleMetaData);
         }
         return dependenciesClassLoader;
     }

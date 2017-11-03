@@ -12,8 +12,8 @@ import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
 import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
-import org.uberfire.java.nio.file.Path;
 
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils.getMavenRepoDir;
 import static org.uberfire.backend.server.util.Paths.convert;
 
@@ -22,28 +22,23 @@ public class BuilderUtils {
 
     private static final String SYSTEM_USER = "system";
 
-    private static final String IMPORTED_REPO_URI = "@myrepo";
-
     @Inject
     private GuvnorM2Repository guvnorM2Repository;
 
     @Inject
-    private BuilderCache<KieAFBuilder> builderCache;
+    private BuilderCache<Project, KieAFBuilder> builderCache;
 
     @Inject
     private Instance<User> identity;
 
     public KieAFBuilder getBuilder(final Project project) {
-
-        final Path nioPath = convert(project.getRootPath());
-
-        KieAFBuilder builder = builderCache.getKieAFBuilder(nioPath);
+        KieAFBuilder builder = builderCache.getEntry(checkNotNull("project", project));
         if (builder == null) {
-            builder = new DefaultKieAFBuilder(nioPath,
+            builder = new DefaultKieAFBuilder(convert(project.getRootPath()),
                                               getMavenRepoDir(guvnorM2Repository.getM2RepositoryDir(ArtifactRepositoryService.GLOBAL_M2_REPO_NAME)),
                                               getActiveUser());
 
-            builderCache.addKieAFBuilder(nioPath, builder);
+            builderCache.setEntry(project, builder);
         }
         return builder;
     }

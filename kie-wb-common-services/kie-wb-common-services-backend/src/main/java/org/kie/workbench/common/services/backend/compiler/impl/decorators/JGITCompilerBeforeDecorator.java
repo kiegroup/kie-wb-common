@@ -26,7 +26,6 @@ import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
-import org.guvnor.common.services.backend.cache.GitCache;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
@@ -38,7 +37,6 @@ import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extends AFCompiler<T>> implements CompilerDecorator {
 
     private Map<JGitFileSystem, Git> gitMap;
-    private GitCache gitCache;
     private boolean holder;
     private C compiler;
 
@@ -46,12 +44,6 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
         this.compiler = compiler;
         gitMap = new HashMap<>();
         holder = Boolean.FALSE;
-    }
-
-    public JGITCompilerBeforeDecorator(C compiler, GitCache gitCache) {
-        this.compiler = compiler;
-        this.gitCache = gitCache;
-        holder = Boolean.TRUE;
     }
 
     @Override
@@ -100,11 +92,11 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
     private Git useHolder(JGitFileSystem fs,
                           CompilationRequest req) {
         Git repo;
-        if (!gitCache.containsJGitFileSystem(fs)) {
-            repo = JGitUtils.tempClone(fs, req.getRequestUUID());
-            gitCache.addJGitFileSystem(fs, repo);
-        }
-        repo = (Git)gitCache.getGit(fs);
+        repo = JGitUtils.tempClone(fs, req.getRequestUUID());
+//        if (!gitCache.containsJGitFileSystem(fs)) {
+//            gitCache.addJGitFileSystem(fs, repo);
+//        }
+//        repo = (Git)gitCache.getGit(fs);
         return repo;
     }
 

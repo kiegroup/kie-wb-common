@@ -15,12 +15,10 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server.cache;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,10 +26,8 @@ import javax.inject.Named;
 import org.guvnor.common.services.backend.cache.ClassLoaderCache;
 import org.guvnor.common.services.backend.cache.LRUCache;
 import org.guvnor.common.services.backend.file.FileDiscoveryService;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOPackageCacheEvent;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.model.Package;
-import org.kie.soup.commons.validation.PortablePreconditions;
+import org.guvnor.common.services.project.model.Project;
 import org.kie.soup.project.datamodel.commons.util.MVELEvaluator;
 import org.kie.soup.project.datamodel.oracle.PackageDataModelOracle;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
@@ -44,7 +40,6 @@ import org.kie.workbench.common.services.datamodel.backend.server.builder.packag
 import org.kie.workbench.common.services.datamodel.spi.DataModelExtension;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.DirectoryStream.Filter;
@@ -58,7 +53,7 @@ import static org.uberfire.backend.server.util.Paths.convert;
  */
 @ApplicationScoped
 @Named("PackageDataModelOracleCache")
-public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelOracle> {
+public class LRUPackageDataModelOracleCache extends LRUCache<Package, PackageDataModelOracle> {
 
     private static final DirectoryStream.Filter<org.uberfire.java.nio.file.Path> FILTER_ENUMERATIONS = new EnumerationsFileFilter();
 
@@ -74,25 +69,25 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
 
     private BuilderUtils builderUtils;
 
-    private ClassLoaderCache classLoaderCache;
+    private ClassLoaderCache<Project> classLoaderCache;
 
     private Instance<DataModelExtension> dataModelExtensionsProvider;
 
     private MVELEvaluator evaluator;
 
-    public LRUDataModelOracleCache() {
+    public LRUPackageDataModelOracleCache() {
         //CDI proxy
     }
 
     @Inject
-    public LRUDataModelOracleCache(final @Named("ioStrategy") IOService ioService,
-                                   final FileDiscoveryService fileDiscoveryService,
-                                   final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
-                                   final KieProjectService projectService,
-                                   final BuilderUtils builderUtils,
-                                   final ClassLoaderCache classLoaderCache,
-                                   final Instance<DataModelExtension> dataModelExtensionsProvider,
-                                   final MVELEvaluator evaluator) {
+    public LRUPackageDataModelOracleCache(final @Named("ioStrategy") IOService ioService,
+                                          final FileDiscoveryService fileDiscoveryService,
+                                          final @Named("ProjectDataModelOracleCache") LRUProjectDataModelOracleCache cacheProjects,
+                                          final KieProjectService projectService,
+                                          final BuilderUtils builderUtils,
+                                          final ClassLoaderCache<Project> classLoaderCache,
+                                          final Instance<DataModelExtension> dataModelExtensionsProvider,
+                                          final MVELEvaluator evaluator) {
         this.ioService = ioService;
         this.fileDiscoveryService = fileDiscoveryService;
         this.cacheProjects = cacheProjects;
@@ -103,48 +98,15 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
         this.evaluator = evaluator;
     }
 
-    public synchronized void invalidatePackageCache(@Observes final InvalidateDMOPackageCacheEvent event) {
-        PortablePreconditions.checkNotNull("event",
-                                           event);
-        final Path resourcePath = event.getResourcePath();
-        final Package pkg = projectService.resolvePackage(resourcePath);
-
-        //If resource was not within a Package there's nothing to invalidate
-        if (pkg != null) {
-            invalidateCache(pkg);
-        }
-    }
-
-    public synchronized void invalidateProjectPackagesCache(@Observes final InvalidateDMOProjectCacheEvent event) {
-        PortablePreconditions.checkNotNull("event",
-                                           event);
-        final Path resourcePath = event.getResourcePath();
-        final KieProject project = projectService.resolveProject(resourcePath);
-
-        //If resource was not within a Project there's nothing to invalidate
+    public synchronized void invalidateCache(final Project project) {
         if (project == null) {
             return;
         }
 
-        final String projectUri = project.getRootPath().toURI();
-        final List<Package> cacheEntriesToInvalidate = new ArrayList<Package>();
         for (final Package pkg : getKeys()) {
-            final Path packageMainSrcPath = pkg.getPackageMainSrcPath();
-            final Path packageTestSrcPath = pkg.getPackageTestSrcPath();
-            final Path packageMainResourcesPath = pkg.getPackageMainResourcesPath();
-            final Path packageTestResourcesPath = pkg.getPackageTestResourcesPath();
-            if (packageMainSrcPath != null && packageMainSrcPath.toURI().startsWith(projectUri)) {
-                cacheEntriesToInvalidate.add(pkg);
-            } else if (packageTestSrcPath != null && packageTestSrcPath.toURI().startsWith(projectUri)) {
-                cacheEntriesToInvalidate.add(pkg);
-            } else if (packageMainResourcesPath != null && packageMainResourcesPath.toURI().startsWith(projectUri)) {
-                cacheEntriesToInvalidate.add(pkg);
-            } else if (packageTestResourcesPath != null && packageTestResourcesPath.toURI().startsWith(projectUri)) {
-                cacheEntriesToInvalidate.add(pkg);
+            if (pkg.getProjectRootPath().equals(project.getRootPath())) {
+                invalidateCache(pkg);
             }
-        }
-        for (final Package pkg : cacheEntriesToInvalidate) {
-            invalidateCache(pkg);
         }
     }
 
@@ -153,10 +115,8 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
                                                                             final Package pkg) {
         PackageDataModelOracle oracle = getEntry(pkg);
         if (oracle == null) {
-            oracle = makePackageDataModelOracle(project,
-                                                pkg);
-            setEntry(pkg,
-                     oracle);
+            oracle = makePackageDataModelOracle(project, pkg);
+            setEntry(pkg, oracle);
         }
         return oracle;
     }
@@ -194,7 +154,7 @@ public class LRUDataModelOracleCache extends LRUCache<Package, PackageDataModelO
         final KieAFBuilder builder = builderUtils.getBuilder(project);
         final KieCompilationResponse res = builder.build(Boolean.TRUE, Boolean.FALSE); //@TODO check if is readed by the UI
         if (res.isSuccessful() && res.getKieModule().isPresent()) {
-            final ClassLoader classLoader = classLoaderCache.getTargetMapClassLoader(convert(project.getRootPath())).get();
+            final ClassLoader classLoader = classLoaderCache.getTargetMapClassLoader(project).get();
             final org.uberfire.java.nio.file.Path nioPackagePath = convert(pkg.getPackageMainResourcesPath());
             final Collection<org.uberfire.java.nio.file.Path> enumFiles = fileDiscoveryService.discoverFiles(nioPackagePath,
                                                                                                              FILTER_ENUMERATIONS);
