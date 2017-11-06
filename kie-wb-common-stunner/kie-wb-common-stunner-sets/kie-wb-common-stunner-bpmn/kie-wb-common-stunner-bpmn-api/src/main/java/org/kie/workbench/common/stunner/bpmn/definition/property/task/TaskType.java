@@ -56,7 +56,7 @@ public class TaskType implements BPMNProperty {
 
     @ReadOnly
     @FieldReadOnly
-    private Boolean readOnly = true;
+    private Boolean readOnly = false;
 
     @Optional
     public static final Boolean optional = false;
