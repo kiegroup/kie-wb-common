@@ -27,7 +27,7 @@ import org.kie.workbench.common.forms.jbpm.model.authoring.process.BusinessProce
 import org.kie.workbench.common.forms.jbpm.service.shared.BPMFinderService;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,11 +39,11 @@ public class BusinessProcessFormModelHandler extends AbstractJBPMFormModelHandle
 
     @Inject
     public BusinessProcessFormModelHandler(KieProjectService projectService,
-                                           ProjectClassLoaderHelper classLoaderHelper,
+                                           final ProjectCache projectCache,
                                            FieldManager fieldManager,
                                            BPMFinderService bpmFinderService) {
         super(projectService,
-              classLoaderHelper,
+              projectCache,
               fieldManager,
               bpmFinderService);
     }
@@ -56,7 +56,7 @@ public class BusinessProcessFormModelHandler extends AbstractJBPMFormModelHandle
     @Override
     public FormModelHandler<BusinessProcessFormModel> newInstance() {
         return new BusinessProcessFormModelHandler(projectService,
-                                                   classLoaderHelper,
+                                                   projectCache,
                                                    fieldManager,
                                                    bpmFinderService);
     }

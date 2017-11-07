@@ -24,11 +24,10 @@ import org.kie.workbench.common.forms.editor.model.FormModelSynchronizationResul
 import org.kie.workbench.common.forms.editor.model.impl.FormModelSynchronizationResultImpl;
 import org.kie.workbench.common.forms.editor.model.impl.TypeConflictImpl;
 import org.kie.workbench.common.forms.editor.service.backend.FormModelHandler;
-import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.service.backend.util.ModelPropertiesGenerator;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
 
@@ -36,16 +35,15 @@ public abstract class AbstractFormModelHandler<F extends FormModel> implements F
 
     protected F formModel;
     protected Path path;
-    protected ClassLoader projectClassLoader;
 
     protected KieProjectService projectService;
 
-    protected ProjectClassLoaderHelper classLoaderHelper;
+    protected ProjectCache projectCache;
 
     public AbstractFormModelHandler(KieProjectService projectService,
-                                    ProjectClassLoaderHelper classLoaderHelper) {
+                                    ProjectCache projectCache) {
         this.projectService = projectService;
-        this.classLoaderHelper = classLoaderHelper;
+        this.projectCache = projectCache;
     }
 
     @Override
@@ -53,12 +51,11 @@ public abstract class AbstractFormModelHandler<F extends FormModel> implements F
                      Path path) {
         this.formModel = formModel;
         this.path = path;
-        initClassLoader();
         initialize();
     }
 
-    protected void initClassLoader() {
-        this.projectClassLoader = classLoaderHelper.getProjectClassLoader(projectService.resolveProject(path));
+    protected ClassLoader getClassLoader() {
+        return projectCache.getOrCreateEntry(projectService.resolveProject(path)).getClassLoader();
     }
 
     protected abstract void initialize();
@@ -117,7 +114,7 @@ public abstract class AbstractFormModelHandler<F extends FormModel> implements F
         ModelProperty property = ModelPropertiesGenerator.createModelProperty(name,
                                                                               className,
                                                                               isMultiple,
-                                                                              projectClassLoader);
+                                                                              getClassLoader());
 
         return Optional.ofNullable(property);
     }
@@ -128,7 +125,7 @@ public abstract class AbstractFormModelHandler<F extends FormModel> implements F
     protected abstract List<ModelProperty> getCurrentModelProperties();
 
     public void checkInitialized() {
-        if (path == null || formModel == null || projectClassLoader == null) {
+        if (path == null || formModel == null || getClassLoader() == null) {
             throw new IllegalArgumentException("Handler isn't initialized");
         }
     }

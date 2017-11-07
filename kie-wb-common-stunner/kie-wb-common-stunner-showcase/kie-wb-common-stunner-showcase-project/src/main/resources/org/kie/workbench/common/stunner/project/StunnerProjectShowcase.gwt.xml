@@ -45,7 +45,6 @@
   <inherits name='org.guvnor.asset.management.GuvnorAssetMgmtClient'/>
 
   <!--Common Screens and services. -->
-  <inherits name="org.kie.workbench.common.services.datamodel.KieWorkbenchCommonDataModelAPI"/>
   <inherits name="org.kie.workbench.common.services.refactoring.KieWorkbenchCommonRefactoringClient"/>
   <inherits name="org.kie.workbench.common.screens.defaulteditor.DroolsWorkbenchDefaultEditorClient"/>
   <inherits name="org.kie.workbench.common.screens.explorer.KieWorkbenchProjectExplorerClient"/>

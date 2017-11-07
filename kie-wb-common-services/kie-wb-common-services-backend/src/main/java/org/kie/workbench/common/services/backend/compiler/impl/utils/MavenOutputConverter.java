@@ -15,7 +15,11 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
@@ -39,9 +43,9 @@ public class MavenOutputConverter {
             for (String item : mavenOutput) {
                 if (item.contains(filter)) {
                     ValidationMessage msg;
-                    if(item.contains( errorLineCheck)) {
-                         msg = getValidationMessage(path, partToCut, item);
-                    }else{
+                    if (item.contains(errorLineCheck)) {
+                        msg = getValidationMessage(path, partToCut, item);
+                    } else {
                         msg = getValidationMessageWithoutLineAndColumn(partToCut, item);
                     }
                     if (msg.getText() != null && !inserted.contains(msg)) {
@@ -57,7 +61,7 @@ public class MavenOutputConverter {
     }
 
     public static BuildResults convertIntoBuildResults(List<String> mavenOutput,
-                                                                       String filter, Path path, String partToCut) {
+                                                       String filter, Path path, String partToCut) {
 
         if (mavenOutput.size() > 0) {
             BuildResults buildRs = new BuildResults();
@@ -72,13 +76,13 @@ public class MavenOutputConverter {
         Set<BuildMessage> inserted = new TreeSet<>();
         for (String item : mavenOutput) {
             if (item.contains(filter)) {
-                BuildMessage msg ;
-                if(item.contains(errorLineCheck)){
+                BuildMessage msg;
+                if (item.contains(errorLineCheck)) {
                     msg = getBuildMessage(path, partToCut, item);
-                }else {
+                } else {
                     msg = getBuildMessageWithoutLineAndColumn(partToCut, item);
                 }
-                if(msg.getText() != null && !inserted.contains(msg)){
+                if (msg.getText() != null && !inserted.contains(msg)) {
                     inserted.add(msg);
                 }
             }
@@ -97,10 +101,10 @@ public class MavenOutputConverter {
             msg.setLine(Integer.parseInt(lineAndColum[0]));
             msg.setColumn(Integer.parseInt(lineAndColum[1]));
         }
-        msg.setText(purged.substring(purged.lastIndexOf("]")+1));
+        msg.setText(purged.substring(purged.lastIndexOf("]") + 1));
         String pathString = purged.substring(indexStartOf, indexOfEdnFilePath);
         msg.setPath(Paths.convert(path.resolve(pathString)));
-        msg.setLevel(Level.ERROR );
+        msg.setLevel(Level.ERROR);
         return msg;
     }
 
@@ -108,26 +112,25 @@ public class MavenOutputConverter {
         ValidationMessage msg = new ValidationMessage();
         String purged = item.replace(partToCut, "");
         msg.setText(purged);
-        msg.setLevel(Level.ERROR );
+        msg.setLevel(Level.ERROR);
         return msg;
     }
-
 
     private static BuildMessage getBuildMessage(Path path, String partToCut, String item) {
         BuildMessage msg = new BuildMessage();
         String purged = item.replace(partToCut, "");
         int indexOfEdnFilePath = purged.lastIndexOf(errorLineCheck);
         int indexStartOf = purged.indexOf("src/");
-        String errorLine = purged.substring(indexOfEdnFilePath+2, purged.lastIndexOf("]"));
+        String errorLine = purged.substring(indexOfEdnFilePath + 2, purged.lastIndexOf("]"));
         String[] lineAndColum = getErrorLineAndColumn(errorLine);
-        if(lineAndColum != null){
+        if (lineAndColum != null) {
             msg.setLine(Integer.parseInt(lineAndColum[0]));
             msg.setColumn(Integer.parseInt(lineAndColum[1]));
         }
-        msg.setText(purged.substring(purged.lastIndexOf("]")+1));
+        msg.setText(purged.substring(purged.lastIndexOf("]") + 1));
         String pathString = purged.substring(indexStartOf, indexOfEdnFilePath);
         msg.setPath(Paths.convert(path.resolve(pathString)));
-        msg.setLevel(Level.ERROR );
+        msg.setLevel(Level.ERROR);
         return msg;
     }
 
@@ -135,22 +138,21 @@ public class MavenOutputConverter {
         BuildMessage msg = new BuildMessage();
         String purged = item.replace(partToCut, "");
         msg.setText(purged);
-        msg.setLevel(Level.ERROR );
+        msg.setLevel(Level.ERROR);
         return msg;
     }
 
-    private static String[] getErrorLineAndColumn(String errorLine){
+    private static String[] getErrorLineAndColumn(String errorLine) {
         String[] lineAndColum = null;
-        if(errorLine.contains(",")){
+        if (errorLine.contains(",")) {
             lineAndColum = errorLine.split(",");
-        }else if(errorLine.contains(":")){
+        } else if (errorLine.contains(":")) {
             lineAndColum = errorLine.split(":");
         }
         return lineAndColum;
     }
 
-
-    public static BuildResults convertIntoBuildResults(List<String> mavenOutput) {
+    public static BuildResults convertIntoBuildResults(final List<String> mavenOutput) {
         BuildResults buildRs = new BuildResults();
         if (mavenOutput.size() > 0) {
             for (String item : mavenOutput) {

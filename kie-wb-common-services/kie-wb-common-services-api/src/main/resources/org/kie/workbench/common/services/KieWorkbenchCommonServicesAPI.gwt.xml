@@ -20,11 +20,15 @@
 <module>
 
   <inherits name='org.uberfire.ext.editor.commons.UberfireCommonsEditorAPI'/>
+  <inherits name='org.drools.workbench.models.datamodel.DroolsWorkbenchDataModelAPI'/>
 
   <inherits name='org.guvnor.common.services.project.GuvnorProjectAPI'/>
   <inherits name='org.guvnor.common.services.GuvnorServicesAPI'/>
   <inherits name="org.ext.uberfire.social.activities.SocialActivitiesAPI"/>
 
   <source path='shared'/>
+  <source path='datamodel/model'/>
+  <source path='datamodel/service'/>
+  <source path='datamodel/util'/>
 
 </module>

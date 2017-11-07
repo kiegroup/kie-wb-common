@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -28,10 +27,7 @@ import javax.inject.Inject;
 import org.drools.core.util.MVELSafeHelper;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
-import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.enums.EnumDropdownService;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -53,7 +49,7 @@ public class EnumDropdownServiceImpl implements EnumDropdownService {
     private KieProjectService projectService;
 
     @Inject
-    private BuilderUtils builderUtils;
+    private ProjectCache projectCache;
 
     @Override
     public String[] loadDropDownExpression(final Path resource,
@@ -67,17 +63,17 @@ public class EnumDropdownServiceImpl implements EnumDropdownService {
             return null;
         }
 
-        final KieAFBuilder builder = builderUtils.getBuilder(project);
+//        final KieAFBuilder builder = ;
+//
+//        Optional<KieModule> optionalModule = builder.build(Boolean.FALSE, Boolean.TRUE).getKieModule();
+//        if (!optionalModule.isPresent()) {
+//            logger.error("A KieModule could not be resolved for path '" + resource.toURI() + "'. No enums will be returned.");
+//            return null;
+//        }
+//
+//        final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData(optionalModule.get()).getClassLoader();
 
-        Optional<KieModule> optionalModule = builder.build(Boolean.FALSE, Boolean.TRUE).getKieModule();
-        if (!optionalModule.isPresent()) {
-            logger.error("A KieModule could not be resolved for path '" + resource.toURI() + "'. No enums will be returned.");
-            return null;
-        }
-
-        final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData(optionalModule.get()).getClassLoader();
-
-        return loadDropDownExpression(classLoader,
+        return loadDropDownExpression(projectCache.getOrCreateEntry(project).getClassLoader(),
                                       valuePairs,
                                       expression);
     }

@@ -55,14 +55,13 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
     private KieCompilationResponse lastResponse = null;
 
     public DefaultKieAFBuilder(final Path projectRootPath,
-                               final String mavenRepo,
-                               final String userId) {
+                               final String mavenRepo) {
         this.originalProjectRootPath = projectRootPath;
         this.mavenRepo = mavenRepo;
         this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new KieDefaultMavenCompiler()));
         final Path projectRepo;
         if (originalProjectRootPath.getFileSystem() instanceof JGitFileSystem) {
-            this.git = JGitUtils.tempClone((JGitFileSystem) originalProjectRootPath.getFileSystem(), getFolderName(userId));
+            this.git = JGitUtils.tempClone((JGitFileSystem) originalProjectRootPath.getFileSystem(), getFolderName());
             projectRepo = Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(originalProjectRootPath.getFileName().toString()).toUri());
         } else {
             git = null;
@@ -76,8 +75,8 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
                                             Boolean.TRUE, Boolean.FALSE);
     }
 
-    private String getFolderName(final String user) {
-        return user + "-" + UUID.randomUUID().toString();
+    private String getFolderName() {
+        return UUID.randomUUID().toString();
     }
 
     @Override

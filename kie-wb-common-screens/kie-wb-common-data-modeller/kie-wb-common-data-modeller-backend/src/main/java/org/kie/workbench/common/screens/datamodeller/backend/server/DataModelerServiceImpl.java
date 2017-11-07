@@ -64,7 +64,7 @@ import org.kie.workbench.common.screens.datamodeller.model.GenerationResult;
 import org.kie.workbench.common.screens.datamodeller.model.TypeInfoResult;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.ServiceException;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.backend.service.KieService;
 import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
 import org.kie.workbench.common.services.datamodeller.codegen.GenerationContext;
@@ -106,7 +106,6 @@ import org.uberfire.ext.editor.commons.service.RenameService;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
-import org.uberfire.java.nio.file.FileSystem;
 
 @Service
 @ApplicationScoped
@@ -130,7 +129,7 @@ public class DataModelerServiceImpl
     private DataModelerServiceHelper serviceHelper;
 
     @Inject
-    private ProjectClassLoaderHelper classLoaderHelper;
+    private ProjectCache projectCache;
 
     @Inject
     private Event<DataObjectCreatedEvent> dataObjectCreatedEvent;
@@ -345,7 +344,7 @@ public class DataModelerServiceImpl
                 logger.debug("Current project path is: " + projectPath);
             }
 
-            ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+            ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
 
             ModelDriver modelDriver = new JavaRoasterModelDriver(ioService,
                                                                  Paths.convert(defaultPackage.getPackageMainSrcPath()),
@@ -419,7 +418,7 @@ public class DataModelerServiceImpl
                                             new ArrayList<DataModelerError>());
             }
 
-            ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+            ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
             JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver(ioService,
                                                                             null,
                                                                             classLoader,
@@ -473,7 +472,7 @@ public class DataModelerServiceImpl
                 return result;
             }
 
-            ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+            ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
             Pair<String, List<DataModelerError>> updateResult = updateJavaSource(source,
                                                                                  dataObject,
                                                                                  new HashMap<String, String>(),
@@ -519,7 +518,7 @@ public class DataModelerServiceImpl
                 return result;
             }
 
-            ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+            ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
             JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver(ioService,
                                                                             Paths.convert(path),
                                                                             classLoader,
@@ -685,7 +684,7 @@ public class DataModelerServiceImpl
             }
 
             if (dataObject == null) {
-                ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+                ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
                 JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver(ioService,
                                                                                 Paths.convert(path),
                                                                                 classLoader,
@@ -1224,7 +1223,7 @@ public class DataModelerServiceImpl
         //check the project class path to see if the class is defined likely in a project dependency or in curren project.
         KieProject project = projectService.resolveProject(path);
         if (project != null) {
-            ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(project);
+            ClassLoader classLoader = projectCache.getOrCreateEntry(project).getClassLoader();
             try {
                 classLoader.loadClass(className);
                 return true;
@@ -1318,7 +1317,7 @@ public class DataModelerServiceImpl
                 parseRequest.getTarget(),
                 parseRequest.getValuePairName(),
                 parseRequest.getValuePairLiteralValue(),
-                classLoaderHelper.getProjectClassLoader(kieProject));
+                projectCache.getOrCreateEntry(kieProject).getClassLoader());
 
         AnnotationParseResponse response = new AnnotationParseResponse(driverResult.getK1());
         response.withErrors(driverResult.getK2());
@@ -1330,7 +1329,7 @@ public class DataModelerServiceImpl
                                                                  KieProject kieProject) {
 
         JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver();
-        ClassLoader classLoader = classLoaderHelper.getProjectClassLoader(kieProject);
+        ClassLoader classLoader = projectCache.getOrCreateEntry(kieProject).getClassLoader();
         ClassTypeResolver classTypeResolver = DriverUtils.createClassTypeResolver(classLoader);
         AnnotationDefinitionResponse definitionResponse = new AnnotationDefinitionResponse();
 

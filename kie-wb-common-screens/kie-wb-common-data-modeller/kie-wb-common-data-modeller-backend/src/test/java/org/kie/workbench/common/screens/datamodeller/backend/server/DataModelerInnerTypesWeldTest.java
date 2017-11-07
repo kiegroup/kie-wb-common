@@ -41,7 +41,6 @@ public class DataModelerInnerTypesWeldTest extends AbstractDataModelerServiceWel
             final Path packagePath = paths.convert(nioPackagePath);
 
             KieProject project = projectService.resolveProject(packagePath);
-            lruProjectDependenciesClassLoaderCache.assertDependenciesClassLoader(project);
 
             DataModel dataModel = dataModelService.loadModel(project);
             DataObject dataObject = dataModel.getDataObject("test.Outer");

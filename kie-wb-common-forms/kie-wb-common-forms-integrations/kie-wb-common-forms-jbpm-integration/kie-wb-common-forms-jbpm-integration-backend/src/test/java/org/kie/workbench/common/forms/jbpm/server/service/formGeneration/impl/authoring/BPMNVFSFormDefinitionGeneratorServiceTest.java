@@ -35,7 +35,8 @@ import org.kie.workbench.common.forms.serialization.impl.FieldSerializer;
 import org.kie.workbench.common.forms.serialization.impl.FormDefinitionSerializerImpl;
 import org.kie.workbench.common.forms.serialization.impl.FormModelSerializer;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.mockito.Mock;
@@ -77,13 +78,15 @@ public abstract class BPMNVFSFormDefinitionGeneratorServiceTest extends Abstract
     private KieProject project;
 
     @Mock
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ProjectCache projectCache;
 
     @Before
     public void setup() throws IOException {
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        when(projectClassLoaderHelper.getProjectClassLoader(project)).thenReturn(this.getClass().getClassLoader());
+        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        when(projectBuildData.getClassLoader()).thenReturn(this.getClass().getClassLoader());
+        when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 
         source = mock(Path.class);
 
@@ -96,7 +99,7 @@ public abstract class BPMNVFSFormDefinitionGeneratorServiceTest extends Abstract
                                                                                                                    invocationOnMock.getArguments()[0].toString()));
 
         formModelHandlerManager = new TestFormModelHandlerManager(projectService,
-                                                                  projectClassLoaderHelper,
+                                                                  projectCache,
                                                                   fieldManager,
                                                                   dataObjectFinderService);
 

@@ -43,7 +43,7 @@ import org.kie.api.io.ResourceType;
 import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderError;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.AbstractFileIndexer;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.DefaultIndexBuilder;
 import org.kie.workbench.common.services.shared.project.KieProject;
@@ -70,7 +70,7 @@ public class BpmnFileIndexer extends AbstractFileIndexer {
     protected BPMNDefinitionSetResourceType bpmnTypeDefinition;
 
     @Inject
-    protected ProjectClassLoaderHelper classLoaderHelper;
+    protected ProjectCache projectCache;
 
     @Override
     public boolean supportsPath(Path path) {
@@ -169,9 +169,8 @@ public class BpmnFileIndexer extends AbstractFileIndexer {
 
     // Protected method for testing
     protected ClassLoader getProjectClassLoader(final KieProject project) {
-        return classLoaderHelper.getProjectClassLoader(project);
+        return projectCache.getOrCreateEntry(project).getClassLoader();
     }
-
 
     private List<BpmnProcessDataEventListener> buildProcessDefinition(String bpmn2Content,
                                                                       ClassLoader projectClassLoader) throws IllegalArgumentException {

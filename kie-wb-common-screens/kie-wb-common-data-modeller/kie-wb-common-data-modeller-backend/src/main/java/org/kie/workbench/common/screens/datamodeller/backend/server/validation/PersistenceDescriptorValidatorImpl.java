@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -28,7 +29,7 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Persisten
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceUnitModel;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.TransactionType;
 import org.kie.workbench.common.screens.datamodeller.validation.PersistenceDescriptorValidator;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
@@ -41,7 +42,7 @@ public class PersistenceDescriptorValidatorImpl
 
     private KieProjectService projectService;
 
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ProjectCache projectCache;
 
     private PersistableClassValidator classValidator = new PersistableClassValidator( );
 
@@ -52,10 +53,10 @@ public class PersistenceDescriptorValidatorImpl
     }
 
     @Inject
-    public PersistenceDescriptorValidatorImpl( KieProjectService projectService,
-                                               ProjectClassLoaderHelper projectClassLoaderHelper ) {
+    public PersistenceDescriptorValidatorImpl( final KieProjectService projectService,
+                                               final ProjectCache projectCache ) {
         this.projectService = projectService;
-        this.projectClassLoaderHelper = projectClassLoaderHelper;
+        this.projectCache = projectCache;
     }
 
     @Override
@@ -103,7 +104,7 @@ public class PersistenceDescriptorValidatorImpl
         }
 
         if ( unitModel.getClasses( ) != null && !unitModel.getClasses( ).isEmpty( ) ) {
-            ClassLoader projectClassLoader = projectClassLoaderHelper.getProjectClassLoader( project );
+            ClassLoader projectClassLoader = projectCache.getOrCreateEntry( project ).getClassLoader();
             unitModel.getClasses( ).forEach( clazz -> Optional.ofNullable( classValidator.validate( clazz, projectClassLoader ) ).ifPresent( messages::addAll ) );
         }
 

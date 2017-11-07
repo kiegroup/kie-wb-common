@@ -31,16 +31,12 @@ import javax.inject.Named;
 import com.google.common.base.Charsets;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
-import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
-import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 
-import static org.kie.workbench.common.services.backend.compiler.impl.utils.MavenOutputConverter.convertIntoValidationMessage;
 import static org.uberfire.backend.server.util.Paths.convert;
 
 @ApplicationScoped
@@ -51,7 +47,7 @@ public class ValidatorBuildService {
     private IOService ioService;
     private KieProjectService projectService;
     private String ERROR_LEVEL = "ERROR";
-    private BuilderUtils builderUtils;
+    private ProjectCache projectCache;
 
     public ValidatorBuildService() {
         //CDI proxies
@@ -60,10 +56,10 @@ public class ValidatorBuildService {
     @Inject
     public ValidatorBuildService(final @Named("ioStrategy") IOService ioService,
                                  final KieProjectService projectService,
-                                 final BuilderUtils builderUtils) {
+                                 final ProjectCache projectCache) {
         this.ioService = ioService;
         this.projectService = projectService;
-        this.builderUtils = builderUtils;
+        this.projectCache = projectCache;
     }
 
     public List<ValidationMessage> validate(final Path resourcePath,
@@ -117,16 +113,8 @@ public class ValidatorBuildService {
             return getExceptionMsgs("[ERROR] no project found");
         }
 
-        final KieProject kieProject = project.get();
-        final org.uberfire.java.nio.file.Path resourcePath = convert(_resourcePath);
-
-        final KieAFBuilder builder = builderUtils.getBuilder(kieProject);
-        final KieCompilationResponse res = builder.validate(resourcePath, inputStream);
-
-        return convertIntoValidationMessage(res.getMavenOutput().get(),
-                                            ERROR_LEVEL,
-                                            ((DefaultKieAFBuilder) builder).getGITURI(),
-                                            ((DefaultKieAFBuilder) builder).getInfo().getPrjPath().getParent().toString());
+        return projectCache.getOrCreateEntry(project.get()).validate(convert(_resourcePath),
+                                                                     inputStream);
     }
 
     private List<ValidationMessage> getExceptionMsgs(String msg) {

@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.stunner.bpmn.backend.service.indexing;
 
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.refactoring.backend.server.TestIndexer;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.stunner.bpmn.backend.indexing.BpmnFileIndexer;
@@ -29,8 +29,8 @@ import static org.mockito.Mockito.when;
 public class TestBpmnFileIndexer extends BpmnFileIndexer implements TestIndexer<BPMNDefinitionSetResourceType> {
 
     public TestBpmnFileIndexer() {
-        this.classLoaderHelper = mock(ProjectClassLoaderHelper.class);
-        when(this.classLoaderHelper.getProjectClassLoader(any())).thenReturn(this.getClass().getClassLoader());
+        this.projectCache = mock(ProjectCache.class);
+        when(this.projectCache.getOrCreateEntry(any()).getClassLoader()).thenReturn(this.getClass().getClassLoader());
     }
 
     @Override

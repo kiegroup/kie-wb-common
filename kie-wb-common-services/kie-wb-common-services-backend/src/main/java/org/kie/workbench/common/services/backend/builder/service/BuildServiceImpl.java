@@ -19,27 +19,20 @@ package org.kie.workbench.common.services.backend.builder.service;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.m2repo.backend.server.GuvnorM2Repository;
-import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.services.backend.builder.af.KieAFBuilder;
-import org.kie.workbench.common.services.backend.builder.af.impl.DefaultKieAFBuilder;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.BuilderUtils;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenOutputConverter;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 
 @Service
 @ApplicationScoped
 public class BuildServiceImpl implements BuildService {
 
-    private GuvnorM2Repository guvnorM2Repository;
+//    private GuvnorM2Repository guvnorM2Repository;
 
-    private BuilderUtils builderUtils;
+    private ProjectCache projectCache;
 
     private String ERROR_LEVEL = "ERROR";
 
@@ -48,10 +41,8 @@ public class BuildServiceImpl implements BuildService {
     }
 
     @Inject
-    public BuildServiceImpl(final GuvnorM2Repository guvnorM2Repository,
-                            final BuilderUtils builderUtils) {
-        this.guvnorM2Repository = guvnorM2Repository;
-        this.builderUtils = builderUtils;
+    public BuildServiceImpl(final ProjectCache projectCache) {
+        this.projectCache = projectCache;
     }
 
     @Override
@@ -60,30 +51,11 @@ public class BuildServiceImpl implements BuildService {
     }
 
     private BuildResults buildAndDeployInternal(final Project project) {
-        final KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
-        KieCompilationResponse res = kieAfBuilder.buildAndInstall(((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().toString(), guvnorM2Repository.getM2RepositoryRootDir(ArtifactRepositoryService.GLOBAL_M2_REPO_NAME));
-        return MavenOutputConverter.convertIntoBuildResults(res.getMavenOutput().get());
+        return projectCache.getOrCreateEntry(project).buildAndInstall();
     }
 
     private BuildResults buildInternal(final Project project) {
-        KieAFBuilder kieAfBuilder = builderUtils.getBuilder(project);
-        if (kieAfBuilder != null) {
-            KieCompilationResponse res = kieAfBuilder.build(Boolean.TRUE,
-                                                            Boolean.FALSE);
-            BuildResults br =
-                    MavenOutputConverter.convertIntoBuildResults(res.getMavenOutput().get(),
-                                                                 ERROR_LEVEL,
-                                                                 ((DefaultKieAFBuilder) kieAfBuilder).getGITURI(),
-                                                                 ((DefaultKieAFBuilder) kieAfBuilder).getInfo().getPrjPath().getParent().toString());
-
-            return br;
-        } else {
-            BuildResults buildRs = new BuildResults();
-            BuildMessage msg = new BuildMessage();
-            msg.setText("[ERROR] Isn't possible build the project " + project.getRootPath().toURI() + " because isn't a Git FS project");
-            buildRs.addBuildMessage(msg);
-            return buildRs;
-        }
+        return projectCache.getOrCreateEntry(project).build();
     }
 
     @Override
@@ -112,6 +84,6 @@ public class BuildServiceImpl implements BuildService {
 
     @Override
     public boolean isBuilt(final Project project) {
-        return builderUtils.getBuilder(project) != null;
+        return projectCache.getOrCreateEntry(project).isBuilt();
     }
 }
