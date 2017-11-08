@@ -20,6 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -28,6 +29,7 @@ import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.widgets.client.handlers.DefaultNewResourceHandler;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceSuccessEvent;
+import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.client.mvp.PlaceManager;
@@ -90,7 +92,6 @@ public class NewFileUploader
     public void create( final org.guvnor.common.services.project.model.Package pkg,
                         final String baseFileName,
                         final NewResourcePresenter presenter ) {
-        busyIndicatorView.showBusyIndicator( GuvnorDefaultEditorConstants.INSTANCE.Uploading() );
 
         //See https://bugzilla.redhat.com/show_bug.cgi?id=1091204
         //If the User-provided file name has an extension use that; otherwise use the same extension as the original (OS FileSystem) extension
@@ -98,6 +99,12 @@ public class NewFileUploader
         String extension;
         final String originalFileName = options.getFormFileName();
         final String providedFileName = baseFileName;
+
+        if (originalFileName == null || "".equals(originalFileName)) {
+            Window.alert(CommonConstants.INSTANCE.UploadSelectAFile());
+            return;
+        }
+
         if ( providedFileName.contains( "." ) ) {
             targetFileName = providedFileName;
             extension = getExtension( providedFileName );
@@ -105,6 +112,8 @@ public class NewFileUploader
             extension = getExtension( originalFileName );
             targetFileName = providedFileName + "." + extension;
         }
+
+        busyIndicatorView.showBusyIndicator( GuvnorDefaultEditorConstants.INSTANCE.Uploading() );
 
         projectService.call( getResolvePathSuccessCallback( targetFileName, presenter ),
                 new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView) ).resolveDefaultPath( pkg, extension );

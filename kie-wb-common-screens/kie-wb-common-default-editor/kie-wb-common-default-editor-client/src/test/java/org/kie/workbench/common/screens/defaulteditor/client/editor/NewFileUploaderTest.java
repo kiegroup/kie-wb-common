@@ -38,8 +38,14 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.type.AnyResourceTypeDefinition;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class NewFileUploaderTest {
@@ -206,6 +212,21 @@ public class NewFileUploaderTest {
                 never() ).complete();
         verify( placeManager,
                 never() ).goTo( any( Path.class ) );
+    }
+
+    @Test
+    public void testNoFileSelected() {
+        when( options.getFormFileName() ).thenReturn( null );
+
+        uploader.create( pkg,
+                         "file",
+                         presenter );
+
+        verify( busyIndicatorView,
+                never() ).showBusyIndicator( any( String.class ) );
+        verify( options,
+                never() ).upload( any( Command.class ),
+                                  any( Command.class ));
     }
 
 }
