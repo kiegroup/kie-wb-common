@@ -55,11 +55,11 @@ public class NewFileUploader
     }
 
     @Inject
-    public NewFileUploader( final PlaceManager placeManager,
-                            final DefaultEditorNewFileUpload options,
-                            final AnyResourceTypeDefinition resourceType,
-                            final BusyIndicatorView busyIndicatorView,
-                            final Caller<KieProjectService> projectService ) {
+    public NewFileUploader(final PlaceManager placeManager,
+                           final DefaultEditorNewFileUpload options,
+                           final AnyResourceTypeDefinition resourceType,
+                           final BusyIndicatorView busyIndicatorView,
+                           final Caller<KieProjectService> projectService) {
         this.placeManager = placeManager;
         this.options = options;
         this.resourceType = resourceType;
@@ -69,8 +69,8 @@ public class NewFileUploader
 
     @PostConstruct
     private void setupExtensions() {
-        extensions.add( new Pair<String, DefaultEditorNewFileUpload>( GuvnorDefaultEditorConstants.INSTANCE.Options(),
-                                                                      options ) );
+        extensions.add(new Pair<String, DefaultEditorNewFileUpload>(GuvnorDefaultEditorConstants.INSTANCE.Options(),
+                                                                    options));
     }
 
     @Override
@@ -89,9 +89,9 @@ public class NewFileUploader
     }
 
     @Override
-    public void create( final org.guvnor.common.services.project.model.Package pkg,
-                        final String baseFileName,
-                        final NewResourcePresenter presenter ) {
+    public void create(final org.guvnor.common.services.project.model.Package pkg,
+                       final String baseFileName,
+                       final NewResourcePresenter presenter) {
 
         //See https://bugzilla.redhat.com/show_bug.cgi?id=1091204
         //If the User-provided file name has an extension use that; otherwise use the same extension as the original (OS FileSystem) extension
@@ -105,50 +105,49 @@ public class NewFileUploader
             return;
         }
 
-        if ( providedFileName.contains( "." ) ) {
+        if (providedFileName.contains(".")) {
             targetFileName = providedFileName;
-            extension = getExtension( providedFileName );
+            extension = getExtension(providedFileName);
         } else {
-            extension = getExtension( originalFileName );
+            extension = getExtension(originalFileName);
             targetFileName = providedFileName + "." + extension;
         }
 
-        busyIndicatorView.showBusyIndicator( GuvnorDefaultEditorConstants.INSTANCE.Uploading() );
+        busyIndicatorView.showBusyIndicator(GuvnorDefaultEditorConstants.INSTANCE.Uploading());
 
-        projectService.call( getResolvePathSuccessCallback( targetFileName, presenter ),
-                new HasBusyIndicatorDefaultErrorCallback( busyIndicatorView) ).resolveDefaultPath( pkg, extension );
+        projectService.call(getResolvePathSuccessCallback(targetFileName, presenter),
+                            new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).resolveDefaultPath(pkg, extension);
     }
 
-    private RemoteCallback<Path> getResolvePathSuccessCallback( final String targetFileName,
-                                                                final NewResourcePresenter presenter ) {
+    private RemoteCallback<Path> getResolvePathSuccessCallback(final String targetFileName,
+                                                               final NewResourcePresenter presenter) {
         return path -> {
-            final Path newPath = PathFactory.newPathBasedOn( targetFileName,
-                    encode( path.toURI( ) + "/" + targetFileName ),
-                    path );
+            final Path newPath = PathFactory.newPathBasedOn(targetFileName,
+                                                            encode(path.toURI() + "/" + targetFileName),
+                                                            path);
 
-            options.setFolderPath( path );
-            options.setFileName( targetFileName );
+            options.setFolderPath(path);
+            options.setFileName(targetFileName);
 
-            options.upload( ( ) -> {
-                        busyIndicatorView.hideBusyIndicator( );
-                        presenter.complete( );
-                        notifySuccess( );
-                        newResourceSuccessEvent.fire( new NewResourceSuccessEvent( path ) );
-                        placeManager.goTo( newPath );
-                    },
-                    ( ) -> busyIndicatorView.hideBusyIndicator( ) );
+            options.upload(() -> {
+                               busyIndicatorView.hideBusyIndicator();
+                               presenter.complete();
+                               notifySuccess();
+                               newResourceSuccessEvent.fire(new NewResourceSuccessEvent(path));
+                               placeManager.goTo(newPath);
+                           },
+                           () -> busyIndicatorView.hideBusyIndicator());
         };
     }
 
-    String encode( final String uri ) {
-        return URL.encode( uri );
+    String encode(final String uri) {
+        return URL.encode(uri);
     }
 
-    private String getExtension( final String fileName ) {
-        if ( fileName.contains( "." ) ) {
-            return fileName.substring( fileName.lastIndexOf( "." ) + 1 );
+    private String getExtension(final String fileName) {
+        if (fileName.contains(".")) {
+            return fileName.substring(fileName.lastIndexOf(".") + 1);
         }
         return "";
     }
-
 }
