@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.projecteditor.client.editor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.google.gwtmockito.GwtMock;
@@ -55,6 +54,8 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
+import org.uberfire.workbench.model.menu.MenuItem;
+import org.uberfire.workbench.model.menu.Menus;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyBoolean;
@@ -541,6 +542,44 @@ public class ProjectScreenPresenterTest
         spiedPresenter.getBuildCommand( DeploymentMode.VALIDATED ).execute();
 
         verify( spiedPresenter ).buildAndDeploy( DeploymentMode.VALIDATED );
+    }
+
+    @Test
+    public void testMakeMenuBar() {
+
+        spiedPresenter.makeMenuBar();
+
+        final Menus menus = spiedPresenter.getMenus();
+        final List<MenuItem> items = menus.getItems();
+
+        final MenuItem saveMenuItem = items.get( 0 );
+        final MenuItem deleteMenuItem = items.get( 1 );
+        final MenuItem renameMenuItem = items.get( 2 );
+        final MenuItem copyMenuItem = items.get( 3 );
+        final MenuItem reImportMenuItem = items.get( 4 );
+
+        assertEquals( "Save", saveMenuItem.getCaption() );
+        assertSignatureId( saveMenuItem );
+
+        assertEquals( "Delete", deleteMenuItem.getCaption() );
+        assertSignatureId( deleteMenuItem );
+
+        assertEquals( "Rename", renameMenuItem.getCaption() );
+        assertSignatureId( renameMenuItem );
+
+        assertEquals( "Copy", copyMenuItem.getCaption() );
+        assertSignatureId( copyMenuItem );
+
+        assertEquals( "Reimport", reImportMenuItem.getCaption() );
+        assertSignatureId( reImportMenuItem );
+    }
+
+    private void assertSignatureId( final MenuItem menuItem ) {
+
+        final String signatureId = menuItem.getSignatureId();
+        final String namespace = getClass().getName();
+
+        assertTrue( signatureId.contains( namespace ) );
     }
 
     private void verifyBusyShowHideAnyString( int show,

@@ -603,26 +603,34 @@ public class ProjectScreenPresenter
         init();
     }
 
-    private void makeMenuBar() {
+    void makeMenuBar() {
+
+        final String namespace = getClass().getName();
+
         menus = MenuFactory
                 .newTopLevelMenu( CommonConstants.INSTANCE.Save() )
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_SAVE ) )
+                .withNamespace( namespace )
                 .respondsWith( getSaveCommand( DeploymentMode.VALIDATED ) )
                 .endMenu()
                 .newTopLevelMenu( CommonConstants.INSTANCE.Delete() )
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_DELETE ) )
+                .withNamespace( namespace )
                 .respondsWith( getDeleteCommand() )
                 .endMenu()
                 .newTopLevelMenu( CommonConstants.INSTANCE.Rename() )
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_RENAME ) )
+                .withNamespace( namespace )
                 .respondsWith( getRenameCommand() )
                 .endMenu()
                 .newTopLevelMenu( CommonConstants.INSTANCE.Copy() )
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_COPY ) )
+                .withNamespace( namespace )
                 .respondsWith( getCopyCommand() )
                 .endMenu()
                 .newTopLevelMenu( CommonConstants.INSTANCE.Reimport() )
                 .withRoles( kieACL.getGrantedRoles( F_PROJECT_AUTHORING_SAVE ) )
+                .withNamespace( namespace )
                 .respondsWith( getReImportCommand() )
                 .endMenu()
                 .newTopLevelCustomMenu( new MenuFactory.CustomMenuBuilder() {
