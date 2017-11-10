@@ -29,10 +29,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Description;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
@@ -43,64 +42,56 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = StartSignalEvent.StartSignalEventBuilder.class)
-@Morph(base = BaseStartEvent.class)
+@Definition(graphFactory = NodeFactory.class, builder = IntermediateSignalEventThrowing.IntermediateSignalEventThrowingBuilder.class)
+@Morph(base = BaseThrowingIntermediateEvent.class)
 @FormDefinition(
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartSignalEvent extends BaseStartEvent {
+public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEvent {
 
     @Title
-    public static final transient String title = "Start Signal Event";
+    public static final transient String title = "Intermediate Signal Event";
 
     @Description
-    public static final transient String description = "A process instance is started based on signalling across " +
-            "different processes. (One signal thrown can be caught multiple times)";
+    public static final transient String description = "The throwing signal event fires up a signal. Afterwards it continues process execution. " +
+            "One signal thrown can be caught multiple times by different catching signal events.";
 
     @PropertySet
     @FormField(afterElement = "general")
     @Valid
-    protected InterruptingSignalEventExecutionSet executionSet;
-
-    @PropertySet
-    @FormField(afterElement = "executionSet")
-    @Valid
-    protected DataIOSet dataIOSet;
+    protected ScopedSignalEventExecutionSet executionSet;
 
     @NonPortable
-    public static class StartSignalEventBuilder extends BaseStartEventBuilder<StartSignalEvent> {
+    public static class IntermediateSignalEventThrowingBuilder extends BaseThrowingIntermediateEventBuilder<IntermediateSignalEventThrowing> {
 
         @Override
-        public StartSignalEvent build() {
-            return new StartSignalEvent(new BPMNGeneralSet(""),
-                                        new BackgroundSet(BG_COLOR,
-                                                          BORDER_COLOR,
-                                                          BORDER_SIZE),
-                                        new FontSet(),
-                                        new CircleDimensionSet(new Radius(RADIUS)),
-                                        new SimulationAttributeSet(),
-                                        new DataIOSet(),
-                                        new InterruptingSignalEventExecutionSet());
+        public IntermediateSignalEventThrowing build() {
+            return new IntermediateSignalEventThrowing(new BPMNGeneralSet(""),
+                                                       new DataIOSet(),
+                                                       new BackgroundSet(BG_COLOR,
+                                                                         BORDER_COLOR,
+                                                                         BORDER_SIZE),
+                                                       new FontSet(),
+                                                       new CircleDimensionSet(new Radius(RADIUS)),
+                                                       new ScopedSignalEventExecutionSet());
         }
     }
 
-    public StartSignalEvent() {
+    public IntermediateSignalEventThrowing() {
     }
 
-    public StartSignalEvent(final @MapsTo("general") BPMNGeneralSet general,
-                            final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
-                            final @MapsTo("fontSet") FontSet fontSet,
-                            final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
-                            final @MapsTo("simulationSet") SimulationAttributeSet simulationSet,
-                            final @MapsTo("dataIOSet") DataIOSet dataIOSet,
-                            final @MapsTo("executionSet") InterruptingSignalEventExecutionSet executionSet) {
+    public IntermediateSignalEventThrowing(final @MapsTo("general") BPMNGeneralSet general,
+                                           final @MapsTo("dataIOSet") DataIOSet dataIOSet,
+                                           final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
+                                           final @MapsTo("fontSet") FontSet fontSet,
+                                           final @MapsTo("dimensionsSet") CircleDimensionSet dimensionsSet,
+                                           final @MapsTo("executionSet") ScopedSignalEventExecutionSet executionSet) {
         super(general,
+              dataIOSet,
               backgroundSet,
               fontSet,
-              dimensionsSet,
-              simulationSet);
-        this.dataIOSet = dataIOSet;
+              dimensionsSet);
         this.executionSet = executionSet;
     }
 
@@ -113,45 +104,25 @@ public class StartSignalEvent extends BaseStartEvent {
         return description;
     }
 
-    public InterruptingSignalEventExecutionSet getExecutionSet() {
+    public ScopedSignalEventExecutionSet getExecutionSet() {
         return executionSet;
     }
 
-    public void setExecutionSet(final InterruptingSignalEventExecutionSet executionSet) {
+    public void setExecutionSet(ScopedSignalEventExecutionSet executionSet) {
         this.executionSet = executionSet;
-    }
-
-    public DataIOSet getDataIOSet() {
-        return dataIOSet;
-    }
-
-    public void setDataIOSet(DataIOSet dataIOSet) {
-        this.dataIOSet = dataIOSet;
-    }
-
-    @Override
-    public boolean hasOutputVars() {
-        return true;
-    }
-
-    @Override
-    public boolean isSingleOutputVar() {
-        return true;
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(super.hashCode(),
-                                         dataIOSet.hashCode(),
                                          executionSet.hashCode());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof StartSignalEvent) {
-            StartSignalEvent other = (StartSignalEvent) o;
+        if (o instanceof IntermediateSignalEventThrowing) {
+            IntermediateSignalEventThrowing other = (IntermediateSignalEventThrowing) o;
             return super.equals(other) &&
-                    dataIOSet.equals(other.dataIOSet) &&
                     executionSet.equals(other.executionSet);
         }
         return false;

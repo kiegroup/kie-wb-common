@@ -29,14 +29,17 @@ import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnec
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.StartEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.ThrowingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
@@ -124,6 +127,9 @@ public class BPMNShapeFactory
                 .delegate(EndNoneEvent.class,
                           new EndEventShapeDef(),
                           () -> svgShapeFactory)
+                .delegate(EndSignalEvent.class,
+                          new EndEventShapeDef(),
+                          () -> svgShapeFactory)
                 .delegate(EndTerminateEvent.class,
                           new EndEventShapeDef(),
                           () -> svgShapeFactory)
@@ -132,6 +138,9 @@ public class BPMNShapeFactory
                           () -> svgShapeFactory)
                 .delegate(IntermediateSignalEventCatching.class,
                           new CatchingIntermediateEventShapeDef(),
+                          () -> svgShapeFactory)
+                .delegate(IntermediateSignalEventThrowing.class,
+                          new ThrowingIntermediateEventShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(SequenceFlow.class,
                           new SequenceFlowConnectorDef(),
