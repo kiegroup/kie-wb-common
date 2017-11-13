@@ -114,7 +114,7 @@ public class DefaultPomEditor implements PomEditor {
             }
 
             //check if is present the alternative maven compiler
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP)) &&
+            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP)) &&
                     plugin.getArtifactId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT))) {
                 alternativeCompilerPluginPresent = Boolean.TRUE;
                 alternativeCompilerPosition = i;
@@ -213,7 +213,7 @@ public class DefaultPomEditor implements PomEditor {
     protected Plugin getNewCompilerPlugin() {
 
         Plugin newCompilerPlugin = new Plugin();
-        newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP));
+        newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP));
         newCompilerPlugin.setArtifactId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT));
         newCompilerPlugin.setVersion(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION));
 
