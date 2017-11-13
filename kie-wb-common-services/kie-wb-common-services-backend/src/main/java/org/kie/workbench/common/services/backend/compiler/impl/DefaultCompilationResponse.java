@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,8 @@ import org.uberfire.java.nio.file.Path;
  * it contains a boolean flag as a result of the build, an optional String error message,
  * and an optional List of String with the maven output
  */
-public class DefaultCompilationResponse implements CompilationResponse {
+public class DefaultCompilationResponse implements CompilationResponse,
+                                                   Serializable{
 
     private Boolean successful;
     private List<String> mavenOutput;

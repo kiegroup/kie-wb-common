@@ -106,16 +106,16 @@ public class DefaultPomEditor implements PomEditor {
         int i = 0;
         for (Plugin plugin : build.getPlugins()) {
             // check if is present the default maven compiler
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.MAVEN_PLUGINS)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN))) {
+            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP)) &&
+                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT))) {
 
                 defaultCompilerPluginPresent = Boolean.TRUE;
                 defaultMavenCompilerPosition = i;
             }
 
             //check if is present the alternative maven compiler
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN))) {
+            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP)) &&
+                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT))) {
                 alternativeCompilerPluginPresent = Boolean.TRUE;
                 alternativeCompilerPosition = i;
             }
@@ -170,7 +170,7 @@ public class DefaultPomEditor implements PomEditor {
         if (!defaultCompilerPluginPresent) {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = new Plugin();
-            disabledDefaultCompiler.setArtifactId(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN));
+            disabledDefaultCompiler.setArtifactId(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT));
             disableMavenCompilerAlreadyPresent(disabledDefaultCompiler);
             build.addPlugin(disabledDefaultCompiler);
             defaultCompilerPluginPresent = Boolean.TRUE;
@@ -213,9 +213,9 @@ public class DefaultPomEditor implements PomEditor {
     protected Plugin getNewCompilerPlugin() {
 
         Plugin newCompilerPlugin = new Plugin();
-        newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS));
-        newCompilerPlugin.setArtifactId(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN));
-        newCompilerPlugin.setVersion(conf.get(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION));
+        newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP));
+        newCompilerPlugin.setArtifactId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT));
+        newCompilerPlugin.setVersion(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION));
 
         PluginExecution execution = new PluginExecution();
         execution.setId(MavenCLIArgs.COMPILE);

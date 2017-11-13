@@ -45,19 +45,19 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
         if (isValid()) {
             conf = new HashMap<>();
 
-            conf.put(ConfigurationKey.MAVEN_PLUGINS,
-                     props.getProperty(ConfigurationKey.MAVEN_PLUGINS.name()));
-            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN,
-                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN.name()));
+            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
+                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
+            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
+                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
                      props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
 
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS.name()));
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN.name()));
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
 
             conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                      props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGINS.name()));
