@@ -52,8 +52,8 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
                      props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
 
-            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP,
-                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGI_GROUP.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
             conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
                      props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
             conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
