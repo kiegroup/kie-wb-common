@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
@@ -34,7 +35,8 @@ import org.uberfire.java.nio.file.Path;
  * it contains a boolean flag as a result of the build, an optional String error message,
  * and a  List of String with the maven output
  */
-public class DefaultKieCompilationResponse implements KieCompilationResponse {
+public class DefaultKieCompilationResponse implements KieCompilationResponse,
+                                                      Serializable {
 
     private KieModuleMetaInfo kieModuleMetaInfo;
     private KieModule kieModule;
