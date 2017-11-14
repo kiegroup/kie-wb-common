@@ -73,16 +73,15 @@
         <executions>
           <execution>
             <id>copy-data-objects</id>
-            <!-- here the phase you need -->
             <phase>process-test-resources</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/test-classes/data-object-sources</outputDirectory>
+              <outputDirectory>${basedir}/target/test-classes/org/kie/workbench/common/forms/integration/tests/formgeneration/data-object-sources</outputDirectory>
               <resources>
                 <resource>
-                  <directory>${basedir}/src/test/java/bpms/new_formmodeler</directory>
+                  <directory>${basedir}/src/test/java/org/kie/workbench/common/forms/integration/tests/formgeneration/model</directory>
                   <includes>
                     <include>*.java</include>
                   </includes>

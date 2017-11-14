@@ -5,7 +5,7 @@
   <bpmn2:itemDefinition id="_booleanItem" structureRef="Boolean"/>
   <bpmn2:itemDefinition id="_floatItem" structureRef="Float"/>
   <bpmn2:itemDefinition id="_objectItem" structureRef="Object"/>
-  <bpmn2:itemDefinition id="_dataObjectItem" structureRef="bpms.new_formmodeler.FormGenerationTest_DataObject"/>
+  <bpmn2:itemDefinition id="_dataObjectItem" structureRef="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject"/>
   <bpmn2:itemDefinition id="_documentItem" structureRef="org.jbpm.document.Document"/>
   <bpmn2:itemDefinition id="__23BBA464-615A-405F-8C3B-4F643BE522D6_TaskNameInputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__23BBA464-615A-405F-8C3B-4F643BE522D6_SkippableInputXItem" structureRef="Object"/>
@@ -15,18 +15,18 @@
   <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__booleanInputXItem" structureRef="Boolean"/>
   <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__floatInputXItem" structureRef="Float"/>
   <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__objectInputXItem" structureRef="Object"/>
-  <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputXItem" structureRef="bpms.new_formmodeler.FormGenerationTest_DataObject"/>
+  <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputXItem" structureRef="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject"/>
   <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__documentInputXItem" structureRef="org.jbpm.document.Document"/>
   <bpmn2:itemDefinition id="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E_SkippableInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_TaskNameInputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_InputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__booleanInputXItem" structureRef="Boolean"/>
-  <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputXItem" structureRef="bpms.new_formmodeler.FormGenerationTest_DataObject"/>
+  <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputXItem" structureRef="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_SkippableInputXItem" structureRef="Object"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_OutputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_integer_OutputXItem" structureRef="Integer"/>
-  <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputXItem" structureRef="bpms.new_formmodeler.FormGenerationTest_DataObject"/>
-  <bpmn2:process id="newformmodeler.FormGenerationTest_Process" drools:packageName="bpms.new_formmodeler" drools:version="1.0" name="FormGenerationTest_Process" isExecutable="true">
+  <bpmn2:itemDefinition id="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputXItem" structureRef="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject"/>
+  <bpmn2:process id="newformmodeler.FormGenerationTest_Process" drools:packageName="org.kie.workbench.common.forms.integration.tests.formgeneration.definitions" drools:version="1.0" name="FormGenerationTest_Process" isExecutable="true">
     <bpmn2:property id="string" itemSubjectRef="_stringItem"/>
     <bpmn2:property id="integer" itemSubjectRef="_integerItem"/>
     <bpmn2:property id="boolean" itemSubjectRef="_booleanItem"/>
@@ -97,11 +97,11 @@
           <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406_TaskNameInputX" drools:dtype="String" name="TaskName"/>
           <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406__stringInputX" drools:dtype="String" name="_string"/>
           <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406__boolean_InputX" drools:dtype="Boolean" name="_boolean_"/>
-          <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406__dataObject1InputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="_dataObject1"/>
+          <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406__dataObject1InputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="_dataObject1"/>
           <bpmn2:dataInput id="_214D2062-C255-4EE8-A686-B0949757D406_SkippableInputX" drools:dtype="Object" name="Skippable"/>
           <bpmn2:dataOutput id="_214D2062-C255-4EE8-A686-B0949757D406_integer_OutputX" drools:dtype="Integer" name="integer_"/>
           <bpmn2:dataOutput id="_214D2062-C255-4EE8-A686-B0949757D406__boolean_OutputX" drools:dtype="Boolean" name="_boolean_"/>
-          <bpmn2:dataOutput id="_214D2062-C255-4EE8-A686-B0949757D406_dataObject_OutputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="dataObject_"/>
+          <bpmn2:dataOutput id="_214D2062-C255-4EE8-A686-B0949757D406_dataObject_OutputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="dataObject_"/>
           <bpmn2:inputSet id="_Xn3YorNUEeeAOaY6M8NwLw">
             <bpmn2:dataInputRefs>_214D2062-C255-4EE8-A686-B0949757D406__stringInputX</bpmn2:dataInputRefs>
             <bpmn2:dataInputRefs>_214D2062-C255-4EE8-A686-B0949757D406__boolean_InputX</bpmn2:dataInputRefs>
@@ -234,7 +234,7 @@
           <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__booleanInputX" drools:dtype="Boolean" name="_boolean"/>
           <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__floatInputX" drools:dtype="Float" name="_float"/>
           <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__objectInputX" drools:dtype="Object" name="_object"/>
-          <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__dataObjectInputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="_dataObject"/>
+          <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__dataObjectInputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="_dataObject"/>
           <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__documentInputX" drools:dtype="org.jbpm.document.Document" name="_document"/>
           <bpmn2:dataInput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_SkippableInputX" drools:dtype="Object" name="Skippable"/>
           <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_string_OutputX" drools:dtype="String" name="string_"/>
@@ -242,7 +242,7 @@
           <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_boolean_OutputX" drools:dtype="Boolean" name="boolean_"/>
           <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_float_OutputX" drools:dtype="Float" name="float_"/>
           <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_object_OutputX" drools:dtype="Object" name="object_"/>
-          <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_dataObject_OutputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="dataObject_"/>
+          <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_dataObject_OutputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="dataObject_"/>
           <bpmn2:dataOutput id="_D3B8EE8F-5402-408D-815D-FFE1BAD943D9_document_OutputX" drools:dtype="org.jbpm.document.Document" name="document_"/>
           <bpmn2:inputSet id="_Xn3_v7NUEeeAOaY6M8NwLw">
             <bpmn2:dataInputRefs>_D3B8EE8F-5402-408D-815D-FFE1BAD943D9__stringInputX</bpmn2:dataInputRefs>
@@ -349,7 +349,7 @@
           <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__boolean_InputX" drools:dtype="Boolean" name="_boolean_"/>
           <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__float_InputX" drools:dtype="Float" name="_float_"/>
           <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__object_InputX" drools:dtype="Object" name="_object_"/>
-          <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__dataObject_InputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="_dataObject_"/>
+          <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__dataObject_InputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="_dataObject_"/>
           <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__document_InputX" drools:dtype="org.jbpm.document.Document" name="_document_"/>
           <bpmn2:dataInput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F_SkippableInputX" drools:dtype="Object" name="Skippable"/>
           <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__string_OutputX" drools:dtype="String" name="_string_"/>
@@ -357,7 +357,7 @@
           <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__boolean_OutputX" drools:dtype="Boolean" name="_boolean_"/>
           <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__float_OutputX" drools:dtype="Float" name="_float_"/>
           <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__object_OutputX" drools:dtype="Object" name="_object_"/>
-          <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__dataObject_OutputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" name="_dataObject_"/>
+          <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__dataObject_OutputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" name="_dataObject_"/>
           <bpmn2:dataOutput id="_6D57FC64-40FB-475D-845D-3EEC80218F4F__document_OutputX" drools:dtype="org.jbpm.document.Document" name="_document_"/>
           <bpmn2:inputSet id="_Xn4mybNUEeeAOaY6M8NwLw">
             <bpmn2:dataInputRefs>_6D57FC64-40FB-475D-845D-3EEC80218F4F__string_InputX</bpmn2:dataInputRefs>
@@ -468,7 +468,7 @@
         <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__booleanInputX" drools:dtype="Boolean" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__booleanInputXItem" name="_boolean"/>
         <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__floatInputX" drools:dtype="Float" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__floatInputXItem" name="_float"/>
         <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__objectInputX" drools:dtype="Object" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__objectInputXItem" name="_object"/>
-        <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputXItem" name="_dataObject"/>
+        <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__dataObjectInputXItem" name="_dataObject"/>
         <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__documentInputX" drools:dtype="org.jbpm.document.Document" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E__documentInputXItem" name="_document"/>
         <bpmn2:dataInput id="_9F3A7665-E7EF-4DC2-94F1-F9D20A38547E_SkippableInputX" drools:dtype="Object" itemSubjectRef="__9F3A7665-E7EF-4DC2-94F1-F9D20A38547E_SkippableInputXItem" name="Skippable"/>
         <bpmn2:inputSet id="_Xn4m47NUEeeAOaY6M8NwLw">
@@ -539,11 +539,11 @@
         <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A_TaskNameInputX" drools:dtype="String" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_TaskNameInputXItem" name="TaskName"/>
         <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_InputX" drools:dtype="String" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_InputXItem" name="_string_"/>
         <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__booleanInputX" drools:dtype="Boolean" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__booleanInputXItem" name="_boolean"/>
-        <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputXItem" name="_dataObject2"/>
+        <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__dataObject2InputXItem" name="_dataObject2"/>
         <bpmn2:dataInput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A_SkippableInputX" drools:dtype="Object" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_SkippableInputXItem" name="Skippable"/>
         <bpmn2:dataOutput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_OutputX" drools:dtype="String" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_OutputXItem" name="_string_"/>
         <bpmn2:dataOutput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A_integer_OutputX" drools:dtype="Integer" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_integer_OutputXItem" name="integer_"/>
-        <bpmn2:dataOutput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputX" drools:dtype="bpms.new_formmodeler.FormGenerationTest_DataObject" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputXItem" name="dataObject_"/>
+        <bpmn2:dataOutput id="_19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputX" drools:dtype="org.kie.workbench.common.forms.integration.tests.formgeneration.model.FormGenerationTest_DataObject" itemSubjectRef="__19FEA2B8-F4C5-4C69-B631-A3F12123A45A_dataObject_OutputXItem" name="dataObject_"/>
         <bpmn2:inputSet id="_Xn5N37NUEeeAOaY6M8NwLw">
           <bpmn2:dataInputRefs>_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__string_InputX</bpmn2:dataInputRefs>
           <bpmn2:dataInputRefs>_19FEA2B8-F4C5-4C69-B631-A3F12123A45A__booleanInputX</bpmn2:dataInputRefs>

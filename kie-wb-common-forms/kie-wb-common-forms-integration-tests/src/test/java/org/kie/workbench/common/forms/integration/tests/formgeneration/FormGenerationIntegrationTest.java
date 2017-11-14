@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package formgeneration;
+package org.kie.workbench.common.forms.integration.tests.formgeneration;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,7 +89,7 @@ import org.uberfire.io.IOService;
 import org.uberfire.io.impl.IOServiceDotFileImpl;
 import org.uberfire.java.nio.base.options.CommentedOption;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.forms.jbpm.model.authoring.document.type.DocumentFieldType.DOCUMENT_TYPE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
@@ -109,9 +109,12 @@ public class FormGenerationIntegrationTest {
             TEXBOX_FIELDTYPE = new TextBoxFieldType().getTypeName(),
             DATEPICKER_FIELDTYPE = new DatePickerFieldType().getTypeName(),
             PROCESS_NAME = "FormGenerationTest_Process",
-            PROCESS_DEFINITION = PROCESS_NAME + ".bpmn2",
-            DATA_OBJECTS_FOLDER = "new_formmodeler",
-            DATAOBJECT_FORM_ID = "ff9db399-fb46-4b3f-894a-81673dd5421c";
+            DATAOBJECT_FORM_ID = "ff9db399-fb46-4b3f-894a-81673dd5421c",
+            DATA_OBJECTS_FOLDER = "model",
+            PREPARED_NESTED_FORMS_FOLDER = "nestedforms",
+            JAVA_MODEL_FOLDER = "data-object-sources",
+            DEFINITIONS_FOLDER = "definitions",
+            PROCESS_DEFINITION = DEFINITIONS_FOLDER + "/" + PROCESS_NAME + ".bpmn2";
 
     private static BPMNVFSFormDefinitionGeneratorService service;
 
@@ -174,7 +177,7 @@ public class FormGenerationIntegrationTest {
         projectClassLoader = FormGenerationIntegrationTest.class.getClassLoader();
 
         formGenerationProcessDefinitions = BPMN2Utils.getDefinitions(
-                FormGenerationIntegrationTest.class.getResourceAsStream("/formgeneration/" + PROCESS_DEFINITION)
+                FormGenerationIntegrationTest.class.getResourceAsStream(PROCESS_DEFINITION)
         );
 
         formModelerContent = new FormModelerContent();
@@ -183,12 +186,12 @@ public class FormGenerationIntegrationTest {
 
     @Before
     public void init() {
-        final String nestedformsUri = getUriOfResource("/nestedforms/");
-        final String modelUri = getUriOfResource("/data-object-sources/");
+        final String nestedformsUri = getUriOfResource(PREPARED_NESTED_FORMS_FOLDER);
+        final String modelUri = getUriOfResource(JAVA_MODEL_FOLDER);
 
         rootPathWithNestedForms = PathFactory.newPath(DATA_OBJECTS_FOLDER, nestedformsUri);
         rootPathWithoutNestedForms = PathFactory.newPath(DATA_OBJECTS_FOLDER, modelUri);
-        
+
         finderService = new DataObjectFinderServiceImpl(projectService, dataModelerService);
 
         formModelHandlerManager = new TestFormModelHandlerManager(projectService,
@@ -440,7 +443,7 @@ public class FormGenerationIntegrationTest {
     }
 
     private FormGenerationResult generateForm(String formName, AbstractJBPMFormModel formModel) {
-        final String DEFINITIONS_URI = getUriOfResource("/formgeneration/");
+        final String DEFINITIONS_URI = getUriOfResource(DEFINITIONS_FOLDER);
         final Path formPath = PathFactory.newPath(formName, DEFINITIONS_URI + formName);
         return service.generateForms(formModel, formPath);
     }
