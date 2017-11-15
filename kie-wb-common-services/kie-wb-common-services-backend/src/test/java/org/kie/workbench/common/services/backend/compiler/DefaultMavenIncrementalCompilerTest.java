@@ -229,6 +229,71 @@ public class DefaultMavenIncrementalCompilerTest {
         TestUtil.rm(tmpRoot.toFile());
     }
 
+    @Test
+    public void testError() throws Exception {
+        Path tmpRoot = Files.createTempDirectory("repo");
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
+        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_untouched_with_error"),
+                          temp);
+        //end NIO
+
+        //compiler
+        AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
+                                                               Boolean.TRUE, Boolean.TRUE);
+        CompilationResponse res = compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "DefaultMavenIncrementalCompilerTest.testError");
+        }
+
+        //checks
+        Assert.assertTrue(res.isSuccessful());
+
+        List<String> fileNames = new ArrayList<>();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/dummyA/target/classes/dummy"))) {
+            for (Path path : directoryStream) {
+                fileNames.add(path.toString());
+            }
+        }
+        Assert.assertTrue(fileNames.size() == 1);
+        String dummyAJava = null;
+        if (fileNames.get(0).endsWith("DummyA.class")) {
+            dummyAJava = fileNames.get(0);
+        }
+        Assert.assertTrue(dummyAJava != null);
+
+        fileNames = new ArrayList<>();
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(temp + "/dummyB/target/classes/dummy"))) {
+            for (Path path : directoryStream) {
+                fileNames.add(path.toString());
+            }
+        }
+
+        Assert.assertTrue(fileNames.size() == 1);
+        String dummyBJava = null;
+        if (fileNames.get(0).endsWith("DummyB.class")) {
+            dummyBJava = fileNames.get(0);
+        }
+        Assert.assertTrue(dummyBJava != null);
+
+        Assert.assertTrue(res.getMavenOutput().isPresent());
+        List<String> output = res.getMavenOutput().get();
+        Assert.assertTrue(isPresent(output,
+                                    "Previous incremental build state does not exist, performing full build"));
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 2 out of 2 sources "));
+
+        Assert.assertTrue(isPresent(output,
+                                    "Compiled 1 out of 1 sources "));
+
+        TestUtil.rm(tmpRoot.toFile());
+    }
+
     private boolean isPresent(List<String> output,
                               String text) {
         return output.stream().anyMatch(s -> s.contains(text));

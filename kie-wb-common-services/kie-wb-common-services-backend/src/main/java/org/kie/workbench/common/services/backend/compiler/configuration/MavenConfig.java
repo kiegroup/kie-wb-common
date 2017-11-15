@@ -16,6 +16,10 @@ public class MavenConfig {
 
     public static String MAVEN_SKIP = "skip";
 
+    public static String MAVEN_SOURCE = "source";
+
+    public static String MAVEN_TARGET = "target";
+
     public static String MAVEN_SKIP_MAIN = "skipMain";
 
     public static String MAVEN_DEFAULT_COMPILE = "default-compile";

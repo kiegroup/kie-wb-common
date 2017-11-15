@@ -42,10 +42,9 @@ public class DefaultIncrementalCompilerEnabler implements IncrementalCompilerEna
 
     private DefaultPomEditor editor;
 
-    public DefaultIncrementalCompilerEnabler(Compilers compiler) {
+    public DefaultIncrementalCompilerEnabler() {
         editor = new DefaultPomEditor(new HashSet<PomPlaceHolder>(),
-                                      new ConfigurationContextProvider(),
-                                      compiler);
+                                      new ConfigurationContextProvider());
     }
 
     @Override
