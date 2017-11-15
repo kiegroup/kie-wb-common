@@ -58,20 +58,17 @@ public class DefaultPomEditor implements PomEditor {
     public final String KJAR_EXT = "kjar";
     protected final Logger logger = LoggerFactory.getLogger(DefaultPomEditor.class);
     protected String FILE_URI = "file://";
-    protected Compilers compiler;
     protected Map<ConfigurationKey, String> conf;
     protected MavenXpp3Reader reader;
     protected MavenXpp3Writer writer;
     protected Set<PomPlaceHolder> history;
 
     public DefaultPomEditor(Set<PomPlaceHolder> history,
-                            ConfigurationProvider config,
-                            Compilers compiler) {
+                            ConfigurationProvider config) {
         conf = config.loadConfiguration();
         reader = new MavenXpp3Reader();
         writer = new MavenXpp3Writer();
         this.history = history;
-        this.compiler = compiler;
     }
 
     public Set<PomPlaceHolder> getHistory() {
@@ -201,6 +198,17 @@ public class DefaultPomEditor implements PomEditor {
                 kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN));
                 kieTakariPlugin.setVersion(kieMavenPlugin.getVersion());
                 kieTakariPlugin.setExtensions(Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
+                Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
+                compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
+                Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
+                sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
+                Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
+                targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
+                Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
+                configuration.addChild(compilerId);
+                configuration.addChild(sourceVersion);
+                configuration.addChild(targetVersion);
+                kieTakariPlugin.setConfiguration(configuration);
                 plugins.set(kieMavenPluginPosition,
                             kieTakariPlugin);
                 build.setPlugins(plugins);
@@ -223,9 +231,16 @@ public class DefaultPomEditor implements PomEditor {
         execution.setPhase(MavenCLIArgs.COMPILE);
 
         Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
-        compilerId.setValue(compiler.name().toLowerCase());
+        compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
+        Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
+        sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
+        Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
+        targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
         Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
         configuration.addChild(compilerId);
+        configuration.addChild(sourceVersion);
+        configuration.addChild(targetVersion);
+
 
         execution.setConfiguration(configuration);
         newCompilerPlugin.setExecutions(Arrays.asList(execution));

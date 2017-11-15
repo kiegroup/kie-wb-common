@@ -31,7 +31,7 @@ public class MavenUtilsTest {
 
     @Test
     public void presenceOfDepInThePrj() throws Exception {
-        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler(Compilers.JAVAC);
+        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         List<String> pomList = MavenUtils.searchPoms(Paths.get("src/test/projects/dummy_kie_multimodule_untouched/"));
         assertTrue(pomList.size() == 3);
         List<Artifact> deps = MavenUtils.resolveDependenciesFromMultimodulePrj(pomList);

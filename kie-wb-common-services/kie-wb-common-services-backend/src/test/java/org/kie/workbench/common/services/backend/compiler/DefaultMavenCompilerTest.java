@@ -32,11 +32,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -46,6 +48,7 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.*;
 
 public class DefaultMavenCompilerTest {
@@ -376,5 +379,54 @@ public class DefaultMavenCompilerTest {
         assertTrue(res.getMavenOutput().isPresent());
 
         TestUtil.rm(tmpRootCloned.toFile());
+    }
+
+
+    @Test
+    public void testJDTCompiler() throws Exception {
+
+        Path tmpRoot = Files.createTempDirectory("repo");
+
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
+        TestUtil.copyTree(Paths.get("src/test/projects/dummy_kie_multimodule_untouched_with_error"),
+                          temp);
+        //end NIO
+        Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString(),
+                             "dummy");
+
+        Path mainPom = Paths.get(tmp.toAbsolutePath().toString(),
+                                 "pom.xml");
+        byte[] encoded = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
+                                                      "pom.xml"));
+        String pomAsAstring = new String(encoded,
+                                         StandardCharsets.UTF_8);
+        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
+        assertFalse(pomAsAstring.contains("<compilerId>jdt</compilerId>"));
+        assertFalse(pomAsAstring.contains("<source>1.8</source>"));
+        assertFalse(pomAsAstring.contains("<target>1.8</target>"));
+
+        byte[] encodedDummyB = Files.readAllBytes(Paths.get(tmp.toAbsolutePath().toString(),
+                                                            "/dummyB/pom.xml"));
+
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, "-X"},
+                                                               Boolean.FALSE, Boolean.FALSE);
+        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
+        assertTrue(enabler.process(req).getResult());
+
+        encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
+        pomAsAstring = new String(encoded,
+                                  StandardCharsets.UTF_8);
+
+        assertTrue(pomAsAstring.contains("<compilerId>jdt</compilerId>"));
+        assertTrue(pomAsAstring.contains("<source>1.8</source>"));
+        assertTrue(pomAsAstring.contains("<target>1.8</target>"));
+
+        TestUtil.rm(tmpRoot.toFile());
     }
 }

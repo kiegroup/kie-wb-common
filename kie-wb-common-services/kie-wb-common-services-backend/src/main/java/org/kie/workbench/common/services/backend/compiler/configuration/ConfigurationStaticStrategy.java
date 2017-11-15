@@ -36,6 +36,10 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order
     public ConfigurationStaticStrategy() {
         conf = new HashMap<>();
 
+        conf.put(ConfigurationKey.COMPILER, "jdt");
+        conf.put(ConfigurationKey.SOURCE_VERSION, "1.8");
+        conf.put(ConfigurationKey.TARGET_VERSION, "1.8");
+
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
                  "org.apache.maven.plugins");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
@@ -48,7 +52,7 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
                  "takari-lifecycle-plugin");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
-                 "1.13.0");
+                 "1.13.3");
 
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                  "org.kie");

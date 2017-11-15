@@ -54,7 +54,7 @@ public abstract class BaseMavenCompiler<T extends CompilationResponse> implement
 
     public BaseMavenCompiler() {
         cli = new AFMavenCli();
-        enabler = new DefaultIncrementalCompilerEnabler(Compilers.JAVAC);
+        enabler = new DefaultIncrementalCompilerEnabler();
     }
 
     /**

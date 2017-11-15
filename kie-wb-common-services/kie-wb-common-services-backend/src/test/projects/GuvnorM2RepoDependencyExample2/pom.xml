@@ -37,6 +37,11 @@
                 <groupId>io.takari.maven.plugins</groupId>
                 <artifactId>takari-lifecycle-plugin</artifactId>
                 <version>1.13.3</version>
+                <configuration>
+                    <compilerId>jdt</compilerId>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
                 <executions>
                     <execution>
                         <id>compile</id>
@@ -45,7 +50,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <compilerId>javac</compilerId>
+                            <compilerId>jdt</compilerId>
                         </configuration>
                     </execution>
                 </executions>

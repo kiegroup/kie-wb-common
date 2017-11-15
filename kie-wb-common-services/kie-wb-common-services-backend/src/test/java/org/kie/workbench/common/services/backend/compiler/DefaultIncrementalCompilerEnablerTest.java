@@ -84,7 +84,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
-        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler(Compilers.JAVAC);
+        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         Assert.assertTrue(enabler.process(req).getResult());
 
         encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
@@ -131,7 +131,7 @@ public class DefaultIncrementalCompilerEnablerTest {
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, "-X"},
                                                                Boolean.FALSE, Boolean.FALSE);
-        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler(Compilers.JAVAC);
+        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         assertTrue(enabler.process(req).getResult());
 
         assertTrue(info.isKiePluginPresent());

@@ -45,6 +45,13 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
         if (isValid()) {
             conf = new HashMap<>();
 
+            conf.put(ConfigurationKey.COMPILER,
+                     props.getProperty(ConfigurationKey.COMPILER.name()));
+            conf.put(ConfigurationKey.SOURCE_VERSION,
+                     props.getProperty(ConfigurationKey.SOURCE_VERSION.name()));
+            conf.put(ConfigurationKey.TARGET_VERSION,
+                     props.getProperty(ConfigurationKey.TARGET_VERSION.name()));
+
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
                      props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
