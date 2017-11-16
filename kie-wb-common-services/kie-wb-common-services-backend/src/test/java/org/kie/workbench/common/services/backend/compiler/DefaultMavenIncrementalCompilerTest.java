@@ -291,6 +291,8 @@ public class DefaultMavenIncrementalCompilerTest {
         TestUtil.rm(tmpRoot.toFile());
     }
 
+
+
     private boolean isPresent(List<String> output,
                               String text) {
         return output.stream().anyMatch(s -> s.contains(text));

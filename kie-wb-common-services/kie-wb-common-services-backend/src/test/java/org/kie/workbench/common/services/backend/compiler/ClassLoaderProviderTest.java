@@ -302,4 +302,66 @@ public class ClassLoaderProviderTest {
         Assert.assertTrue(resources.size() == 3);
         TestUtil.rm(tmpRoot.toFile());
     }
+
+    @Test
+    public void getResourcesFromADroolsPRJWithError() throws Exception {
+        /**
+         * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
+         * */
+        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                     "dummy"));
+        TestUtil.copyTree(Paths.get("target/test-classes/kjar-2-single-resources_with_error"),
+                          tmp);
+
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath, MavenCLIArgs.FAIL_NEVER},
+                                                               Boolean.FALSE, Boolean.FALSE);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
+        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+                                                      "KieMetadataTest.getResourcesFromADroolsPRJWithError");
+        }
+        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
+            List<String> msgs = res.getMavenOutput().get();
+            for(String msg: msgs){
+                logger.info(msg);
+            }
+        }
+
+        Assert.assertTrue(res.isSuccessful());
+
+        Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
+        Assert.assertTrue(metaDataOptional.isPresent());
+        KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
+        Assert.assertNotNull(kieModuleMetaInfo);
+
+        Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
+        Assert.assertEquals(rulesBP.size(),
+                            1);
+
+        Optional<KieModule> kieModuleOptional = res.getKieModule();
+        Assert.assertTrue(kieModuleOptional.isPresent());
+        KieModule kModule = kieModuleOptional.get();
+
+        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
+        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
+
+        KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
+                                                                        res.getProjectDependenciesAsURI().get());
+
+        Assert.assertNotNull(kieModuleMetaData);
+
+        Optional<List<String>> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
+        assertTrue(classloaderOptional.isPresent());
+        List<String> resources = classloaderOptional.get();
+        Assert.assertTrue(resources.size() == 3);
+        TestUtil.rm(tmpRoot.toFile());
+
+    }
 }
