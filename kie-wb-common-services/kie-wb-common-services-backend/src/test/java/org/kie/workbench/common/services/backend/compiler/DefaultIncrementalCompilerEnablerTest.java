@@ -97,6 +97,53 @@ public class DefaultIncrementalCompilerEnablerTest {
     }
 
     @Test
+    public void testReadPomsInaPrjMortgages() throws Exception {
+
+        FileSystemProvider fs = FileSystemProviders.getDefaultProvider();
+
+        Path tmpRoot = Files.createTempDirectory("repo");
+        //NIO creation and copy content
+        Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
+                                                      "dummy"));
+        TestUtil.copyTree(Paths.get("src/test/projects/mortgages"),
+                          temp);
+        //end NIO
+        Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString(),
+                             "dummy");
+
+        Path mainPom = Paths.get(temp.toAbsolutePath().toString(),
+                                 "pom.xml");
+
+        byte[] encoded = Files.readAllBytes(Paths.get(temp.toAbsolutePath().toString(),
+                                                      "pom.xml"));
+        String pomAsAstring = new String(encoded,
+                                         StandardCharsets.UTF_8);
+        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        Assert.assertFalse(pomAsAstring.contains("<groupId>org.eclipse.tycho</groupId>"));
+        Assert.assertFalse(pomAsAstring.contains("<artifactId>tycho-compiler-jdt</artifactId>"));
+        Assert.assertFalse(pomAsAstring.contains("<version>0.22.0</version>"));
+
+
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
+
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               Boolean.FALSE);
+        DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
+        Assert.assertTrue(enabler.process(req).getResult());
+
+        encoded = Files.readAllBytes(Paths.get(mainPom.toString()));
+        pomAsAstring = new String(encoded,
+                                  StandardCharsets.UTF_8);
+        Assert.assertTrue(pomAsAstring.contains("<groupId>org.eclipse.tycho</groupId>"));
+        Assert.assertTrue(pomAsAstring.contains("<artifactId>tycho-compiler-jdt</artifactId>"));
+        Assert.assertTrue(pomAsAstring.contains("<version>0.22.0</version>"));
+
+        TestUtil.rm(tmpRoot.toFile());
+    }
+
+    @Test
     public void testReadKiePluginTest() throws Exception {
 
         Path tmpRoot = Files.createTempDirectory("repo");
