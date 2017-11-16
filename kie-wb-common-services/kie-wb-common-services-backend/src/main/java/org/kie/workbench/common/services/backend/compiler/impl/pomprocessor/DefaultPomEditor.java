@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -159,7 +160,8 @@ public class DefaultPomEditor implements PomEditor {
 
         if (!alternativeCompilerPluginPresent) {
             //add alternative compiler and disable the default compiler
-            build.addPlugin(getNewCompilerPlugin());
+            //build.addPlugin(getNewCompilerPlugin());
+            build.addPlugin(getTemporaryNewCompilerPlugin());
             alternativeCompilerPluginPresent = Boolean.TRUE;
             overwritePOM = Boolean.TRUE;
         }
@@ -216,6 +218,65 @@ public class DefaultPomEditor implements PomEditor {
             }
         }
         return overwritePOM;
+    }
+
+
+    protected Plugin getTemporaryNewCompilerPlugin() {
+
+        /*
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.1</version>
+          <configuration>
+              <compilerId>jdt</compilerId>
+              <source>1.8</source>
+              <target>1.8</target>
+              <optimize>true</optimize>
+              <failOnError>false</failOnError>
+          </configuration>
+          <dependencies>
+              <dependency>
+                  <groupId>org.eclipse.tycho</groupId>
+                  <artifactId>tycho-compiler-jdt</artifactId>
+                  <version>0.22.0</version>
+              </dependency>
+          </dependencies>
+</plugin>
+    }*/
+
+        Plugin newCompilerPlugin = new Plugin();
+        newCompilerPlugin.setGroupId("org.apache.maven.plugins");
+        newCompilerPlugin.setArtifactId("maven-compiler-plugin");
+        newCompilerPlugin.setVersion("3.1");
+
+        List<Dependency> dependencies = new ArrayList<>();
+        Dependency dependency = new Dependency();
+        dependency.setGroupId("org.eclipse.tycho");
+        dependency.setArtifactId("tycho-compiler-jdt");
+        dependency.setVersion("0.22.0");
+        dependencies.add(dependency);
+        newCompilerPlugin.setDependencies(dependencies);
+
+        Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
+        compilerId.setValue("jdt");
+        Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
+        sourceVersion.setValue("1.8");
+        Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
+        targetVersion.setValue("1.8");
+        Xpp3Dom optimize = new Xpp3Dom("optimize");
+        optimize.setValue("true");
+        Xpp3Dom failOnError = new Xpp3Dom("failOnError");
+        failOnError.setValue("false");
+        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
+        configuration.addChild(compilerId);
+        configuration.addChild(sourceVersion);
+        configuration.addChild(targetVersion);
+        configuration.addChild(optimize);
+        configuration.addChild(failOnError);
+        newCompilerPlugin.setConfiguration(configuration);
+
+        return newCompilerPlugin;
     }
 
     protected Plugin getNewCompilerPlugin() {
