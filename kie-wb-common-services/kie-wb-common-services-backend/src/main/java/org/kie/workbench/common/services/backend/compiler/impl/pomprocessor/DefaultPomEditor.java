@@ -160,12 +160,18 @@ public class DefaultPomEditor implements PomEditor {
 
         if (!alternativeCompilerPluginPresent) {
             //add alternative compiler and disable the default compiler
-            //build.addPlugin(getNewCompilerPlugin());
-            build.addPlugin(getTemporaryNewCompilerPlugin());
+            //build.addPlugin(getNewCompilerPlugin()); disabled temporarly
+            build.addPlugin(getTemporaryNewCompilerPlugin());// temporarly enabled
+            swapPositionsTemporaryPlugin(build,
+                                          defaultMavenCompilerPosition,
+                                          alternativeCompilerPosition);
+            //end opf temporary enabled
+
+
             alternativeCompilerPluginPresent = Boolean.TRUE;
             overwritePOM = Boolean.TRUE;
         }
-
+        /* disabled temporarly
         if (!defaultCompilerPluginPresent) {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = new Plugin();
@@ -187,7 +193,7 @@ public class DefaultPomEditor implements PomEditor {
                                        defaultMavenCompiler);
                 overwritePOM = Boolean.TRUE;
             }
-        }
+        }*/
 
         // Change the kie-maven-plugin into kie-takari-plugin
         if (kiePluginPresent && !kieTakariPresent) {
@@ -220,30 +226,30 @@ public class DefaultPomEditor implements PomEditor {
         return overwritePOM;
     }
 
+    private void swapPositionsTemporaryPlugin(Build build,
+                                               int defaultMavenCompilerPosition,
+                                               int alternativeCompilerPosition) {
+        int buildPluginSize = build.getPlugins().size();
+        int compilerPosition = 0;
+        for(int i=0;  i < buildPluginSize; i++){
+            Plugin plugin = build.getPlugins().get(i);
+            if(plugin.getArtifactId().equals("maven-compiler-plugin")){
+                compilerPosition = i;
+                break;
+            }
+        }
+
+        if(compilerPosition >0) {
+            Plugin defaultMavenCompiler = build.getPlugins().get(compilerPosition);
+            Plugin firstPlugin = build.getPlugins().get(0);
+            build.getPlugins().set(0,
+                                   defaultMavenCompiler);
+            build.getPlugins().set(compilerPosition,
+                                   firstPlugin);
+        }
+    }
 
     protected Plugin getTemporaryNewCompilerPlugin() {
-
-        /*
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.1</version>
-          <configuration>
-              <compilerId>jdt</compilerId>
-              <source>1.8</source>
-              <target>1.8</target>
-              <optimize>true</optimize>
-              <failOnError>false</failOnError>
-          </configuration>
-          <dependencies>
-              <dependency>
-                  <groupId>org.eclipse.tycho</groupId>
-                  <artifactId>tycho-compiler-jdt</artifactId>
-                  <version>0.22.0</version>
-              </dependency>
-          </dependencies>
-</plugin>
-    }*/
 
         Plugin newCompilerPlugin = new Plugin();
         newCompilerPlugin.setGroupId("org.apache.maven.plugins");
