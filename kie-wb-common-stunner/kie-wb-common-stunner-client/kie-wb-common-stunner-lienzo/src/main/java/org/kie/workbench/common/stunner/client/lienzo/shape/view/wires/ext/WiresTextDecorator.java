@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.Text;
-import com.ait.lienzo.client.core.shape.TextBoundsWrap;
+import com.ait.lienzo.client.core.shape.TextBoundsAndLineBreaksWrap;
 import com.ait.lienzo.client.core.shape.wires.LayoutContainer;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.shared.core.types.ColorName;
@@ -51,7 +51,7 @@ public class WiresTextDecorator {
     private ViewHandler<TextClickEvent> textClickEventViewHandler;
     private ViewHandler<TextDoubleClickEvent> textDblClickEventViewHandler;
     private Text text;
-    private TextBoundsWrap textWrapper;
+    private TextBoundsAndLineBreaksWrap textWrapper;
     private LayoutContainer.Layout currentTextLayout;
 
     public WiresTextDecorator(final ViewEventHandlerManager eventHandlerManager) {
@@ -83,7 +83,7 @@ public class WiresTextDecorator {
                 .setDraggable(false)
                 .setAlpha(0)
                 .setTextAlign(TextAlign.CENTER);
-        this.textWrapper = new TextBoundsWrap(text,
+        this.textWrapper = new TextBoundsAndLineBreaksWrap(text,
                                               new BoundingBox(0,
                                                               0,
                                                               100,

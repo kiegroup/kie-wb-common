@@ -48,7 +48,7 @@ public class DiagramSet implements BPMNPropertySet, BPMNBaseInfo {
     public static final transient String propertySetName = "BPMN Process";
 
     @Property
-    @FormField
+    @FormField(type = TextAreaFieldType.class)
     @Valid
     private Name name;
 
