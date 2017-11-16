@@ -243,7 +243,7 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER, MavenCLIArgs.DEBUG},
                                                                Boolean.TRUE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
@@ -293,6 +293,8 @@ public class DefaultMavenIncrementalCompilerTest {
 
         TestUtil.rm(tmpRoot.toFile());
     }
+
+
 
     private boolean isPresent(List<String> output,
                               String text) {
