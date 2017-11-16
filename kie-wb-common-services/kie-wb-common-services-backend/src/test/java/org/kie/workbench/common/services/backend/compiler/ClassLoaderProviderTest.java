@@ -19,7 +19,6 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,8 +32,8 @@ import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
@@ -49,7 +48,10 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ClassLoaderProviderTest {
 
@@ -87,8 +89,8 @@ public class ClassLoaderProviderTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -137,12 +139,11 @@ public class ClassLoaderProviderTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
         }
         assertTrue(res.isSuccessful());
-
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                             mavenRepo.toAbsolutePath().toString());
@@ -187,8 +188,8 @@ public class ClassLoaderProviderTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
         }
         assertTrue(res.isSuccessful());
@@ -261,16 +262,16 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
         }
-        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
-            List<String> msgs = res.getMavenOutput().get();
-            for(String msg: msgs){
+        if (!res.isSuccessful()) {
+            List<String> msgs = res.getMavenOutput();
+            for (String msg : msgs) {
                 logger.info(msg);
             }
         }
@@ -290,19 +291,15 @@ public class ClassLoaderProviderTest {
         Assert.assertTrue(kieModuleOptional.isPresent());
         KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
-        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
+        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-                                                                        res.getProjectDependenciesAsURI().get());
+                                                                        res.getDependenciesAsURI());
 
         Assert.assertNotNull(kieModuleMetaData);
 
-        Optional<List<String>> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
-        assertTrue(classloaderOptional.isPresent());
-        List<String> resources = classloaderOptional.get();
+        List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         Assert.assertTrue(resources.size() == 3);
         TestUtil.rm(tmpRoot.toFile());
-
     }
 }

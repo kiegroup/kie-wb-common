@@ -22,16 +22,16 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.services.backend.compiler.AFCompiler;
+import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.AFCompiler;
-import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.MavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +78,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.VERSION},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -106,8 +106,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -137,8 +137,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -176,8 +176,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
         }
 
@@ -200,8 +200,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         }
         long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        List<String> output = res.getMavenOutput().get();
+        List<String> output = res.getMavenOutput();
         Assert.assertTrue(isPresent(output,
                                     "Previous incremental build state does not exist, performing full build"));
         Assert.assertTrue(isPresent(output,
@@ -214,8 +213,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
 
         //second compilation
         res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieDefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
         }
 
@@ -234,8 +233,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         long dummyJavaSizeAfterChanges = Paths.get(dummyJava).toFile().length();
         Assert.assertTrue(dummyJavaSize < dummyJavaSizeAfterChanges);
 
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        output = res.getMavenOutput().get();
+        output = res.getMavenOutput();
         Assert.assertTrue(isPresent(output,
                                     "Performing incremental build"));
         Assert.assertTrue(isPresent(output,

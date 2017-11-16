@@ -15,11 +15,10 @@
  */
 package org.kie.workbench.common.services.backend.builder.cache;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -43,6 +42,8 @@ import org.uberfire.workbench.events.ResourceCopiedEvent;
 import org.uberfire.workbench.events.ResourceDeletedEvent;
 import org.uberfire.workbench.events.ResourceRenamedEvent;
 import org.uberfire.workbench.events.ResourceUpdatedEvent;
+
+import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
  * Server side component that observes for the different resource add/delete/update events related to
@@ -119,14 +120,7 @@ public class ResourceChangeObserver {
         final ProjectBuildData buildData = projectCache.getOrCreateEntry(project);
 
         if (isObservableResource(path)) {
-
-            if (isPomFile(path)) {
-                buildData.invalidate(ProjectBuildData.TypeOfInvalidation.POM);
-            } else {
-                buildData.invalidate(ProjectBuildData.TypeOfInvalidation.OBSERVABLE);
-            }
-
-            buildData.build();
+            buildData.reBuild(convert(path));
         }
 
         if (logger.isDebugEnabled()) {
@@ -142,22 +136,29 @@ public class ResourceChangeObserver {
 
         Project project;
         final Map<Project, Path> pendingNotifications = new HashMap<>();
-        final Set<Project> modifiedPOMProjects = new HashSet<>();
+        final Map<Project, Collection<org.uberfire.java.nio.file.Path>> impactedPaths = new HashMap<>();
         for (final Map.Entry<Path, Collection<ResourceChange>> pathCollectionEntry : resourceChanges.entrySet()) {
-
             //Only process Project resources
             project = projectService.resolveProject(pathCollectionEntry.getKey());
             if (project == null) {
                 continue;
             }
-
-            if (isPomFile(pathCollectionEntry.getKey())) {
-                modifiedPOMProjects.add(project);
+            final Collection<org.uberfire.java.nio.file.Path> value;
+            if (!impactedPaths.containsKey(project)) {
+                value = new ArrayList<>();
+                impactedPaths.put(project, value);
+            } else {
+                value = impactedPaths.get(project);
+            }
+            final boolean isObservable = isObservableResource(pathCollectionEntry.getKey());
+            final boolean isPomFile = isPomFile(pathCollectionEntry.getKey());
+            if (isObservable && !isPomFile) {
+                value.add(convert(pathCollectionEntry.getKey()));
             }
 
-            if (!pendingNotifications.containsKey(project) && isObservableResource(pathCollectionEntry.getKey())) {
+            if (!pendingNotifications.containsKey(project) && isObservable) {
                 pendingNotifications.put(project, pathCollectionEntry.getKey());
-            } else if (isPomFile(pathCollectionEntry.getKey())) {
+            } else if (isPomFile) {
                 //if the pom.xml comes in the batch events set then use the pom.xml path for the cache invalidation event
                 pendingNotifications.put(project, pathCollectionEntry.getKey());
             }
@@ -171,20 +172,12 @@ public class ResourceChangeObserver {
         }
 
         for (final Map.Entry<Project, Path> pendingEntry : pendingNotifications.entrySet()) {
-
             final ProjectBuildData buildData = projectCache.getOrCreateEntry(pendingEntry.getKey());
-
-            if (modifiedPOMProjects.contains(pendingEntry.getKey())) {
-                buildData.invalidate(ProjectBuildData.TypeOfInvalidation.POM);
-            } else {
-                buildData.invalidate(ProjectBuildData.TypeOfInvalidation.OBSERVABLE);
-            }
-
-            buildData.build();
+            buildData.reBuild(impactedPaths.get(pendingEntry.getKey()));
         }
     }
 
-    //Check if the changed file should invalidate the DMO cache
+    //Check if the changed file should reBuild the DMO cache
     private boolean isObservableResource(final Path path) {
         if (path == null) {
             return false;

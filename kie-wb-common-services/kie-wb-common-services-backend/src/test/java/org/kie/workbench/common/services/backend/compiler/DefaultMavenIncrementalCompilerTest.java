@@ -70,8 +70,8 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.VERSION},
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -97,8 +97,8 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -128,8 +128,8 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
         }
         Assert.assertTrue(res.isSuccessful());
@@ -165,8 +165,8 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
         }
 
@@ -188,8 +188,7 @@ public class DefaultMavenIncrementalCompilerTest {
         }
         long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        List<String> output = res.getMavenOutput().get();
+        List<String> output = res.getMavenOutput();
         Assert.assertTrue(isPresent(output,
                                     "Previous incremental build state does not exist, performing full build"));
         Assert.assertTrue(isPresent(output,
@@ -219,8 +218,7 @@ public class DefaultMavenIncrementalCompilerTest {
         long dummyJavaSizeAfterChanges = Paths.get(dummyJava).toFile().length();
         Assert.assertTrue(dummyJavaSize < dummyJavaSizeAfterChanges);
 
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        output = res.getMavenOutput().get();
+        output = res.getMavenOutput();
         Assert.assertTrue(isPresent(output,
                                     "Performing incremental build"));
         Assert.assertTrue(isPresent(output,
@@ -243,11 +241,11 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER, MavenCLIArgs.DEBUG},
                                                                Boolean.TRUE, Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testError");
         }
 
@@ -281,8 +279,7 @@ public class DefaultMavenIncrementalCompilerTest {
         }
         Assert.assertTrue(dummyBJava != null);
 
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        List<String> output = res.getMavenOutput().get();
+        List<String> output = res.getMavenOutput();
         Assert.assertTrue(isPresent(output,
                                     "Previous incremental build state does not exist, performing full build"));
         Assert.assertTrue(isPresent(output,

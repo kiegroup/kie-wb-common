@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -72,19 +73,26 @@ public class MavenOutputConverter {
         return new BuildResults();
     }
 
-    private static Set<BuildMessage> getErrorMsgs(List<String> mavenOutput, String filter, Path path, String partToCut) {
-        Set<BuildMessage> inserted = new TreeSet<>();
-        for (String item : mavenOutput) {
-            if (item.contains(filter)) {
-                BuildMessage msg;
-                if (item.contains(errorLineCheck)) {
-                    msg = getBuildMessage(path, partToCut, item);
-                } else {
-                    msg = getBuildMessageWithoutLineAndColumn(partToCut, item);
+    private static Set<BuildMessage> getErrorMsgs(final List<String> mavenOutput,
+                                                  final String filter,
+                                                  final Path path,
+                                                  final String partToCut) {
+        final Set<BuildMessage> inserted = new LinkedHashSet<>(mavenOutput.size());
+        for (int i = 0; i < mavenOutput.size(); i++) {
+            String item = mavenOutput.get(i);
+            if (item.contains(filter + " " + partToCut)) {
+                final BuildMessage msg = getBuildMessage(path, partToCut, item);
+                inserted.add(msg);
+                int j = i + 1;
+                for (; j < mavenOutput.size(); j++) {
+                    final String nextItem = mavenOutput.get(j);
+                    if (nextItem.startsWith(" ")) {
+                        inserted.add(getBuildMessage(msg, nextItem));
+                    } else {
+                        break;
+                    }
                 }
-                if (msg.getText() != null && !inserted.contains(msg)) {
-                    inserted.add(msg);
-                }
+                i = j;
             }
         }
         return inserted;
@@ -121,16 +129,31 @@ public class MavenOutputConverter {
         String purged = item.replace(partToCut, "");
         int indexOfEdnFilePath = purged.lastIndexOf(errorLineCheck);
         int indexStartOf = purged.indexOf("src/");
-        String errorLine = purged.substring(indexOfEdnFilePath + 2, purged.lastIndexOf("]"));
-        String[] lineAndColum = getErrorLineAndColumn(errorLine);
-        if (lineAndColum != null) {
-            msg.setLine(Integer.parseInt(lineAndColum[0]));
-            msg.setColumn(Integer.parseInt(lineAndColum[1]));
+        if (indexOfEdnFilePath > 0 && indexStartOf > 0) {
+            String errorLine = purged.substring(indexOfEdnFilePath + 2, purged.lastIndexOf("]"));
+            String[] lineAndColum = getErrorLineAndColumn(errorLine);
+            if (lineAndColum != null) {
+                msg.setLine(Integer.parseInt(lineAndColum[0]));
+                msg.setColumn(Integer.parseInt(lineAndColum[1]));
+            }
+            msg.setText(purged.substring(purged.lastIndexOf("]") + 1).trim());
+            String pathString = purged.substring(indexStartOf, indexOfEdnFilePath);
+            msg.setPath(Paths.convert(path.resolve(pathString)));
+        } else {
+            msg.setText(purged.trim());
         }
-        msg.setText(purged.substring(purged.lastIndexOf("]") + 1));
-        String pathString = purged.substring(indexStartOf, indexOfEdnFilePath);
-        msg.setPath(Paths.convert(path.resolve(pathString)));
         msg.setLevel(Level.ERROR);
+        return msg;
+    }
+
+    private static BuildMessage getBuildMessage(final BuildMessage origin,
+                                                final String text) {
+        final BuildMessage msg = new BuildMessage();
+        msg.setLevel(origin.getLevel());
+        msg.setColumn(origin.getColumn());
+        msg.setLine(origin.getLine());
+        msg.setPath(origin.getPath());
+        msg.setText(text.trim());
         return msg;
     }
 

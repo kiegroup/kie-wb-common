@@ -96,13 +96,13 @@ public class KieMetadataTest {
                                                                Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
         }
 
-        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
-            List<String> msgs = res.getMavenOutput().get();
+        if (!res.isSuccessful()) {
+            List<String> msgs = res.getMavenOutput();
             for(String msg: msgs){
                 logger.info(msg);
             }
@@ -125,12 +125,11 @@ public class KieMetadataTest {
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
 
-        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
-        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
+        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
         KieModule kModule = kieModuleOptional.get();
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-                                                                        res.getProjectDependenciesAsURI().get());
+                                                                        res.getDependenciesAsURI());
         Assert.assertNotNull(kieModuleMetaData);
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());
@@ -160,14 +159,13 @@ public class KieMetadataTest {
                                                                    Boolean.TRUE, Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
-            if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+            if (!res.isSuccessful()) {
+                TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                           "KieMetadataTest.compileAndloadKieJarSingleMetadata");
             }
 
-            Assert.assertTrue(res.getMavenOutput().isPresent());
-            if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
-                List<String> msgs = res.getMavenOutput().get();
+            if (!res.isSuccessful()) {
+                List<String> msgs = res.getMavenOutput();
                 for(String msg: msgs){
                     logger.info(msg);
                 }
@@ -187,8 +185,7 @@ public class KieMetadataTest {
             Optional<KieModule> kieModuleOptional = res.getKieModule();
             Assert.assertTrue(kieModuleOptional.isPresent());
 
-            Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
-            Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
+            Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
 
             //comment if you want read the log file after the test run
             TestUtil.rm(tmpRoot.toFile());
@@ -217,12 +214,12 @@ public class KieMetadataTest {
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
                                                                Boolean.FALSE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
         }
-        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
-            List<String> msgs = res.getMavenOutput().get();
+        if (!res.isSuccessful()) {
+            List<String> msgs = res.getMavenOutput();
             for(String msg: msgs){
                 logger.info(msg);
             }
@@ -243,11 +240,10 @@ public class KieMetadataTest {
         Assert.assertTrue(kieModuleOptional.isPresent());
         KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
-        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
+        Assert.assertTrue(res.getDependenciesAsURI().size() == 5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-                                                                        res.getProjectDependenciesAsURI().get());
+                                                                        res.getDependenciesAsURI());
 
         //KieModuleMetaData kieModuleMetaData = KieModuleMetaData.Factory.newKieModuleMetaData(kModule); // broken
         Assert.assertNotNull(kieModuleMetaData);

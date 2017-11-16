@@ -55,7 +55,7 @@ public class MockIncrementalDataModelServiceCaller implements Caller<Incremental
         final ProjectCache projectCache = mock(ProjectCache.class);
 
         final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
-        when(projectBuildData.getPackageDataModelOracle()).thenReturn(packageLoader);
+        when(projectBuildData.getPackageDataModelOracle(any())).thenReturn(packageLoader);
         when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 
         final KieProjectService projectService = mock(KieProjectService.class);

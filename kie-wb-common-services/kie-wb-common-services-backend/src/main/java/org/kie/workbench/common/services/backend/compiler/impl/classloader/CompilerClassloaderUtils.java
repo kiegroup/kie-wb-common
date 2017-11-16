@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,6 +77,9 @@ public class CompilerClassloaderUtils {
     protected static String META_INF = "META-INF";
     protected static String UTF_8 = "UTF-8";
 
+    private CompilerClassloaderUtils() {
+    }
+
     /**
      * Execute a maven run to create the classloaders with the dependencies in the Poms, transitive included
      */
@@ -83,10 +87,11 @@ public class CompilerClassloaderUtils {
                                                                           String localRepo) {
         AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + prjPath)));
-        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
+        final StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.DEPS_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.DEBUG, MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
+                                                               new String[]{MavenCLIArgs.DEBUG,
+                                                                       MavenConfig.DEPS_BUILD_CLASSPATH, sb.toString()},
                                                                Boolean.TRUE,
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -108,16 +113,15 @@ public class CompilerClassloaderUtils {
      **/
     public static Map<String, byte[]> getMapClasses(String path, Map<String, byte[]> store) {
 
-        List<String> keys = IoUtils.recursiveListFile(new File(path), "", filterClasses());
-
-        Map<String, byte[]> classes = new HashMap<String, byte[]>(keys.size());
+        final List<String> keys = IoUtils.recursiveListFile(new File(path), "", filterClasses());
+        final Map<String, byte[]> classes = new HashMap<>(keys.size() + store.size());
 
         for (String item : keys) {
             byte[] bytez = getBytes(path + "/" + item);
             String fqn = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes"
             classes.put(fqn, bytez);
         }
-        if(store != Collections.EMPTY_MAP){
+        if (!store.isEmpty()) {
             for (Map.Entry<String, byte[]> entry : store.entrySet()) {
                 classes.put(entry.getKey(), entry.getValue());
             }
@@ -126,12 +130,12 @@ public class CompilerClassloaderUtils {
     }
 
     public static Predicate<File> filterClasses() {
-        return f -> f.toString().contains(MAVEN_TARGET) && !f.toString().contains(META_INF) &&!FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
+        return f -> f.toString().contains(MAVEN_TARGET) && !f.toString().contains(META_INF) && !FilenameUtils.getName(f.toString()).startsWith(DOT_FILE);
     }
 
-    public static void searchCPFiles(Path file,
-                                     List<String> classPathFiles,
-                                     String... extensions) {
+    public static void searchCPFiles(final Path file,
+                                     final List<String> classPathFiles,
+                                     final String... extensions) {
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
             for (Path p : ds) {
                 if (Files.isDirectory(p)) {
@@ -371,8 +375,8 @@ public class CompilerClassloaderUtils {
         return items;
     }
 
-    public static Optional<List<String>> getStringFromTargets(Path prjPath) {
-        List<String> classPathFiles = new ArrayList<>();
+    public static List<String> getStringFromTargets(Path prjPath) {
+        final List<String> classPathFiles = new ArrayList<>();
         searchTargetFiles(prjPath,
                           classPathFiles,
                           JAVA_CLASS_EXT,
@@ -381,26 +385,20 @@ public class CompilerClassloaderUtils {
                           RDROOLS_EXT,
                           XML_EXT,
                           SCENARIO_EXT);
-        if (!classPathFiles.isEmpty()) {
-            return Optional.of(classPathFiles);
-        }
-        return Optional.empty();
+        return classPathFiles;
     }
 
-    public static Optional<List<String>> getStringsFromTargets(Path prjPath,
-                                                               String... extensions) {
-        List<String> classPathFiles = new ArrayList<>();
+    public static List<String> getStringsFromTargets(Path prjPath,
+                                                     String... extensions) {
+        final List<String> classPathFiles = new ArrayList<>();
         searchCPFiles(prjPath,
                       classPathFiles,
                       extensions);
-        if (!classPathFiles.isEmpty()) {
-            return Optional.of(classPathFiles);
-        }
-        return Optional.empty();
+        return classPathFiles;
     }
 
-    public static Optional<List<String>> getStringsFromAllDependencies(Path prjPath) {
-        List<String> classPathFiles = new ArrayList<>();
+    public static List<String> getStringsFromAllDependencies(Path prjPath) {
+        final List<String> classPathFiles = new ArrayList<>();
         searchCPFiles(prjPath,
                       classPathFiles,
                       MavenConfig.CLASSPATH_EXT,
@@ -410,13 +408,7 @@ public class CompilerClassloaderUtils {
                       GDROOLS_EXT,
                       RDROOLS_EXT,
                       SCENARIO_EXT);
-        if (!classPathFiles.isEmpty()) {
-            List<String> deps = processScannedFilesAsString(classPathFiles);
-            if (!deps.isEmpty()) {
-                return Optional.of(deps);
-            }
-        }
-        return Optional.empty();
+        return processScannedFilesAsString(classPathFiles);
     }
 
     public static List<URI> processScannedFilesAsURIs(List<String> classPathFiles) {
@@ -441,7 +433,7 @@ public class CompilerClassloaderUtils {
     }
 
     public static List<String> processScannedFilesAsString(List<String> classPathFiles) {
-        List<String> deps = new ArrayList<>();
+        final List<String> deps = new ArrayList<>();
         for (String file : classPathFiles) {
             if (FilenameUtils.getName(file).startsWith(".")) {
                 continue;
@@ -522,14 +514,14 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static Set<String> filterPathClasses(List<String> paths,  String mavenRpo) {
+    public static Set<String> filterPathClasses(Collection<String> paths, String mavenRpo) {
         int mavenRepoLength = mavenRpo.length();
         Set<String> filtered = new HashSet<>(paths.size());
         for (String item : paths) {
             if (item.endsWith(JAVA_CLASS_EXT)) {
                 String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes/"
-                if(one.contains("/")){  //there is a package
-                   one =  one.substring(0, one.lastIndexOf("/")).replace("/", ".");
+                if (one.contains("/")) {  //there is a package
+                    one = one.substring(0, one.lastIndexOf("/")).replace("/", ".");
                     filtered.add(one);
                 }
             } else if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
@@ -541,14 +533,14 @@ public class CompilerClassloaderUtils {
         return filtered;
     }
 
-    public static List<String> filterClassesByPackage(List<String> items, String packageName) {
+    public static List<String> filterClassesByPackage(Collection<String> items, String packageName) {
         String packageNameWithSlash = packageName.replace(".", "/");//fix for the wildcard
         List<String> filtered = new ArrayList<>(items.size());
         for (String item : items) {
             if (!item.contains(META_INF)) {
                 String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15, item.lastIndexOf(".")); // 15 chars are for "target/classes/"
                 if (one.contains(packageNameWithSlash)) {
-                    if(one.contains("/")) { //there is a package
+                    if (one.contains("/")) { //there is a package
                         one = one.replace("/", ".");
                     }
                     filtered.add(one);

@@ -81,7 +81,7 @@ public class IncrementalDataModelServiceImpl implements IncrementalDataModelServ
             String fullyQualifiedClassName = factType;
 
             //Retrieve (or build) oracle and populate incremental content
-            final PackageDataModelOracle oracle = projectCache.getOrCreateEntry(project).getPackageDataModelOracle();
+            final PackageDataModelOracle oracle = projectCache.getOrCreateEntry(project).getPackageDataModelOracle(pkg);
 
             // Check if the FactType is already known to the DataModelOracle, otherwise we need to find the FQCN
             if (oracle.getProjectModelFields().get(fullyQualifiedClassName) == null) {

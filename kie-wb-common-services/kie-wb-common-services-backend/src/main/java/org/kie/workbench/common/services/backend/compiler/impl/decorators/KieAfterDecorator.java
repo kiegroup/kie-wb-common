@@ -23,7 +23,12 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.drools.compiler.kie.builder.impl.FileKieModule;
 import org.drools.core.rule.KieModuleMetaInfo;
@@ -33,11 +38,13 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Path;
+
+import static org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils.getStringFromTargets;
+import static org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils.getStringsFromAllDependencies;
 
 /***
  * After decorator that reads and store the Object created by the Kie takari plugin and placed in the CompilationResponse
@@ -58,47 +65,42 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     @Override
     public T compileSync(CompilationRequest req) {
         T res = compiler.compileSync(req);
-        if (res.isSuccessful()) {
-
-            if (req.getInfo().isKiePluginPresent()) {
-                return (T) handleKieMavenPlugin(req,
-                                                res);
-            } else {
-                return (T) handleNormalBuild(req, res);
-            }
+        if (req.getInfo().isKiePluginPresent()) {
+            return (T) handleKieMavenPlugin(req, res);
         }
-        return res;
+        return (T) handleNormalBuild(req, res);
     }
 
     @Override
-    public void cleanInternalCache() {}
+    public void cleanInternalCache() {
+    }
 
     private KieCompilationResponse handleKieMavenPlugin(CompilationRequest req,
                                                         CompilationResponse res) {
 
-        KieTuple kieModuleMetaInfoTuple = read(req,KieModuleMetaInfo.class.getName(), "kieModuleMetaInfo not present in the map");
-        KieTuple kieModuleTuple = read(req, FileKieModule.class.getName(), "kieModule not present in the map");
-        List<String> mavenOutput = getMavenOutput(req, res);
+        final KieTuple kieModuleMetaInfoTuple = read(req, KieModuleMetaInfo.class.getName(), "kieModuleMetaInfo not present in the map");
+        final KieTuple kieModuleTuple = read(req, FileKieModule.class.getName(), "kieModule not present in the map");
+        final List<String> mavenOutput = getMavenOutput(req, res);
 
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
+            final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
+            final List<String> projectDependencies = readProjectDependencies(req);
 
-            List<String> allDepsAsString = readAllDepsAsString(req);
-            KieTuple kieProjectClassloaderStore = read(req, prjClassloaderStoreKey, "ProjectClassLoaderStore Map not present in the map");
-            KieTuple eventClasses = read(req, eventClassesKey, "EventClasses Set not present in the map");
-            Set<String> events = getEventTypes(eventClasses);
-            Map<String, byte[]> store = getDroolsGeneratedClasses(kieProjectClassloaderStore);
+            final KieTuple kieProjectClassloaderStore = read(req, prjClassloaderStoreKey, "ProjectClassLoaderStore Map not present in the map");
+            final KieTuple eventClasses = read(req, eventClassesKey, "EventClasses Set not present in the map");
+            final Set<String> events = getEventTypes(eventClasses);
+            final Map<String, byte[]> store = getDroolsGeneratedClasses(kieProjectClassloaderStore);
 
-            return new DefaultKieCompilationResponse(Boolean.TRUE,
+            return new DefaultKieCompilationResponse(res.isSuccessful(),
                                                      (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
                                                      (KieModule) kieModuleTuple.getOptionalObject().get(),
                                                      store,
                                                      mavenOutput,
-                                                     allDepsAsString,
+                                                     targetContent,
+                                                     projectDependencies,
                                                      req.getInfo().getPrjPath(),
                                                      events);
-
         } else {
-
             List<String> msgs = new ArrayList<>();
             if (kieModuleMetaInfoTuple.getErrorMsg().isPresent()) {
 
@@ -109,78 +111,54 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
             }
             msgs.addAll(mavenOutput);
             return new DefaultKieCompilationResponse(Boolean.FALSE, msgs, req.getInfo().getPrjPath());
-
         }
     }
 
     private Map<String, byte[]> getDroolsGeneratedClasses(KieTuple kieProjectClassloaderStore) {
         Map<String, byte[]> store = Collections.emptyMap();
-        if(kieProjectClassloaderStore.getOptionalObject().isPresent()){
-            store =  (Map<String, byte[]>) kieProjectClassloaderStore.getOptionalObject().get();
+        if (kieProjectClassloaderStore.getOptionalObject().isPresent()) {
+            store = (Map<String, byte[]>) kieProjectClassloaderStore.getOptionalObject().get();
         }
         return store;
     }
 
-    private Set<String> getEventTypes(KieTuple eventClasses) {
+    private Set<String> getEventTypes(final KieTuple eventClasses) {
         Set<String> events = Collections.emptySet();
-        if(eventClasses.getOptionalObject().isPresent()){
-             events = (Set<String>)eventClasses.getOptionalObject().get();
+        if (eventClasses.getOptionalObject().isPresent()) {
+            events = (Set<String>) eventClasses.getOptionalObject().get();
         }
         return events;
     }
 
-    private KieCompilationResponse handleNormalBuild(CompilationRequest req,
-                                                     CompilationResponse res) {
+    private KieCompilationResponse handleNormalBuild(final CompilationRequest req,
+                                                     final CompilationResponse res) {
 
-        List<String> mavenOutput = getMavenOutput(req, res);
-        List<String> allDepsAsString = readAllDepsAsString(req);
+        final List<String> mavenOutput = getMavenOutput(req, res);
+        final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
+        final List<String> projectDependencies = readProjectDependencies(req);
         if (res.isSuccessful()) {
-            return new DefaultKieCompilationResponse(Boolean.TRUE, null, null, null, mavenOutput, allDepsAsString, req.getInfo().getPrjPath(), null);
+            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, mavenOutput, targetContent, projectDependencies, req.getInfo().getPrjPath(), null);
         } else {
             List<String> msgs = new ArrayList<>();
             msgs.addAll(mavenOutput);
-            return new DefaultKieCompilationResponse(Boolean.FALSE, msgs, req.getInfo().getPrjPath());
+            return new DefaultKieCompilationResponse(res.isSuccessful(), msgs, req.getInfo().getPrjPath());
         }
     }
 
-    private List<String> readAllDepsAsString(CompilationRequest req) {
-        List<String> allDeps = Collections.EMPTY_LIST;
+    private List<String> readProjectDependencies(CompilationRequest req) {
         if (!req.skipPrjDependenciesCreationList()) {
-            allDeps = getAllDepsAsString(req);
+            return getStringsFromAllDependencies(req.getInfo().getPrjPath());
         }
-        return allDeps;
+        return Collections.emptyList();
     }
 
     private List<String> getMavenOutput(CompilationRequest req,
                                         CompilationResponse res) {
-        List<String> mavenOutput = Collections.EMPTY_LIST;
-
-        if (req.getKieCliRequest().isLogRequested() && res.getMavenOutput().isPresent()) {
-            mavenOutput = res.getMavenOutput().get();
-        }
-        return mavenOutput;
+        return res.getMavenOutput();
     }
 
-    private List<String> getAllDepsAsString(CompilationRequest req) {
-        List<String> items = Collections.EMPTY_LIST;
-        if (!req.skipPrjDependenciesCreationList()) {
-            Optional<List<String>> optionalDeps = CompilerClassloaderUtils.getStringsFromAllDependencies(req.getInfo().getPrjPath());
-            if (optionalDeps.isPresent()) {
-                items = optionalDeps.get();
-            }
-        }
-        Optional<List<String>> artifactsFromTargets = CompilerClassloaderUtils.getStringFromTargets(req.getInfo().getPrjPath());
-        if (artifactsFromTargets.isPresent()) {
-            if (items.equals(Collections.EMPTY_LIST)) {
-                items = new ArrayList<>(artifactsFromTargets.get().size());
-            }
-            items.addAll(artifactsFromTargets.get());
-        }
-        return items;
-    }
-
-    private KieTuple read(CompilationRequest req, String keyName, String errorMsg){
-        StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
+    private KieTuple read(CompilationRequest req, String keyName, String errorMsg) {
+        final StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
         if (o != null) {
             KieTuple tuple = readObjectFromADifferentClassloader(o);
@@ -193,7 +171,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
             return new KieTuple(errorMsg);
         }
     }
-
 
     private KieTuple readObjectFromADifferentClassloader(Object o) {
 

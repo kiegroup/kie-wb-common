@@ -26,7 +26,6 @@ import java.util.Set;
 
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
-import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
 
@@ -42,11 +41,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     private KieModule kieModule;
     private Map<String, byte[]> projectClassLoaderStore;
     private Set<String> eventsTypeClasses;
-    private List<String> projectDependenciesRaw;
-    private List<URI> projectDependenciesAsURI;
-    private List<URL> projectDependenciesAsURL;
     private DefaultCompilationResponse defaultResponse;
-    private Path workingDir;
 
     public DefaultKieCompilationResponse(Boolean successful) {
         this(successful,
@@ -58,22 +53,19 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
 
     public DefaultKieCompilationResponse(Boolean successful, List<String> mavenOutput) {
         this(successful,
-             null,
-             null,
-             null,
              mavenOutput,
-             null,
-             null,
              null);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          List<String> mavenOutput,
                                          Path workingDir) {
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         mavenOutput);
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              workingDir,
+                                                              Collections.emptyList(),
+                                                              Collections.emptyList());
         this.kieModuleMetaInfo = null;
-        this.workingDir = workingDir;
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -81,17 +73,19 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                          KieModule kieModule,
                                          Map<String, byte[]> projectClassLoaderStore,
                                          List<String> mavenOutput,
-                                         List<String> projectDependenciesRaw,
+                                         List<String> targetContent,
+                                         List<String> projectDependencies,
                                          Path workingDir,
                                          Set<String> eventTypesClasses) {
 
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         mavenOutput);
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              workingDir,
+                                                              targetContent,
+                                                              projectDependencies);
         this.kieModuleMetaInfo = kieModuleMetaInfo;
         this.kieModule = kieModule;
         this.projectClassLoaderStore = projectClassLoaderStore;
-        this.projectDependenciesRaw = projectDependenciesRaw;
-        this.workingDir = workingDir;
         this.eventsTypeClasses = eventTypesClasses;
     }
 
@@ -99,15 +93,18 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                          KieModuleMetaInfo kieModuleMetaInfo,
                                          KieModule kieModule,
                                          Map<String, byte[]> projectClassloaderStore,
-                                         List<String> projectDependenciesRaw,
+                                         List<String> targetContent,
+                                         List<String> projectDependencies,
                                          Path workingDir) {
 
-        defaultResponse = new DefaultCompilationResponse(successful);
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              Collections.emptyList(),
+                                                              workingDir,
+                                                              targetContent,
+                                                              projectDependencies);
         this.kieModuleMetaInfo = kieModuleMetaInfo;
         this.projectClassLoaderStore = projectClassloaderStore;
         this.kieModule = kieModule;
-        this.projectDependenciesRaw = projectDependenciesRaw;
-        this.workingDir = workingDir;
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -116,25 +113,12 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                          Map<String, byte[]> projectClassloaderStore,
                                          Path workingDir) {
 
-        defaultResponse = new DefaultCompilationResponse(successful);
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              Collections.emptyList(),
+                                                              workingDir);
         this.kieModuleMetaInfo = kieModuleMetaInfo;
         this.kieModule = kieModule;
         this.projectClassLoaderStore = projectClassloaderStore;
-        this.workingDir = workingDir;
-    }
-
-    @Override
-    public Optional<List<String>> getProjectDependenciesRaw() {
-        return Optional.ofNullable(projectDependenciesRaw);
-    }
-
-    @Override
-    public Optional<List<URI>> getProjectDependenciesAsURI() {
-        return Optional.ofNullable(getRawAsURIs());
-    }
-
-    public Optional<List<URL>> getProjectDependenciesAsURL() {
-        return Optional.ofNullable(getRawAsURLs());
     }
 
     @Override
@@ -153,44 +137,52 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     }
 
     @Override
-    public Optional<List<String>> getMavenOutput() {
+    public List<String> getMavenOutput() {
         return defaultResponse.getMavenOutput();
     }
 
     @Override
     public Optional<Path> getWorkingDir() {
-        return Optional.ofNullable(workingDir);
+        return defaultResponse.getWorkingDir();
     }
 
     @Override
-    public Optional<Map<String, byte[]>> getProjectClassLoaderStore() {
-        return Optional.ofNullable(projectClassLoaderStore);
+    public List<String> getDependencies() {
+        return defaultResponse.getDependencies();
     }
 
     @Override
-    public Optional<Set<String>> getEventTypeClasses() {
-        return Optional.ofNullable(eventsTypeClasses);
+    public List<URI> getDependenciesAsURI() {
+        return defaultResponse.getDependenciesAsURI();
     }
 
-    private List<URL> getRawAsURLs() {
-        if (projectDependenciesAsURL != null) {
-            return projectDependenciesAsURL;
-        }
-        if (projectDependenciesRaw != null) {
-            projectDependenciesAsURL = CompilerClassloaderUtils.processScannedFilesAsURLs(projectDependenciesRaw);
-            return projectDependenciesAsURL;
-        }
-        return Collections.emptyList();
+    @Override
+    public List<URL> getDependenciesAsURL() {
+        return defaultResponse.getDependenciesAsURL();
     }
 
-    private List<URI> getRawAsURIs() {
-        if (projectDependenciesAsURI != null) {
-            return projectDependenciesAsURI;
-        }
-        if (projectDependenciesRaw != null) {
-            projectDependenciesAsURI = CompilerClassloaderUtils.processScannedFilesAsURIs(projectDependenciesRaw);
-            return projectDependenciesAsURI;
-        }
-        return Collections.emptyList();
+    @Override
+    public List<String> getTargetContent() {
+        return defaultResponse.getTargetContent();
+    }
+
+    @Override
+    public List<URI> getTargetContentAsURI() {
+        return defaultResponse.getTargetContentAsURI();
+    }
+
+    @Override
+    public List<URL> getTargetContentAsURL() {
+        return defaultResponse.getTargetContentAsURL();
+    }
+
+    @Override
+    public Map<String, byte[]> getProjectClassLoaderStore() {
+        return projectClassLoaderStore;
+    }
+
+    @Override
+    public Set<String> getEventTypeClasses() {
+        return eventsTypeClasses;
     }
 }

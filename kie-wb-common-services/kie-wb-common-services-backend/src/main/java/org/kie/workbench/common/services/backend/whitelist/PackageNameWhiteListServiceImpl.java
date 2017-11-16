@@ -47,7 +47,6 @@ public class PackageNameWhiteListServiceImpl
     private KieProjectService projectService;
     private PackageNameWhiteListLoader loader;
     private PackageNameWhiteListSaver saver;
-    private String FILE_URI = "file://";
     private String PACKAGE_NAME_WHITE_LIST = "package-names-white-list";
 
     public PackageNameWhiteListServiceImpl() {
@@ -86,11 +85,7 @@ public class PackageNameWhiteListServiceImpl
         if (packageNames == null) {
             return new WhiteList();
         } else if (project instanceof KieProject) {
-
-            org.uberfire.java.nio.file.Path workingDir = convert(project.getRootPath());
-            org.uberfire.java.nio.file.Path pnwl = org.uberfire.java.nio.file.Paths.get(FILE_URI + workingDir.toUri() + "/" + PACKAGE_NAME_WHITE_LIST);
-            final WhiteList whiteList = load(convert(pnwl));
-
+            final WhiteList whiteList = load(convert(convert(project.getRootPath()).resolve(PACKAGE_NAME_WHITE_LIST)));
             if (whiteList.isEmpty()) {
                 return new WhiteList(packageNames);
             } else {
@@ -98,8 +93,7 @@ public class PackageNameWhiteListServiceImpl
                     whiteList.add(aPackage.getPackageName());
                 }
 
-                return new PackageNameWhiteListFilter(packageNames,
-                                                      whiteList).getFilteredPackageNames();
+                return new PackageNameWhiteListFilter(packageNames, whiteList).getFilteredPackageNames();
             }
         } else {
             return new WhiteList(packageNames);

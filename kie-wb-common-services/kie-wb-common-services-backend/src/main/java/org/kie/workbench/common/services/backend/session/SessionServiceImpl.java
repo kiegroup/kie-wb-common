@@ -15,19 +15,22 @@
  */
 package org.kie.workbench.common.services.backend.session;
 
-import java.io.File;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 import org.drools.core.ClockType;
 import org.drools.core.SessionConfiguration;
-import org.kie.api.KieServices;
-import org.kie.api.builder.KieBuilder;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 
+@ApplicationScoped
 public class SessionServiceImpl
         implements SessionService {
+
+    @Inject
+    private ProjectCache projectCache;
 
     //@MAXWasHere
     public SessionServiceImpl() {
@@ -35,8 +38,9 @@ public class SessionServiceImpl
     }
 
     @Override
-    public KieSession newKieSession(KieProject project, String ksessionName) {
-        KieContainer kieContainer = getKieContainerFromKieProject(project);
+    public KieSession newKieSession(final KieProject project,
+                                    final String ksessionName) {
+        final KieContainer kieContainer = getKieContainerFromKieProject(project);
         //If a KieContainer could not be built there is a build error somewhere; so return null to be handled elsewhere
         if (kieContainer == null) {
             return null;
@@ -46,7 +50,7 @@ public class SessionServiceImpl
 
     @Override
     public KieSession newDefaultKieSessionWithPseudoClock(final KieProject project) {
-        KieContainer kieContainer = getKieContainerFromKieProject(project);
+        final KieContainer kieContainer = getKieContainerFromKieProject(project);
         //If a KieContainer could not be built there is a build error somewhere; so return null to be handled elsewhere
         if (kieContainer == null) {
             return null;
@@ -57,12 +61,7 @@ public class SessionServiceImpl
         return kieContainer.getKieBase().newKieSession(conf, null);
     }
 
-
-    private KieContainer getKieContainerFromKieProject(KieProject project){
-        KieServices ks = KieServices.get();
-        KieBuilder kieBuilder = ks.newKieBuilder(new File(project.getRootPath().toString())).buildAll();
-        KieContainer kieContainer = ks.newKieContainer( ks.getRepository().getDefaultReleaseId() );
-        return kieContainer;
+    private KieContainer getKieContainerFromKieProject(final KieProject project) {
+        return projectCache.getOrCreateEntry(project).getKieContainer().orElse(null);
     }
-
 }

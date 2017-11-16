@@ -46,16 +46,13 @@ public class MavenOutputTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
-        if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
+        if (!res.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
                                                       "MavenOutputTest.testOutputWithTakari");
         }
         Assert.assertTrue(res.isSuccessful());
-        Assert.assertTrue(res.getMavenOutput().isPresent());
-        Assert.assertTrue(res.getMavenOutput().get().size() > 0);
+        Assert.assertTrue(res.getMavenOutput().size() > 0);
 
         TestUtil.rm(tmpRoot.toFile());
     }
-
-
 }

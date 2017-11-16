@@ -62,12 +62,14 @@ public class DataModelServiceImpl
             final Optional<KieProject> project = resolveProject(checkNotNull("resourcePath", resourcePath));
             final Optional<Package> pkg = resolvePackage(resourcePath);
 
+
+
             //Resource was not within a Project structure
             if (!project.isPresent()) {
                 return EMPTY_PKG_MODEL;
             }
 
-            return projectCache.getOrCreateEntry(project.get()).getPackageDataModelOracle();
+            return projectCache.getOrCreateEntry(project.get()).getPackageDataModelOracle(pkg.get());
         } catch (Exception e) {
             throw ExceptionUtilities.handleException(e);
         }

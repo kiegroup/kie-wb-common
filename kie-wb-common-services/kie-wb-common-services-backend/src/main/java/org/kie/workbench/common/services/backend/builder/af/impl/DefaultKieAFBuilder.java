@@ -71,7 +71,7 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
         info = new WorkspaceCompilationInfo(projectRepo);
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
-                                            new String[]{MavenCLIArgs.COMPILE},
+                                            new String[]{MavenCLIArgs.PACKAGE},
                                             Boolean.TRUE, Boolean.FALSE);
     }
 

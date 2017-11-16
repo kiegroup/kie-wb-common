@@ -269,11 +269,11 @@ public class DefaultPomEditor implements PomEditor {
     }
 
     protected String[] addCreateClasspathMavenArgs(String[] args) {
-        StringBuilder sb = new StringBuilder(MavenConfig.MAVEN_DEP_PLUGING_OUTPUT_FILE).append(MavenConfig.CLASSPATH_FILENAME).append(MavenConfig.CLASSPATH_EXT);
         String[] newArgs = Arrays.copyOf(args,
                                          args.length + 2);
         newArgs[args.length] = MavenConfig.DEPS_BUILD_CLASSPATH;
-        newArgs[args.length + 1] = sb.toString();
+        newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_ARG_CLASSPATH;
+
         return newArgs;
     }
 
