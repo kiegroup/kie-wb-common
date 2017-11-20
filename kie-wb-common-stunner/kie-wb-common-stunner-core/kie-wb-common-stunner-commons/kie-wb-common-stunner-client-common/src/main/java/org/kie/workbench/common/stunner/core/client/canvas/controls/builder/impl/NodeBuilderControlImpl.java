@@ -39,7 +39,7 @@ import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -132,7 +132,7 @@ public class NodeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
                                        @Override
                                        public void onComplete(final String uuid,
                                                               final List<Command<AbstractCanvasHandler, CanvasViolation>> commands) {
-                                           final CompositeCommandImpl.CompositeCommandBuilder commandBuilder = new CompositeCommandImpl.CompositeCommandBuilder().addCommands(commands);
+                                           final CompositeCommand.Builder commandBuilder = new CompositeCommand.Builder().addCommands(commands);
                                            if (inEdge != null) {
                                                final Object edgeDef = inEdge.getContent().getDefinition();
                                                final String edgeId = clientDefinitionManager.adapters().forDefinition().getId(edgeDef);

@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.RequiresCommandManager;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -115,7 +115,7 @@ public class EdgeBuilderControlImpl extends AbstractCanvasHandlerControl<Abstrac
             throw new RuntimeException(" An edge must be into the outgoing edges list from a node.");
         }
         final String ssid = canvasHandler.getDiagram().getMetadata().getShapeSetId();
-        final CompositeCommandImpl.CompositeCommandBuilder commandBuilder = new CompositeCommandImpl.CompositeCommandBuilder()
+        final CompositeCommand.Builder commandBuilder = new CompositeCommand.Builder()
                 .addCommand(commandFactory.addConnector(inNode,
                                                         edge,
                                                         MagnetConnection.Builder.forElement(inNode),

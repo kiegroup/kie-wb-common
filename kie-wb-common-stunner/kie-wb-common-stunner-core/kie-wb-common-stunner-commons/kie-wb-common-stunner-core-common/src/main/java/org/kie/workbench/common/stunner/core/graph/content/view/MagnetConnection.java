@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.graph.content.view;
 
-import java.util.OptionalInt;
-
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -44,8 +42,6 @@ public class MagnetConnection extends DiscreteConnection {
 
     public MagnetConnection setLocation(final Point2D location) {
         this.location = location;
-        // Once changing the location of the connection, the magnet index has to be re-calculated.
-        this.setOptionalIndex(OptionalInt.empty());
         return this;
     }
 

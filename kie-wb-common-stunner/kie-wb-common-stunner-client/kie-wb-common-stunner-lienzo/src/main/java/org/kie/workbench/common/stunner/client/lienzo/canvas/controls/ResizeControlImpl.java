@@ -48,7 +48,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventTy
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CommandResultImpl;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
@@ -264,16 +264,16 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
         final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = getResizeCommands(element,
                                                                                                  w,
                                                                                                  h);
-        final CompositeCommandImpl.CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation> commandBuilder =
-                new CompositeCommandImpl.CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation>();
+        final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder =
+                new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>();
         if (null != commands) {
             if (null != x && null != y) {
                 commandBuilder
                         .addCommand(canvasCommandFactory.updatePosition((Node<View<?>, Edge>) element,
-                                                                        x,
-                                                                        y));
+                                                                        new Point2D(x,
+                                                                                    y)));
             }
-            commands.stream().forEach(commandBuilder::addCommand);
+            commands.forEach(commandBuilder::addCommand);
         }
         final CommandResult<CanvasViolation> resizeResults = getCommandManager().execute(canvasHandler,
                                                                                          commandBuilder.build());

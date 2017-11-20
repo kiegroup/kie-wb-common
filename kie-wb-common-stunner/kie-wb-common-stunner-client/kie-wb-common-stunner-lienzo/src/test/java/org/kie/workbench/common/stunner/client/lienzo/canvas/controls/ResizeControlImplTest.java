@@ -54,6 +54,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.mockito.ArgumentCaptor;
@@ -274,12 +275,8 @@ public class ResizeControlImplTest {
         final UpdateElementPositionCommand positionCommand = (UpdateElementPositionCommand) commands.get(0);
         assertEquals(element,
                      positionCommand.getElement());
-        assertEquals(x,
-                     positionCommand.getX(),
-                     0d);
-        assertEquals(y,
-                     positionCommand.getY(),
-                     0d);
+        assertEquals(new Point2D(x, y),
+                     positionCommand.getLocation());
         assertTrue(commands.get(1) instanceof UpdateElementPropertyCommand);
         final UpdateElementPropertyCommand wPropertyCommand = (UpdateElementPropertyCommand) commands.get(1);
         assertEquals(element,

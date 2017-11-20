@@ -20,7 +20,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
 
 /**
@@ -57,7 +57,7 @@ public class AddCanvasChildNodeCommand extends AbstractRegistrationCanvasNodeCom
 
     @Override
     public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler context) {
-        return new CompositeCommandImpl.CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation>()
+        return new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                 .addCommand(new RemoveCanvasChildCommand(parent,
                                                          getCandidate()))
                 .addCommand(new DeleteCanvasNodeCommand(getCandidate(),

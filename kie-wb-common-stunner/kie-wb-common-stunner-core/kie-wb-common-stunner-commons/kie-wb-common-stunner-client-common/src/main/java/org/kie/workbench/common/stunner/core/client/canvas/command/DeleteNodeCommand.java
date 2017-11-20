@@ -22,8 +22,7 @@ import java.util.logging.Logger;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.command.CompositeCommand;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -43,7 +42,7 @@ public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
     @SuppressWarnings("unchecked")
     public DeleteNodeCommand(final Node candidate) {
         this.candidate = candidate;
-        this.command = new CompositeCommandImpl.CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation>()
+        this.command = new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                 .reverse()
                 .build();
     }

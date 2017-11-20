@@ -86,7 +86,7 @@ public class MagnetConnectionTest {
     }
 
     @Test
-    public void testChangeLocationAndResetMagnet() {
+    public void testChangeLocationAndNotResetMagnet() {
         MagnetConnection m1 = new MagnetConnection.Builder()
                 .atX(10)
                 .atY(25)
@@ -109,6 +109,6 @@ public class MagnetConnectionTest {
         assertEquals(200,
                      m1.getLocation().getY(),
                      0);
-        assertFalse(m1.getMagnetIndex().isPresent());
+        assertTrue(m1.getMagnetIndex().isPresent());
     }
 }

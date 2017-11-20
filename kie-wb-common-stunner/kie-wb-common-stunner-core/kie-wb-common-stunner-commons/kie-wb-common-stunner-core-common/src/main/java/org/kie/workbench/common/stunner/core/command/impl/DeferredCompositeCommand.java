@@ -18,30 +18,40 @@ package org.kie.workbench.common.stunner.core.command.impl;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.CompositeCommand;
 
 /**
- * A generic composite command implementation. Feel free to add commands into it.
+ * This type composites several commands but defers the creation of the command instances
+ * until execution, it means that this command cannot be evaluated for allow.
+ * <p>
+ * This way dependencies between the composites commands are possible but consider not previous
+ * allow evaluations can be done, so consider doing the right checks when using this type.
+ * @param <T> The content type.
+ * @param <V> The violation type.
  */
 @Portable
-public class CompositeCommandImpl<T, V> extends AbstractCompositeCommand<T, V> {
+public class DeferredCompositeCommand<T, V> extends AbstractCompositeCommand<T, V> {
 
     private final boolean reverse;
 
-    public CompositeCommandImpl(final @MapsTo("reverse") boolean reverse) {
+    public DeferredCompositeCommand(final @MapsTo("reverse") boolean reverse) {
         this.reverse = reverse;
     }
 
     @Override
-    protected CommandResult<V> doAllow(final T context,
-                                       final Command<T, V> command) {
-        return command.allow(context);
+    public CommandResult<V> allow(final T context) {
+        throw new IllegalStateException("Deferred commands cannot be evaluated previous to execution.");
+    }
+
+    @Override
+    public CommandResult<V> execute(final T context) {
+        return executeCommands(context);
     }
 
     @Override
@@ -62,7 +72,7 @@ public class CompositeCommandImpl<T, V> extends AbstractCompositeCommand<T, V> {
     }
 
     @NonPortable
-    public static class CompositeCommandBuilder<T, V> {
+    public static class Builder<T, V> {
 
         private final List<Command<T, V>> commands = new LinkedList<>();
         private boolean reverse = true;
@@ -70,7 +80,7 @@ public class CompositeCommandImpl<T, V> extends AbstractCompositeCommand<T, V> {
         /**
          * The undo for this composite command will be done by using a reverse order.
          */
-        public CompositeCommandBuilder<T, V> reverse() {
+        public Builder<T, V> reverse() {
             this.reverse = true;
             return this;
         }
@@ -78,18 +88,13 @@ public class CompositeCommandImpl<T, V> extends AbstractCompositeCommand<T, V> {
         /**
          * The undo for this composite command will be done by using the same insertion order.
          */
-        public CompositeCommandBuilder<T, V> forward() {
+        public Builder<T, V> forward() {
             this.reverse = false;
             return this;
         }
 
-        public CompositeCommandBuilder<T, V> addCommand(final Command<T, V> command) {
-            commands.add(command);
-            return this;
-        }
-
-        public CompositeCommandBuilder<T, V> addCommands(final List<Command<T, V>> _commands) {
-            commands.addAll(_commands);
+        public Builder<T, V> deferCommand(final Supplier<Command<T, V>> commandSupplier) {
+            commands.add(new DeferredCommand<>(commandSupplier));
             return this;
         }
 
@@ -97,9 +102,9 @@ public class CompositeCommandImpl<T, V> extends AbstractCompositeCommand<T, V> {
             return commands.size();
         }
 
-        public CompositeCommand<T, V> build() {
-            final CompositeCommandImpl<T, V> compositeCommand = new CompositeCommandImpl<T, V>(reverse);
-            commands.stream().forEach(compositeCommand::addCommand);
+        public DeferredCompositeCommand<T, V> build() {
+            final DeferredCompositeCommand<T, V> compositeCommand = new DeferredCompositeCommand<T, V>(reverse);
+            commands.forEach(compositeCommand::addCommand);
             return compositeCommand;
         }
     }

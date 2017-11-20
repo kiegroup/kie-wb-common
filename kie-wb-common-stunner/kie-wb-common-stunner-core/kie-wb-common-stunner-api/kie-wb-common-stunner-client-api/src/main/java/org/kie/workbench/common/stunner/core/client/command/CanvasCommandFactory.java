@@ -23,6 +23,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
@@ -82,8 +83,7 @@ public interface CanvasCommandFactory<H extends CanvasHandler> {
                                    final Connection connection);
 
     CanvasCommand<H> updatePosition(final Node<View<?>, Edge> element,
-                                    final Double x,
-                                    final Double y);
+                                    final Point2D location);
 
     CanvasCommand<H> updatePropertyValue(final Element element,
                                          final String propertyId,
