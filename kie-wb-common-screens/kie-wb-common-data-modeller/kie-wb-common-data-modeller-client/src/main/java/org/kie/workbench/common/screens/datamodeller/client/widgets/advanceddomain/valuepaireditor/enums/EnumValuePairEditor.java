@@ -112,7 +112,7 @@ public class EnumValuePairEditor
 
     @Override
     public void showValidateButton( boolean show ) {
-        //This editor doesn't need the validate button.
+        //This editor doesn't need the accept button.
     }
 
     @Override

@@ -31,7 +31,7 @@ public interface PersistenceDescriptorValidator {
      * Validates a persistence descriptor.
      *
      * @param path path to the persistence descriptor.
-     * @param model the persistence descriptor model to validate.
+     * @param model the persistence descriptor model to accept.
      * @return a list of validation message with the results.
      */
     List<ValidationMessage> validate( final Path path, final PersistenceDescriptorModel model );

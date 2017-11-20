@@ -1286,7 +1286,7 @@ public class DataModelerServiceImpl
                                                      ElementType target,
                                                      String valuePairName,
                                                      String literalValue) {
-        //Currently we only validate the syntax but additional checks may be added.
+        //Currently we only accept the syntax but additional checks may be added.
         List<ValidationMessage> validationMessages = new ArrayList<ValidationMessage>();
         JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver();
         Pair<AnnotationSource<JavaClassSource>, List<DriverError>> parseResult =

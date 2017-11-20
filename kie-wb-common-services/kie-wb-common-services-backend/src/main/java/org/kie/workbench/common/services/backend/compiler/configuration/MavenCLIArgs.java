@@ -24,7 +24,7 @@ public class MavenCLIArgs {
 
     public static final String COMPILE = "compile";
 
-    public static final String VALIDATE = "validate";
+    public static final String VALIDATE = "accept";
 
     public static final String TEST = "test";
 

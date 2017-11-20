@@ -139,7 +139,7 @@ public class DroolsDataObjectFieldEditor
             final String newValue = DataModelerUtils.nullTrim( view.getPosition() );
 
             if ( newValue != null && !"".equals( newValue ) ) {
-                // validate that entered value is a valid position.
+                // accept that entered value is a valid position.
                 int newPosition;
                 String error = null;
                 try {

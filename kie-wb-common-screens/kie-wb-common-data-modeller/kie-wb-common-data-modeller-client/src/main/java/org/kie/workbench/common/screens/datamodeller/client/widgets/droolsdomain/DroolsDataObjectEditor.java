@@ -293,7 +293,7 @@ public class DroolsDataObjectEditor
 
             final String newValue = view.getExpires();
 
-            // Otherwise validate
+            // Otherwise accept
             validatorService.isValidTimerInterval( newValue, new ValidatorCallback() {
                 @Override
                 public void onFailure() {

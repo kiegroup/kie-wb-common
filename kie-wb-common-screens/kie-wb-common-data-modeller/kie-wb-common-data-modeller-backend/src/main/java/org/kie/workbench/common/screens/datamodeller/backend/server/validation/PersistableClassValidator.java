@@ -40,7 +40,7 @@ public class PersistableClassValidator {
 
     /**
      * Validates if a class can be considered persistable.
-     * @param className a class name to validate.
+     * @param className a class name to accept.
      * @param classLoader a classloader from where the class className and the referenced types by the className can be loaded.
      * @return a list of validation messages.
      */

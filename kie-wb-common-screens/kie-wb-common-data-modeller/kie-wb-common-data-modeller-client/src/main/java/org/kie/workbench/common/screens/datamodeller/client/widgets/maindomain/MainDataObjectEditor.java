@@ -325,7 +325,7 @@ public class MainDataObjectEditor
             view.setNameOnError(false);
             return;
         }
-        // Otherwise validate
+        // Otherwise accept
         validatorService.isValidIdentifier(newValue,
                                            new ValidatorCallback() {
                                                @Override

@@ -166,7 +166,6 @@ public class ProjectBuildData {
         try {
             final KieCompilationResponse res = getCompilationResponse();
             final BuildResults br = convertIntoBuildResults(res.getMavenOutput(),
-                                                            ERROR_LEVEL,
                                                             convert(project.getRootPath()),
                                                             res.getWorkingDir().get().getParent().toString());
 
