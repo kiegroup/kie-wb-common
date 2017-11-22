@@ -48,11 +48,11 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order
                  "3.6.1");
 
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
-                 "io.takari.maven.plugins");
+                 "kie.io.takari.maven.plugins");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
-                 "takari-lifecycle-plugin");
+                 "kie-takari-lifecycle-plugin");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
-                 "1.13.3");
+                 "1.13.4");
 
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                  "org.kie");

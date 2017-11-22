@@ -51,6 +51,8 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
                      props.getProperty(ConfigurationKey.SOURCE_VERSION.name()));
             conf.put(ConfigurationKey.TARGET_VERSION,
                      props.getProperty(ConfigurationKey.TARGET_VERSION.name()));
+            conf.put(ConfigurationKey.FAIL_ON_ERROR,
+                     props.getProperty(ConfigurationKey.FAIL_ON_ERROR.name()));
 
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
                      props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));

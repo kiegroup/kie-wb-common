@@ -320,8 +320,9 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{"--fail-at-end", MavenCLIArgs.DEBUG, MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
-                                                               Boolean.FALSE, Boolean.FALSE);
+                                                               new String[]{ MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
+                                                               Boolean.TRUE, Boolean.FALSE);
+
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput(),
