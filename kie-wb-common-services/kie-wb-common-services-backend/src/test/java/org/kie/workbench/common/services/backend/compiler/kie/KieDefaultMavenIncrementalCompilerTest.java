@@ -113,7 +113,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
-                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
+                                                  "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         Assert.assertTrue(incrementalConfiguration.toFile().exists());
 
         TestUtil.rm(tmpRoot.toFile());
@@ -150,7 +150,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Assert.assertTrue(res.isSuccessful());
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
-                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
+                                                  "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
         Assert.assertTrue(incrementalConfiguration.toFile().exists());
 
         TestUtil.rm(tmpRoot.toFile());

@@ -34,13 +34,14 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>io.takari.maven.plugins</groupId>
-                <artifactId>takari-lifecycle-plugin</artifactId>
-                <version>1.13.3</version>
+                <groupId>kie.io.takari.maven.plugins</groupId>
+                <artifactId>kie-takari-lifecycle-plugin</artifactId>
+                <version>1.13.4</version>
                 <configuration>
                     <compilerId>jdt</compilerId>
                     <source>1.8</source>
                     <target>1.8</target>
+                    <failOnError>true</failOnError>
                 </configuration>
                 <executions>
                     <execution>

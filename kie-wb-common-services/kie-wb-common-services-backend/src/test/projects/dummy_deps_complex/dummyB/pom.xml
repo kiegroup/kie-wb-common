@@ -35,6 +35,25 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>kie.io.takari.maven.plugins</groupId>
+        <artifactId>kie-takari-lifecycle-plugin</artifactId>
+        <version>1.13.4</version>
+        <executions>
+          <execution>
+            <id>compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <configuration>
+              <compilerId>jdt</compilerId>
+              <source>1.8</source>
+              <target>1.8</target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <executions>
           <execution>

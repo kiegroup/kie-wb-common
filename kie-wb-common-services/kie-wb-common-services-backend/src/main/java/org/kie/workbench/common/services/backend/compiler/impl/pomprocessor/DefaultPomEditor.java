@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.model.Build;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -37,7 +36,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.configuration.Compilers;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
@@ -160,18 +158,18 @@ public class DefaultPomEditor implements PomEditor {
 
         if (!alternativeCompilerPluginPresent) {
             //add alternative compiler and disable the default compiler
-            //build.addPlugin(getNewCompilerPlugin()); disabled temporarly
-            build.addPlugin(getTemporaryNewCompilerPlugin());// temporarly enabled
+            build.addPlugin(getNewCompilerPlugin());
+            /*build.addPlugin(getTemporaryNewCompilerPlugin());// temporarly enabled
             swapPositionsTemporaryPlugin(build,
                                           defaultMavenCompilerPosition,
-                                          alternativeCompilerPosition);
-            //end opf temporary enabled
+                                          alternativeCompilerPosition);*/
+            //end of temporary enabled
 
 
             alternativeCompilerPluginPresent = Boolean.TRUE;
             overwritePOM = Boolean.TRUE;
         }
-        /* disabled temporarly
+
         if (!defaultCompilerPluginPresent) {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = new Plugin();
@@ -193,7 +191,7 @@ public class DefaultPomEditor implements PomEditor {
                                        defaultMavenCompiler);
                 overwritePOM = Boolean.TRUE;
             }
-        }*/
+        }
 
         // Change the kie-maven-plugin into kie-takari-plugin
         if (kiePluginPresent && !kieTakariPresent) {
@@ -226,7 +224,7 @@ public class DefaultPomEditor implements PomEditor {
         return overwritePOM;
     }
 
-    private void swapPositionsTemporaryPlugin(Build build,
+  /*  private void swapPositionsTemporaryPlugin(Build build,
                                                int defaultMavenCompilerPosition,
                                                int alternativeCompilerPosition) {
         int buildPluginSize = build.getPlugins().size();
@@ -248,7 +246,6 @@ public class DefaultPomEditor implements PomEditor {
                                    firstPlugin);
         }
     }
-
     protected Plugin getTemporaryNewCompilerPlugin() {
 
         Plugin newCompilerPlugin = new Plugin();
@@ -283,7 +280,8 @@ public class DefaultPomEditor implements PomEditor {
         newCompilerPlugin.setConfiguration(configuration);
 
         return newCompilerPlugin;
-    }
+    }*/
+
 
     protected Plugin getNewCompilerPlugin() {
 
@@ -303,6 +301,10 @@ public class DefaultPomEditor implements PomEditor {
         sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
         Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
         targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
+
+        Xpp3Dom failOnErorr = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
+        failOnErorr.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
+
         Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
         configuration.addChild(compilerId);
         configuration.addChild(sourceVersion);
