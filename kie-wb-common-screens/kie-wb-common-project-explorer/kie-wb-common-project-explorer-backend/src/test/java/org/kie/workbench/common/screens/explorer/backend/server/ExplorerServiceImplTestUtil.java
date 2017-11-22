@@ -29,7 +29,7 @@ public class ExplorerServiceImplTestUtil {
 
     @Produces
     @Alternative
-    public KieModuleService kieProjectService() {
+    public KieModuleService kieWorkspaceProjectService() {
         return mock(KieModuleService.class);
     }
 

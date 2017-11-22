@@ -23,7 +23,7 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.model.DiscussionRecord;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
@@ -59,7 +59,7 @@ public abstract class KieService<T> {
     protected PathResolver pathResolver;
 
     @Inject
-    protected ProjectService projectService;
+    protected WorkspaceProjectService projectService;
 
     @Inject
     @Named("ioStrategy")

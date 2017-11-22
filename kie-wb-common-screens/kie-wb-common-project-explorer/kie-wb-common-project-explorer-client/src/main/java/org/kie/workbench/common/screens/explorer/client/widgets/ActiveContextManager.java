@@ -18,7 +18,7 @@ package org.kie.workbench.common.screens.explorer.client.widgets;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.NewBranchEvent;
@@ -116,9 +116,9 @@ public class ActiveContextManager {
                                                 activeContextItems.getActiveFolderItem()));
     }
 
-    public void initActiveContext(final ProjectContext context) {
-        initActiveContext(context.getActiveProject().getRepository(),
-                          context.getActiveProject().getBranch(),
+    public void initActiveContext(final WorkspaceProjectContext context) {
+        initActiveContext(context.getActiveWorkspaceProject().getRepository(),
+                          context.getActiveWorkspaceProject().getBranch(),
                           context.getActiveModule(),
                           context.getActivePackage());
     }

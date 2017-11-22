@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -95,7 +95,7 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     protected ImportsWidgetPresenter importsWidget;
     protected Event<NotificationEvent> notificationEvent;
     protected Event<ChangeTitleWidgetEvent> changeTitleEvent;
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
     protected SavePopUpPresenter savePopUpPresenter;
     protected FileMenuBuilder fileMenuBuilder;
     protected VersionRecordManager versionRecordManager;
@@ -164,7 +164,7 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     @Inject
-    protected void setWorkbenchContext(final ProjectContext workbenchContext) {
+    protected void setWorkbenchContext(final WorkspaceProjectContext workbenchContext) {
         this.workbenchContext = workbenchContext;
     }
 

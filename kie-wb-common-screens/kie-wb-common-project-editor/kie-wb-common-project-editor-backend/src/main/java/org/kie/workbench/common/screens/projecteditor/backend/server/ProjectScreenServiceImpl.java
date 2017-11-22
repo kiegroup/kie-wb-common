@@ -22,7 +22,7 @@ import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.POMService;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.repositories.Repository;
 import org.guvnor.structure.repositories.RepositoryCopier;
@@ -39,7 +39,7 @@ import org.uberfire.backend.vfs.Path;
 public class ProjectScreenServiceImpl
         implements ProjectScreenService {
 
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
     private RepositoryService repositoryService;
     private KieModuleService moduleService;
     private ProjectScreenModelLoader loader;
@@ -53,7 +53,7 @@ public class ProjectScreenServiceImpl
     }
 
     @Inject
-    public ProjectScreenServiceImpl(final ProjectService projectService,
+    public ProjectScreenServiceImpl(final WorkspaceProjectService projectService,
                                     final RepositoryService repositoryService,
                                     final KieModuleService moduleService,
                                     final ProjectScreenModelLoader loader,

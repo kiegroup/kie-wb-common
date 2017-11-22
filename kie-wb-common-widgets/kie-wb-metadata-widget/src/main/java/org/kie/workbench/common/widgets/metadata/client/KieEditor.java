@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
@@ -54,8 +54,6 @@ public abstract class KieEditor
         extends BaseEditor
         implements KieEditorWrapperView.KieEditorWrapperPresenter {
 
-    protected Menus menus;
-
     @Inject
     protected KieEditorWrapperView kieView;
     @Inject
@@ -65,7 +63,7 @@ public abstract class KieEditor
     protected FileMenuBuilder fileMenuBuilder;
 
     @Inject
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
     @Inject
     protected SavePopUpPresenter savePopUpPresenter;
     @Inject

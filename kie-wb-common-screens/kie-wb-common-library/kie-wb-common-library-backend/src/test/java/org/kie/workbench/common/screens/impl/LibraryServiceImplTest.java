@@ -24,15 +24,15 @@ import java.util.Set;
 
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.ext.uberfire.social.activities.service.SocialUserRepositoryAPI;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.project.ProjectMigrationService;
+import org.guvnor.common.services.project.project.WorkspaceProjectMigrationService;
 import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Branch;
@@ -82,7 +82,7 @@ public class LibraryServiceImplTest {
     private OrganizationalUnitService ouService;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Mock
     private KieModuleService moduleService;
@@ -167,7 +167,7 @@ public class LibraryServiceImplTest {
                                                     projectService,
                                                     moduleService,
                                                     examplesService,
-                                                    mock(ProjectMigrationService.class),
+                                                    mock(WorkspaceProjectMigrationService.class),
                                                     ioService,
                                                     internalPreferences,
                                                     socialUserRepositoryAPI
@@ -191,15 +191,13 @@ public class LibraryServiceImplTest {
     @Test
     public void getLibraryInfoTest() {
         final Path path = mockPath("file://the_project");
-        final Project project = mock(Project.class);
+        final WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getRootPath()).thenReturn(path);
         doReturn(true).when(ioService).exists(any());
 
-        final Repository repository = mock(Repository.class);
-        final Set<Project> projects = new HashSet<>();
+        final Set<WorkspaceProject> projects = new HashSet<>();
         projects.add(project);
-        doReturn(projects).when(kieProjectService).getProjects(eq(repository),
-                                                               anyString());
+        doReturn(projects).when(projectService).getAllWorkspaceProjects(ou1);
 
         final LibraryInfo libraryInfo = libraryService.getLibraryInfo(ou1);
 
@@ -245,7 +243,7 @@ public class LibraryServiceImplTest {
         assertFalse(thereIsAModuleInTheWorkbench);
 
         verify(projectService,
-               times(1)).getAllProjects();
+               times(1)).getAllWorkspaceProjects();
     }
 
     @Test
@@ -256,14 +254,14 @@ public class LibraryServiceImplTest {
                                           new Branch("master",
                                                      mock(Path.class)),
                                           mock(Module.class)));
-        doReturn(projects).when(projectService).getAllProjects();
+        doReturn(projects).when(projectService).getAllWorkspaceProjects();
 
         final Boolean thereIsAModuleInTheWorkbench = libraryService.thereIsAProjectInTheWorkbench();
 
         assertTrue(thereIsAModuleInTheWorkbench);
 
         verify(projectService,
-               times(1)).getAllProjects();
+               times(1)).getAllWorkspaceProjects();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -412,16 +410,13 @@ public class LibraryServiceImplTest {
     @Test
     public void hasProjectsTest() {
         final Path path = mockPath("file://the_project");
-        final Project project = mock(Project.class);
+        final WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getRootPath()).thenReturn(path);
         doReturn(true).when(ioService).exists(any());
 
-        final Repository emptyRepository = mock(Repository.class);
-        final Repository repository = mock(Repository.class);
-        final Set<Project> projects = new HashSet<>();
+        final Set<WorkspaceProject> projects = new HashSet<>();
         projects.add(project);
-        doReturn(projects).when(kieProjectService).getProjects(eq(repository),
-                                                               anyString());
+        doReturn(projects).when(projectService).getAllWorkspaceProjects(ou1);
 
         assertTrue(libraryService.hasProjects(ou1));
     }
@@ -454,11 +449,13 @@ public class LibraryServiceImplTest {
     public void unexistentProjectDosNotHaveAssetsTest() {
         final Path path = mockPath("file://the_project");
         final Package package1 = mock(Package.class);
-        final Project project1 = mock(Project.class);
+        final WorkspaceProject project1 = mock(WorkspaceProject.class);
 
         when(project1.getRootPath()).thenReturn(path);
+        final Module module = mock(Module.class);
+        when(project1.getMainModule()).thenReturn(module);
         doReturn(false).when(ioService).exists(any());
-        doReturn(package1).when(projectService).resolveDefaultPackage(project1);
+        doReturn(package1).when(moduleService).resolveDefaultPackage(module);
         doReturn(true).when(explorerServiceHelper).hasAssets(package1);
 
         assertFalse(libraryService.hasAssets(project1));
@@ -506,7 +503,7 @@ public class LibraryServiceImplTest {
         final Module module = mock(Module.class);
         doReturn(module).when(project).getMainModule();
 
-        final ProjectContextChangeEvent projectContextChangeEvent = mock(ProjectContextChangeEvent.class);
+        final WorkspaceProjectContextChangeEvent projectContextChangeEvent = mock(WorkspaceProjectContextChangeEvent.class);
         doReturn(project).when(projectContextChangeEvent).getWorkspaceProject();
         doReturn(projectContextChangeEvent).when(examplesService).setupExamples(any(ExampleOrganizationalUnit.class),
                                                                                 anyList());
@@ -534,12 +531,13 @@ public class LibraryServiceImplTest {
         final WorkspaceProject project = mock(WorkspaceProject.class);
         final Module module = mock(Module.class);
         doReturn(module).when(project).getMainModule();
-        final ProjectContextChangeEvent projectContextChangeEvent = mock(ProjectContextChangeEvent.class);
+        final WorkspaceProjectContextChangeEvent projectContextChangeEvent = mock(WorkspaceProjectContextChangeEvent.class);
         doReturn(project).when(projectContextChangeEvent).getWorkspaceProject();
         doReturn(projectContextChangeEvent).when(examplesService).setupExamples(any(ExampleOrganizationalUnit.class),
                                                                                 anyList());
 
-        final WorkspaceProject importedProject = libraryService.importProject(exampleProject);
+        final WorkspaceProject importedProject = libraryService.importProject(organizationalUnit,
+                                                                              exampleProject);
 
         assertEquals(module,
                      importedProject.getMainModule());
@@ -588,14 +586,6 @@ public class LibraryServiceImplTest {
     }
 
     @Test
-    public void getSecondaryDefaultRepositoryNameTest() {
-        assertEquals("myalias-myrepo",
-                     libraryService.getSecondaryDefaultRepositoryName(getOrganizationalUnit("myalias")));
-        assertEquals("my-alias-myrepo",
-                     libraryService.getSecondaryDefaultRepositoryName(getOrganizationalUnit("my alias")));
-    }
-
-    @Test
     public void getAllUsersTest() {
         List<SocialUser> allUsers = new ArrayList<>();
         allUsers.add(new SocialUser("system"));
@@ -611,104 +601,5 @@ public class LibraryServiceImplTest {
                      users.get(0).getUserName());
         assertEquals("user",
                      users.get(1).getUserName());
-    }
-
-    private void organizationalUnitWithSecondaryRepositoryExistent(final OrganizationalUnit organizationalUnit,
-                                                                   final String repositoryIdentifier) {
-        final OrganizationalUnitRepositoryInfo info5 = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info5,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               1,
-                                               repositoryIdentifier);
-    }
-
-    private void organizationalUnitWithNoRepositoriesCreatesTheSecondaryRepositorySincePrimaryAlreadyExists(final OrganizationalUnit organizationalUnit,
-                                                                                                            final String repositoryIdentifier,
-                                                                                                            final Repository alreadyExistentPrimaryRepository) {
-        doReturn(alreadyExistentPrimaryRepository).when(repositoryService).getRepository("repository1");
-        final OrganizationalUnitRepositoryInfo info = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               0,
-                                               repositoryIdentifier);
-    }
-
-    private void organizationalUnitWithNoRepositoriesCreatesATertiaryRepositorySincePrimaryAndSecondaryAlreadyExists(final OrganizationalUnit organizationalUnit,
-                                                                                                                     final String repositoryIdentifier,
-                                                                                                                     final Repository alreadyExistentPrimaryRepository,
-                                                                                                                     final Repository alreadyExistentSecondaryRepository) {
-        doReturn(alreadyExistentPrimaryRepository).when(repositoryService).getRepository("repository1");
-        doReturn(alreadyExistentSecondaryRepository).when(repositoryService).getRepository("organizationalUnit3-repository1");
-
-        final OrganizationalUnitRepositoryInfo info = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               0,
-                                               repositoryIdentifier);
-    }
-
-    private void organizationalUnitWithNoRepositoriesCreatesThePrimaryRepository(final OrganizationalUnit organizationalUnit,
-                                                                                 final String repositoryIdentifier) {
-        doReturn(null).when(repositoryService).getRepository("repository1");
-        final OrganizationalUnitRepositoryInfo info = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               0,
-                                               repositoryIdentifier);
-    }
-
-    private void organizationalUnitWithTwoRepositoriesSelectsTheFirst(final OrganizationalUnit organizationalUnit,
-                                                                      final String repositoryIdentifier) {
-        final OrganizationalUnitRepositoryInfo info = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               2,
-                                               repositoryIdentifier);
-    }
-
-    private void organizationalUnitWithPrimaryRepositoryExistent(final OrganizationalUnit organizationalUnit,
-                                                                 final String repositoryIdentifier) {
-        final OrganizationalUnitRepositoryInfo info = libraryService.getOrganizationalUnitRepositoryInfo(organizationalUnit);
-        assertOrganizationalUnitRepositoryInfo(info,
-                                               4,
-                                               organizationalUnit.getIdentifier(),
-                                               1,
-                                               repositoryIdentifier);
-    }
-
-    private void assertOrganizationalUnitRepositoryInfo(final OrganizationalUnitRepositoryInfo info,
-                                                        final int totalOfOrganizationalUnits,
-                                                        final String organizationalUnitIdentifier,
-                                                        final int totalOfRepositories,
-                                                        final String repositoryAlias) {
-        assertEquals(totalOfOrganizationalUnits,
-                     info.getOrganizationalUnits().size());
-        assertEquals(organizationalUnitIdentifier,
-                     info.getSelectedOrganizationalUnit().getIdentifier());
-        assertEquals(totalOfRepositories,
-                     info.getRepositories().size());
-        assertEquals(repositoryAlias,
-                     info.getSelectedRepository().getAlias());
-    }
-
-    private Repository getRepository(final String alias) {
-        final Repository repository1 = mock(Repository.class);
-        doReturn(alias).when(repository1).getAlias();
-
-        return repository1;
-    }
-
-    private OrganizationalUnit getOrganizationalUnit(final String identifier,
-                                                     final Repository... repositories) {
-        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
-        doReturn(identifier).when(organizationalUnit).getIdentifier();
-        doReturn(Arrays.asList(repositories)).when(organizationalUnit).getRepositories();
-
-        return organizationalUnit;
     }
 }

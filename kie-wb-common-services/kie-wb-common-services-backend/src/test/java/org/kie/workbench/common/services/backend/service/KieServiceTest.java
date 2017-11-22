@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 
 import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,7 +78,7 @@ public class KieServiceTest {
                 this.pathResolver = new PathResolverMock();
                 this.ioService = mockIOService;
                 this.moduleService = mock(KieModuleService.class);
-                this.projectService = mock(ProjectService.class);
+                this.projectService = mock(WorkspaceProjectService.class);
                 this.metadataService = KieServiceTest.this.metadataService;
             }
 

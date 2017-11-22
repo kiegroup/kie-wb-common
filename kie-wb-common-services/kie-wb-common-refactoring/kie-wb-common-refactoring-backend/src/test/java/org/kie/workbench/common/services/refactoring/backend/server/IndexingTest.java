@@ -191,11 +191,11 @@ public abstract class IndexingTest<T extends ResourceTypeDefinition> {
         final Package mockPackage = mock(Package.class);
         when(mockPackage.getPackageName()).thenReturn(TEST_PACKAGE_NAME);
 
-        final KieModuleService mockProjectService = mock(KieModuleService.class);
-        when(mockProjectService.resolveModule(any(org.uberfire.backend.vfs.Path.class))).thenReturn(mockModule);
-        when(mockProjectService.resolvePackage(any(org.uberfire.backend.vfs.Path.class))).thenReturn(mockPackage);
+        final KieModuleService mockWorkspaceProjectService = mock(KieModuleService.class);
+        when(mockWorkspaceProjectService.resolveModule(any(org.uberfire.backend.vfs.Path.class))).thenReturn(mockModule);
+        when(mockWorkspaceProjectService.resolvePackage(any(org.uberfire.backend.vfs.Path.class))).thenReturn(mockPackage);
 
-        return mockProjectService;
+        return mockWorkspaceProjectService;
     }
 
     protected KieModule getKieModuleMock(final String testModuleRoot,

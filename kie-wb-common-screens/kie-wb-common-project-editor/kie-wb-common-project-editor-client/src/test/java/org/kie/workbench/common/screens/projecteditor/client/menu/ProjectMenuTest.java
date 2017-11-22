@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.projecteditor.client.menu;
 import java.util.List;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,7 +40,7 @@ public class ProjectMenuTest {
     private PlaceManager placeManager;
 
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     @Before
     public void setup() {

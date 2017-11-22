@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.examples.backend.server;
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.project.events.NewProjectEvent;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.backend.config.ConfigurationFactoryImpl;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -73,7 +73,7 @@ public class ExamplesServiceImplCheckNoIndexConfigTest {
     private RepositoryCopier repositoryCopier;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Spy
     private Event<NewProjectEvent> newProjectEvent = new EventSourceMock<NewProjectEvent>() {

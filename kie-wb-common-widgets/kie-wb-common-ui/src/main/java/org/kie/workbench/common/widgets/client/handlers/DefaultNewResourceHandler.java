@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.user.client.ui.IsWidget;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -45,7 +45,7 @@ public abstract class DefaultNewResourceHandler implements NewResourceHandler {
     protected final List<Pair<String, ? extends IsWidget>> extensions = new LinkedList<Pair<String, ? extends IsWidget>>();
 
     @Inject
-    protected ProjectContext context;
+    protected WorkspaceProjectContext context;
 
     @Inject
     protected Caller<KieModuleService> moduleService;
@@ -68,7 +68,7 @@ public abstract class DefaultNewResourceHandler implements NewResourceHandler {
     //Package-protected constructor for tests. In an ideal world we'd move to Constructor injection
     //however that would require every sub-class of this abstract class to also have Constructor
     //injection.. and that's a lot of refactoring just to be able to test.
-    DefaultNewResourceHandler(final ProjectContext context,
+    DefaultNewResourceHandler(final WorkspaceProjectContext context,
                               final Caller<KieModuleService> moduleService,
                               final Caller<ValidationService> validationService,
                               final PlaceManager placeManager,

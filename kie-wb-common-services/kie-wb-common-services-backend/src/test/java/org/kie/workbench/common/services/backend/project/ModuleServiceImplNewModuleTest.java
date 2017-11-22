@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
@@ -38,6 +39,7 @@ import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.guvnor.common.services.project.service.ModuleRepositoryResolver;
 import org.guvnor.common.services.project.service.POMService;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -111,16 +113,18 @@ public class ModuleServiceImplNewModuleTest {
     @Test
     public void testNewModuleCreationNonClashingGAV() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
+        final Path masterBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
         final String baseURL = "/";
 
         final KieModule expected = new KieModule();
 
-        when(saver.save(repository.getRoot(),
+        when(saver.save(masterBranchRoot,
                         pom,
                         baseURL)).thenReturn(expected);
 
-        final Module project = moduleService.newModule(repository.getRoot(),
+        final Module project = moduleService.newModule(masterBranchRoot,
                                                        pom,
                                                        baseURL);
 
@@ -131,6 +135,8 @@ public class ModuleServiceImplNewModuleTest {
     @Test(expected = GAVAlreadyExistsException.class)
     public void testNewModuleCreationClashingGAV() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
+        final Path masterBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
         final String baseURL = "/";
 
@@ -141,11 +147,11 @@ public class ModuleServiceImplNewModuleTest {
                                             "url",
                                             MavenRepositorySource.SETTINGS));
         }});
-        when(saver.save(repository.getRoot(),
+        when(saver.save(masterBranchRoot,
                         pom,
                         baseURL)).thenReturn(expected);
 
-        moduleService.newModule(repository.getRoot(),
+        moduleService.newModule(masterBranchRoot,
                                 pom,
                                 baseURL);
     }
@@ -153,6 +159,8 @@ public class ModuleServiceImplNewModuleTest {
     @Test()
     public void testNewModuleCreationClashingGAVForced() throws URISyntaxException {
         final Repository repository = mock(Repository.class);
+        final Path masterBranchRoot = mock(Path.class);
+        doReturn(Optional.of(new Branch("master", masterBranchRoot))).when(repository).getDefaultBranch();
         final POM pom = new POM();
         final String baseURL = "/";
 
@@ -163,12 +171,12 @@ public class ModuleServiceImplNewModuleTest {
                                             "url",
                                             MavenRepositorySource.SETTINGS));
         }});
-        when(saver.save(repository.getRoot(),
+        when(saver.save(masterBranchRoot,
                         pom,
                         baseURL)).thenReturn(expected);
 
         try {
-            moduleService.newModule(repository.getRoot(),
+            moduleService.newModule(masterBranchRoot,
                                     pom,
                                     baseURL,
                                     DeploymentMode.FORCED);

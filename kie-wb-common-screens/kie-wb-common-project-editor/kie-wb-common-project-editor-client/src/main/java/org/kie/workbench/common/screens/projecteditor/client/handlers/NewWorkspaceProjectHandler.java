@@ -25,8 +25,8 @@ import com.google.gwt.core.client.Callback;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -35,7 +35,7 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
-import org.kie.workbench.common.screens.projecteditor.client.wizard.NewProjectWizard;
+import org.kie.workbench.common.screens.projecteditor.client.wizard.NewWorkspaceProjectWizard;
 import org.kie.workbench.common.screens.projecteditor.client.wizard.POMBuilder;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.uberfire.commons.data.Pair;
@@ -48,32 +48,32 @@ import org.uberfire.workbench.type.ResourceTypeDefinition;
  * Handler for the creation of new Projects
  */
 @Dependent
-public class NewProjectHandler
-        implements org.kie.workbench.common.widgets.client.handlers.NewProjectHandler {
+public class NewWorkspaceProjectHandler
+        implements org.kie.workbench.common.widgets.client.handlers.NewWorkspaceProjectHandler {
 
     private Caller<OrganizationalUnitService> ouService;
-    private ProjectContext context;
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private WorkspaceProjectContext context;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
     private LibraryPreferences libraryPreferences;
-    private NewProjectWizard wizard;
+    private NewWorkspaceProjectWizard wizard;
     private ProjectController projectController;
     //We don't really need this for Packages but it's required by DefaultNewResourceHandler
     private AnyResourceTypeDefinition resourceType;
     private boolean openEditorOnCreation = true;
     private org.uberfire.client.callbacks.Callback<WorkspaceProject> creationSuccessCallback;
 
-    public NewProjectHandler() {
+    public NewWorkspaceProjectHandler() {
         //Zero argument constructor for CDI proxies
     }
 
     @Inject
-    public NewProjectHandler(final ProjectContext context,
-                             final Event<ProjectContextChangeEvent> projectContextChangeEvent,
-                             final LibraryPreferences libraryPreferences,
-                             final NewProjectWizard wizard,
-                             final Caller<OrganizationalUnitService> ouService,
-                             final ProjectController projectController,
-                             final AnyResourceTypeDefinition resourceType) {
+    public NewWorkspaceProjectHandler(final WorkspaceProjectContext context,
+                                      final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
+                                      final LibraryPreferences libraryPreferences,
+                                      final NewWorkspaceProjectWizard wizard,
+                                      final Caller<OrganizationalUnitService> ouService,
+                                      final ProjectController projectController,
+                                      final AnyResourceTypeDefinition resourceType) {
         this.context = context;
         this.projectContextChangeEvent = projectContextChangeEvent;
         this.libraryPreferences = libraryPreferences;
@@ -134,14 +134,12 @@ public class NewProjectHandler
             @Override
             public void execute() {
 
-                // TODO : Test this
-                // TODO: Might not be actually needed.
                 if (context.getActiveOrganizationalUnit() == null) {
                     ouService.call(new RemoteCallback<OrganizationalUnit>() {
                         @Override
                         public void callback(OrganizationalUnit organizationalUnit) {
 
-                            projectContextChangeEvent.fire(new ProjectContextChangeEvent(organizationalUnit));
+                            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
 
                             init();
                         }
@@ -161,7 +159,7 @@ public class NewProjectHandler
     }
 
     @Override
-    public void setCreationSuccessCallback(final org.uberfire.client.callbacks.Callback<Project> creationSuccessCallback) {
+    public void setCreationSuccessCallback(final org.uberfire.client.callbacks.Callback<WorkspaceProject> creationSuccessCallback) {
         this.creationSuccessCallback = creationSuccessCallback;
     }
 

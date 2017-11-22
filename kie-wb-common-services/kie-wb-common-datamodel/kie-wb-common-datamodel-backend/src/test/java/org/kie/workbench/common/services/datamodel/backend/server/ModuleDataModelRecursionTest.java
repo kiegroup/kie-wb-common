@@ -31,9 +31,9 @@ import static org.kie.workbench.common.services.datamodel.backend.server.ModuleD
 public class ModuleDataModelRecursionTest extends AbstractDataModelWeldTest {
 
     @Test
-    public void testProjectDataModelOracle() throws URISyntaxException {
+    public void testModuleDataModelOracle() throws URISyntaxException {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendRecursionTest1/src/main/java/t6p1");
+                initializeModuleDataModelOracle("/DataModelBackendRecursionTest1/src/main/java/t6p1");
 
         assertNotNull(oracle);
 

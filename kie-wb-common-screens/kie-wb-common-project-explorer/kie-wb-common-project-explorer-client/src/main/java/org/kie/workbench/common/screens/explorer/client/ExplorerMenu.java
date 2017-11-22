@@ -15,9 +15,11 @@
  */
 package org.kie.workbench.common.screens.explorer.client;
 
+import java.util.Optional;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.structure.repositories.Branch;
 import org.kie.workbench.common.screens.explorer.client.widgets.ActiveContextOptions;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.Menus;
@@ -26,7 +28,7 @@ public class ExplorerMenu {
 
     private ActiveContextOptions activeOptions;
 
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
 
     private Command refreshCommand;
     private Command updateCommand;
@@ -40,7 +42,7 @@ public class ExplorerMenu {
     @Inject
     public ExplorerMenu(final ExplorerMenuView view,
                         final ActiveContextOptions activeOptions,
-                        final ProjectContext projectContext) {
+                        final WorkspaceProjectContext projectContext) {
         this.view = view;
         this.activeOptions = activeOptions;
         this.context = projectContext;
@@ -129,7 +131,10 @@ public class ExplorerMenu {
     }
 
     public void onArchiveActiveRepository() {
-        view.archive(context.getActiveProject().getRepository().getRoot());
+        final Optional<Branch> defaultBranch = context.getActiveWorkspaceProject().getRepository().getDefaultBranch();
+        if (defaultBranch.isPresent()) {
+            view.archive(defaultBranch.get().getPath());
+        }
     }
 
     public void onRefresh() {

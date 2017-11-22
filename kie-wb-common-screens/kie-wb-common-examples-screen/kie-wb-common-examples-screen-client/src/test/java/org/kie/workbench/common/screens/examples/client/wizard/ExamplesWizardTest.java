@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.examples.client.wizard;
 import java.util.List;
 import javax.enterprise.event.Event;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
@@ -65,9 +65,9 @@ public class ExamplesWizardTest {
     private ExamplesService examplesService = mock(ExamplesService.class);
     private Caller<ExamplesService> examplesServiceCaller = new CallerMock<ExamplesService>(examplesService);
     @Spy
-    private Event<ProjectContextChangeEvent> event = new EventSourceMock<ProjectContextChangeEvent>() {
+    private Event<WorkspaceProjectContextChangeEvent> event = new EventSourceMock<WorkspaceProjectContextChangeEvent>() {
         @Override
-        public void fire(final ProjectContextChangeEvent event) {
+        public void fire(final WorkspaceProjectContextChangeEvent event) {
             //Do nothing. Default implementation throws an exception.
         }
     };
@@ -223,7 +223,7 @@ public class ExamplesWizardTest {
                times(1)).setupExamples(any(ExampleOrganizationalUnit.class),
                                        any(List.class));
         verify(event,
-               times(1)).fire(any(ProjectContextChangeEvent.class));
+               times(1)).fire(any(WorkspaceProjectContextChangeEvent.class));
     }
 
     @Test

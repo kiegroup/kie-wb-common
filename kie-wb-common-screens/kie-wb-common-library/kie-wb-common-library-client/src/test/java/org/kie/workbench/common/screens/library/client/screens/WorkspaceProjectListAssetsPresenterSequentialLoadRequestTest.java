@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectListAssetsPresenterSequentialLoadRequestTest
+public class WorkspaceProjectListAssetsPresenterSequentialLoadRequestTest
         extends ProjectScreenTestBase {
 
     @Mock
@@ -46,15 +46,15 @@ public class ProjectListAssetsPresenterSequentialLoadRequestTest
     @Before
     public void setup() {
 
-        projectListAssetsPresenter = spy(new ProjectListAssetsPresenter(view,
-                                                                        libraryPlaces,
-                                                                        mock(ProjectsDetailScreen.class),
-                                                                        ts,
-                                                                        new CallerMock<>(libraryService),
-                                                                        assetClassifier,
-                                                                        assetDetailEvent,
-                                                                        busyIndicatorView,
-                                                                        projectController) {
+        workspaceProjectListAssetsPresenter = spy(new WorkspaceProjectListAssetsPresenter(view,
+                                                                                          libraryPlaces,
+                                                                                          mock(ProjectsDetailScreen.class),
+                                                                                          ts,
+                                                                                          new CallerMock<>(libraryService),
+                                                                                          assetClassifier,
+                                                                                          assetDetailEvent,
+                                                                                          busyIndicatorView,
+                                                                                          projectController) {
             @Override
             protected void reload() {
                 onFilterChange();
@@ -66,11 +66,11 @@ public class ProjectListAssetsPresenterSequentialLoadRequestTest
             }
         });
 
-        doReturn("createdTime").when(projectListAssetsPresenter).getCreatedTime(any(AssetInfo.class));
-        doReturn("lastModifiedTime").when(projectListAssetsPresenter).getLastModifiedTime(any(AssetInfo.class));
+        doReturn("createdTime").when(workspaceProjectListAssetsPresenter).getCreatedTime(any(AssetInfo.class));
+        doReturn("lastModifiedTime").when(workspaceProjectListAssetsPresenter).getLastModifiedTime(any(AssetInfo.class));
 
         doAnswer(a -> {
-            projectListAssetsPresenter.loadProjectInfo();
+            workspaceProjectListAssetsPresenter.loadProjectInfo();
             return null;
         }).when(timer).schedule(anyInt());
 
@@ -89,7 +89,7 @@ public class ProjectListAssetsPresenterSequentialLoadRequestTest
             //This mocks a successive request to load the asset list whilst the first request is incomplete with a filter "ab"
             if (inCall[0]) {
                 when(view.getFilterValue()).thenReturn("ab");
-                projectListAssetsPresenter.onFilterChange();
+                workspaceProjectListAssetsPresenter.onFilterChange();
                 inCall[0] = false;
             }
 
@@ -98,7 +98,7 @@ public class ProjectListAssetsPresenterSequentialLoadRequestTest
 
         //This invokes the first request to load the asset list with a filter "a"
         when(view.getFilterValue()).thenReturn("a");
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(libraryService,
                times(2)).getProjectAssets(queryCaptor.capture());

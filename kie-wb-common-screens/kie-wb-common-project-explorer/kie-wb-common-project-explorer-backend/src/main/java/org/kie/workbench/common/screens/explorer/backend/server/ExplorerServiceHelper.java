@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -252,7 +253,8 @@ public class ExplorerServiceHelper {
 
         final Set<Package> childPackages = moduleService.resolvePackages(pkg);
         for (final Package childPackage : childPackages) {
-            if (hasAssets(childPackage)) {
+
+            if (!childPackage.equals(pkg) && hasAssets(childPackage)) {
                 return true;
             }
         }

@@ -28,22 +28,20 @@ import java.util.stream.Collectors;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
-import org.kie.workbench.common.screens.examples.model.ExampleTargetRepository;
 import org.kie.workbench.common.screens.examples.service.ExamplesService;
 import org.kie.workbench.common.screens.library.api.LibraryService;
-import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.widgets.common.TileWidget;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
-import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberElement;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.callbacks.HasBusyIndicatorDefaultErrorCallback;
@@ -53,11 +51,9 @@ import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 
-@WorkbenchScreen(identifier = LibraryPlaces.IMPORT_PROJECTS_SCREEN,
-        owningPerspective = LibraryPerspective.class)
-public class ImportProjectsScreen {
+public class ImportWorkspaceProjectsScreen {
 
-    public interface View extends UberElement<ImportProjectsScreen>,
+    public interface View extends UberElement<ImportWorkspaceProjectsScreen>,
                                   HasBusyIndicator {
 
         void setTitle(String title);
@@ -91,25 +87,28 @@ public class ImportProjectsScreen {
 
     private Caller<ExamplesService> examplesService;
 
+    private WorkspaceProjectContext projectContext;
     private Event<NotificationEvent> notificationEvent;
 
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     private Map<ExampleProject, TileWidget> projectWidgetsByName;
 
     @Inject
-    public ImportProjectsScreen(final View view,
-                                final LibraryPlaces libraryPlaces,
-                                final Caller<LibraryService> libraryService,
-                                final ManagedInstance<TileWidget> tileWidgets,
-                                final Caller<ExamplesService> examplesService,
-                                final Event<NotificationEvent> notificationEvent,
-                                final Event<ProjectContextChangeEvent> projectContextChangeEvent) {
+    public ImportWorkspaceProjectsScreen(final View view,
+                                         final LibraryPlaces libraryPlaces,
+                                         final Caller<LibraryService> libraryService,
+                                         final ManagedInstance<TileWidget> tileWidgets,
+                                         final Caller<ExamplesService> examplesService,
+                                         final WorkspaceProjectContext projectContext,
+                                         final Event<NotificationEvent> notificationEvent,
+                                         final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
         this.libraryService = libraryService;
         this.tileWidgets = tileWidgets;
         this.examplesService = examplesService;
+        this.projectContext = projectContext;
         this.notificationEvent = notificationEvent;
         this.projectContextChangeEvent = projectContextChangeEvent;
     }
@@ -213,15 +212,13 @@ public class ImportProjectsScreen {
         }
 
         view.showBusyIndicator(view.getImportingMessage());
-        examplesService.call((ProjectContextChangeEvent contextChangeEvent) -> {
+        examplesService.call((WorkspaceProjectContextChangeEvent contextChangeEvent) -> {
                                  view.hideBusyIndicator();
                                  notificationEvent.fire(new NotificationEvent(view.getImportProjectsSuccessMessage(),
                                                                               NotificationEvent.NotificationType.SUCCESS));
                                  projectContextChangeEvent.fire(contextChangeEvent);
                              },
-                             new HasBusyIndicatorDefaultErrorCallback(view)).setupExamples(new ExampleOrganizationalUnit(libraryPlaces.getSelectedOrganizationalUnit().getName()),
-                                                                                           new ExampleTargetRepository(libraryPlaces.getSelectedRepository().getAlias()),
-                                                                                           libraryPlaces.getSelectedBranch(),
+                             new HasBusyIndicatorDefaultErrorCallback(view)).setupExamples(new ExampleOrganizationalUnit(projectContext.getActiveOrganizationalUnit().getName()),
                                                                                            projects);
     }
 

@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.screens.projecteditor.util;
 
-public class NewProjectUtils {
+public class NewWorkspaceProjectUtils {
 
     /* The projectName has been validated as a FileSystem folder name, which may not be consistent with Maven ArtifactID
      * naming restrictions (see org.apache.maven.model.validation.DefaultModelValidator.java::ID_REGEX). Therefore we'd

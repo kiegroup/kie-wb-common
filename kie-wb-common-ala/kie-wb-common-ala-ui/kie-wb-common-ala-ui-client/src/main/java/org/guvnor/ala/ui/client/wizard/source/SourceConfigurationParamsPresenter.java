@@ -87,14 +87,14 @@ public class SourceConfigurationParamsPresenter
 
         void clearModules();
 
-        void addProject(String projectName);
+        void addModule(final String moduleName);
     }
 
     public static final String REPO_NAME = "repo-name";
 
     public static final String BRANCH = "branch";
 
-    public static final String PROJECT_DIR = "project-dir";
+    public static final String MODULE_DIR = "module-dir";
 
     private final View view;
     private final Caller<SourceService> sourceService;
@@ -145,7 +145,7 @@ public class SourceConfigurationParamsPresenter
                    getRepository());
         params.put(BRANCH,
                    getBranch());
-        params.put(PROJECT_DIR,
+        params.put(MODULE_DIR,
                    getModule().getModuleName());
         return params;
     }
@@ -284,7 +284,7 @@ public class SourceConfigurationParamsPresenter
         sourceService.call((Collection<Module> modules) -> {
                                clearModules();
                                modules.forEach(module -> {
-                                   view.addProject(module.getModuleName());
+                                   view.addModule(module.getModuleName());
                                    currentModules.put(module.getModuleName(),
                                                       module);
                                });

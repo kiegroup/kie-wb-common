@@ -53,6 +53,7 @@ import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.backend.server.handler.JPADomainHandler;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
+import org.kie.workbench.common.services.datamodeller.core.Annotation;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
@@ -71,6 +72,8 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -129,6 +132,32 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
         handler.init(formModel,
                      path);
         handler.synchronizeFormModel();
+    }
+
+    @Test
+    public void usesRestrictedPropertyName() throws Exception {
+        final ObjectProperty property = mock(ObjectProperty.class);
+        doReturn("serialVersionUID").when(property).getName();
+
+        assertFalse(DataObjectFormModelHandler.isValidDataObjectProperty(property));
+    }
+
+    @Test
+    public void usesRestrictedAnnotation() throws Exception {
+        final ObjectProperty property = mock(ObjectProperty.class);
+
+        doReturn(mock(Annotation.class)).when(property).getAnnotation("javax.persistence.Id");
+
+        assertFalse(DataObjectFormModelHandler.isValidDataObjectProperty(property));
+    }
+
+    @Test
+    public void usesLegalAnnotation() throws Exception {
+        final ObjectProperty property = mock(ObjectProperty.class);
+
+        doReturn(null).when(property).getAnnotation("I.am.OK");
+
+        assertTrue(DataObjectFormModelHandler.isValidDataObjectProperty(property));
     }
 
     @Test

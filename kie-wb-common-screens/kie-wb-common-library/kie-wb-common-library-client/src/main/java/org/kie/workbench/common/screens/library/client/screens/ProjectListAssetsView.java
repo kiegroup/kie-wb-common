@@ -38,7 +38,7 @@ import org.uberfire.mvp.Command;
 
 @Templated
 public class ProjectListAssetsView
-        implements ProjectListAssetsPresenter.View,
+        implements WorkspaceProjectListAssetsPresenter.View,
                    IsElement {
 
     @Inject
@@ -65,7 +65,7 @@ public class ProjectListAssetsView
     @DataField
     Div assetListContainer;
 
-    private ProjectListAssetsPresenter presenter;
+    private WorkspaceProjectListAssetsPresenter presenter;
 
     @Inject
     private ProjectsDetailScreen projectsDetailScreen;
@@ -93,7 +93,7 @@ public class ProjectListAssetsView
     }
 
     @Override
-    public void init(ProjectListAssetsPresenter presenter) {
+    public void init(WorkspaceProjectListAssetsPresenter presenter) {
         this.presenter = presenter;
         projectActionsWidget.init(presenter::goToSettings);
         filterText.setAttribute("placeholder",

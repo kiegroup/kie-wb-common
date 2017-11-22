@@ -69,8 +69,8 @@ public class ProjectScreenPresenterTest
 
         final POM pom = mockProjectScreenService(model);
 
-        //Mock ProjectContext
-        mockProjectContext(pom,
+        //Mock WorkspaceProjectContext
+        mockWorkspaceProjectContext(pom,
                            repository,
                            module,
                            pomPath);

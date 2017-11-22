@@ -32,7 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.contributors.model.ContributorsDataSets;
-import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
+import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.util.ProjectMetricsFactory;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -112,7 +112,7 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
                                              i18n,
                                              metricsFactory,
                                              displayerCoordinator);
-        presenter.onStartup(new ProjectMetricsEvent(projectInfo));
+        presenter.onStartup(new WorkbenchProjectMetricsEvent(project));
     }
 
     @Test
@@ -292,7 +292,7 @@ public class ProjectMetricsScreenTest extends AbstractDisplayerTest {
 
     @Test
     public void dateSelectorFormatTest() {
-        DisplayerSettings settings = metricsFactory.buildDateSelectorSettings(projectInfo);
+        DisplayerSettings settings = metricsFactory.buildDateSelectorSettings(project);
         assertEquals(settings.getColumnSettings(COLUMN_DATE).getValuePattern(),
                      "dd MMM, yyyy HH:mm");
     }

@@ -27,12 +27,12 @@ import java.util.Optional;
 import java.util.Set;
 import javax.enterprise.event.Event;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -112,7 +112,7 @@ public class ExamplesServiceImplTest {
     private User user;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     private ExamplesServiceImpl service;
 
@@ -350,7 +350,7 @@ public class ExamplesServiceImplTest {
         final WorkspaceProject project = new WorkspaceProject();
         doReturn(project).when(projectService).resolveProject(repository);
 
-        final ProjectContextChangeEvent event = service.setupExamples(exOU,
+        final WorkspaceProjectContextChangeEvent event = service.setupExamples(exOU,
                                                                       exModules);
 
         assertNull(event.getOrganizationalUnit());
@@ -413,7 +413,7 @@ public class ExamplesServiceImplTest {
         final WorkspaceProject project = new WorkspaceProject();
         doReturn(project).when(projectService).resolveProject(repository1);
 
-        final ProjectContextChangeEvent event = service.setupExamples(exOU,
+        final WorkspaceProjectContextChangeEvent event = service.setupExamples(exOU,
                                                                       exProjects);
 
         assertNull(event.getOrganizationalUnit());

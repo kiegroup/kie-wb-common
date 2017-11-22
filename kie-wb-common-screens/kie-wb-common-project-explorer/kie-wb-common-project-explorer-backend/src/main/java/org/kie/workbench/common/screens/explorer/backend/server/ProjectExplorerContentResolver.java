@@ -28,7 +28,7 @@ import org.guvnor.common.services.backend.file.LinkedDotFileFilter;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.repositories.Branch;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.kie.workbench.common.screens.explorer.model.FolderItem;
@@ -54,13 +54,13 @@ public class ProjectExplorerContentResolver {
     private KieModuleService moduleService;
     private ExplorerServiceHelper helper;
     private ExplorerServiceHelper explorerServiceHelper;
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Inject
     public ProjectExplorerContentResolver(final KieModuleService moduleService,
                                           final ExplorerServiceHelper helper,
                                           final ExplorerServiceHelper explorerServiceHelper,
-                                          final ProjectService projectService) {
+                                          final WorkspaceProjectService projectService) {
         this.moduleService = moduleService;
         this.helper = helper;
         this.explorerServiceHelper = explorerServiceHelper;

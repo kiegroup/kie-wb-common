@@ -64,7 +64,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSetupMenuBar() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         editor.setupMenuBar();
@@ -88,7 +88,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSetupMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         editor.setupMenuBar();
@@ -668,7 +668,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSave() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         final TestDocument document = createTestDocument();

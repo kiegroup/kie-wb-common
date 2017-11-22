@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.ext.uberfire.social.activities.model.SocialActivitiesEvent;
 import org.ext.uberfire.social.activities.service.SocialSecurityConstraint;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.uberfire.java.nio.file.Path;
@@ -42,7 +42,7 @@ public class SocialEventModuleConstraint implements SocialSecurityConstraint {
     private UserCDIContextHelper userCDIContextHelper;
     private SocialEventRepositoryConstraint delegate;
     private AuthorizationManager authorizationManager;
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     public SocialEventModuleConstraint() {
         //Zero argument constructor for CDI proxies
@@ -51,7 +51,7 @@ public class SocialEventModuleConstraint implements SocialSecurityConstraint {
     @Inject
     public SocialEventModuleConstraint(final SocialEventRepositoryConstraint delegate,
                                        final AuthorizationManager authorizationManager,
-                                       final ProjectService projectService,
+                                       final WorkspaceProjectService projectService,
                                        final UserCDIContextHelper userCDIContextHelper) {
         this.delegate = PortablePreconditions.checkNotNull("delegate",
                                                            delegate);

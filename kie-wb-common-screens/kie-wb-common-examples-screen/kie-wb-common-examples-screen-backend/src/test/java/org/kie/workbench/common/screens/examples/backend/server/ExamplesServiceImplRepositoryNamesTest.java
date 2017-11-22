@@ -25,7 +25,7 @@ import javax.enterprise.event.Event;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -102,7 +102,7 @@ public class ExamplesServiceImplRepositoryNamesTest {
     private User user;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     private ExamplesServiceImpl service;
 

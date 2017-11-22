@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.library.client.screens.organizationalun
 import java.util.ArrayList;
 import java.util.List;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterEditOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -53,7 +53,7 @@ public class ContributorsListPresenterTest {
     private ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters;
 
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     @Mock
     private OrganizationalUnitController organizationalUnitController;
@@ -101,7 +101,7 @@ public class ContributorsListPresenterTest {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         doReturn("B").when(organizationalUnit).getOwner();
         doReturn(contributors).when(organizationalUnit).getContributors();
-        doReturn(organizationalUnit).when(libraryPlaces).getSelectedOrganizationalUnit();
+        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
 
         presenter.setup();
 
@@ -129,7 +129,7 @@ public class ContributorsListPresenterTest {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         doReturn("Mary").when(organizationalUnit).getOwner();
         doReturn(presenter.contributors).when(organizationalUnit).getContributors();
-        doReturn(organizationalUnit).when(libraryPlaces).getSelectedOrganizationalUnit();
+        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
 
         presenter.filterContributors("h");
 
@@ -187,7 +187,7 @@ public class ContributorsListPresenterTest {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         doReturn("B").when(organizationalUnit).getOwner();
         doReturn(contributors).when(organizationalUnit).getContributors();
-        doReturn(organizationalUnit).when(libraryPlaces).getSelectedOrganizationalUnit();
+        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
 
         assertEquals(3,
                      presenter.getContributorsCount());

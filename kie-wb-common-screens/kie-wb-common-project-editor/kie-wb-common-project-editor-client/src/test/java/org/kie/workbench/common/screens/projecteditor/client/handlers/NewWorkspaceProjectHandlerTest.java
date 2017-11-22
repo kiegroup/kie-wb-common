@@ -18,8 +18,8 @@ package org.kie.workbench.common.screens.projecteditor.client.handlers;
 
 import com.google.gwt.core.client.Callback;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -32,7 +32,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryOrganizationalUnitPreferences;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
-import org.kie.workbench.common.screens.projecteditor.client.wizard.NewProjectWizard;
+import org.kie.workbench.common.screens.projecteditor.client.wizard.NewWorkspaceProjectWizard;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -49,12 +49,12 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class NewProjectHandlerTest {
+public class NewWorkspaceProjectHandlerTest {
 
     @Mock
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     @Mock
-    private NewProjectWizard wizard;
+    private NewWorkspaceProjectWizard wizard;
     @Mock
     private Repository repository;
     @Mock
@@ -62,25 +62,25 @@ public class NewProjectHandlerTest {
     @Mock
     private OrganizationalUnitService organizationalUnitService;
     @Mock
-    private EventSourceMock<ProjectContextChangeEvent> projectContextChangeEvent;
+    private EventSourceMock<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     @Mock
     private LibraryPreferences libraryPreferences;
 
-    private NewProjectHandler handler;
+    private NewWorkspaceProjectHandler handler;
     private AnyResourceTypeDefinition resourceType = mock(AnyResourceTypeDefinition.class);
     private NewResourcePresenter newResourcePresenter = mock(NewResourcePresenter.class);
 
     @Before
     public void setup() {
 
-        handler = new NewProjectHandler(context,
-                                        projectContextChangeEvent,
-                                        libraryPreferences,
-                                        wizard,
-                                        new CallerMock<>(organizationalUnitService),
-                                        projectController,
-                                        resourceType);
+        handler = new NewWorkspaceProjectHandler(context,
+                                                 projectContextChangeEvent,
+                                                 libraryPreferences,
+                                                 wizard,
+                                                 new CallerMock<>(organizationalUnitService),
+                                                 projectController,
+                                                 resourceType);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -139,7 +139,7 @@ public class NewProjectHandlerTest {
                 when(context.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
                 return null;
             }
-        }).when(projectContextChangeEvent).fire(any(ProjectContextChangeEvent.class));
+        }).when(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));
 
         final Command command = handler.getCommand(newResourcePresenter);
         assertNotNull(command);

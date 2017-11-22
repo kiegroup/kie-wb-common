@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.Window;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
@@ -111,7 +111,7 @@ public abstract class BaseViewPresenter {
     @Inject
     private ActiveContextManager activeContextManager;
     @Inject
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     private boolean isOnLoading = false;
     private BaseViewImpl baseView;
     @Inject
@@ -637,7 +637,7 @@ public abstract class BaseViewPresenter {
                                   activeOptions.getOptions());
     }
 
-    public void initialiseViewForActiveContext(final ProjectContext context) {
+    public void initialiseViewForActiveContext(final WorkspaceProjectContext context) {
         activeContextManager.initActiveContext(context);
     }
 

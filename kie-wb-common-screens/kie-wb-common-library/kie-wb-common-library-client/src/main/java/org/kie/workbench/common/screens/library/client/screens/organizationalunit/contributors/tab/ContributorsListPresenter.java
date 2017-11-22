@@ -23,7 +23,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterEditOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -56,7 +56,7 @@ public class ContributorsListPresenter {
 
     private ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters;
 
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     private OrganizationalUnitController organizationalUnitController;
 
@@ -67,7 +67,7 @@ public class ContributorsListPresenter {
                                      final LibraryPlaces libraryPlaces,
                                      final ManagedInstance<ContributorsListItemPresenter> contributorsListItemPresenters,
                                      final ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters,
-                                     final ProjectContext projectContext,
+                                     final WorkspaceProjectContext projectContext,
                                      final OrganizationalUnitController organizationalUnitController) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
@@ -80,7 +80,7 @@ public class ContributorsListPresenter {
     @PostConstruct
     public void setup() {
         view.init(this);
-        updateContributors(libraryPlaces.getSelectedOrganizationalUnit());
+        updateContributors(projectContext.getActiveOrganizationalUnit());
     }
 
     public void updateContributors(final OrganizationalUnit organizationalUnit) {
@@ -98,7 +98,7 @@ public class ContributorsListPresenter {
     }
 
     private void updateView(final List<String> contributors) {
-        final OrganizationalUnit organizationalUnit = libraryPlaces.getSelectedOrganizationalUnit();
+        final OrganizationalUnit organizationalUnit = projectContext.getActiveOrganizationalUnit();
 
         view.clearContributors();
 
@@ -129,7 +129,7 @@ public class ContributorsListPresenter {
     }
 
     public int getContributorsCount() {
-        return libraryPlaces.getSelectedOrganizationalUnit().getContributors().size();
+        return projectContext.getActiveOrganizationalUnit().getContributors().size();
     }
 
     public View getView() {

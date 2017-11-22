@@ -17,7 +17,7 @@ package org.kie.workbench.common.screens.explorer.client;
 
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.kie.workbench.common.screens.explorer.client.resources.i18n.ProjectExplorerConstants;
 import org.kie.workbench.common.screens.explorer.client.widgets.ActiveContextOptions;
 import org.kie.workbench.common.screens.explorer.client.widgets.BaseViewPresenter;
@@ -48,7 +48,7 @@ public class ExplorerPresenter {
     private ExplorerView view;
     private BusinessViewPresenter businessViewPresenter;
     private TechnicalViewPresenter technicalViewPresenter;
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     private ActiveContextOptions activeOptions;
 
     public ExplorerPresenter() {
@@ -58,7 +58,7 @@ public class ExplorerPresenter {
     public ExplorerPresenter(final ExplorerView view,
                              final BusinessViewPresenter businessViewPresenter,
                              final TechnicalViewPresenter technicalViewPresenter,
-                             final ProjectContext context,
+                             final WorkspaceProjectContext context,
                              final ActiveContextOptions activeOptions,
                              final ExplorerMenu menu) {
         this.view = view;

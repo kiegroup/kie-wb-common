@@ -21,13 +21,13 @@ import javax.enterprise.event.Event;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.RenameModuleEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Branch;
@@ -43,7 +43,7 @@ import org.kie.workbench.common.screens.examples.client.wizard.ExamplesWizard;
 import org.kie.workbench.common.screens.explorer.model.URIStructureExplorerModel;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
-import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
+import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.widgets.library.LibraryToolbarPresenter;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -66,7 +66,6 @@ import org.uberfire.ext.preferences.client.event.PreferencesCentralUndoChangesEv
 import org.uberfire.ext.widgets.common.client.breadcrumbs.UberfireBreadcrumbs;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.ConditionalPlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.preferences.shared.impl.PreferenceScopeResolutionStrategyInfo;
@@ -87,7 +86,7 @@ public class LibraryPlacesTest {
     private TranslationService ts;
 
     @Mock
-    private Event<ProjectMetricsEvent> projectMetricsEvent;
+    private Event<WorkbenchProjectMetricsEvent> projectMetricsEvent;
 
     @Mock
     private Event<AssetDetailEvent> assetDetailEvent;
@@ -103,7 +102,7 @@ public class LibraryPlacesTest {
     private PlaceManager placeManager;
 
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     @Mock
     private LibraryToolbarPresenter libraryToolbar;
@@ -112,7 +111,7 @@ public class LibraryPlacesTest {
     private AuthoringWorkbenchDocks docks;
 
     @Mock
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     @Mock
     private Event<NotificationEvent> notificationEvent;
@@ -134,13 +133,13 @@ public class LibraryPlacesTest {
     private Event<PreferencesCentralInitializationEvent> preferencesCentralInitializationEvent;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Mock
     private KieModuleService moduleService;
 
     @Captor
-    private ArgumentCaptor<ProjectContextChangeEvent> projectContextChangeEventArgumentCaptor;
+    private ArgumentCaptor<WorkspaceProjectContextChangeEvent> projectContextChangeEventArgumentCaptor;
 
     private LibraryPlaces libraryPlaces;
 
@@ -203,7 +202,6 @@ public class LibraryPlacesTest {
         doReturn(mock(Path.class)).when(vfsService).get(any());
 
         doNothing().when(libraryPlaces).setupLibraryBreadCrumbs();
-        doNothing().when(libraryPlaces).setupLibraryBreadCrumbsForTrySamples();
         doNothing().when(libraryPlaces).setupLibraryBreadCrumbsForNewProject();
         doNothing().when(libraryPlaces).setupLibraryBreadCrumbsForAsset(any(Path.class));
         final PathPlaceRequest pathPlaceRequest = mock(PathPlaceRequest.class);
@@ -403,9 +401,9 @@ public class LibraryPlacesTest {
         verify(projectContextChangeEvent).fire(projectContextChangeEventArgumentCaptor.capture());
         assertNull(projectContextChangeEventArgumentCaptor.getValue().getOrganizationalUnit());
 
-        final ArgumentCaptor<ProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ProjectContextChangeEvent.class);
+        final ArgumentCaptor<WorkspaceProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(WorkspaceProjectContextChangeEvent.class);
         verify(projectContextChangeEvent).fire(eventArgumentCaptor.capture());
-        final ProjectContextChangeEvent event = eventArgumentCaptor.getValue();
+        final WorkspaceProjectContextChangeEvent event = eventArgumentCaptor.getValue();
         assertNull(event.getOrganizationalUnit());
         assertNull(event.getWorkspaceProject());
         verify(placeManager).closeAllPlacesOrNothing();
@@ -424,10 +422,10 @@ public class LibraryPlacesTest {
         libraryPlaces.goToAsset(path);
 
         verify(placeManager).goTo(pathPlaceRequest);
-        final ArgumentCaptor<ProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ProjectContextChangeEvent.class);
+        final ArgumentCaptor<WorkspaceProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(WorkspaceProjectContextChangeEvent.class);
         verify(projectContextChangeEvent).fire(eventArgumentCaptor.capture());
 
-        final ProjectContextChangeEvent value = eventArgumentCaptor.getValue();
+        final WorkspaceProjectContextChangeEvent value = eventArgumentCaptor.getValue();
         assertEquals(activeProject, value.getWorkspaceProject());
         assertEquals(activeModule, value.getModule());
         assertNull(value.getPackage());
@@ -447,16 +445,16 @@ public class LibraryPlacesTest {
         libraryPlaces.goToAsset(path);
 
         verify(projectContextChangeEvent).fire(projectContextChangeEventArgumentCaptor.capture());
-        final ProjectContextChangeEvent contextChangeEvent = projectContextChangeEventArgumentCaptor.getValue();
+        final WorkspaceProjectContextChangeEvent contextChangeEvent = projectContextChangeEventArgumentCaptor.getValue();
         assertEquals(activeProject, contextChangeEvent.getWorkspaceProject());
         assertEquals(activeModule, contextChangeEvent.getModule());
         assertEquals(pkg, contextChangeEvent.getPackage());
 
         verify(placeManager).goTo(pathPlaceRequest);
-        final ArgumentCaptor<ProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(ProjectContextChangeEvent.class);
+        final ArgumentCaptor<WorkspaceProjectContextChangeEvent> eventArgumentCaptor = ArgumentCaptor.forClass(WorkspaceProjectContextChangeEvent.class);
         verify(projectContextChangeEvent).fire(eventArgumentCaptor.capture());
 
-        final ProjectContextChangeEvent value = eventArgumentCaptor.getValue();
+        final WorkspaceProjectContextChangeEvent value = eventArgumentCaptor.getValue();
         assertEquals(activeProject, value.getWorkspaceProject());
         assertEquals(activeModule, value.getModule());
         assertEquals(pkg, value.getPackage());
@@ -483,8 +481,7 @@ public class LibraryPlacesTest {
         verify(placeManager).goTo(eq(part),
                                   any(PanelDefinition.class));
         verify(libraryPlaces).setupLibraryBreadCrumbs();
-        verify(projectContextChangeEvent,
-               never()).fire(any(ProjectContextChangeEvent.class));
+        verify(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));
     }
 
     @Test
@@ -498,7 +495,7 @@ public class LibraryPlacesTest {
         verify(placeManager).goTo(eq(part),
                                   any(PanelDefinition.class));
         verify(projectContextChangeEvent,
-               never()).fire(any(ProjectContextChangeEvent.class));
+               never()).fire(any(WorkspaceProjectContextChangeEvent.class));
         verify(libraryPlaces).setupLibraryBreadCrumbs();
     }
 
@@ -525,7 +522,7 @@ public class LibraryPlacesTest {
 
         verify(placeManager).goTo(eq(part),
                                   any(PanelDefinition.class));
-        verify(projectMetricsEvent).fire(any(ProjectMetricsEvent.class));
+        verify(projectMetricsEvent).fire(any(WorkbenchProjectMetricsEvent.class));
         verify(libraryPlaces).setupLibraryBreadCrumbsForProjectMetrics();
     }
 
@@ -542,16 +539,31 @@ public class LibraryPlacesTest {
     }
 
     @Test
-    public void goToSameProjectTest() {
-        final ProjectInfo projectInfo = new ProjectInfo(activeOrganizationalUnit,
-                                                        activeRepository,
-                                                        activeBranch,
-                                                        activeProject);
-        libraryPlaces.goToProject(projectInfo);
-        libraryPlaces.goToProject(projectInfo);
+    public void goToNewProject() {
 
-        verify(placeManager,
-               times(1)).closeAllPlacesOrNothing();
+        final WorkspaceProject project = new WorkspaceProject(activeOrganizationalUnit,
+                                                              activeRepository,
+                                                              activeBranch,
+                                                              mock(Module.class));
+        libraryPlaces.goToProject(project);
+
+        verify(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));
+
+        verify(placeManager).closeAllPlacesOrNothing();
+    }
+
+    @Test
+    public void goToSameProjectTest() {
+
+        final WorkspaceProject project = new WorkspaceProject(activeOrganizationalUnit,
+                                                              activeRepository,
+                                                              activeBranch,
+                                                              activeModule);
+        libraryPlaces.goToProject(project);
+
+        verify(projectContextChangeEvent, never()).fire(any(WorkspaceProjectContextChangeEvent.class));
+
+        verify(placeManager, never()).closeAllPlacesOrNothing();
     }
 
     @Test

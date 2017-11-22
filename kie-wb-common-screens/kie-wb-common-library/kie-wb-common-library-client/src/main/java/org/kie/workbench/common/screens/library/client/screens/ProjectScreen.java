@@ -20,7 +20,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.IsElement;
@@ -50,10 +50,10 @@ public class ProjectScreen {
     private LibraryPlaces libraryPlaces;
     private Caller<LibraryService> libraryService;
 
-    private EmptyProjectPresenter emptyProjectPresenter;
-    private ProjectListAssetsPresenter projectListAssetsPresenter;
+    private EmptyWorkspaceProjectPresenter emptyWorkspaceProjectPresenter;
+    private WorkspaceProjectListAssetsPresenter workspaceProjectListAssetsPresenter;
     private ProjectMigrationPresenter projectMigrationPresenter;
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     private Event<ProjectDetailEvent> projectDetailEvent;
 
@@ -66,16 +66,16 @@ public class ProjectScreen {
     public ProjectScreen(final View view,
                          final LibraryPlaces libraryPlaces,
                          final Caller<LibraryService> libraryService,
-                         final EmptyProjectPresenter emptyProjectPresenter,
-                         final ProjectListAssetsPresenter projectListAssetsPresenter,
+                         final EmptyWorkspaceProjectPresenter emptyWorkspaceProjectPresenter,
+                         final WorkspaceProjectListAssetsPresenter workspaceProjectListAssetsPresenter,
                          final ProjectMigrationPresenter projectMigrationPresenter,
-                         final ProjectContext projectContext,
+                         final WorkspaceProjectContext projectContext,
                          final Event<ProjectDetailEvent> projectDetailEvent) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
         this.libraryService = libraryService;
-        this.emptyProjectPresenter = emptyProjectPresenter;
-        this.projectListAssetsPresenter = projectListAssetsPresenter;
+        this.emptyWorkspaceProjectPresenter = emptyWorkspaceProjectPresenter;
+        this.workspaceProjectListAssetsPresenter = workspaceProjectListAssetsPresenter;
         this.projectMigrationPresenter = projectMigrationPresenter;
         this.projectContext = projectContext;
         this.projectDetailEvent = projectDetailEvent;
@@ -89,23 +89,31 @@ public class ProjectScreen {
 
     public void refreshOnFocus(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
 
-        if (project != null && placeGainFocusEvent.getPlace().getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
+        String identifier = placeGainFocusEvent.getPlace().getIdentifier();
+        if (project != null && identifier.equals(LibraryPlaces.PROJECT_SCREEN)) {
 
             setup();
         }
     }
 
     private void setup() {
+
+        if (project != null && project.equals(projectContext.getActiveWorkspaceProject())) {
+            return;
+        }
+
         project = projectContext.getActiveWorkspaceProject();
         libraryPlaces.setUpBranches();
 
         if (projectContext.getActiveWorkspaceProject().getMainModule() == null) {
+
             showMigration();
         } else {
 
             projectDetailEvent.fire(new ProjectDetailEvent(project));
 
             libraryService.call(hasAssets -> {
+
                 if ((Boolean) hasAssets) {
                     showList();
                 } else {
@@ -116,13 +124,13 @@ public class ProjectScreen {
     }
 
     private void showEmptyProject() {
-        emptyProjectPresenter.show(project);
-        view.setContent(emptyProjectPresenter.getView().getElement());
+        emptyWorkspaceProjectPresenter.show(project);
+        view.setContent(emptyWorkspaceProjectPresenter.getView().getElement());
     }
 
     private void showList() {
-        projectListAssetsPresenter.show(project);
-        view.setContent(projectListAssetsPresenter.getView().getElement());
+        workspaceProjectListAssetsPresenter.show(project);
+        view.setContent(workspaceProjectListAssetsPresenter.getView().getElement());
     }
 
     private void showMigration() {

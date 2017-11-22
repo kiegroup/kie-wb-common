@@ -25,7 +25,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Module;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Branch;
@@ -47,7 +47,7 @@ public class DefExplorerQueryServiceImpl
         implements DefExplorerQueryService {
 
     @Inject
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
     @Inject
     private DataSourceDefQueryService queryService;
     @Inject

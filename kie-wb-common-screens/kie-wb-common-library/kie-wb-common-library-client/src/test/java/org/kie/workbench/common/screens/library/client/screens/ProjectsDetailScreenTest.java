@@ -16,7 +16,7 @@
 package org.kie.workbench.common.screens.library.client.screens;
 
 import org.dashbuilder.displayer.client.Displayer;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -53,7 +53,7 @@ public class ProjectsDetailScreenTest {
     private WorkspaceProject project;
 
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     private ProjectDetailEvent projectDetailEvent;
     private ProjectsDetailScreen projectsDetail;

@@ -17,7 +17,7 @@ package org.kie.workbench.common.screens.explorer.client;
 
 import java.util.Optional;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -50,7 +50,7 @@ public class ExplorerMenuTest {
     private Command updateCommand;
 
     @Mock
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
 
     private ExplorerMenu menu;
 

@@ -38,7 +38,7 @@ import org.dashbuilder.dataset.def.DataSetDefFactory;
 import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.NewOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -81,7 +81,7 @@ public class ContributorsManager implements DataSetGenerator {
     protected OrganizationalUnitService organizationalUnitService;
 
     @Inject
-    protected ProjectService projectService;
+    protected WorkspaceProjectService projectService;
 
     @Inject
     protected VersionRecordService recordService;
@@ -135,7 +135,7 @@ public class ContributorsManager implements DataSetGenerator {
         final Collection<OrganizationalUnit> orgUnitList = organizationalUnitService.getOrganizationalUnits();
         for (final OrganizationalUnit orgUnit : orgUnitList) {
             final String org = orgUnit.getName();
-            final Collection<WorkspaceProject> projects = projectService.getAllProjects(orgUnit);
+            final Collection<WorkspaceProject> projects = projectService.getAllWorkspaceProjects(orgUnit);
 
             if (projects.isEmpty()) {
                 dsBuilder.row(org,

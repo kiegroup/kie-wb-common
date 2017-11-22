@@ -18,7 +18,7 @@ package org.kie.workbench.common.widgets.metadata.client;
 import java.lang.reflect.Field;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.junit.Before;
 import org.kie.soup.project.datamodel.imports.Imports;
@@ -75,7 +75,7 @@ abstract class KieMultipleDocumentEditorTestBase {
     protected EventSourceMock<ChangeTitleWidgetEvent> changeTitleEvent;
 
     @Mock
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
 
     @Mock
     protected ProjectController projectController;

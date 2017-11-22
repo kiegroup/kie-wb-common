@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectListAssetsPresenterReloadTest
+public class WorkspaceProjectListAssetsPresenterReloadTest
         extends ProjectScreenTestBase {
 
     @Mock
@@ -45,15 +45,15 @@ public class ProjectListAssetsPresenterReloadTest
     public void setup() {
         numberOfCalls = 0;
 
-        projectListAssetsPresenter = new ProjectListAssetsPresenter(view,
-                                                                    libraryPlaces,
-                                                                    mock(ProjectsDetailScreen.class),
-                                                                    ts,
-                                                                    new CallerMock<>(libraryService),
-                                                                    assetClassifier,
-                                                                    assetDetailEvent,
-                                                                    busyIndicatorView,
-                                                                    projectController) {
+        workspaceProjectListAssetsPresenter = new WorkspaceProjectListAssetsPresenter(view,
+                                                                                      libraryPlaces,
+                                                                                      mock(ProjectsDetailScreen.class),
+                                                                                      ts,
+                                                                                      new CallerMock<>(libraryService),
+                                                                                      assetClassifier,
+                                                                                      assetDetailEvent,
+                                                                                      busyIndicatorView,
+                                                                                      projectController) {
             @Override
             String getCreatedTime(AssetInfo asset) {
                 return "";
@@ -78,7 +78,7 @@ public class ProjectListAssetsPresenterReloadTest
         };
 
         doAnswer(a -> {
-            projectListAssetsPresenter.loadProjectInfo();
+            workspaceProjectListAssetsPresenter.loadProjectInfo();
             return null;
         }).when(timer).schedule(anyInt());
 
@@ -117,7 +117,7 @@ public class ProjectListAssetsPresenterReloadTest
                                 FolderItemType.FILE,
                                 "file2.txt"));
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(view,
                never()).showIndexingIncomplete();
@@ -131,7 +131,7 @@ public class ProjectListAssetsPresenterReloadTest
 
         when(view.getFilterValue()).thenReturn("my asset");
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(view,
                never()).showIndexingIncomplete();
@@ -146,7 +146,7 @@ public class ProjectListAssetsPresenterReloadTest
 
         when(view.getFirstIndex()).thenReturn(15);
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(view,
                never()).showIndexingIncomplete();
@@ -164,7 +164,7 @@ public class ProjectListAssetsPresenterReloadTest
         when(view.getFilterValue()).thenReturn("some asset");
         when(view.getFirstIndex()).thenReturn(15);
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(view,
                never()).showIndexingIncomplete();
@@ -181,7 +181,7 @@ public class ProjectListAssetsPresenterReloadTest
 
         when(view.getStep()).thenReturn(3);
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         assertEquals(3,
                      numberOfCalls);
@@ -190,7 +190,7 @@ public class ProjectListAssetsPresenterReloadTest
     @Test
     public void reloadOnEmptyList() throws Exception {
 
-        projectListAssetsPresenter.show(project);
+        workspaceProjectListAssetsPresenter.show(project);
 
         verify(view,
                atLeastOnce()).showIndexingIncomplete();

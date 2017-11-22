@@ -22,7 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -48,10 +49,10 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ImportProjectsScreenTest {
+public class ImportWorkspaceProjectsScreenTest {
 
     @Mock
-    private ImportProjectsScreen.View view;
+    private ImportWorkspaceProjectsScreen.View view;
 
     @Mock
     private LibraryPlaces libraryPlaces;
@@ -71,11 +72,11 @@ public class ImportProjectsScreenTest {
     private EventSourceMock<NotificationEvent> notificationEvent;
 
     @Mock
-    private EventSourceMock<ProjectContextChangeEvent> projectContextChangeEvent;
+    private EventSourceMock<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     private TileWidget tileWidget;
 
-    private ImportProjectsScreen importProjectsScreen;
+    private ImportWorkspaceProjectsScreen importWorkspaceProjectsScreen;
 
     @Before
     public void setup() {
@@ -85,13 +86,14 @@ public class ImportProjectsScreenTest {
 
         doReturn(tileWidget).when(tileWidgets).get();
 
-        importProjectsScreen = new ImportProjectsScreen(view,
-                                                        libraryPlaces,
-                                                        libraryServiceCaller,
-                                                        tileWidgets,
-                                                        examplesServiceCaller,
-                                                        notificationEvent,
-                                                        projectContextChangeEvent);
+        importWorkspaceProjectsScreen = new ImportWorkspaceProjectsScreen(view,
+                                                                          libraryPlaces,
+                                                                          libraryServiceCaller,
+                                                                          tileWidgets,
+                                                                          examplesServiceCaller,
+                                                                          mock(WorkspaceProjectContext.class),
+                                                                          notificationEvent,
+                                                                          projectContextChangeEvent);
     }
 
     @Test
@@ -115,10 +117,10 @@ public class ImportProjectsScreenTest {
         params.put("title",
                    "Import Projects");
 
-        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
-                                                               params));
+        importWorkspaceProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN,
+                                                                        params));
 
-        verify(view).init(importProjectsScreen);
+        verify(view).init(importWorkspaceProjectsScreen);
         verify(view).setTitle("Import Projects");
         verify(view).showBusyIndicator(anyString());
         verify(view).hideBusyIndicator();
@@ -150,7 +152,7 @@ public class ImportProjectsScreenTest {
 
     @Test
     public void onStartupWithoutProjectsTest() {
-        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN));
+        importWorkspaceProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
 
         verify(view).hideBusyIndicator();
         verify(notificationEvent).fire(any());
@@ -174,8 +176,8 @@ public class ImportProjectsScreenTest {
                                         null));
         doReturn(projects).when(libraryService).getProjects(anyString());
 
-        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN));
-        final List<TileWidget> filteredProjects = importProjectsScreen.filterProjects("a");
+        importWorkspaceProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
+        final List<TileWidget> filteredProjects = importWorkspaceProjectsScreen.filterProjects("a");
 
         assertEquals(2,
                      filteredProjects.size());
@@ -183,7 +185,7 @@ public class ImportProjectsScreenTest {
 
     @Test
     public void cancelTest() {
-        importProjectsScreen.cancel();
+        importWorkspaceProjectsScreen.cancel();
 
         verify(libraryPlaces).goToLibrary();
     }

@@ -15,11 +15,12 @@
  */
 package org.kie.workbench.common.screens.library.client.screens;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
+import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,12 +32,18 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.PlaceRequest;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectScreenRefreshTest {
@@ -48,13 +55,13 @@ public class ProjectScreenRefreshTest {
     @Mock
     private LibraryService libraryService;
     @Mock
-    private EmptyProjectPresenter emptyProjectPresenter;
+    private EmptyWorkspaceProjectPresenter emptyWorkspaceProjectPresenter;
     @Mock
-    private ProjectListAssetsPresenter projectListAssetsPresenter;
+    private WorkspaceProjectListAssetsPresenter workspaceProjectListAssetsPresenter;
     @Mock
     private ProjectMigrationPresenter projectMigrationPresenter;
     @Mock
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
     @Mock
     private EventSourceMock<ProjectDetailEvent> projectDetailEvent;
 
@@ -68,8 +75,8 @@ public class ProjectScreenRefreshTest {
         screen = new ProjectScreen(view,
                                    libraryPlaces,
                                    new CallerMock<>(libraryService),
-                                   emptyProjectPresenter,
-                                   projectListAssetsPresenter,
+                                   emptyWorkspaceProjectPresenter,
+                                   workspaceProjectListAssetsPresenter,
                                    projectMigrationPresenter,
                                    projectContext,
                                    projectDetailEvent);
@@ -81,7 +88,7 @@ public class ProjectScreenRefreshTest {
 
         final WorkspaceProject project = new WorkspaceProject(mock(OrganizationalUnit.class),
                                                               mock(Repository.class),
-                                                              mock(Branch.class),
+                                                              new Branch("master", mock(Path.class)),
                                                               null);
         doReturn(project).when(projectContext).getActiveWorkspaceProject();
     }
@@ -97,11 +104,35 @@ public class ProjectScreenRefreshTest {
     }
 
     @Test
-    public void refresh() throws Exception {
+    public void refreshNoChanges() throws Exception {
 
         final PlaceGainFocusEvent placeGainFocusEvent = getPlaceGainFocusEvent(LibraryPlaces.PROJECT_SCREEN);
 
         screen.onStartup();
+
+        reset(this.view);
+
+        screen.refreshOnFocus(placeGainFocusEvent);
+
+        verify(this.view, never()).setContent(any(HTMLElement.class));
+    }
+
+    @Test
+    public void refreshProjectChanged() throws Exception {
+
+        IsElement view = mock(IsElement.class);
+        doReturn(view).when(emptyWorkspaceProjectPresenter).getView();
+        doReturn(mock(HTMLElement.class)).when(view).getElement();
+
+        final PlaceGainFocusEvent placeGainFocusEvent = getPlaceGainFocusEvent(LibraryPlaces.PROJECT_SCREEN);
+
+        screen.onStartup();
+
+        doReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                      mock(Repository.class),
+                                      new Branch("other", mock(Path.class)),
+                                      null)).when(projectContext).getActiveWorkspaceProject();
+
 
         reset(this.view);
 

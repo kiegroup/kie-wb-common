@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Optional;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.spi.Bean;
@@ -33,6 +34,7 @@ import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.service.ModuleRepositoriesService;
 import org.guvnor.common.services.project.service.POMService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
+import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.security.shared.api.identity.UserImpl;
@@ -186,7 +188,7 @@ public class ModuleSaverTest
 
         FileAlreadyExistsException fileExistsException = null;
 
-        when(repository.getRoot()).thenReturn(repositoryRootPath);
+        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", repositoryRootPath)));
 
         //name for the module we are trying to re-create over an existing one.
         when(newPOM.getName()).thenReturn("existingModule");
@@ -263,7 +265,7 @@ public class ModuleSaverTest
                                               Long.toString(System.nanoTime()));
         final Path repositoryRootPath = paths.convert(fs.getPath(test.toURI()));
 
-        when(repository.getRoot()).thenReturn(repositoryRootPath);
+        when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", repositoryRootPath)));
 
         when(pomService.load(any(Path.class))).thenReturn(pom);
 
@@ -284,7 +286,7 @@ public class ModuleSaverTest
             }
         });
 
-        Module module = saver.save(repository.getRoot(),
+        Module module = saver.save(repositoryRootPath,
                                    pom,
                                    baseURL);
 

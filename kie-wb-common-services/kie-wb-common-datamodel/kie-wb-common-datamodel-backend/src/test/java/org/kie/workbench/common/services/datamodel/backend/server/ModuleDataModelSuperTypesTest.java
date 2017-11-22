@@ -31,8 +31,8 @@ public class ModuleDataModelSuperTypesTest extends AbstractDataModelWeldTest {
 
     @Test
     public void testProjectSuperTypes() throws Exception {
-        final DataModelService oracle =
-                initializeProjectDataModelOracle("/DataModelBackendSuperTypesTest1/src/main/java/t2p1");
+        final ModuleDataModelOracle oracle =
+                initializeModuleDataModelOracle("/DataModelBackendSuperTypesTest1/src/main/java/t2p1");
 
         assertNotNull(oracle);
 
@@ -50,12 +50,12 @@ public class ModuleDataModelSuperTypesTest extends AbstractDataModelWeldTest {
                        oracle.getModuleModelFields().keySet());
 
         assertContains("java.lang.Object",
-                       new HashSet<>(oracle.getProjectSuperTypes().get("t2p1.Bean1")));
+                       new HashSet<>(oracle.getModuleSuperTypes().get("t2p1.Bean1")));
         assertContains("t2p1.Bean1",
-                       new HashSet<>(oracle.getProjectSuperTypes().get("t2p1.Bean2")));
+                       new HashSet<>(oracle.getModuleSuperTypes().get("t2p1.Bean2")));
         assertContains("t2p1.Bean1",
-                       new HashSet<>(oracle.getProjectSuperTypes().get("t2p2.Bean3")));
+                       new HashSet<>(oracle.getModuleSuperTypes().get("t2p2.Bean3")));
         assertContains("t2p2.Bean3",
-                       new HashSet<>(oracle.getProjectSuperTypes().get("t2p1.Bean4")));
+                       new HashSet<>(oracle.getModuleSuperTypes().get("t2p1.Bean4")));
     }
 }

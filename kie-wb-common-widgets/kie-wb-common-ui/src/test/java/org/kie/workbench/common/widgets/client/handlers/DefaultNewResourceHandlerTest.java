@@ -21,7 +21,7 @@ import javax.enterprise.event.Event;
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.jboss.errai.common.client.api.Caller;
@@ -49,7 +49,7 @@ public class DefaultNewResourceHandlerTest {
 
     private DefaultNewResourceHandler handler;
 
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     private KieModuleService moduleService;
     private Caller<KieModuleService> moduleServiceCaller;
     private ValidationService validationService;
@@ -61,7 +61,7 @@ public class DefaultNewResourceHandlerTest {
 
     @Before
     public void setup() {
-        context = mock(ProjectContext.class);
+        context = mock(WorkspaceProjectContext.class);
         moduleService = mock(KieModuleService.class);
         moduleServiceCaller = new CallerMock<>(moduleService);
         validationService = mock(ValidationService.class);

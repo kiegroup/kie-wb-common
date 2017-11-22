@@ -26,7 +26,7 @@ import java.util.Set;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
@@ -157,7 +157,7 @@ public abstract class DataModelerScreenPresenterTestBase {
     protected ProjectController projectController;
 
     @Mock
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
 
     @Mock
     protected DeletePopUpPresenter deletePopUpPresenter;

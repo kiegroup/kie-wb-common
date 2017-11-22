@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.google.gwtmockito.GwtMock;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -135,7 +135,7 @@ public class FormEditorPresenterAbstractTest {
     protected ProjectController projectController;
 
     @Mock
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
 
     @Mock
     protected DeletePopUpView deletePopUpView;

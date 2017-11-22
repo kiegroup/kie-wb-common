@@ -32,7 +32,7 @@ import org.dashbuilder.dataset.def.DataSetDefRegistry;
 import org.dashbuilder.dataset.events.DataSetStaleEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Branch;
@@ -68,7 +68,7 @@ public class ContributorsManagerTest {
     protected OrganizationalUnitService organizationalUnitService;
 
     @Mock
-    protected ProjectService projectService;
+    protected WorkspaceProjectService projectService;
 
     @Mock
     protected VersionRecordService recordService;
@@ -513,7 +513,7 @@ public class ContributorsManagerTest {
                                  org1,
                                  "project2"));
 
-        when(projectService.getAllProjects(eq(org1))).thenReturn(projects);
+        when(projectService.getAllWorkspaceProjects(eq(org1))).thenReturn(projects);
 
         when(recordService.loadVersionRecords(any()))
                 .thenReturn(repositoryHistory1)

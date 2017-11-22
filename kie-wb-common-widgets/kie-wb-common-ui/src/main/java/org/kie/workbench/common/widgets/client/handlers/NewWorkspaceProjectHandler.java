@@ -19,9 +19,9 @@ package org.kie.workbench.common.widgets.client.handlers;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.uberfire.client.callbacks.Callback;
 
-public interface NewProjectHandler extends NewResourceHandler {
+public interface NewWorkspaceProjectHandler extends NewResourceHandler {
 
-    void setCreationSuccessCallback(Callback<Project> creationSuccessCallback);
+    void setCreationSuccessCallback(Callback<WorkspaceProject> creationSuccessCallback);
 
     void setOpenEditorOnCreation(boolean openEditorOnCreation);
 }

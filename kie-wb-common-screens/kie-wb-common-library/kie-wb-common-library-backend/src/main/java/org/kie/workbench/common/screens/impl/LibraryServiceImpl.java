@@ -32,14 +32,15 @@ import javax.inject.Named;
 
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.ext.uberfire.social.activities.service.SocialUserRepositoryAPI;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.GAV;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.project.ProjectMigrationService;
+import org.guvnor.common.services.project.project.WorkspaceProjectMigrationService;
 import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
 import org.guvnor.structure.repositories.Repository;
@@ -61,7 +62,7 @@ import org.kie.workbench.common.screens.library.api.index.LibraryValueFileNameIn
 import org.kie.workbench.common.screens.library.api.index.LibraryValueModuleRootPathIndexTerm;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
-import org.kie.workbench.common.screens.projecteditor.util.NewProjectUtils;
+import org.kie.workbench.common.screens.projecteditor.util.NewWorkspaceProjectUtils;
 import org.kie.workbench.common.services.refactoring.model.index.terms.valueterms.ValueIndexTerm;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRequest;
 import org.kie.workbench.common.services.refactoring.model.query.RefactoringPageRow;
@@ -95,10 +96,10 @@ public class LibraryServiceImpl implements LibraryService {
     private AuthorizationManager authorizationManager;
     private SessionInfo sessionInfo;
     private ExplorerServiceHelper explorerServiceHelper;
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
     private KieModuleService moduleService;
     private ExamplesService examplesService;
-    private ProjectMigrationService projectMigrationService;
+    private WorkspaceProjectMigrationService projectMigrationService;
     private IOService ioService;
     private SocialUserRepositoryAPI socialUserRepositoryAPI;
 
@@ -112,10 +113,10 @@ public class LibraryServiceImpl implements LibraryService {
                               final AuthorizationManager authorizationManager,
                               final SessionInfo sessionInfo,
                               final ExplorerServiceHelper explorerServiceHelper,
-                              final ProjectService projectService,
+                              final WorkspaceProjectService projectService,
                               final KieModuleService moduleService,
                               final ExamplesService examplesService,
-                              final ProjectMigrationService projectMigrationService,
+                              final WorkspaceProjectMigrationService projectMigrationService,
                               @Named("ioStrategy") final IOService ioService,
                               final LibraryInternalPreferences internalPreferences,
                               final SocialUserRepositoryAPI socialUserRepositoryAPI) {
@@ -157,14 +158,22 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public LibraryInfo getLibraryInfo(final OrganizationalUnit organizationalUnit) {
-        return new LibraryInfo(projectService.getAllProjects(organizationalUnit));
+        final Collection<WorkspaceProject> result = projectService.getAllWorkspaceProjects(organizationalUnit);
+
+        for (final WorkspaceProject workspaceProject : result) {
+            if (workspaceProject.getMainModule() != null) {
+                workspaceProject.getMainModule().setNumberOfAssets(getNumberOfAssets(workspaceProject.getMainModule()));
+            }
+        }
+
+        return new LibraryInfo(result);
     }
 
     @Override
     public WorkspaceProject createProject(final String projectName,
-                                 final OrganizationalUnit selectedOrganizationalUnit,
-                                 final String projectDescription,
-                                 final DeploymentMode deploymentMode) {
+                                          final OrganizationalUnit selectedOrganizationalUnit,
+                                          final String projectDescription,
+                                          final DeploymentMode deploymentMode) {
 
         final GAV gav = createGAV(projectName,
                                   selectedOrganizationalUnit);
@@ -178,35 +187,15 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public KieProject createProject(final String name,
-                                    final String description,
-                                    final String groupId,
-                                    final String artifactId,
-                                    final String version,
-                                    final OrganizationalUnit selectedOrganizationalUnit,
-                                    final Repository selectedRepository,
-                                    final String baseURL,
-                                    final DeploymentMode mode) {
-        final Path selectedRepositoryRootPath = selectedRepository.getRoot();
-
-        final GAV gav = new GAV(groupId,
-                                artifactId,
-                                version);
-        final POM pom = createPOM(name,
-                                  description,
-                                  gav);
-
-        final KieProject kieProject = kieProjectService.newProject(selectedRepositoryRootPath,
-                                                                   pom,
-                                                                   baseURL,
-                                                                   mode);
-
-        return kieProject;
+    public WorkspaceProject createProject(final OrganizationalUnit activeOrganizationalUnit,
+                                          final POM pom,
+                                          final DeploymentMode mode) {
+        return projectService.newProject(activeOrganizationalUnit, pom, mode);
     }
 
     @Override
     public Boolean thereIsAProjectInTheWorkbench() {
-        return !projectService.getAllProjects().isEmpty();
+        return !projectService.getAllWorkspaceProjects().isEmpty();
     }
 
     @Override
@@ -274,7 +263,7 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public Boolean hasProjects(final OrganizationalUnit organizationalUnit) {
-        return !projectService.getAllProjects(organizationalUnit).isEmpty();
+        return !projectService.getAllWorkspaceProjects(organizationalUnit).isEmpty();
     }
 
     @Override
@@ -287,7 +276,7 @@ public class LibraryServiceImpl implements LibraryService {
             return false;
         }
 
-        final Package defaultPackage = moduleService.resolveDefaultPackage(project);
+        final Package defaultPackage = moduleService.resolveDefaultPackage(project.getMainModule());
         return explorerServiceHelper.hasAssets(defaultPackage);
     }
 
@@ -314,20 +303,13 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public WorkspaceProject importProject(final ExampleProject exampleProject) {
-        final OrganizationalUnit ou = getDefaultOrganizationalUnit();
-        return importProject(ou,
-                             exampleProject);
-    }
-
-    @Override
     public WorkspaceProject importProject(final OrganizationalUnit organizationalUnit,
-                                 final ExampleProject exampleProject) {
+                                          final ExampleProject exampleProject) {
         final ExampleOrganizationalUnit exampleOrganizationalUnit = new ExampleOrganizationalUnit(organizationalUnit.getName());
 
         final List<ExampleProject> exampleProjects = Collections.singletonList(exampleProject);
 
-        final ProjectContextChangeEvent projectContextChangeEvent = examplesService.setupExamples(exampleOrganizationalUnit,
+        final WorkspaceProjectContextChangeEvent projectContextChangeEvent = examplesService.setupExamples(exampleOrganizationalUnit,
                                                                                                   exampleProjects);
 
         return projectContextChangeEvent.getWorkspaceProject();
@@ -342,7 +324,7 @@ public class LibraryServiceImpl implements LibraryService {
     public GAV createGAV(final String projectName,
                          final OrganizationalUnit selectedOrganizationalUnit) {
         final LibraryPreferences preferences = getPreferences();
-        final String artifactId = NewProjectUtils.sanitizeProjectName(projectName);
+        final String artifactId = NewWorkspaceProjectUtils.sanitizeProjectName(projectName);
         return new GAV(selectedOrganizationalUnit.getDefaultGroupId(),
                        artifactId,
                        preferences.getProjectPreferences().getVersion());
@@ -385,18 +367,9 @@ public class LibraryServiceImpl implements LibraryService {
                 .findFirst();
     }
 
-    private List<Project> getProjects(final Repository repository,
-                                      final String branch) {
-        final List<Project> projects = new ArrayList<>(kieProjectService.getProjects(repository,
-                                                                                     branch));
-        projects.forEach(project -> project.setNumberOfAssets(getNumberOfAssets(project)));
-
-        return projects;
-    }
-
-    private int getNumberOfAssets(final Project project) {
+    private int getNumberOfAssets(final Module module) {
         final HashSet<ValueIndexTerm> queryTerms = new HashSet<>();
-        queryTerms.add(new LibraryValueProjectRootPathIndexTerm(project.getRootPath().toURI()));
+        queryTerms.add(new LibraryValueModuleRootPathIndexTerm((module.getRootPath().toURI())));
 
         return refactoringQueryService.queryHitCount(new RefactoringPageRequest(FindAllLibraryAssetsQuery.NAME,
                                                                                 queryTerms,
@@ -404,7 +377,8 @@ public class LibraryServiceImpl implements LibraryService {
                                                                                 null));
     }
 
-    private OrganizationalUnit getDefaultOrganizationalUnit() {
+    @Override
+    public OrganizationalUnit getDefaultOrganizationalUnit() {
         String defaultOUIdentifier = getInternalPreferences().getLastOpenedOrganizationalUnit();
         if (defaultOUIdentifier == null || defaultOUIdentifier.isEmpty()) {
             defaultOUIdentifier = getPreferences().getOrganizationalUnitPreferences().getName();

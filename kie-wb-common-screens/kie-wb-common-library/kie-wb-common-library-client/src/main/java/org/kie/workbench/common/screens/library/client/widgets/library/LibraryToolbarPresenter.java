@@ -19,9 +19,9 @@ package org.kie.workbench.common.screens.library.client.widgets.library;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.repositories.Branch;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -46,8 +46,8 @@ public class LibraryToolbarPresenter {
         void setBranchSelectorVisibility(boolean visible);
     }
 
-    private ProjectContext projectContext;
-    private Caller<ProjectService> projectService;
+    private WorkspaceProjectContext projectContext;
+    private Caller<WorkspaceProjectService> projectService;
     private LibraryPlaces libraryPlaces;
     private View view;
     private PlaceManager placeManager;
@@ -56,8 +56,8 @@ public class LibraryToolbarPresenter {
     }
 
     @Inject
-    public LibraryToolbarPresenter(final ProjectContext projectContext,
-                                   final Caller<ProjectService> projectService,
+    public LibraryToolbarPresenter(final WorkspaceProjectContext projectContext,
+                                   final Caller<WorkspaceProjectService> projectService,
                                    final LibraryPlaces libraryPlaces,
                                    final View view,
                                    final PlaceManager placeManager) {

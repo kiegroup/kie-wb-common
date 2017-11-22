@@ -31,7 +31,7 @@ public class ModuleDataModelDeclaredTypesTest extends AbstractDataModelWeldTest 
     @Test
     public void testProjectDeclaredTypes() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendDeclaredTypesTest1/src/main/java/t1p1");
+                initializeModuleDataModelOracle("/DataModelBackendDeclaredTypesTest1/src/main/java/t1p1");
 
         assertNotNull(oracle);
 

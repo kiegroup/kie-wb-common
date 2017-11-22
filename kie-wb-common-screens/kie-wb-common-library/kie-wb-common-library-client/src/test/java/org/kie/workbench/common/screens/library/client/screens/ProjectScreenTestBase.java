@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.Module;
@@ -48,7 +49,7 @@ import static org.mockito.Mockito.*;
 public class ProjectScreenTestBase {
 
     @Mock
-    protected ProjectListAssetsPresenter.View view;
+    protected WorkspaceProjectListAssetsPresenter.View view;
 
     @Mock
     protected LibraryPlaces libraryPlaces;
@@ -74,7 +75,7 @@ public class ProjectScreenTestBase {
     @Captor
     protected ArgumentCaptor<ProjectAssetsQuery> queryArgumentCaptor;
 
-    protected ProjectListAssetsPresenter projectListAssetsPresenter;
+    protected WorkspaceProjectListAssetsPresenter workspaceProjectListAssetsPresenter;
 
     protected WorkspaceProject project;
 
@@ -99,8 +100,8 @@ public class ProjectScreenTestBase {
         final Repository repository = mock(Repository.class);
         final Path repositoryRootPath = mock(Path.class);
 
-        doReturn(new Branch("master",
-                            repositoryRootPath)).when(repository).getDefaultBranch();
+        doReturn(Optional.of(new Branch("master",
+                                        repositoryRootPath))).when(repository).getDefaultBranch();
         doReturn("rootpath").when(repositoryRootPath).toURI();
 
         return new WorkspaceProject(organizationalUnit,

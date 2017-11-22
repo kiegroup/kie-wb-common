@@ -30,7 +30,7 @@ public class ModuleDataModelDependencyExclusionTest extends AbstractDataModelWel
     @Test
     public void testBuilderExcludeTestProvidedScopeDependencies() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelDependencyExclusionTest1");
+                initializeModuleDataModelOracle("/DataModelDependencyExclusionTest1");
 
         assertNotNull(oracle);
 

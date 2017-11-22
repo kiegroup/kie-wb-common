@@ -30,7 +30,7 @@ import javax.validation.UnexpectedTypeException;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.MavenRepositoryMetadata;
 import org.guvnor.common.services.project.model.Module;
@@ -68,7 +68,7 @@ public class BuildExecutor {
 
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
 
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     private View view;
 
@@ -81,7 +81,7 @@ public class BuildExecutor {
                          final Event<BuildResults> buildResultsEvent,
                          final Event<NotificationEvent> notificationEvent,
                          final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                         final ProjectContext projectContext) {
+                         final WorkspaceProjectContext projectContext) {
 
         this.deploymentScreenPopupView = deploymentScreenPopupView;
         this.specManagementService = specManagementService;
@@ -447,7 +447,7 @@ public class BuildExecutor {
     }
 
     private Module activeModule() {
-        return projectContext.getActiveProject().getMainModule();
+        return projectContext.getActiveWorkspaceProject().getMainModule();
     }
 
     private GAV projectGAV() {

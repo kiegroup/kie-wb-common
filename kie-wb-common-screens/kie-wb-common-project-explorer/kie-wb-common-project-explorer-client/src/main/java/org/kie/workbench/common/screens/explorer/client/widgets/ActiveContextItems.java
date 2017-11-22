@@ -18,7 +18,7 @@ package org.kie.workbench.common.screens.explorer.client.widgets;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -35,11 +35,11 @@ import org.kie.workbench.common.screens.explorer.service.ExplorerService;
 @EntryPoint
 public class ActiveContextItems {
 
-    protected Event<ProjectContextChangeEvent> contextChangedEvent;
+    protected Event<WorkspaceProjectContextChangeEvent> contextChangedEvent;
 
     protected Caller<ExplorerService> explorerService;
 
-    private Project activeProject;
+    private WorkspaceProject activeProject;
     private Module activeModule;
     private Package activePackage;
     private FolderItem activeFolderItem;
@@ -49,7 +49,7 @@ public class ActiveContextItems {
     }
 
     @Inject
-    public ActiveContextItems(final Event<ProjectContextChangeEvent> contextChangedEvent,
+    public ActiveContextItems(final Event<WorkspaceProjectContextChangeEvent> contextChangedEvent,
                               final Caller<ExplorerService> explorerService) {
         this.contextChangedEvent = contextChangedEvent;
         this.explorerService = explorerService;
@@ -121,7 +121,7 @@ public class ActiveContextItems {
     void fireContextChangeEvent() {
         if (activeFolderItem.getItem() instanceof Package) {
             activePackage = (Package) activeFolderItem.getItem();
-            contextChangedEvent.fire(new ProjectContextChangeEvent(activeProject,
+            contextChangedEvent.fire(new WorkspaceProjectContextChangeEvent(activeProject,
                                                                    activeModule,
                                                                    activePackage));
         } else if (activeFolderItem.getType().equals(FolderItemType.FOLDER)) {
@@ -136,7 +136,7 @@ public class ActiveContextItems {
                 if (Utils.hasPackageChanged(pkg,
                                             activePackage)) {
                     activePackage = pkg;
-                    contextChangedEvent.fire(new ProjectContextChangeEvent(activeProject,
+                    contextChangedEvent.fire(new WorkspaceProjectContextChangeEvent(activeProject,
                                                                            activeModule,
                                                                            activePackage));
                 }

@@ -34,8 +34,8 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
@@ -119,7 +119,7 @@ public class ProjectScreenPresenter
     protected ObservablePath pathToPomXML;
     protected CopyPopUpPresenter copyPopUpPresenter;
     protected SavePopUpPresenter savePopUpPresenter;
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
     private ProjectScreenView view;
     private User user;
     private Caller<ValidationService> validationService;
@@ -136,7 +136,7 @@ public class ProjectScreenPresenter
     private ObservablePath.OnConcurrentUpdateEvent concurrentUpdateSessionInfo = null;
     private ButtonGroup buildOptions;
     private Collection<Widget> buildExtensions;
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
     private Instance<LockManager> lockManagerInstanceProvider;
     private Map<Widget, LockManager> lockManagers = new HashMap<Widget, LockManager>();
     private Runnable reloadRunnable;
@@ -155,12 +155,12 @@ public class ProjectScreenPresenter
 
     @Inject
     public ProjectScreenPresenter(final ProjectScreenView view,
-                                  final ProjectContext projectContext,
+                                  final WorkspaceProjectContext projectContext,
                                   final Caller<ProjectScreenService> projectScreenService,
                                   final User user,
                                   final Event<NotificationEvent> notificationEvent,
                                   final Event<ChangeTitleWidgetEvent> changeTitleWidgetEvent,
-                                  final Event<ProjectContextChangeEvent> projectContextChangeEvent,
+                                  final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
                                   final ProjectNameValidator projectNameValidator,
                                   final PlaceManager placeManager,
                                   final BusyIndicatorView busyIndicatorView,
@@ -816,7 +816,7 @@ public class ProjectScreenPresenter
                                       @Override
                                       public void callback(final WorkspaceProject project) {
 
-                                          projectContextChangeEvent.fire(new ProjectContextChangeEvent(project));
+                                          projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project));
 
                                           update();
 

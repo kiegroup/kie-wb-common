@@ -22,7 +22,7 @@ import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -88,7 +88,7 @@ public class BaseViewPresenterUpdateTest {
     @Mock
     private EventSourceMock<BuildResults> buildResultsEvent;
     @Mock
-    private EventSourceMock<ProjectContextChangeEvent> contextChangedEvent;
+    private EventSourceMock<WorkspaceProjectContextChangeEvent> contextChangedEvent;
     @Mock
     private EventSourceMock<NotificationEvent> notification;
     @Mock

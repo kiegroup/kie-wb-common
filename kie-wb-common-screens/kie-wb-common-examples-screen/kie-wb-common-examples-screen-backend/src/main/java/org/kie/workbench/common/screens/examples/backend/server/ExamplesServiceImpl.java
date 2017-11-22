@@ -38,12 +38,12 @@ import javax.inject.Named;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
@@ -83,7 +83,7 @@ public class ExamplesServiceImpl implements ExamplesService {
 
     private static final String KIE_WB_PLAYGROUND_ZIP = "org/kie/kie-wb-playground/kie-wb-playground.zip";
     private final Set<Repository> clonedRepositories = new HashSet<Repository>();
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
     private IOService ioService;
     private ConfigurationFactory configurationFactory;
     private RepositoryFactory repositoryFactory;
@@ -107,7 +107,7 @@ public class ExamplesServiceImpl implements ExamplesService {
                                final RepositoryService repositoryService,
                                final RepositoryCopier repositoryCopier,
                                final OrganizationalUnitService ouService,
-                               final ProjectService projectService,
+                               final WorkspaceProjectService projectService,
                                final MetadataService metadataService,
                                final Event<NewProjectEvent> newProjectEvent) {
         this.ioService = ioService;
@@ -335,8 +335,8 @@ public class ExamplesServiceImpl implements ExamplesService {
     }
 
     @Override
-    public ProjectContextChangeEvent setupExamples(final ExampleOrganizationalUnit exampleTargetOU,
-                                                   final List<ExampleProject> exampleProjects) {
+    public WorkspaceProjectContextChangeEvent setupExamples(final ExampleOrganizationalUnit exampleTargetOU,
+                                                            final List<ExampleProject> exampleProjects) {
         PortablePreconditions.checkNotNull("exampleTargetOU",
                                            exampleTargetOU);
         PortablePreconditions.checkNotNull("exampleProjects",
@@ -374,7 +374,7 @@ public class ExamplesServiceImpl implements ExamplesService {
                 ioService.endBatch();
             }
         }
-        return new ProjectContextChangeEvent(firstExampleProject);
+        return new WorkspaceProjectContextChangeEvent(firstExampleProject);
     }
 
     private String resolveRepositoryName(final OrganizationalUnit targetOU,

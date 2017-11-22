@@ -21,7 +21,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.enterprise.event.Event;
 
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterCreateOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -71,7 +72,7 @@ public class OrganizationalUnitsScreenTest {
     private ManagedInstance<TileWidget> organizationalUnitTileWidgets;
 
     @Mock
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     @Mock
     private LibraryInternalPreferences libraryInternalPreferences;
@@ -123,6 +124,7 @@ public class OrganizationalUnitsScreenTest {
                                                       organizationalUnitController,
                                                       organizationalUnitTileWidgets,
                                                       projectContextChangeEvent,
+                                                      mock(WorkspaceProjectContext.class),
                                                       libraryInternalPreferences,
                                                       emptyOrganizationalUnitsScreen));
 

@@ -211,7 +211,7 @@ public class SourceConfigurationParamsView
     }
 
     @Override
-    public void addProject(String moduleName) {
+    public void addModule(String moduleName) {
         modules.add(newOption(moduleName,
                               moduleName));
     }

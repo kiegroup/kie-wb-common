@@ -21,8 +21,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.widgets.client.resources.i18n.ToolsMenuConstants;
 import org.uberfire.client.mvp.PlaceManager;
@@ -34,7 +34,7 @@ import org.uberfire.workbench.model.menu.MenuItem;
 public class ProjectMenu {
 
     private PlaceManager placeManager;
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     private MenuItem projectScreen = MenuFactory.newSimpleItem(ToolsMenuConstants.INSTANCE.ProjectEditor()).respondsWith(
             new Command() {
                 @Override
@@ -56,7 +56,7 @@ public class ProjectMenu {
 
     @Inject
     public ProjectMenu(final PlaceManager placeManager,
-                       final ProjectContext context) {
+                       final WorkspaceProjectContext context) {
         this.placeManager = placeManager;
         this.context = context;
     }
@@ -72,7 +72,7 @@ public class ProjectMenu {
         return menuItems;
     }
 
-    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+    public void onWorkspaceProjectContextChanged(@Observes final WorkspaceProjectContextChangeEvent event) {
         enableToolsMenuItems((KieModule) event.getModule());
     }
 

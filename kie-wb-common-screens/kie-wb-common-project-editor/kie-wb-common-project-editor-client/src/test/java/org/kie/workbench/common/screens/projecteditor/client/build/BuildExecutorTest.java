@@ -24,7 +24,7 @@ import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -88,7 +88,7 @@ public class BuildExecutorTest {
     @Mock
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
     @Mock
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
 
     @Mock
     private BuildExecutor.View view;
@@ -104,7 +104,7 @@ public class BuildExecutorTest {
                                         "artifactId",
                                         "version"));
         mockBuildService(buildServiceMock);
-        mockProjectContext(pom,
+        mockWorkspaceProjectContext(pom,
                            repository,
                            module,
                            pomPath);
@@ -492,7 +492,7 @@ public class BuildExecutorTest {
                times(hide)).hideBusyIndicator();
     }
 
-    private void mockProjectContext(final POM pom,
+    private void mockWorkspaceProjectContext(final POM pom,
                                     final Repository repository,
                                     final KieModule module,
                                     final Path pomPath) {

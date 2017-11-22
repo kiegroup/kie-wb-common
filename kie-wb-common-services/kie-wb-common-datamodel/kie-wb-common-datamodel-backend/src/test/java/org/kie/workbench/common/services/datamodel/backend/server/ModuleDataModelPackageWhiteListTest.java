@@ -30,7 +30,7 @@ public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTe
     @Test
     public void testPackageNameWhiteList_EmptyWhiteList() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest1");
+                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest1");
 
         assertNotNull(oracle);
 
@@ -55,7 +55,7 @@ public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTe
     @Test
     public void testPackageNameWhiteList_IncludeOnePackage() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest2");
+                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest2");
 
         assertNotNull(oracle);
 
@@ -80,7 +80,7 @@ public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTe
     @Test
     public void testPackageNameWhiteList_IncludeAllPackages() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest3");
+                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest3");
 
         assertNotNull(oracle);
 
@@ -105,7 +105,7 @@ public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTe
     @Test
     public void testPackageNameWhiteList_NoWhiteList() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest4");
+                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest4");
 
         assertNotNull(oracle);
 
@@ -130,7 +130,7 @@ public class ModuleDataModelPackageWhiteListTest extends AbstractDataModelWeldTe
     @Test
     public void testPackageNameWhiteList_Wildcards() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelPackageWhiteListTest5");
+                initializeModuleDataModelOracle("/DataModelPackageWhiteListTest5");
 
         assertNotNull(oracle);
 

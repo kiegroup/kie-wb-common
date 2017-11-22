@@ -49,7 +49,7 @@ public class ProjectScreenPresenterRefreshTest
         model.setProjectImportsMetaData(new Metadata());
         mockProjectScreenService(model);
 
-        mockProjectContext(new POM(),
+        mockWorkspaceProjectContext(new POM(),
                            repository,
                            module,
                            pomPath);

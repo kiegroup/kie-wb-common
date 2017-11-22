@@ -70,7 +70,6 @@ import static org.mockito.Mockito.*;
 
 public abstract class BaseLibraryIndexingTest {
 
-    protected static final List<File> tempFiles = new ArrayList<>();
     private static final String TEST_PACKAGE_NAME = "org.kie.workbench.mock.package";
     private static final Logger logger = LoggerFactory.getLogger(BaseLibraryIndexingTest.class);
 

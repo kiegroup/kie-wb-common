@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -28,12 +29,12 @@ import javax.inject.Inject;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
-import org.guvnor.common.services.project.context.ProjectContextChangeHandler;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeHandler;
 import org.guvnor.common.services.project.events.RenameModuleEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -45,7 +46,7 @@ import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.screens.examples.client.wizard.ExamplesWizard;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
-import org.kie.workbench.common.screens.library.client.events.ProjectMetricsEvent;
+import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.widgets.library.LibraryToolbarPresenter;
@@ -66,7 +67,6 @@ import org.uberfire.ext.preferences.client.event.PreferencesCentralUndoChangesEv
 import org.uberfire.ext.widgets.common.client.breadcrumbs.UberfireBreadcrumbs;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.ConditionalPlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.preferences.shared.impl.PreferenceScopeResolutionStrategyInfo;
@@ -74,7 +74,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 
 @ApplicationScoped
-public class LibraryPlaces implements ProjectContextChangeHandler {
+public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     public static final String LIBRARY_PERSPECTIVE = "LibraryPerspective";
     public static final String LIBRARY_SCREEN = "LibraryScreen";
@@ -103,7 +103,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
 
     private TranslationService ts;
 
-    private Event<ProjectMetricsEvent> projectMetricsEvent;
+    private Event<WorkbenchProjectMetricsEvent> projectMetricsEvent;
 
     private Event<AssetDetailEvent> assetDetailEvent;
 
@@ -111,7 +111,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
 
     private Caller<LibraryService> libraryService;
 
-    private Caller<ProjectService> projectService;
+    private Caller<WorkspaceProjectService> projectService;
 
     private Caller<KieModuleService> moduleService;
 
@@ -119,13 +119,13 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
 
     private LibraryPerspective libraryPerspective;
 
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
 
     private LibraryToolbarPresenter libraryToolbar;
 
     private AuthoringWorkbenchDocks docks;
 
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
 
     private Event<NotificationEvent> notificationEvent;
 
@@ -153,17 +153,17 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
     @Inject
     public LibraryPlaces(final UberfireBreadcrumbs breadcrumbs,
                          final TranslationService ts,
-                         final Event<ProjectMetricsEvent> projectMetricsEvent,
+                         final Event<WorkbenchProjectMetricsEvent> projectMetricsEvent,
                          final Event<AssetDetailEvent> assetDetailEvent,
                          final ResourceUtils resourceUtils,
                          final Caller<LibraryService> libraryService,
-                         final Caller<ProjectService> projectService,
+                         final Caller<WorkspaceProjectService> projectService,
                          final Caller<KieModuleService> moduleService,
                          final PlaceManager placeManager,
-                         final ProjectContext projectContext,
+                         final WorkspaceProjectContext projectContext,
                          final LibraryToolbarPresenter libraryToolbar,
                          final AuthoringWorkbenchDocks docks,
-                         final Event<ProjectContextChangeEvent> projectContextChangeEvent,
+                         final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
                          final Event<NotificationEvent> notificationEvent,
                          final ManagedInstance<ExamplesWizard> examplesWizards,
                          final TranslationUtils translationUtils,
@@ -211,8 +211,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                 } else if (projectContext.getActiveWorkspaceProject() != null
                         && place.getIdentifier().equals(LibraryPlaces.PROJECT_SCREEN)) {
                     setupLibraryBreadCrumbs();
-                } else if (place.getIdentifier().equals(LibraryPlaces.LIBRARY_SCREEN)
-                        || place.getIdentifier().equals(LibraryPlaces.EMPTY_LIBRARY_SCREEN)) {
+                } else if (place.getIdentifier().equals(LibraryPlaces.LIBRARY_SCREEN)) {
                     setupLibraryBreadCrumbs();
                 }
             }
@@ -323,7 +322,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                                       final WorkspaceProject project) {
 
         if (!projectContext.getActiveWorkspaceProject().equals(project)) {
-            projectContextChangeEvent.fire(new ProjectContextChangeEvent(project));
+            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project));
         }
 
         final PlaceRequest libraryPerspectivePlace = getLibraryPlaceRequestWithoutRefresh();
@@ -396,7 +395,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                                   translationUtils.getOrganizationalUnitAliasInPlural(),
                                   () -> goToOrganizationalUnits());
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
-                                  getSelectedOrganizationalUnit().getName(),
+                                  projectContext.getActiveOrganizationalUnit().getName(),
                                   () -> goToLibrary());
         breadcrumbs.addBreadCrumb(LibraryPlaces.LIBRARY_PERSPECTIVE,
                                   ts.getTranslation(LibraryConstants.ImportProjects),
@@ -457,7 +456,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
             PortablePreconditions.checkNotNull("libraryPerspective.closeAllPlacesOrNothing",
                                                libraryPerspective);
 
-            projectContextChangeEvent.fire(new ProjectContextChangeEvent());
+            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent());
 
             final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.ORGANIZATIONAL_UNITS_SCREEN);
             final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
@@ -477,11 +476,11 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                 PortablePreconditions.checkNotNull("libraryPerspective.hasProjects",
                                                    libraryPerspective);
 
-                final PlaceRequest placeRequest = new ConditionalPlaceRequest(LibraryPlaces.LIBRARY_SCREEN)
-                        .when(p -> hasProjects)
-                        .orElse(new DefaultPlaceRequest(LibraryPlaces.EMPTY_LIBRARY_SCREEN));
+                final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
                 final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
                 part.setSelectable(false);
+
+                projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(projectContext.getActiveOrganizationalUnit()));
 
                 closeLibraryPlaces();
                 placeManager.goTo(part,
@@ -500,7 +499,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                         @Override
                         public void callback(OrganizationalUnit organizationalUnit) {
 
-                            projectContextChangeEvent.fire(new ProjectContextChangeEvent(organizationalUnit));
+                            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
                             command.execute();
                         }
                     }
@@ -512,10 +511,15 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
     }
 
     public void goToProject(final WorkspaceProject project) {
+
         if (!project.equals(projectContext.getActiveWorkspaceProject())) {
 
-            projectContextChangeEvent.fire(new ProjectContextChangeEvent(project,
-                                                                         project.getMainModule()));
+            closeAllPlacesOrNothing();
+
+            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project,
+                                                                                  project.getMainModule()));
+
+            goToProject();
         }
     }
 
@@ -532,6 +536,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
 
         final PartDefinitionImpl part = new PartDefinitionImpl(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
         part.setSelectable(false);
+
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
 
@@ -556,7 +561,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
         setupLibraryBreadCrumbsForProjectMetrics();
-        projectMetricsEvent.fire(new ProjectMetricsEvent(projectContext.getActiveWorkspaceProject()));
+        projectMetricsEvent.fire(new WorkbenchProjectMetricsEvent(projectContext.getActiveWorkspaceProject()));
     }
 
     public void goToAsset(final Path path) {
@@ -565,9 +570,9 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
             @Override
             public void callback(final org.guvnor.common.services.project.model.Package response) {
 
-                projectContextChangeEvent.fire(new ProjectContextChangeEvent(projectContext.getActiveWorkspaceProject(),
-                                                                             projectContext.getActiveModule(),
-                                                                             response));
+                projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(projectContext.getActiveWorkspaceProject(),
+                                                                                      projectContext.getActiveModule(),
+                                                                                      response));
 
                 final PlaceRequest placeRequest = generatePlaceRequest(path);
                 placeManager.goTo(placeRequest);
@@ -581,14 +586,14 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
     }
 
     public void goToTrySamples() {
-        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN);
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 
         closeLibraryPlaces();
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
-        setupLibraryBreadCrumbsForTrySamples();
+        // TODO  setupLibraryBreadCrumbsForTrySamples();
     }
 
     public void goToImportProjects(final String repositoryUrl) {
@@ -597,7 +602,7 @@ public class LibraryPlaces implements ProjectContextChangeHandler {
                    ts.getTranslation(LibraryConstants.ImportProjects));
         params.put("repositoryUrl",
                    repositoryUrl);
-        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN,
                                                                          params);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);

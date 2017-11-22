@@ -35,8 +35,12 @@ import org.mockito.Mock;
 import org.uberfire.mocks.CallerMock;
 
 import static org.guvnor.ala.ui.client.util.UIUtil.EMPTY_STRING;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class SourceConfigurationParamsPresenterTest {
@@ -132,7 +136,12 @@ public class SourceConfigurationParamsPresenterTest {
         when(sourceService.getModules(REPOSITORY,
                                       BRANCH)).thenReturn(modules);
 
-        when(view.getModule()).thenReturn(SOME_VALUE);
+        presenter.onBranchChange();
+
+        //pick an arbitrary project as the selected one
+        int selectedModule = 1;
+        String moduleName = modules.get(selectedModule).getModuleName();
+        when(view.getModule()).thenReturn(moduleName);
         //completed when al values are in place.
         presenter.isComplete(Assert::assertTrue);
     }
@@ -144,6 +153,8 @@ public class SourceConfigurationParamsPresenterTest {
         when(view.getOU()).thenReturn(OU);
         when(view.getRepository()).thenReturn(REPOSITORY);
         when(view.getBranch()).thenReturn(BRANCH);
+        when(sourceService.getModules(REPOSITORY,
+                                      BRANCH)).thenReturn(modules);
         when(view.getModule()).thenReturn(MODULE);
         presenter.onBranchChange();
 
@@ -160,7 +171,7 @@ public class SourceConfigurationParamsPresenterTest {
         assertEquals(BRANCH,
                      params.get(SourceConfigurationParamsPresenter.BRANCH));
         assertEquals(moduleName,
-                     params.get(SourceConfigurationParamsPresenter.PROJECT_DIR));
+                     params.get(SourceConfigurationParamsPresenter.MODULE_DIR));
     }
 
     @Test
@@ -311,7 +322,7 @@ public class SourceConfigurationParamsPresenterTest {
 
     private void verifyProjectsWereLoaded() {
         modules.forEach(module -> verify(view,
-                                         times(1)).addProject(module.getModuleName()));
+                                         times(1)).addModule(module.getModuleName()));
     }
 
     private List<String> createOUs() {
@@ -334,6 +345,7 @@ public class SourceConfigurationParamsPresenterTest {
         for (int i = 0; i < ELEMENTS_SIZE; i++) {
             Module module = mock(Module.class);
             when(module.getModuleName()).thenReturn("Module.name." + i);
+            elements.add(module);
         }
         return elements;
     }

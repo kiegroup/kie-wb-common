@@ -20,11 +20,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class NewProjectUtilsTest {
+public class NewWorkspaceProjectUtilsTest {
 
     @Test
     public void sanitizeProjectNameTest() {
         assertEquals("project-name",
-                     NewProjectUtils.sanitizeProjectName("project-n a*m?e!"));
+                     NewWorkspaceProjectUtils.sanitizeProjectName("project-n a*m?e!"));
     }
 }

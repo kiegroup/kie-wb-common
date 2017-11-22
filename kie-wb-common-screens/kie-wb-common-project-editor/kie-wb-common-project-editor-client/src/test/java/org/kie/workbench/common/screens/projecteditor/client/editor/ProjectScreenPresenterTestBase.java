@@ -22,7 +22,7 @@ import java.util.Collections;
 import com.google.gwtmockito.GwtMock;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -81,7 +81,7 @@ public abstract class ProjectScreenPresenterTestBase {
     @Mock
     protected ConflictingRepositoriesPopup conflictingRepositoriesPopup;
     @Spy
-    protected ProjectContext context = new ProjectContext();
+    protected WorkspaceProjectContext context = new WorkspaceProjectContext();
     @Spy
     protected MockInstance<LockManager> lockManagerInstanceProvider = new MockInstance();
     @Spy
@@ -142,7 +142,7 @@ public abstract class ProjectScreenPresenterTestBase {
         when(importsMetadata.getPath()).thenReturn(path);
     }
 
-    protected void mockProjectContext(final POM pom,
+    protected void mockWorkspaceProjectContext(final POM pom,
                                       final Repository repository,
                                       final KieModule module,
                                       final Path pomPath) {

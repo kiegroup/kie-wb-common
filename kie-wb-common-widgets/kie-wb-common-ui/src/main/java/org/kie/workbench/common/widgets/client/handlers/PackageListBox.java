@@ -28,7 +28,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.SimplePanel;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
@@ -44,14 +44,14 @@ import org.uberfire.mvp.Command;
 @Dependent
 public class PackageListBox extends Composite {
 
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
     protected Caller<KieModuleService> moduleService;
     private SimplePanel panel = new SimplePanel();
     private Select select;
     private Map<String, Package> packages;
 
     @Inject
-    public PackageListBox(final ProjectContext projectContext,
+    public PackageListBox(final WorkspaceProjectContext projectContext,
                           final Caller<KieModuleService> moduleService) {
         this.projectContext = projectContext;
         this.moduleService = moduleService;

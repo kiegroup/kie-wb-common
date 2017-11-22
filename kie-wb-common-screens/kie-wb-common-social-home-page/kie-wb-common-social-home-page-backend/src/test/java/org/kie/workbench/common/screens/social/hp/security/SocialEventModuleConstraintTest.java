@@ -22,7 +22,7 @@ import java.util.Date;
 import org.ext.uberfire.social.activities.model.SocialActivitiesEvent;
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.backend.repositories.ConfiguredRepositories;
 import org.guvnor.structure.backend.repositories.RepositoryServiceImpl;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -58,7 +58,7 @@ public class SocialEventModuleConstraintTest {
     private RepositoryServiceImpl repositoryService;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Mock
     private UserCDIContextHelper userCDIContextHelper;

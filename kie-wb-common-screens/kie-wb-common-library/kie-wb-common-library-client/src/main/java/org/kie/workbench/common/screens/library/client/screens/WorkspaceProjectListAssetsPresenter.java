@@ -18,7 +18,6 @@ package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.List;
 import javax.enterprise.event.Event;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.core.client.Scheduler;
@@ -38,7 +37,6 @@ import org.kie.workbench.common.screens.explorer.model.FolderItemType;
 import org.kie.workbench.common.screens.library.api.AssetInfo;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
-import org.kie.workbench.common.screens.library.api.search.FilterUpdateEvent;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -48,12 +46,12 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.mvp.Command;
 import org.uberfire.util.URIUtil;
 
-public class ProjectListAssetsPresenter {
+public class WorkspaceProjectListAssetsPresenter {
 
     public interface View
             extends IsElement {
 
-        void init(ProjectListAssetsPresenter projectListAssetsPresenter);
+        void init(WorkspaceProjectListAssetsPresenter workspaceProjectListAssetsPresenter);
 
         void setProjectName(final String projectName);
 
@@ -107,15 +105,15 @@ public class ProjectListAssetsPresenter {
     private WorkspaceProject project;
 
     @Inject
-    public ProjectListAssetsPresenter(final View view,
-                                      final LibraryPlaces libraryPlaces,
-                                      final ProjectsDetailScreen projectsDetailScreen,
-                                      final TranslationService ts,
-                                      final Caller<LibraryService> libraryService,
-                                      final Classifier assetClassifier,
-                                      final Event<AssetDetailEvent> assetDetailEvent,
-                                      final BusyIndicatorView busyIndicatorView,
-                                      final ProjectController projectController) {
+    public WorkspaceProjectListAssetsPresenter(final View view,
+                                               final LibraryPlaces libraryPlaces,
+                                               final ProjectsDetailScreen projectsDetailScreen,
+                                               final TranslationService ts,
+                                               final Caller<LibraryService> libraryService,
+                                               final Classifier assetClassifier,
+                                               final Event<AssetDetailEvent> assetDetailEvent,
+                                               final BusyIndicatorView busyIndicatorView,
+                                               final ProjectController projectController) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
         this.projectsDetailScreen = projectsDetailScreen;
@@ -260,10 +258,11 @@ public class ProjectListAssetsPresenter {
         }
     }
 
-    public void filterUpdate(@Observes final FilterUpdateEvent event) {
-        view.setFilterName(event.getName());
-        onFilterChange();
-    }
+    // TODO: FIX FILTER
+//    public void filterUpdate(@Observes final FilterUpdateEvent event) {
+//        view.setFilterName(event.getName());
+//        onFilterChange();
+//    }
 
     private boolean isFilterEmpty() {
         return view.getFilterValue().isEmpty();
@@ -272,7 +271,7 @@ public class ProjectListAssetsPresenter {
     private String getAssetPath(final AssetInfo asset) {
         final String fullPath = ((Path) asset.getFolderItem().getItem()).toURI();
 
-        if(!project.getRepository().getDefaultBranch().isPresent()){
+        if (!project.getRepository().getDefaultBranch().isPresent()) {
             throw new IllegalStateException("Project repository should have at least one branch");
         }
 

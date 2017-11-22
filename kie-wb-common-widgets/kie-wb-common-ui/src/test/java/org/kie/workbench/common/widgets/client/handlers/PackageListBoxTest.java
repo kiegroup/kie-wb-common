@@ -21,7 +21,7 @@ import java.util.List;
 
 import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.Package;
 import org.junit.Before;
@@ -39,14 +39,14 @@ public class PackageListBoxTest {
     private KieModuleService moduleService;
     private CallerMock<KieModuleService> moduleServiceCaller;
 
-    private ProjectContext moduleContext;
+    private WorkspaceProjectContext moduleContext;
 
     private PackageListBox packageListBox;
 
     @Before
     public void setup() {
         setupModuleService();
-        setupProjectContext();
+        setupWorkspaceProjectContext();
         setupPackageListBox();
     }
 
@@ -92,8 +92,8 @@ public class PackageListBoxTest {
         moduleServiceCaller = new CallerMock<>(moduleService);
     }
 
-    private void setupProjectContext() {
-        moduleContext = new ProjectContext() {
+    private void setupWorkspaceProjectContext() {
+        moduleContext = new WorkspaceProjectContext() {
             {
                 setActiveModule(mock(Module.class));
                 setActivePackage(mock(Package.class));

@@ -23,7 +23,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -56,7 +56,7 @@ public class ExamplesWizard extends AbstractWizard {
     private SourceRepositoryPage sourceRepositoryPage;
     private BusyIndicatorView busyIndicatorView;
     private Caller<ExamplesService> examplesService;
-    private Event<ProjectContextChangeEvent> projectContextChangeEvent;
+    private Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent;
     private TranslationService translator;
 
     public ExamplesWizard() {
@@ -68,7 +68,7 @@ public class ExamplesWizard extends AbstractWizard {
                           final ProjectPage projectPage,
                           final BusyIndicatorView busyIndicatorView,
                           final Caller<ExamplesService> examplesService,
-                          final Event<ProjectContextChangeEvent> projectContextChangeEvent,
+                          final Event<WorkspaceProjectContextChangeEvent> projectContextChangeEvent,
                           final TranslationService translator) {
         this.pages.add(sourceRepositoryPage);
         this.pages.add(projectPage);
@@ -156,10 +156,10 @@ public class ExamplesWizard extends AbstractWizard {
     @Override
     public void complete() {
         busyIndicatorView.showBusyIndicator(translator.format(ExamplesScreenConstants.ExamplesWizard_SettingUpExamples));
-        examplesService.call(new RemoteCallback<ProjectContextChangeEvent>() {
+        examplesService.call(new RemoteCallback<WorkspaceProjectContextChangeEvent>() {
 
                                  @Override
-                                 public void callback(final ProjectContextChangeEvent context) {
+                                 public void callback(final WorkspaceProjectContextChangeEvent context) {
                                      busyIndicatorView.hideBusyIndicator();
                                      ExamplesWizard.super.complete();
                                      projectContextChangeEvent.fire(context);

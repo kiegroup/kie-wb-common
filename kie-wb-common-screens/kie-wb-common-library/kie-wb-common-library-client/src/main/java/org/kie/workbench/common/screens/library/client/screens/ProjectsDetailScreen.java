@@ -21,7 +21,7 @@ import javax.inject.Inject;
 
 import org.dashbuilder.dataset.events.DataSetModifiedEvent;
 import org.dashbuilder.displayer.client.Displayer;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.POM;
 import org.kie.workbench.common.screens.contributors.model.ContributorsDataSets;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
@@ -48,14 +48,14 @@ public class ProjectsDetailScreen {
     private View view;
     private ProjectMetricsFactory projectMetricsFactory;
     private LibraryPlaces libraryPlaces;
-    private ProjectContext projectContext;
+    private WorkspaceProjectContext projectContext;
     private Displayer commitsDisplayer;
 
     @Inject
     public ProjectsDetailScreen(final View view,
                                 final ProjectMetricsFactory projectMetricsFactory,
                                 final LibraryPlaces libraryPlaces,
-                                final ProjectContext projectContext) {
+                                final WorkspaceProjectContext projectContext) {
         this.view = view;
         this.projectMetricsFactory = projectMetricsFactory;
         this.libraryPlaces = libraryPlaces;
@@ -106,7 +106,7 @@ public class ProjectsDetailScreen {
     }
 
     public void gotoProjectMetrics() {
-        if (projectContext.getActiveProject() != null) {
+        if (projectContext.getActiveWorkspaceProject() != null) {
             libraryPlaces.goToProjectMetrics();
         }
     }

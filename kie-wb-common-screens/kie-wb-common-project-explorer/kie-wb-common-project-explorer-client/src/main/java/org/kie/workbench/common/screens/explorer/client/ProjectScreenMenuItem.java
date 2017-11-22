@@ -5,7 +5,7 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.kie.workbench.common.screens.explorer.client.resources.i18n.ProjectExplorerConstants;
@@ -26,7 +26,7 @@ public class ProjectScreenMenuItem
         this.placeManager = placeManager;
     }
 
-    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+    public void onWorkspaceProjectContextChanged(@Observes final WorkspaceProjectContextChangeEvent event) {
         this.setEnabled((event.getModule() != null));
     }
 

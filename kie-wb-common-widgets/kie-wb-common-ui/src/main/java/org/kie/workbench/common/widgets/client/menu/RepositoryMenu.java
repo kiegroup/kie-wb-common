@@ -21,8 +21,8 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.context.ProjectContext;
-import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -39,7 +39,7 @@ public class RepositoryMenu {
     protected Caller<KieModuleService> moduleService;
 
     @Inject
-    protected ProjectContext context;
+    protected WorkspaceProjectContext context;
 
     @Inject
     private PlaceManager placeManager;
@@ -73,7 +73,7 @@ public class RepositoryMenu {
     }
 
     //@TODO: we need to remove these two when we remove the projectScreen from here
-    public void onProjectContextChanged(@Observes final ProjectContextChangeEvent event) {
+    public void onWorkspaceProjectContextChanged(@Observes final WorkspaceProjectContextChangeEvent event) {
         enableToolsMenuItems((KieModule) event.getModule());
     }
 

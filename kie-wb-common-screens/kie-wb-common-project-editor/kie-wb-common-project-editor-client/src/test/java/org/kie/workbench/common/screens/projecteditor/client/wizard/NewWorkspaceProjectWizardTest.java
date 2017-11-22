@@ -21,13 +21,13 @@ import javax.enterprise.event.Event;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.jboss.errai.common.client.api.Caller;
 import org.junit.Before;
@@ -54,7 +54,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class NewProjectWizardTest {
+public class NewWorkspaceProjectWizardTest {
 
     @GwtMock
     WizardView view;
@@ -66,9 +66,9 @@ public class NewProjectWizardTest {
     @Mock
     private POMWizardPage pomWizardPage;
     @Mock
-    private ProjectContext moduleContext;
+    private WorkspaceProjectContext moduleContext;
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
     @Spy
     private Event<NotificationEvent> notificationEventEvent = new EventSourceMock<NotificationEvent>() {
         @Override
@@ -76,7 +76,7 @@ public class NewProjectWizardTest {
             //Do nothing. Default implementation throws an UnsupportedOperationException
         }
     };
-    private NewProjectWizardExtended wizard;
+    private NewWorkspaceProjectWizardExtended wizard;
 
     private HashMap<String, String> preferences;
 
@@ -86,15 +86,15 @@ public class NewProjectWizardTest {
         ApplicationPreferences.setUp(preferences);
         pomDefaultOptions = new KiePOMDefaultOptions();
         PlaceManager placeManager = mock(PlaceManager.class);
-        wizard = new NewProjectWizardExtended(new CallerMock<>(projectService),
-                                              placeManager,
-                                              notificationEventEvent,
-                                              pomWizardPage,
-                                              busyIndicatorView,
-                                              conflictingRepositoriesPopup,
-                                              moduleContext,
-                                              view,
-                                              pomDefaultOptions
+        wizard = new NewWorkspaceProjectWizardExtended(new CallerMock<>(projectService),
+                                                       placeManager,
+                                                       notificationEventEvent,
+                                                       pomWizardPage,
+                                                       busyIndicatorView,
+                                                       conflictingRepositoriesPopup,
+                                                       moduleContext,
+                                                       view,
+                                                       pomDefaultOptions
         );
 
         wizard.setupPages();
@@ -275,17 +275,17 @@ public class NewProjectWizardTest {
                times(1)).callback(any());
     }
 
-    public static class NewProjectWizardExtended extends NewProjectWizard {
+    public static class NewWorkspaceProjectWizardExtended extends NewWorkspaceProjectWizard {
 
-        public NewProjectWizardExtended(final Caller<ProjectService> projectService,
-                                        final PlaceManager placeManager,
-                                        final Event<NotificationEvent> notificationEvent,
-                                        final POMWizardPage pomWizardPage,
-                                        final BusyIndicatorView busyIndicatorView,
-                                        final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                                        final ProjectContext context,
-                                        final WizardView view,
-                                        final KiePOMDefaultOptions pomDefaultOptions) {
+        public NewWorkspaceProjectWizardExtended(final Caller<WorkspaceProjectService> projectService,
+                                                 final PlaceManager placeManager,
+                                                 final Event<NotificationEvent> notificationEvent,
+                                                 final POMWizardPage pomWizardPage,
+                                                 final BusyIndicatorView busyIndicatorView,
+                                                 final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
+                                                 final WorkspaceProjectContext context,
+                                                 final WizardView view,
+                                                 final KiePOMDefaultOptions pomDefaultOptions) {
             super(projectService,
                   placeManager,
                   notificationEvent,

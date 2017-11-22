@@ -25,7 +25,7 @@ import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
@@ -72,7 +72,7 @@ public class ProjectExplorerContentResolverDefaultSelectionsTest {
     private HelperWrapper helperWrapper;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     @Before
     public void setUp() throws Exception {

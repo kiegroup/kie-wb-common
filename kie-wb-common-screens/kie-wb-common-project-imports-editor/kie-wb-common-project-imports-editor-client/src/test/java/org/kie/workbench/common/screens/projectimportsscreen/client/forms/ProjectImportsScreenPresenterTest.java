@@ -17,7 +17,7 @@
 package org.kie.workbench.common.screens.projectimportsscreen.client.forms;
 
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.bus.client.api.messaging.Message;
@@ -97,7 +97,7 @@ public class ProjectImportsScreenPresenterTest {
     protected ProjectController projectController;
 
     @Mock
-    protected ProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
 
     @InjectMocks
     protected ProjectImportsScreenPresenter presenter = new ProjectImportsScreenPresenter(view,

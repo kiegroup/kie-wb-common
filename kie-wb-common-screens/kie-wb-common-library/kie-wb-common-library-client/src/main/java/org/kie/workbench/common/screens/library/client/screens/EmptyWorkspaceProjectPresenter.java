@@ -18,10 +18,9 @@ package org.kie.workbench.common.screens.library.client.screens;
 
 import javax.inject.Inject;
 
-import org.jboss.errai.common.client.api.Caller;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.IsElement;
-import org.kie.workbench.common.screens.library.api.LibraryService;
-import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceUtils;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
@@ -32,11 +31,11 @@ import static org.kie.workbench.common.screens.library.client.util.ResourceUtils
 import static org.kie.workbench.common.screens.library.client.util.ResourceUtils.isProjectHandler;
 import static org.kie.workbench.common.screens.library.client.util.ResourceUtils.isUploadHandler;
 
-public class EmptyProjectPresenter {
+public class EmptyWorkspaceProjectPresenter {
 
     public interface View extends IsElement {
 
-        void init(EmptyProjectPresenter emptyProjectPresenter);
+        void init(EmptyWorkspaceProjectPresenter emptyWorkspaceProjectPresenter);
 
         void setProjectName(String projectName);
 
@@ -60,12 +59,12 @@ public class EmptyProjectPresenter {
     private ProjectsDetailScreen projectsDetailScreen;
 
     @Inject
-    public EmptyProjectPresenter(final View view,
-                                 final ResourceUtils resourceUtils,
-                                 final NewResourcePresenter newResourcePresenter,
-                                 final PlaceManager placeManager,
-                                 final LibraryPlaces libraryPlaces,
-                                 final ProjectsDetailScreen projectsDetailScreen) {
+    public EmptyWorkspaceProjectPresenter(final View view,
+                                          final ResourceUtils resourceUtils,
+                                          final NewResourcePresenter newResourcePresenter,
+                                          final PlaceManager placeManager,
+                                          final LibraryPlaces libraryPlaces,
+                                          final ProjectsDetailScreen projectsDetailScreen) {
         this.view = view;
         this.resourceUtils = resourceUtils;
         this.newResourcePresenter = newResourcePresenter;

@@ -19,37 +19,31 @@ package org.kie.workbench.common.screens.library.client.screens;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.guvnor.common.services.project.model.Project;
-import org.jboss.errai.common.client.api.Caller;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.NewFileUploader;
-import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceUtils;
 import org.kie.workbench.common.screens.projecteditor.client.handlers.NewPackageHandler;
-import org.kie.workbench.common.screens.projecteditor.client.handlers.NewProjectHandler;
+import org.kie.workbench.common.screens.projecteditor.client.handlers.NewWorkspaceProjectHandler;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
-import org.uberfire.mocks.CallerMock;
-import org.uberfire.mvp.PlaceRequest;
-import org.uberfire.mvp.impl.DefaultPlaceRequest;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class EmptyProjectListAssetsPresenterTest {
+public class EmptyWorkspaceProjectListAssetsPresenterTest {
 
     @Mock
-    private EmptyProjectPresenter.View view;
+    private EmptyWorkspaceProjectPresenter.View view;
 
     @Mock
     private ResourceUtils resourceUtils;
@@ -66,21 +60,21 @@ public class EmptyProjectListAssetsPresenterTest {
     @Mock
     private ProjectsDetailScreen projectsDetailScreen;
 
-    private EmptyProjectPresenter emptyProjectPresenter;
+    private EmptyWorkspaceProjectPresenter emptyWorkspaceProjectPresenter;
 
     @Before
     public void setup() {
-        emptyProjectPresenter = spy(new EmptyProjectPresenter(view,
-                                                        resourceUtils,
-                                                        newResourcePresenter,
-                                                        placeManager,
-                                                        libraryPlaces,
-                                                        projectsDetailScreen));
+        emptyWorkspaceProjectPresenter = spy(new EmptyWorkspaceProjectPresenter(view,
+                                                                                resourceUtils,
+                                                                                newResourcePresenter,
+                                                                                placeManager,
+                                                                                libraryPlaces,
+                                                                                projectsDetailScreen));
     }
 
     @Test
     public void onStartupTest() {
-        NewResourceHandler projectHandler = mock(NewProjectHandler.class);
+        NewResourceHandler projectHandler = mock(NewWorkspaceProjectHandler.class);
         doReturn(true).when(projectHandler).canCreate();
         NewResourceHandler packageHandler = mock(NewPackageHandler.class);
         doReturn(true).when(packageHandler).canCreate();
@@ -104,10 +98,10 @@ public class EmptyProjectListAssetsPresenterTest {
         final ProjectDetailEvent projectDetailEvent = mock(ProjectDetailEvent.class);
         doReturn(project).when(projectDetailEvent).getProject();
 
-        emptyProjectPresenter.show(project);
+        emptyWorkspaceProjectPresenter.show(project);
 
         assertEquals(uploadHandler,
-                     emptyProjectPresenter.getUploadHandler());
+                     emptyWorkspaceProjectPresenter.getUploadHandler());
 
         verify(view,
                times(2)).addResourceHandler(any(NewResourceHandler.class));
@@ -119,46 +113,8 @@ public class EmptyProjectListAssetsPresenterTest {
     }
 
     @Test
-    public void refreshOnFocusProjectWithoutAssetsTest() {
-        doReturn(false).when(libraryService).hasAssets(any());
-
-        final PlaceRequest place = new DefaultPlaceRequest(LibraryPlaces.EMPTY_PROJECT_SCREEN);
-        final PlaceGainFocusEvent placeGainFocusEvent = new PlaceGainFocusEvent(place);
-
-        emptyProjectScreen.projectInfo = mock(ProjectInfo.class);
-        emptyProjectScreen.refreshOnFocus(placeGainFocusEvent);
-
-        verify(libraryPlaces,
-               never()).goToProject(any(ProjectInfo.class));
-    }
-
-    @Test
-    public void refreshOnFocusProjectWithAssetsTest() {
-        doReturn(true).when(libraryService).hasAssets(any());
-
-        final PlaceRequest place = new DefaultPlaceRequest(LibraryPlaces.EMPTY_PROJECT_SCREEN);
-        final PlaceGainFocusEvent placeGainFocusEvent = new PlaceGainFocusEvent(place);
-
-        emptyProjectScreen.projectInfo = mock(ProjectInfo.class);
-        emptyProjectScreen.refreshOnFocus(placeGainFocusEvent);
-
-        verify(libraryPlaces).goToProject(any(ProjectInfo.class));
-    }
-
-    @Test
-    public void dontRefreshOnFocusOnAnotherScreenTest() {
-        final PlaceRequest place = new DefaultPlaceRequest("anotherScreen");
-        final PlaceGainFocusEvent placeGainFocusEvent = new PlaceGainFocusEvent(place);
-
-        emptyProjectScreen.refreshOnFocus(placeGainFocusEvent);
-
-        verify(libraryPlaces,
-               never()).goToProject(any(ProjectInfo.class));
-    }
-
-    @Test
     public void goToSettingsTest() {
-        emptyProjectPresenter.goToSettings();
+        emptyWorkspaceProjectPresenter.goToSettings();
 
         verify(libraryPlaces).goToSettings();
     }

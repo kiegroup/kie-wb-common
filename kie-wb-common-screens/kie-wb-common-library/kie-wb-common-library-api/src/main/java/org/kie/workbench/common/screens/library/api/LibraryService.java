@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.guvnor.common.services.project.model.GAV;
+import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -41,18 +42,12 @@ public interface LibraryService {
 
     WorkspaceProject createProject(final String projectName,
                                    final OrganizationalUnit selectedOrganizationalUnit,
-                                   final String projectDescription,
-                                   DeploymentMode deploymentMode);
+                                   final String description,
+                                   final DeploymentMode deploymentMode);
 
-    KieProject createProject(final String name,
-                             final String description,
-                             final String groupId,
-                             final String artifactId,
-                             final String version,
-                             final OrganizationalUnit selectedOrganizationalUnit,
-                             final Repository selectedRepository,
-                             final String baseURL,
-                             final DeploymentMode mode);
+    WorkspaceProject createProject(final OrganizationalUnit activeOrganizationalUnit,
+                                   final POM pom,
+                                   final DeploymentMode mode);
 
     Boolean thereIsAProjectInTheWorkbench();
 
@@ -66,12 +61,8 @@ public interface LibraryService {
 
     Set<ExampleProject> getProjects(final String repositoryUrl);
 
-    Project importProject(final OrganizationalUnit organizationalUnit,
-                          final Repository repository,
-                          final String branch,
-                          final ExampleProject exampleProject);
-
-    WorkspaceProject importProject(final ExampleProject exampleProject);
+    WorkspaceProject importProject(final OrganizationalUnit organizationalUnit,
+                                   final ExampleProject exampleProject);
 
     List<OrganizationalUnit> getOrganizationalUnits();
 
@@ -81,4 +72,6 @@ public interface LibraryService {
                   final OrganizationalUnit selectedOrganizationalUnit);
 
     List<SocialUser> getAllUsers();
+
+    void migrate(final WorkspaceProject activeProject);
 }

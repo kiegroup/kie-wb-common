@@ -26,13 +26,13 @@ import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.ProjectWizard;
+import org.guvnor.common.services.project.model.WorkspaceProjectWizard;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
@@ -48,18 +48,18 @@ import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @Dependent
-public class NewProjectWizard
+public class NewWorkspaceProjectWizard
         extends AbstractWizard
-        implements ProjectWizard {
+        implements WorkspaceProjectWizard {
 
     boolean openEditor = true;
-    private Caller<ProjectService> projectService;
+    private Caller<WorkspaceProjectService> projectService;
     private PlaceManager placeManager;
     private Event<NotificationEvent> notificationEvent;
     private POMWizardPage pomWizardPage;
     private BusyIndicatorView busyIndicatorView;
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
     private KiePOMDefaultOptions pomDefaultOptions;
     private ArrayList<WizardPage> pages = new ArrayList<WizardPage>();
     private Callback<WorkspaceProject> moduleCallback;
@@ -84,18 +84,18 @@ public class NewProjectWizard
             });
     }};
 
-    public NewProjectWizard() {
+    public NewWorkspaceProjectWizard() {
     }
 
     @Inject
-    public NewProjectWizard(final Caller<ProjectService> projectService,
-                            final PlaceManager placeManager,
-                            final Event<NotificationEvent> notificationEvent,
-                            final POMWizardPage pomWizardPage,
-                            final BusyIndicatorView busyIndicatorView,
-                            final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                            final ProjectContext context,
-                            final KiePOMDefaultOptions pomDefaultOptions) {
+    public NewWorkspaceProjectWizard(final Caller<WorkspaceProjectService> projectService,
+                                     final PlaceManager placeManager,
+                                     final Event<NotificationEvent> notificationEvent,
+                                     final POMWizardPage pomWizardPage,
+                                     final BusyIndicatorView busyIndicatorView,
+                                     final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
+                                     final WorkspaceProjectContext context,
+                                     final KiePOMDefaultOptions pomDefaultOptions) {
         this.projectService = projectService;
         this.placeManager = placeManager;
         this.notificationEvent = notificationEvent;
@@ -198,7 +198,7 @@ public class NewProjectWizard
 
             @Override
             public void callback(final WorkspaceProject project) {
-                NewProjectWizard.super.complete();
+                NewWorkspaceProjectWizard.super.complete();
                 invokeCallback(project);
                 if (openEditor) {
                     placeManager.goTo("projectScreen");

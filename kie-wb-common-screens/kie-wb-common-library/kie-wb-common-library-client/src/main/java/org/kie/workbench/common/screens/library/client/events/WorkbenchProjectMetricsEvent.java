@@ -19,15 +19,15 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
-public class ProjectMetricsEvent {
+public class WorkbenchProjectMetricsEvent {
 
     private WorkspaceProject project;
 
-    public ProjectMetricsEvent() {
+    public WorkbenchProjectMetricsEvent() {
 
     }
 
-    public ProjectMetricsEvent(final WorkspaceProject project) {
+    public WorkbenchProjectMetricsEvent(final WorkspaceProject project) {
         this.project = checkNotNull("project",
                                     project);
     }
@@ -41,11 +41,11 @@ public class ProjectMetricsEvent {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ProjectMetricsEvent)) {
+        if (!(o instanceof WorkbenchProjectMetricsEvent)) {
             return false;
         }
 
-        final ProjectMetricsEvent that = (ProjectMetricsEvent) o;
+        final WorkbenchProjectMetricsEvent that = (WorkbenchProjectMetricsEvent) o;
 
         return !(getProject() != null ? !getProject().equals(that.getProject()) : that.getProject() != null);
     }

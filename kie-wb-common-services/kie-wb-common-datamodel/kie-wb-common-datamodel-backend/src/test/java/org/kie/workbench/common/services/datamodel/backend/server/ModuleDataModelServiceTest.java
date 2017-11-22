@@ -32,9 +32,9 @@ import static org.kie.workbench.common.services.datamodel.backend.server.ModuleD
 public class ModuleDataModelServiceTest extends AbstractDataModelWeldTest {
 
     @Test
-    public void testProjectDataModelOracle() throws URISyntaxException {
+    public void testModuleDataModelOracle() throws URISyntaxException {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendTest1/src/main/java/t3p1");
+                initializeModuleDataModelOracle("/DataModelBackendTest1/src/main/java/t3p1");
 
         assertNotNull(oracle);
 
@@ -68,9 +68,9 @@ public class ModuleDataModelServiceTest extends AbstractDataModelWeldTest {
     }
 
     @Test
-    public void testProjectDataModelOracleJavaDefaultPackage() throws URISyntaxException {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendTest2/src/main/java");
+    public void testModuleDataModelOracleJavaDefaultPackage() throws URISyntaxException {
+        final ModuleDataModelOracle oracle =
+                initializeModuleDataModelOracle("/DataModelBackendTest2/src/main/java");
 
         assertNotNull(oracle);
 

@@ -32,7 +32,7 @@ public class ModuleDataModelExtendJavaTypeTest extends AbstractDataModelWeldTest
     @Test
     public void testProjectExtendJavaTypeWithQualifiedDRLBeanName() throws Exception {
         final ModuleDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendExtendJavaTypeTest1");
+                initializeModuleDataModelOracle("/DataModelBackendExtendJavaTypeTest1");
 
         assertNotNull(oracle);
 
@@ -49,8 +49,8 @@ public class ModuleDataModelExtendJavaTypeTest extends AbstractDataModelWeldTest
 
     @Test
     public void testProjectExtendJavaTypeWithImport() throws Exception {
-        final ProjectDataModelOracle oracle =
-                initializeProjectDataModelOracle("/DataModelBackendExtendJavaTypeTest2");
+        final ModuleDataModelOracle oracle =
+                initializeModuleDataModelOracle("/DataModelBackendExtendJavaTypeTest2");
 
         assertNotNull(oracle);
 

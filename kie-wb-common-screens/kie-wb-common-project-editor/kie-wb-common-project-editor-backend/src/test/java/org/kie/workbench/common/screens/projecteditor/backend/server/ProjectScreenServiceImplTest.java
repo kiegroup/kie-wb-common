@@ -33,7 +33,7 @@ import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.guvnor.common.services.project.service.ModuleRepositoriesService;
 import org.guvnor.common.services.project.service.ModuleRepositoryResolver;
 import org.guvnor.common.services.project.service.POMService;
-import org.guvnor.common.services.project.service.ProjectService;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.MetadataService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -148,7 +148,7 @@ public class ProjectScreenServiceImplTest {
     private MetadataService metadataService;
 
     @Mock
-    private ProjectService projectService;
+    private WorkspaceProjectService projectService;
 
     private ProjectScreenService service;
     private ProjectScreenModelLoader loader;

@@ -71,7 +71,7 @@ public class DataObjectFormModelHandler extends AbstractFormModelHandler<DataObj
         this.fieldManager = fieldManager;
     }
 
-    public static boolean isValidDataObjectProperty(ObjectProperty property) {
+    public static boolean isValidDataObjectProperty(final ObjectProperty property) {
         if (ArrayUtils.contains(RESTRICTED_PROPERTY_NAMES,
                                 property.getName())) {
             return false;
