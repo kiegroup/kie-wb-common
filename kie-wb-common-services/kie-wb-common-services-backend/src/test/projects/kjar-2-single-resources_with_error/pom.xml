@@ -35,16 +35,9 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.5</version>
-                <configuration>
-                    <goalPrefix>kie</goalPrefix>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>kie.io.takari.maven.plugins</groupId>
                 <artifactId>kie-takari-lifecycle-plugin</artifactId>
-                <version>1.13.4</version>
+                <version>1.13.3</version>
                 <configuration>
                     <compilerId>jdt</compilerId>
                     <source>1.8</source>
