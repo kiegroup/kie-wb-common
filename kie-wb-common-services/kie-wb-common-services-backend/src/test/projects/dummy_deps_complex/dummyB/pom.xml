@@ -18,9 +18,9 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-lifecycle-plugin</artifactId>
-        <version>1.12.6</version>
+        <groupId>kie.io.takari.maven.plugins</groupId>
+        <artifactId>kie-takari-lifecycle-plugin</artifactId>
+        <version>1.13.3</version>
         <executions>
           <execution>
             <id>compile</id>
@@ -29,7 +29,10 @@
               <goal>compile</goal>
             </goals>
             <configuration>
-              <compilerId>javac</compilerId>
+              <compilerId>jdt</compilerId>
+              <source>1.8</source>
+              <target>1.8</target>
+              <failOnError>true</failOnError>
             </configuration>
           </execution>
         </executions>
@@ -37,7 +40,7 @@
       <plugin>
         <groupId>kie.io.takari.maven.plugins</groupId>
         <artifactId>kie-takari-lifecycle-plugin</artifactId>
-        <version>1.13.4</version>
+        <version>1.13.3</version>
         <executions>
           <execution>
             <id>compile</id>
