@@ -474,7 +474,7 @@ public class BuildExecutorTest {
                                     final NotificationEvent.NotificationType type) {
         verify(notificationEvent).fire(argThat(new ArgumentMatcher<NotificationEvent>() {
             @Override
-            public boolean matches(final Object argument) {
+            public boolean matches(final NotificationEvent argument) {
                 final NotificationEvent event = (NotificationEvent) argument;
                 final String notification = event.getNotification();
                 final NotificationEvent.NotificationType type = event.getType();

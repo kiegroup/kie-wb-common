@@ -49,14 +49,14 @@ public class Bpmn2JsonUnmarshallerTest {
 
         when(process.getId()).thenAnswer((m) -> processId.get());
         doAnswer((m) -> {
-            processId.set(m.getArgumentAt(0, String.class));
+            processId.set(m.getArgument(0));
             return null;
         }).when(process).setId(anyString());
 
         when(flowElement.getId()).thenAnswer((m) -> flowElementId.get());
         when(flowElement.getName()).thenAnswer((m) -> flowElementId.get());
         doAnswer((m) -> {
-            flowElementId.set(m.getArgumentAt(0, String.class));
+            flowElementId.set(m.getArgument(0));
             return null;
         }).when(flowElement).setId(anyString());
 
