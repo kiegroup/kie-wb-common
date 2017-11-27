@@ -101,7 +101,7 @@ public class AFCLIReportingUtils {
     static Properties getBuildProperties() {
         Properties properties = new Properties();
 
-        try (InputStream resourceAsStream = AFMavenCli.class.getResourceAsStream(
+        try (InputStream resourceAsStream = ReusableAFMavenCli.class.getResourceAsStream(
                 "/org/apache/maven/messages/build.properties")) {
 
             if (resourceAsStream != null) {
