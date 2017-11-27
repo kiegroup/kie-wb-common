@@ -19,10 +19,12 @@ package org.kie.workbench.common.stunner.core.client.session.command.impl;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DeleteNodeCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.LocalClipboardControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
@@ -56,19 +58,26 @@ public class CutSelectionSessionCommandTest extends BaseSessionCommandKeyboardTe
     @Mock
     private DeleteNodeCommand deleteNodeCommand;
 
-    private ClipboardControl<Element> clipboardControl;
+    @Mock
+    private SessionCommandFactory sessionCommandFactory;
+
+    private ClipboardControl<Element, AbstractCanvas, ClientSession> clipboardControl;
 
     @Before
     public void setUp() throws Exception {
-        this.clipboardControl = spy(new LocalClipboardControl());
-        this.cutSelectionSessionCommand = getCommand();
-        super.setup();
+        clipboardControl = spy(new LocalClipboardControl());
+        when(sessionCommandFactory.newCopySelectionCommand()).thenReturn(copySelectionSessionCommand);
+        when(sessionCommandFactory.newDeleteSelectedElementsCommand()).thenReturn(deleteSelectionSessionCommand);
         when(sessionCommandManager.getRegistry()).thenReturn(commandRegistry);
         when(commandRegistry.peek()).thenReturn(deleteNodeCommand);
+        when(session.getClipboardControl()).thenReturn(clipboardControl);
+        super.setup();
+        this.cutSelectionSessionCommand = getCommand();
     }
 
     @Test
     public void testExecute() {
+        cutSelectionSessionCommand.bind(session);
         cutSelectionSessionCommand.execute(mainCallback);
         ArgumentCaptor<ClientSessionCommand.Callback> callbackArgumentCaptor = ArgumentCaptor.forClass(ClientSessionCommand.Callback.class);
         verify(copySelectionSessionCommand).execute(callbackArgumentCaptor.capture());
@@ -87,7 +96,7 @@ public class CutSelectionSessionCommandTest extends BaseSessionCommandKeyboardTe
 
     @Override
     protected CutSelectionSessionCommand getCommand() {
-        return new CutSelectionSessionCommand(copySelectionSessionCommand, deleteSelectionSessionCommand, sessionCommandManager, clipboardControl);
+        return new CutSelectionSessionCommand(sessionCommandFactory, sessionCommandManager);
     }
 
     @Override

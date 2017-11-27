@@ -29,16 +29,21 @@ import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
 
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
 @ApplicationScoped
-public class LocalClipboardControl implements ClipboardControl<Element> {
+public class LocalClipboardControl extends AbstractCanvasControl<AbstractCanvas> implements ClipboardControl<Element, AbstractCanvas, ClientSession> {
 
     private final Set<Element> elements;
     private final Map<String, String> elementsParent;
     private final List<Command> commands;
+    private ClientSession session;
 
     public LocalClipboardControl() {
         this.elements = new HashSet<>();
@@ -47,7 +52,7 @@ public class LocalClipboardControl implements ClipboardControl<Element> {
     }
 
     @Override
-    public ClipboardControl<Element> set(Element... element) {
+    public ClipboardControl<Element, AbstractCanvas, ClientSession> set(Element... element) {
         clear();
         elements.addAll(Arrays.stream(element).collect(Collectors.toSet()));
         elementsParent.putAll(elements.stream().collect(Collectors.toMap(Element::getUUID, e -> GraphUtils.getParent(e.asNode()).getUUID())));
@@ -55,7 +60,7 @@ public class LocalClipboardControl implements ClipboardControl<Element> {
     }
 
     @Override
-    public ClipboardControl<Element> remove(Element... element) {
+    public ClipboardControl<Element, AbstractCanvas, ClientSession> remove(Element... element) {
         elements.removeAll(Arrays.stream(element).collect(Collectors.toSet()));
         return this;
     }
@@ -66,7 +71,7 @@ public class LocalClipboardControl implements ClipboardControl<Element> {
     }
 
     @Override
-    public ClipboardControl<Element> clear() {
+    public ClipboardControl<Element, AbstractCanvas, ClientSession> clear() {
         commands.clear();
         elements.clear();
         elementsParent.clear();
@@ -89,9 +94,24 @@ public class LocalClipboardControl implements ClipboardControl<Element> {
     }
 
     @Override
-    public ClipboardControl<Element> setRollbackCommand(Command... command) {
+    public ClipboardControl<Element, AbstractCanvas, ClientSession> setRollbackCommand(Command... command) {
         commands.clear();
         commands.addAll(Stream.of(command).collect(Collectors.toList()));
         return this;
+    }
+
+    @Override
+    public void bind(final ClientSession session) {
+        this.session = session;
+    }
+
+    @Override
+    public void unbind() {
+        this.session = null;
+        clear();
+    }
+
+    @Override
+    protected void doDisable() {
     }
 }

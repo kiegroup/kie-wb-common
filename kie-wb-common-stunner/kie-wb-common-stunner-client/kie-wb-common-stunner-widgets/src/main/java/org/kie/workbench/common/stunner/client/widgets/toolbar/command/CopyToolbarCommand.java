@@ -20,17 +20,18 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
+import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.CopySelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
+import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 
-// TODO: I18n.
 @Dependent
 public class CopyToolbarCommand extends AbstractToolbarCommand<ClientFullSession, CopySelectionSessionCommand> {
 
     @Inject
-    public CopyToolbarCommand(final CopySelectionSessionCommand copySelectionSessionCommand) {
-        super(copySelectionSessionCommand);
+    public CopyToolbarCommand(final CopySelectionSessionCommand copySelectionSessionCommand, final ClientTranslationService translationService) {
+        super(copySelectionSessionCommand, translationService);
     }
 
     @Override
@@ -40,12 +41,12 @@ public class CopyToolbarCommand extends AbstractToolbarCommand<ClientFullSession
 
     @Override
     public String getCaption() {
-        return null;
+        return translationService.getKeyValue(CoreTranslationMessages.COPY_SELECTION);
     }
 
     @Override
     public String getTooltip() {
-        return "Copy selection";
+        return translationService.getKeyValue(CoreTranslationMessages.COPY_SELECTION);
     }
 
     @Override

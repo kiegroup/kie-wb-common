@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.CloneNodeCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.ClipboardControl;
@@ -39,6 +40,7 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -89,10 +91,10 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
 
     @Mock
-    private ClipboardControl<Element> clipboardControl;
+    private ClipboardControl<Element, AbstractCanvas, ClientSession> clipboardControl;
 
     @Mock
-    private CanvasLayoutUtils canvasLayoutUtils;
+    private SessionCommandFactory sessionCommandFactory;
 
     @Mock
     private Event<CanvasElementSelectedEvent> elementSelectedEvent;
@@ -120,20 +122,19 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     @Mock
     private CloneNodeCommand cloneNodeCommand;
 
+    @Mock
+    private CopySelectionSessionCommand copySelectionSessionCommand;
+
     private static final String CLONE_UUID = UUID.uuid();
 
     @Before
     public void setUp() throws Exception {
         clipboardControl = spy(new LocalClipboardControl());
 
-        super.setup();
-
         TestingGraphMockHandler graphMockHandler = new TestingGraphMockHandler();
         this.graphInstance = TestingGraphInstanceBuilder.newGraph2(graphMockHandler);
-        this.pasteSelectionSessionCommand = getCommand();
         node = graphInstance.startNode;
         node.setContent(view);
-
         when(session.getSelectionControl()).thenReturn(selectionControl);
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getGraphIndex()).thenReturn(graphMockHandler.graphIndex);
@@ -144,6 +145,11 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
         when(sessionCommandManager.execute(eq(canvasHandler), any())).thenReturn(commandResult);
         when(commandResult.getType()).thenReturn(CommandResult.Type.INFO);
         when(clone.getUUID()).thenReturn(CLONE_UUID);
+        when(session.getClipboardControl()).thenReturn(clipboardControl);
+        when(sessionCommandFactory.newCopySelectionCommand()).thenReturn(copySelectionSessionCommand);
+
+        super.setup();
+        this.pasteSelectionSessionCommand = getCommand();
     }
 
     @Test
@@ -202,7 +208,7 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     @Override
     protected PasteSelectionSessionCommand getCommand() {
         return new PasteSelectionSessionCommand(sessionCommandManager, canvasCommandFactory,
-                                                clipboardControl, canvasLayoutUtils, elementSelectedEvent);
+                                                elementSelectedEvent, sessionCommandFactory);
     }
 
     @Override

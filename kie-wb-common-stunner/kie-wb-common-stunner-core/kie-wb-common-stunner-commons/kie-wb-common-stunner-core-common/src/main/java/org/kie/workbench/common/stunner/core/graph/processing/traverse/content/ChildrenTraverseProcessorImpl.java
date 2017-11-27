@@ -181,18 +181,4 @@ public final class ChildrenTraverseProcessorImpl extends AbstractContentTraverse
                     node.getUUID().equals(rootUUID.get());
         }
     }
-
-    @Override
-    public void consume(Graph graph, Node<?, ? extends Edge> parent, Consumer<Node<?, ? extends Edge>> nodeConsumer) {
-        setRootUUID(parent.getUUID()).traverse(graph, new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
-            @Override
-            public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
-                                              final Node<View, Edge> node) {
-                super.startNodeTraversal(parents,
-                                         node);
-                nodeConsumer.accept(node);
-                return true;
-            }
-        });
-    }
 }

@@ -41,22 +41,17 @@ public class CopySelectionSessionCommand extends AbstractClientSessionCommand<Cl
 
     private static Logger LOGGER = Logger.getLogger(CopySelectionSessionCommand.class.getName());
 
-    private final ClipboardControl clipboardControl;
+    private ClipboardControl clipboardControl;
 
-    protected CopySelectionSessionCommand() {
-        this(null);
-    }
-
-    @Inject
-    public CopySelectionSessionCommand(final ClipboardControl clipboardControl) {
+    public CopySelectionSessionCommand() {
         super(true);
-        this.clipboardControl = clipboardControl;
     }
 
     @Override
     public void bind(final ClientFullSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        this.clipboardControl = session.getClipboardControl();
     }
 
     protected void onKeyDownEvent(final Key... keys) {

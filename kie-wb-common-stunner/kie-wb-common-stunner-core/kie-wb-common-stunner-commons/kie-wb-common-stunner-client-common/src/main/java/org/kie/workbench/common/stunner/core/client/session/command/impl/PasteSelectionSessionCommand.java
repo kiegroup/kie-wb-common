@@ -29,19 +29,20 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasElementSelectedEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key;
 import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl.CompositeCommandBuilder;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -64,34 +65,34 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
 
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
-    private final ClipboardControl<Element> clipboardControl;
-    private final CanvasLayoutUtils canvasLayoutUtils;
     private final Event<CanvasElementSelectedEvent> elementSelectedEvent;
     private final List<String> clonedElements;
+    private ClipboardControl<Element, AbstractCanvas, ClientSession> clipboardControl;
+    private final CopySelectionSessionCommand copySelectionSessionCommand;
 
     protected PasteSelectionSessionCommand() {
-        this(null, null, null, null, null);
+        this(null, null, null, null);
     }
 
     @Inject
     public PasteSelectionSessionCommand(final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                                        final ClipboardControl<Element> clipboardControl,
-                                        final CanvasLayoutUtils canvasLayoutUtils,
-                                        final Event<CanvasElementSelectedEvent> elementSelectedEvent) {
+                                        final Event<CanvasElementSelectedEvent> elementSelectedEvent,
+                                        final SessionCommandFactory sessionCommandFactory) {
         super(true);
         this.sessionCommandManager = sessionCommandManager;
         this.canvasCommandFactory = canvasCommandFactory;
-        this.clipboardControl = clipboardControl;
-        this.canvasLayoutUtils = canvasLayoutUtils;
         this.elementSelectedEvent = elementSelectedEvent;
         this.clonedElements = new ArrayList<>();
+        this.copySelectionSessionCommand = sessionCommandFactory.newCopySelectionCommand();
     }
 
     @Override
     public void bind(final ClientFullSession session) {
         super.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        this.clipboardControl = session.getClipboardControl();
+        this.copySelectionSessionCommand.bind(session);
     }
 
     void onKeyDownEvent(final Key... keys) {
@@ -110,7 +111,7 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
                      callback);
 
         if (clipboardControl.hasElements()) {
-            final CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommandBuilder<>();
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
 
             //for now just pasting Nodes not Edges
             commandBuilder.addCommands(clipboardControl.getElements().stream()
@@ -149,6 +150,9 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
             fireSelectedElementEvent();
             callback.onSuccess();
             clear();
+
+            //copy the cloned node to the clipboard to allow pasting several times
+            copySelectionSessionCommand.execute();
         }
     }
 

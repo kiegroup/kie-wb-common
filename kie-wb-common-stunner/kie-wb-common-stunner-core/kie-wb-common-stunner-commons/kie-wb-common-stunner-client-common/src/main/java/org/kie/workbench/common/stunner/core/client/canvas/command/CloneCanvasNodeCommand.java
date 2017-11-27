@@ -16,73 +16,96 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.CompositeCommand;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
-import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.AbstractChildrenTraverseCallback;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
-import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
-import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
 /**
  * Clone a node shape into de canvas.
  */
-public class CloneCanvasNodeCommand extends AddCanvasChildNodeCommand {
+public class CloneCanvasNodeCommand extends AbstractCanvasCommand {
 
     private transient CompositeCommand<AbstractCanvasHandler, CanvasViolation> commands;
     private transient ChildrenTraverseProcessor childrenTraverseProcessor;
+    private transient final AddCanvasChildNodeCommand addCanvasChildNodeCommand;
+    private final Node parent;
+    private final Node candidate;
+    private final String shapeSetId;
 
-    public CloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId) {
-        super(parent, candidate, shapeSetId);
+    public CloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId, final ChildrenTraverseProcessor childrenTraverseProcessor) {
+        this.parent = parent;
+        this.candidate = candidate;
+        this.shapeSetId = shapeSetId;
+        this.childrenTraverseProcessor = childrenTraverseProcessor;
+        this.addCanvasChildNodeCommand = new AddCanvasChildNodeCommand(parent, candidate, shapeSetId);
+    }
 
-        this.childrenTraverseProcessor = new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl());
+    /**
+     * Creates the {@link AbstractCanvasCommand} responsible to add the clone node to canvas, may be override in case of
+     * a specification on the command.
+     * @return
+     */
+    public AbstractCanvasCommand createAddCanvasChildNodeCommand(Node parent, Node candidate, String shapeSetId) {
+        return new AddCanvasChildNodeCommand(parent, candidate, shapeSetId);
+    }
+
+    /**
+     * Creates a {@link CloneCanvasNodeCommand} that is used to clone children nodes and may be override in case a
+     * specification of {@link CloneCanvasNodeCommand}.
+     * @param parent
+     * @param candidate
+     * @return
+     */
+    public CloneCanvasNodeCommand createCloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId) {
+        return new CloneCanvasNodeCommand(parent, candidate, shapeSetId, childrenTraverseProcessor);
     }
 
     @Override
     public CommandResult<CanvasViolation> execute(AbstractCanvasHandler context) {
-        this.commands = new CompositeCommandImpl.CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation>()
+        commands = new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                 .reverse()
                 .build();
 
-        CommandResult<CanvasViolation> rootResult = super.execute(context);
-
-        if (CommandUtils.isError(rootResult)) {
-            return rootResult;
-        }
+        //first add the candidate clone
+        commands.addCommand(createAddCanvasChildNodeCommand(getParent(), getCandidate(), getShapeSetId()));
 
         //process clone children nodes
         if (GraphUtils.hasChildren(getCandidate())) {
             Graph graph = context.getGraphIndex().getGraph();
-            childrenTraverseProcessor.consume(graph, getCandidate(), node -> {
-                commands.addCommand(new CloneCanvasNodeCommand(getCandidate(), node, getShapeSetId()));
+            List<Edge> clonedEdges = new ArrayList<>();
+
+            childrenTraverseProcessor.setRootUUID(getCandidate().getUUID());
+            childrenTraverseProcessor.traverse(graph, new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
+                @Override
+                public boolean startNodeTraversal(List<Node<View, Edge>> parents, Node<View, Edge> node) {
+                    commands.addCommand(createCloneCanvasNodeCommand(getCandidate(), node, getShapeSetId()));
+                    clonedEdges.addAll(node.getOutEdges());
+                    return super.startNodeTraversal(parents, node);
+                }
             });
 
-            //process children children connectors and dock
-            childrenTraverseProcessor.consume(graph, getCandidate(), node -> {
-                node.getOutEdges()
-                        .stream()
-                        .filter(edge -> edge.getContent() instanceof Dock)
-                        .forEach(edge -> commands.addCommand(new CanvasDockNodeCommand(edge.getSourceNode(), edge.getTargetNode())));
-
-                node.getOutEdges()
-                        .stream()
-                        .filter(edge -> edge.getContent() instanceof ViewConnector)
-                        .forEach(edge -> commands.addCommand(new AddCanvasConnectorCommand((Edge) edge, getShapeSetId())));
-            });
+            //process children edges -> connectors and dock
+            clonedEdges.stream()
+                    .filter(edge -> edge.getContent() instanceof Dock)
+                    .forEach(edge -> commands.addCommand(new CanvasDockNodeCommand(edge.getSourceNode(), edge.getTargetNode())));
+            clonedEdges
+                    .stream()
+                    .filter(edge -> edge.getContent() instanceof ViewConnector)
+                    .forEach(edge -> commands.addCommand(new AddCanvasConnectorCommand((Edge) edge, getShapeSetId())));
         }
 
         //process clone docked nodes on the root
@@ -102,14 +125,26 @@ public class CloneCanvasNodeCommand extends AddCanvasChildNodeCommand {
 
     @Override
     public CommandResult<CanvasViolation> undo(AbstractCanvasHandler context) {
-        CommandResult<CanvasViolation> commandResult = commands.undo(context);
-        CommandResult<CanvasViolation> undoResult = super.undo(context);
-        return new CanvasCommandResultBuilder(Stream.concat(StreamSupport.stream(commandResult.getViolations().spliterator(), false),
-                                                            StreamSupport.stream(undoResult.getViolations().spliterator(), false))
-                                                      .collect(Collectors.toList())).build();
+        return commands.undo(context);
     }
 
     protected CompositeCommand<AbstractCanvasHandler, CanvasViolation> getCommands() {
         return commands;
+    }
+
+    public ChildrenTraverseProcessor getChildrenTraverseProcessor() {
+        return childrenTraverseProcessor;
+    }
+
+    public Node getParent() {
+        return parent;
+    }
+
+    public Node getCandidate() {
+        return candidate;
+    }
+
+    public String getShapeSetId() {
+        return shapeSetId;
     }
 }

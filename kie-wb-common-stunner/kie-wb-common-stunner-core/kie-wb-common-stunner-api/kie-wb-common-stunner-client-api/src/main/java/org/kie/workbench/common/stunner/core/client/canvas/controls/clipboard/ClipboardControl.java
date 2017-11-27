@@ -19,19 +19,22 @@ package org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard;
 import java.util.Collection;
 import java.util.List;
 
-import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
+import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.graph.Element;
 
-public interface ClipboardControl<E extends Element> {
+public interface ClipboardControl<E extends Element, C extends Canvas, S extends ClientSession> extends CanvasControl<C>,
+                                                                                                        CanvasControl.SessionAware<S> {
 
-    ClipboardControl<E> set(final E... item);
+    ClipboardControl<E, C, S> set(final E... item);
 
-    ClipboardControl<E> remove(final E... item);
+    ClipboardControl<E, C, S> remove(final E... item);
 
     Collection<E> getElements();
 
-    ClipboardControl<E> clear();
+    ClipboardControl<E, C, S> clear();
 
     boolean hasElements();
 
@@ -39,5 +42,5 @@ public interface ClipboardControl<E extends Element> {
 
     List<Command> getRollbackCommands();
 
-    ClipboardControl<E> setRollbackCommand(Command ... command);
+    ClipboardControl<E, C, S> setRollbackCommand(Command... command);
 }

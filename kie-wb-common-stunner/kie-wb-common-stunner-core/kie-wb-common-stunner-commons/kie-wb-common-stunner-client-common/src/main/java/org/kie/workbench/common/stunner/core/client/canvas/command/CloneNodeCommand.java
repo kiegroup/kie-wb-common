@@ -19,20 +19,16 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.logging.Logger;
 
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.CompositeCommand;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommandImpl.CompositeCommandBuilder;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
@@ -43,18 +39,20 @@ public class CloneNodeCommand extends AbstractCanvasGraphCommand {
     private Optional<Point2D> cloneLocation;
     private transient CompositeCommand<AbstractCanvasHandler, CanvasViolation> command;
     private final Optional<Consumer<Node>> cloneNodeCommandCallback;
+    private final ChildrenTraverseProcessor childrenTraverseProcessor;
 
     @SuppressWarnings("unchecked")
-    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D cloneLocation, final Consumer<Node> cloneNodeCommandCallback) {
+    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D cloneLocation, final Consumer<Node> cloneNodeCommandCallback, final ChildrenTraverseProcessor childrenTraverseProcessor) {
         this.candidate = candidate;
         this.cloneLocation = Optional.ofNullable(cloneLocation);
         this.parentUuid = parentUuid;
         this.cloneNodeCommandCallback = Optional.ofNullable(cloneNodeCommandCallback);
+        this.childrenTraverseProcessor = childrenTraverseProcessor;
         this.command = buildCommand();
     }
 
     private CompositeCommand<AbstractCanvasHandler, CanvasViolation> buildCommand() {
-        return new CompositeCommandBuilder<AbstractCanvasHandler, CanvasViolation>()
+        return new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                 .reverse()
                 .build();
     }
@@ -65,7 +63,8 @@ public class CloneNodeCommand extends AbstractCanvasGraphCommand {
         return new org.kie.workbench.common.stunner.core.graph.command.impl.CloneNodeCommand(candidate,
                                                                                              parentUuid,
                                                                                              getClonePosition(),
-                                                                                             cloneNodeCallback(context));
+                                                                                             cloneNodeCallback(context),
+                                                                                             childrenTraverseProcessor);
     }
 
     @Override
@@ -83,11 +82,19 @@ public class CloneNodeCommand extends AbstractCanvasGraphCommand {
             if (!Objects.equals(command.size(), 0)) {
                 command = buildCommand();
             }
-            command.addCommand(new CloneCanvasNodeCommand(GraphUtils.getParent(clone).asNode(),
-                                                          clone,
-                                                          context.getDiagram().getMetadata().getShapeSetId()));
+            command.addCommand(getCloneCanvasNodeCommand(GraphUtils.getParent(clone).asNode(), clone, context.getDiagram().getMetadata().getShapeSetId()));
 
             cloneNodeCommandCallback.ifPresent(callback -> callback.accept(clone));
         };
+    }
+
+    public CloneCanvasNodeCommand getCloneCanvasNodeCommand(Node parent, Node clone, String shapeId) {
+        return new CloneCanvasNodeCommand(parent,
+                                          clone,
+                                          shapeId, childrenTraverseProcessor);
+    }
+
+    public ChildrenTraverseProcessor getChildrenTraverseProcessor() {
+        return childrenTraverseProcessor;
     }
 }

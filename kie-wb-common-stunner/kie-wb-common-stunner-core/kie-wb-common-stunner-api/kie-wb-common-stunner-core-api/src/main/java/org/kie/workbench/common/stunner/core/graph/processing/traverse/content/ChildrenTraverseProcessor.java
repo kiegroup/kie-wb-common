@@ -31,6 +31,4 @@ public interface ChildrenTraverseProcessor
         extends ContentTraverseProcessor<Child, Node<View, Edge>, Edge<Child, Node>, ChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>> {
 
     ChildrenTraverseProcessor setRootUUID(final String rootUUID);
-
-    void consume(Graph graph, Node<?, ? extends Edge> parent, Consumer<Node<?, ? extends Edge>> nodeConsumer);
 }

@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.widgets.toolbar.command;
+package org.kie.workbench.common.stunner.client.widgets.toolbar.command;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
-import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
+import org.mockito.Mock;
 
-@DMNEditor
-@Dependent
-public class ClearToolbarCommand extends org.kie.workbench.common.stunner.client.widgets.toolbar.command.ClearToolbarCommand {
+public class AbstractToolbarCommandTest {
 
-    @Inject
-    public ClearToolbarCommand(final @DMNEditor SessionCommandFactory sessionCommandFactory, final ClientTranslationService translationService) {
-        super(sessionCommandFactory, translationService);
-    }
+    @Mock
+    protected ClientTranslationService translationService;
+
+    @Mock
+    protected SessionCommandFactory sessionCommandFactory;
+
 }

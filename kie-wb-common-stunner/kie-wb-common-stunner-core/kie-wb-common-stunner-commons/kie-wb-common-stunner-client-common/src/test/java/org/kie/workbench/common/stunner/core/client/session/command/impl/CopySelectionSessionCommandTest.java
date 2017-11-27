@@ -23,11 +23,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.ClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.clipboard.LocalClipboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent.Key;
+import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -48,7 +50,8 @@ import static org.mockito.Mockito.when;
 public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardTest {
 
     private CopySelectionSessionCommand copySelectionSessionCommand;
-    private ClipboardControl<Element> clipboardControl;
+
+    private ClipboardControl<Element, AbstractCanvas, ClientSession> clipboardControl;
 
     @Mock
     private SelectionControl selectionControl;
@@ -77,6 +80,7 @@ public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardT
         when(selectionControl.getSelectedItems()).thenReturn(Arrays.asList(node.getUUID()));
         when(session.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getGraphIndex()).thenReturn(graphMockHandler.graphIndex);
+        when(session.getClipboardControl()).thenReturn(clipboardControl);
     }
 
     @Test
@@ -98,7 +102,7 @@ public class CopySelectionSessionCommandTest extends BaseSessionCommandKeyboardT
 
     @Override
     protected CopySelectionSessionCommand getCommand() {
-        return new CopySelectionSessionCommand(clipboardControl);
+        return new CopySelectionSessionCommand();
     }
 
     @Override

@@ -43,31 +43,29 @@ public class CutSelectionSessionCommand extends AbstractClientSessionCommand<Cli
     private final DeleteSelectionSessionCommand deleteSelectionSessionCommand;
     private static Logger LOGGER = Logger.getLogger(CopySelectionSessionCommand.class.getName());
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final ClipboardControl clipboardControl;
+    private ClipboardControl clipboardControl;
 
 
     protected CutSelectionSessionCommand() {
-        this(null, null, null, null);
+        this(null, null);
     }
 
     @Inject
-    public CutSelectionSessionCommand(final CopySelectionSessionCommand copySelectionSessionCommand,
-                                      final DeleteSelectionSessionCommand deleteSelectionSessionCommand,
-                                      final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                      final ClipboardControl clipboardControl) {
+    public CutSelectionSessionCommand(final SessionCommandFactory sessionCommandFactory,
+                                      final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager) {
         super(true);
-        this.copySelectionSessionCommand = copySelectionSessionCommand;
-        this.deleteSelectionSessionCommand = deleteSelectionSessionCommand;
+        this.copySelectionSessionCommand = sessionCommandFactory.newCopySelectionCommand();
+        this.deleteSelectionSessionCommand = sessionCommandFactory.newDeleteSelectedElementsCommand();
         this.sessionCommandManager = sessionCommandManager;
-        this.clipboardControl = clipboardControl;
     }
 
     @Override
     public void bind(final ClientFullSession session) {
         super.bind(session);
-        copySelectionSessionCommand.bind(getSession());
-        deleteSelectionSessionCommand.bind(getSession());
+        copySelectionSessionCommand.bind(session);
+        deleteSelectionSessionCommand.bind(session);
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        this.clipboardControl = session.getClipboardControl();
     }
 
     protected void onKeyDownEvent(final Key... keys) {

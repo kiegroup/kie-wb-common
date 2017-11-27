@@ -29,6 +29,9 @@ import org.kie.workbench.common.stunner.core.client.shape.EdgeShape;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.command.impl.AbstractCompositeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
@@ -57,6 +60,9 @@ public class CloneCanvasNodeCommandTest extends AbstractCanvasCommandTest {
     @Mock
     private ShapeView shapeView;
 
+    @Mock
+    private ChildrenTraverseProcessor childrenTraverseProcessor;
+
     @Before
     public void setup() throws Exception {
         super.setup();
@@ -72,7 +78,8 @@ public class CloneCanvasNodeCommandTest extends AbstractCanvasCommandTest {
 
         this.cloneCanvasNodeCommand = new CloneCanvasNodeCommand(parent,
                                                                  candidate,
-                                                                 SHAPE_SET_ID);
+                                                                 SHAPE_SET_ID,
+                                                                 new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
     }
 
     @Test
@@ -82,7 +89,7 @@ public class CloneCanvasNodeCommandTest extends AbstractCanvasCommandTest {
         AbstractCompositeCommand<AbstractCanvasHandler, CanvasViolation> commands =
                 (AbstractCompositeCommand) cloneCanvasNodeCommand.getCommands();
 
-        assertEquals(commands.size(), 5);
+        assertEquals(commands.size(), 6);
         assertTrue(commands.getCommands().stream()
                                   .filter(command -> command instanceof CloneCanvasNodeCommand)
                                   .map(command -> (CloneCanvasNodeCommand) command)
