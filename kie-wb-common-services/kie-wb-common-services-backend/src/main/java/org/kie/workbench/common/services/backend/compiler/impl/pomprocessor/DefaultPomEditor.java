@@ -157,15 +157,7 @@ public class DefaultPomEditor implements PomEditor {
         Boolean overwritePOM = Boolean.FALSE;
 
         if (!alternativeCompilerPluginPresent) {
-            //add alternative compiler and disable the default compiler
             build.addPlugin(getNewCompilerPlugin());
-            /*build.addPlugin(getTemporaryNewCompilerPlugin());// temporarly enabled
-            swapPositionsTemporaryPlugin(build,
-                                          defaultMavenCompilerPosition,
-                                          alternativeCompilerPosition);*/
-            //end of temporary enabled
-
-
             alternativeCompilerPluginPresent = Boolean.TRUE;
             overwritePOM = Boolean.TRUE;
         }
@@ -204,17 +196,20 @@ public class DefaultPomEditor implements PomEditor {
                 kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN));
                 kieTakariPlugin.setVersion(kieMavenPlugin.getVersion());
                 kieTakariPlugin.setExtensions(Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
-                Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
+               /* Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
                 compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
                 Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
                 sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
                 Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
                 targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
+                Xpp3Dom failOnError = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
+                failOnError.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
                 Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
                 configuration.addChild(compilerId);
                 configuration.addChild(sourceVersion);
                 configuration.addChild(targetVersion);
-                kieTakariPlugin.setConfiguration(configuration);
+                configuration.addChild(failOnError);
+                kieTakariPlugin.setConfiguration(configuration);*/
                 plugins.set(kieMavenPluginPosition,
                             kieTakariPlugin);
                 build.setPlugins(plugins);
@@ -224,76 +219,12 @@ public class DefaultPomEditor implements PomEditor {
         return overwritePOM;
     }
 
-  /*  private void swapPositionsTemporaryPlugin(Build build,
-                                               int defaultMavenCompilerPosition,
-                                               int alternativeCompilerPosition) {
-        int buildPluginSize = build.getPlugins().size();
-        int compilerPosition = 0;
-        for(int i=0;  i < buildPluginSize; i++){
-            Plugin plugin = build.getPlugins().get(i);
-            if(plugin.getArtifactId().equals("maven-compiler-plugin")){
-                compilerPosition = i;
-                break;
-            }
-        }
-
-        if(compilerPosition >0) {
-            Plugin defaultMavenCompiler = build.getPlugins().get(compilerPosition);
-            Plugin firstPlugin = build.getPlugins().get(0);
-            build.getPlugins().set(0,
-                                   defaultMavenCompiler);
-            build.getPlugins().set(compilerPosition,
-                                   firstPlugin);
-        }
-    }
-    protected Plugin getTemporaryNewCompilerPlugin() {
-
-        Plugin newCompilerPlugin = new Plugin();
-        newCompilerPlugin.setGroupId("org.apache.maven.plugins");
-        newCompilerPlugin.setArtifactId("maven-compiler-plugin");
-        newCompilerPlugin.setVersion("3.1");
-
-        List<Dependency> dependencies = new ArrayList<>();
-        Dependency dependency = new Dependency();
-        dependency.setGroupId("org.eclipse.tycho");
-        dependency.setArtifactId("tycho-compiler-jdt");
-        dependency.setVersion("0.22.0");
-        dependencies.add(dependency);
-        newCompilerPlugin.setDependencies(dependencies);
-
-        Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
-        compilerId.setValue("jdt");
-        Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
-        sourceVersion.setValue("1.8");
-        Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
-        targetVersion.setValue("1.8");
-        Xpp3Dom optimize = new Xpp3Dom("optimize");
-        optimize.setValue("true");
-        Xpp3Dom failOnError = new Xpp3Dom("failOnError");
-        failOnError.setValue("false");
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(compilerId);
-        configuration.addChild(sourceVersion);
-        configuration.addChild(targetVersion);
-        configuration.addChild(optimize);
-        configuration.addChild(failOnError);
-        newCompilerPlugin.setConfiguration(configuration);
-
-        return newCompilerPlugin;
-    }*/
-
-
     protected Plugin getNewCompilerPlugin() {
 
         Plugin newCompilerPlugin = new Plugin();
         newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP));
         newCompilerPlugin.setArtifactId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT));
         newCompilerPlugin.setVersion(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION));
-
-        PluginExecution execution = new PluginExecution();
-        execution.setId(MavenCLIArgs.COMPILE);
-        execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
-        execution.setPhase(MavenCLIArgs.COMPILE);
 
         Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
         compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
@@ -310,8 +241,13 @@ public class DefaultPomEditor implements PomEditor {
         configuration.addChild(sourceVersion);
         configuration.addChild(targetVersion);
         configuration.addChild(failOnError);
-        
-        execution.setConfiguration(configuration);
+        newCompilerPlugin.setConfiguration(configuration);
+
+        PluginExecution execution = new PluginExecution();
+        execution.setId(MavenCLIArgs.COMPILE);
+        execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
+        execution.setPhase(MavenCLIArgs.COMPILE);
+
         newCompilerPlugin.setExecutions(Arrays.asList(execution));
 
         return newCompilerPlugin;
