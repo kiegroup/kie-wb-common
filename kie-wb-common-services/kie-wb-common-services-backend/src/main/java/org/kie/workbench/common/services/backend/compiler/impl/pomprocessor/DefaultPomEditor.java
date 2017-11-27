@@ -302,15 +302,15 @@ public class DefaultPomEditor implements PomEditor {
         Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
         targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
 
-        Xpp3Dom failOnErorr = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
-        failOnErorr.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
+        Xpp3Dom failOnError = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
+        failOnError.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
 
         Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
         configuration.addChild(compilerId);
         configuration.addChild(sourceVersion);
         configuration.addChild(targetVersion);
-
-
+        configuration.addChild(failOnError);
+        
         execution.setConfiguration(configuration);
         newCompilerPlugin.setExecutions(Arrays.asList(execution));
 
