@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.uberfire.backend.vfs.Path;
 
@@ -29,62 +29,61 @@ import org.uberfire.backend.vfs.Path;
 @Remote
 public interface ValidationService {
 
-    boolean isProjectNameValid( final String projectName );
+    boolean isProjectNameValid(final String projectName);
 
-    boolean isPackageNameValid( final String packageName );
+    boolean isPackageNameValid(final String packageName);
 
-    boolean isFileNameValid( final Path path,
-                                    final String fileName );
+    boolean isFileNameValid(final Path path,
+                            final String fileName);
 
-    boolean isJavaFileNameValid( final String fileName );
+    boolean isJavaFileNameValid(final String fileName);
 
-    boolean isFileNameValid( final String fileName );
+    boolean isFileNameValid(final String fileName);
 
-    Map<String, Boolean> evaluateJavaIdentifiers( final String[] identifiers );
+    Map<String, Boolean> evaluateJavaIdentifiers(final String[] identifiers);
 
-    Map<String, Boolean> evaluateMavenIdentifiers( final String[] identifiers );
+    Map<String, Boolean> evaluateMavenIdentifiers(final String[] identifiers);
 
-    boolean isTimerIntervalValid( final String timerInterval );
+    boolean isTimerIntervalValid(final String timerInterval);
 
     /**
      * Validate whole POM
      * @param pom
      * @return true if valid
      */
-    boolean validate( final POM pom );
+    boolean validate(final POM pom);
 
     /**
      * Validate GroupID element of POM's GAV
      * @param groupId
      * @return true if valid
      */
-    boolean validateGroupId( final String groupId );
+    boolean validateGroupId(final String groupId);
 
     /**
      * Validate ArtifactID element of POM's GAV
      * @param artifactId
      * @return true if valid
      */
-    boolean validateArtifactId( final String artifactId );
+    boolean validateArtifactId(final String artifactId);
 
     /**
      * Validate Version element of POM's GAV
      * @param version
      * @return true if valid
      */
-    boolean validateGAVVersion( final String version );
+    boolean validateGAVVersion(final String version);
 
-    <T> Collection<ValidationMessage> validateForSave( final Path path,
-                                                       final T content );
+    <T> Collection<BuildMessage> validateForSave(final Path path,
+                                                 final T content);
 
-    <T> Collection<ValidationMessage> validateForCopy( final Path path,
-                                                       final T content );
+    <T> Collection<BuildMessage> validateForCopy(final Path path,
+                                                 final T content);
 
-    Collection<ValidationMessage> validateForCopy( final Path path );
+    Collection<BuildMessage> validateForCopy(final Path path);
 
-    <T> Collection<ValidationMessage> validateForDelete( final Path path,
-                                                         final T content );
+    <T> Collection<BuildMessage> validateForDelete(final Path path,
+                                                   final T content);
 
-    Collection<ValidationMessage> validateForDelete( final Path path );
-
+    Collection<BuildMessage> validateForDelete(final Path path);
 }

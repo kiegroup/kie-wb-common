@@ -19,11 +19,10 @@ package org.kie.workbench.common.screens.datamodeller.client.widgets.editor;
 import java.util.List;
 
 import com.google.gwt.view.client.ListDataProvider;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.mvp.Command;
@@ -94,7 +93,7 @@ public interface DataObjectBrowserView
                               final String cancelButtonText,
                               final ButtonType cancelButtonType);
 
-    void showValidationPopupForDeletion(final List<ValidationMessage> validationMessages,
+    void showValidationPopupForDeletion(final List<BuildMessage> validationMessages,
                                         final Command yesCommand,
                                         final Command cancelCommand);
 }

@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 
 import static org.kie.workbench.common.screens.datamodeller.backend.server.validation.PersistenceDescriptorValidationMessages.newErrorMessage;
 
@@ -39,8 +39,8 @@ public class PropertyValidator {
      * @param value the value for the property.
      * @return a list list of validation messages.
      */
-    public List<ValidationMessage> validate( String name, String value ) {
-        return validate( name, value, -1 );
+    public List<BuildMessage> validate(String name, String value) {
+        return validate(name, value, -1);
     }
 
     /**
@@ -51,21 +51,21 @@ public class PropertyValidator {
      * @return a list list of validation messages.
      */
 
-    public List<ValidationMessage> validate( String name, String value, int propertyIndex ) {
-        List<ValidationMessage> messages = new ArrayList<ValidationMessage>();
-        if ( name == null || name.trim().isEmpty() ) {
+    public List<BuildMessage> validate(String name, String value, int propertyIndex) {
+        List<BuildMessage> messages = new ArrayList<>();
+        if (name == null || name.trim().isEmpty()) {
             //uncommon case
-            if ( propertyIndex >= 0 ) {
-                messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY_ID,
-                        MessageFormat.format( PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY, Integer.toString( propertyIndex ) ), Integer.toString( propertyIndex ) ) );
+            if (propertyIndex >= 0) {
+                messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY_ID,
+                                             MessageFormat.format(PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY, Integer.toString(propertyIndex)), Integer.toString(propertyIndex)));
             } else {
-                messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PROPERTY_NAME_EMPTY_ID,
-                        PersistenceDescriptorValidationMessages.PROPERTY_NAME_EMPTY ) );
+                messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PROPERTY_NAME_EMPTY_ID,
+                                             PersistenceDescriptorValidationMessages.PROPERTY_NAME_EMPTY));
             }
         }
-        if ( value == null || value.trim().isEmpty() ) {
-            messages.add( PersistenceDescriptorValidationMessages.newWarningMessage( PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY_ID,
-                    MessageFormat.format( PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY, name ), name ) );
+        if (value == null || value.trim().isEmpty()) {
+            messages.add(PersistenceDescriptorValidationMessages.newWarningMessage(PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY_ID,
+                                                                                   MessageFormat.format(PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY, name), name));
         }
         return messages;
     }

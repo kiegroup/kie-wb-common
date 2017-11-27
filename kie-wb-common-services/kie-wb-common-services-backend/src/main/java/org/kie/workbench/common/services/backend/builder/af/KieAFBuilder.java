@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.builder.af;
 
 import java.io.InputStream;
 
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
@@ -175,4 +176,5 @@ public interface KieAFBuilder {
                                             String mavenRepo,
                                             String[] args,
                                             KieDecorator decorator, Boolean skipPrjDependenciesCreationList);
+
 }

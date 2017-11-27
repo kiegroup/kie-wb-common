@@ -18,7 +18,7 @@ package org.kie.workbench.common.services.backend.builder.core;
 import java.util.function.Supplier;
 
 import org.drools.compiler.kie.builder.impl.MessageImpl;
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
 import org.junit.Before;
 import org.junit.Test;

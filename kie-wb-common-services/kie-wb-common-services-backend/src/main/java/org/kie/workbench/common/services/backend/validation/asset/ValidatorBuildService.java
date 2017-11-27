@@ -29,8 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.common.base.Charsets;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -62,12 +62,12 @@ public class ValidatorBuildService {
         this.projectCache = projectCache;
     }
 
-    public List<ValidationMessage> validate(final Path resourcePath,
-                                            final String content) {
+    public List<BuildMessage> validate(final Path resourcePath,
+                                       final String content) {
         InputStream inputStream = null;
         try {
             inputStream = new ByteArrayInputStream(content.getBytes(Charsets.UTF_8));
-            final List<ValidationMessage> results = doValidation(resourcePath, inputStream);
+            final List<BuildMessage> results = doValidation(resourcePath, inputStream);
             return results;
         } catch (NoClassDefFoundError e) {
             return error(MessageFormat.format(ERROR_CLASS_NOT_FOUND,
@@ -84,11 +84,11 @@ public class ValidatorBuildService {
         }
     }
 
-    public List<ValidationMessage> validate(final Path resourcePath) {
+    public List<BuildMessage> validate(final Path resourcePath) {
         InputStream inputStream = null;
         try {
             inputStream = ioService.newInputStream(convert(resourcePath));
-            final List<ValidationMessage> results = doValidation(resourcePath, inputStream);
+            final List<BuildMessage> results = doValidation(resourcePath, inputStream);
             return results;
         } catch (NoClassDefFoundError e) {
             return error(MessageFormat.format(ERROR_CLASS_NOT_FOUND,
@@ -105,8 +105,8 @@ public class ValidatorBuildService {
         }
     }
 
-    private List<ValidationMessage> doValidation(final Path _resourcePath,
-                                                 final InputStream inputStream) throws NoProjectException {
+    private List<BuildMessage> doValidation(final Path _resourcePath,
+                                            final InputStream inputStream) throws NoProjectException {
 
         final Optional<KieProject> project = project(_resourcePath);
         if (!project.isPresent()) {
@@ -117,9 +117,9 @@ public class ValidatorBuildService {
                                                                      inputStream);
     }
 
-    private List<ValidationMessage> getExceptionMsgs(String msg) {
-        List<ValidationMessage> msgs = new ArrayList<>();
-        ValidationMessage msgInternal = new ValidationMessage();
+    private List<BuildMessage> getExceptionMsgs(String msg) {
+        List<BuildMessage> msgs = new ArrayList<>();
+        BuildMessage msgInternal = new BuildMessage();
         msgInternal.setText(msg);
         msgs.add(msgInternal);
         return msgs;
@@ -130,9 +130,9 @@ public class ValidatorBuildService {
         return Optional.ofNullable(project);
     }
 
-    private ArrayList<ValidationMessage> error(final String errorMessage) {
-        return new ArrayList<ValidationMessage>() {{
-            add(new ValidationMessage(Level.ERROR, errorMessage));
+    private ArrayList<BuildMessage> error(final String errorMessage) {
+        return new ArrayList<BuildMessage>() {{
+            add(new BuildMessage(Level.ERROR, errorMessage));
         }};
     }
 }

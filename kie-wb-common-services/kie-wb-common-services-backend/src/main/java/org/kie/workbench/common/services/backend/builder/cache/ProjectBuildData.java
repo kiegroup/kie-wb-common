@@ -39,7 +39,7 @@ import org.drools.compiler.kie.builder.impl.InternalKieModule;
 import org.guvnor.common.services.backend.file.FileDiscoveryService;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieModule;
 import org.kie.api.builder.ReleaseId;
@@ -87,6 +87,8 @@ import static org.kie.workbench.common.services.datamodel.backend.server.builder
 import static org.uberfire.backend.server.util.Paths.convert;
 
 public class ProjectBuildData {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProjectBuildData.class);
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -151,11 +153,17 @@ public class ProjectBuildData {
         this.mavenRepo = mavenRepo;
     }
 
-    public List<ValidationMessage> validate(final Path resourcePath,
-                                            final InputStream inputStream) {
+    public List<BuildMessage> validate(final Path resourcePath,
+                                       final InputStream inputStream) {
         lock.lock();
         try {
-            return Collections.emptyList();
+            final KieCompilationResponse res = getBuilder().validate(resourcePath, inputStream);
+
+            final BuildResults br = convertIntoBuildResults(res.getMavenOutput(),
+                                                            convert(project.getRootPath()),
+                                                            res.getWorkingDir().get().getParent().toString());
+
+            return br.getMessages();
         } finally {
             lock.unlock();
         }
@@ -182,7 +190,9 @@ public class ProjectBuildData {
 
             final KieCompilationResponse res = builder.buildAndInstall(builder.getInfo().getPrjPath().toString(),
                                                                        mavenRepo);
-            return convertIntoBuildResults(res.getMavenOutput());
+            return convertIntoBuildResults(res.getMavenOutput(),
+                                           convert(project.getRootPath()),
+                                           res.getWorkingDir().get().getParent().toString());
         } finally {
             lock.unlock();
         }

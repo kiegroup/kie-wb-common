@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.services.shared.validation;
-
-import java.util.Collection;
+package org.kie.workbench.common.widgets.client.popups.validation;
 
 import org.guvnor.common.services.shared.builder.model.BuildMessage;
-import org.uberfire.backend.vfs.Path;
 
-/**
- * Checks whether delete action can be safely performed. Implement this class in order to define
- * custom check criterion.
- * <p>
- * The checks are collected by org.kie.workbench.common.services.shared.validation.ValidationService
- */
-public interface DeleteValidator<T> {
+public interface BuildMessageTranslator {
 
-    Collection<BuildMessage> validate(final Path path,
-                                      final T content);
+    boolean accept(final BuildMessage checkMessage);
 
-    Collection<BuildMessage> validate(final Path path);
-
-    boolean accept(final Path path);
+    BuildMessage translate(final BuildMessage checkMessage);
 }

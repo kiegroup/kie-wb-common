@@ -19,7 +19,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.soup.project.datamodel.oracle.TypeSource;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
@@ -38,7 +38,7 @@ public class ClassVerifier {
     private final TypeSourceResolver typeSourceResolver;
     private final KieModuleMetaData kieModuleMetaData;
 
-    private final List<BuildMessage> buildMessages = new ArrayList<BuildMessage>();
+    private final List<BuildMessage> buildMessages = new ArrayList<>();
 
     public ClassVerifier(final KieModuleMetaData kieModuleMetaData,
                          final TypeSourceResolver typeSourceResolver) {

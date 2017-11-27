@@ -17,10 +17,11 @@
 package org.kie.workbench.common.screens.datasource.management.client.util;
 
 import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
@@ -36,57 +37,53 @@ public class PopupsUtil {
     public PopupsUtil() {
     }
 
-    public void showInformationPopup( final String message ) {
-        showOkButtonPopup( CommonConstants.INSTANCE.Information(), message );
+    public void showInformationPopup(final String message) {
+        showOkButtonPopup(CommonConstants.INSTANCE.Information(), message);
     }
 
-    public void showErrorPopup( final String message ) {
-        showOkButtonPopup( CommonConstants.INSTANCE.Error(), message );
+    public void showErrorPopup(final String message) {
+        showOkButtonPopup(CommonConstants.INSTANCE.Error(), message);
     }
 
-    public void showYesNoPopup( final String title,
-            final String message,
-            final Command yesCommand,
-            final String yesButtonText,
-            final ButtonType yesButtonType,
-            final Command noCommand,
-            final String noButtonText,
-            final ButtonType noButtonType ) {
+    public void showYesNoPopup(final String title,
+                               final String message,
+                               final Command yesCommand,
+                               final String yesButtonText,
+                               final ButtonType yesButtonType,
+                               final Command noCommand,
+                               final String noButtonText,
+                               final ButtonType noButtonType) {
 
-        YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup( title,
-                message,
-                yesCommand,
-                yesButtonText,
-                yesButtonType,
-                noCommand,
-                noButtonText,
-                noButtonType,
-                null,
-                null,
-                null );
-        yesNoCancelPopup.setClosable( false );
+        YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup(title,
+                                                                                 message,
+                                                                                 yesCommand,
+                                                                                 yesButtonText,
+                                                                                 yesButtonType,
+                                                                                 noCommand,
+                                                                                 noButtonText,
+                                                                                 noButtonType,
+                                                                                 null,
+                                                                                 null,
+                                                                                 null);
+        yesNoCancelPopup.setClosable(false);
         yesNoCancelPopup.show();
     }
 
-    private static void showOkButtonPopup( final String title, final String message ) {
-        YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup( title,
-                message,
-                new Command() {
-                    @Override public void execute() {
+    private static void showOkButtonPopup(final String title, final String message) {
+        YesNoCancelPopup yesNoCancelPopup = YesNoCancelPopup.newYesNoCancelPopup(title,
+                                                                                 message,
+                                                                                 () -> {},
+                                                                                 CommonConstants.INSTANCE.OK(),
+                                                                                 null,
+                                                                                 null,
+                                                                                 null,
+                                                                                 null);
 
-                    }
-                },
-                CommonConstants.INSTANCE.OK(),
-                null,
-                null,
-                null,
-                null );
-
-        yesNoCancelPopup.setClosable( false );
+        yesNoCancelPopup.setClosable(false);
         yesNoCancelPopup.show();
     }
 
-    public void showValidationMessages( final List<ValidationMessage> messages ) {
-        validationPopup.showMessages( messages );
+    public void showValidationMessages(final List<BuildMessage> messages) {
+        validationPopup.showMessages(messages);
     }
 }

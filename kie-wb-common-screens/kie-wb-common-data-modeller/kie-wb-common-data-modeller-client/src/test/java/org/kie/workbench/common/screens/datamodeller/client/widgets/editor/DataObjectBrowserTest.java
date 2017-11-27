@@ -22,10 +22,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Test;
@@ -52,8 +53,16 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyListOf;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DataObjectBrowserTest
@@ -333,7 +342,7 @@ public class DataObjectBrowserTest
                                            0);
 
         verify(view,
-               never()).showValidationPopupForDeletion(anyListOf(ValidationMessage.class),
+               never()).showValidationPopupForDeletion(anyListOf(BuildMessage.class),
                                                        any(Command.class),
                                                        any(Command.class));
     }
@@ -350,7 +359,7 @@ public class DataObjectBrowserTest
                                                                Integer.class.getName(),
                                                                false);
 
-        List<ValidationMessage> validationMessages = Arrays.asList(new ValidationMessage());
+        List<BuildMessage> validationMessages = Arrays.asList(new BuildMessage());
         when(dataObjectValidationService.validateObjectPropertyDeletion(dataObject,
                                                                         objectProperty)).thenReturn(validationMessages);
 
@@ -358,7 +367,7 @@ public class DataObjectBrowserTest
                                            0);
 
         verify(view,
-               times(1)).showValidationPopupForDeletion(anyListOf(ValidationMessage.class),
+               times(1)).showValidationPopupForDeletion(anyListOf(BuildMessage.class),
                                                         any(Command.class),
                                                         any(Command.class)
         );

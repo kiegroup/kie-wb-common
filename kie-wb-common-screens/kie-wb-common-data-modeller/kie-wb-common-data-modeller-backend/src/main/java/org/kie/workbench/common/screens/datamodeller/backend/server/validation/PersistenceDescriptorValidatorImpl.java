@@ -24,7 +24,7 @@ import java.util.Optional;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceDescriptorModel;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceUnitModel;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.TransactionType;
@@ -44,74 +44,74 @@ public class PersistenceDescriptorValidatorImpl
 
     private ProjectCache projectCache;
 
-    private PersistableClassValidator classValidator = new PersistableClassValidator( );
+    private PersistableClassValidator classValidator = new PersistableClassValidator();
 
-    private PropertyValidator propertyValidator = new PropertyValidator( );
+    private PropertyValidator propertyValidator = new PropertyValidator();
 
-    public PersistenceDescriptorValidatorImpl( ) {
+    public PersistenceDescriptorValidatorImpl() {
         //Empty constructor for Weld proxying
     }
 
     @Inject
-    public PersistenceDescriptorValidatorImpl( final KieProjectService projectService,
-                                               final ProjectCache projectCache ) {
+    public PersistenceDescriptorValidatorImpl(final KieProjectService projectService,
+                                              final ProjectCache projectCache) {
         this.projectService = projectService;
         this.projectCache = projectCache;
     }
 
     @Override
-    public List< ValidationMessage > validate( Path path, PersistenceDescriptorModel model ) {
+    public List<BuildMessage> validate(Path path, PersistenceDescriptorModel model) {
 
-        final List< ValidationMessage > messages = new ArrayList< ValidationMessage >( );
-        final KieProject project = projectService.resolveProject( path );
+        final List<BuildMessage> messages = new ArrayList<>();
+        final KieProject project = projectService.resolveProject(path);
 
-        if ( project == null ) {
+        if (project == null) {
             //uncommon scenario, since by construction, the same as with other wb assets, a persistence descriptor
             // belongs to a project
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT_ID,
-                    PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT ) );
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT_ID,
+                                         PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT));
             return messages;
         }
 
-        if ( model.getPersistenceUnit( ) == null ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND ) );
+        if (model.getPersistenceUnit() == null) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND));
             return messages;
         }
 
         final PersistenceUnitModel unitModel = model.getPersistenceUnit();
-        if ( unitModel.getName( ) == null || unitModel.getName( ).trim( ).isEmpty( ) ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY ) );
+        if (unitModel.getName() == null || unitModel.getName().trim().isEmpty()) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY));
         }
 
-        if ( unitModel.getProvider( ) == null || unitModel.getProvider( ).trim( ).isEmpty( ) ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_EMPTY ) );
+        if (unitModel.getProvider() == null || unitModel.getProvider().trim().isEmpty()) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_EMPTY));
         }
 
-        if ( unitModel.getTransactionType( ) == null ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY ) );
-        } else if ( unitModel.getTransactionType( ) == TransactionType.JTA &&
-                ( unitModel.getJtaDataSource( ) == null || unitModel.getJtaDataSource( ).trim( ).isEmpty( ) ) ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY ) );
-        } else if ( unitModel.getTransactionType( ) == TransactionType.RESOURCE_LOCAL &&
-                ( unitModel.getNonJtaDataSource( ) == null || unitModel.getNonJtaDataSource( ).trim( ).isEmpty( ) ) ) {
-            messages.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY_ID,
-                    PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY ) );
+        if (unitModel.getTransactionType() == null) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY));
+        } else if (unitModel.getTransactionType() == TransactionType.JTA &&
+                (unitModel.getJtaDataSource() == null || unitModel.getJtaDataSource().trim().isEmpty())) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY));
+        } else if (unitModel.getTransactionType() == TransactionType.RESOURCE_LOCAL &&
+                (unitModel.getNonJtaDataSource() == null || unitModel.getNonJtaDataSource().trim().isEmpty())) {
+            messages.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY_ID,
+                                         PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY));
         }
 
-        if ( unitModel.getClasses( ) != null && !unitModel.getClasses( ).isEmpty( ) ) {
-            ClassLoader projectClassLoader = projectCache.getOrCreateEntry( project ).getClassLoader();
-            unitModel.getClasses( ).forEach( clazz -> Optional.ofNullable( classValidator.validate( clazz, projectClassLoader ) ).ifPresent( messages::addAll ) );
+        if (unitModel.getClasses() != null && !unitModel.getClasses().isEmpty()) {
+            ClassLoader projectClassLoader = projectCache.getOrCreateEntry(project).getClassLoader();
+            unitModel.getClasses().forEach(clazz -> Optional.ofNullable(classValidator.validate(clazz, projectClassLoader)).ifPresent(messages::addAll));
         }
 
-        if ( unitModel.getProperties( ) != null ) {
-            int[] index = { 1 };
-            unitModel.getProperties( ).forEach( property ->
-                    messages.addAll( Optional.ofNullable( propertyValidator.validate( property.getName( ), property.getValue( ), index[ 0 ]++ ) ).orElse( Collections.emptyList( ) ) )
+        if (unitModel.getProperties() != null) {
+            int[] index = {1};
+            unitModel.getProperties().forEach(property ->
+                                                      messages.addAll(Optional.ofNullable(propertyValidator.validate(property.getName(), property.getValue(), index[0]++)).orElse(Collections.emptyList()))
             );
         }
         return messages;

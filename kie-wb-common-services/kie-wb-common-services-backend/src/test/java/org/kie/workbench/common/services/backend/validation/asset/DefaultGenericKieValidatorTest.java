@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import com.google.common.io.Resources;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.test.TestFileSystem;
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +38,9 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.uberfire.backend.server.util.Paths.convert;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -91,9 +93,9 @@ public class DefaultGenericKieValidatorTest {
         ioService.endBatch();
 
         final URL urlToValidate = this.getClass().getResource("/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl");
-        final List<ValidationMessage> errors = validator.validate(convert(fs.getPath("/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl")),
-                                                                  Resources.toString(urlToValidate,
-                                                                                     Charset.forName("UTF-8")));
+        final List<BuildMessage> errors = validator.validate(convert(fs.getPath("/GuvnorM2RepoDependencyExample1/src/main/resources/rule2.drl")),
+                                                             Resources.toString(urlToValidate,
+                                                                                Charset.forName("UTF-8")));
 
         assertTrue(errors.isEmpty());
     }
@@ -103,13 +105,13 @@ public class DefaultGenericKieValidatorTest {
         final Path path = resourcePath("/BuilderExampleBrokenSyntax/src/main/resources/rule1.drl");
         final URL urlToValidate = this.getClass().getResource("/BuilderExampleBrokenSyntax/src/main/resources/rule1.drl");
 
-        final List<ValidationMessage> errors1 = validator.validate(path,
-                                                                   Resources.toString(urlToValidate,
-                                                                                      Charset.forName("UTF-8")));
+        final List<BuildMessage> errors1 = validator.validate(path,
+                                                              Resources.toString(urlToValidate,
+                                                                                 Charset.forName("UTF-8")));
 
-        final List<ValidationMessage> errors2 = validator.validate(path,
-                                                                   Resources.toString(urlToValidate,
-                                                                                      Charset.forName("UTF-8")));
+        final List<BuildMessage> errors2 = validator.validate(path,
+                                                              Resources.toString(urlToValidate,
+                                                                                 Charset.forName("UTF-8")));
 
         assertFalse(errors1.isEmpty());
         assertFalse(errors2.isEmpty());

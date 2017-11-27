@@ -20,7 +20,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -87,37 +87,37 @@ public class PersistenceDescriptorValidatorTest {
 
     @Test
     public void testValidateValidDescriptor() {
-        List<ValidationMessage> result = validator.validate(path, descriptor);
+        List<BuildMessage> result = validator.validate(path, descriptor);
         assertTrue(result.isEmpty());
     }
 
     @Test
     public void testValidateInvalidProject() {
         when(projectService.resolveProject(path)).thenReturn(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
+        List<BuildMessage> result = validator.validate(path, descriptor);
         //no more errors are produced since the validations stops if the project is not found.
         assertEquals(1, result.size());
-        ValidationMessage expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT_ID,
-                                                            PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT);
+        BuildMessage expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT_ID,
+                                                       PersistenceDescriptorValidationMessages.DESCRIPTOR_NOT_BELONG_TO_PROJECT);
         assertEquals(expectedMessage, result.get(0));
     }
 
     @Test
     public void testValidateMissingPersistenceUnit() {
         descriptor.setPersistenceUnit(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
+        List<BuildMessage> result = validator.validate(path, descriptor);
         //no more errors are produced since the validation stops if the persistence unit is missing.
         assertEquals(1, result.size());
-        ValidationMessage expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND_ID,
-                                                            PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND);
+        BuildMessage expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND_ID,
+                                                       PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NOT_FOUND);
         assertEquals(expectedMessage, result.get(0));
     }
 
     @Test
     public void testValidateMissingPersistenceUnitName() {
         descriptor.getPersistenceUnit().setName(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //persistence unit name validation should fail
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY_ID,
                                           PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NAME_EMPTY);
@@ -127,8 +127,8 @@ public class PersistenceDescriptorValidatorTest {
     @Test
     public void testValidateMissingPersistenceProvider() {
         descriptor.getPersistenceUnit().setProvider(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //persistence provider validation should fail
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_ID,
                                           PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_PROVIDER_EMPTY);
@@ -138,8 +138,8 @@ public class PersistenceDescriptorValidatorTest {
     @Test
     public void testValidateMissingTransactionType() {
         descriptor.getPersistenceUnit().setTransactionType(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //transaction type validation should fail
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY_ID,
                                           PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_TRANSACTION_TYPE_EMPTY);
@@ -150,8 +150,8 @@ public class PersistenceDescriptorValidatorTest {
     public void testValidateMissingJtaDataSource() {
         descriptor.getPersistenceUnit().setTransactionType(TransactionType.JTA);
         descriptor.getPersistenceUnit().setJtaDataSource(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //jta datasource validation should fail
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY_ID,
                                           PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_JTA_DATASOURCE_EMPTY);
@@ -162,8 +162,8 @@ public class PersistenceDescriptorValidatorTest {
     public void testValidateMissingNonJtaDataSource() {
         descriptor.getPersistenceUnit().setTransactionType(TransactionType.RESOURCE_LOCAL);
         descriptor.getPersistenceUnit().setNonJtaDataSource(null);
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //jta datasource validation should fail
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY_ID,
                                           PersistenceDescriptorValidationMessages.PERSISTENCE_UNIT_NON_JTA_DATASOURCE_EMPTY);
@@ -174,8 +174,8 @@ public class PersistenceDescriptorValidatorTest {
     public void testValidateNonPersistableClass() {
         //add a non persistable class
         descriptor.getPersistenceUnit().getClasses().add(NonPersistableClass1.class.getName());
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //validation for the non persistable class should fail.
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE_ID,
                                           MessageFormat.format(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE, NonPersistableClass1.class.getName()), NonPersistableClass1.class.getName());
@@ -186,8 +186,8 @@ public class PersistenceDescriptorValidatorTest {
     public void testValidatePropertyWithMissingName() {
         //add a property with no name
         descriptor.getPersistenceUnit().addProperty(new Property(null, "someValue"));
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //validation for the property with missing name should fail.
         expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY_ID,
                                           MessageFormat.format(PersistenceDescriptorValidationMessages.INDEXED_PROPERTY_NAME_EMPTY, "3"), "3");
@@ -198,8 +198,8 @@ public class PersistenceDescriptorValidatorTest {
     public void testValidatePropertyWithMissingValue() {
         //add a property with no name
         descriptor.getPersistenceUnit().addProperty(new Property("someName", null));
-        List<ValidationMessage> result = validator.validate(path, descriptor);
-        ValidationMessage expectedMessage;
+        List<BuildMessage> result = validator.validate(path, descriptor);
+        BuildMessage expectedMessage;
         //validation for the property with missing value should fail.
         expectedMessage = PersistenceDescriptorValidationMessages.newWarningMessage(PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY_ID,
                                                                                     MessageFormat.format(PersistenceDescriptorValidationMessages.PROPERTY_VALUE_EMPTY, "someName"), "someName");

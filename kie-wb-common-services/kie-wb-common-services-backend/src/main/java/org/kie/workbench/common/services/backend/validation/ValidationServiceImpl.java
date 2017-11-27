@@ -27,7 +27,7 @@ import javax.inject.Inject;
 
 import org.drools.core.base.evaluators.TimeIntervalParser;
 import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.services.shared.validation.CopyValidator;
@@ -176,33 +176,33 @@ public class ValidationServiceImpl
     }
 
     @Override
-    public <T> Collection<ValidationMessage> validateForSave(final Path path,
-                                                             final T content) {
-        return (Collection<ValidationMessage>) saveValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
-                                                                                                                           content).stream()).collect(Collectors.toList());
+    public <T> Collection<BuildMessage> validateForSave(final Path path,
+                                                        final T content) {
+        return (Collection<BuildMessage>) saveValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
+                                                                                                                      content).stream()).collect(Collectors.toList());
     }
 
     @Override
-    public <T> Collection<ValidationMessage> validateForCopy(final Path path,
-                                                             final T content) {
-        return (Collection<ValidationMessage>) copyValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
-                                                                                                                           content).stream()).collect(Collectors.toList());
+    public <T> Collection<BuildMessage> validateForCopy(final Path path,
+                                                        final T content) {
+        return (Collection<BuildMessage>) copyValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
+                                                                                                                      content).stream()).collect(Collectors.toList());
     }
 
     @Override
-    public Collection<ValidationMessage> validateForCopy(final Path path) {
-        return (Collection<ValidationMessage>) copyValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path).stream()).collect(Collectors.toList());
+    public Collection<BuildMessage> validateForCopy(final Path path) {
+        return (Collection<BuildMessage>) copyValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path).stream()).collect(Collectors.toList());
     }
 
     @Override
-    public <T> Collection<ValidationMessage> validateForDelete(final Path path,
-                                                               final T content) {
-        return (Collection<ValidationMessage>) deleteValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
-                                                                                                                             content).stream()).collect(Collectors.toList());
+    public <T> Collection<BuildMessage> validateForDelete(final Path path,
+                                                          final T content) {
+        return (Collection<BuildMessage>) deleteValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path,
+                                                                                                                        content).stream()).collect(Collectors.toList());
     }
 
     @Override
-    public Collection<ValidationMessage> validateForDelete(final Path path) {
-        return (Collection<ValidationMessage>) deleteValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path).stream()).collect(Collectors.toList());
+    public Collection<BuildMessage> validateForDelete(final Path path) {
+        return (Collection<BuildMessage>) deleteValidators.stream().filter(v -> v.accept(path)).flatMap(c -> c.validate(path).stream()).collect(Collectors.toList());
     }
 }

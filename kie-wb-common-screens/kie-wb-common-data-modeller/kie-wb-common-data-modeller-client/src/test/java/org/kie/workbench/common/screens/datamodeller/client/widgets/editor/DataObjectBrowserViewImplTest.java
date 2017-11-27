@@ -19,11 +19,12 @@ package org.kie.workbench.common.screens.datamodeller.client.widgets.editor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
 import javax.enterprise.inject.Instance;
 
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,8 +39,8 @@ import org.mockito.Mockito;
 import org.uberfire.mocks.MockInstanceImpl;
 import org.uberfire.mvp.Command;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DataObjectBrowserViewImplTest {
@@ -58,7 +59,7 @@ public class DataObjectBrowserViewImplTest {
 
     @Test
     public void showValidationPopupForDeletion() {
-        List<ValidationMessage> validationMessages = Collections.EMPTY_LIST;
+        List<BuildMessage> validationMessages = Collections.EMPTY_LIST;
         Command yesCommand = () -> {
         };
         Command noCommand = () -> {

@@ -16,8 +16,8 @@
 
 package org.kie.workbench.common.screens.datamodeller.client.validation;
 
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,10 +26,12 @@ import org.kie.workbench.common.screens.datamodeller.validation.PersistenceDescr
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
-@RunWith( MockitoJUnitRunner.class )
+@RunWith(MockitoJUnitRunner.class)
 public class PersistenceDescriptorValidationMessageTranslatorTest {
 
     private static final String ORIGINAL_MESSAGE = "original message";
@@ -46,45 +48,44 @@ public class PersistenceDescriptorValidationMessageTranslatorTest {
     private PersistenceDescriptorValidationMessage originalMessage;
 
     @Before
-    public void setUp( ) {
-        translator = new PersistenceDescriptorValidationMessageTranslator( translationService );
-        originalMessage = new PersistenceDescriptorValidationMessage( 12345, Level.INFO, ORIGINAL_MESSAGE );
+    public void setUp() {
+        translator = new PersistenceDescriptorValidationMessageTranslator(translationService);
+        originalMessage = new PersistenceDescriptorValidationMessage(12345, Level.INFO, ORIGINAL_MESSAGE);
     }
 
     @Test
-    public void testAcceptMessage( ) {
-        assertTrue( translator.accept( originalMessage ) );
-        assertFalse( translator.accept( new ValidationMessage( ) ) );
+    public void testAcceptMessage() {
+        assertTrue(translator.accept(originalMessage));
+        assertFalse(translator.accept(new BuildMessage()));
     }
 
     @Test
-    public void testSimpleTranslation( ) {
-        String translationKey = PersistenceDescriptorValidationMessageTranslator.PREFIX + originalMessage.getId( );
-        when( translationService.getTranslation( translationKey ) ).thenReturn( TRANSLATED_MESSAGE );
+    public void testSimpleTranslation() {
+        String translationKey = PersistenceDescriptorValidationMessageTranslator.PREFIX + originalMessage.getId();
+        when(translationService.getTranslation(translationKey)).thenReturn(TRANSLATED_MESSAGE);
 
-        ValidationMessage expectedTranslatedMessage = new ValidationMessage( );
-        expectedTranslatedMessage.setId( originalMessage.getId( ) );
-        expectedTranslatedMessage.setLevel( originalMessage.getLevel( ) );
-        expectedTranslatedMessage.setText( TRANSLATED_MESSAGE );
+        BuildMessage expectedTranslatedMessage = new BuildMessage();
+        expectedTranslatedMessage.setId(originalMessage.getId());
+        expectedTranslatedMessage.setLevel(originalMessage.getLevel());
+        expectedTranslatedMessage.setText(TRANSLATED_MESSAGE);
 
-        assertEquals( expectedTranslatedMessage, translator.translate( originalMessage ) );
+        assertEquals(expectedTranslatedMessage, translator.translate(originalMessage));
     }
 
     @Test
-    public void testParametrizedTranslation( ) {
-        String translationKey = PersistenceDescriptorValidationMessageTranslator.PREFIX + originalMessage.getId( );
-        originalMessage.getParams( ).add( "param1" );
-        originalMessage.getParams( ).add( "param2" );
+    public void testParametrizedTranslation() {
+        String translationKey = PersistenceDescriptorValidationMessageTranslator.PREFIX + originalMessage.getId();
+        originalMessage.getParams().add("param1");
+        originalMessage.getParams().add("param2");
 
-        when( translationService.getTranslation( translationKey ) ).thenReturn( TRANSLATED_MESSAGE );
-        when( translationService.format( translationKey, originalMessage.getParams( ).toArray( ) ) ).thenReturn( FORMATTED_MESSAGE );
+        when(translationService.getTranslation(translationKey)).thenReturn(TRANSLATED_MESSAGE);
+        when(translationService.format(translationKey, originalMessage.getParams().toArray())).thenReturn(FORMATTED_MESSAGE);
 
-        ValidationMessage expectedTranslatedMessage = new ValidationMessage( );
-        expectedTranslatedMessage.setId( originalMessage.getId( ) );
-        expectedTranslatedMessage.setLevel( originalMessage.getLevel( ) );
-        expectedTranslatedMessage.setText( FORMATTED_MESSAGE );
+        BuildMessage expectedTranslatedMessage = new BuildMessage();
+        expectedTranslatedMessage.setId(originalMessage.getId());
+        expectedTranslatedMessage.setLevel(originalMessage.getLevel());
+        expectedTranslatedMessage.setText(FORMATTED_MESSAGE);
 
-        assertEquals( expectedTranslatedMessage, translator.translate( originalMessage ) );
+        assertEquals(expectedTranslatedMessage, translator.translate(originalMessage));
     }
-
 }

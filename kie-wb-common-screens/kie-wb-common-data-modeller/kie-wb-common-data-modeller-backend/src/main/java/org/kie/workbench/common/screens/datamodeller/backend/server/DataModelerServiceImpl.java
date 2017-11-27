@@ -36,10 +36,10 @@ import org.guvnor.common.services.backend.validation.GenericValidator;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.utils.ProjectResourcePaths;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
 import org.jboss.errai.bus.server.annotations.Service;
@@ -449,9 +449,8 @@ public class DataModelerServiceImpl
     /**
      * Updates Java code provided in the source parameter with the data object values provided in the dataObject
      * parameter. This method does not write any changes in the file system.
-     *
-     * @param source     Java code to be updated.
-     * @param path       Path to the java file. (used for error messages adf and project )
+     * @param source Java code to be updated.
+     * @param path Path to the java file. (used for error messages adf and project )
      * @param dataObject Data object definition.
      * @return returns a GenerationResult object with the updated Java code and the dataObject parameter as is.
      */
@@ -494,10 +493,9 @@ public class DataModelerServiceImpl
     /**
      * Updates data object provided in the dataObject parameter with the Java code provided in the source parameter.
      * This method does not write changes in the file system.
-     *
      * @param dataObject Data object definition to be updated.
-     * @param source     Java code to use for the update.
-     * @param path       Path to the java file. (used for error messages adf)
+     * @param source Java code to use for the update.
+     * @param path Path to the java file. (used for error messages adf)
      * @return returns a GenerationResult object with the updated data object and the source and path parameter as is.
      */
     @Override
@@ -1030,22 +1028,22 @@ public class DataModelerServiceImpl
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<ValidationMessage> validate(final String source,
-                                            final Path path,
-                                            final DataObject dataObject) {
+    public List<BuildMessage> validate(final String source,
+                                       final Path path,
+                                       final DataObject dataObject) {
 
         try {
             String validationSource = null;
-            List<ValidationMessage> validations = new ArrayList<ValidationMessage>();
+            List<BuildMessage> validations = new ArrayList<BuildMessage>();
 
             KieProject project = projectService.resolveProject(path);
             if (project == null) {
                 logger.warn("File : " + path.toURI() + " do not belong to a valid project");
-                ValidationMessage validationMessage = new ValidationMessage();
+                BuildMessage validationMessage = new BuildMessage();
                 validationMessage.setPath(path);
                 validationMessage.setText("File do no belong to a valid project");
                 validationMessage.setLevel(Level.ERROR);
-                validations.add(new ValidationMessage());
+                validations.add(new BuildMessage());
                 return validations;
             }
 
@@ -1282,12 +1280,12 @@ public class DataModelerServiceImpl
     }
 
     @Override
-    public List<ValidationMessage> validateValuePair(String annotationClassName,
-                                                     ElementType target,
-                                                     String valuePairName,
-                                                     String literalValue) {
+    public List<BuildMessage> validateValuePair(String annotationClassName,
+                                                ElementType target,
+                                                String valuePairName,
+                                                String literalValue) {
         //Currently we only accept the syntax but additional checks may be added.
-        List<ValidationMessage> validationMessages = new ArrayList<ValidationMessage>();
+        List<BuildMessage> validationMessages = new ArrayList<BuildMessage>();
         JavaRoasterModelDriver modelDriver = new JavaRoasterModelDriver();
         Pair<AnnotationSource<JavaClassSource>, List<DriverError>> parseResult =
                 modelDriver.parseAnnotationWithValuePair(annotationClassName,
@@ -1295,9 +1293,9 @@ public class DataModelerServiceImpl
                                                          valuePairName,
                                                          literalValue);
         if (parseResult.getK2() != null && parseResult.getK2().size() > 0) {
-            ValidationMessage validationMessage;
+            BuildMessage validationMessage;
             for (DriverError driverError : parseResult.getK2()) {
-                validationMessage = new ValidationMessage();
+                validationMessage = new BuildMessage();
                 validationMessage.setText(driverError.getMessage());
                 validationMessage.setColumn(driverError.getColumn());
                 validationMessage.setLine(driverError.getLine());

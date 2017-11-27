@@ -31,7 +31,7 @@ import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -213,12 +213,12 @@ public abstract class BaseViewPresenter
         final Path path = getFolderItemPath( folderItem );
 
         validationService.call( messages -> {
-            if ( ( (List<ValidationMessage>) messages ).isEmpty() ) {
+            if ( ( (List<BuildMessage>) messages ).isEmpty() ) {
                 showDeletePopup( folderItem );
             } else {
                 validationPopup.showDeleteValidationMessages( () -> showDeletePopup( folderItem ),
                                                               () -> {},
-                                                              (List<ValidationMessage>) messages );
+                                                              (List<BuildMessage>) messages );
             }
         } ).validateForDelete( path );
     }
@@ -308,12 +308,12 @@ public abstract class BaseViewPresenter
         final Path path = getFolderItemPath( folderItem );
 
         validationService.call( messages -> {
-            if ( ( (List<ValidationMessage>) messages).isEmpty() ) {
+            if ( ( (List<BuildMessage>) messages).isEmpty() ) {
                 showCopyPopup( folderItem, path );
             } else {
                 validationPopup.showCopyValidationMessages( () -> showCopyPopup( folderItem, path ),
                                                             () -> {},
-                                                            ( List<ValidationMessage>) messages );
+                                                            ( List<BuildMessage>) messages );
             }
         } ).validateForCopy( path );
     }

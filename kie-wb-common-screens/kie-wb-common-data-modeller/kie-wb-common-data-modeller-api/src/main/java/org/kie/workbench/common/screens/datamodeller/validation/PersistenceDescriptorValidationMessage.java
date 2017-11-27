@@ -19,33 +19,33 @@ package org.kie.workbench.common.screens.datamodeller.validation;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class PersistenceDescriptorValidationMessage
-        extends ValidationMessage {
+        extends BuildMessage {
 
-    private List<String> params = new ArrayList<>( );
+    private List<String> params = new ArrayList<>();
 
-    public PersistenceDescriptorValidationMessage( @MapsTo( "id" ) long id,
-                                                   @MapsTo( "level" ) Level level,
-                                                   @MapsTo( "text" ) String text,
-                                                   @MapsTo( "params" ) List< String > params ) {
-        super( level, text );
-        setId( id );
-            this.params = params;
+    public PersistenceDescriptorValidationMessage(@MapsTo("id") long id,
+                                                  @MapsTo("level") Level level,
+                                                  @MapsTo("text") String text,
+                                                  @MapsTo("params") List<String> params) {
+        super(level, text);
+        setId(id);
+        this.params = params;
     }
 
-    public PersistenceDescriptorValidationMessage( long id,
-                                                   Level level,
-                                                   String text ) {
-        this( id, level, text, new ArrayList<>( ) );
+    public PersistenceDescriptorValidationMessage(long id,
+                                                  Level level,
+                                                  String text) {
+        this(id, level, text, new ArrayList<>());
     }
 
-    public List< String > getParams( ) {
+    public List<String> getParams() {
         return params;
     }
 }

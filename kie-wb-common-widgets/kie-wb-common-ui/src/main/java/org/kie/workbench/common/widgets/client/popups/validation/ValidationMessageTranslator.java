@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.widgets.client.popups.validation;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 
 public interface ValidationMessageTranslator {
 
-    boolean accept( final ValidationMessage checkMessage );
+    boolean accept(final BuildMessage checkMessage);
 
-    ValidationMessage translate( final ValidationMessage checkMessage );
+    BuildMessage translate(final BuildMessage checkMessage);
 }

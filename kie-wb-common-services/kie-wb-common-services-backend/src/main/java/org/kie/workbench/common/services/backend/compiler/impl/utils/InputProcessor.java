@@ -2,7 +2,7 @@ package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import java.util.List;
 
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.uberfire.java.nio.file.Path;
 
 public interface InputProcessor {

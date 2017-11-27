@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.drools.compiler.kie.builder.impl.MessageImpl;
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.kie.api.builder.Message;
 
 import static org.kie.workbench.common.services.backend.builder.core.BaseFileNameResolver.getBaseFileName;
@@ -31,7 +30,7 @@ class MessageConverter {
 
     static List<BuildMessage> convertMessages(List<Message> messages,
                                               Handles handles) {
-        List<BuildMessage> result = new ArrayList<BuildMessage>();
+        List<BuildMessage> result = new ArrayList<>();
 
         if (!(messages == null || messages.isEmpty())) {
             for (Message message : messages) {
@@ -41,29 +40,6 @@ class MessageConverter {
         }
 
         return result;
-    }
-
-    static List<BuildMessage> convertValidationMessages(List<ValidationMessage> validationMessages) {
-        List<BuildMessage> result = new ArrayList<BuildMessage>();
-
-        if (!(validationMessages == null || validationMessages.isEmpty())) {
-            for (ValidationMessage validationMessage : validationMessages) {
-                result.add(convertValidationMessage(validationMessage));
-            }
-        }
-
-        return result;
-    }
-
-    static BuildMessage convertValidationMessage(final ValidationMessage message) {
-        final BuildMessage m = new BuildMessage();
-        m.setLevel(message.getLevel());
-        m.setId(message.getId());
-        m.setLine(message.getLine());
-        m.setColumn(message.getColumn());
-        m.setText(message.getText());
-        m.setPath(message.getPath());
-        return m;
     }
 
     static BuildMessage convertMessage(final Message message,
