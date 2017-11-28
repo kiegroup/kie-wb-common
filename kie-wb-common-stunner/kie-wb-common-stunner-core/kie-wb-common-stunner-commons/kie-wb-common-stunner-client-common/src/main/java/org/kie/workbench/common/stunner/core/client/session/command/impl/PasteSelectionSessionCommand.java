@@ -106,6 +106,12 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
     }
 
     @Override
+    public void unbind() {
+        super.unbind();
+        clear();
+    }
+
+    @Override
     public <V> void execute(final Callback<V> callback) {
         checkNotNull("callback",
                      callback);

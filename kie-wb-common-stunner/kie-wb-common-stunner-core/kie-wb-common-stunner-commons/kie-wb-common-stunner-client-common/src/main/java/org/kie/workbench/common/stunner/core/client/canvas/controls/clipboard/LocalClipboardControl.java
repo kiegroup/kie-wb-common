@@ -31,7 +31,6 @@ import javax.enterprise.context.ApplicationScoped;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -107,11 +106,12 @@ public class LocalClipboardControl extends AbstractCanvasControl<AbstractCanvas>
 
     @Override
     public void unbind() {
-        this.session = null;
         clear();
+        this.session = null;
     }
 
     @Override
     protected void doDisable() {
+        clear();
     }
 }
