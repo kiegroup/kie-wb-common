@@ -244,7 +244,7 @@ public class DefaultPomEditor implements PomEditor {
         newCompilerPlugin.setConfiguration(configuration);
 
         PluginExecution execution = new PluginExecution();
-        execution.setId(MavenCLIArgs.COMPILE);
+        execution.setId(MavenCLIArgs.DEFAULT_COMPILE);
         execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
         execution.setPhase(MavenCLIArgs.COMPILE);
 
