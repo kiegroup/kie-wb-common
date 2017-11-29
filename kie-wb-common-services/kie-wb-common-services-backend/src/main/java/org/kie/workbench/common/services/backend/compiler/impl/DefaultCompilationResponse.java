@@ -15,53 +15,132 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.Serializable;
+import java.net.URI;
+import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
+import org.uberfire.java.nio.file.Path;
 
 /***
  * Default implementation of a basic (Non Kie) Compilation response,
  * it contains a boolean flag as a result of the build, an optional String error message,
- *  and an optional List of String with the maven output
- *
+ * and an optional List of String with the maven output
  */
-public class DefaultCompilationResponse implements CompilationResponse {
+public class DefaultCompilationResponse implements CompilationResponse,
+                                                   Serializable {
 
     private Boolean successful;
-    private Optional<String> errorMessage;
-    private Optional<List<String>> mavenOutput;
+    private List<String> mavenOutput;
+    private Path workingDir;
+
+    private List<String> projectDependencies;
+    private List<URI> projectDependenciesAsURI;
+    private List<URL> projectDependenciesAsURL;
+
+    private List<String> targetContent;
+    private List<URI> targetContentAsURI;
+    private List<URL> targetContentAsURL;
 
     public DefaultCompilationResponse(Boolean successful) {
         this.successful = successful;
-        this.errorMessage = Optional.empty();
-        this.mavenOutput = Optional.empty();
     }
 
-    public DefaultCompilationResponse(Boolean successful,
-                                      List<String> mavenOutput) {
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput) {
         this.successful = successful;
-        this.errorMessage = Optional.empty();
-        this.mavenOutput = Optional.ofNullable(mavenOutput);
+        this.mavenOutput = mavenOutput;
     }
 
-    public DefaultCompilationResponse(Boolean successful,
-                                      String errorMessage,
-                                      List<String> mavenOutput) {
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput,
+                                      final Path workingDir) {
         this.successful = successful;
-        this.errorMessage = Optional.ofNullable(errorMessage);
-        this.mavenOutput = Optional.ofNullable(mavenOutput);
+        this.mavenOutput = mavenOutput;
+        this.workingDir = workingDir;
+    }
+
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput,
+                                      final Path workingDir,
+                                      final List<String> targetContent,
+                                      final List<String> projectDependencies) {
+        this.successful = successful;
+        this.mavenOutput = mavenOutput;
+        this.workingDir = workingDir;
+        this.targetContent = targetContent;
+        this.projectDependencies = projectDependencies;
     }
 
     public Boolean isSuccessful() {
         return successful;
     }
 
-    public Optional<String> getErrorMessage() {
-        return errorMessage;
+    public List<String> getMavenOutput() {
+        return mavenOutput;
     }
 
-    public Optional<List<String>> getMavenOutput() {
-        return mavenOutput;
+    public Optional<Path> getWorkingDir() {
+        return Optional.ofNullable(workingDir);
+    }
+
+    @Override
+    public List<String> getTargetContent() {
+        return targetContent;
+    }
+
+    @Override
+    public List<URI> getTargetContentAsURI() {
+        if (targetContentAsURI == null) {
+            targetContentAsURI = getRawAsURIs(targetContent);
+        }
+        return targetContentAsURI;
+    }
+
+    @Override
+    public List<URL> getTargetContentAsURL() {
+        if (targetContentAsURL == null) {
+            targetContentAsURL = getRawAsURLs(targetContent);
+        }
+        return targetContentAsURL;
+    }
+
+    @Override
+    public List<String> getDependencies() {
+        return projectDependencies;
+    }
+
+    @Override
+    public List<URI> getDependenciesAsURI() {
+        if (projectDependenciesAsURI == null) {
+            projectDependenciesAsURI = getRawAsURIs(projectDependencies);
+        }
+        return projectDependenciesAsURI;
+    }
+
+    @Override
+    public List<URL> getDependenciesAsURL() {
+        if (projectDependenciesAsURL == null) {
+            projectDependenciesAsURL = getRawAsURLs(projectDependencies);
+        }
+        return projectDependenciesAsURL;
+    }
+
+    private List<URL> getRawAsURLs(final List<String> content) {
+        if (content != null && !content.isEmpty()) {
+            return CompilerClassloaderUtils.processScannedFilesAsURLs(content);
+        }
+        return Collections.emptyList();
+    }
+
+    private List<URI> getRawAsURIs(final List<String> content) {
+        if (content != null && !content.isEmpty()) {
+            return CompilerClassloaderUtils.processScannedFilesAsURIs(content);
+        }
+        return Collections.emptyList();
     }
 }

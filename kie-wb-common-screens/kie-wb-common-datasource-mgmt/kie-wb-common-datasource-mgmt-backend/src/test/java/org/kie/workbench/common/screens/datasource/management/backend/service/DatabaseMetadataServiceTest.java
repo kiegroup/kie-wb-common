@@ -74,7 +74,7 @@ public class DatabaseMetadataServiceTest {
     }
 
     /**
-     * Tests the execution of the getMetadata method.
+     * Tests the execution of the getKieModuleMetaData method.
      */
     public void getMetadata( ) throws Exception {
         PowerMockito.mockStatic( DatabaseMetadataUtil.class );

@@ -24,6 +24,8 @@ public class MavenCLIArgs {
 
     public static final String COMPILE = "compile";
 
+    public static final String DEFAULT_COMPILE = "default-compile";
+
     public static final String VALIDATE = "validate";
 
     public static final String TEST = "test";
@@ -47,4 +49,6 @@ public class MavenCLIArgs {
     public static final String SKIP_TEST = "-DskipTests";
 
     public static final String ALTERNATE_USER_SETTINGS = "-s";
+
+    public static final String FAIL_NEVER = "-fn";
 }

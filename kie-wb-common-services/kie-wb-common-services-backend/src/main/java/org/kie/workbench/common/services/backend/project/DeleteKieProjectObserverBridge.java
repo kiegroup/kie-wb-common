@@ -24,12 +24,13 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.project.backend.server.AbstractDeleteProjectObserverBridge;
 import org.guvnor.common.services.project.events.DeleteProjectEvent;
-import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.workbench.events.ResourceBatchChangesEvent;
 import org.uberfire.workbench.events.ResourceDeletedEvent;
+
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 /**
  * CDI implementation for KIE Workbenches
@@ -47,10 +48,8 @@ public class DeleteKieProjectObserverBridge extends AbstractDeleteProjectObserve
     public DeleteKieProjectObserverBridge(final @Named("ioStrategy") IOService ioService,
                                           final Event<DeleteProjectEvent> deleteProjectEvent,
                                           final KieProjectFactory projectFactory) {
-        super(ioService,
-              deleteProjectEvent);
-        this.projectFactory = PortablePreconditions.checkNotNull("projectFactory",
-                                                                 projectFactory);
+        super(ioService, deleteProjectEvent);
+        this.projectFactory = checkNotNull("projectFactory", projectFactory);
     }
 
     public void onBatchResourceChanges(final @Observes ResourceDeletedEvent event) {

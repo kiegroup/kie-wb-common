@@ -70,7 +70,8 @@ import org.kie.workbench.common.forms.serialization.impl.FormModelSerializer;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.ServiceException;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.driver.FilterHolder;
 import org.kie.workbench.common.services.datamodeller.driver.ModelDriver;
@@ -92,6 +93,7 @@ import org.uberfire.java.nio.base.options.CommentedOption;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.forms.jbpm.model.authoring.document.type.DocumentFieldType.DOCUMENT_TYPE;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -133,7 +135,7 @@ public class FormGenerationIntegrationTest {
     private static KieProjectService projectService;
 
     @Mock
-    private static ProjectClassLoaderHelper projectClassLoaderHelper;
+    private static ProjectCache projectCache;
     private static FormLayoutTemplateGenerator templateGenerator;
     private static BPMNFormModelGeneratorImpl generator;
     private static Path rootPathWithNestedForms;
@@ -195,7 +197,7 @@ public class FormGenerationIntegrationTest {
         finderService = new DataObjectFinderServiceImpl(projectService, dataModelerService);
 
         formModelHandlerManager = new TestFormModelHandlerManager(projectService,
-                                                                  projectClassLoaderHelper,
+                                                                  projectCache,
                                                                   fieldManager,
                                                                   finderService);
 
@@ -212,10 +214,12 @@ public class FormGenerationIntegrationTest {
                                                             formModelSynchronizationUtil);
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        when(projectClassLoaderHelper.getProjectClassLoader(any())).thenReturn(projectClassLoader);
+        final ProjectBuildData buildData = mock(ProjectBuildData.class);
+        when(projectCache.getOrCreateEntry(project)).thenReturn(buildData);
+        when(buildData.getClassLoader()).thenReturn(projectClassLoader);
 
         generator = new BPMNFormModelGeneratorImpl(projectService,
-                                                   projectClassLoaderHelper);
+                                                   projectCache);
         processFormModel = generator.generateProcessFormModel(formGenerationProcessDefinitions,
                                                               rootPathWithNestedForms);
         taskFormModels = generator.generateTaskFormModels(formGenerationProcessDefinitions, rootPathWithNestedForms);

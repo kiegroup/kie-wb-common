@@ -18,10 +18,10 @@ package org.kie.workbench.common.widgets.client.popups.validation;
 
 import java.util.Arrays;
 import java.util.List;
+
 import javax.enterprise.inject.Instance;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
-import org.junit.Assert;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -35,63 +35,64 @@ import static org.junit.Assert.assertNull;
 public class ValidationMessageTranslatorUtilsTest {
 
     @Mock
-    private Instance<ValidationMessageTranslator> messageTranslatorInstance;
+    private Instance<BuildMessageTranslator> messageTranslatorInstance;
 
     private ValidationMessageTranslatorUtils translatorUtils;
 
     @Before
     public void setUp() {
-        translatorUtils = new ValidationMessageTranslatorUtils( messageTranslatorInstance );
+        translatorUtils = new ValidationMessageTranslatorUtils(messageTranslatorInstance);
     }
 
     @Test
     public void translateMessageExists() {
-        translatorUtils.setValidationMessageTranslators( Arrays.asList( new UniversalTestTranslator() ) );
+        translatorUtils.setValidationMessageTranslators(Arrays.asList(new UniversalTestTranslator()));
 
         TestMessage messageToTranslate = new TestMessage();
 
-        List<ValidationMessage> result = translatorUtils.translate( Arrays.asList( messageToTranslate ) );
-        assertEquals( 1, result.size() );
-        assertEquals( "Translated message", result.get( 0 ).getText() );
+        List<BuildMessage> result = translatorUtils.translate(Arrays.asList(messageToTranslate));
+        assertEquals(1, result.size());
+        assertEquals("Translated message", result.get(0).getText());
     }
 
     public void translateMessageNonAcceptingTranslator() {
-        translatorUtils.setValidationMessageTranslators( Arrays.asList( new FalsumTestTranslator() ) );
+        translatorUtils.setValidationMessageTranslators(Arrays.asList(new FalsumTestTranslator()));
 
         TestMessage messageToTranslate = new TestMessage();
 
-        List<ValidationMessage> result = translatorUtils.translate( Arrays.asList( messageToTranslate ) );
-        assertEquals( 1, result.size() );
-        assertNull( result.get( 0 ).getText() );
+        List<BuildMessage> result = translatorUtils.translate(Arrays.asList(messageToTranslate));
+        assertEquals(1, result.size());
+        assertNull(result.get(0).getText());
     }
 
-    private class UniversalTestTranslator implements ValidationMessageTranslator {
+    private class UniversalTestTranslator implements BuildMessageTranslator {
 
         @Override
-        public boolean accept( ValidationMessage message ) {
+        public boolean accept(BuildMessage message) {
             return true;
         }
 
         @Override
-        public ValidationMessage translate( ValidationMessage checkMessage ) {
-            checkMessage.setText( "Translated message" );
+        public BuildMessage translate(BuildMessage checkMessage) {
+            checkMessage.setText("Translated message");
             return checkMessage;
         }
     }
 
-    private class FalsumTestTranslator implements ValidationMessageTranslator {
+    private class FalsumTestTranslator implements BuildMessageTranslator {
 
         @Override
-        public boolean accept( ValidationMessage message ) {
+        public boolean accept(BuildMessage message) {
             return false;
         }
 
         @Override
-        public ValidationMessage translate( ValidationMessage checkMessage ) {
+        public BuildMessage translate(BuildMessage checkMessage) {
             return null;
         }
     }
 
-    private class TestMessage extends ValidationMessage {
+    private class TestMessage extends BuildMessage {
+
     }
 }

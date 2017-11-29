@@ -22,11 +22,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
 import javax.persistence.MappedSuperclass;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 
 import static org.kie.workbench.common.screens.datamodeller.backend.server.validation.PersistenceDescriptorValidationMessages.newErrorMessage;
 
@@ -35,39 +36,39 @@ import static org.kie.workbench.common.screens.datamodeller.backend.server.valid
  */
 public class PersistableClassValidator {
 
-    public PersistableClassValidator( ) {
+    public PersistableClassValidator() {
     }
 
     /**
      * Validates if a class can be considered persistable.
-     * @param className a class name to validate.
+     * @param className a class name to accept.
      * @param classLoader a classloader from where the class className and the referenced types by the className can be loaded.
      * @return a list of validation messages.
      */
-    public List<ValidationMessage> validate( String className, ClassLoader classLoader ) {
-        List<ValidationMessage> result = new ArrayList<>( );
-        Class< ? > clazz;
+    public List<BuildMessage> validate(String className, ClassLoader classLoader) {
+        List<BuildMessage> result = new ArrayList<>();
+        Class<?> clazz;
         try {
-            if ( className == null || className.trim( ).isEmpty( ) ) {
-                result.add( newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY_ID,
-                        PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY ) );
+            if (className == null || className.trim().isEmpty()) {
+                result.add(newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY_ID,
+                                           PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY));
                 return result;
             }
-            clazz = classLoader.loadClass( className );
-            Annotation[] annotations = clazz.getAnnotations( );
-            Optional< Annotation > persistable = Arrays.stream( annotations )
-                    .filter( annotation ->
-                            Entity.class.equals( annotation.annotationType( ) ) ||
-                                    Embeddable.class.equals( annotation.annotationType( ) ) ||
-                                    MappedSuperclass.class.equals( annotation.annotationType( ) ) )
-                    .findFirst( );
-            if ( !persistable.isPresent( ) ) {
-                result.add( newErrorMessage( PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE_ID,
-                        MessageFormat.format( PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE, className ), className ) );
+            clazz = classLoader.loadClass(className);
+            Annotation[] annotations = clazz.getAnnotations();
+            Optional<Annotation> persistable = Arrays.stream(annotations)
+                    .filter(annotation ->
+                                    Entity.class.equals(annotation.annotationType()) ||
+                                            Embeddable.class.equals(annotation.annotationType()) ||
+                                            MappedSuperclass.class.equals(annotation.annotationType()))
+                    .findFirst();
+            if (!persistable.isPresent()) {
+                result.add(newErrorMessage(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE_ID,
+                                           MessageFormat.format(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE, className), className));
             }
-        } catch ( ClassNotFoundException e ) {
-            result.add( newErrorMessage( PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND_ID,
-                    MessageFormat.format( PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND, className ), className ) );
+        } catch (ClassNotFoundException e) {
+            result.add(newErrorMessage(PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND_ID,
+                                       MessageFormat.format(PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND, className), className));
         }
         return result;
     }

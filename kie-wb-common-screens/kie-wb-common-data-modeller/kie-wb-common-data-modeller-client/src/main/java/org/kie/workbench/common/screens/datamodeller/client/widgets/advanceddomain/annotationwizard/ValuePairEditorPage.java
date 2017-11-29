@@ -102,7 +102,7 @@ public class ValuePairEditorPage
         currentValue = view.getValuePairEditor().getValue();
 
         if ( view.getValuePairEditor() instanceof GenericValuePairEditor ) {
-            //for the generic editor we should use the validate button
+            //for the generic editor we should use the accept button
 
             //available options
             //1) the value pair is required

@@ -19,7 +19,7 @@ package org.kie.workbench.common.screens.datasource.management.service;
 import java.util.List;
 
 import org.guvnor.common.services.project.model.Project;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.bus.server.annotations.Remote;
 import org.kie.workbench.common.screens.datasource.management.model.DriverDef;
 import org.kie.workbench.common.screens.datasource.management.model.DriverDefEditorContent;
@@ -38,5 +38,5 @@ public interface DriverDefEditorService {
 
     void delete( final Path path, final String comment );
 
-    List<ValidationMessage> validate( final DriverDef driverDef );
+    List<BuildMessage> validate(final DriverDef driverDef );
 }

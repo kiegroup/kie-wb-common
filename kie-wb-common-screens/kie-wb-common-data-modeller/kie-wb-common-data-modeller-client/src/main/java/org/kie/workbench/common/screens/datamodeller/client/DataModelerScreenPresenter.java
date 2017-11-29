@@ -17,13 +17,14 @@
 package org.kie.workbench.common.screens.datamodeller.client;
 
 import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.messageconsole.events.PublishBaseEvent;
 import org.guvnor.messageconsole.events.PublishBatchMessagesEvent;
 import org.guvnor.messageconsole.events.SystemMessage;
@@ -331,13 +332,13 @@ public class DataModelerScreenPresenter
 
     private void onDelete(final Path path) {
         validationService.call(validationMessages -> {
-            if (((List<ValidationMessage>) validationMessages).isEmpty()) {
+            if (((List<BuildMessage>) validationMessages).isEmpty()) {
                 showDeletePopup(path);
             } else {
                 validationPopup.showDeleteValidationMessages(() -> showDeletePopup(path),
                                                              () -> {
                                                              },
-                                                             (List<ValidationMessage>) validationMessages);
+                                                             (List<BuildMessage>) validationMessages);
             }
         }).validateForDelete(versionRecordManager.getPathToLatest(),
                              context.getDataObject());
@@ -355,13 +356,13 @@ public class DataModelerScreenPresenter
 
     void onCopy() {
         validationService.call(checkMessages -> {
-            if (((List<ValidationMessage>) checkMessages).isEmpty()) {
+            if (((List<BuildMessage>) checkMessages).isEmpty()) {
                 showCopyPopup();
             } else {
                 validationPopup.showCopyValidationMessages(() -> showCopyPopup(),
                                                            () -> {
                                                            },
-                                                           ((List<ValidationMessage>) checkMessages));
+                                                           ((List<BuildMessage>) checkMessages));
             }
         }).validateForCopy(versionRecordManager.getPathToLatest(),
                            context.getDataObject());
@@ -431,7 +432,7 @@ public class DataModelerScreenPresenter
         }
     }
 
-    RemoteCallback<List<ValidationMessage>> getRenameValidationCallback() {
+    RemoteCallback<List<BuildMessage>> getRenameValidationCallback() {
         return checkMessages -> {
             if (checkMessages.isEmpty()) {
                 rename(true);
@@ -465,9 +466,9 @@ public class DataModelerScreenPresenter
                     }
                 }
 
-                modelerService.call(new RemoteCallback<List<org.guvnor.common.services.shared.validation.model.ValidationMessage>>() {
+                modelerService.call(new RemoteCallback<List<BuildMessage>>() {
                     @Override
-                    public void callback(final List<org.guvnor.common.services.shared.validation.model.ValidationMessage> results) {
+                    public void callback(final List<BuildMessage> results) {
                         if (results == null || results.isEmpty()) {
                             notification.fire(new NotificationEvent(org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.ItemValidatedSuccessfully(),
                                                                     NotificationEvent.NotificationType.SUCCESS));
@@ -533,13 +534,13 @@ public class DataModelerScreenPresenter
 
     protected void save() {
         validationService.call(checkMessages -> {
-            if (((List<ValidationMessage>) checkMessages).isEmpty()) {
+            if (((List<BuildMessage>) checkMessages).isEmpty()) {
                 checkDirtyAndSaveFile();
             } else {
                 validationPopup.showSaveValidationMessages(() -> checkDirtyAndSaveFile(),
                                                            () -> {
                                                            },
-                                                           (List<ValidationMessage>) checkMessages);
+                                                           (List<BuildMessage>) checkMessages);
             }
         }).validateForSave(versionRecordManager.getPathToLatest(),
                            context.getDataObject());

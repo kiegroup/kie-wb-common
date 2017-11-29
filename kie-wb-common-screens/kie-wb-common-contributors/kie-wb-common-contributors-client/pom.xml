@@ -27,6 +27,10 @@
     </dependency>
     <dependency>
       <groupId>org.dashbuilder</groupId>
+      <artifactId>dashbuilder-renderer-default</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.dashbuilder</groupId>
       <artifactId>dashbuilder-dataset-client</artifactId>
     </dependency>
     <dependency>

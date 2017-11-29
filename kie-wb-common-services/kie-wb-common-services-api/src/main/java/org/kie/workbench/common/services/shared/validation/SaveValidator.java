@@ -18,19 +18,19 @@ package org.kie.workbench.common.services.shared.validation;
 
 import java.util.Collection;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.uberfire.backend.vfs.Path;
 
 /**
  * Checks whether save action can be safely performed. Implement this class in order to define
  * custom check criterion.
- *
+ * <p>
  * The checks are collected by org.kie.workbench.common.services.shared.validation.ValidationService
  */
 public interface SaveValidator<T> {
 
-    Collection<ValidationMessage> validate( Path path,
-                                            T content );
+    Collection<BuildMessage> validate(Path path,
+                                      T content);
 
-    boolean accept( final Path path );
+    boolean accept(final Path path);
 }

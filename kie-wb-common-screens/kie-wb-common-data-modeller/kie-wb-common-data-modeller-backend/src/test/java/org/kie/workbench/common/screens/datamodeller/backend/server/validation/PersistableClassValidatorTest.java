@@ -19,12 +19,13 @@ package org.kie.workbench.common.screens.datamodeller.backend.server.validation;
 import java.text.MessageFormat;
 import java.util.List;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.kie.workbench.common.screens.datamodeller.backend.server.validation.PersistenceDescriptorValidationMessages.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.kie.workbench.common.screens.datamodeller.backend.server.validation.PersistenceDescriptorValidationMessages.newErrorMessage;
 
 public class PersistableClassValidatorTest {
 
@@ -35,45 +36,45 @@ public class PersistableClassValidatorTest {
     private ClassLoader classLoader;
 
     @Before
-    public void setUp( ) {
-        validator = new PersistableClassValidator( );
-        classLoader = this.getClass( ).getClassLoader( );
+    public void setUp() {
+        validator = new PersistableClassValidator();
+        classLoader = this.getClass().getClassLoader();
     }
 
     @Test
-    public void testValidateValidPersistableClasses( ) {
-        assertTrue( validator.validate( PersistableClass1.class.getName( ), classLoader ).isEmpty( ) );
-        assertTrue( validator.validate( PersistableClass2.class.getName( ), classLoader ).isEmpty( ) );
-        assertTrue( validator.validate( PersistableClass3.class.getName( ), classLoader ).isEmpty( ) );
+    public void testValidateValidPersistableClasses() {
+        assertTrue(validator.validate(PersistableClass1.class.getName(), classLoader).isEmpty());
+        assertTrue(validator.validate(PersistableClass2.class.getName(), classLoader).isEmpty());
+        assertTrue(validator.validate(PersistableClass3.class.getName(), classLoader).isEmpty());
     }
 
     @Test
-    public void testValidateInvalidPersistableClasses( ) {
+    public void testValidateInvalidPersistableClasses() {
         //tests an existing class but not persistable.
-        List< ValidationMessage > result = validator.validate( NonPersistableClass1.class.getName( ), classLoader );
-        assertEquals( 1, result.size( ) );
-        ValidationMessage expectedMessage = newErrorMessage( PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE_ID,
-                MessageFormat.format( PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE, NonPersistableClass1.class.getName( ) ), NonPersistableClass1.class.getName( ) );
-        assertEquals( expectedMessage, result.get( 0 ) );
+        List<BuildMessage> result = validator.validate(NonPersistableClass1.class.getName(), classLoader);
+        assertEquals(1, result.size());
+        BuildMessage expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE_ID,
+                                                       MessageFormat.format(PersistenceDescriptorValidationMessages.CLASS_NOT_PERSISTABLE, NonPersistableClass1.class.getName()), NonPersistableClass1.class.getName());
+        assertEquals(expectedMessage, result.get(0));
 
         //tests a class not existing in current classloader.
-        result = validator.validate( NOT_EXISTING_CLASS, classLoader );
-        assertEquals( 1, result.size( ) );
-        expectedMessage = newErrorMessage( PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND_ID,
-                MessageFormat.format( PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND, NOT_EXISTING_CLASS ), NOT_EXISTING_CLASS );
-        assertEquals( expectedMessage, result.get( 0 ) );
+        result = validator.validate(NOT_EXISTING_CLASS, classLoader);
+        assertEquals(1, result.size());
+        expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND_ID,
+                                          MessageFormat.format(PersistenceDescriptorValidationMessages.CLASS_NOT_FOUND, NOT_EXISTING_CLASS), NOT_EXISTING_CLASS);
+        assertEquals(expectedMessage, result.get(0));
 
         //test the case of the empty String as class name.
-        result = validator.validate( "", classLoader );
-        assertEquals( 1, result.size( ) );
-        expectedMessage = newErrorMessage( PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY_ID,
-                PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY );
-        assertEquals( expectedMessage, result.get( 0 ) );
+        result = validator.validate("", classLoader);
+        assertEquals(1, result.size());
+        expectedMessage = newErrorMessage(PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY_ID,
+                                          PersistenceDescriptorValidationMessages.PERSISTABLE_CLASS_NAME_EMPTY);
+        assertEquals(expectedMessage, result.get(0));
 
         //test the case of the null String as class name.
-        result = validator.validate( null, classLoader );
-        assertEquals( 1, result.size( ) );
+        result = validator.validate(null, classLoader);
+        assertEquals(1, result.size());
         //same error message as the empty String case.
-        assertEquals( expectedMessage, result.get( 0 ) );
+        assertEquals(expectedMessage, result.get(0));
     }
 }

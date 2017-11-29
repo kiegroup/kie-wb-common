@@ -22,7 +22,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.widgets.client.resources.i18n.KieWorkbenchWidgetsConstants;
@@ -55,7 +55,7 @@ public class ValidationPopup implements ValidationPopupView.Presenter {
         view.init(this);
     }
 
-    public void showMessages(final List<ValidationMessage> messages) {
+    public void showMessages(final List<BuildMessage> messages) {
         clear();
         view.setCancelButtonText(translationService.getTranslation(KieWorkbenchWidgetsConstants.ValidationPopup_Cancel));
         view.showCancelButton(true);
@@ -67,13 +67,13 @@ public class ValidationPopup implements ValidationPopupView.Presenter {
                          messages);
     }
 
-    public void showTranslatedMessages(final List<ValidationMessage> messages) {
+    public void showTranslatedMessages(final List<BuildMessage> messages) {
         showMessages(validationMessageTranslatorUtils.translate(messages));
     }
 
     public void showCopyValidationMessages(final Command yesCommand,
                                            final Command cancelCommand,
-                                           final List<ValidationMessage> validationMessages) {
+                                           final List<BuildMessage> validationMessages) {
         clear();
         view.setYesButtonText(translationService.getTranslation(KieWorkbenchWidgetsConstants.ValidationPopup_YesCopyAnyway));
         view.showYesButton(true);
@@ -88,7 +88,7 @@ public class ValidationPopup implements ValidationPopupView.Presenter {
 
     public void showSaveValidationMessages(final Command yesCommand,
                                            final Command cancelCommand,
-                                           final List<ValidationMessage> validationMessages) {
+                                           final List<BuildMessage> validationMessages) {
         clear();
         view.setYesButtonText(translationService.getTranslation(KieWorkbenchWidgetsConstants.ValidationPopup_YesSaveAnyway));
         view.showYesButton(true);
@@ -103,7 +103,7 @@ public class ValidationPopup implements ValidationPopupView.Presenter {
 
     public void showDeleteValidationMessages(final Command yesCommand,
                                              final Command cancelCommand,
-                                             final List<ValidationMessage> validationMessages) {
+                                             final List<BuildMessage> validationMessages) {
         clear();
         view.setYesButtonText(translationService.getTranslation(KieWorkbenchWidgetsConstants.ValidationPopup_YesDeleteAnyway));
         view.showYesButton(true);
@@ -118,7 +118,7 @@ public class ValidationPopup implements ValidationPopupView.Presenter {
 
     private void initAndShowModal(final Command yesCommand,
                                   final Command cancelCommand,
-                                  final List<ValidationMessage> validationMessages) {
+                                  final List<BuildMessage> validationMessages) {
         this.yesCommand = PortablePreconditions.checkNotNull("yesCommand",
                                                              yesCommand);
         this.cancelCommand = PortablePreconditions.checkNotNull("cancelCommand",

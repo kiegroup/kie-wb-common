@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.projecteditor.backend.server;
 
 import java.util.Set;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -30,7 +31,6 @@ import org.guvnor.common.services.project.service.POMService;
 import org.guvnor.common.services.project.service.ProjectRepositoriesService;
 import org.guvnor.common.services.project.service.ProjectRepositoryResolver;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.services.backend.builder.core.LRUPomModelCache;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -53,8 +53,6 @@ public class ProjectScreenModelSaver {
     private ProjectRepositoryResolver repositoryResolver;
     private CommentedOptionFactory commentedOptionFactory;
 
-    private LRUPomModelCache pomModelCache;
-
     public ProjectScreenModelSaver() {
     }
 
@@ -67,8 +65,7 @@ public class ProjectScreenModelSaver {
                                    final @Named("ioStrategy") IOService ioService,
                                    final KieProjectService projectService,
                                    final ProjectRepositoryResolver repositoryResolver,
-                                   final CommentedOptionFactory commentedOptionFactory,
-                                   final LRUPomModelCache pomModelCache) {
+                                   final CommentedOptionFactory commentedOptionFactory) {
         this.pomService = pomService;
         this.kModuleService = kModuleService;
         this.importsService = importsService;
@@ -79,8 +76,6 @@ public class ProjectScreenModelSaver {
         this.projectService = projectService;
         this.repositoryResolver = repositoryResolver;
         this.commentedOptionFactory = commentedOptionFactory;
-
-        this.pomModelCache = pomModelCache;
     }
 
     public void save(final Path pathToPomXML,
@@ -94,7 +89,6 @@ public class ProjectScreenModelSaver {
 
         try {
             final KieProject project = projectService.resolveProject(pathToPomXML);
-            pomModelCache.invalidateCache(project);
 
             ioService.startBatch(Paths.convert(pathToPomXML).getFileSystem(),
                                  commentedOptionFactory.makeCommentedOption(comment));

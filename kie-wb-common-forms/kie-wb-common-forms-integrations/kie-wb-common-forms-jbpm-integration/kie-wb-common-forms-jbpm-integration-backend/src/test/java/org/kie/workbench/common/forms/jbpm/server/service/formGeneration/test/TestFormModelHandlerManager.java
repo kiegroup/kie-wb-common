@@ -26,25 +26,25 @@ import org.kie.workbench.common.forms.jbpm.server.service.impl.BusinessProcessFo
 import org.kie.workbench.common.forms.jbpm.server.service.impl.TaskFormModelHandler;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 
 public class TestFormModelHandlerManager implements FormModelHandlerManager {
 
     private KieProjectService projectService;
 
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ProjectCache projectCache;
 
     private FieldManager fieldManager;
 
     private DataObjectFinderService finderService;
 
     public TestFormModelHandlerManager(KieProjectService projectService,
-                                       ProjectClassLoaderHelper projectClassLoaderHelper,
+                                       ProjectCache projectCache,
                                        FieldManager fieldManager,
                                        DataObjectFinderService finderService) {
         this.projectService = projectService;
-        this.projectClassLoaderHelper = projectClassLoaderHelper;
+        this.projectCache = projectCache;
         this.fieldManager = fieldManager;
         this.finderService = finderService;
     }
@@ -59,18 +59,18 @@ public class TestFormModelHandlerManager implements FormModelHandlerManager {
     public FormModelHandler getFormModelHandler(Class<? extends FormModel> clazz) {
         if (BusinessProcessFormModel.class.equals(clazz)) {
             return new BusinessProcessFormModelHandler(projectService,
-                                                       projectClassLoaderHelper,
+                                                       projectCache,
                                                        fieldManager,
                                                        null);
         }
         if (TaskFormModel.class.equals(clazz)) {
             return new TaskFormModelHandler(projectService,
-                                            projectClassLoaderHelper,
+                                            projectCache,
                                             fieldManager,
                                             null);
         }
         return new DataObjectFormModelHandler(projectService,
-                                              projectClassLoaderHelper,
+                                              projectCache,
                                               finderService,
                                               fieldManager);
     }

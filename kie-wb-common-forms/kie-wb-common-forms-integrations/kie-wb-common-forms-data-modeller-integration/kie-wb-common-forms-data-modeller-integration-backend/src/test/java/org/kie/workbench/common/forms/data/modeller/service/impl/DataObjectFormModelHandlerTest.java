@@ -52,7 +52,8 @@ import org.kie.workbench.common.forms.model.TypeKind;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.screens.datamodeller.backend.server.handler.JPADomainHandler;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.DataModel;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
@@ -71,6 +72,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -103,7 +105,7 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     private KieProject project;
 
     @Mock
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ProjectCache projectCache;
 
     @Mock
     private ClassLoader classLoader;
@@ -112,7 +114,9 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
     public void setUp() throws Exception {
 
         when(projectService.resolveProject(any())).thenReturn(project);
-        when(projectClassLoaderHelper.getProjectClassLoader(project)).thenReturn(classLoader);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        when(projectBuildData.getClassLoader()).thenReturn(classLoader);
+        when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
         when(classLoader.loadClass(any())).thenAnswer((Answer<Class>) invocation -> String.class);
 
         createModel();
@@ -120,7 +124,7 @@ public class DataObjectFormModelHandlerTest extends AbstractDataObjectTest {
         finderService = new DataObjectFinderServiceImpl(projectService,
                                                         dataModelerService);
         handler = new DataObjectFormModelHandler(projectService,
-                                                 projectClassLoaderHelper,
+                                                 projectCache,
                                                  finderService,
                                                  new TestFieldManager());
         when(dataModelerService.loadModel(any())).thenReturn(dataModel);

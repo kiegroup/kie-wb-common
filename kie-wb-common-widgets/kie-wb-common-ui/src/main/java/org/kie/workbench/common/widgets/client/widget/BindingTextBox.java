@@ -28,7 +28,7 @@ public class BindingTextBox
     @Override
     public boolean isValidValue(String value,
                                 boolean isOnFocusLost) {
-        //Unable to use a RegEx to validate value as GWT uses the JS RegEx object that is does not handle Unicode.
+        //Unable to use a RegEx to accept value as GWT uses the JS RegEx object that is does not handle Unicode.
         //Furthermore we're unable to use GWT's Character class emulation as this too doesn't support Unicode fully.
         //See https://gwt.googlesource.com/gwt/+/2.5.1/user/super/com/google/gwt/emul/java/lang/Character.java
         //See https://bugzilla.redhat.com/show_bug.cgi?id=1086462

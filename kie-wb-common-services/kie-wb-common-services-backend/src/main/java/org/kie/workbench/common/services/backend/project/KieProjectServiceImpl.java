@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.project;
 
 import java.util.Set;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -24,7 +25,6 @@ import javax.inject.Named;
 
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.backend.server.AbstractProjectService;
-import org.guvnor.common.services.project.builder.events.InvalidateDMOProjectCacheEvent;
 import org.guvnor.common.services.project.events.NewPackageEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.events.RenameProjectEvent;
@@ -68,7 +68,6 @@ public class KieProjectServiceImpl
                                  final Event<NewProjectEvent> newProjectEvent,
                                  final Event<NewPackageEvent> newPackageEvent,
                                  final Event<RenameProjectEvent> renameProjectEvent,
-                                 final Event<InvalidateDMOProjectCacheEvent> invalidateDMOCache,
                                  final SessionInfo sessionInfo,
                                  final AuthorizationManager authorizationManager,
                                  final BackwardCompatibleUtil backward,
@@ -82,7 +81,6 @@ public class KieProjectServiceImpl
               newProjectEvent,
               newPackageEvent,
               renameProjectEvent,
-              invalidateDMOCache,
               sessionInfo,
               authorizationManager,
               backward,

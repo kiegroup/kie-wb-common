@@ -18,7 +18,7 @@ package org.kie.workbench.common.widgets.client.popups.validation;
 
 import java.util.List;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.uberfire.client.mvp.UberElement;
 
 public interface ValidationPopupView extends UberElement<ValidationPopupView.Presenter> {
@@ -30,15 +30,15 @@ public interface ValidationPopupView extends UberElement<ValidationPopupView.Pre
         void onCancelButtonClicked();
     }
 
-    void setYesButtonText( final String text );
+    void setYesButtonText(final String text);
 
-    void setCancelButtonText( final String text );
+    void setCancelButtonText(final String text);
 
-    void showYesButton( final boolean show );
+    void showYesButton(final boolean show);
 
-    void showCancelButton( final boolean show );
+    void showCancelButton(final boolean show);
 
-    void setValidationMessages( final List<ValidationMessage> messages );
+    void setValidationMessages(final List<BuildMessage> messages);
 
     void show();
 

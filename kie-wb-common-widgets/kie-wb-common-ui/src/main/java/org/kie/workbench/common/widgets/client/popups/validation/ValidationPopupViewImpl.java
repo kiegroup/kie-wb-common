@@ -23,8 +23,8 @@ import javax.inject.Inject;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.Range;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.guvnor.messageconsole.client.console.widget.MessageTableWidget;
 import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.common.client.dom.Div;
@@ -45,7 +45,7 @@ public class ValidationPopupViewImpl implements ValidationPopupView {
     Div view;
 
     @DataField("validationTable")
-    MessageTableWidget<ValidationMessage> validationTable;
+    MessageTableWidget<BuildMessage> validationTable;
 
     @DataField("yesButton")
     Button yesButton;
@@ -57,7 +57,7 @@ public class ValidationPopupViewImpl implements ValidationPopupView {
 
     private BaseModal modal;
 
-    private ListDataProvider<ValidationMessage> validationTableDataProvider;
+    private ListDataProvider<BuildMessage> validationTableDataProvider;
 
     private TranslationService translationService;
 
@@ -76,12 +76,12 @@ public class ValidationPopupViewImpl implements ValidationPopupView {
 
         validationTable.addLevelColumn( 75,
                                         row -> {
-                                            final Level level = ( (ValidationMessage) row ).getLevel();
+                                            final Level level = ( (BuildMessage) row ).getLevel();
                                             return level != null ? level : Level.ERROR;
                                         } );
 
         validationTable.addTextColumn( 90,
-                                       row -> ( (ValidationMessage) row ).getText() );
+                                       row -> ( (BuildMessage) row ).getText() );
 
         validationTableDataProvider = new ListDataProvider<>();
         validationTableDataProvider.addDataDisplay( validationTable );
@@ -119,8 +119,8 @@ public class ValidationPopupViewImpl implements ValidationPopupView {
     }
 
     @Override
-    public void setValidationMessages( List<ValidationMessage> messages ) {
-        ListDataProvider<ValidationMessage> listDataProvider = (ListDataProvider<ValidationMessage>) this.validationTable.getDataProvider();
+    public void setValidationMessages( List<BuildMessage> messages ) {
+        ListDataProvider<BuildMessage> listDataProvider = (ListDataProvider<BuildMessage>) this.validationTable.getDataProvider();
         listDataProvider.getList().clear();
         listDataProvider.getList().addAll( messages );
         validationTable.setVisibleRangeAndClearData( new Range( 0, 5 ), true );

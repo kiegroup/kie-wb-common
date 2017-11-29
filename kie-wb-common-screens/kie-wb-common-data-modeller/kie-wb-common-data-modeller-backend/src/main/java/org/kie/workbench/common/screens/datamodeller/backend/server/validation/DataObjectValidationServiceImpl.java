@@ -19,14 +19,15 @@ package org.kie.workbench.common.screens.datamodeller.backend.server.validation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.screens.datamodeller.validation.ObjectPropertyDeleteValidator;
 import org.kie.workbench.common.screens.datamodeller.validation.DataObjectValidationService;
+import org.kie.workbench.common.screens.datamodeller.validation.ObjectPropertyDeleteValidator;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 
@@ -45,8 +46,8 @@ public class DataObjectValidationServiceImpl implements DataObjectValidationServ
         objectPropertyDeleteValidatorInstance.iterator().forEachRemaining(objectPropertyDeleteValidators::add);
     }
 
-    public Collection<ValidationMessage> validateObjectPropertyDeletion(final DataObject dataObject,
-                                                                        final ObjectProperty objectProperty) {
+    public Collection<BuildMessage> validateObjectPropertyDeletion(final DataObject dataObject,
+                                                                   final ObjectProperty objectProperty) {
         return objectPropertyDeleteValidators
                 .stream()
                 .flatMap(c -> c.validate(dataObject,

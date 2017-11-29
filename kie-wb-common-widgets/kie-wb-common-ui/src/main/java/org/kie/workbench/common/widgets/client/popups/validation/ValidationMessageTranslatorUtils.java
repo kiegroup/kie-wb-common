@@ -19,39 +19,40 @@ package org.kie.workbench.common.widgets.client.popups.validation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 
 @ApplicationScoped
 public class ValidationMessageTranslatorUtils {
 
-    private List<ValidationMessageTranslator> validationMessageTranslators = new ArrayList<>();
+    private List<BuildMessageTranslator> validationMessageTranslators = new ArrayList<>();
 
     public ValidationMessageTranslatorUtils() {
     }
 
     @Inject
-    public ValidationMessageTranslatorUtils( Instance<ValidationMessageTranslator> checkTranslators ) {
-        checkTranslators.forEach( this.validationMessageTranslators::add );
+    public ValidationMessageTranslatorUtils(Instance<BuildMessageTranslator> checkTranslators) {
+        checkTranslators.forEach(this.validationMessageTranslators::add);
     }
 
-    public List<ValidationMessage> translate( List<ValidationMessage> messages ) {
-        return messages.stream().map( m -> lookUpTranslation( m ) ).collect( Collectors.toList() );
+    public List<BuildMessage> translate(List<BuildMessage> messages) {
+        return messages.stream().map(m -> lookUpTranslation(m)).collect(Collectors.toList());
     }
 
-    private ValidationMessage lookUpTranslation( ValidationMessage messageToTranslate ) {
+    private BuildMessage lookUpTranslation(BuildMessage messageToTranslate) {
         return validationMessageTranslators.stream()
-                .filter( t -> t.accept( messageToTranslate ) )
-                .map( t -> t.translate( messageToTranslate ) )
+                .filter(t -> t.accept(messageToTranslate))
+                .map(t -> t.translate(messageToTranslate))
                 .findFirst()
-                .orElse( messageToTranslate );
+                .orElse(messageToTranslate);
     }
 
     // Test purposes
-    void setValidationMessageTranslators( List<ValidationMessageTranslator> messageTranslators ) {
+    void setValidationMessageTranslators(List<BuildMessageTranslator> messageTranslators) {
         this.validationMessageTranslators = messageTranslators;
     }
 }

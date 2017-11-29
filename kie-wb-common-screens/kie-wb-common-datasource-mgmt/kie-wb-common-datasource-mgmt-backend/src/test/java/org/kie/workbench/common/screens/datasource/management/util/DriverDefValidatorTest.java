@@ -45,7 +45,7 @@ public class DriverDefValidatorTest {
 
     @Test
     public void testValidate() {
-        // validate a complete definition.
+        // accept a complete definition.
         assertTrue( validator.validate( driverDef ) );
     }
 

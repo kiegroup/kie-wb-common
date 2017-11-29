@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.whitelist;
 
 import java.util.Collection;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,10 +29,11 @@ import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
-import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
+
+import static org.uberfire.backend.server.util.Paths.convert;
 
 /**
  * Represents a "white list" of permitted package names for use with authoring
@@ -41,19 +43,20 @@ import org.uberfire.java.nio.file.FileAlreadyExistsException;
 public class PackageNameWhiteListServiceImpl
         implements PackageNameWhiteListService {
 
-    private IOService         ioService;
+    private IOService ioService;
     private KieProjectService projectService;
     private PackageNameWhiteListLoader loader;
     private PackageNameWhiteListSaver saver;
+    private String PACKAGE_NAME_WHITE_LIST = "package-names-white-list";
 
     public PackageNameWhiteListServiceImpl() {
     }
 
     @Inject
-    public PackageNameWhiteListServiceImpl( final @Named( "ioStrategy" ) IOService ioService,
-                                            final KieProjectService projectService,
-                                            final PackageNameWhiteListLoader loader,
-                                            final PackageNameWhiteListSaver saver ) {
+    public PackageNameWhiteListServiceImpl(final @Named("ioStrategy") IOService ioService,
+                                           final KieProjectService projectService,
+                                           final PackageNameWhiteListLoader loader,
+                                           final PackageNameWhiteListSaver saver) {
         this.ioService = ioService;
         this.projectService = projectService;
         this.loader = loader;
@@ -61,12 +64,12 @@ public class PackageNameWhiteListServiceImpl
     }
 
     @Override
-    public void createProjectWhiteList( final Path packageNamesWhiteListPath ) {
-        if ( ioService.exists( Paths.convert( packageNamesWhiteListPath ) ) ) {
-            throw new FileAlreadyExistsException( packageNamesWhiteListPath.toString() );
+    public void createProjectWhiteList(final Path packageNamesWhiteListPath) {
+        if (ioService.exists(convert(packageNamesWhiteListPath))) {
+            throw new FileAlreadyExistsException(packageNamesWhiteListPath.toString());
         } else {
-            ioService.write( Paths.convert( packageNamesWhiteListPath ),
-                             "" );
+            ioService.write(convert(packageNamesWhiteListPath),
+                            "");
         }
     }
 
@@ -77,43 +80,40 @@ public class PackageNameWhiteListServiceImpl
      * @return A filtered collection of Package names
      */
     @Override
-    public WhiteList filterPackageNames( final Project project,
-                                         final Collection<String> packageNames ) {
-        if ( packageNames == null ) {
+    public WhiteList filterPackageNames(final Project project,
+                                        final Collection<String> packageNames) {
+        if (packageNames == null) {
             return new WhiteList();
-        } else if ( project instanceof KieProject ) {
-
-            final WhiteList whiteList = load( ( (KieProject) project ).getPackageNamesWhiteListPath() );
-
-            if ( whiteList.isEmpty() ) {
-                return new WhiteList( packageNames );
+        } else if (project instanceof KieProject) {
+            final WhiteList whiteList = load(convert(convert(project.getRootPath()).resolve(PACKAGE_NAME_WHITE_LIST)));
+            if (whiteList.isEmpty()) {
+                return new WhiteList(packageNames);
             } else {
-                for ( Package aPackage : projectService.resolvePackages( project ) ) {
-                    whiteList.add( aPackage.getPackageName() );
+                for (Package aPackage : projectService.resolvePackages(project)) {
+                    whiteList.add(aPackage.getPackageName());
                 }
 
-                return new PackageNameWhiteListFilter( packageNames,
-                                                       whiteList ).getFilteredPackageNames();
+                return new PackageNameWhiteListFilter(packageNames, whiteList).getFilteredPackageNames();
             }
         } else {
-            return new WhiteList( packageNames );
+            return new WhiteList(packageNames);
         }
     }
 
     @Override
-    public WhiteList load( final Path packageNamesWhiteListPath ) {
-        return loader.load( packageNamesWhiteListPath );
+    public WhiteList load(final Path packageNamesWhiteListPath) {
+        return loader.load(packageNamesWhiteListPath);
     }
 
     @Override
-    public Path save( final Path path,
-                      final WhiteList content,
-                      final Metadata metadata,
-                      final String comment ) {
-        return saver.save( path,
-                           content,
-                           metadata,
-                           comment );
+    public Path save(final Path path,
+                     final WhiteList content,
+                     final Metadata metadata,
+                     final String comment) {
+        return saver.save(path,
+                          content,
+                          metadata,
+                          comment);
     }
 }
 

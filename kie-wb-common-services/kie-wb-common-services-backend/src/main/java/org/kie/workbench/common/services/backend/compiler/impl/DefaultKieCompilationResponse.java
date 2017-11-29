@@ -15,104 +15,120 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.io.Serializable;
 import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
-import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.uberfire.java.nio.file.Path;
 
 /***
  * Default implementation of a Kie Compilation response,
  * it contains a boolean flag as a result of the build, an optional String error message,
- *  and a  List of String with the maven output
- *
+ * and a  List of String with the maven output
  */
-public class DefaultKieCompilationResponse implements KieCompilationResponse {
+public class DefaultKieCompilationResponse implements KieCompilationResponse,
+                                                      Serializable {
 
-    private Optional<KieModuleMetaInfo> kieModuleMetaInfo;
-    private Optional<KieModule> kieModule;
-    private Optional<List<URI>> projectDependencies;
+    private KieModuleMetaInfo kieModuleMetaInfo;
+    private KieModule kieModule;
+    private Map<String, byte[]> projectClassLoaderStore;
+    private Set<String> eventsTypeClasses;
     private DefaultCompilationResponse defaultResponse;
 
     public DefaultKieCompilationResponse(Boolean successful) {
         this(successful,
              null,
+             null,
+             null,
+             null);
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful, List<String> mavenOutput) {
+        this(successful,
+             mavenOutput,
              null);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
-                                         List<String> mavenOutput) {
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         null,
-                                                         mavenOutput);
-        this.kieModuleMetaInfo = Optional.empty();
-        this.kieModule = Optional.empty();
-        this.projectDependencies = Optional.empty();
-    }
-
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         String errorMessage) {
-
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         errorMessage,
-                                                         Collections.emptyList());
-        this.kieModuleMetaInfo = Optional.empty();
-        this.kieModule = Optional.empty();
-        this.projectDependencies = Optional.empty();
-    }
-
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         String errorMessage,
-                                         List<String> mavenOutput) {
-
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         errorMessage,
-                                                         mavenOutput);
-        this.kieModuleMetaInfo = Optional.empty();
-        this.kieModule = Optional.empty();
-        this.projectDependencies = Optional.empty();
-    }
-
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         KieModuleMetaInfo kieModuleMetaInfo,
-                                         KieModule kieModule,
                                          List<String> mavenOutput,
-                                         List<URI> projectDependencies) {
-
-        defaultResponse = new DefaultCompilationResponse(successful,
-                                                         mavenOutput);
-        this.kieModuleMetaInfo = Optional.ofNullable(kieModuleMetaInfo);
-        this.kieModule = Optional.ofNullable(kieModule);
-        this.projectDependencies = Optional.ofNullable(projectDependencies);
+                                         Path workingDir) {
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              workingDir,
+                                                              Collections.emptyList(),
+                                                              Collections.emptyList());
+        this.kieModuleMetaInfo = null;
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          KieModuleMetaInfo kieModuleMetaInfo,
                                          KieModule kieModule,
-                                         List<URI> projectDependencies) {
+                                         Map<String, byte[]> projectClassLoaderStore,
+                                         List<String> mavenOutput,
+                                         List<String> targetContent,
+                                         List<String> projectDependencies,
+                                         Path workingDir,
+                                         Set<String> eventTypesClasses) {
 
-        defaultResponse = new DefaultCompilationResponse(successful);
-        this.kieModuleMetaInfo = Optional.ofNullable(kieModuleMetaInfo);
-        this.kieModule = Optional.ofNullable(kieModule);
-        this.projectDependencies = Optional.ofNullable(projectDependencies);
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              workingDir,
+                                                              targetContent,
+                                                              projectDependencies);
+        this.kieModuleMetaInfo = kieModuleMetaInfo;
+        this.kieModule = kieModule;
+        this.projectClassLoaderStore = projectClassLoaderStore;
+        this.eventsTypeClasses = eventTypesClasses;
     }
 
-    @Override
-    public Optional<List<URI>> getProjectDependencies() {
-        return projectDependencies;
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         KieModuleMetaInfo kieModuleMetaInfo,
+                                         KieModule kieModule,
+                                         Map<String, byte[]> projectClassloaderStore,
+                                         List<String> targetContent,
+                                         List<String> projectDependencies,
+                                         Path workingDir) {
+
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              Collections.emptyList(),
+                                                              workingDir,
+                                                              targetContent,
+                                                              projectDependencies);
+        this.kieModuleMetaInfo = kieModuleMetaInfo;
+        this.projectClassLoaderStore = projectClassloaderStore;
+        this.kieModule = kieModule;
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         KieModuleMetaInfo kieModuleMetaInfo,
+                                         KieModule kieModule,
+                                         Map<String, byte[]> projectClassloaderStore,
+                                         Path workingDir) {
+
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              Collections.emptyList(),
+                                                              workingDir);
+        this.kieModuleMetaInfo = kieModuleMetaInfo;
+        this.kieModule = kieModule;
+        this.projectClassLoaderStore = projectClassloaderStore;
     }
 
     @Override
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
-        return kieModuleMetaInfo;
+        return Optional.ofNullable(kieModuleMetaInfo);
     }
 
     @Override
     public Optional<KieModule> getKieModule() {
-        return kieModule;
+        return Optional.ofNullable(kieModule);
     }
 
     @Override
@@ -121,12 +137,52 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse {
     }
 
     @Override
-    public Optional<String> getErrorMessage() {
-        return defaultResponse.getErrorMessage();
+    public List<String> getMavenOutput() {
+        return defaultResponse.getMavenOutput();
     }
 
     @Override
-    public Optional<List<String>> getMavenOutput() {
-        return defaultResponse.getMavenOutput();
+    public Optional<Path> getWorkingDir() {
+        return defaultResponse.getWorkingDir();
+    }
+
+    @Override
+    public List<String> getDependencies() {
+        return defaultResponse.getDependencies();
+    }
+
+    @Override
+    public List<URI> getDependenciesAsURI() {
+        return defaultResponse.getDependenciesAsURI();
+    }
+
+    @Override
+    public List<URL> getDependenciesAsURL() {
+        return defaultResponse.getDependenciesAsURL();
+    }
+
+    @Override
+    public List<String> getTargetContent() {
+        return defaultResponse.getTargetContent();
+    }
+
+    @Override
+    public List<URI> getTargetContentAsURI() {
+        return defaultResponse.getTargetContentAsURI();
+    }
+
+    @Override
+    public List<URL> getTargetContentAsURL() {
+        return defaultResponse.getTargetContentAsURL();
+    }
+
+    @Override
+    public Map<String, byte[]> getProjectClassLoaderStore() {
+        return projectClassLoaderStore;
+    }
+
+    @Override
+    public Set<String> getEventTypeClasses() {
+        return eventsTypeClasses;
     }
 }

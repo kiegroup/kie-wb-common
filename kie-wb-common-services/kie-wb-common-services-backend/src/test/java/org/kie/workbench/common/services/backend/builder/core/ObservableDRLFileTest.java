@@ -46,8 +46,7 @@ public class ObservableDRLFileTest {
 
     @Before
     public void setup() {
-        this.observer = spy(new ObservableDRLFile(ioService));
-        doReturn(nioPath).when(observer).convert(any(Path.class));
+        this.observer = spy(new ObservableDRLFile());
     }
 
     @Test

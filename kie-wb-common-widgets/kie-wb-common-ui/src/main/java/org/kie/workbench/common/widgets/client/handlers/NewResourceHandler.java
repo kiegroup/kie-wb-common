@@ -74,7 +74,7 @@ public interface NewResourceHandler {
     List<Pair<String, ? extends IsWidget>> getExtensions();
 
     /**
-     * Provide NewResourceHandlers with the ability to validate additional parameters before the creation of the new resource
+     * Provide NewResourceHandlers with the ability to accept additional parameters before the creation of the new resource
      * @param baseFileName The base file name for the new item (excluding extension)
      * @param callback Callback depending on validation result
      */

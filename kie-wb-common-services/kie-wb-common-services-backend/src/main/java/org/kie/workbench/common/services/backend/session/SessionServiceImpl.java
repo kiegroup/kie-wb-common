@@ -15,59 +15,53 @@
  */
 package org.kie.workbench.common.services.backend.session;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.drools.core.ClockType;
 import org.drools.core.SessionConfiguration;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfoService;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 
+@ApplicationScoped
 public class SessionServiceImpl
         implements SessionService {
 
-    private BuildInfoService buildInfoService;
+    @Inject
+    private ProjectCache projectCache;
 
+    //@MAXWasHere
     public SessionServiceImpl() {
         //Empty constructor for Weld
     }
 
-    @Inject
-    public SessionServiceImpl(final BuildInfoService buildInfoService) {
-        this.buildInfoService = buildInfoService;
-    }
-
     @Override
-    public KieSession newKieSession(KieProject project, String ksessionName) {
-
-        KieContainer kieContainer = buildInfoService.getBuildInfo( project ).getKieContainer();
-
+    public KieSession newKieSession(final KieProject project,
+                                    final String ksessionName) {
+        final KieContainer kieContainer = getKieContainerFromKieProject(project);
         //If a KieContainer could not be built there is a build error somewhere; so return null to be handled elsewhere
         if (kieContainer == null) {
             return null;
         }
-
         return kieContainer.newKieSession(ksessionName);
-
     }
 
     @Override
     public KieSession newDefaultKieSessionWithPseudoClock(final KieProject project) {
-
-        KieContainer kieContainer = buildInfoService.getBuildInfo( project ).getKieContainer();
-
+        final KieContainer kieContainer = getKieContainerFromKieProject(project);
         //If a KieContainer could not be built there is a build error somewhere; so return null to be handled elsewhere
         if (kieContainer == null) {
             return null;
         }
-
         //We always need a pseudo clock
         final SessionConfiguration conf = SessionConfiguration.newInstance();
         conf.setClockType(ClockType.PSEUDO_CLOCK);
-
         return kieContainer.getKieBase().newKieSession(conf, null);
-
     }
 
+    private KieContainer getKieContainerFromKieProject(final KieProject project) {
+        return projectCache.getOrCreateEntry(project).getKieContainer().orElse(null);
+    }
 }

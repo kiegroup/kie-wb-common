@@ -33,8 +33,8 @@ import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.utils.ProjectResourcePaths;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.forge.roaster.model.SyntaxError;
 import org.kie.workbench.common.screens.datamodeller.model.DataModelerError;
 import org.kie.workbench.common.services.datamodeller.driver.model.DriverError;
@@ -105,15 +105,15 @@ public class DataModelerServiceHelper {
         return vfsPaths;
     }
 
-    public List<ValidationMessage> toValidationMessage( List<DataModelerError> errors ) {
-        List<ValidationMessage> validationMessages = new ArrayList<ValidationMessage>();
-        ValidationMessage validationMessage;
+    public List<BuildMessage> toValidationMessage(List<DataModelerError> errors ) {
+        List<BuildMessage> validationMessages = new ArrayList<BuildMessage>();
+        BuildMessage validationMessage;
 
         if ( errors == null ) {
             return validationMessages;
         }
         for ( DataModelerError error : errors ) {
-            validationMessage = new ValidationMessage();
+            validationMessage = new BuildMessage();
             validationMessage.setPath( error.getFile() );
             validationMessage.setText( error.getMessage() );
             validationMessage.setColumn( error.getColumn() );

@@ -85,7 +85,7 @@ public class ProjectExplorerContentResolver {
 
         final Content content = setupSelectedItems( query );
 
-        //Content may contain invalid state, e.g. Repository deleted, Project deleted etc so validate and reset as appropriate
+        //Content may contain invalid state, e.g. Repository deleted, Project deleted etc so accept and reset as appropriate
         setSelectedOrganizationalUnit( content );
         setSelectedRepository( content );
         setSelectedBranch( content );

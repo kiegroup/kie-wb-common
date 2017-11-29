@@ -20,42 +20,35 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 
 public class ValidatorResultBuilder {
 
-    final List<ValidationMessage> validationMessages;
+    final List<BuildMessage> validationMessages;
 
     public ValidatorResultBuilder() {
         this.validationMessages = new ArrayList<>();
     }
 
-    public ValidatorResultBuilder add( final List<BuildMessage> messages ) {
-        validationMessages.addAll( filterValidationMessages( messages ) );
+    public ValidatorResultBuilder add(final List<BuildMessage> messages) {
+        validationMessages.addAll(filterValidationMessages(messages));
         return this;
     }
 
-    public ValidatorResultBuilder remove( final List<BuildMessage> messages ) {
-        validationMessages.removeAll( filterValidationMessages( messages ) );
+    public ValidatorResultBuilder remove(final List<BuildMessage> messages) {
+        validationMessages.removeAll(filterValidationMessages(messages));
         return this;
     }
 
-    public List<ValidationMessage> results() {
+    public List<BuildMessage> results() {
         return validationMessages;
     }
 
-    private List<ValidationMessage> filterValidationMessages( List<BuildMessage> messages ) {
+    private List<BuildMessage> filterValidationMessages(List<BuildMessage> messages) {
         return messages
                 .stream()
-                .filter( message -> message.getLevel() == Level.ERROR )
-                .map( message -> new ValidationMessage( message.getId(),
-                                                        message.getLevel(),
-                                                        message.getPath(),
-                                                        message.getLine(),
-                                                        message.getColumn(),
-                                                        message.getText() ) )
-                .collect( Collectors.toList() );
+                .filter(message -> message.getLevel() == Level.ERROR)
+                .collect(Collectors.toList());
     }
 }

@@ -18,12 +18,12 @@ package org.kie.workbench.common.screens.datamodeller.validation;
 
 import java.util.Collection;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 
 public interface ObjectPropertyDeleteValidator {
 
-    Collection<ValidationMessage> validate(final DataObject dataObject,
-                                           final ObjectProperty objectProperty);
+    Collection<BuildMessage> validate(final DataObject dataObject,
+                                      final ObjectProperty objectProperty);
 }

@@ -108,7 +108,7 @@ public class WildflyDataSourceAttributes {
     /**
      * Should be a boolean value.
      */
-    public static final String VALIDATE_ON_MATCH = "validate-on-match";
+    public static final String VALIDATE_ON_MATCH = "accept-on-match";
 
     /**
      * Should be a String value.

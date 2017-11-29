@@ -24,6 +24,7 @@ import org.jboss.weld.environment.se.Weld;
 import org.junit.After;
 import org.junit.Before;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.datamodeller.core.AnnotationDefinition;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.server.util.Paths;
@@ -38,6 +39,7 @@ public abstract class AbstractDataModelerServiceWeldTest {
     protected DataModelerService dataModelService;
     protected KieProjectService projectService;
     protected Map<String, AnnotationDefinition> systemAnnotations = null;
+    protected ProjectCache projectCache;
 
     @Before
     public void setUp() throws Exception {
@@ -75,6 +77,14 @@ public abstract class AbstractDataModelerServiceWeldTest {
         projectService = (KieProjectService) beanManager.getReference( projectServiceBean,
                                                                        KieProjectService.class,
                                                                        projectServiceCContext );
+
+
+       //Create  LRUProjectDependenciesClassLoaderCache
+        final Bean projectCacheBean = beanManager.getBeans( ProjectCache.class ).iterator().next();
+        final CreationalContext projectCacheBeanContext = beanManager.createCreationalContext( projectCacheBean );
+        projectCache = (ProjectCache) beanManager.getReference(projectCacheBean,
+                                                               ProjectCache.class,
+                                                               projectCacheBeanContext );
 
         systemAnnotations = dataModelService.getAnnotationDefinitions();
     }

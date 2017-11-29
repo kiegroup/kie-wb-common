@@ -16,119 +16,74 @@
 
 package org.kie.workbench.common.services.backend.builder.service;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.function.Consumer;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.builder.model.BuildResults;
-import org.guvnor.common.services.project.builder.model.IncrementalBuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.workbench.common.services.backend.builder.ala.LocalBuildConfig;
-import org.kie.workbench.common.services.backend.builder.core.Builder;
-import org.kie.workbench.common.services.backend.builder.core.LRUBuilderCache;
-import org.kie.workbench.common.services.shared.project.KieProjectService;
-import org.uberfire.backend.vfs.Path;
-import org.uberfire.workbench.events.ResourceChange;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 
 @Service
 @ApplicationScoped
 public class BuildServiceImpl implements BuildService {
 
-    private BuildServiceHelper buildServiceHelper;
+//    private GuvnorM2Repository guvnorM2Repository;
 
-    private KieProjectService projectService;
+    private ProjectCache projectCache;
 
-    private LRUBuilderCache cache;
+    private String ERROR_LEVEL = "ERROR";
 
-    public BuildServiceImpl( ) {
+    public BuildServiceImpl() {
         //Empty constructor for Weld
     }
 
     @Inject
-    public BuildServiceImpl( final KieProjectService projectService,
-                             final BuildServiceHelper buildServiceHelper,
-                             final LRUBuilderCache cache ) {
-        this.projectService = projectService;
-        this.buildServiceHelper = buildServiceHelper;
-        this.cache = cache;
+    public BuildServiceImpl(final ProjectCache projectCache) {
+        this.projectCache = projectCache;
     }
 
     @Override
-    public BuildResults build( final Project project ) {
-        return buildServiceHelper.localBuild( project );
+    public BuildResults build(final Project project) {
+        return buildInternal(project);
     }
 
-    public void build( final Project project, final Consumer< Builder > consumer ) {
-        buildServiceHelper.localBuild( project, localBinaryConfig ->
-                consumer.accept( localBinaryConfig.getBuilder( ) ) );
+    private BuildResults buildAndDeployInternal(final Project project) {
+        return projectCache.getOrCreateEntry(project).buildAndInstall();
     }
 
-    @Override
-    public BuildResults buildAndDeploy( final Project project ) {
-        return buildAndDeploy( project, DeploymentMode.VALIDATED );
-    }
-
-    @Override
-    public BuildResults buildAndDeploy( final Project project,
-                                        final DeploymentMode mode ) {
-
-        return buildAndDeploy( project, false, mode );
+    private BuildResults buildInternal(final Project project) {
+        return projectCache.getOrCreateEntry(project).build();
     }
 
     @Override
-    public BuildResults buildAndDeploy( final Project project,
-                                        final boolean suppressHandlers ) {
-        return buildAndDeploy( project, suppressHandlers, DeploymentMode.VALIDATED );
+    public BuildResults buildAndDeploy(final Project project) {
+        return buildAndDeployInternal(project);
     }
 
     @Override
-    public BuildResults buildAndDeploy( final Project project,
-                                        final boolean suppressHandlers,
-                                        final DeploymentMode mode ) {
-        return buildServiceHelper.localBuildAndDeploy( project, mode, suppressHandlers );
+    public BuildResults buildAndDeploy(final Project project,
+                                       final DeploymentMode mode) {
+        return buildAndDeployInternal(project);
     }
 
     @Override
-    public boolean isBuilt( final Project project ) {
-        final Builder builder = cache.assertBuilder( project );
-        return builder.isBuilt( );
+    public BuildResults buildAndDeploy(final Project project,
+                                       final boolean suppressHandlers) {
+        return buildAndDeployInternal(project);
     }
 
     @Override
-    public IncrementalBuildResults addPackageResource( final Path resource ) {
-        return buildIncrementally( resource, LocalBuildConfig.BuildType.INCREMENTAL_ADD_RESOURCE );
+    public BuildResults buildAndDeploy(final Project project,
+                                       final boolean suppressHandlers,
+                                       final DeploymentMode mode) {
+        return buildAndDeployInternal(project);
     }
 
     @Override
-    public IncrementalBuildResults deletePackageResource( final Path resource ) {
-        return buildIncrementally( resource, LocalBuildConfig.BuildType.INCREMENTAL_DELETE_RESOURCE );
+    public boolean isBuilt(final Project project) {
+        return projectCache.getOrCreateEntry(project).isBuilt();
     }
-
-    @Override
-    public IncrementalBuildResults updatePackageResource( final Path resource ) {
-        return buildIncrementally( resource, LocalBuildConfig.BuildType.INCREMENTAL_UPDATE_RESOURCE );
-    }
-
-    private IncrementalBuildResults buildIncrementally( Path resource, LocalBuildConfig.BuildType buildType ) {
-        Project project = projectService.resolveProject( resource );
-        if ( project == null ) {
-            return new IncrementalBuildResults( );
-        }
-        return buildServiceHelper.localBuild( project, buildType, resource );
-    }
-
-    @Override
-    public IncrementalBuildResults applyBatchResourceChanges( final Project project,
-                                                              final Map< Path, Collection< ResourceChange > > changes ) {
-        if ( project == null ) {
-            return new IncrementalBuildResults( );
-        }
-        return buildServiceHelper.localBuild( project, changes );
-    }
-
 }

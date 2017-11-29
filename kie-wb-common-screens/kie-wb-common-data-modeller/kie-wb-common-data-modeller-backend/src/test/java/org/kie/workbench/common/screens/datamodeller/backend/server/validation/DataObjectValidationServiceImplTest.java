@@ -20,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
 import javax.enterprise.inject.Instance;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,8 +33,9 @@ import org.kie.workbench.common.services.datamodeller.core.impl.ObjectPropertyIm
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DataObjectValidationServiceImplTest {
@@ -43,9 +45,9 @@ public class DataObjectValidationServiceImplTest {
 
     private DataObjectValidationServiceImpl validationService;
 
-    private ValidationMessage message1 = new ValidationMessage();
+    private BuildMessage message1 = new BuildMessage();
 
-    private ValidationMessage message2 = new ValidationMessage();
+    private BuildMessage message2 = new BuildMessage();
 
     @Before
     public void setUp() {
@@ -64,8 +66,8 @@ public class DataObjectValidationServiceImplTest {
 
     @Test
     public void validateObjectPropertyDeletion() {
-        Collection<ValidationMessage> result = validationService.validateObjectPropertyDeletion(new DataObjectImpl(),
-                                                                                                new ObjectPropertyImpl());
+        Collection<BuildMessage> result = validationService.validateObjectPropertyDeletion(new DataObjectImpl(),
+                                                                                           new ObjectPropertyImpl());
 
         assertEquals(2,
                      result.size());

@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
@@ -43,7 +44,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.messageconsole.client.console.HyperLinkCell;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
@@ -288,6 +289,7 @@ public class DataObjectBrowserViewImpl
         final int defaultColumnWidth = 40;
         final Column<ObjectProperty, List<ImageWrapper>> column = new Column<ObjectProperty, List<ImageWrapper>>(new MultiImageCell()) {
             int maxColumnWidth = defaultColumnWidth;
+
             @Override
             public List<ImageWrapper> getValue(final ObjectProperty property) {
                 List<ImageWrapper> imageWrapperList = fieldMetadataProviderList.stream()
@@ -444,7 +446,7 @@ public class DataObjectBrowserViewImpl
     }
 
     @Override
-    public void showValidationPopupForDeletion(List<ValidationMessage> validationMessages,
+    public void showValidationPopupForDeletion(List<BuildMessage> validationMessages,
                                                Command yesCommand,
                                                Command cancelCommand) {
         validationPopup.showDeleteValidationMessages(yesCommand,

@@ -16,13 +16,10 @@
 
 package org.kie.workbench.common.services.backend.builder.core;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
 import java.util.Arrays;
 import java.util.List;
 
-import org.guvnor.common.services.project.builder.model.BuildMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,34 +28,37 @@ import org.kie.workbench.common.services.shared.whitelist.WhiteList;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ClassVerifierTest {
-	
-	@Mock
-	private KieModuleMetaData kieModuleMetaData;
-	@Mock
-	private TypeSourceResolver typeSourceResolver;
 
-	@Before
-	public void setUp() throws Exception{
-		when(kieModuleMetaData.getPackages()).thenReturn(Arrays.asList("org.kie.workbench.common.services.backend.builder"));
-		when(kieModuleMetaData.getClasses("org.kie.workbench.common.services.backend.builder")).thenReturn(Arrays.asList("SomeClass"));
-		
-		when(kieModuleMetaData.getClass("org.kie.workbench.common.services.backend.builder", "SomeClass")).thenThrow(
-				new IllegalAccessError("The access to the class is not allowed"));				
-	}
-	
-	@Test
-	public void testVerifyClass(){
-		WhiteList whiteList = new WhiteList();	
-		whiteList.add("org.kie.workbench.common.services.backend.builder");
-		
-		ClassVerifier classVerifier = new ClassVerifier(kieModuleMetaData, typeSourceResolver);
-		List<BuildMessage> messages  = classVerifier.verify(whiteList);
-		
-		assertEquals(messages.size(), 1);
-		assertEquals("Verification of class org.kie.workbench.common.services.backend.builder.SomeClass failed and will not be available for authoring.\n"
-				+ "Underlying system error is: The access to the class is not allowed. Please check the necessary external dependencies for this project are configured correctly.",
-				messages.get(0).getText());
-	}		
+    @Mock
+    private KieModuleMetaData kieModuleMetaData;
+    @Mock
+    private TypeSourceResolver typeSourceResolver;
+
+    @Before
+    public void setUp() throws Exception {
+        when(kieModuleMetaData.getPackages()).thenReturn(Arrays.asList("org.kie.workbench.common.services.backend.builder"));
+        when(kieModuleMetaData.getClasses("org.kie.workbench.common.services.backend.builder")).thenReturn(Arrays.asList("SomeClass"));
+
+        when(kieModuleMetaData.getClass("org.kie.workbench.common.services.backend.builder", "SomeClass")).thenThrow(
+                new IllegalAccessError("The access to the class is not allowed"));
+    }
+
+    @Test
+    public void testVerifyClass() {
+        WhiteList whiteList = new WhiteList();
+        whiteList.add("org.kie.workbench.common.services.backend.builder");
+
+        ClassVerifier classVerifier = new ClassVerifier(kieModuleMetaData, typeSourceResolver);
+        List<BuildMessage> messages = classVerifier.verify(whiteList);
+
+        assertEquals(messages.size(), 1);
+        assertEquals("Verification of class org.kie.workbench.common.services.backend.builder.SomeClass failed and will not be available for authoring.\n"
+                             + "Underlying system error is: The access to the class is not allowed. Please check the necessary external dependencies for this project are configured correctly.",
+                     messages.get(0).getText());
+    }
 }

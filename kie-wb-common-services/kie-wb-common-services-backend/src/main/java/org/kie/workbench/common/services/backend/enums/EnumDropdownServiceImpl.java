@@ -24,12 +24,10 @@ import java.util.Map;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.drools.core.util.MVELSafeHelper;
 import org.guvnor.common.services.backend.exceptions.ExceptionUtilities;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.kie.api.builder.KieModule;
-import org.kie.scanner.KieModuleMetaData;
-import org.kie.soup.project.datamodel.commons.util.MVELEvaluator;
-import org.kie.workbench.common.services.backend.builder.service.BuildInfoService;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.enums.EnumDropdownService;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
@@ -48,13 +46,10 @@ public class EnumDropdownServiceImpl implements EnumDropdownService {
     private static final Logger logger = LoggerFactory.getLogger(EnumDropdownServiceImpl.class);
 
     @Inject
-    private BuildInfoService buildInfoService;
-
-    @Inject
     private KieProjectService projectService;
 
     @Inject
-    private MVELEvaluator mvelEvaluator;
+    private ProjectCache projectCache;
 
     @Override
     public String[] loadDropDownExpression(final Path resource,
@@ -67,25 +62,27 @@ public class EnumDropdownServiceImpl implements EnumDropdownService {
             logger.error("A Project could not be resolved for path '" + resource.toURI() + "'. No enums will be returned.");
             return null;
         }
-        final KieModule module = buildInfoService.getBuildInfo(project).getKieModuleIgnoringErrors();
-        if (module == null) {
-            logger.error("A KieModule could not be resolved for path '" + resource.toURI() + "'. No enums will be returned.");
-            return null;
-        }
-        final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData(module).getClassLoader();
 
-        return loadDropDownExpression(classLoader,
-                                      mvelEvaluator,
+//        final KieAFBuilder builder = ;
+//
+//        Optional<KieModule> optionalModule = builder.build(Boolean.FALSE, Boolean.TRUE).getKieModule();
+//        if (!optionalModule.isPresent()) {
+//            logger.error("A KieModule could not be resolved for path '" + resource.toURI() + "'. No enums will be returned.");
+//            return null;
+//        }
+//
+//        final ClassLoader classLoader = KieModuleMetaData.Factory.newKieModuleMetaData(optionalModule.get()).getClassLoader();
+
+        return loadDropDownExpression(projectCache.getOrCreateEntry(project).getClassLoader(),
                                       valuePairs,
                                       expression);
     }
 
     protected String[] loadDropDownExpression(final ClassLoader classLoader,
-                                              final MVELEvaluator mvelEvaluator,
                                               final String[] valuePairs,
                                               String expression) {
         try {
-            final Map<String, String> context = new HashMap<>();
+            final Map<String, String> context = new HashMap<String, String>();
             for (final String valuePair : valuePairs) {
                 if (valuePair == null) {
                     return new String[0];
@@ -112,8 +109,8 @@ public class EnumDropdownServiceImpl implements EnumDropdownService {
 
             final Serializable compiled = MVEL.compileExpression(expression,
                                                                  pctx);
-            Object result = mvelEvaluator.executeExpression(compiled,
-                                                            new HashMap<String, Object>());
+            Object result = MVELSafeHelper.getEvaluator().executeExpression(compiled,
+                                                                            new HashMap<String, Object>());
 
             //Handle result of evaluation
             if (result instanceof String[]) {

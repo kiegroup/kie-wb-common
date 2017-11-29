@@ -23,7 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.jbpm.model.authoring.JBPMProcessModel;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectBuildData;
+import org.kie.workbench.common.services.backend.builder.cache.ProjectCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.mockito.Mock;
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -75,7 +77,7 @@ public class BPMFinderServiceImplTest {
     private KieProjectService projectService;
 
     @Mock
-    private ProjectClassLoaderHelper projectClassLoaderHelper;
+    private ProjectCache projectCache;
 
     @Mock
     private ClassLoader classLoader;
@@ -105,10 +107,12 @@ public class BPMFinderServiceImplTest {
 
         when(classLoader.loadClass(any())).thenAnswer((Answer<Class>) invocation -> String.class);
 
-        when(projectClassLoaderHelper.getProjectClassLoader(any())).thenReturn(classLoader);
+        final ProjectBuildData projectBuildData = mock(ProjectBuildData.class);
+        when(projectBuildData.getClassLoader()).thenReturn(classLoader);
+        when(projectCache.getOrCreateEntry(project)).thenReturn(projectBuildData);
 
         bpmnFormModelGenerator = new BPMNFormModelGeneratorImpl(projectService,
-                                                                projectClassLoaderHelper);
+                                                                projectCache);
 
         finderService = new BPMFinderServiceImpl(ioService,
                                                  projectService,

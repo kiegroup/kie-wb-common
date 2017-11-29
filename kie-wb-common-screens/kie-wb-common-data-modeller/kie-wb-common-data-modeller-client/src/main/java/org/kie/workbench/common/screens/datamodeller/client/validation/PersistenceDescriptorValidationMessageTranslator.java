@@ -19,10 +19,10 @@ package org.kie.workbench.common.screens.datamodeller.client.validation;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.datamodeller.validation.PersistenceDescriptorValidationMessage;
-import org.kie.workbench.common.widgets.client.popups.validation.ValidationMessageTranslator;
+import org.kie.workbench.common.widgets.client.popups.validation.BuildMessageTranslator;
 
 /**
  * This class manages the translation of the PersistenceDescriptor related validations messages returned by
@@ -30,44 +30,44 @@ import org.kie.workbench.common.widgets.client.popups.validation.ValidationMessa
  */
 @ApplicationScoped
 public class PersistenceDescriptorValidationMessageTranslator
-        implements ValidationMessageTranslator {
+        implements BuildMessageTranslator {
 
     public static final String PREFIX = "persistence_descriptor_validation_";
 
     private TranslationService translationService;
 
     @Inject
-    public PersistenceDescriptorValidationMessageTranslator( TranslationService translationService ) {
+    public PersistenceDescriptorValidationMessageTranslator(TranslationService translationService) {
         this.translationService = translationService;
     }
 
     @Override
-    public boolean accept( ValidationMessage checkMessage ) {
+    public boolean accept(BuildMessage checkMessage) {
         return checkMessage instanceof PersistenceDescriptorValidationMessage;
     }
 
     @Override
-    public ValidationMessage translate( ValidationMessage checkMessage ) {
-        PersistenceDescriptorValidationMessage pdValidationMessage = ( PersistenceDescriptorValidationMessage ) checkMessage;
-        ValidationMessage result = new ValidationMessage( );
-        result.setId( checkMessage.getId( ) );
-        result.setLevel( checkMessage.getLevel( ) );
-        String translationKey = createTranslationKey( pdValidationMessage.getId( ) );
+    public BuildMessage translate(BuildMessage checkMessage) {
+        PersistenceDescriptorValidationMessage pdValidationMessage = (PersistenceDescriptorValidationMessage) checkMessage;
+        BuildMessage result = new BuildMessage();
+        result.setId(checkMessage.getId());
+        result.setLevel(checkMessage.getLevel());
+        String translationKey = createTranslationKey(pdValidationMessage.getId());
 
-        if ( translationService.getTranslation( translationKey ) != null ) {
-            if ( pdValidationMessage.getParams( ) != null && !pdValidationMessage.getParams( ).isEmpty( ) ) {
-                pdValidationMessage.getParams().toArray( new String[ pdValidationMessage.getParams().size() ] );
-                result.setText( translationService.format( translationKey, pdValidationMessage.getParams().toArray() ) );
+        if (translationService.getTranslation(translationKey) != null) {
+            if (pdValidationMessage.getParams() != null && !pdValidationMessage.getParams().isEmpty()) {
+                pdValidationMessage.getParams().toArray(new String[pdValidationMessage.getParams().size()]);
+                result.setText(translationService.format(translationKey, pdValidationMessage.getParams().toArray()));
             } else {
-                result.setText( translationService.getTranslation( translationKey ) );
+                result.setText(translationService.getTranslation(translationKey));
             }
         } else {
-            result.setText( checkMessage.getText( ) );
+            result.setText(checkMessage.getText());
         }
         return result;
     }
 
-    private String createTranslationKey( long id ) {
+    private String createTranslationKey(long id) {
         return PREFIX + id;
     }
 }

@@ -18,21 +18,21 @@ package org.kie.workbench.common.services.shared.validation;
 
 import java.util.Collection;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.uberfire.backend.vfs.Path;
 
 /**
  * Checks whether copy action can be safely performed. Implement this class in order to define
  * custom check criterion.
- *
+ * <p>
  * The checks are collected by org.kie.workbench.common.services.shared.validation.ValidationService
  */
 public interface CopyValidator<T> {
 
-    Collection<ValidationMessage> validate( final Path path,
-                                            final T content );
+    Collection<BuildMessage> validate(final Path path,
+                                      final T content);
 
-    Collection<ValidationMessage> validate( final Path path );
+    Collection<BuildMessage> validate(final Path path);
 
-    boolean accept( final Path path );
+    boolean accept(final Path path);
 }

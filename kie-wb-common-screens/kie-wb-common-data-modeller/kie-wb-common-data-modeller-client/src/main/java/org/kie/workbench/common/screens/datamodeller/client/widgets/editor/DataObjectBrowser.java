@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -29,7 +30,7 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.gwtbootstrap3.client.ui.constants.ButtonType;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
@@ -322,11 +323,11 @@ public class DataObjectBrowser
     public void onDeleteProperty(final ObjectProperty objectProperty,
                                  final int index) {
         dataObjectValidationService.call(checkMessages -> {
-            if (((List<ValidationMessage>) checkMessages).isEmpty()) {
+            if (((List<BuildMessage>) checkMessages).isEmpty()) {
                 checkUsagesAndDeleteDataObjectProperty(objectProperty,
                                                        index);
             } else {
-                view.showValidationPopupForDeletion((List<ValidationMessage>) checkMessages,
+                view.showValidationPopupForDeletion((List<BuildMessage>) checkMessages,
                                                     () -> checkUsagesAndDeleteDataObjectProperty(objectProperty,
                                                                                                  index),
                                                     () -> {
@@ -361,7 +362,7 @@ public class DataObjectBrowser
     }
 
     private void checkUsagesAndDeleteDataObjectProperty(final ObjectProperty objectProperty,
-                                                final int index) {
+                                                        final int index) {
 
         final String className = dataObject.getClassName();
         final String fieldName = objectProperty.getName();
@@ -373,8 +374,9 @@ public class DataObjectBrowser
             showAssetUsagesDisplayer.showAssetPartUsages(Constants.INSTANCE.modelEditor_confirm_deletion_of_used_field(objectProperty.getName()),
                                                          currentPath, className, fieldName,
                                                          PartType.FIELD, () -> deleteProperty(objectProperty,
-                                                                               index),
-                                                         () ->{});
+                                                                                              index),
+                                                         () -> {
+                                                         });
         }
     }
 

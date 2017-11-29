@@ -20,13 +20,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.kie.workbench.common.services.backend.compiler.Order;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 
 /**
  * Default implementation, this class can be extended to change the protected configuration Map
  */
-public class ConfigurationStaticStrategy implements ConfigurationStrategy,
-                                                    Order {
+public class ConfigurationStaticStrategy implements ConfigurationStrategy, Order {
 
     protected Map<ConfigurationKey, String> conf;
 
@@ -35,24 +36,33 @@ public class ConfigurationStaticStrategy implements ConfigurationStrategy,
     public ConfigurationStaticStrategy() {
         conf = new HashMap<>();
 
-        conf.put(ConfigurationKey.MAVEN_PLUGINS,
+        conf.put(ConfigurationKey.COMPILER, "jdt");
+        conf.put(ConfigurationKey.SOURCE_VERSION, "1.8");
+        conf.put(ConfigurationKey.TARGET_VERSION, "1.8");
+
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
                  "org.apache.maven.plugins");
-        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN,
+        conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
                  "maven-compiler-plugin");
         conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
                  "3.6.1");
 
-        conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS,
-                 "io.takari.maven.plugins");
-        conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN,
-                 "takari-lifecycle-plugin");
-        conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION,
-                 "1.12.6");
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
+                 "kie.io.takari.maven.plugins");
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
+                 "kie-takari-lifecycle-plugin");
+        conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
+                 "1.13.3");
 
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                  "org.kie");
         conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN,
+                 "kie-maven-plugin");
+        conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN,
                  "kie-takari-plugin");
+
+        conf.put(ConfigurationKey.KIE_VERSION,
+                "7.5.0-SNAPSHOT");
 
         valid = Boolean.TRUE;
     }

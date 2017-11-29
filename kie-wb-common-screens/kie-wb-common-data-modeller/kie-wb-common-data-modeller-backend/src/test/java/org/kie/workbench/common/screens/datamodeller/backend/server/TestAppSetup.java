@@ -22,7 +22,6 @@ import javax.inject.Singleton;
 
 import org.guvnor.m2repo.service.M2RepoService;
 import org.guvnor.structure.server.config.ConfigurationService;
-import org.kie.workbench.common.services.backend.project.ProjectClassLoaderHelper;
 import org.kie.workbench.common.services.shared.kmodule.KModuleService;
 
 import static org.mockito.Mockito.*;
@@ -49,12 +48,12 @@ public class TestAppSetup {
         return mock( ConfigurationService.class );
     }
 
-    @Produces
-    @Alternative
-    public ProjectClassLoaderHelper classLoaderHelper() {
-        ProjectClassLoaderHelper classLoaderHelper = mock( ProjectClassLoaderHelper.class );
-        when(classLoaderHelper.getProjectClassLoader(any())).thenReturn(this.getClass().getClassLoader());
-        return classLoaderHelper;
-    }
+//    @Produces
+//    @Alternative
+//    public ProjectClassLoaderHelper classLoaderHelper() {
+//        ProjectClassLoaderHelper classLoaderHelper = mock( ProjectClassLoaderHelper.class );
+//        when(classLoaderHelper.getProjectClassLoader(any())).thenReturn(this.getClass().getClassLoader());
+//        return classLoaderHelper;
+//    }
 
 }

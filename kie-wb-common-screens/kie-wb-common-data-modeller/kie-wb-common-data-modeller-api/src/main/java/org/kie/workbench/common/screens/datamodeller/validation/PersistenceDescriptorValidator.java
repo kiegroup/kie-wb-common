@@ -18,7 +18,7 @@ package org.kie.workbench.common.screens.datamodeller.validation;
 
 import java.util.List;
 
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceDescriptorModel;
 import org.uberfire.backend.vfs.Path;
 
@@ -29,11 +29,9 @@ public interface PersistenceDescriptorValidator {
 
     /**
      * Validates a persistence descriptor.
-     *
      * @param path path to the persistence descriptor.
-     * @param model the persistence descriptor model to validate.
+     * @param model the persistence descriptor model to accept.
      * @return a list of validation message with the results.
      */
-    List<ValidationMessage> validate( final Path path, final PersistenceDescriptorModel model );
-
+    List<BuildMessage> validate(final Path path, final PersistenceDescriptorModel model);
 }

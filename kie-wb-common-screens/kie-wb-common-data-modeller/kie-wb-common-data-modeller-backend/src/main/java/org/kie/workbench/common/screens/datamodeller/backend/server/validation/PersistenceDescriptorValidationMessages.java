@@ -19,8 +19,8 @@ package org.kie.workbench.common.screens.datamodeller.backend.server.validation;
 import java.util.Arrays;
 import java.util.List;
 
+import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
-import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.kie.workbench.common.screens.datamodeller.validation.PersistenceDescriptorValidationMessage;
 
 public class PersistenceDescriptorValidationMessages {
@@ -79,15 +79,15 @@ public class PersistenceDescriptorValidationMessages {
 
     static final String PROPERTY_VALUE_EMPTY = "Property \"{0}\" has an empty value assigned";
 
-    public static ValidationMessage newValidationMessage( long id, Level level, String text, List<String> params ) {
-        return new PersistenceDescriptorValidationMessage( id, level, text, params );
+    public static BuildMessage newValidationMessage(long id, Level level, String text, List<String> params) {
+        return new PersistenceDescriptorValidationMessage(id, level, text, params);
     }
 
-    public static ValidationMessage newErrorMessage( long id, String text, String ... params ) {
-        return newValidationMessage( id, Level.ERROR, text, Arrays.asList( params != null ? params : new String[]{} ) );
+    public static BuildMessage newErrorMessage(long id, String text, String... params) {
+        return newValidationMessage(id, Level.ERROR, text, Arrays.asList(params != null ? params : new String[]{}));
     }
 
-    public static ValidationMessage newWarningMessage( long id, String text, String ... params ) {
-        return newValidationMessage( id, Level.WARNING, text, Arrays.asList( params != null ? params : new String[]{} ) );
+    public static BuildMessage newWarningMessage(long id, String text, String... params) {
+        return newValidationMessage(id, Level.WARNING, text, Arrays.asList(params != null ? params : new String[]{}));
     }
 }
