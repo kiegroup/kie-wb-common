@@ -141,7 +141,7 @@ public class DefaultMavenCompilerTest {
         }
         assertTrue(res.isSuccessful());
 
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
         assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
@@ -221,7 +221,7 @@ public class DefaultMavenCompilerTest {
 
         assertTrue(res.isSuccessful());
 
-        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_compile");
+        Path incrementalConfiguration = Paths.get(prjFolder + "/target/incremental/kie.io.takari.maven.plugins_kie-takari-lifecycle-plugin_compile_default-compile");
         assertTrue(incrementalConfiguration.toFile().exists());
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
@@ -400,7 +400,7 @@ public class DefaultMavenCompilerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertFalse(pomAsAstring.contains("<artifactId>takari-lifecycle-plugin</artifactId>"));
+        assertFalse(pomAsAstring.contains("<artifactId>kie-takari-lifecycle-plugin</artifactId>"));
         assertFalse(pomAsAstring.contains("<packaging>kjar</packaging>"));
         assertFalse(pomAsAstring.contains("<compilerId>jdt</compilerId>"));
         assertFalse(pomAsAstring.contains("<source>1.8</source>"));
