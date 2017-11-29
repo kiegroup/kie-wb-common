@@ -18,11 +18,8 @@ package org.kie.workbench.common.services.datamodel.backend.server;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-
 import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
@@ -34,8 +31,7 @@ import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 abstract public class AbstractDataModelWeldTest {
 
     private final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
-    private Weld weld;
-    private BeanManager beanManager;
+    private WeldContainer weldContainer;
 
     @Before
     public void setUp() throws Exception {
@@ -43,9 +39,9 @@ abstract public class AbstractDataModelWeldTest {
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
         System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
+
         //Bootstrap WELD container
-        weld = new Weld();
-        beanManager = weld.initialize().getBeanManager();
+        weldContainer = new Weld().initialize();
 
         //Ensure URLs use the default:// scheme
         fs.forceAsDefault();
@@ -53,19 +49,16 @@ abstract public class AbstractDataModelWeldTest {
 
     @After
     public void tearDown() {
-        // beanManager will be null in case weld.initialize() failed. And if that is the case the shutdown method
-        // would return NPE
-        if (weld != null && beanManager != null) {
-            weld.shutdown();
+        // Avoid NPE in case weld.initialize() failed
+        if (weldContainer != null) {
+            weldContainer.shutdown();
         }
     }
 
     protected ProjectDataModelOracle initializeProjectDataModelOracle(String projectResourceDirectoryPath) throws URISyntaxException {
-        final Bean<?> dataModelServiceBean = beanManager.getBeans(DataModelService.class).iterator().next();
-        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
-        DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean, DataModelService.class, cc);
+        DataModelService dataModelService = weldContainer.instance().select(DataModelService.class).get();
 
-        final URL packageUrl = this.getClass().getResource(projectResourceDirectoryPath);
+        final URL packageUrl = getClass().getResource(projectResourceDirectoryPath);
         final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
         final Path packagePath = Paths.convert(nioPackagePath);
 
