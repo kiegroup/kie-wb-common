@@ -61,12 +61,7 @@ public class MavenOutputConverterTest {
                                                   "2017-11-16 16:35:03,918 [Thread-2579] INFO  Changes detected - recompiling the module!",
                                                   "2017-11-16 16:35:03,920 [Thread-2579] WARN  File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!",
                                                   "2017-11-16 16:35:03,930 [Thread-2579] INFO  Compiling 4 source files to /var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/41643253-9e34-4768-985d-74a2f3728b7d/myrepo/mortgages/target/classes",
-                                                  "2017-11-16 16:35:05,023 [Thread-2579] WARN  /var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/41643253-9e34-4768-985d-74a2f3728b7d/myrepo/mortgages/src/main/java/mortgages/mortgages/Applicant.java:[21] ",
-                                                  "\tstatic final xxxx serialVersionUID = 1L;",
-                                                  "\t             ^^^^",
-                                                  "xxxx cannot be resolved to a type",
-                                                  "2. WARNING: CAL10NAnnotationProcessor 0.8.1 initialized",
-                                                  "2 problems (1 error, 1 warning)",
+                                                  "2017-11-27 23:09:53,264 [Thread-2614] WARN  /var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/41643253-9e34-4768-985d-74a2f3728b7d/myrepo/mortgages/src/main/java/mortgages/mortgages/Applicant.java:[21,15] [ERROR] xxxxx cannot be resolved to a type",
                                                   "2017-11-16 16:35:05,023 [Thread-2579] INFO  ",
                                                   "2017-11-16 16:35:05,023 [Thread-2579] INFO  --- kie-maven-plugin:7.5.0-SNAPSHOT:build (default-build) @ mortgages ---",
                                                   "2017-11-16 16:35:05,045 [Thread-2579] INFO  Loading kie.conf from  ",
@@ -334,49 +329,48 @@ public class MavenOutputConverterTest {
                                                                                   path,
                                                                                   "/var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/41643253-9e34-4768-985d-74a2f3728b7d/myrepo/mortgages/");
 
-        assertEquals(16, results.getErrorMessages().size());
-        assertEquals("\tstatic final xxxx serialVersionUID = 1L;", results.getErrorMessages().get(0).getText());
-        assertEquals("\t             ^^^^", results.getErrorMessages().get(1).getText());
-        assertEquals("xxxx cannot be resolved to a type", results.getErrorMessages().get(2).getText());
-        assertEquals("2. WARNING: CAL10NAnnotationProcessor 0.8.1 initialized", results.getErrorMessages().get(3).getText());
-
-        for (int i = 0; i < 4; i++) {
-            final BuildMessage buildMessage = results.getErrorMessages().get(i);
-            assertEquals(convert(path.resolve("src/main/java/mortgages/mortgages/Applicant.java")), buildMessage.getPath());
-            assertEquals(0, buildMessage.getColumn());
-            assertEquals(21, buildMessage.getLine());
-            assertEquals(Level.ERROR, buildMessage.getLevel());
+        for (BuildMessage buildMessage : results.getMessages()) {
+            System.out.println(buildMessage.getText());
         }
 
+        assertEquals(13, results.getErrorMessages().size());
+        assertEquals(" [ERROR] xxxxx cannot be resolved to a type", results.getErrorMessages().get(0).getText());
+
+        final BuildMessage buildMessage = results.getErrorMessages().get(0);
+        assertEquals(convert(path.resolve("src/main/java/mortgages/mortgages/Applicant.java")), buildMessage.getPath());
+        assertEquals(15, buildMessage.getColumn());
+        assertEquals(21, buildMessage.getLine());
+        assertEquals(Level.ERROR, buildMessage.getLevel());
+
+        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(1).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(1).getPath());
+        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(2).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(2).getPath());
+
+        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(3).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Underage.rdrl")), results.getErrorMessages().get(3).getPath());
+
         assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(4).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(4).getPath());
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(5).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(5).getPath());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(4).getPath());
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(6).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Underage.rdrl")), results.getErrorMessages().get(6).getPath());
-
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(7).getText());
+        assertEquals("Unable to Analyse Expression applicant.setApproved(true);:", results.getErrorMessages().get(5).getText());
+        assertEquals("[Error: unable to resolve method using strict-mode: org.drools.core.spi.KnowledgeHelper.applicant()]", results.getErrorMessages().get(6).getText());
+        assertEquals("[Near : {... applicant.setApproved(true); ....}]", results.getErrorMessages().get(7).getText());
+        assertEquals("             ^", results.getErrorMessages().get(8).getText());
+        assertEquals("[Line: 5, Column: 0]", results.getErrorMessages().get(9).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(5).getPath());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(6).getPath());
         assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(7).getPath());
-
-        assertEquals("Unable to Analyse Expression applicant.setApproved(true);:", results.getErrorMessages().get(8).getText());
-        assertEquals("[Error: unable to resolve method using strict-mode: org.drools.core.spi.KnowledgeHelper.applicant()]", results.getErrorMessages().get(9).getText());
-        assertEquals("[Near : {... applicant.setApproved(true); ....}]", results.getErrorMessages().get(10).getText());
-        assertEquals("             ^", results.getErrorMessages().get(11).getText());
-        assertEquals("[Line: 5, Column: 0]", results.getErrorMessages().get(12).getText());
         assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(8).getPath());
         assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(9).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(10).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(11).getPath());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/CreditApproval.rdslr")), results.getErrorMessages().get(12).getPath());
 
-        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(13).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/RegexDslRule.rdslr")), results.getErrorMessages().get(13).getPath());
+        assertEquals("Unable to resolve ObjectType 'Applicant'", results.getErrorMessages().get(10).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/RegexDslRule.rdslr")), results.getErrorMessages().get(10).getPath());
 
-        assertEquals("Rule Compilation error Only a type can be imported. mortgages.mortgages.Applicant resolves to a package", results.getErrorMessages().get(14).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Dummy rule.drl")), results.getErrorMessages().get(14).getPath());
+        assertEquals("Rule Compilation error Only a type can be imported. mortgages.mortgages.Applicant resolves to a package", results.getErrorMessages().get(11).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/Dummy rule.drl")), results.getErrorMessages().get(11).getPath());
 
-        assertEquals("Error importing : 'mortgages.mortgages.Applicant'", results.getErrorMessages().get(15).getText());
-        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(15).getPath());
+        assertEquals("Error importing : 'mortgages.mortgages.Applicant'", results.getErrorMessages().get(12).getText());
+        assertEquals(convert(path.resolve("src/main/resources/mortgages/mortgages/No bad credit checks.rdrl")), results.getErrorMessages().get(12).getPath());
     }
 }

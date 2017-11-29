@@ -18,12 +18,14 @@ package org.kie.workbench.common.services.backend.compiler.impl.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.shared.builder.model.BuildMessage;
 import org.guvnor.common.services.shared.message.Level;
+import org.uberfire.backend.server.util.Paths;
 import org.uberfire.java.nio.file.Path;
 
 import static org.uberfire.backend.server.util.Paths.convert;
@@ -36,17 +38,13 @@ public class MavenOutputConverter {
     private static Collection<InputProcessor> filters = new ArrayList<>();
 
     static {
-        //JDT: failOnError=false
-        //"2017-11-16 16:35:05,023 [Thread-2579] WARN  /private/var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/41643253-9e34-4768-985d-74a2f3728b7d/myrepo/mortgages/src/main/java/mortgages/mortgages/Applicant.java:[21] ",
-        //"\tstatic final xxxx serialVersionUID = 1L;",
-        //"\t             ^^^^",
-        //"xxxx cannot be resolved to a type",
+        //2017-11-28 13:21:31,070 [Thread-2604] WARN  /private/var/folders/j4/86jpk9rx5rzdrbtrxwsfv0pr0000gn/T/maven/6bb64341-93ab-4e26-813d-84ee2a8c9700/myrepo/mortgages/src/main/java/mortgages/mortgages/Applicant.java:[21,18] [ERROR] xxxx cannot be resolved to a type
         filters.add(new BaseInputProcessor() {
             @Override
             public boolean accept(final Path rootPath,
                                   final String workingDir,
                                   final String value) {
-                return value.matches(".*\\s+WARN\\s+" + workingDir + ".*");
+                return value.matches(".*\\s+WARN\\s+" + workingDir + ".*\\s+\\[ERROR\\]\\s+.*");
             }
 
             @Override
@@ -54,19 +52,39 @@ public class MavenOutputConverter {
                                   final String workingDir,
                                   final List<String> allValues,
                                   final int index) {
-                List<BuildMessage> result = new ArrayList<>();
                 final BuildMessage msg = getBuildMessage(rootPath, workingDir, allValues.get(index));
-                int j = index + 1;
-                for (; j < allValues.size(); j++) {
-                    final String nextItem = allValues.get(j);
-                    if (nextItem.matches("\\d+\\s+problems?\\s+\\(.*")) {
-                        break;
-                    } else {
-                        result.add(getBuildMessage(msg, nextItem));
-                    }
-                }
+                return new Result(Collections.singletonList(msg), index + 1);
+            }
 
-                return new Result(result, j);
+            private BuildMessage getBuildMessage(final Path rootPath,
+                                                 final String workingDir,
+                                                 final String item) {
+                final BuildMessage msg = new BuildMessage();
+                final int indexOfEdnFilePath = item.lastIndexOf(":[");
+                final String fileName = item.substring(item.indexOf(workingDir) + workingDir.length(), indexOfEdnFilePath);
+                final int endLineInfoIndex = indexOfEdnFilePath + item.substring(indexOfEdnFilePath).indexOf("]");
+                final LineColumn lineAndColumn = getLineAndColumn(item.substring(indexOfEdnFilePath + 2, endLineInfoIndex));
+
+                msg.setLine(Integer.parseInt(lineAndColumn.getLine()));
+                if (lineAndColumn.getColumn() != null) {
+                    msg.setColumn(Integer.parseInt(lineAndColumn.getColumn()));
+                }
+                msg.setText(item.substring(endLineInfoIndex + 1));
+                msg.setPath(Paths.convert(rootPath.resolve(fileName)));
+                msg.setLevel(Level.ERROR);
+
+                return msg;
+            }
+
+            private LineColumn getLineAndColumn(final String errorLine) {
+                if (errorLine.contains(",")) {
+                    String[] result = errorLine.split(",");
+                    return new LineColumn(result[0], result[1]);
+                } else if (errorLine.contains(":")) {
+                    String[] result = errorLine.split(":");
+                    return new LineColumn(result[0], result[1]);
+                }
+                return new LineColumn(errorLine);
             }
         });
         //KIE MAVEN PLUGIN
@@ -203,11 +221,6 @@ public class MavenOutputConverter {
                     }
                 }
                 return true;
-            }
-
-            private int nextCharIndex(String message, int index, String s) {
-                int substringIndex = message.substring(index).indexOf(s);
-                return substringIndex + index;
             }
         });
     }

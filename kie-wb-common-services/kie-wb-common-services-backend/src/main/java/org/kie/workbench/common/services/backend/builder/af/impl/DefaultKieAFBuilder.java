@@ -45,8 +45,8 @@ import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 
 public class DefaultKieAFBuilder implements KieAFBuilder {
 
-    private final Path originalProjectRootPath;
-    private final Git git;
+    private Path originalProjectRootPath;
+    private Git git;
     private AFCompiler<KieCompilationResponse> compiler;
     private WorkspaceCompilationInfo info;
     private CompilationRequest req;
@@ -56,19 +56,38 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     public DefaultKieAFBuilder(final Path projectRootPath,
                                final String mavenRepo) {
-        this.originalProjectRootPath = projectRootPath;
-        this.mavenRepo = mavenRepo;
-        this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new KieDefaultMavenCompiler()));
         final Path projectRepo;
-        if (originalProjectRootPath.getFileSystem() instanceof JGitFileSystem) {
-            this.git = JGitUtils.tempClone((JGitFileSystem) originalProjectRootPath.getFileSystem(), getFolderName());
-            projectRepo = Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(originalProjectRootPath.getFileName().toString()).toUri());
+        if (projectRootPath.getFileSystem() instanceof JGitFileSystem) {
+            this.git = JGitUtils.tempClone((JGitFileSystem) projectRootPath.getFileSystem(), getFolderName());
+            try {
+                projectRepo = Paths.get(git.getRepository().getDirectory().getParentFile().toPath().resolve(projectRootPath.getFileName().toString()).toFile().getCanonicalFile().toPath().toUri());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         } else {
             git = null;
             projectRepo = projectRootPath;
         }
+        setup(projectRootPath, mavenRepo, git, projectRepo);
+    }
 
-        info = new WorkspaceCompilationInfo(projectRepo);
+    public DefaultKieAFBuilder(final Path projectRootPath,
+                               final String mavenRepo,
+                               final Git git,
+                               final Path workingDir) {
+        setup(projectRootPath, mavenRepo, git, workingDir);
+    }
+
+    private void setup(Path projectRootPath,
+                       String mavenRepo,
+                       Git git,
+                       Path workingDir) {
+        this.originalProjectRootPath = projectRootPath;
+        this.git = git;
+        this.mavenRepo = mavenRepo;
+        this.compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new KieDefaultMavenCompiler()));
+
+        info = new WorkspaceCompilationInfo(workingDir);
         req = new DefaultCompilationRequest(mavenRepo,
                                             info,
                                             new String[]{MavenCLIArgs.PACKAGE},
@@ -406,5 +425,9 @@ public class DefaultKieAFBuilder implements KieAFBuilder {
 
     public Path getGITURI() {
         return originalProjectRootPath;
+    }
+
+    public Git getGit() {
+        return git;
     }
 }

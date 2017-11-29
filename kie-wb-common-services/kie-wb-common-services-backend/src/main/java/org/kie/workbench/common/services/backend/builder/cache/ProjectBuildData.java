@@ -92,8 +92,6 @@ public class ProjectBuildData {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private static final String ERROR_LEVEL = "ERROR";
-
     private static final MapClassLoader EMPTY_CLASSLOADER = new MapClassLoader(Collections.emptyMap(), new URLClassLoader(new URL[0], ClassLoader.getSystemClassLoader().getParent()));
     private static final ProjectDataModelOracle EMPTY_PROJECT_ORACLE = newProjectOracleBuilder(new RawMVELEvaluator()).build();
 
@@ -381,18 +379,18 @@ public class ProjectBuildData {
 
     private List<String> clearTargetAndListPackages(final Collection<Path> changedPaths) {
         final List<String> packages = new ArrayList<>();
-        if (workingDir != null && workingDir.resolve("target/classes").toFile().exists()) {
-            final Path baseTargetPath = workingDir.resolve("target/classes");
-            for (final Path path : changedPaths) {
-                final Path basePath = path.subpath(convert(project.getRootPath()).getNameCount(), path.getNameCount());
-                if (basePath.startsWith("src/main/java") || basePath.startsWith("src/main/resources")) {
-                    final Path relativeFilePath = path.subpath(convert(project.getRootPath()).getNameCount() + 3, path.getNameCount());
-                    final Path filePackage = relativeFilePath.subpath(0, relativeFilePath.getNameCount() - 1);
-                    packages.add(filePackage.toString().replace('/', '.'));
-                    final String fullFileName = path.getFileName().toString();
-                    final String fileName = fullFileName.substring(0, fullFileName.lastIndexOf('.'));
-                    Files.deleteIfExists(baseTargetPath.resolve(filePackage.resolve(fileName + ".class")));
-                }
+//        if (workingDir != null && workingDir.resolve("target/classes").toFile().exists()) {
+//            final Path baseTargetPath = workingDir.resolve("target/classes");
+        for (final Path path : changedPaths) {
+            final Path basePath = path.subpath(convert(project.getRootPath()).getNameCount(), path.getNameCount());
+            if (basePath.startsWith("src/main/java") || basePath.startsWith("src/main/resources")) {
+                final Path relativeFilePath = path.subpath(convert(project.getRootPath()).getNameCount() + 3, path.getNameCount());
+                final Path filePackage = relativeFilePath.subpath(0, relativeFilePath.getNameCount() - 1);
+                packages.add(filePackage.toString().replace('/', '.'));
+//                    final String fullFileName = path.getFileName().toString();
+//                    final String fileName = fullFileName.substring(0, fullFileName.lastIndexOf('.'));
+//                    Files.deleteIfExists(baseTargetPath.resolve(filePackage.resolve(fileName + ".class")));
+//                }
             }
         }
         return packages;
@@ -400,7 +398,11 @@ public class ProjectBuildData {
 
     private DefaultKieAFBuilder getBuilder() {
         if (builder == null || isReBuild.get()) {
-            builder = new DefaultKieAFBuilder(convert(project.getRootPath()), mavenRepo);
+            if (builder == null) {
+                builder = new DefaultKieAFBuilder(convert(project.getRootPath()), mavenRepo);
+            } else {
+                builder = new DefaultKieAFBuilder(convert(project.getRootPath()), mavenRepo, builder.getGit(), workingDir);
+            }
         }
         return builder;
     }
