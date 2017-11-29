@@ -15,38 +15,37 @@
 
 package org.kie.workbench.common.services.datamodel.backend.server;
 
-import org.jboss.weld.environment.se.Weld;
-import org.junit.After;
-import org.junit.Before;
-import org.uberfire.backend.server.util.Paths;
-import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
+import org.jboss.weld.environment.se.Weld;
+import org.junit.After;
+import org.junit.Before;
+import org.kie.soup.project.datamodel.oracle.ProjectDataModelOracle;
+import org.kie.workbench.common.services.datamodel.backend.server.service.DataModelService;
+import org.uberfire.backend.server.util.Paths;
+import org.uberfire.backend.vfs.Path;
+import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
+
 abstract public class AbstractDataModelWeldTest {
 
-    protected final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
-    protected Weld weld;
-    protected BeanManager beanManager;
-    protected Paths paths;
+    private final SimpleFileSystemProvider fs = new SimpleFileSystemProvider();
+    private Weld weld;
+    private BeanManager beanManager;
 
     @Before
     public void setUp() throws Exception {
         // disable git and ssh daemons as they are not needed for the tests
-        System.setProperty( "org.uberfire.nio.git.daemon.enabled", "false" );
-        System.setProperty( "org.uberfire.nio.git.ssh.enabled", "false" );
-        System.setProperty( "org.uberfire.sys.repo.monitor.disabled", "true" );
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+        System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
         //Bootstrap WELD container
         weld = new Weld();
         beanManager = weld.initialize().getBeanManager();
-        //Instantiate Paths used in tests for Path conversion
-        final Bean pathsBean = (Bean) beanManager.getBeans( Paths.class ).iterator().next();
-        final CreationalContext cc = beanManager.createCreationalContext( pathsBean );
-        paths = (Paths) beanManager.getReference( pathsBean,
-                Paths.class,
-                cc );
 
         //Ensure URLs use the default:// scheme
         fs.forceAsDefault();
@@ -61,4 +60,15 @@ abstract public class AbstractDataModelWeldTest {
         }
     }
 
+    protected ProjectDataModelOracle initializeProjectDataModelOracle(String projectResourceDirectoryPath) throws URISyntaxException {
+        final Bean<?> dataModelServiceBean = beanManager.getBeans(DataModelService.class).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
+        DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean, DataModelService.class, cc);
+
+        final URL packageUrl = this.getClass().getResource(projectResourceDirectoryPath);
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
+        final Path packagePath = Paths.convert(nioPackagePath);
+
+        return dataModelService.getProjectDataModel(packagePath);
+    }
 }
