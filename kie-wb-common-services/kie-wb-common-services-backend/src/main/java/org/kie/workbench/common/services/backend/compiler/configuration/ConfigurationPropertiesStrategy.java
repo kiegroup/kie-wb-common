@@ -23,12 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.kie.workbench.common.services.backend.compiler.Order;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
+import org.guvnor.common.services.project.backend.server.utils.configuration.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
-                                                        Order {
+        Order {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPropertiesStrategy.class);
 
@@ -43,24 +45,38 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy,
         if (isValid()) {
             conf = new HashMap<>();
 
-            conf.put(ConfigurationKey.MAVEN_PLUGINS,
-                     props.getProperty(ConfigurationKey.MAVEN_PLUGINS.name()));
-            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN,
-                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN.name()));
+            conf.put(ConfigurationKey.COMPILER,
+                     props.getProperty(ConfigurationKey.COMPILER.name()));
+            conf.put(ConfigurationKey.SOURCE_VERSION,
+                     props.getProperty(ConfigurationKey.SOURCE_VERSION.name()));
+            conf.put(ConfigurationKey.TARGET_VERSION,
+                     props.getProperty(ConfigurationKey.TARGET_VERSION.name()));
+            conf.put(ConfigurationKey.FAIL_ON_ERROR,
+                     props.getProperty(ConfigurationKey.FAIL_ON_ERROR.name()));
+
+            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP,
+                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()));
+            conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT,
+                     props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
             conf.put(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION,
                      props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name()));
 
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGINS.name()));
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN.name()));
-            conf.put(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION,
-                     props.getProperty(ConfigurationKey.ALTERNATIVE_COMPILER_PLUGIN_VERSION.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
+            conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION,
+                     props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
 
             conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS,
                      props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGINS.name()));
             conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN,
                      props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGIN.name()));
+            conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN,
+                     props.getProperty(ConfigurationKey.KIE_TAKARI_PLUGIN.name()));
+
+            conf.put(ConfigurationKey.KIE_VERSION,
+                    props.getProperty(ConfigurationKey.KIE_VERSION.name()));
         }
     }
 

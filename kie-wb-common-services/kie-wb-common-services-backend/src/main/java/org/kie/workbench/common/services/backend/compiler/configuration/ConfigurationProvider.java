@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+
 import java.util.Map;
 
 /***

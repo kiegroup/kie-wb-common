@@ -17,7 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
 import java.io.File;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -32,15 +32,15 @@ import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
-import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.nio.AFCompiler;
-import org.kie.workbench.common.services.backend.compiler.nio.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.WorkspaceCompilationInfo;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.DefaultCompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.nio.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.AFCompiler;
+import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -93,8 +93,7 @@ public class KieMetadataTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
-                                                               new HashMap<>(),
-                                                               Boolean.TRUE);
+                                                               Boolean.TRUE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
@@ -102,8 +101,11 @@ public class KieMetadataTest {
                                                       "KieMetadataTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
         }
 
-        if (res.getErrorMessage().isPresent()) {
-            logger.info("Error:" + res.getErrorMessage().get());
+        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
+            List<String> msgs = res.getMavenOutput().get();
+            for(String msg: msgs){
+                logger.info(msg);
+            }
         }
 
         Assert.assertTrue(res.isSuccessful());
@@ -123,12 +125,12 @@ public class KieMetadataTest {
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         Assert.assertTrue(kieModuleOptional.isPresent());
 
-        Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
+        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
+        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
         KieModule kModule = kieModuleOptional.get();
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-                                                                        res.getProjectDependencies().get());
+                                                                        res.getProjectDependenciesAsURI().get());
         Assert.assertNotNull(kieModuleMetaData);
         //comment if you want read the log file after the test run
         TestUtil.rm(tmpRoot.toFile());
@@ -155,8 +157,7 @@ public class KieMetadataTest {
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
-                                                                   new HashMap<>(),
-                                                                   Boolean.TRUE);
+                                                                   Boolean.TRUE, Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
 
             if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
@@ -165,8 +166,11 @@ public class KieMetadataTest {
             }
 
             Assert.assertTrue(res.getMavenOutput().isPresent());
-            if (res.getErrorMessage().isPresent()) {
-                logger.info(res.getErrorMessage().get());
+            if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
+                List<String> msgs = res.getMavenOutput().get();
+                for(String msg: msgs){
+                    logger.info(msg);
+                }
             }
 
             Assert.assertTrue(res.isSuccessful());
@@ -183,8 +187,8 @@ public class KieMetadataTest {
             Optional<KieModule> kieModuleOptional = res.getKieModule();
             Assert.assertTrue(kieModuleOptional.isPresent());
 
-            Assert.assertTrue(res.getProjectDependencies().isPresent());
-            Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
+            Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
+            Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
 
             //comment if you want read the log file after the test run
             TestUtil.rm(tmpRoot.toFile());
@@ -211,15 +215,17 @@ public class KieMetadataTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS +alternateSettingsAbsPath},
-                                                               new HashMap<>(),
-                                                               Boolean.FALSE);
+                                                               Boolean.FALSE, Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
         if (res.getMavenOutput().isPresent() && !res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(res.getMavenOutput().get(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
         }
-        if (res.getErrorMessage().isPresent()) {
-            logger.info(res.getErrorMessage().get());
+        if (!res.isSuccessful() && res.getMavenOutput().isPresent()) {
+            List<String> msgs = res.getMavenOutput().get();
+            for(String msg: msgs){
+                logger.info(msg);
+            }
         }
 
         Assert.assertTrue(res.isSuccessful());
@@ -237,11 +243,11 @@ public class KieMetadataTest {
         Assert.assertTrue(kieModuleOptional.isPresent());
         KieModule kModule = kieModuleOptional.get();
 
-        Assert.assertTrue(res.getProjectDependencies().isPresent());
-        Assert.assertTrue(res.getProjectDependencies().get().size() == 5);
+        Assert.assertTrue(res.getProjectDependenciesAsURI().isPresent());
+        Assert.assertTrue(res.getProjectDependenciesAsURI().get().size() == 5);
 
         KieModuleMetaData kieModuleMetaData = new KieModuleMetaDataImpl((InternalKieModule) kModule,
-                                                                        res.getProjectDependencies().get());
+                                                                        res.getProjectDependenciesAsURI().get());
 
         //KieModuleMetaData kieModuleMetaData = KieModuleMetaData.Factory.newKieModuleMetaData(kModule); // broken
         Assert.assertNotNull(kieModuleMetaData);

@@ -23,7 +23,6 @@ import org.guvnor.structure.server.config.ConfigurationService;
 import org.guvnor.test.WeldJUnitRunner;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.backend.builder.core.LRUBuilderCache;
 import org.kie.workbench.common.services.datamodel.backend.server.cache.LRUProjectDataModelOracleCache;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.uberfire.backend.server.util.Paths;
@@ -51,8 +50,6 @@ public abstract class AbstractWeldBuilderIntegrationTest {
     protected BuildService buildService;
     @Inject
     protected KieProjectService projectService;
-    @Inject
-    protected LRUBuilderCache builderCache;
     @Inject
     protected LRUProjectDataModelOracleCache projectDMOCache;
 

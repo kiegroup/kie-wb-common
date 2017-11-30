@@ -35,25 +35,26 @@ public class ProjectDataModelDependencyExclusionTest extends AbstractDataModelWe
 
     @Test
     public void testBuilderExcludeTestProvidedScopeDependencies() throws Exception {
-        final Bean dataModelServiceBean = (Bean) beanManager.getBeans(DataModelService.class).iterator().next();
-        final CreationalContext cc = beanManager.createCreationalContext(dataModelServiceBean);
-        final DataModelService dataModelService = (DataModelService) beanManager.getReference(dataModelServiceBean,
-                                                                                              DataModelService.class,
-                                                                                              cc);
+        final Bean dataModelServiceBean = (Bean) beanManager.getBeans( DataModelService.class ).iterator().next();
+        final CreationalContext cc = beanManager.createCreationalContext( dataModelServiceBean );
+        final DataModelService dataModelService = (DataModelService) beanManager.getReference( dataModelServiceBean,
+                                                                                               DataModelService.class,
+                                                                                               cc );
 
-        final URL packageUrl = this.getClass().getResource("/DataModelDependencyExclusionTest1");
-        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath(packageUrl.toURI());
-        final Path packagePath = paths.convert(nioPackagePath);
+        final URL packageUrl = this.getClass().getResource( "/DataModelDependencyExclusionTest1" );
+        final org.uberfire.java.nio.file.Path nioPackagePath = fs.getPath( packageUrl.toURI() );
+        final Path packagePath = paths.convert( nioPackagePath );
 
-        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel(packagePath);
+        final ProjectDataModelOracle oracle = dataModelService.getProjectDataModel( packagePath , Boolean.FALSE);
 
-        assertNotNull(oracle);
+        assertNotNull( oracle );
 
-        assertEquals(2,
-                     oracle.getProjectModelFields().size());
-        assertContains("t7p1.Bean1",
-                       oracle.getProjectModelFields().keySet());
-        assertContains("t7p2.Bean2",
-                       oracle.getProjectModelFields().keySet());
+        assertEquals( 2,
+                      oracle.getProjectModelFields().size() );
+        assertContains( "t7p1.Bean1",
+                        oracle.getProjectModelFields().keySet() );
+        assertContains( "t7p2.Bean2",
+                        oracle.getProjectModelFields().keySet() );
     }
+
 }

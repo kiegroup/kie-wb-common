@@ -18,7 +18,7 @@ package org.kie.workbench.common.services.shared.project;
 
 import org.guvnor.common.services.project.model.Project;
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.kie.soup.commons.validation.PortablePreconditions;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import org.uberfire.backend.vfs.Path;
 
 @Portable
@@ -44,14 +44,10 @@ public class KieProject
         super(rootPath,
               pomXMLPath,
               projectName);
-        this.kmoduleXMLPath = PortablePreconditions.checkNotNull("kmoduleXMLPath",
-                                                                 kmoduleXMLPath);
-        this.importsPath = PortablePreconditions.checkNotNull("importsPath",
-                                                              importsPath);
-        this.repositoriesPath = PortablePreconditions.checkNotNull("repositoriesPath",
-                                                                   repositoriesPath);
-        this.packageNamesWhiteListPath = PortablePreconditions.checkNotNull("packageNamesWhiteListPath",
-                                                                            packageNamesWhiteListPath);
+        this.kmoduleXMLPath = checkNotNull("kmoduleXMLPath", kmoduleXMLPath);
+        this.importsPath = checkNotNull("importsPath",importsPath);
+        this.repositoriesPath = checkNotNull("repositoriesPath",repositoriesPath);
+        this.packageNamesWhiteListPath = checkNotNull("packageNamesWhiteListPath", packageNamesWhiteListPath);
     }
 
     public Path getKModuleXMLPath() {

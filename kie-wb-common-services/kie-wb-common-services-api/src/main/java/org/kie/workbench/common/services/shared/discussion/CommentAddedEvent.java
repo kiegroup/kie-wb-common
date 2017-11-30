@@ -17,9 +17,9 @@
 package org.kie.workbench.common.services.shared.discussion;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import org.uberfire.backend.vfs.Path;
 
-import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @Portable
 public class CommentAddedEvent {
@@ -37,12 +37,9 @@ public class CommentAddedEvent {
             Path path,
             String comment,
             Long timestamp) {
-        this.path = checkNotNull("path",
-                                 path);
-        this.userName = checkNotNull("userName",
-                                     userName);
-        this.comment = checkNotNull("comment",
-                                    comment);
+        this.path = checkNotNull("path", path);
+        this.userName = checkNotNull("userName", userName);
+        this.comment = checkNotNull("comment", comment);
         this.timestamp = checkNotNull("timestamp",
                                       timestamp);
     }

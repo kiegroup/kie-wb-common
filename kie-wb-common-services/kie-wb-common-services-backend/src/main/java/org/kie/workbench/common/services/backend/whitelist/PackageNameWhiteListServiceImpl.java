@@ -24,6 +24,7 @@ import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.guvnor.common.services.backend.cache.BuilderCache;
 import org.kie.workbench.common.services.shared.project.KieProject;
 import org.kie.workbench.common.services.shared.project.KieProjectService;
 import org.kie.workbench.common.services.shared.whitelist.PackageNameWhiteListService;
@@ -45,19 +46,24 @@ public class PackageNameWhiteListServiceImpl
     private KieProjectService projectService;
     private PackageNameWhiteListLoader loader;
     private PackageNameWhiteListSaver saver;
+    private BuilderCache builderCache;
+    private String FILE_URI = "file://";
+    private String PACKAGE_NAME_WHITE_LIST = "package-names-white-list";
 
     public PackageNameWhiteListServiceImpl() {
     }
 
     @Inject
-    public PackageNameWhiteListServiceImpl( final @Named( "ioStrategy" ) IOService ioService,
-                                            final KieProjectService projectService,
-                                            final PackageNameWhiteListLoader loader,
-                                            final PackageNameWhiteListSaver saver ) {
+    public PackageNameWhiteListServiceImpl(final @Named( "ioStrategy" ) IOService ioService,
+                                           final KieProjectService projectService,
+                                           final PackageNameWhiteListLoader loader,
+                                           final PackageNameWhiteListSaver saver,
+                                           final BuilderCache builderCache) {
         this.ioService = ioService;
         this.projectService = projectService;
         this.loader = loader;
         this.saver = saver;
+        this.builderCache = builderCache;
     }
 
     @Override
@@ -78,12 +84,14 @@ public class PackageNameWhiteListServiceImpl
      */
     @Override
     public WhiteList filterPackageNames( final Project project,
-                                         final Collection<String> packageNames ) {
+                                         final Collection<String> packageNames) {
         if ( packageNames == null ) {
             return new WhiteList();
         } else if ( project instanceof KieProject ) {
 
-            final WhiteList whiteList = load( ( (KieProject) project ).getPackageNamesWhiteListPath() );
+            org.uberfire.java.nio.file.Path workingDir = builderCache.getProjectRoot(project.getRootPath().toURI().toString());
+            org.uberfire.java.nio.file.Path pnwl = org.uberfire.java.nio.file.Paths.get(FILE_URI + workingDir.toUri()+"/"+PACKAGE_NAME_WHITE_LIST );
+            final WhiteList whiteList = load( Paths.convert(pnwl));
 
             if ( whiteList.isEmpty() ) {
                 return new WhiteList( packageNames );

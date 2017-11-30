@@ -24,7 +24,10 @@ public interface DataModelService {
 
     public static final String DEFAULT_PACKAGE = "defaultpkg";
 
-    PackageDataModelOracle getDataModel(final Path resourcePath);
+    PackageDataModelOracle getDataModel( final Path resourcePath );
 
-    ProjectDataModelOracle getProjectDataModel(final Path resourcePath);
+    ProjectDataModelOracle getProjectDataModel( final Path resourcePath);
+
+    ProjectDataModelOracle getProjectDataModel( final Path resourcePath, boolean indexing );
+
 }

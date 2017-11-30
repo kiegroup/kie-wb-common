@@ -14,7 +14,7 @@
   <logger name="org.guvnor" level="INFO"/>
 
   <root level="WARN">
-    <appender-ref ref="consoleAppender" />
+    <appender-ref ref="consoleAppender"/>
   </root>
 
 </configuration>
