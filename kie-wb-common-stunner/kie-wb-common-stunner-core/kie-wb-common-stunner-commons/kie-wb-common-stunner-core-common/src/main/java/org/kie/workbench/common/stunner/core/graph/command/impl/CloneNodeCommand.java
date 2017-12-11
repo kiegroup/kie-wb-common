@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -43,6 +45,7 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.AbstractChildrenTraverseCallback;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
@@ -62,7 +65,7 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
     private final Point2D position;
     private transient Node<View, Edge> clone;
     private transient Optional<Consumer<Node>> callbackOptional;
-    private transient ChildrenTraverseProcessor childrenTraverseProcessor;
+    private transient ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor;
     private transient List<Command<GraphCommandExecutionContext, RuleViolation>> childrenCommands;
 
     private static Logger LOGGER = Logger.getLogger(CloneNodeCommand.class.getName());
@@ -76,12 +79,16 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
              PortablePreconditions.checkNotNull("parentUuid", parentUuid), null, null, null);
     }
 
-    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D position, final Consumer<Node> callback, final ChildrenTraverseProcessor childrenTraverseProcessor) {
+    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D position, final Consumer<Node> callback, final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor) {
         this.candidate = candidate;
         this.parentUuidOptional = Optional.ofNullable(parentUuid);
         this.position = position;
         this.callbackOptional = Optional.ofNullable(callback);
         this.childrenTraverseProcessor = childrenTraverseProcessor;
+    }
+
+    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D position, final Consumer<Node> callback) {
+        this(candidate, parentUuid, position, callback, null);
     }
 
     @Override
@@ -153,7 +160,7 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
 
         //process nodes
         Graph<View, Node<View, Edge>> graph = (Graph<View, Node<View, Edge>>) context.getGraphIndex().getGraph();
-        childrenTraverseProcessor.setRootUUID(candidate.getUUID()).traverse(graph, new AbstractChildrenTraverseCallback<Node<View,Edge>, Edge<Child,Node>>() {
+        childrenTraverseProcessor.get().setRootUUID(candidate.getUUID()).traverse(graph, new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
             @Override
             public boolean startNodeTraversal(final List<Node<View, Edge>> parents,
                                               final Node<View, Edge> node) {
@@ -165,7 +172,8 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
                                                                 childrenTraverseProcessor);
                 childrenCommands.add(command);
                 commandResults.add(command.execute(context));
-                return super.startNodeTraversal(parents,node);
+                //just traverse the first level children of the root node
+                return false;
             }
         });
 
@@ -173,16 +181,20 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
         //get connector from source node and map to cloned node
         commandResults.addAll(cloneNodeMapUUID.keySet().stream()
                                       .flatMap(sourceUUID -> getNode(context, sourceUUID).getOutEdges().stream())
+                                      .filter(edge -> edge.getContent() instanceof ViewConnector)
+                                      .filter(edge -> Objects.nonNull(edge.getSourceNode()) && Objects.nonNull(edge.getTargetNode()))
                                       .map(edge -> {
                                           Command<GraphCommandExecutionContext, RuleViolation> command;
                                           //need to check whether the edge for dock or child
+                                          Node sourceNode = edge.getSourceNode();
+                                          Node targetNode = edge.getTargetNode();
                                           if (edge.getContent() instanceof Dock) {
-                                              command = new DockNodeCommand(cloneNodeMapUUID.get(edge.getSourceNode().getUUID()), cloneNodeMapUUID.get(edge.getTargetNode().getUUID()));
+                                              command = new DockNodeCommand(cloneNodeMapUUID.get(sourceNode.getUUID()), cloneNodeMapUUID.get(targetNode.getUUID()));
                                           } else {
                                               command =
                                                       new CloneConnectorCommand(edge,
-                                                                                cloneNodeMapUUID.get(edge.getSourceNode().getUUID()).getUUID(),
-                                                                                cloneNodeMapUUID.get(edge.getTargetNode().getUUID()).getUUID());
+                                                                                cloneNodeMapUUID.get(sourceNode.getUUID()).getUUID(),
+                                                                                cloneNodeMapUUID.get(targetNode.getUUID()).getUUID());
                                           }
                                           childrenCommands.add(command);
                                           return command;

@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -26,6 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
@@ -51,13 +53,18 @@ public class CloneNodeCommandTest extends AbstractCanvasCommandTest {
 
     private CloneNodeCommand cloneNodeCommand;
 
+    @Mock
+    private ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessorManagedInstance;
+
     @Before
     public void setup() throws Exception {
         super.setup();
         when(candidate.getUUID()).thenReturn(NODE_UUID);
         when(candidate.getContent()).thenReturn(candidateContent);
+        when(childrenTraverseProcessorManagedInstance.get()).thenReturn(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
+        
         this.position = new Point2D(1,1);
-        this.cloneNodeCommand = new CloneNodeCommand(candidate, PARENT_UUID, position, null, new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
+        this.cloneNodeCommand = new CloneNodeCommand(candidate, PARENT_UUID, position, null, childrenTraverseProcessorManagedInstance);
     }
 
     @Test

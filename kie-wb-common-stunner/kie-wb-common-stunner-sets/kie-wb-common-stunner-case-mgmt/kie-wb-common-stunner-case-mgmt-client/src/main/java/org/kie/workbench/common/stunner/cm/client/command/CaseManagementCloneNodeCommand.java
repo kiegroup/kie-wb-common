@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.cm.client.command;
 
 import java.util.function.Consumer;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.cm.client.command.canvas.CaseManagementCloneCanvasNodeCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.CloneNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -26,7 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.C
 
 public class CaseManagementCloneNodeCommand extends CloneNodeCommand {
 
-    public CaseManagementCloneNodeCommand(Node candidate, String parentUuid, Point2D cloneLocation, Consumer<Node> cloneNodeCommandCallback, ChildrenTraverseProcessor childrenTraverseProcessor) {
+    public CaseManagementCloneNodeCommand(Node candidate, String parentUuid, Point2D cloneLocation, Consumer<Node> cloneNodeCommandCallback, ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor) {
         super(candidate, parentUuid, cloneLocation, cloneNodeCommandCallback, childrenTraverseProcessor);
     }
 

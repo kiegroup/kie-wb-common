@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.TestingGraphInstanceBuilder;
 import org.kie.workbench.common.stunner.core.TestingGraphMockHandler;
 import org.kie.workbench.common.stunner.core.definition.clone.CloneManager;
@@ -31,6 +32,9 @@ import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -74,8 +78,10 @@ public abstract class AbstractCloneCommandTest extends AbstractGraphCommandTest 
     @Mock
     protected Bounds.Bound bound;
 
-    protected TestingGraphInstanceBuilder.TestGraph3 graphInstance;
+    @Mock
+    protected ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessorManagedInstance;
 
+    protected TestingGraphInstanceBuilder.TestGraph3 graphInstance;
 
     protected MagnetConnection sourceConnection;
 
@@ -128,5 +134,6 @@ public abstract class AbstractCloneCommandTest extends AbstractGraphCommandTest 
         when(cloneContent.getBounds()).thenReturn(bounds);
         when(bounds.getUpperLeft()).thenReturn(bound);
         when(bounds.getLowerRight()).thenReturn(bound);
+        when(childrenTraverseProcessorManagedInstance.get()).thenReturn(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
     }
 }

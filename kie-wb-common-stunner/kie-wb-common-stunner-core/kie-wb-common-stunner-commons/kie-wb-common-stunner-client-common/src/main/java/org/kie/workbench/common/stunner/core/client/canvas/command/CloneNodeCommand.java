@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.Command;
@@ -39,10 +40,10 @@ public class CloneNodeCommand extends AbstractCanvasGraphCommand {
     private Optional<Point2D> cloneLocation;
     private transient CompositeCommand<AbstractCanvasHandler, CanvasViolation> command;
     private final Optional<Consumer<Node>> cloneNodeCommandCallback;
-    private final ChildrenTraverseProcessor childrenTraverseProcessor;
+    private final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor;
 
     @SuppressWarnings("unchecked")
-    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D cloneLocation, final Consumer<Node> cloneNodeCommandCallback, final ChildrenTraverseProcessor childrenTraverseProcessor) {
+    public CloneNodeCommand(final Node candidate, final String parentUuid, final Point2D cloneLocation, final Consumer<Node> cloneNodeCommandCallback, final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor) {
         this.candidate = candidate;
         this.cloneLocation = Optional.ofNullable(cloneLocation);
         this.parentUuid = parentUuid;
@@ -94,7 +95,7 @@ public class CloneNodeCommand extends AbstractCanvasGraphCommand {
                                           shapeId, childrenTraverseProcessor);
     }
 
-    public ChildrenTraverseProcessor getChildrenTraverseProcessor() {
+    public ManagedInstance<ChildrenTraverseProcessor> getChildrenTraverseProcessor() {
         return childrenTraverseProcessor;
     }
 }

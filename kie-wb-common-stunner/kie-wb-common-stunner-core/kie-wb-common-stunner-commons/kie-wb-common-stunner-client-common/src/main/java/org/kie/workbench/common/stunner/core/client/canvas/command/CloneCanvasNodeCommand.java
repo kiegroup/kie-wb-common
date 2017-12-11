@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -40,18 +41,16 @@ import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 public class CloneCanvasNodeCommand extends AbstractCanvasCommand {
 
     private transient CompositeCommand<AbstractCanvasHandler, CanvasViolation> commands;
-    private transient ChildrenTraverseProcessor childrenTraverseProcessor;
-    private transient final AddCanvasChildNodeCommand addCanvasChildNodeCommand;
+    private transient ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor;
     private final Node parent;
     private final Node candidate;
     private final String shapeSetId;
 
-    public CloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId, final ChildrenTraverseProcessor childrenTraverseProcessor) {
+    public CloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId, final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor) {
         this.parent = parent;
         this.candidate = candidate;
         this.shapeSetId = shapeSetId;
         this.childrenTraverseProcessor = childrenTraverseProcessor;
-        this.addCanvasChildNodeCommand = new AddCanvasChildNodeCommand(parent, candidate, shapeSetId);
     }
 
     /**
@@ -88,15 +87,17 @@ public class CloneCanvasNodeCommand extends AbstractCanvasCommand {
             Graph graph = context.getGraphIndex().getGraph();
             List<Edge> clonedEdges = new ArrayList<>();
 
-            childrenTraverseProcessor.setRootUUID(getCandidate().getUUID());
-            childrenTraverseProcessor.traverse(graph, new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
-                @Override
-                public boolean startNodeTraversal(List<Node<View, Edge>> parents, Node<View, Edge> node) {
-                    commands.addCommand(createCloneCanvasNodeCommand(getCandidate(), node, getShapeSetId()));
-                    clonedEdges.addAll(node.getOutEdges());
-                    return super.startNodeTraversal(parents, node);
-                }
-            });
+            childrenTraverseProcessor.get()
+                    .setRootUUID(getCandidate().getUUID())
+                    .traverse(graph, new AbstractChildrenTraverseCallback<Node<View, Edge>, Edge<Child, Node>>() {
+                        @Override
+                        public boolean startNodeTraversal(List<Node<View, Edge>> parents, Node<View, Edge> node) {
+                            commands.addCommand(createCloneCanvasNodeCommand(getCandidate(), node, getShapeSetId()));
+                            clonedEdges.addAll(node.getOutEdges());
+                            //just traverse the first level children of the root node
+                            return false;
+                        }
+                    });
 
             //process children edges -> connectors and dock
             clonedEdges.stream()
@@ -132,7 +133,7 @@ public class CloneCanvasNodeCommand extends AbstractCanvasCommand {
         return commands;
     }
 
-    public ChildrenTraverseProcessor getChildrenTraverseProcessor() {
+    public ManagedInstance<ChildrenTraverseProcessor> getChildrenTraverseProcessor() {
         return childrenTraverseProcessor;
     }
 

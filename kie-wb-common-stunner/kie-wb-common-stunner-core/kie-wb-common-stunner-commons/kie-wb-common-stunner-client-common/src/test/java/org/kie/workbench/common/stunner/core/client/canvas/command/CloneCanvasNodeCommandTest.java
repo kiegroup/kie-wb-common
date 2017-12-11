@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.client.canvas.command;
 
 import java.util.Objects;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +62,7 @@ public class CloneCanvasNodeCommandTest extends AbstractCanvasCommandTest {
     private ShapeView shapeView;
 
     @Mock
-    private ChildrenTraverseProcessor childrenTraverseProcessor;
+    private ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessorManagedInstance;
 
     @Before
     public void setup() throws Exception {
@@ -75,11 +76,12 @@ public class CloneCanvasNodeCommandTest extends AbstractCanvasCommandTest {
         when(canvas.getShape(graphInstance.edge1.getUUID())).thenReturn(edgeShape);
         when(canvas.getShape(graphInstance.edge2.getUUID())).thenReturn(edgeShape);
         when(edgeShape.getShapeView()).thenReturn(shapeView);
+        when(childrenTraverseProcessorManagedInstance.get()).thenReturn(new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
 
         this.cloneCanvasNodeCommand = new CloneCanvasNodeCommand(parent,
                                                                  candidate,
                                                                  SHAPE_SET_ID,
-                                                                 new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
+                                                                 childrenTraverseProcessorManagedInstance);
     }
 
     @Test

@@ -201,7 +201,7 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
 
     @Override
     public CanvasCommand<AbstractCanvasHandler> cloneNode(Node candidate, String parentUuid, Point2D cloneLocation, Consumer<Node> cloneNodeCallback) {
-        return new CloneNodeCommand(candidate, parentUuid, cloneLocation, cloneNodeCallback, newChildrenTraverseProcessor());
+        return new CloneNodeCommand(candidate, parentUuid, cloneLocation, cloneNodeCallback, childrenTraverseProcessors);
     }
 
     protected ChildrenTraverseProcessor newChildrenTraverseProcessor() {
@@ -210,5 +210,9 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
 
     protected ViewTraverseProcessor newViewTraverseProcessor() {
         return viewTraverseProcessors.get();
+    }
+
+    protected ManagedInstance<ChildrenTraverseProcessor> getChildrenTraverseProcessors() {
+        return childrenTraverseProcessors;
     }
 }

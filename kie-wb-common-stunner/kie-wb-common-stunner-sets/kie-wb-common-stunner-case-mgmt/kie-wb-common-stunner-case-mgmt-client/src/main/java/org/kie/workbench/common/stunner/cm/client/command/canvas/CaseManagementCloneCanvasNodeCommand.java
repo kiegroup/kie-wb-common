@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.cm.client.command.canvas;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.CloneCanvasNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -23,7 +24,8 @@ import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.C
 
 public class CaseManagementCloneCanvasNodeCommand extends CloneCanvasNodeCommand {
 
-    public CaseManagementCloneCanvasNodeCommand(Node parent, Node candidate, String shapeSetId, ChildrenTraverseProcessor childrenTraverseProcessor) {
+    public CaseManagementCloneCanvasNodeCommand(final Node parent, final Node candidate, final String shapeSetId,
+                                                final ManagedInstance<ChildrenTraverseProcessor> childrenTraverseProcessor) {
         super(parent, candidate, shapeSetId, childrenTraverseProcessor);
     }
 

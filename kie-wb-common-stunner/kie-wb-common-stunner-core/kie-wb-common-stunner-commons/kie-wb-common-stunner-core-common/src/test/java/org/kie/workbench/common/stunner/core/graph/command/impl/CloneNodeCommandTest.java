@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.graph.command.impl;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,8 +27,10 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessor;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
+import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -36,6 +39,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CloneNodeCommandTest extends AbstractCloneCommandTest {
@@ -56,7 +60,8 @@ public class CloneNodeCommandTest extends AbstractCloneCommandTest {
         parent = graphInstance.parentNode;
         candidate.setContent(candidateContent);
         this.position = new Point2D(1, 1);
-        this.cloneNodeCommand = new CloneNodeCommand(candidate, parent.getUUID(), position, null, new ChildrenTraverseProcessorImpl(new TreeWalkTraverseProcessorImpl()));
+        this.cloneNodeCommand = new CloneNodeCommand(candidate, parent.getUUID(), position, null, childrenTraverseProcessorManagedInstance);
+
     }
 
     @Test
