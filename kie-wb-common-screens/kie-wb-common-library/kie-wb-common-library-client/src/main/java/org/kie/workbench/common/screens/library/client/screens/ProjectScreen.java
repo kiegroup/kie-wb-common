@@ -20,11 +20,13 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.HTMLElement;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
@@ -83,13 +85,12 @@ public class ProjectScreen {
 
     @OnStartup
     public void onStartup() {
-
         setup();
     }
 
     public void refreshOnFocus(@Observes final PlaceGainFocusEvent placeGainFocusEvent) {
 
-        String identifier = placeGainFocusEvent.getPlace().getIdentifier();
+        final String identifier = placeGainFocusEvent.getPlace().getIdentifier();
         if (project != null && identifier.equals(LibraryPlaces.PROJECT_SCREEN)) {
 
             setup();
@@ -101,6 +102,9 @@ public class ProjectScreen {
         if (project != null && project.equals(projectContext.getActiveWorkspaceProject())) {
             return;
         }
+
+        PortablePreconditions.checkNotNull("ProjectScreen projectContext.getActiveWorkspaceProject()",
+                                           projectContext.getActiveWorkspaceProject());
 
         project = projectContext.getActiveWorkspaceProject();
         libraryPlaces.setUpBranches();

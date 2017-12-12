@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.widgets.project;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.user.client.Window;
 import org.jboss.errai.common.client.dom.Button;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;

@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.screens;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;
@@ -94,6 +95,8 @@ public class ProjectListAssetsView
 
     @Override
     public void init(WorkspaceProjectListAssetsPresenter presenter) {
+
+        Window.alert("list view");
         this.presenter = presenter;
         projectActionsWidget.init(presenter::goToSettings);
         filterText.setAttribute("placeholder",

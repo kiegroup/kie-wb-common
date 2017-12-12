@@ -26,6 +26,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
@@ -79,6 +80,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     public static final String LIBRARY_PERSPECTIVE = "LibraryPerspective";
     public static final String LIBRARY_SCREEN = "LibraryScreen";
     public static final String PROJECT_SCREEN = "ProjectScreen";
+    public static final String IMPORT_PROJECTS_SCREEN = "TrySamplesScreen";
     public static final String PROJECT_DETAIL_SCREEN = "ProjectsDetailScreen";
     public static final String ORG_UNITS_METRICS_SCREEN = "OrgUnitsMetricsScreen";
     public static final String PROJECT_METRICS_SCREEN = "ProjectMetricsScreen";
@@ -473,7 +475,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
             @Override
             public void callback(final Boolean hasProjects) {
 
-                PortablePreconditions.checkNotNull("libraryPerspective.hasProjects",
+                PortablePreconditions.checkNotNull("libraryPerspective",
                                                    libraryPerspective);
 
                 final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
@@ -534,6 +536,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         lastViewedProject = projectContext.getActiveWorkspaceProject();
         setupLibraryBreadCrumbs();
 
+        Window.alert("go to project A");
         final PartDefinitionImpl part = new PartDefinitionImpl(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
         part.setSelectable(false);
 
@@ -586,14 +589,13 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     }
 
     public void goToTrySamples() {
-        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN);
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 
         closeLibraryPlaces();
         placeManager.goTo(part,
                           libraryPerspective.getRootPanel());
-        // TODO  setupLibraryBreadCrumbsForTrySamples();
     }
 
     public void goToImportProjects(final String repositoryUrl) {
@@ -602,7 +604,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                    ts.getTranslation(LibraryConstants.ImportProjects));
         params.put("repositoryUrl",
                    repositoryUrl);
-        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN,
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
                                                                          params);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
