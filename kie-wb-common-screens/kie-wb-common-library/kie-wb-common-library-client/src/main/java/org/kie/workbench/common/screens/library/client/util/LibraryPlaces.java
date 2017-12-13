@@ -536,7 +536,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         lastViewedProject = projectContext.getActiveWorkspaceProject();
         setupLibraryBreadCrumbs();
 
-        Window.alert("go to project A");
         final PartDefinitionImpl part = new PartDefinitionImpl(new DefaultPlaceRequest(LibraryPlaces.PROJECT_SCREEN));
         part.setSelectable(false);
 

@@ -82,8 +82,6 @@ public class EmptyProjectView implements EmptyWorkspaceProjectPresenter.View,
     @Override
     public void init(final EmptyWorkspaceProjectPresenter presenter) {
 
-        Window.alert("empty project view");
-
         this.presenter = presenter;
         resourceHandlerContainer.setTextContent("");
         assetsActionsWidget.init();

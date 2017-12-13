@@ -96,7 +96,6 @@ public class ProjectListAssetsView
     @Override
     public void init(WorkspaceProjectListAssetsPresenter presenter) {
 
-        Window.alert("list view");
         this.presenter = presenter;
         projectActionsWidget.init(presenter::goToSettings);
         filterText.setAttribute("placeholder",
