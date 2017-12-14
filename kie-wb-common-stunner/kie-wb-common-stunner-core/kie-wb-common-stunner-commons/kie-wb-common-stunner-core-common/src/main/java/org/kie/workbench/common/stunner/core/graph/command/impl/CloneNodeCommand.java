@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -185,20 +186,23 @@ public final class CloneNodeCommand extends AbstractGraphCompositeCommand {
                                       .filter(edge -> Objects.nonNull(edge.getSourceNode()) && Objects.nonNull(edge.getTargetNode()))
                                       .map(edge -> {
                                           Command<GraphCommandExecutionContext, RuleViolation> command;
+                                          Node<View, Edge> candidateToClone = cloneNodeMapUUID.get(edge.getTargetNode().getUUID());
+                                          Node<View, Edge> parentToClone = cloneNodeMapUUID.get(edge.getSourceNode().getUUID());
+                                          if (Objects.isNull(candidateToClone) || Objects.isNull(parentToClone)) {
+                                              return null;
+                                          }
                                           //need to check whether the edge for dock or child
-                                          Node sourceNode = edge.getSourceNode();
-                                          Node targetNode = edge.getTargetNode();
                                           if (edge.getContent() instanceof Dock) {
-                                              command = new DockNodeCommand(cloneNodeMapUUID.get(sourceNode.getUUID()), cloneNodeMapUUID.get(targetNode.getUUID()));
+                                              command = new DockNodeCommand(parentToClone, candidateToClone);
                                           } else {
-                                              command =
-                                                      new CloneConnectorCommand(edge,
-                                                                                cloneNodeMapUUID.get(sourceNode.getUUID()).getUUID(),
-                                                                                cloneNodeMapUUID.get(targetNode.getUUID()).getUUID());
+                                              command = new CloneConnectorCommand(edge,
+                                                                                  parentToClone.getUUID(),
+                                                                                  candidateToClone.getUUID());
                                           }
                                           childrenCommands.add(command);
                                           return command;
                                       })
+                                      .filter(Objects::nonNull)
                                       .map(command -> command.execute(context))
                                       .collect(Collectors.toList()));
         return commandResults;

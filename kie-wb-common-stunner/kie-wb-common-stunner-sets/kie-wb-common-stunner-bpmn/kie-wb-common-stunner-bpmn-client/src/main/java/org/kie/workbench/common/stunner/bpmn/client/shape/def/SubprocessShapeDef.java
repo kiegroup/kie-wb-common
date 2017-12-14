@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.shape.def;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGGlyphFactory;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
@@ -36,8 +37,8 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeViewResour
 
 import static java.util.Objects.nonNull;
 
-public class SubprocessShapeDef
-        implements BPMNSvgShapeDef<BaseSubprocess> {
+public class SubprocessShapeDef extends BaseDimensionedShapeDef
+        implements BPMNSvgShapeDef<BaseSubprocess>{
 
     public static final SVGShapeViewResources<BaseSubprocess, BPMNSVGViewFactory> VIEW_RESOURCES =
             new SVGShapeViewResources<BaseSubprocess, BPMNSVGViewFactory>()
@@ -68,10 +69,9 @@ public class SubprocessShapeDef
     @Override
     public SVGShapeView<?> newViewInstance(final BPMNSVGViewFactory factory,
                                            final BaseSubprocess task) {
-        Double width = (nonNull(task.getDimensionsSet().getWidth()) ? task.getDimensionsSet().getWidth().getValue() : null);
-        Double height = (nonNull(task.getDimensionsSet().getHeight()) ? task.getDimensionsSet().getHeight().getValue() : null);
-        SVGShapeViewResource resource = VIEW_RESOURCES.getResource(factory, task);
-        return (nonNull(width) && nonNull(height) ? resource.build(width, height, true) : resource.build(true));
+        return newViewInstance(Optional.ofNullable(task.getDimensionsSet().getWidth()),
+                               Optional.ofNullable(task.getDimensionsSet().getHeight()),
+                               VIEW_RESOURCES.getResource(factory, task));
     }
 
     @Override
