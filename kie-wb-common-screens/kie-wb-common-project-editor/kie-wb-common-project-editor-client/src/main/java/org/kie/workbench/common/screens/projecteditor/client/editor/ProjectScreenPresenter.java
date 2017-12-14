@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -367,6 +368,7 @@ public class ProjectScreenPresenter
     }
 
     private void showCurrentModuleInfoIfAny() {
+
         this.kieDeploymentDescriptoPath = PathFactory.newPath(KIE_DEPLOYMENT_DESCRIPTOR_XML,
                                                               projectContext.getActiveWorkspaceProject().getRootPath().toURI() + "/src/main/resources/META-INF/" + KIE_DEPLOYMENT_DESCRIPTOR_XML);
         setupPathToPomXML();
@@ -538,28 +540,29 @@ public class ProjectScreenPresenter
 
     private Menus makeMenuBar() {
         showCurrentModuleInfoIfAny();
+
         return MenuFactory
                 .newTopLevelMenu(CommonConstants.INSTANCE.Save())
                 .withPermission(Repository.RESOURCE_TYPE,
-                                projectContext.getActiveWorkspaceProject().getRepository(),
+                                getRepository(),
                                 RepositoryAction.UPDATE)
                 .respondsWith(getSaveCommand(DeploymentMode.VALIDATED))
                 .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Delete())
                 .withPermission(Repository.RESOURCE_TYPE,
-                                projectContext.getActiveWorkspaceProject().getRepository(),
+                                getRepository(),
                                 RepositoryAction.DELETE)
                 .respondsWith(getDeleteCommand())
                 .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Copy())
                 .withPermission(Repository.RESOURCE_TYPE,
-                                projectContext.getActiveWorkspaceProject().getRepository(),
+                                getRepository(),
                                 RepositoryAction.CREATE)
                 .respondsWith(getCopyCommand())
                 .endMenu()
                 .newTopLevelMenu(CommonConstants.INSTANCE.Reimport())
                 .withPermission(Repository.RESOURCE_TYPE,
-                                projectContext.getActiveWorkspaceProject().getRepository(),
+                                getRepository(),
                                 RepositoryAction.UPDATE)
                 .respondsWith(getReImportCommand())
                 .endMenu()
@@ -593,7 +596,7 @@ public class ProjectScreenPresenter
                             @Override
                             public List<ResourceActionRef> getResourceActions() {
                                 ResourceActionRef ref = new ResourceActionRef(Repository.RESOURCE_TYPE,
-                                                                              projectContext.getActiveWorkspaceProject().getRepository(),
+                                                                              getRepository(),
                                                                               RepositoryAction.BUILD);
                                 return Collections.singletonList(ref);
                             }
@@ -603,10 +606,20 @@ public class ProjectScreenPresenter
                 .build();
     }
 
+    private Repository getRepository() {
+
+        if (projectContext.getActiveWorkspaceProject() == null) {
+            return null;
+        } else {
+            return projectContext.getActiveWorkspaceProject().getRepository();
+        }
+    }
+
     protected Command getReImportCommand() {
         return new Command() {
             @Override
             public void execute() {
+
                 projectScreenService.call(
                         new RemoteCallback<Void>() {
 
@@ -627,6 +640,7 @@ public class ProjectScreenPresenter
             public void execute() {
 
                 busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Deleting());
+
                 projectScreenService.call(
                         new RemoteCallback<Void>() {
                             @Override
@@ -645,6 +659,7 @@ public class ProjectScreenPresenter
         return new Command() {
             @Override
             public void execute() {
+
                 copyPopUpPresenter.show(projectContext.getActiveWorkspaceProject().getRootPath(),
                                         projectNameValidator,
                                         new CommandWithFileNameAndCommitMessage() {
