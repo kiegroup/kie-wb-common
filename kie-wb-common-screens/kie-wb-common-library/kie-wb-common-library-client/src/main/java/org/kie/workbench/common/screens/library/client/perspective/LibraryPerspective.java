@@ -51,8 +51,10 @@ public class LibraryPerspective {
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        perspectiveDefinition = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
-        perspectiveDefinition.setName("Library Perspective");
+        if (perspectiveDefinition == null) {
+            perspectiveDefinition = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+            perspectiveDefinition.setName("Library Perspective");
+        }
 
         return perspectiveDefinition;
     }
@@ -66,6 +68,7 @@ public class LibraryPerspective {
 
     @OnOpen
     public void onOpen() {
+
         libraryPlaces.refresh(getRefreshCallBack());
     }
 
@@ -87,10 +90,6 @@ public class LibraryPerspective {
     }
 
     public PanelDefinition getRootPanel() {
-        if (perspectiveDefinition == null) {
-            return null;
-        }
-
-        return perspectiveDefinition.getRoot();
+        return buildPerspective().getRoot();
     }
 }

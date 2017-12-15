@@ -79,16 +79,6 @@ import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopu
  */
 public abstract class KieMultipleDocumentEditor<D extends KieDocument> implements KieMultipleDocumentEditorPresenter<D> {
 
-    //Handler for MayClose requests
-    protected interface MayCloseHandler {
-
-        boolean mayClose(final Integer originalHashCode,
-                         final Integer currentHashCode);
-    }
-
-    protected final Set<D> documents = new HashSet<>();
-    //This implementation always permits closure as something went wrong loading the Editor's content
-    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = (originalHashCode, currentHashCode) -> true;
     //Injected
     protected KieMultipleDocumentEditorWrapperView kieEditorWrapperView;
     protected OverviewWidgetPresenter overviewWidget;
@@ -97,6 +87,7 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     protected Event<ChangeTitleWidgetEvent> changeTitleEvent;
     protected WorkspaceProjectContext workbenchContext;
     protected SavePopUpPresenter savePopUpPresenter;
+
     protected FileMenuBuilder fileMenuBuilder;
     protected VersionRecordManager versionRecordManager;
     protected RegisteredDocumentsMenuBuilder registeredDocumentsMenuBuilder;
@@ -107,14 +98,30 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
 
     //Constructed
     protected BaseEditorView editorView;
-    //The default implementation delegates to the HashCode comparison in BaseEditor
-    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = this::doMayClose;
     protected ViewDRLSourceWidget sourceWidget = GWT.create(ViewDRLSourceWidget.class);
-    protected Menus menus;
+
     private MenuItem saveMenuItem;
     private MenuItem versionMenuItem;
     private MenuItem registeredDocumentsMenuItem;
-    private D activeDocument = null;
+
+    protected Menus menus;
+
+    protected D activeDocument = null;
+    protected final Set<D> documents = new HashSet<>();
+
+    //Handler for MayClose requests
+    protected interface MayCloseHandler {
+
+        boolean mayClose(final Integer originalHashCode,
+                         final Integer currentHashCode);
+    }
+
+    //The default implementation delegates to the HashCode comparison in BaseEditor
+    private final MayCloseHandler DEFAULT_MAY_CLOSE_HANDLER = this::doMayClose;
+
+    //This implementation always permits closure as something went wrong loading the Editor's content
+    private final MayCloseHandler EXCEPTION_MAY_CLOSE_HANDLER = (originalHashCode, currentHashCode) -> true;
+
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
 
     @SuppressWarnings("unused")

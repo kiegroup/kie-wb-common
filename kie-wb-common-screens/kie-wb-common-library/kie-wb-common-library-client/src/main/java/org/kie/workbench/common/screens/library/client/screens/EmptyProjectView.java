@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.library.client.screens;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.user.client.Window;
 import org.jboss.errai.common.client.dom.Anchor;
 import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Div;

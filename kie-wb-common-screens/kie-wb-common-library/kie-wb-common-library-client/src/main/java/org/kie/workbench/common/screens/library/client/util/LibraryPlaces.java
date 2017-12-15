@@ -26,7 +26,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.user.client.Window;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
@@ -471,7 +470,27 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     public void goToLibrary() {
 
-        final Command command = () -> libraryService.call(new RemoteCallback<Boolean>() {
+        if (projectContext.getActiveOrganizationalUnit() == null) {
+
+            libraryService.call(
+                    new RemoteCallback<OrganizationalUnit>() {
+                        @Override
+                        public void callback(OrganizationalUnit organizationalUnit) {
+
+
+                            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
+                            setupLibraryPerspective();
+                        }
+                    }
+
+            ).getDefaultOrganizationalUnit();
+        } else {
+            setupLibraryPerspective();
+        }
+    }
+
+    private Boolean setupLibraryPerspective() {
+        return libraryService.call(new RemoteCallback<Boolean>() {
             @Override
             public void callback(final Boolean hasProjects) {
 
@@ -493,23 +512,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                 hideDocks();
             }
         }).hasProjects(projectContext.getActiveOrganizationalUnit());
-
-        if (projectContext.getActiveOrganizationalUnit() == null) {
-
-            libraryService.call(
-                    new RemoteCallback<OrganizationalUnit>() {
-                        @Override
-                        public void callback(OrganizationalUnit organizationalUnit) {
-
-                            projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(organizationalUnit));
-                            command.execute();
-                        }
-                    }
-
-            ).getDefaultOrganizationalUnit();
-        } else {
-            command.execute();
-        }
     }
 
     public void goToProject(final WorkspaceProject project) {
