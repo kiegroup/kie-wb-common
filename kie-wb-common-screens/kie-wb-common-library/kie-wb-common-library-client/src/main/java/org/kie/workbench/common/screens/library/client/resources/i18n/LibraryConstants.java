@@ -280,4 +280,16 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String RepositoryURL = "RepositoryURL";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AllPackagesIncluded = "AllPackagesIncluded";
+
+    @TranslationKey(defaultValue = "")
+    public static final String PackagesNotIncluded = "PackagesNotIncluded";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SomePackagesIncluded = "SomePackagesIncluded";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SettingsSaveSuccess = "SettingsSaveSuccess";
 }

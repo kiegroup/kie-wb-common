@@ -143,6 +143,7 @@ public class ProjectScreenServiceImplTest {
                               "1.0.0");
     private POM pom = new POM("test",
                               "test",
+                              "test",
                               gav);
 
     @BeforeClass

@@ -695,8 +695,13 @@ public class LibraryPlaces {
     }
 
     public void goToSettings(final ProjectInfo projectInfo) {
-        assetDetailEvent.fire(new AssetDetailEvent(projectInfo,
-                                                   null));
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest("project-settings");
+        final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
+        part.setSelectable(false);
+
+        closeLibraryPlaces();
+        placeManager.goTo(part,
+                          libraryPerspective.getRootPanel());
     }
 
     public void goToImportProjectWizard() {
