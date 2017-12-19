@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -26,15 +29,23 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
+import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
-import org.kie.workbench.common.screens.library.client.settings.general.GeneralPresenter;
+import org.kie.workbench.common.screens.library.client.settings.dependencies.DependenciesPresenter;
+import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.externaldataobjects.ExternalDataObjectsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.generalsettings.GeneralSettingsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.validation.ValidationPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
+import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -44,11 +55,9 @@ import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.workbench.events.NotificationEvent;
+import org.uberfire.workbench.events.NotificationEvent.NotificationType;
 
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 
 @WorkbenchScreen(identifier = "project-settings",
@@ -60,30 +69,31 @@ public class SettingsPresenter {
 
         void showBusyIndicator();
 
-        void setContent(SettingsBaseSectionView contentView);
+        void setContent(final Section contentView);
 
         String getSaveSuccessfulMessage();
 
         String getSavingMessage();
+
+        interface Section<T> extends UberElemental<T>,
+                                     IsElement {
+
+        }
     }
 
-    private View view;
+    private final View view;
 
-    private Caller<ProjectScreenService> projectScreenService;
+    private final Caller<ProjectScreenService> projectScreenService;
 
-    private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
+    private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
 
-    private Caller<ValidationService> validationService;
+    private final ProjectContext workbenchContext;
 
-    private ProjectContext workbenchContext;
+    private final ManagedInstance<ObservablePath> observablePaths;
 
-    private ManagedInstance<ObservablePath> observablePaths;
+    private final Event<NotificationEvent> notificationEvent;
 
-    private Event<NotificationEvent> notificationEvent;
-
-    private SavePopUpPresenter savePopUpPresenter;
-
-    private GeneralPresenter generalPresenter;
+    private final SavePopUpPresenter savePopUpPresenter;
 
     private ProjectScreenModel model;
 
@@ -91,27 +101,47 @@ public class SettingsPresenter {
 
     private Integer originalHash;
 
-    private ObservablePath pathToPomXML;
+    private ObservablePath pathToPomXml;
+
+    // Sections
+    private final DependenciesPresenter dependenciesSettingsSectionPresenter;
+    private final DeploymentsPresenter deploymentsSettingsSectionPresenter;
+    private final ExternalDataObjectsPresenter externalDataObjectsSettingsSectionPresenter;
+    private final GeneralSettingsPresenter generalSettingsSectionPresenter;
+    private final KnowledgeBasesPresenter knowledgeBasesSettingsSectionPresenter;
+    private final PersistencePresenter persistenceSettingsSectionPresenter;
+    private final ValidationPresenter validationSettingsSectionPresenter;
 
     @Inject
     public SettingsPresenter(final View view,
                              final Caller<ProjectScreenService> projectScreenService,
                              final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                             final Caller<ValidationService> validationService,
                              final ProjectContext workbenchContext,
                              final ManagedInstance<ObservablePath> observablePaths,
                              final Event<NotificationEvent> notificationEvent,
                              final SavePopUpPresenter savePopUpPresenter,
-                             final GeneralPresenter generalPresenter) {
+                             final DependenciesPresenter dependenciesSettingsSectionPresenter,
+                             final DeploymentsPresenter deploymentsSettingsSectionPresenter,
+                             final ExternalDataObjectsPresenter externalDataObjectsSettingsSectionPresenter,
+                             final GeneralSettingsPresenter generalSettingsSectionPresenter,
+                             final KnowledgeBasesPresenter knowledgeBasesSettingsSectionPresenter,
+                             final PersistencePresenter persistenceSettingsSectionPresenter,
+                             final ValidationPresenter validationSettingsSectionPresenter) {
         this.view = view;
         this.projectScreenService = projectScreenService;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.validationService = validationService;
         this.workbenchContext = workbenchContext;
         this.observablePaths = observablePaths;
         this.notificationEvent = notificationEvent;
         this.savePopUpPresenter = savePopUpPresenter;
-        this.generalPresenter = generalPresenter;
+
+        this.dependenciesSettingsSectionPresenter = dependenciesSettingsSectionPresenter;
+        this.deploymentsSettingsSectionPresenter = deploymentsSettingsSectionPresenter;
+        this.externalDataObjectsSettingsSectionPresenter = externalDataObjectsSettingsSectionPresenter;
+        this.generalSettingsSectionPresenter = generalSettingsSectionPresenter;
+        this.knowledgeBasesSettingsSectionPresenter = knowledgeBasesSettingsSectionPresenter;
+        this.persistenceSettingsSectionPresenter = persistenceSettingsSectionPresenter;
+        this.validationSettingsSectionPresenter = validationSettingsSectionPresenter;
     }
 
     @PostConstruct
@@ -119,133 +149,125 @@ public class SettingsPresenter {
         view.init(this);
         view.showBusyIndicator();
 
-        setupPathToPomXML();
+        if (pathToPomXml != null) {
+            pathToPomXml.dispose();
+        }
 
-        projectScreenService.call((ProjectScreenModel model) -> {
-            concurrentUpdateSessionInfo = null;
-            SettingsPresenter.this.model = model;
+        pathToPomXml = observablePaths.get().wrap(workbenchContext.getActiveProject().getPomXMLPath());
+        pathToPomXml.onConcurrentUpdate(eventInfo -> concurrentUpdateSessionInfo = eventInfo);
 
-            generalPresenter.setup(model.getPOM());
+        projectScreenService
+                .call(this::onProjectScreenModelLoadSuccess, new DefaultErrorCallback())
+                .load(pathToPomXml);
+    }
 
-            view.hideBusyIndicator();
-            originalHash = model.hashCode();
-        },
-        new DefaultErrorCallback()).load(pathToPomXML);
+    private void onProjectScreenModelLoadSuccess(final ProjectScreenModel projectScreenModel) {
+        concurrentUpdateSessionInfo = null;
+        model = projectScreenModel;
+        generalSettingsSectionPresenter.setup(projectScreenModel.getPOM());
+        view.hideBusyIndicator();
+        originalHash = projectScreenModel.hashCode();
     }
 
     public void save() {
-        saveProject(v -> {
-            view.hideBusyIndicator();
-            notificationEvent.fire(new NotificationEvent(view.getSaveSuccessfulMessage(),
-                                                         NotificationEvent.NotificationType.SUCCESS));
-            originalHash = model.hashCode();
-        },
-        DeploymentMode.VALIDATED);
-    }
-
-    private void saveProject(final RemoteCallback<Void> callback,
-                             final DeploymentMode mode) {
-        generalPresenter.validate(() -> {
-            if (concurrentUpdateSessionInfo != null) {
-                newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
-                                    concurrentUpdateSessionInfo.getIdentity(),
-                                    () -> save(callback,
-                                               mode),
-                                    () -> {},
-                                    () -> reset()).show();
-            } else {
-                save(callback,
-                     mode);
+        for (final Section section : getSectionsInDisplayOrder()) {
+            if (!section.isValid()) {
+                goTo(section);
+                break;
             }
-        },
-        () -> {});
+        }
+
+        if (concurrentUpdateSessionInfo != null) {
+            newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
+                                concurrentUpdateSessionInfo.getIdentity(),
+                                this::showSavePopup,
+                                this::noOp,
+                                this::reset).show();
+        } else {
+            showSavePopup();
+            concurrentUpdateSessionInfo = null;
+        }
     }
 
-    private void save(final RemoteCallback<Void> callback,
-                      final DeploymentMode mode) {
-        savePopUpPresenter.show(pathToPomXML,
-                                comment -> doSave(comment,
-                                                  callback,
-                                                  mode));
-        concurrentUpdateSessionInfo = null;
+    private void showSavePopup() {
+        savePopUpPresenter.show(pathToPomXml, comment -> executeSave(comment, DeploymentMode.VALIDATED));
     }
 
-    private void doSave(final String comment,
-                        final RemoteCallback<Void> callback,
-                        final DeploymentMode mode) {
-        generalPresenter.preSave();
+    private void executeSave(final String comment, final DeploymentMode mode) {
+        getSectionsInDisplayOrder().forEach(Section::beforeSave);
+        projectScreenService.call(this::onSaveSuccess, onSaveError(comment)).save(pathToPomXml, model, comment, mode);
+    }
 
-        final Map<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable> onSaveGavExistsHandler = new HashMap<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable>() {{
-            put(GAVAlreadyExistsException.class,
-                parameter -> {
-                    view.hideBusyIndicator();
-                    conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
-                                                            ((GAVAlreadyExistsException) parameter).getRepositories(),
-                                                            () -> {
-                                                                conflictingRepositoriesPopup.hide();
-                                                                doSave(comment,
-                                                                       callback,
-                                                                       DeploymentMode.FORCED);
-                                                            });
-                    conflictingRepositoriesPopup.show();
+    private void onSaveSuccess(final Void v) {
+        view.hideBusyIndicator();
+        notificationEvent.fire(new NotificationEvent(view.getSaveSuccessfulMessage(), NotificationType.SUCCESS));
+        originalHash = model.hashCode();
+    }
+
+    private ErrorCallback<Message> onSaveError(final String comment) {
+        final Map<Class<? extends Throwable>, CommandWithThrowable> callbacksByExceptionTypes = new HashMap<>();
+        callbacksByExceptionTypes.put(GAVAlreadyExistsException.class, e -> onGAVAlreadyExistsException(comment, (GAVAlreadyExistsException) e));
+        return new CommandWithThrowableDrivenErrorCallback(view, callbacksByExceptionTypes);
+    }
+
+    private void onGAVAlreadyExistsException(final String comment, final GAVAlreadyExistsException e) {
+        view.hideBusyIndicator();
+        conflictingRepositoriesPopup.setContent(
+                model.getPOM().getGav(),
+                e.getRepositories(),
+                () -> {
+                    conflictingRepositoriesPopup.hide();
+                    executeSave(comment, DeploymentMode.FORCED);
                 });
-        }};
-
-        projectScreenService.call(new RemoteCallback<Void>() {
-                                      @Override
-                                      public void callback(Void v) {
-                                          if (callback != null) {
-                                              callback.callback(v);
-                                          }
-                                      }
-                                  },
-                                  new CommandWithThrowableDrivenErrorCallback(view,
-                                                                              onSaveGavExistsHandler)).save(pathToPomXML,
-                                                                                                            model,
-                                                                                                            comment,
-                                                                                                            mode);
+        conflictingRepositoriesPopup.show();
     }
 
     public void reset() {
         setup();
     }
 
-    public void goToGeneralTab() {
-        view.setContent(generalPresenter.getView());
+    public void goToGeneralSettingsSection() {
+        goTo(generalSettingsSectionPresenter);
     }
 
-    public void goToDependenciesTab() {
-        // TODO
+    public void goToDependenciesSection() {
+        goTo(dependenciesSettingsSectionPresenter);
     }
 
-    public void goToKnowledgeBasesTab() {
-        // TODO
+    public void goToKnowledgeBasesSection() {
+        goTo(knowledgeBasesSettingsSectionPresenter);
     }
 
-    public void goToExternalDataObjectsTab() {
-        // TODO
+    public void goToExternalDataObjectsSection() {
+        goTo(externalDataObjectsSettingsSectionPresenter);
     }
 
-    public void goToValidationTab() {
-        // TODO
+    public void goToValidationSection() {
+        goTo(validationSettingsSectionPresenter);
     }
 
-    public void goToDeploymentsTab() {
-        // TODO
+    public void goToDeploymentsSection() {
+        goTo(deploymentsSettingsSectionPresenter);
     }
 
-    public void goToPersistenceTab() {
-        // TODO
+    public void goToPersistenceSection() {
+        goTo(persistenceSettingsSectionPresenter);
     }
 
-    protected void setupPathToPomXML() {
-        if (pathToPomXML != null) {
-            pathToPomXML.dispose();
-        }
+    private void goTo(final Section section) {
+        view.setContent(section.getView());
+    }
 
-        pathToPomXML = observablePaths.get().wrap(workbenchContext.getActiveProject().getPomXMLPath());
-
-        pathToPomXML.onConcurrentUpdate(eventInfo -> concurrentUpdateSessionInfo = eventInfo);
+    private List<Section> getSectionsInDisplayOrder() {
+        return Arrays.asList(
+                generalSettingsSectionPresenter,
+                dependenciesSettingsSectionPresenter,
+                knowledgeBasesSettingsSectionPresenter,
+                externalDataObjectsSettingsSectionPresenter,
+                validationSettingsSectionPresenter,
+                deploymentsSettingsSectionPresenter,
+                persistenceSettingsSectionPresenter
+        );
     }
 
     @WorkbenchPartTitle
@@ -256,5 +278,21 @@ public class SettingsPresenter {
     @WorkbenchPartView
     public View getView() {
         return view;
+    }
+
+    private void noOp() {
+    }
+
+    public interface Section {
+
+        void validate(final Command successCallback, final Command errorCallback);
+
+        void beforeSave();
+
+        View.Section getView();
+
+        default boolean isValid() {
+            return true;
+        }
     }
 }

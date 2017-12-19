@@ -20,18 +20,18 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.POM;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.SettingsBaseSectionView;
+import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
+import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencies;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
-import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.mvp.Command;
 
-public class DependenciesPresenter {
+public class DependenciesPresenter implements SettingsPresenter.Section {
 
-    public interface View extends UberElemental<DependenciesPresenter>,
-                                  HasBusyIndicator,
-                                  SettingsBaseSectionView {
+    public interface View extends HasBusyIndicator,
+                                  SettingsPresenter.View.Section<DependenciesPresenter> {
 
         void showBusyIndicator();
 
@@ -55,22 +55,22 @@ public class DependenciesPresenter {
         this.dependenciesItemPresenters = dependenciesItemPresenters;
     }
 
-    public void setup(final POM pom,
-                      final WhiteList whiteList) {
+    public void setup(final POM pom, final WhiteList whiteList) {
         view.init(this);
         this.whiteList = whiteList;
 
         view.showBusyIndicator();
-        enhancedDependenciesManager.init(pom,
-                                         enhancedDependencies -> {
-                                             view.hideBusyIndicator();
-                                             for (EnhancedDependency enhancedDependency : enhancedDependencies) {
-                                                 final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
-                                                 dependenciesItemPresenter.setup(enhancedDependency,
-                                                                                 whiteList);
-                                                 view.addItem(dependenciesItemPresenter.getView());
-                                             }
-                                         });
+        enhancedDependenciesManager.init(pom, this::onSetupSuccess);
+    }
+
+    private void onSetupSuccess(final EnhancedDependencies enhancedDependencies) {
+        view.hideBusyIndicator();
+
+        for (EnhancedDependency enhancedDependency : enhancedDependencies) {
+            final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
+            dependenciesItemPresenter.setup(enhancedDependency, whiteList);
+            view.addItem(dependenciesItemPresenter.getView());
+        }
     }
 
     public void add() {
@@ -81,7 +81,18 @@ public class DependenciesPresenter {
         //TODO
     }
 
-    public View getView() {
+    @Override
+    public void validate(Command successCallback, Command errorCallback) {
+
+    }
+
+    @Override
+    public void beforeSave() {
+
+    }
+
+    @Override
+    public SettingsPresenter.View.Section getView() {
         return view;
     }
 }

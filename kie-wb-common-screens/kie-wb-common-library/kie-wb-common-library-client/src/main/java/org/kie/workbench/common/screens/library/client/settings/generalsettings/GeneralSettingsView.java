@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.general;
+package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,10 +30,9 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 
 @Templated
-public class GeneralView implements GeneralPresenter.View,
-                                    IsElement {
+public class GeneralSettingsView implements GeneralSettingsPresenter.View {
 
-    private GeneralPresenter presenter;
+    private GeneralSettingsPresenter presenter;
 
     @Inject
     private TranslationService translationService;
@@ -80,7 +79,7 @@ public class GeneralView implements GeneralPresenter.View,
     private HTMLInputElement version;
 
     @Override
-    public void init(final GeneralPresenter presenter) {
+    public void init(final GeneralSettingsPresenter presenter) {
         this.presenter = presenter;
         hideError();
     }

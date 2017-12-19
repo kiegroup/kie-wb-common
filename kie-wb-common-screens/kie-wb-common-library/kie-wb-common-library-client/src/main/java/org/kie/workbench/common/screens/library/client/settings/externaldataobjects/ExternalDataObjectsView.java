@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright (C) 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
-import org.uberfire.mvp.Command;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-public interface SettingsBaseSection {
+@Templated
+public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.View {
 
-    void validate(Command successCallback,
-                  Command errorCallback);
+    @Override
+    public void init(final ExternalDataObjectsPresenter presenter) {
 
-    void preSave();
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright (C) 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.persistence;
 
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-public interface SettingsBaseSectionView extends IsElement {
+@Templated
+public class PersistenceView implements PersistencePresenter.View {
 
+    @Override
+    public void init(final PersistencePresenter presenter) {
+
+    }
 }

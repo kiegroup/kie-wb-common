@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.general;
+package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.POM;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.screens.library.client.settings.SettingsBaseSection;
-import org.kie.workbench.common.screens.library.client.settings.SettingsBaseSectionView;
+import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.util.NewProjectUtils;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.mvp.Command;
 
-public class GeneralPresenter implements SettingsBaseSection {
+public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
-    public interface View extends UberElemental<GeneralPresenter>,
-                                  SettingsBaseSectionView {
+    public interface View extends SettingsPresenter.View.Section<GeneralSettingsPresenter> {
 
         String getName();
 
@@ -77,15 +75,15 @@ public class GeneralPresenter implements SettingsBaseSection {
         String getInvalidVersionMessage();
     }
 
-    private View view;
+    private final View view;
 
-    private Caller<ValidationService> validationService;
+    private final Caller<ValidationService> validationService;
 
     private POM pom;
 
     @Inject
-    public GeneralPresenter(final View view,
-                            final Caller<ValidationService> validationService) {
+    public GeneralSettingsPresenter(final View view,
+                                    final Caller<ValidationService> validationService) {
         this.view = view;
         this.validationService = validationService;
     }
@@ -117,7 +115,7 @@ public class GeneralPresenter implements SettingsBaseSection {
     }
 
     @Override
-    public void preSave() {
+    public void beforeSave() {
         pom.setName(view.getName());
         pom.setDescription(view.getDescription());
         pom.setUrl(view.getURL());
@@ -134,6 +132,7 @@ public class GeneralPresenter implements SettingsBaseSection {
                                 final String version,
                                 final Command successCallback,
                                 final Command errorCallback) {
+
         final Command validateVersion = () -> validateVersion(version,
                                                               successCallback,
                                                               errorCallback);
@@ -161,7 +160,7 @@ public class GeneralPresenter implements SettingsBaseSection {
 
         validationService.call((Boolean isValid) -> {
             final String sanitizeProjectName = NewProjectUtils.sanitizeProjectName(name);
-            if (Boolean.TRUE.equals(isValid) && !sanitizeProjectName.isEmpty()) {
+            if (isValid && !sanitizeProjectName.isEmpty()) {
                 if (successCallback != null) {
                     successCallback.execute();
                 }
@@ -186,7 +185,7 @@ public class GeneralPresenter implements SettingsBaseSection {
         }
 
         validationService.call((Boolean isValid) -> {
-            if (Boolean.TRUE.equals(isValid)) {
+            if (isValid) {
                 if (successCallback != null) {
                     successCallback.execute();
                 }
@@ -211,7 +210,7 @@ public class GeneralPresenter implements SettingsBaseSection {
         }
 
         validationService.call((Boolean isValid) -> {
-            if (Boolean.TRUE.equals(isValid)) {
+            if (isValid) {
                 if (successCallback != null) {
                     successCallback.execute();
                 }
@@ -236,7 +235,7 @@ public class GeneralPresenter implements SettingsBaseSection {
         }
 
         validationService.call((Boolean isValid) -> {
-            if (Boolean.TRUE.equals(isValid)) {
+            if (isValid) {
                 if (successCallback != null) {
                     successCallback.execute();
                 }
@@ -249,7 +248,8 @@ public class GeneralPresenter implements SettingsBaseSection {
         }).validateGAVVersion(version);
     }
 
-    public View getView() {
+    @Override
+    public SettingsPresenter.View.Section getView() {
         return view;
     }
 }

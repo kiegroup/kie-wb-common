@@ -40,32 +40,32 @@ public class SettingsView implements SettingsPresenter.View,
     private TranslationService translationService;
 
     @Inject
-    @DataField("general-tab")
-    private HTMLAnchorElement generalTab;
+    @DataField("general-section")
+    private HTMLAnchorElement generalSection;
 
     @Inject
-    @DataField("dependencies-tab")
-    private HTMLAnchorElement dependenciesTab;
+    @DataField("dependencies-section")
+    private HTMLAnchorElement dependenciesSection;
 
     @Inject
-    @DataField("knowledge-bases-tab")
-    private HTMLAnchorElement knowledgeBasesTab;
+    @DataField("knowledge-bases-section")
+    private HTMLAnchorElement knowledgeBasesSection;
 
     @Inject
-    @DataField("external-data-objects-tab")
-    private HTMLAnchorElement externalDataObjectsTab;
+    @DataField("external-data-objects-section")
+    private HTMLAnchorElement externalDataObjectsSection;
 
     @Inject
-    @DataField("validation-tab")
-    private HTMLAnchorElement validationTab;
+    @DataField("validation-section")
+    private HTMLAnchorElement validationSection;
 
     @Inject
-    @DataField("deployments-tab")
-    private HTMLAnchorElement deploymentsTab;
+    @DataField("deployments-section")
+    private HTMLAnchorElement deploymentsSection;
 
     @Inject
-    @DataField("persistence-tab")
-    private HTMLAnchorElement persistenceTab;
+    @DataField("persistence-section")
+    private HTMLAnchorElement persistenceSection;
 
     @Inject
     @DataField("save")
@@ -94,45 +94,45 @@ public class SettingsView implements SettingsPresenter.View,
         presenter.reset();
     }
 
-    @EventHandler("general-tab")
-    public void goToGeneralTab(final ClickEvent event) {
-        presenter.goToGeneralTab();
+    @EventHandler("general-section")
+    public void goToGeneralSection(final ClickEvent event) {
+        presenter.goToGeneralSettingsSection();
     }
 
-    @EventHandler("dependencies-tab")
-    public void goToDependenciesTab(final ClickEvent event) {
-        presenter.goToDependenciesTab();
+    @EventHandler("dependencies-section")
+    public void goToDependenciesSection(final ClickEvent event) {
+        presenter.goToDependenciesSection();
     }
 
-    @EventHandler("knowledge-bases-tab")
-    public void goToKnowledgeBasesTab(final ClickEvent event) {
-        presenter.goToKnowledgeBasesTab();
+    @EventHandler("knowledge-bases-section")
+    public void goToKnowledgeBasesSection(final ClickEvent event) {
+        presenter.goToKnowledgeBasesSection();
     }
 
-    @EventHandler("external-data-objects-tab")
-    public void goToExternalDataObjectsTab(final ClickEvent event) {
-        presenter.goToExternalDataObjectsTab();
+    @EventHandler("external-data-objects-section")
+    public void goToExternalDataObjectsSection(final ClickEvent event) {
+        presenter.goToExternalDataObjectsSection();
     }
 
-    @EventHandler("validation-tab")
-    public void goToValidationTab(final ClickEvent event) {
-        presenter.goToValidationTab();
+    @EventHandler("validation-section")
+    public void goToValidationSection(final ClickEvent event) {
+        presenter.goToValidationSection();
     }
 
-    @EventHandler("deployments-tab")
-    public void goToDeploymentsTab(final ClickEvent event) {
-        presenter.goToDeploymentsTab();
+    @EventHandler("deployments-section")
+    public void goToDeploymentsSection(final ClickEvent event) {
+        presenter.goToDeploymentsSection();
     }
 
-    @EventHandler("persistence-tab")
-    public void goToPersistenceTab(final ClickEvent event) {
-        presenter.goToPersistenceTab();
+    @EventHandler("persistence-section")
+    public void goToPersistenceSection(final ClickEvent event) {
+        presenter.goToPersistenceSection();
     }
 
     @Override
-    public void setContent(final SettingsBaseSectionView contentView) {
+    public void setContent(final Section section) {
         content.innerHTML = "";
-        content.appendChild(contentView.getElement());
+        content.appendChild(section.getElement());
     }
 
     @Override
