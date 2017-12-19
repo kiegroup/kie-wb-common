@@ -25,6 +25,7 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.service.DeploymentMode;
@@ -54,7 +55,6 @@ import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
-import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.events.NotificationEvent.NotificationType;
 
@@ -104,13 +104,13 @@ public class SettingsPresenter {
     private ObservablePath pathToPomXml;
 
     // Sections
-    private final DependenciesPresenter dependenciesSettingsSectionPresenter;
-    private final DeploymentsPresenter deploymentsSettingsSectionPresenter;
-    private final ExternalDataObjectsPresenter externalDataObjectsSettingsSectionPresenter;
-    private final GeneralSettingsPresenter generalSettingsSectionPresenter;
-    private final KnowledgeBasesPresenter knowledgeBasesSettingsSectionPresenter;
-    private final PersistencePresenter persistenceSettingsSectionPresenter;
-    private final ValidationPresenter validationSettingsSectionPresenter;
+    private final DependenciesPresenter dependenciesSettingsSection;
+    private final DeploymentsPresenter deploymentsSettingsSection;
+    private final ExternalDataObjectsPresenter externalDataObjectsSettingsSection;
+    private final GeneralSettingsPresenter generalSettingsSection;
+    private final KnowledgeBasesPresenter knowledgeBasesSettingsSection;
+    private final PersistencePresenter persistenceSettingsSection;
+    private final ValidationPresenter validationSettingsSection;
 
     @Inject
     public SettingsPresenter(final View view,
@@ -120,13 +120,13 @@ public class SettingsPresenter {
                              final ManagedInstance<ObservablePath> observablePaths,
                              final Event<NotificationEvent> notificationEvent,
                              final SavePopUpPresenter savePopUpPresenter,
-                             final DependenciesPresenter dependenciesSettingsSectionPresenter,
-                             final DeploymentsPresenter deploymentsSettingsSectionPresenter,
-                             final ExternalDataObjectsPresenter externalDataObjectsSettingsSectionPresenter,
-                             final GeneralSettingsPresenter generalSettingsSectionPresenter,
-                             final KnowledgeBasesPresenter knowledgeBasesSettingsSectionPresenter,
-                             final PersistencePresenter persistenceSettingsSectionPresenter,
-                             final ValidationPresenter validationSettingsSectionPresenter) {
+                             final DependenciesPresenter dependenciesSettingsSection,
+                             final DeploymentsPresenter deploymentsSettingsSection,
+                             final ExternalDataObjectsPresenter externalDataObjectsSettingsSection,
+                             final GeneralSettingsPresenter generalSettingsSection,
+                             final KnowledgeBasesPresenter knowledgeBasesSettingsSection,
+                             final PersistencePresenter persistenceSettingsSection,
+                             final ValidationPresenter validationSettingsSection) {
         this.view = view;
         this.projectScreenService = projectScreenService;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
@@ -135,13 +135,13 @@ public class SettingsPresenter {
         this.notificationEvent = notificationEvent;
         this.savePopUpPresenter = savePopUpPresenter;
 
-        this.dependenciesSettingsSectionPresenter = dependenciesSettingsSectionPresenter;
-        this.deploymentsSettingsSectionPresenter = deploymentsSettingsSectionPresenter;
-        this.externalDataObjectsSettingsSectionPresenter = externalDataObjectsSettingsSectionPresenter;
-        this.generalSettingsSectionPresenter = generalSettingsSectionPresenter;
-        this.knowledgeBasesSettingsSectionPresenter = knowledgeBasesSettingsSectionPresenter;
-        this.persistenceSettingsSectionPresenter = persistenceSettingsSectionPresenter;
-        this.validationSettingsSectionPresenter = validationSettingsSectionPresenter;
+        this.dependenciesSettingsSection = dependenciesSettingsSection;
+        this.deploymentsSettingsSection = deploymentsSettingsSection;
+        this.externalDataObjectsSettingsSection = externalDataObjectsSettingsSection;
+        this.generalSettingsSection = generalSettingsSection;
+        this.knowledgeBasesSettingsSection = knowledgeBasesSettingsSection;
+        this.persistenceSettingsSection = persistenceSettingsSection;
+        this.validationSettingsSection = validationSettingsSection;
     }
 
     @PostConstruct
@@ -164,19 +164,29 @@ public class SettingsPresenter {
     private void onProjectScreenModelLoadSuccess(final ProjectScreenModel projectScreenModel) {
         concurrentUpdateSessionInfo = null;
         model = projectScreenModel;
-        generalSettingsSectionPresenter.setup(projectScreenModel.getPOM());
+        generalSettingsSection.setup(projectScreenModel.getPOM());
         view.hideBusyIndicator();
         originalHash = projectScreenModel.hashCode();
     }
 
     public void save() {
-        for (final Section section : getSectionsInDisplayOrder()) {
-            if (!section.isValid()) {
-                goTo(section);
-                break;
-            }
-        }
+        Promises.reduce(true, getSectionsInDisplayOrder().stream().map(Section::isValid))
+                .then(i -> {
+                    onValidationSuccess();
+                    return Promise.resolve(true);
+                })
+                .catch_(section -> {
+                    onValidationError((Section) section);
+                    return Promise.resolve(section);
+                });
+    }
 
+    private void onValidationError(final Section section) {
+        view.hideBusyIndicator();
+        goTo(section);
+    }
+
+    private void onValidationSuccess() {
         if (concurrentUpdateSessionInfo != null) {
             newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
                                 concurrentUpdateSessionInfo.getIdentity(),
@@ -227,31 +237,31 @@ public class SettingsPresenter {
     }
 
     public void goToGeneralSettingsSection() {
-        goTo(generalSettingsSectionPresenter);
+        goTo(generalSettingsSection);
     }
 
     public void goToDependenciesSection() {
-        goTo(dependenciesSettingsSectionPresenter);
+        goTo(dependenciesSettingsSection);
     }
 
     public void goToKnowledgeBasesSection() {
-        goTo(knowledgeBasesSettingsSectionPresenter);
+        goTo(knowledgeBasesSettingsSection);
     }
 
     public void goToExternalDataObjectsSection() {
-        goTo(externalDataObjectsSettingsSectionPresenter);
+        goTo(externalDataObjectsSettingsSection);
     }
 
     public void goToValidationSection() {
-        goTo(validationSettingsSectionPresenter);
+        goTo(validationSettingsSection);
     }
 
     public void goToDeploymentsSection() {
-        goTo(deploymentsSettingsSectionPresenter);
+        goTo(deploymentsSettingsSection);
     }
 
     public void goToPersistenceSection() {
-        goTo(persistenceSettingsSectionPresenter);
+        goTo(persistenceSettingsSection);
     }
 
     private void goTo(final Section section) {
@@ -260,13 +270,13 @@ public class SettingsPresenter {
 
     private List<Section> getSectionsInDisplayOrder() {
         return Arrays.asList(
-                generalSettingsSectionPresenter,
-                dependenciesSettingsSectionPresenter,
-                knowledgeBasesSettingsSectionPresenter,
-                externalDataObjectsSettingsSectionPresenter,
-                validationSettingsSectionPresenter,
-                deploymentsSettingsSectionPresenter,
-                persistenceSettingsSectionPresenter
+                generalSettingsSection,
+                dependenciesSettingsSection,
+                knowledgeBasesSettingsSection,
+                externalDataObjectsSettingsSection,
+                validationSettingsSection,
+                deploymentsSettingsSection,
+                persistenceSettingsSection
         );
     }
 
@@ -285,14 +295,12 @@ public class SettingsPresenter {
 
     public interface Section {
 
-        void validate(final Command successCallback, final Command errorCallback);
-
         void beforeSave();
 
         View.Section getView();
 
-        default boolean isValid() {
-            return true;
+        default Promise<Object> isValid() {
+            return Promise.resolve(true);
         }
     }
 }

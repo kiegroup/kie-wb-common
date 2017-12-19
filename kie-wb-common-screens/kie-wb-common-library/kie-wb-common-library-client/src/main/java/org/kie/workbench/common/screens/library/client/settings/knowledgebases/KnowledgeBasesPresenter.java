@@ -19,9 +19,6 @@ package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
-import org.uberfire.client.mvp.UberElemental;
-import org.uberfire.mvp.Command;
 
 public class KnowledgeBasesPresenter implements SettingsPresenter.Section {
 
@@ -34,11 +31,6 @@ public class KnowledgeBasesPresenter implements SettingsPresenter.Section {
     @Inject
     public KnowledgeBasesPresenter(final KnowledgeBasesPresenter.View view) {
         this.view = view;
-    }
-
-    @Override
-    public void validate(final Command successCallback, final Command errorCallback) {
-
     }
 
     @Override

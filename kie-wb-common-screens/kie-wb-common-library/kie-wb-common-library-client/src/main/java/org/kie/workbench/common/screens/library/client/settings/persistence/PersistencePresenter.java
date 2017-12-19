@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.library.client.settings.persistence;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
-import org.uberfire.mvp.Command;
 
 public class PersistencePresenter implements SettingsPresenter.Section {
 
@@ -32,11 +31,6 @@ public class PersistencePresenter implements SettingsPresenter.Section {
     @Inject
     public PersistencePresenter(final PersistencePresenter.View view) {
         this.view = view;
-    }
-
-    @Override
-    public void validate(final Command successCallback, final Command errorCallback) {
-
     }
 
     @Override

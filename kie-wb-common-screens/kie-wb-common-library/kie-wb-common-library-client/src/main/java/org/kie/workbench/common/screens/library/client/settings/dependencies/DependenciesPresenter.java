@@ -26,7 +26,6 @@ import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencie
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
-import org.uberfire.mvp.Command;
 
 public class DependenciesPresenter implements SettingsPresenter.Section {
 
@@ -79,11 +78,6 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
     public void addFromRepository() {
         //TODO
-    }
-
-    @Override
-    public void validate(Command successCallback, Command errorCallback) {
-
     }
 
     @Override

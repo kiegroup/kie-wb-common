@@ -16,15 +16,16 @@
 
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
+import java.util.function.Function;
+
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.POM;
 import org.jboss.errai.common.client.api.Caller;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
-import org.kie.workbench.common.screens.projecteditor.util.NewProjectUtils;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
-import org.uberfire.client.mvp.UberElemental;
-import org.uberfire.mvp.Command;
 
 public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
@@ -101,17 +102,53 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public void validate(final Command successCallback,
-                         final Command errorCallback) {
+    public Promise<Object> isValid() {
         view.hideError();
-        validateFields(view.getName(),
-                       view.getDescription(),
-                       view.getURL(),
-                       view.getGroupId(),
-                       view.getArtifactId(),
-                       view.getVersion(),
-                       successCallback,
-                       errorCallback);
+        return Promise.resolve(true)
+                .then(this::validateName)
+                .then(this::validateGroupId)
+                .then(this::validateArtifactId)
+                .then(this::validateVersion)
+                .catch_(this::onValidationError);
+    }
+
+    private Promise<Boolean> validateGroupId(final Boolean b) {
+        return validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage())
+                .then(x -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()));
+    }
+
+    private Promise<Boolean> validateArtifactId(final Boolean b) {
+        return validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage())
+                .then(x -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()));
+    }
+
+    private Promise<Boolean> validateName(final Boolean b) {
+        return validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
+                .then(x -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()));
+    }
+
+    private Promise<Boolean> validateVersion(final Boolean b) {
+        return validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage())
+                .then(x -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()));
+    }
+
+    private Promise<Object> onValidationError(final Object e) {
+        view.showError((String) e);
+        return Promise.reject(this);
+    }
+
+    private Promise<Boolean> validateStringIsNotEmpty(final String string, final String errorMessage) {
+        return new Promise<>((resolve, reject) -> {
+            if (string == null || string.isEmpty()) {
+                reject.onInvoke(errorMessage);
+            } else {
+                resolve.onInvoke(true);
+            }
+        });
+    }
+
+    private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call, final String errorMessage) {
+        return Promises.promisify(validationService, call, errorMessage, isValid -> isValid);
     }
 
     @Override
@@ -122,130 +159,6 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         pom.getGav().setGroupId(view.getGroupId());
         pom.getGav().setArtifactId(view.getArtifactId());
         pom.getGav().setVersion(view.getVersion());
-    }
-
-    private void validateFields(final String name,
-                                final String description,
-                                final String url,
-                                final String groupId,
-                                final String artifactId,
-                                final String version,
-                                final Command successCallback,
-                                final Command errorCallback) {
-
-        final Command validateVersion = () -> validateVersion(version,
-                                                              successCallback,
-                                                              errorCallback);
-        final Command validateArtifactId = () -> validateArtifactId(artifactId,
-                                                                    validateVersion,
-                                                                    errorCallback);
-        final Command validateGroupId = () -> validateGroupId(groupId,
-                                                              validateArtifactId,
-                                                              errorCallback);
-        validateName(name,
-                     validateGroupId,
-                     errorCallback);
-    }
-
-    private void validateName(final String name,
-                              final Command successCallback,
-                              final Command errorCallback) {
-        if (name == null || name.trim().isEmpty()) {
-            view.showError(view.getEmptyNameMessage());
-            if (errorCallback != null) {
-                errorCallback.execute();
-            }
-            return;
-        }
-
-        validationService.call((Boolean isValid) -> {
-            final String sanitizeProjectName = NewProjectUtils.sanitizeProjectName(name);
-            if (isValid && !sanitizeProjectName.isEmpty()) {
-                if (successCallback != null) {
-                    successCallback.execute();
-                }
-            } else {
-                view.showError(view.getInvalidNameMessage());
-                if (errorCallback != null) {
-                    errorCallback.execute();
-                }
-            }
-        }).isProjectNameValid(name);
-    }
-
-    private void validateGroupId(final String groupId,
-                                 final Command successCallback,
-                                 final Command errorCallback) {
-        if (groupId == null || groupId.trim().isEmpty()) {
-            view.showError(view.getEmptyGroupIdMessage());
-            if (errorCallback != null) {
-                errorCallback.execute();
-            }
-            return;
-        }
-
-        validationService.call((Boolean isValid) -> {
-            if (isValid) {
-                if (successCallback != null) {
-                    successCallback.execute();
-                }
-            } else {
-                view.showError(view.getInvalidGroupIdMessage());
-                if (errorCallback != null) {
-                    errorCallback.execute();
-                }
-            }
-        }).validateGroupId(groupId);
-    }
-
-    private void validateArtifactId(final String artifactId,
-                                    final Command successCallback,
-                                    final Command errorCallback) {
-        if (artifactId == null || artifactId.trim().isEmpty()) {
-            view.showError(view.getEmptyArtifactIdMessage());
-            if (errorCallback != null) {
-                errorCallback.execute();
-            }
-            return;
-        }
-
-        validationService.call((Boolean isValid) -> {
-            if (isValid) {
-                if (successCallback != null) {
-                    successCallback.execute();
-                }
-            } else {
-                view.showError(view.getInvalidArtifactIdMessage());
-                if (errorCallback != null) {
-                    errorCallback.execute();
-                }
-            }
-        }).validateArtifactId(artifactId);
-    }
-
-    private void validateVersion(final String version,
-                                 final Command successCallback,
-                                 final Command errorCallback) {
-        if (version == null || version.trim().isEmpty()) {
-            view.showError(view.getEmptyVersionMessage());
-            if (errorCallback != null) {
-                errorCallback.execute();
-            }
-            return;
-        }
-
-        validationService.call((Boolean isValid) -> {
-            if (isValid) {
-                if (successCallback != null) {
-                    successCallback.execute();
-                }
-            } else {
-                view.showError(view.getInvalidVersionMessage());
-                if (errorCallback != null) {
-                    errorCallback.execute();
-                }
-            }
-        }).validateGAVVersion(version);
     }
 
     @Override
