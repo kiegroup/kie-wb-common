@@ -24,8 +24,11 @@ import javax.inject.Inject;
 
 import com.google.gwt.core.client.GWT;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.GAV;
+import org.guvnor.common.services.project.model.POM;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.common.client.api.Caller;
@@ -33,11 +36,9 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.library.api.LibraryInfo;
 import org.kie.workbench.common.screens.library.api.LibraryService;
-import org.kie.workbench.common.screens.library.api.ProjectInfo;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryPreferences;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
-import org.kie.workbench.common.screens.projecteditor.util.NewProjectUtils;
-import org.kie.workbench.common.services.shared.project.KieProject;
+import org.kie.workbench.common.screens.projecteditor.util.NewWorkspaceProjectUtils;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
 import org.uberfire.client.mvp.UberElement;
@@ -104,6 +105,7 @@ public class AddProjectPopUpPresenter {
 
     private LibraryPlaces libraryPlaces;
 
+    private WorkspaceProjectContext projectContext;
     private View view;
 
     private SessionInfo sessionInfo;
@@ -123,6 +125,7 @@ public class AddProjectPopUpPresenter {
                                     final BusyIndicatorView busyIndicatorView,
                                     final Event<NotificationEvent> notificationEvent,
                                     final LibraryPlaces libraryPlaces,
+                                    final WorkspaceProjectContext projectContext,
                                     final View view,
                                     final SessionInfo sessionInfo,
                                     final Event<NewProjectEvent> newProjectEvent,
@@ -133,6 +136,7 @@ public class AddProjectPopUpPresenter {
         this.busyIndicatorView = busyIndicatorView;
         this.notificationEvent = notificationEvent;
         this.libraryPlaces = libraryPlaces;
+        this.projectContext = projectContext;
         this.view = view;
         this.sessionInfo = sessionInfo;
         this.newProjectEvent = newProjectEvent;
@@ -150,8 +154,7 @@ public class AddProjectPopUpPresenter {
             public void callback(LibraryInfo libraryInfo) {
                 AddProjectPopUpPresenter.this.libraryInfo = libraryInfo;
             }
-        }).getLibraryInfo(libraryPlaces.getSelectedRepository(),
-                          libraryPlaces.getSelectedBranch());
+        }).getLibraryInfo(projectContext.getActiveOrganizationalUnit());
     }
 
     public void show() {
@@ -177,34 +180,29 @@ public class AddProjectPopUpPresenter {
         final String version = view.getVersion();
 
         validateFields(name,
-                       description,
                        groupId,
                        artifactId,
                        version,
                        () -> {
-                           final RemoteCallback<KieProject> successCallback = getSuccessCallback();
-                           final ErrorCallback<?> errorCallback = getErrorCallback(name,
-                                                                                   description,
-                                                                                   groupId,
+                           final RemoteCallback<WorkspaceProject> successCallback = getSuccessCallback();
+                           final ErrorCallback<?> errorCallback = getErrorCallback(groupId,
                                                                                    artifactId,
                                                                                    version);
                            if (view.isAdvancedOptionsSelected()) {
+
+                               final POM pom = new POM(new GAV(groupId,
+                                                               artifactId,
+                                                               version));
+                               pom.setName(name);
+                               pom.setDescription(description);
                                libraryService.call(successCallback,
-                                                   errorCallback).createProject(name,
-                                                                                description,
-                                                                                groupId,
-                                                                                artifactId,
-                                                                                version,
-                                                                                libraryPlaces.getSelectedOrganizationalUnit(),
-                                                                                libraryPlaces.getSelectedRepository(),
-                                                                                getBaseURL(),
+                                                   errorCallback).createProject(projectContext.getActiveOrganizationalUnit(),
+                                                                                pom,
                                                                                 mode);
                            } else {
                                libraryService.call(successCallback,
                                                    errorCallback).createProject(name,
-                                                                                libraryPlaces.getSelectedOrganizationalUnit(),
-                                                                                libraryPlaces.getSelectedRepository(),
-                                                                                getBaseURL(),
+                                                                                projectContext.getActiveOrganizationalUnit(),
                                                                                 description,
                                                                                 mode);
                            }
@@ -212,7 +210,6 @@ public class AddProjectPopUpPresenter {
     }
 
     private void validateFields(final String name,
-                                final String description,
                                 final String groupId,
                                 final String artifactId,
                                 final String version,
@@ -236,7 +233,7 @@ public class AddProjectPopUpPresenter {
         }
 
         validationService.call((Boolean isValid) -> {
-            final String sanitizeProjectName = NewProjectUtils.sanitizeProjectName(name);
+            final String sanitizeProjectName = NewWorkspaceProjectUtils.sanitizeProjectName(name);
             if (Boolean.TRUE.equals(isValid) && !sanitizeProjectName.isEmpty()) {
                 if (successCallback != null) {
                     successCallback.execute();
@@ -308,21 +305,17 @@ public class AddProjectPopUpPresenter {
         }).validateGAVVersion(version);
     }
 
-    private RemoteCallback<KieProject> getSuccessCallback() {
+    private RemoteCallback<WorkspaceProject> getSuccessCallback() {
         return project -> {
-            newProjectEvent.fire(new NewProjectEvent(project,
-                                                     sessionInfo.getId(),
-                                                     sessionInfo.getIdentity().getIdentifier()));
+            newProjectEvent.fire(new NewProjectEvent(project));
             view.hideBusyIndicator();
             view.hide();
             notifySuccess();
-            goToProject(project);
+            libraryPlaces.goToProject(project);
         };
     }
 
-    private ErrorCallback<?> getErrorCallback(final String name,
-                                              final String description,
-                                              final String groupId,
+    private ErrorCallback<?> getErrorCallback(final String groupId,
                                               final String artifactId,
                                               final String version) {
 
@@ -364,14 +357,6 @@ public class AddProjectPopUpPresenter {
         final String baseUrl = url.replace(GWT.getModuleName() + "/",
                                            "");
         return baseUrl;
-    }
-
-    private void goToProject(KieProject project) {
-        final ProjectInfo projectInfo = new ProjectInfo(libraryPlaces.getSelectedOrganizationalUnit(),
-                                                        libraryPlaces.getSelectedRepository(),
-                                                        libraryInfo.getSelectedBranch(),
-                                                        project);
-        libraryPlaces.goToProject(projectInfo);
     }
 
     private void notifySuccess() {

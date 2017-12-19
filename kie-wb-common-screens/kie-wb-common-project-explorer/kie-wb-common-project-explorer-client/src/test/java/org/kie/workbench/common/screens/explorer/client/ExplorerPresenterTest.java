@@ -15,7 +15,7 @@
  */
 package org.kie.workbench.common.screens.explorer.client;
 
-import org.guvnor.common.services.project.context.ProjectContext;
+import org.guvnor.common.services.project.context.WorkspaceProjectContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,11 +46,11 @@ public class ExplorerPresenterTest {
 
     @Mock
     private TechnicalViewPresenter technicalViewPresenter;
-    private ProjectContext context;
+    private WorkspaceProjectContext context;
 
     @Before
     public void setUp() throws Exception {
-        context = new ProjectContext();
+        context = new WorkspaceProjectContext();
         explorer = new ExplorerPresenter( mock( ExplorerView.class ),
                                           businessViewPresenter,
                                           technicalViewPresenter,

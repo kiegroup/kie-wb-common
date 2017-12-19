@@ -27,7 +27,7 @@ import org.guvnor.ala.ui.client.util.AbstractHasContentChangeHandlers;
 import org.guvnor.ala.ui.client.widget.FormStatus;
 import org.guvnor.ala.ui.client.wizard.pipeline.params.PipelineParamsForm;
 import org.guvnor.ala.ui.service.SourceService;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.Module;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.IsElement;
 import org.uberfire.client.callbacks.Callback;
@@ -53,7 +53,7 @@ public class SourceConfigurationParamsPresenter
 
         String getBranch();
 
-        String getProject();
+        String getModule();
 
         void setRuntimeStatus(final FormStatus status);
 
@@ -85,20 +85,20 @@ public class SourceConfigurationParamsPresenter
 
         void addOrganizationUnit(String ou);
 
-        void clearProjects();
+        void clearModules();
 
-        void addProject(String projectName);
+        void addModule(final String moduleName);
     }
 
     public static final String REPO_NAME = "repo-name";
 
     public static final String BRANCH = "branch";
 
-    public static final String PROJECT_DIR = "project-dir";
+    public static final String MODULE_DIR = "module-dir";
 
     private final View view;
     private final Caller<SourceService> sourceService;
-    private final Map<String, Project> currentProjects = new HashMap<>();
+    private final Map<String, Module> currentModules = new HashMap<>();
 
     @Inject
     public SourceConfigurationParamsPresenter(final View view,
@@ -145,14 +145,14 @@ public class SourceConfigurationParamsPresenter
                    getRepository());
         params.put(BRANCH,
                    getBranch());
-        params.put(PROJECT_DIR,
-                   getProject().getProjectName());
+        params.put(MODULE_DIR,
+                   getModule().getModuleName());
         return params;
     }
 
     public void clear() {
         view.clear();
-        clearProjects();
+        clearModules();
     }
 
     private void setup() {
@@ -175,8 +175,8 @@ public class SourceConfigurationParamsPresenter
         return view.getOU();
     }
 
-    private Project getProject() {
-        return currentProjects.get(view.getProject());
+    private Module getModule() {
+        return currentModules.get(view.getModule());
     }
 
     private boolean isValid() {
@@ -184,7 +184,7 @@ public class SourceConfigurationParamsPresenter
                 !getOU().isEmpty() &&
                 !getRepository().isEmpty() &&
                 !getBranch().isEmpty() &&
-                getProject() != null;
+                getModule() != null;
     }
 
     public void disable() {
@@ -205,7 +205,7 @@ public class SourceConfigurationParamsPresenter
             view.setOUStatus(FormStatus.VALID);
             view.clearRepositories();
             view.clearBranches();
-            clearProjects();
+            clearModules();
             loadRepositories(getOU());
         } else {
             view.setOUStatus(FormStatus.ERROR);
@@ -217,7 +217,7 @@ public class SourceConfigurationParamsPresenter
         if (!view.getRepository().isEmpty()) {
             view.setRepositoryStatus(FormStatus.VALID);
             view.clearBranches();
-            clearProjects();
+            clearModules();
             loadBranches(getRepository());
         } else {
             view.setRepositoryStatus(FormStatus.ERROR);
@@ -228,7 +228,7 @@ public class SourceConfigurationParamsPresenter
     protected void onBranchChange() {
         if (!view.getBranch().isEmpty()) {
             view.setBranchStatus(FormStatus.VALID);
-            clearProjects();
+            clearModules();
             loadProjects(getRepository(),
                          getBranch());
         } else {
@@ -237,8 +237,8 @@ public class SourceConfigurationParamsPresenter
         onContentChange();
     }
 
-    protected void onProjectChange() {
-        if (!view.getProject().isEmpty()) {
+    protected void onModuleChange() {
+        if (!view.getModule().isEmpty()) {
             view.setProjectStatus(FormStatus.VALID);
         } else {
             view.setProjectStatus(FormStatus.ERROR);
@@ -252,7 +252,7 @@ public class SourceConfigurationParamsPresenter
                                ous.forEach(view::addOrganizationUnit);
                                view.clearRepositories();
                                view.clearBranches();
-                               clearProjects();
+                               clearModules();
                            },
                            new DefaultErrorCallback()
         ).getOrganizationUnits();
@@ -263,7 +263,7 @@ public class SourceConfigurationParamsPresenter
                                view.clearRepositories();
                                repos.forEach(view::addRepository);
                                view.clearBranches();
-                               clearProjects();
+                               clearModules();
                            },
                            new DefaultErrorCallback()
         ).getRepositories(ou);
@@ -273,7 +273,7 @@ public class SourceConfigurationParamsPresenter
         sourceService.call((Collection<String> branches) -> {
                                view.clearBranches();
                                branches.forEach(view::addBranch);
-                               clearProjects();
+                               clearModules();
                            },
                            new DefaultErrorCallback()
         ).getBranches(repository);
@@ -281,22 +281,22 @@ public class SourceConfigurationParamsPresenter
 
     private void loadProjects(String repository,
                               String branch) {
-        sourceService.call((Collection<Project> projects) -> {
-                               clearProjects();
-                               projects.forEach(project -> {
-                                   view.addProject(project.getProjectName());
-                                   currentProjects.put(project.getProjectName(),
-                                                       project);
+        sourceService.call((Collection<Module> modules) -> {
+                               clearModules();
+                               modules.forEach(module -> {
+                                   view.addModule(module.getModuleName());
+                                   currentModules.put(module.getModuleName(),
+                                                      module);
                                });
                            },
                            new DefaultErrorCallback()
-        ).getProjects(repository,
-                      branch);
+        ).getModules(repository,
+                     branch);
     }
 
-    private void clearProjects() {
-        view.clearProjects();
-        currentProjects.clear();
+    private void clearModules() {
+        view.clearModules();
+        currentModules.clear();
     }
 
     private void onContentChange() {

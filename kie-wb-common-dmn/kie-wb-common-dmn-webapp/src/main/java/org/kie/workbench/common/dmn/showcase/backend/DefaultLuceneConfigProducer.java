@@ -17,6 +17,7 @@ package org.kie.workbench.common.dmn.showcase.backend;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
@@ -25,9 +26,9 @@ import javax.inject.Named;
 import org.apache.lucene.analysis.Analyzer;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.ImpactAnalysisAnalyzerWrapperFactory;
 import org.kie.workbench.common.services.refactoring.backend.server.indexing.LowerCaseOnlyAnalyzer;
+import org.kie.workbench.common.services.refactoring.model.index.terms.ModuleNameIndexTerm;
+import org.kie.workbench.common.services.refactoring.model.index.terms.ModuleRootPathIndexTerm;
 import org.kie.workbench.common.services.refactoring.model.index.terms.PackageNameIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.index.terms.ProjectNameIndexTerm;
-import org.kie.workbench.common.services.refactoring.model.index.terms.ProjectRootPathIndexTerm;
 import org.uberfire.ext.metadata.MetadataConfig;
 import org.uberfire.ext.metadata.backend.lucene.analyzer.FilenameAnalyzer;
 import org.uberfire.ext.metadata.io.MetadataConfigBuilder;
@@ -60,9 +61,9 @@ public class DefaultLuceneConfigProducer {
 
     private Map<String, Analyzer> getAnalyzers() {
         return new HashMap<String, Analyzer>() {{
-            put(ProjectRootPathIndexTerm.TERM,
+            put(ModuleRootPathIndexTerm.TERM,
                 new FilenameAnalyzer());
-            put(ProjectNameIndexTerm.TERM,
+            put(ModuleNameIndexTerm.TERM,
                 new LowerCaseOnlyAnalyzer());
             put(PackageNameIndexTerm.TERM,
                 new LowerCaseOnlyAnalyzer());

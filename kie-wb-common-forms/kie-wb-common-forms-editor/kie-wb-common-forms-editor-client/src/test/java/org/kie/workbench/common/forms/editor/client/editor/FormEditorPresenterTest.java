@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.guvnor.common.services.project.model.Project;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldLayoutComponent;
@@ -317,7 +317,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         loadContent();
         addAllFields();
         when(layoutDragComponentPaletteMock.hasDraggableComponent(anyString(),
-                                                         anyString())).thenReturn(true);
+                                                                  anyString())).thenReturn(true);
         List<FieldDefinition> fieldList = presenter.getFormDefinition().getFields();
 
         presenter.removeAllDraggableGroupComponent(fieldList);
@@ -327,7 +327,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
         verify(layoutDragComponentPaletteMock,
                times(fieldList.size())).removeDraggableComponent(anyString(),
-                                                        anyString());
+                                                                 anyString());
     }
 
     @Test
@@ -338,8 +338,8 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         presenter.addAllDraggableGroupComponent(fieldList);
         verify(layoutDragComponentPaletteMock,
                times(fieldList.size())).addDraggableComponent(anyString(),
-                                                    anyString(),
-                                                    any());
+                                                              anyString(),
+                                                              any());
     }
 
     @Test
@@ -459,7 +459,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         loadContent();
@@ -477,7 +477,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(Project.class)).when(workbenchContext).getActiveProject();
+        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         loadContent();

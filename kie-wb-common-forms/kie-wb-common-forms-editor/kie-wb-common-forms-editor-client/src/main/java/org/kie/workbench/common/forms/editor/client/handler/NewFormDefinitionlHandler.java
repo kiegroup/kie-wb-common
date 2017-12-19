@@ -96,7 +96,7 @@ public class NewFormDefinitionlHandler extends DefaultNewResourceHandler {
 
     @Override
     public List<Pair<String, ? extends IsWidget>> getExtensions() {
-        formModelsPresenter.initialize(context.getActiveProject().getRootPath());
+        formModelsPresenter.initialize(context.getActiveModule().getRootPath());
 
         return super.getExtensions();
     }

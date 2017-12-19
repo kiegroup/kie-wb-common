@@ -91,27 +91,15 @@ public interface DefaultWorkbenchConstants
 
     String WorkbenchRootNodeName();
 
-    String ConfigureRepositories();
-
     String PermissionAllow();
 
     String PermissionDeny();
-
-    String PromoteAssets();
-
-    String ReleaseProjects();
 
     String DataModelerEditSources();
 
     String ResourcePlanner();
 
     String WorkbenchRootNodeHelp();
-
-    String ConfigureRepositoriesHelp();
-
-    String PromoteAssetsHelp();
-
-    String ReleaseProjectsHelp();
 
     String DataModelerEditSourcesHelp();
 
@@ -164,5 +152,4 @@ public interface DefaultWorkbenchConstants
     String InvalidBusResponseProbablySessionTimeout();
 
     String SessionTimeout();
-
 }
