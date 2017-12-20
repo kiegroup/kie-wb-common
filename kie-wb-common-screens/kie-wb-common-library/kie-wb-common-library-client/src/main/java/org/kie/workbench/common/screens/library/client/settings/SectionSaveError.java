@@ -14,27 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.deployments;
+package org.kie.workbench.common.screens.library.client.settings;
 
-import javax.inject.Inject;
+public class SectionSaveError {
 
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+    public final String comment;
+    public final SettingsPresenter.Section section;
 
-public class DeploymentsPresenter implements SettingsPresenter.Section {
-
-    private final View view;
-
-    public interface View extends SettingsPresenter.View.Section<DeploymentsPresenter> {
-
-    }
-
-    @Inject
-    public DeploymentsPresenter(final DeploymentsPresenter.View view) {
-        this.view = view;
-    }
-
-    @Override
-    public SettingsPresenter.View.Section getView() {
-        return view;
+    public SectionSaveError(final String comment, final SettingsPresenter.Section section) {
+        this.comment = comment;
+        this.section = section;
     }
 }

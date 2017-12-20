@@ -18,58 +18,88 @@ package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.model.POM;
+import com.google.gwt.core.client.GWT;
+import elemental2.promise.Promise;
+import org.guvnor.common.services.project.context.ProjectContext;
+import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencies;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 public class DependenciesPresenter implements SettingsPresenter.Section {
 
-    public interface View extends HasBusyIndicator,
-                                  SettingsPresenter.View.Section<DependenciesPresenter> {
-
-        void showBusyIndicator();
+    public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
 
         void addItem(DependenciesItemPresenter.View dependenciesItemView);
     }
 
-    private View view;
+    private final View view;
+    private final ProjectContext workbenchContext;
+    private final EnhancedDependenciesManager enhancedDependenciesManager;
+    private final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters;
+    private final ManagedInstance<ObservablePath> observablePaths;
+    private final Caller<ProjectScreenService> projectScreenService;
 
-    private EnhancedDependenciesManager enhancedDependenciesManager;
-
-    private ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters;
-
+    private HasBusyIndicator container;
+    private ObservablePath pathToPomXml;
     private WhiteList whiteList;
 
     @Inject
     public DependenciesPresenter(final View view,
+                                 final ProjectContext workbenchContext,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
-                                 final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters) {
+                                 final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters,
+                                 final ManagedInstance<ObservablePath> observablePaths,
+                                 final Caller<ProjectScreenService> projectScreenService) {
         this.view = view;
+        this.workbenchContext = workbenchContext;
         this.enhancedDependenciesManager = enhancedDependenciesManager;
         this.dependenciesItemPresenters = dependenciesItemPresenters;
+        this.observablePaths = observablePaths;
+        this.projectScreenService = projectScreenService;
     }
 
-    public void setup(final POM pom, final WhiteList whiteList) {
+    @Override
+    public void setup(final HasBusyIndicator container) {
         view.init(this);
-        this.whiteList = whiteList;
+        this.container = container;
+        this.whiteList = null; //FIXME: tiago
 
-        view.showBusyIndicator();
-        enhancedDependenciesManager.init(pom, this::onSetupSuccess);
+        if (pathToPomXml != null) {
+            pathToPomXml.dispose();
+        }
+
+        pathToPomXml = observablePaths.get().wrap(workbenchContext.getActiveProject().getPomXMLPath());
+
+        loadPom().then(this::loadDependencies);
+    }
+
+    private Promise<ProjectScreenModel> loadPom() {
+        return Promises.promisify(projectScreenService, s -> s.load(pathToPomXml));
+    }
+
+    private Promise<Void> loadDependencies(final ProjectScreenModel model) {
+        enhancedDependenciesManager.init(model.getPOM(), this::onSetupSuccess);
+        return Promises.resolve();
     }
 
     private void onSetupSuccess(final EnhancedDependencies enhancedDependencies) {
-        view.hideBusyIndicator();
-
-        for (EnhancedDependency enhancedDependency : enhancedDependencies) {
-            final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
-            dependenciesItemPresenter.setup(enhancedDependency, whiteList);
-            view.addItem(dependenciesItemPresenter.getView());
-        }
+        container.hideBusyIndicator();
+        GWT.log("Dependencies section Setup success");
+//
+//        for (final EnhancedDependency enhancedDependency : enhancedDependencies) {
+//            final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
+//            dependenciesItemPresenter.setup(enhancedDependency, whiteList);
+//            view.addItem(dependenciesItemPresenter.getView());
+//        }
     }
 
     public void add() {
@@ -78,11 +108,6 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
     public void addFromRepository() {
         //TODO
-    }
-
-    @Override
-    public void beforeSave() {
-
     }
 
     @Override

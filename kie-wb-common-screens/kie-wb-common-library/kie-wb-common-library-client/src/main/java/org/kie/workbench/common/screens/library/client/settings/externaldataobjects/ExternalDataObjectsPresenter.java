@@ -34,11 +34,6 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public void beforeSave() {
-
-    }
-
-    @Override
     public SettingsPresenter.View.Section getView() {
         return view;
     }

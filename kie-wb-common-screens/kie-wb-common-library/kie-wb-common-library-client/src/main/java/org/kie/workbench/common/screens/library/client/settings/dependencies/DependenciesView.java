@@ -74,19 +74,4 @@ public class DependenciesView implements DependenciesPresenter.View,
     public void addItem(final DependenciesItemPresenter.View dependenciesItemView) {
         table.appendChild(dependenciesItemView.getElement());
     }
-
-    @Override
-    public void showBusyIndicator() {
-        showBusyIndicator(translationService.format(LibraryConstants.Loading));
-    }
-
-    @Override
-    public void showBusyIndicator(final String message) {
-        BusyPopup.showMessage(message);
-    }
-
-    @Override
-    public void hideBusyIndicator() {
-        BusyPopup.close();
-    }
 }

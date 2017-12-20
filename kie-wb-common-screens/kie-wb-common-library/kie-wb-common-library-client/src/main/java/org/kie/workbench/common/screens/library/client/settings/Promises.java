@@ -16,31 +16,99 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
+import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.api.Caller;
 
 public class Promises {
 
-    static <T> Promise<T> reduce(final T identity, final Stream<Promise<T>> promises) {
-        return promises.reduce(Promise.resolve(identity), (p, q) -> p.then(b -> q));
+    static <T, O> Promise<O> reduceLazily(final O identity,
+                                          final List<T> objects,
+                                          final Function<T, Promise<O>> f) {
+        return objects.stream()
+                .<Supplier<Promise<O>>>
+                        map(o -> () -> f.apply(o))
+                .<Supplier<Promise<O>>>
+                        reduce(() -> Promise.resolve(identity),
+                               (p1, p2) -> () -> p1.get().then(ignore -> p2.get())
+                )
+                .get();
     }
 
-    public static <T, S, E> Promise<S> promisify(final Caller<T> caller, final Function<T, S> call, final E rejectObject, Predicate<S> validate) {
-        return new Promise<>((resolve, reject) -> {
-            call.apply(caller.call((S resolveObject) -> {
-                if (validate.test(resolveObject)) {
-                    resolve.onInvoke(resolveObject);
-                } else {
-                    reject.onInvoke(rejectObject);
-                }
-            }, (message, throwable) -> {
-                reject.onInvoke(rejectObject);
-                return true;
-            }));
-        });
+    static <T, O> Promise<O> reduceLazilyChaining(final O identity,
+                                                  final List<T> objects,
+                                                  final BiFunction<Supplier<Promise<O>>, T, Promise<O>> f) {
+        return objects.stream()
+                .<Function<Supplier<Promise<O>>, Supplier<Promise<O>>>>
+                        map(o -> next -> () -> f.apply(next, o))
+                .<Function<Supplier<Promise<O>>, Supplier<Promise<O>>>>
+                        reduce(next -> () -> Promise.resolve(identity),
+                               (p1, p2) -> next -> () -> p1.apply(p2.apply(next)).get().then(ignore -> p2.apply(next).get())
+                )
+                .apply(Promises::resolve).get();
+    }
+
+    public static <T, S> Promise<S> promisify(final Caller<T> caller,
+                                              final Function<T, S> call) {
+
+        return promisify(caller, call, null, i -> true);
+    }
+
+    public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
+                                                    final Function<T, S> call,
+                                                    final E rejectObject,
+                                                    final Predicate<S> validate) {
+
+        return new Promise<>((resolve, reject) -> call.apply(caller.call(
+                (S response) -> {
+                    if (validate.test(response)) {
+                        resolve.onInvoke(response);
+                    } else {
+                        reject.onInvoke(rejectObject);
+                    }
+                },
+                (M message, Throwable throwable) -> {
+                    reject.onInvoke(new ThrowableReject<>(rejectObject, message, throwable));
+                    return true;
+                })));
+    }
+
+    public static <T> Promise<T> resolve() {
+        return Promise.resolve((IThenable<T>) null);
+    }
+
+    public static class ThrowableReject<E, M> {
+
+        private final E rejectObject;
+        private final M message;
+        private final Throwable throwable;
+
+        private ThrowableReject(final E rejectObject,
+                                final M message,
+                                final Throwable throwable) {
+
+            this.rejectObject = rejectObject;
+            this.message = message;
+            this.throwable = throwable;
+        }
+
+        public E getRejectObject() {
+            return rejectObject;
+        }
+
+        public M getObject() {
+            return message;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
+        }
     }
 }

@@ -17,23 +17,17 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
+import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
-import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.jboss.errai.bus.client.api.messaging.Message;
-import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.ErrorCallback;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.settings.dependencies.DependenciesPresenter;
@@ -43,22 +37,14 @@ import org.kie.workbench.common.screens.library.client.settings.generalsettings.
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
 import org.kie.workbench.common.screens.library.client.settings.validation.ValidationPresenter;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
-import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
-import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
-import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.events.NotificationEvent.NotificationType;
-
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 
 @WorkbenchScreen(identifier = "project-settings",
         owningPerspective = LibraryPerspective.class)
@@ -83,25 +69,9 @@ public class SettingsPresenter {
 
     private final View view;
 
-    private final Caller<ProjectScreenService> projectScreenService;
-
-    private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-
-    private final ProjectContext workbenchContext;
-
-    private final ManagedInstance<ObservablePath> observablePaths;
-
     private final Event<NotificationEvent> notificationEvent;
 
     private final SavePopUpPresenter savePopUpPresenter;
-
-    private ProjectScreenModel model;
-
-    private ObservablePath.OnConcurrentUpdateEvent concurrentUpdateSessionInfo = null;
-
-    private Integer originalHash;
-
-    private ObservablePath pathToPomXml;
 
     // Sections
     private final DependenciesPresenter dependenciesSettingsSection;
@@ -114,10 +84,6 @@ public class SettingsPresenter {
 
     @Inject
     public SettingsPresenter(final View view,
-                             final Caller<ProjectScreenService> projectScreenService,
-                             final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                             final ProjectContext workbenchContext,
-                             final ManagedInstance<ObservablePath> observablePaths,
                              final Event<NotificationEvent> notificationEvent,
                              final SavePopUpPresenter savePopUpPresenter,
                              final DependenciesPresenter dependenciesSettingsSection,
@@ -128,10 +94,6 @@ public class SettingsPresenter {
                              final PersistencePresenter persistenceSettingsSection,
                              final ValidationPresenter validationSettingsSection) {
         this.view = view;
-        this.projectScreenService = projectScreenService;
-        this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.workbenchContext = workbenchContext;
-        this.observablePaths = observablePaths;
         this.notificationEvent = notificationEvent;
         this.savePopUpPresenter = savePopUpPresenter;
 
@@ -144,92 +106,60 @@ public class SettingsPresenter {
         this.validationSettingsSection = validationSettingsSection;
     }
 
+    //
+    // Setup
+
     @PostConstruct
     public void setup() {
         view.init(this);
         view.showBusyIndicator();
-
-        if (pathToPomXml != null) {
-            pathToPomXml.dispose();
-        }
-
-        pathToPomXml = observablePaths.get().wrap(workbenchContext.getActiveProject().getPomXMLPath());
-        pathToPomXml.onConcurrentUpdate(eventInfo -> concurrentUpdateSessionInfo = eventInfo);
-
-        projectScreenService
-                .call(this::onProjectScreenModelLoadSuccess, new DefaultErrorCallback())
-                .load(pathToPomXml);
+        getSectionsInDisplayOrder().forEach(this::setup);
+        goTo(generalSettingsSection);
     }
 
-    private void onProjectScreenModelLoadSuccess(final ProjectScreenModel projectScreenModel) {
-        concurrentUpdateSessionInfo = null;
-        model = projectScreenModel;
-        generalSettingsSection.setup(projectScreenModel.getPOM());
-        view.hideBusyIndicator();
-        originalHash = projectScreenModel.hashCode();
+    private void setup(final Section section) {
+        section.setup(getView());
     }
+
+    //
+    // Validate
 
     public void save() {
-        Promises.reduce(true, getSectionsInDisplayOrder().stream().map(Section::isValid))
-                .then(i -> {
-                    onValidationSuccess();
-                    return Promise.resolve(true);
-                })
-                .catch_(section -> {
-                    onValidationError((Section) section);
-                    return Promise.resolve(section);
-                });
+        Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::isValid)
+                .then(this::onValidationSuccess)
+                .catch_(this::onValidationError);
     }
 
-    private void onValidationError(final Section section) {
+    private Promise<Boolean> onValidationSuccess(final Object o) {
+        savePopUpPresenter.show(comment -> executeSave(comment, DeploymentMode.VALIDATED));
+        return Promise.resolve(true);
+    }
+
+    private Promise<Object> onValidationError(final Object o) {
         view.hideBusyIndicator();
-        goTo(section);
+        goTo((Section) o);
+        return Promise.resolve(o);
     }
 
-    private void onValidationSuccess() {
-        if (concurrentUpdateSessionInfo != null) {
-            newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
-                                concurrentUpdateSessionInfo.getIdentity(),
-                                this::showSavePopup,
-                                this::noOp,
-                                this::reset).show();
-        } else {
-            showSavePopup();
-            concurrentUpdateSessionInfo = null;
-        }
-    }
-
-    private void showSavePopup() {
-        savePopUpPresenter.show(pathToPomXml, comment -> executeSave(comment, DeploymentMode.VALIDATED));
-    }
+    //
+    // Save
 
     private void executeSave(final String comment, final DeploymentMode mode) {
-        getSectionsInDisplayOrder().forEach(Section::beforeSave);
-        projectScreenService.call(this::onSaveSuccess, onSaveError(comment)).save(pathToPomXml, model, comment, mode);
+        Promises.reduceLazilyChaining(null, getSectionsInDisplayOrder(), (chain, s) -> s.save(comment, mode, chain))
+                .then(this::onSaveSuccess)
+                .catch_(this::onSaveError);
     }
 
-    private void onSaveSuccess(final Void v) {
+    private Promise<Object> onSaveSuccess(final Object o) {
         view.hideBusyIndicator();
         notificationEvent.fire(new NotificationEvent(view.getSaveSuccessfulMessage(), NotificationType.SUCCESS));
-        originalHash = model.hashCode();
+        return Promise.resolve((IThenable<Object>) null);
     }
 
-    private ErrorCallback<Message> onSaveError(final String comment) {
-        final Map<Class<? extends Throwable>, CommandWithThrowable> callbacksByExceptionTypes = new HashMap<>();
-        callbacksByExceptionTypes.put(GAVAlreadyExistsException.class, e -> onGAVAlreadyExistsException(comment, (GAVAlreadyExistsException) e));
-        return new CommandWithThrowableDrivenErrorCallback(view, callbacksByExceptionTypes);
-    }
-
-    private void onGAVAlreadyExistsException(final String comment, final GAVAlreadyExistsException e) {
-        view.hideBusyIndicator();
-        conflictingRepositoriesPopup.setContent(
-                model.getPOM().getGav(),
-                e.getRepositories(),
-                () -> {
-                    conflictingRepositoriesPopup.hide();
-                    executeSave(comment, DeploymentMode.FORCED);
-                });
-        conflictingRepositoriesPopup.show();
+    private Promise<Object> onSaveError(final Object o) {
+        final SectionSaveError sectionSaveError = (SectionSaveError) o;
+        goTo(sectionSaveError.section);
+        return Promise.resolve(o);
     }
 
     public void reset() {
@@ -290,17 +220,28 @@ public class SettingsPresenter {
         return view;
     }
 
-    private void noOp() {
-    }
-
     public interface Section {
 
-        void beforeSave();
+        //FIXME: remove default
+        default Promise<Object> save(final String comment,
+                                     final DeploymentMode mode,
+                                     final Supplier<Promise<Object>> saveChain) {
 
-        View.Section getView();
+            DomGlobal.console.info("Saving " + getClass().getSimpleName());
+            return Promises.resolve();
+        }
 
+        //FIXME: remove default
         default Promise<Object> isValid() {
+            DomGlobal.console.info("Validating " + getClass().getSimpleName());
             return Promise.resolve(true);
         }
+
+        //FIXME: remove default
+        default void setup(final HasBusyIndicator container) {
+            DomGlobal.console.info("Setting up " + getClass().getSimpleName());
+        }
+
+        View.Section getView();
     }
 }

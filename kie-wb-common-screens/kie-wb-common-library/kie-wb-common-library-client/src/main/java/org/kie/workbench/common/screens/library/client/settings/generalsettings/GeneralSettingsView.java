@@ -114,6 +114,16 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     }
 
     @Override
+    public Boolean getConflictingGAVCheckDisabled() {
+        return disableGAVConflictCheck.checked;
+    }
+
+    @Override
+    public Boolean getChildGavEditEnabled() {
+        return allowChildGAVEdition.checked;
+    }
+
+    @Override
     public void setName(final String name) {
         this.name.value = name;
     }
@@ -141,6 +151,16 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     @Override
     public void setVersion(final String version) {
         this.version.value = version;
+    }
+
+    @Override
+    public void setConflictingGAVCheckDisabled(final boolean value) {
+        this.disableGAVConflictCheck.checked = value;
+    }
+
+    @Override
+    public void setChildGavEditEnabled(final boolean value) {
+        this.allowChildGAVEdition.checked = value;
     }
 
     @Override
