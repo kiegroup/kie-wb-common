@@ -17,13 +17,11 @@
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
@@ -34,9 +32,9 @@ import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
-import org.kie.workbench.common.screens.library.client.settings.Promises.ThrowableReject;
 import org.kie.workbench.common.screens.library.client.settings.SectionSaveError;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
@@ -197,7 +195,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     // Validate
 
     @Override
-    public Promise<Object> isValid() {
+    public Promise<Object> validate() {
         view.hideError();
         return Promises.<Boolean>resolve()
                 .then(this::validateName)
@@ -207,25 +205,22 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                 .catch_(this::onValidationError);
     }
 
-    private void noOp() {
-    }
-
-    private Promise<Boolean> validateGroupId(final Boolean b) {
+    private Promise<Boolean> validateGroupId(final Boolean ignore) {
         return validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage())
                 .then(x -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()));
     }
 
-    private Promise<Boolean> validateArtifactId(final Boolean b) {
+    private Promise<Boolean> validateArtifactId(final Boolean ignore) {
         return validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage())
                 .then(x -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()));
     }
 
-    private Promise<Boolean> validateName(final Boolean b) {
+    private Promise<Boolean> validateName(final Boolean ignore) {
         return validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
                 .then(x -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()));
     }
 
-    private Promise<Boolean> validateVersion(final Boolean b) {
+    private Promise<Boolean> validateVersion(final Boolean ignore) {
         return validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage())
                 .then(x -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()));
     }
@@ -250,7 +245,8 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
                                                final String errorMessage) {
 
-        return Promises.promisify(validationService, call, errorMessage, isValid -> isValid);
+        return Promises.promisify(validationService, call, (m, t) -> {
+        }, errorMessage, isValid -> isValid);
     }
 
     // Save
@@ -269,12 +265,10 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         pom.getGav().setVersion(view.getVersion());
 
         return Promises.resolve()
-                .then(x -> checkConcurrentUpdate(comment, saveChain))
-                .then(x -> saveGavPreferences(comment))
-                .then(x -> saveModel(comment, mode))
-                .then(x -> updateModelHashCode())
-//                .then(x -> saveChain.get())
-                .catch_(x -> onSaveError(x, saveChain));
+                .then(ignore -> checkConcurrentUpdate(comment, saveChain))
+                .then(ignore -> saveModel(comment, mode, saveChain))
+                .then(ignore -> updateModelHashCode())
+                .then(ignore -> saveGavPreferences(comment));
     }
 
     private Promise<Object> saveGavPreferences(final String comment) {
@@ -282,10 +276,11 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         gavPreferences.setConflictingGAVCheckDisabled(view.getConflictingGAVCheckDisabled());
         gavPreferences.setChildGAVEditEnabled(view.getChildGavEditEnabled());
 
-        return new Promise<>(
-                (res, rej) -> gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
-                                                  () -> res.onInvoke(Promises.resolve()),
-                                                  (t) -> rej.onInvoke(newSectionSaveError(comment))));
+        return new Promise<>((resolve, reject) -> {
+            gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
+                                () -> resolve.onInvoke(Promises.resolve()),
+                                (throwable) -> reject.onInvoke(newSectionSaveError(comment)));
+        });
     }
 
     private Promise<Object> updateModelHashCode() {
@@ -294,15 +289,30 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private Promise<Void> saveModel(final String comment,
-                                    final DeploymentMode mode) {
+                                    final DeploymentMode mode,
+                                    final Supplier<Promise<Object>> saveChain) {
 
         return Promises.promisify(projectScreenService,
-                                  s -> {
-                                      s.save(pathToPomXml, model, comment, mode);
-                                      return null;
-                                  },
-                                  newSectionSaveError(comment),
-                                  v -> true);
+                                  s -> s.save(pathToPomXml, model, comment, mode),
+                                  onSaveModelError(comment, saveChain)::error,
+                                  newSectionSaveError(comment)
+        );
+    }
+
+    private ErrorCallback<Message> onSaveModelError(final String comment,
+                                                    final Supplier<Promise<Object>> saveChain) {
+
+        return new CommandWithThrowableDrivenErrorCallback(container, new HashMap<Class<? extends Throwable>, CommandWithThrowable>() {{
+            put(GAVAlreadyExistsException.class,
+                e -> {
+                    container.hideBusyIndicator();
+                    conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
+                                                            ((GAVAlreadyExistsException) e).getRepositories(),
+                                                            () -> forceSave(comment, saveChain));
+
+                    conflictingRepositoriesPopup.show();
+                });
+        }});
     }
 
     private Promise<Object> checkConcurrentUpdate(final String comment,
@@ -315,57 +325,19 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
                             concurrentUpdateSessionInfo.getIdentity(),
                             () -> forceSave(comment, saveChain),
-                            this::noOp,
+                            () -> {
+                            },
                             () -> this.setup(container)).show();
 
-        return rejectWith(comment);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Promise<Object> onSaveError(final Object rejectObject,
-                                        final Supplier<Promise<Object>> saveChain) {
-
-        if (!(rejectObject instanceof ThrowableReject)) {
-            return Promise.reject(rejectObject);
-        }
-
-        final ThrowableReject<SectionSaveError, Message> throwableReject = (ThrowableReject<SectionSaveError, Message>) rejectObject;
-        final Map<Class<? extends Throwable>, CommandWithThrowable> callbacksByExceptionTypes = new HashMap<>();
-
-        callbacksByExceptionTypes.put(GAVAlreadyExistsException.class,
-                                      e -> onGAVAlreadyExistsException(throwableReject.getRejectObject().comment,
-                                                                       (GAVAlreadyExistsException) e,
-                                                                       saveChain));
-
-        new CommandWithThrowableDrivenErrorCallback(container,
-                                                    callbacksByExceptionTypes).error(throwableReject.getObject(),
-                                                                                     throwableReject.getThrowable());
-
-        return rejectWith(throwableReject.getRejectObject().comment);
-    }
-
-    private void onGAVAlreadyExistsException(final String comment,
-                                             final GAVAlreadyExistsException e,
-                                             final Supplier<Promise<Object>> saveChain) {
-
-        container.hideBusyIndicator();
-
-        conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
-                                                e.getRepositories(),
-                                                () -> forceSave(comment, saveChain));
-
-        conflictingRepositoriesPopup.show();
+        return Promise.reject(newSectionSaveError(comment));
     }
 
     private void forceSave(final String comment,
                            final Supplier<Promise<Object>> saveChain) {
 
+        concurrentUpdateSessionInfo = null;
         conflictingRepositoriesPopup.hide();
-        save(comment, DeploymentMode.FORCED, saveChain);
-    }
-
-    private Promise<Object> rejectWith(final String comment) {
-        return Promise.reject(newSectionSaveError(comment));
+        save(comment, DeploymentMode.FORCED, saveChain).then(ignore -> saveChain.get());
     }
 
     private SectionSaveError newSectionSaveError(final String comment) {

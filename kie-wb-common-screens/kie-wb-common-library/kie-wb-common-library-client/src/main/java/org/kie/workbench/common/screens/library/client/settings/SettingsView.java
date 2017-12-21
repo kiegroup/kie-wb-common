@@ -136,7 +136,7 @@ public class SettingsView implements SettingsPresenter.View,
     }
 
     @Override
-    public String getSaveSuccessfulMessage() {
+    public String getSaveSuccessMessage() {
         return translationService.format(LibraryConstants.SettingsSaveSuccess);
     }
 

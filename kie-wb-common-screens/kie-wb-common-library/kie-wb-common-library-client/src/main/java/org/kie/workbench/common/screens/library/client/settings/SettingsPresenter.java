@@ -25,7 +25,6 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.dom.DomGlobal;
-import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -44,7 +43,8 @@ import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
-import org.uberfire.workbench.events.NotificationEvent.NotificationType;
+
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 
 @WorkbenchScreen(identifier = "project-settings",
         owningPerspective = LibraryPerspective.class)
@@ -57,7 +57,7 @@ public class SettingsPresenter {
 
         void setContent(final Section contentView);
 
-        String getSaveSuccessfulMessage();
+        String getSaveSuccessMessage();
 
         String getSavingMessage();
 
@@ -113,53 +113,40 @@ public class SettingsPresenter {
     public void setup() {
         view.init(this);
         view.showBusyIndicator();
-        getSectionsInDisplayOrder().forEach(this::setup);
+        getSectionsInDisplayOrder().forEach(section -> section.setup(getView()));
         goTo(generalSettingsSection);
     }
 
-    private void setup(final Section section) {
-        section.setup(getView());
-    }
-
-    //
-    // Validate
-
     public void save() {
-        Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::isValid)
-                .then(this::onValidationSuccess)
-                .catch_(this::onValidationError);
+        Promises.reduceLazily(null,
+                              getSectionsInDisplayOrder(),
+                              Section::validate)
+                .then(o -> {
+                    savePopUpPresenter.show(comment -> executeSave(comment, DeploymentMode.VALIDATED));
+                    return Promises.resolve();
+                })
+                .catch_(o -> {
+                    view.hideBusyIndicator();
+                    goTo((Section) o);
+                    return Promises.resolve();
+                });
     }
 
-    private Promise<Boolean> onValidationSuccess(final Object o) {
-        savePopUpPresenter.show(comment -> executeSave(comment, DeploymentMode.VALIDATED));
-        return Promise.resolve(true);
-    }
+    private void executeSave(final String comment,
+                             final DeploymentMode mode) {
 
-    private Promise<Object> onValidationError(final Object o) {
-        view.hideBusyIndicator();
-        goTo((Section) o);
-        return Promise.resolve(o);
-    }
-
-    //
-    // Save
-
-    private void executeSave(final String comment, final DeploymentMode mode) {
-        Promises.reduceLazilyChaining(null, getSectionsInDisplayOrder(), (chain, s) -> s.save(comment, mode, chain))
-                .then(this::onSaveSuccess)
-                .catch_(this::onSaveError);
-    }
-
-    private Promise<Object> onSaveSuccess(final Object o) {
-        view.hideBusyIndicator();
-        notificationEvent.fire(new NotificationEvent(view.getSaveSuccessfulMessage(), NotificationType.SUCCESS));
-        return Promise.resolve((IThenable<Object>) null);
-    }
-
-    private Promise<Object> onSaveError(final Object o) {
-        final SectionSaveError sectionSaveError = (SectionSaveError) o;
-        goTo(sectionSaveError.section);
-        return Promise.resolve(o);
+        Promises.reduceLazilyChaining(null,
+                                      getSectionsInDisplayOrder(),
+                                      (chain, section) -> section.save(comment, mode, chain))
+                .then(o -> {
+                    view.hideBusyIndicator();
+                    notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
+                    return Promises.resolve();
+                })
+                .catch_(o -> {
+                    goTo(((SectionSaveError) o).section);
+                    return Promises.resolve();
+                });
     }
 
     public void reset() {
@@ -232,7 +219,7 @@ public class SettingsPresenter {
         }
 
         //FIXME: remove default
-        default Promise<Object> isValid() {
+        default Promise<Object> validate() {
             DomGlobal.console.info("Validating " + getClass().getSimpleName());
             return Promise.resolve(true);
         }
