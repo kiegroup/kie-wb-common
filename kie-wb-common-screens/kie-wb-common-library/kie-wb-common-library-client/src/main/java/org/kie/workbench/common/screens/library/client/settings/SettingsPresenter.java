@@ -106,9 +106,6 @@ public class SettingsPresenter {
         this.validationSettingsSection = validationSettingsSection;
     }
 
-    //
-    // Setup
-
     @PostConstruct
     public void setup() {
         view.init(this);
@@ -135,7 +132,7 @@ public class SettingsPresenter {
     private void executeSave(final String comment,
                              final DeploymentMode mode) {
 
-        Promises.reduceLazilyChaining(null,
+        Promises.reduceLazilyChaining((Void) null,
                                       getSectionsInDisplayOrder(),
                                       (chain, section) -> section.save(comment, mode, chain))
                 .then(o -> {
@@ -210,9 +207,9 @@ public class SettingsPresenter {
     public interface Section {
 
         //FIXME: remove default
-        default Promise<Object> save(final String comment,
-                                     final DeploymentMode mode,
-                                     final Supplier<Promise<Object>> saveChain) {
+        default Promise<Void> save(final String comment,
+                                   final DeploymentMode mode,
+                                   final Supplier<Promise<Void>> saveChain) {
 
             DomGlobal.console.info("Saving " + getClass().getSimpleName());
             return Promises.resolve();

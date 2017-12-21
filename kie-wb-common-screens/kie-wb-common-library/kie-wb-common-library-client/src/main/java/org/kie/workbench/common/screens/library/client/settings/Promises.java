@@ -26,7 +26,9 @@ import java.util.function.Supplier;
 
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
+import elemental2.promise.Promise.PromiseExecutorCallbackFn.RejectCallbackFn;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 public class Promises {
@@ -67,10 +69,10 @@ public class Promises {
 
         return promisify(caller,
                          call,
-                         (m, t) -> {
+                         (o, throwable) -> {
                          },
                          null,
-                         i -> true);
+                         ignore -> true);
     }
 
     public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
@@ -87,11 +89,7 @@ public class Promises {
                         reject.onInvoke(rejectObject);
                     }
                 },
-                (M o, Throwable throwable) -> {
-                    onError.accept(o, throwable);
-                    reject.onInvoke(rejectObject);
-                    return true;
-                })));
+                defaultErrorCallback(onError, rejectObject, reject))));
     }
 
     public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
@@ -101,11 +99,17 @@ public class Promises {
 
         return new Promise<>((resolve, reject) -> call.accept(caller.call(
                 (RemoteCallback<S>) resolve::onInvoke,
-                (M o, Throwable throwable) -> {
-                    onError.accept(o, throwable);
-                    reject.onInvoke(rejectObject);
-                    return true;
-                })));
+                defaultErrorCallback(onError, rejectObject, reject))));
+    }
+
+    private static <E, M> ErrorCallback<M> defaultErrorCallback(final BiConsumer<M, Throwable> onError,
+                                                                final E rejectObject,
+                                                                final RejectCallbackFn reject) {
+        return (M o, Throwable throwable) -> {
+            onError.accept(o, throwable);
+            reject.onInvoke(rejectObject);
+            return true;
+        };
     }
 
     public static <T> Promise<T> resolve() {

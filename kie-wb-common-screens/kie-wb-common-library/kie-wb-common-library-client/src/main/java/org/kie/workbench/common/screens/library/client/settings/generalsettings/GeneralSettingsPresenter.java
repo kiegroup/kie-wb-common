@@ -226,6 +226,10 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private Promise<Object> onValidationError(final Object e) {
+        if (e instanceof Throwable) {
+            return Promise.reject(e);
+        }
+
         view.showError((String) e);
         return Promise.reject(this);
     }
@@ -252,9 +256,9 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     // Save
 
     @Override
-    public Promise<Object> save(final String comment,
-                                final DeploymentMode mode,
-                                final Supplier<Promise<Object>> saveChain) {
+    public Promise<Void> save(final String comment,
+                              final DeploymentMode mode,
+                              final Supplier<Promise<Void>> saveChain) {
 
         final POM pom = this.model.getPOM();
         pom.setName(view.getName());
@@ -271,7 +275,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                 .then(ignore -> saveGavPreferences(comment));
     }
 
-    private Promise<Object> saveGavPreferences(final String comment) {
+    private Promise<Void> saveGavPreferences(final String comment) {
 
         gavPreferences.setConflictingGAVCheckDisabled(view.getConflictingGAVCheckDisabled());
         gavPreferences.setChildGAVEditEnabled(view.getChildGavEditEnabled());
@@ -283,14 +287,14 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         });
     }
 
-    private Promise<Object> updateModelHashCode() {
+    private Promise<Void> updateModelHashCode() {
         originalHash = model.hashCode();
         return Promises.resolve();
     }
 
     private Promise<Void> saveModel(final String comment,
                                     final DeploymentMode mode,
-                                    final Supplier<Promise<Object>> saveChain) {
+                                    final Supplier<Promise<Void>> saveChain) {
 
         return Promises.promisify(projectScreenService,
                                   s -> s.save(pathToPomXml, model, comment, mode),
@@ -300,7 +304,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private ErrorCallback<Message> onSaveModelError(final String comment,
-                                                    final Supplier<Promise<Object>> saveChain) {
+                                                    final Supplier<Promise<Void>> saveChain) {
 
         return new CommandWithThrowableDrivenErrorCallback(container, new HashMap<Class<? extends Throwable>, CommandWithThrowable>() {{
             put(GAVAlreadyExistsException.class,
@@ -316,7 +320,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private Promise<Object> checkConcurrentUpdate(final String comment,
-                                                  final Supplier<Promise<Object>> saveChain) {
+                                                  final Supplier<Promise<Void>> saveChain) {
 
         if (concurrentUpdateSessionInfo == null) {
             return Promises.resolve();
@@ -333,7 +337,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private void forceSave(final String comment,
-                           final Supplier<Promise<Object>> saveChain) {
+                           final Supplier<Promise<Void>> saveChain) {
 
         concurrentUpdateSessionInfo = null;
         conflictingRepositoriesPopup.hide();
