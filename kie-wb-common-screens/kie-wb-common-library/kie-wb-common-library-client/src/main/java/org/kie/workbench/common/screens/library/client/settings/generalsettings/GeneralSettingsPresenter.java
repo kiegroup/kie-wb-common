@@ -16,37 +16,23 @@
 
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
-import java.util.HashMap;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.preferences.ProjectScopedResolutionStrategySupplier;
-import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
-import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.ErrorCallback;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
-import org.kie.workbench.common.screens.library.client.settings.SectionSaveError;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
-import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
-import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
-import static org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
+import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 
 public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
@@ -106,34 +92,18 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     private final View view;
-    private final Caller<ProjectScreenService> projectScreenService;
-    private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-    private final ProjectContext workbenchContext;
-    private final ManagedInstance<ObservablePath> observablePaths;
     private final Caller<ValidationService> validationService;
     private final GAVPreferences gavPreferences;
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
-    private HasBusyIndicator container;
-    private ProjectScreenModel model;
-    private Integer originalHash;
-    private ObservablePath pathToPomXml;
-    private ObservablePath.OnConcurrentUpdateEvent concurrentUpdateSessionInfo = null;
+    private ProjectScreenModel projectScreenModel;
 
     @Inject
     public GeneralSettingsPresenter(final View view,
-                                    final Caller<ProjectScreenService> projectScreenService,
-                                    final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
-                                    final ProjectContext workbenchContext,
-                                    final ManagedInstance<ObservablePath> observablePaths,
                                     final Caller<ValidationService> validationService,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
         this.view = view;
-        this.projectScreenService = projectScreenService;
-        this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.workbenchContext = workbenchContext;
-        this.observablePaths = observablePaths;
         this.validationService = validationService;
         this.gavPreferences = gavPreferences;
         this.projectScopedResolutionStrategySupplier = projectScopedResolutionStrategySupplier;
@@ -142,33 +112,13 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     // Save
 
     @Override
-    public void setup(final HasBusyIndicator container) {
+    public void setup(final HasBusyIndicator container,
+                      final ProjectScreenModel projectScreenModel) {
+
         view.init(this);
-        this.container = container;
+        this.projectScreenModel = projectScreenModel;
 
-        if (pathToPomXml != null) {
-            pathToPomXml.dispose();
-        }
-
-        pathToPomXml = observablePaths.get().wrap(workbenchContext.getActiveProject().getPomXMLPath());
-        pathToPomXml.onConcurrentUpdate(eventInfo -> concurrentUpdateSessionInfo = eventInfo);
-
-        loadPom().then(this::onProjectScreenModelLoadSuccess);
-
-        gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
-                            this::onGavPreferencesLoadSuccess,
-                            this::onGavPreferencesLoadError);
-    }
-
-    private Promise<ProjectScreenModel> loadPom() {
-        return Promises.promisify(projectScreenService, s -> s.load(pathToPomXml));
-    }
-
-    private Promise<Object> onProjectScreenModelLoadSuccess(final ProjectScreenModel projectScreenModel) {
-        concurrentUpdateSessionInfo = null;
-        model = projectScreenModel;
-
-        final POM pom = model.getPOM();
+        final POM pom = projectScreenModel.getPOM();
         view.setName(pom.getName());
         view.setDescription(pom.getDescription());
         view.setURL(pom.getUrl() != null ? pom.getUrl() : "");
@@ -176,62 +126,33 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         view.setArtifactId(pom.getGav().getArtifactId());
         view.setVersion(pom.getGav().getVersion());
 
-        container.hideBusyIndicator();
-
-        originalHash = projectScreenModel.hashCode();
-        return Promises.resolve();
+        gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
+                            gavPreferences -> {
+                                view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
+                                view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
+                                container.hideBusyIndicator();
+                            },
+                            throwable -> {
+                                new DefaultErrorCallback().error(null, throwable);
+                            });
     }
-
-    private void onGavPreferencesLoadSuccess(final GAVPreferences gavPreferences) {
-        view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
-        view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
-        container.hideBusyIndicator();
-    }
-
-    private void onGavPreferencesLoadError(final Throwable throwable) {
-        new DefaultErrorCallback().error(null, throwable);
-    }
-
-    // Validate
 
     @Override
     public Promise<Object> validate() {
         view.hideError();
-        return Promises.<Boolean>resolve()
-                .then(this::validateName)
-                .then(this::validateGroupId)
-                .then(this::validateArtifactId)
-                .then(this::validateVersion)
-                .catch_(this::onValidationError);
-    }
-
-    private Promise<Boolean> validateGroupId(final Boolean ignore) {
-        return validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage())
-                .then(x -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()));
-    }
-
-    private Promise<Boolean> validateArtifactId(final Boolean ignore) {
-        return validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage())
-                .then(x -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()));
-    }
-
-    private Promise<Boolean> validateName(final Boolean ignore) {
-        return validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
-                .then(x -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()));
-    }
-
-    private Promise<Boolean> validateVersion(final Boolean ignore) {
-        return validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage())
-                .then(x -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()));
-    }
-
-    private Promise<Object> onValidationError(final Object e) {
-        if (e instanceof Throwable) {
-            return Promise.reject(e);
-        }
-
-        view.showError((String) e);
-        return Promise.reject(this);
+        return resolve()
+                .then(o -> validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage()))
+                .then(o -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()))
+                .then(o -> validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage()))
+                .then(o -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()))
+                .then(o -> validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage()))
+                .then(o -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()))
+                .then(o -> validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage()))
+                .then(o -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()))
+                .catch_(e -> Promises.handleExceptionOr(e, (final String errorMessage) -> {
+                    view.showError(errorMessage);
+                    return Promise.reject(this);
+                }));
     }
 
     private Promise<Boolean> validateStringIsNotEmpty(final String string,
@@ -249,18 +170,17 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
                                                final String errorMessage) {
 
-        return Promises.promisify(validationService, call, (m, t) -> {
-        }, errorMessage, isValid -> isValid);
+        return Promises.promisify(validationService,
+                                  call,
+                                  Promises::noOpOnError,
+                                  errorMessage,
+                                  isValid -> isValid);
     }
 
-    // Save
-
     @Override
-    public Promise<Void> save(final String comment,
-                              final DeploymentMode mode,
-                              final Supplier<Promise<Void>> saveChain) {
+    public Promise<Void> beforeSave() {
 
-        final POM pom = this.model.getPOM();
+        final POM pom = projectScreenModel.getPOM();
         pom.setName(view.getName());
         pom.setDescription(view.getDescription());
         pom.setUrl(view.getURL());
@@ -268,84 +188,20 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         pom.getGav().setArtifactId(view.getArtifactId());
         pom.getGav().setVersion(view.getVersion());
 
-        return Promises.resolve()
-                .then(ignore -> checkConcurrentUpdate(comment, saveChain))
-                .then(ignore -> saveModel(comment, mode, saveChain))
-                .then(ignore -> updateModelHashCode())
-                .then(ignore -> saveGavPreferences(comment));
+        return resolve();
     }
 
-    private Promise<Void> saveGavPreferences(final String comment) {
+    @Override
+    public Promise<Void> save() {
 
         gavPreferences.setConflictingGAVCheckDisabled(view.getConflictingGAVCheckDisabled());
         gavPreferences.setChildGAVEditEnabled(view.getChildGavEditEnabled());
 
         return new Promise<>((resolve, reject) -> {
             gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
-                                () -> resolve.onInvoke(Promises.resolve()),
-                                (throwable) -> reject.onInvoke(newSectionSaveError(comment)));
+                                () -> resolve.onInvoke(resolve()),
+                                (throwable) -> reject.onInvoke(this));
         });
-    }
-
-    private Promise<Void> updateModelHashCode() {
-        originalHash = model.hashCode();
-        return Promises.resolve();
-    }
-
-    private Promise<Void> saveModel(final String comment,
-                                    final DeploymentMode mode,
-                                    final Supplier<Promise<Void>> saveChain) {
-
-        return Promises.promisify(projectScreenService,
-                                  s -> s.save(pathToPomXml, model, comment, mode),
-                                  onSaveModelError(comment, saveChain)::error,
-                                  newSectionSaveError(comment)
-        );
-    }
-
-    private ErrorCallback<Message> onSaveModelError(final String comment,
-                                                    final Supplier<Promise<Void>> saveChain) {
-
-        return new CommandWithThrowableDrivenErrorCallback(container, new HashMap<Class<? extends Throwable>, CommandWithThrowable>() {{
-            put(GAVAlreadyExistsException.class,
-                e -> {
-                    container.hideBusyIndicator();
-                    conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
-                                                            ((GAVAlreadyExistsException) e).getRepositories(),
-                                                            () -> forceSave(comment, saveChain));
-
-                    conflictingRepositoriesPopup.show();
-                });
-        }});
-    }
-
-    private Promise<Object> checkConcurrentUpdate(final String comment,
-                                                  final Supplier<Promise<Void>> saveChain) {
-
-        if (concurrentUpdateSessionInfo == null) {
-            return Promises.resolve();
-        }
-
-        newConcurrentUpdate(concurrentUpdateSessionInfo.getPath(),
-                            concurrentUpdateSessionInfo.getIdentity(),
-                            () -> forceSave(comment, saveChain),
-                            () -> {
-                            },
-                            () -> this.setup(container)).show();
-
-        return Promise.reject(newSectionSaveError(comment));
-    }
-
-    private void forceSave(final String comment,
-                           final Supplier<Promise<Void>> saveChain) {
-
-        concurrentUpdateSessionInfo = null;
-        conflictingRepositoriesPopup.hide();
-        save(comment, DeploymentMode.FORCED, saveChain).then(ignore -> saveChain.get());
-    }
-
-    private SectionSaveError newSectionSaveError(final String comment) {
-        return new SectionSaveError(comment, this);
     }
 
     @Override

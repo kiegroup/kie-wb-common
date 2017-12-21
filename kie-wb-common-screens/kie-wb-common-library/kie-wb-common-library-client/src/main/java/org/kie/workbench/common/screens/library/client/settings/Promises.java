@@ -33,6 +33,8 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 
 public class Promises {
 
+    // Reducers
+
     static <T, O> Promise<O> reduceLazily(final O identity,
                                           final List<T> objects,
                                           final Function<T, Promise<O>> f) {
@@ -64,15 +66,19 @@ public class Promises {
                 .apply(Promises::resolve).get();
     }
 
+    // Callers
+
     public static <T, S> Promise<S> promisify(final Caller<T> caller,
                                               final Function<T, S> call) {
 
-        return promisify(caller,
-                         call,
-                         (o, throwable) -> {
-                         },
-                         null,
-                         ignore -> true);
+        return promisify(caller, call, Promises::noOpOnError, null, ignore -> true);
+    }
+
+    public static <T, S, M> Promise<S> promisify(final Caller<T> caller,
+                                                 final Consumer<T> call,
+                                                 final BiConsumer<M, Throwable> onError) {
+
+        return promisify(caller, call, onError, null);
     }
 
     public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
@@ -112,7 +118,23 @@ public class Promises {
         };
     }
 
+    public static <M> void noOpOnError(final M o, final Throwable t) {
+    }
+
     public static <T> Promise<T> resolve() {
         return Promise.resolve((IThenable<T>) null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <V> Promise<Object> handleExceptionOr(final Object o,
+                                                        final Function<V, Promise<Object>> f) {
+
+        if (o instanceof RuntimeException) {
+            throw (RuntimeException) o;
+        } if (o instanceof Error) {
+            throw (Error) o;
+        } else {
+            return f.apply((V) o);
+        }
     }
 }

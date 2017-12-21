@@ -19,6 +19,8 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 public class ValidationPresenter implements SettingsPresenter.Section {
 
@@ -32,6 +34,13 @@ public class ValidationPresenter implements SettingsPresenter.Section {
     public ValidationPresenter(final ValidationPresenter.View view) {
         this.view = view;
     }
+
+    @Override
+    public void setup(final HasBusyIndicator container,
+                      final ProjectScreenModel model) {
+
+    }
+
 
     @Override
     public SettingsPresenter.View.Section getView() {
