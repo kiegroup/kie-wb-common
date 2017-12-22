@@ -23,6 +23,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -57,7 +58,6 @@ import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static elemental2.promise.Promise.resolve;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
@@ -73,6 +73,20 @@ public class SettingsPresenter {
 
         void showBusyIndicator();
 
+        void setGeneralSectionDirty(boolean value);
+
+        void setDependenciesSectionDirty(boolean value);
+
+        void setKnowledgeBasesSectionDirty(boolean value);
+
+        void setExternalDataObjectsSectionDirty(boolean value);
+
+        void setValidationSectionDirty(boolean value);
+
+        void setDeploymentsSectionDirty(boolean value);
+
+        void setPersistenceSectionDirty(boolean value);
+
         void setSection(final Section contentView);
 
         String getSaveSuccessMessage();
@@ -85,10 +99,16 @@ public class SettingsPresenter {
                                      IsElement {
 
         }
+
+        interface MenuItem<T> extends UberElemental<T>,
+                                      IsElement {
+
+        }
     }
 
     private final View view;
     private final Event<NotificationEvent> notificationEvent;
+    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final SavePopUpPresenter savePopUpPresenter;
 
     // Sections
@@ -113,6 +133,7 @@ public class SettingsPresenter {
     @Inject
     public SettingsPresenter(final View view,
                              final Event<NotificationEvent> notificationEvent,
+                             final Event<SettingsSectionChange> settingsSectionChangeEvent,
                              final SavePopUpPresenter savePopUpPresenter,
                              final DependenciesPresenter dependenciesSettingsSection,
                              final DeploymentsPresenter deploymentsSettingsSection,
@@ -127,6 +148,7 @@ public class SettingsPresenter {
                              final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
         this.view = view;
         this.notificationEvent = notificationEvent;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.savePopUpPresenter = savePopUpPresenter;
 
         this.dependenciesSettingsSection = dependenciesSettingsSection;
@@ -136,6 +158,7 @@ public class SettingsPresenter {
         this.knowledgeBasesSettingsSection = knowledgeBasesSettingsSection;
         this.persistenceSettingsSection = persistenceSettingsSection;
         this.validationSettingsSection = validationSettingsSection;
+
         this.projectScreenService = projectScreenService;
         this.projectContext = projectContext;
         this.observablePaths = observablePaths;
@@ -161,7 +184,11 @@ public class SettingsPresenter {
                 .then(model -> {
                     this.model = model;
                     return Promises.<Section, Void>
-                            all(getSectionsInDisplayOrder(), section -> section.setup(model));
+                            all(getSectionsInDisplayOrder(), section ->
+                            section.setup(model).then(ignore -> {
+                                section.fireChangeEvent(settingsSectionChangeEvent);
+                                return resolve();
+                            }));
                 })
                 .then(ignore -> {
                     goTo(currentSection);
@@ -221,7 +248,15 @@ public class SettingsPresenter {
     private List<SavingStep> getSavingSteps(final String comment,
                                             final DeploymentMode mode) {
 
-        return Arrays.asList(chain -> saveProjectScreenModel(comment, mode, chain));
+        return Arrays.asList(chain -> saveProjectScreenModel(comment, mode, chain),
+                             chain -> fireSectionChangeEvents());
+    }
+
+    private Promise<Void> fireSectionChangeEvents() {
+        return Promises.all(getSectionsInDisplayOrder(), section -> {
+            section.fireChangeEvent(settingsSectionChangeEvent);
+            return resolve();
+        });
     }
 
     private Promise<Void> saveProjectScreenModel(final String comment,
@@ -277,6 +312,26 @@ public class SettingsPresenter {
     private Promise<Void> defaultErrorResolution(final Object e) {
         new DefaultErrorCallback().error(null, (Throwable) e);
         return resolve();
+    }
+
+    public void onSettingsSectionChanged(@Observes final SettingsSectionChange settingsSectionChange) {
+        final Section changedSection = settingsSectionChange.getSection();
+
+        if (changedSection.equals(this.dependenciesSettingsSection)) {
+            view.setDependenciesSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.deploymentsSettingsSection)) {
+            view.setDeploymentsSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.externalDataObjectsSettingsSection)) {
+            view.setExternalDataObjectsSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.generalSettingsSection)) {
+            view.setGeneralSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.knowledgeBasesSettingsSection)) {
+            view.setKnowledgeBasesSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.persistenceSettingsSection)) {
+            view.setPersistenceSectionDirty(changedSection.isDirty());
+        } else if (changedSection.equals(this.validationSettingsSection)) {
+            view.setValidationSectionDirty(changedSection.isDirty());
+        }
     }
 
     public void reset() {
@@ -357,6 +412,15 @@ public class SettingsPresenter {
         }
 
         View.Section getView();
+
+        //FIXME; remove default
+        default boolean isDirty() {
+            return false;
+        }
+
+        default void fireChangeEvent(final Event<SettingsSectionChange> settingsSectionChangeEvent) {
+            settingsSectionChangeEvent.fire(new SettingsSectionChange(this));
+        }
     }
 
     @FunctionalInterface

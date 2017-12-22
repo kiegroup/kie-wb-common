@@ -33,7 +33,7 @@ public class DependenciesItemPresenter {
 
         void setVersion(String version);
 
-        void setPackageWhiteList(boolean packageWhiteList);
+        void setAllPackagesWhiteListed(final boolean packageWhiteList);
     }
 
     private final View view;
@@ -61,7 +61,7 @@ public class DependenciesItemPresenter {
         view.setGroupId(dependency.getGroupId());
         view.setArtifactId(dependency.getArtifactId());
         view.setVersion(dependency.getVersion());
-        view.setPackageWhiteList(whiteList.isEmpty() || whiteList.containsAll(enhancedDependency.getPackages()));
+        view.setAllPackagesWhiteListed(whiteList.isEmpty() || whiteList.containsAll(enhancedDependency.getPackages()));
 
         return this;
     }

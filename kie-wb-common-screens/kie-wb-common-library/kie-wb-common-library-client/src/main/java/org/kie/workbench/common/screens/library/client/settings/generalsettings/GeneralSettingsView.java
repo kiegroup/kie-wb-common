@@ -19,12 +19,14 @@ package org.kie.workbench.common.screens.library.client.settings.generalsettings
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTextAreaElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 
@@ -81,6 +83,46 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     public void init(final GeneralSettingsPresenter presenter) {
         this.presenter = presenter;
         hideError();
+    }
+
+    @EventHandler("disable-gav-conflict-check")
+    public void onDisableGavConflictCheckChanged(final ChangeEvent ignore) {
+        presenter.disableGavConflictCheck(disableGAVConflictCheck.checked);
+    }
+
+    @EventHandler("allow-child-gav-edition")
+    public void onAllowChildGavEditionChanged(final ChangeEvent ignore) {
+        presenter.allowChildGavEdition(allowChildGAVEdition.checked);
+    }
+
+    @EventHandler("name")
+    public void onNameChanged(final ChangeEvent ignore) {
+        presenter.setName(name.value);
+    }
+
+    @EventHandler("description")
+    public void onDescriptionChanged(final ChangeEvent ignore) {
+        presenter.setDescription(description.value);
+    }
+
+    @EventHandler("url")
+    public void onUrlChanged(final ChangeEvent ignore) {
+        presenter.setUrl(url.value);
+    }
+
+    @EventHandler("group-id")
+    public void onGroupIdChanged(final ChangeEvent ignore) {
+        presenter.setGroupId(groupId.value);
+    }
+
+    @EventHandler("artifact-id")
+    public void onArtifactIdChanged(final ChangeEvent ignore) {
+        presenter.setArtifactId(artifactId.value);
+    }
+
+    @EventHandler("version")
+    public void onVersionChanged(final ChangeEvent ignore) {
+        presenter.setVersion(version.value);
     }
 
     @Override

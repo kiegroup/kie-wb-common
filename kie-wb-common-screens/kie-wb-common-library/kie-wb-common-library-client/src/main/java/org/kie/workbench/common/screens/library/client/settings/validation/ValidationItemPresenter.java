@@ -17,10 +17,12 @@
 package org.kie.workbench.common.screens.library.client.settings.validation;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
@@ -39,17 +41,23 @@ public class ValidationItemPresenter {
     }
 
     private final View view;
+    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
 
     private ProjectRepository projectRepository;
+    private ValidationPresenter presenter;
 
     @Inject
-    public ValidationItemPresenter(final View view) {
+    public ValidationItemPresenter(final View view,
+                                   final Event<SettingsSectionChange> settingsSectionChangeEvent) {
         this.view = view;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
     }
 
-    ValidationItemPresenter setup(final ProjectRepository projectRepository) {
+    ValidationItemPresenter setup(final ProjectRepository projectRepository,
+                                  final ValidationPresenter validationPresenter) {
 
         this.projectRepository = projectRepository;
+        this.presenter = validationPresenter;
 
         view.init(this);
         view.setInclude(projectRepository.isIncluded());
@@ -62,6 +70,7 @@ public class ValidationItemPresenter {
 
     public void setInclude(final boolean include) {
         projectRepository.setIncluded(include);
+        presenter.fireChangeEvent(settingsSectionChangeEvent);
     }
 
     public View getView() {

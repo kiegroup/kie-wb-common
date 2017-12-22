@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.settings.externaldataobj
 
 import java.util.List;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -26,6 +27,7 @@ import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 
@@ -38,6 +40,9 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     private final AddImportPopup addImportPopup;
 
     private Imports imports;
+    private int originalHashCode;
+
+    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
 
     public interface View extends SettingsPresenter.View.Section<ExternalDataObjectsPresenter> {
 
@@ -51,17 +56,21 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     @Inject
     public ExternalDataObjectsPresenter(final View view,
                                         final AddImportPopup addImportPopup,
-                                        final ManagedInstance<ExternalDataObjectsItemPresenter> itemPresenters) {
+                                        final ManagedInstance<ExternalDataObjectsItemPresenter> itemPresenters,
+                                        final Event<SettingsSectionChange> settingsSectionChangeEvent) {
 
         this.view = view;
         this.itemPresenters = itemPresenters;
         this.addImportPopup = addImportPopup;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
     }
 
     @Override
     public Promise<Void> setup(final ProjectScreenModel model) {
 
         imports = model.getProjectImports().getImports();
+
+        originalHashCode = imports.hashCode();
 
         view.init(this);
         view.setItems(imports.getImports()
@@ -82,16 +91,23 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     void remove(final ExternalDataObjectsItemPresenter itemPresenter) {
         imports.removeImport(itemPresenter.getImport());
         view.remove(itemPresenter.getView());
+        fireChangeEvent(settingsSectionChangeEvent);
     }
 
     private void addImport(final String typeName) {
         final Import newImport = new Import(typeName);
         imports.addImport(newImport);
         view.add(newItemPresenter(newImport).getView());
+        fireChangeEvent(settingsSectionChangeEvent);
     }
 
     private ExternalDataObjectsItemPresenter newItemPresenter(final Import import_) {
         return itemPresenters.get().setup(import_, this);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return originalHashCode != imports.hashCode();
     }
 
     @Override

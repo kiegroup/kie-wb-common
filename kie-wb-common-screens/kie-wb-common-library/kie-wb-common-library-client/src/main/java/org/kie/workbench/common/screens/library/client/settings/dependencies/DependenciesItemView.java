@@ -92,7 +92,7 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     }
 
     @Override
-    public void setPackageWhiteList(final boolean allPackagesWhitelisted) {
+    public void setAllPackagesWhiteListed(final boolean allPackagesWhitelisted) {
 
         packageWhiteListNone.checked = false;
         packageWhiteListAll.checked = false;

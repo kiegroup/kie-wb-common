@@ -16,13 +16,15 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
-public class SectionSaveError {
+public class SettingsSectionChange {
 
-    public final String comment;
-    public final SettingsPresenter.Section section;
+    private final SettingsPresenter.Section presenter;
 
-    public SectionSaveError(final String comment, final SettingsPresenter.Section section) {
-        this.comment = comment;
-        this.section = section;
+    public SettingsSectionChange(final SettingsPresenter.Section presenter) {
+        this.presenter = presenter;
+    }
+
+    public SettingsPresenter.Section getSection() {
+        return presenter;
     }
 }

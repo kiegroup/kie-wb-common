@@ -17,11 +17,13 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -66,6 +68,41 @@ public class SettingsView implements SettingsPresenter.View,
     @Inject
     @DataField("persistence-section")
     private HTMLAnchorElement persistenceSection;
+
+    @Inject
+    @Named("span")
+    @DataField("general-section-dirty-indicator")
+    private HTMLElement generalSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("dependencies-section-dirty-indicator")
+    private HTMLElement dependenciesSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("knowledge-bases-section-dirty-indicator")
+    private HTMLElement knowledgeBasesSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("external-data-objects-section-dirty-indicator")
+    private HTMLElement externalDataObjectsSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("validation-section-dirty-indicator")
+    private HTMLElement validationSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("deployments-section-dirty-indicator")
+    private HTMLElement deploymentsSectionDirtyIndicator;
+
+    @Inject
+    @Named("span")
+    @DataField("persistence-section-dirty-indicator")
+    private HTMLElement persistenceSectionDirtyIndicator;
 
     @Inject
     @DataField("save")
@@ -127,6 +164,51 @@ public class SettingsView implements SettingsPresenter.View,
     @EventHandler("persistence-section")
     public void goToPersistenceSection(final ClickEvent event) {
         presenter.goToPersistenceSection();
+    }
+
+    @Override
+    public void setGeneralSectionDirty(final boolean dirty) {
+        markAsDirty(generalSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setDependenciesSectionDirty(final boolean dirty) {
+        markAsDirty(dependenciesSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setKnowledgeBasesSectionDirty(final boolean dirty) {
+        markAsDirty(knowledgeBasesSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setExternalDataObjectsSectionDirty(final boolean dirty) {
+        markAsDirty(externalDataObjectsSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setValidationSectionDirty(final boolean dirty) {
+        markAsDirty(validationSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setDeploymentsSectionDirty(final boolean dirty) {
+        markAsDirty(deploymentsSectionDirtyIndicator, dirty);
+    }
+
+    @Override
+    public void setPersistenceSectionDirty(final boolean dirty) {
+        markAsDirty(persistenceSectionDirtyIndicator, dirty);
+    }
+
+    private void markAsDirty(final HTMLElement dirtyIndicator,
+                             final boolean dirty) {
+
+        if (dirty) {
+            dirtyIndicator.innerHTML = "*";
+        } else {
+            dirtyIndicator.innerHTML = "";
+        }
     }
 
     @Override

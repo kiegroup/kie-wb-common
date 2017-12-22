@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.settings.generalsettings
 
 import java.util.function.Function;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
@@ -27,6 +28,7 @@ import org.guvnor.common.services.project.preferences.GAVPreferences;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 
@@ -91,18 +93,22 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
     private final View view;
     private final Caller<ValidationService> validationService;
+    private Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final GAVPreferences gavPreferences;
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
-    private ProjectScreenModel projectScreenModel;
+    private POM pom;
+    private int originalHashCode;
 
     @Inject
     public GeneralSettingsPresenter(final View view,
                                     final Caller<ValidationService> validationService,
+                                    final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
         this.view = view;
         this.validationService = validationService;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.gavPreferences = gavPreferences;
         this.projectScopedResolutionStrategySupplier = projectScopedResolutionStrategySupplier;
     }
@@ -110,11 +116,9 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     // Save
 
     @Override
-    public Promise<Void> setup(final ProjectScreenModel projectScreenModel) {
+    public Promise<Void> setup(final ProjectScreenModel model) {
 
-        this.projectScreenModel = projectScreenModel;
-
-        final POM pom = projectScreenModel.getPOM();
+        pom = model.getPOM();
 
         view.init(this);
         view.setName(pom.getName());
@@ -129,6 +133,9 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                                 gavPreferences -> {
                                     view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
                                     view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
+
+                                    originalHashCode = pom.hashCode() + gavPreferencesHashCode();
+
                                     resolve.onInvoke(Promises.resolve());
                                 },
                                 reject::onInvoke);
@@ -175,31 +182,63 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                                   isValid -> isValid);
     }
 
-    @Override
-    public Promise<Void> beforeSave() {
+    void setVersion(final String version) {
+        pom.getGav().setVersion(version);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
 
-        final POM pom = projectScreenModel.getPOM();
-        pom.setName(view.getName());
-        pom.setDescription(view.getDescription());
-        pom.setUrl(view.getURL());
-        pom.getGav().setGroupId(view.getGroupId());
-        pom.getGav().setArtifactId(view.getArtifactId());
-        pom.getGav().setVersion(view.getVersion());
+    void setArtifactId(final String artifactId) {
+        pom.getGav().setArtifactId(artifactId);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
 
-        return resolve();
+    void setGroupId(final String groupId) {
+        pom.getGav().setGroupId(groupId);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    void setUrl(final String url) {
+        pom.setUrl(url);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    void setDescription(final String description) {
+        pom.setDescription(description);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    void setName(final String name) {
+        pom.setName(name);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    void disableGavConflictCheck(final boolean value) {
+        gavPreferences.setConflictingGAVCheckDisabled(value);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    void allowChildGavEdition(final boolean value) {
+        gavPreferences.setChildGAVEditEnabled(value);
+        fireChangeEvent(settingsSectionChangeEvent);
     }
 
     @Override
     public Promise<Void> save() {
-
-        gavPreferences.setConflictingGAVCheckDisabled(view.getConflictingGAVCheckDisabled());
-        gavPreferences.setChildGAVEditEnabled(view.getChildGavEditEnabled());
-
         return new Promise<>((resolve, reject) -> {
             gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
                                 () -> resolve.onInvoke(resolve()),
                                 (throwable) -> reject.onInvoke(this));
         });
+    }
+
+    private int gavPreferencesHashCode() {
+        return (gavPreferences.isChildGAVEditEnabled() ? 1 : 2) +
+                (gavPreferences.isConflictingGAVCheckDisabled() ? 3 : 7);
+    }
+
+    @Override
+    public boolean isDirty() {
+        return originalHashCode != pom.hashCode() + gavPreferencesHashCode();
     }
 
     @Override
