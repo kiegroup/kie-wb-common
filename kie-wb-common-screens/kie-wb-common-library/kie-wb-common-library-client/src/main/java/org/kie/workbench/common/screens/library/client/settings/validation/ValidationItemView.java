@@ -19,16 +19,16 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
-import elemental2.dom.HTMLTableRowElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
 public class ValidationItemView implements ValidationItemPresenter.View {
-
 
     @Inject
     @DataField("tr-top")
@@ -55,29 +55,14 @@ public class ValidationItemView implements ValidationItemPresenter.View {
 
     private ValidationItemPresenter presenter;
 
+    @EventHandler("include")
+    public void includeChanged(final ClickEvent event) {
+        presenter.setInclude(include.checked);
+    }
+
     @Override
     public void init(final ValidationItemPresenter presenter) {
         this.presenter = presenter;
-    }
-
-    @Override
-    public boolean getInclude() {
-        return include.checked;
-    }
-
-    @Override
-    public String getId() {
-        return identifier.innerHTML;
-    }
-
-    @Override
-    public String getUrl() {
-        return url.innerHTML;
-    }
-
-    @Override
-    public String getSource() {
-        return source.innerHTML;
     }
 
     @Override

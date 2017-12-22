@@ -115,10 +115,11 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     public void setup(final HasBusyIndicator container,
                       final ProjectScreenModel projectScreenModel) {
 
-        view.init(this);
         this.projectScreenModel = projectScreenModel;
 
         final POM pom = projectScreenModel.getPOM();
+
+        view.init(this);
         view.setName(pom.getName());
         view.setDescription(pom.getDescription());
         view.setURL(pom.getUrl() != null ? pom.getUrl() : "");

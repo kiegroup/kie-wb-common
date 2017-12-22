@@ -21,7 +21,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import elemental2.dom.HTMLTableElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -34,11 +33,8 @@ public class ValidationView implements ValidationPresenter.View {
     @DataField("repositories")
     private HTMLTableSectionElement repositories;
 
-    private ValidationPresenter presenter;
-
     @Override
     public void init(final ValidationPresenter presenter) {
-        this.presenter = presenter;
     }
 
     @Override

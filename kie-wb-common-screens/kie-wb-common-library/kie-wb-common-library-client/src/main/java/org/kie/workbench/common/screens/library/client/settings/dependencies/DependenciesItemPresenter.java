@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
 import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Dependency;
@@ -54,35 +55,18 @@ public class DependenciesItemPresenter {
         this.enhancedDependenciesManager = enhancedDependenciesManager;
     }
 
-    public void setup(final EnhancedDependency enhancedDependency,
-                      final WhiteList whiteList) {
-        view.init(this);
+    public DependenciesItemPresenter setup(final EnhancedDependency enhancedDependency,
+                                           final WhiteList whiteList) {
+
         this.enhancedDependency = enhancedDependency;
         this.whiteList = whiteList;
 
         final Dependency dependency = enhancedDependency.getDependency();
 
+        view.init(this);
         view.setGroupId(dependency.getGroupId());
         view.setArtifactId(dependency.getArtifactId());
         view.setVersion(dependency.getVersion());
-        setupPackageWhiteList(enhancedDependency,
-                              whiteList);
-    }
-
-    public void whiteListAddAll() {
-        whiteList.addAll(enhancedDependency.getPackages());
-    }
-
-    public void whiteListAddNone() {
-        whiteList.removeAll(enhancedDependency.getPackages());
-    }
-
-    public void delete() {
-        enhancedDependenciesManager.delete(enhancedDependency);
-    }
-
-    private void setupPackageWhiteList(final EnhancedDependency enhancedDependency,
-                                       final WhiteList whiteList) {
         if (whiteList.isEmpty()) {
             view.setPackageWhiteList(LibraryConstants.AllPackagesIncluded);
         }
@@ -97,6 +81,20 @@ public class DependenciesItemPresenter {
         } else {
             view.setPackageWhiteList(LibraryConstants.PackagesNotIncluded);
         }
+
+        return this;
+    }
+
+    public void whiteListAddAll() {
+        whiteList.addAll(enhancedDependency.getPackages());
+    }
+
+    public void whiteListAddNone() {
+        whiteList.removeAll(enhancedDependency.getPackages());
+    }
+
+    public void delete() {
+        enhancedDependenciesManager.delete(enhancedDependency);
     }
 
     public View getView() {

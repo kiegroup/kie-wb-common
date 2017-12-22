@@ -19,25 +19,15 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.guvnor.common.services.project.model.ProjectRepositories;
+import org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
 public class ValidationItemPresenter {
 
-    private final View view;
-
     public interface View extends UberElemental<ValidationItemPresenter>,
                                   IsElement {
-
-        boolean getInclude();
-
-        String getId();
-
-        String getUrl();
-
-        String getSource();
 
         void setInclude(boolean included);
 
@@ -48,25 +38,30 @@ public class ValidationItemPresenter {
         void setSource(String source);
     }
 
+    private final View view;
+
+    private ProjectRepository projectRepository;
+
     @Inject
     public ValidationItemPresenter(final View view) {
         this.view = view;
     }
 
-    ValidationItemPresenter setup(final ProjectRepositories.ProjectRepository projectRepository) {
+    ValidationItemPresenter setup(final ProjectRepository projectRepository) {
+
+        this.projectRepository = projectRepository;
+
+        view.init(this);
         view.setInclude(projectRepository.isIncluded());
         view.setId(projectRepository.getMetadata().getId());
         view.setUrl(projectRepository.getMetadata().getUrl());
         view.setSource(projectRepository.getMetadata().getSource().name());
+
         return this;
     }
 
-    public String getId() {
-        return view.getId();
-    }
-
-    public boolean getInclude() {
-        return view.getInclude();
+    public void setInclude(final boolean include) {
+        projectRepository.setIncluded(include);
     }
 
     public View getView() {

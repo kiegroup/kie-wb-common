@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -29,9 +28,7 @@ import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
 
@@ -40,7 +37,6 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     private final AddImportPopup addImportPopup;
 
     private Imports imports;
-    private Map<Import, ExternalDataObjectsItemPresenter> presentersByImports;
 
     public interface View extends SettingsPresenter.View.Section<ExternalDataObjectsPresenter> {
 
@@ -65,15 +61,12 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     public void setup(final HasBusyIndicator container,
                       final ProjectScreenModel model) {
 
-        view.init(this);
-
         imports = model.getProjectImports().getImports();
 
-        presentersByImports = imports.getImports()
-                .stream()
-                .collect(toMap(identity(), this::newItemPresenter));
-
-        view.setItems(presentersByImports.values().stream()
+        view.init(this);
+        view.setItems(imports.getImports()
+                              .stream()
+                              .map(this::newItemPresenter)
                               .map(ExternalDataObjectsItemPresenter::getView)
                               .collect(toList()));
     }
@@ -84,23 +77,19 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
         addImportPopup.setCommand(() -> addImport(addImportPopup.getImportType()));
     }
 
-    private void removeImport(final Import import_) {
-        imports.removeImport(import_);
-        view.remove(presentersByImports.get(import_).getView());
+    void remove(final ExternalDataObjectsItemPresenter itemPresenter) {
+        imports.removeImport(itemPresenter.getImport());
+        view.remove(itemPresenter.getView());
     }
 
     private void addImport(final String typeName) {
         final Import newImport = new Import(typeName);
-
         imports.addImport(newImport);
-
-        final ExternalDataObjectsItemPresenter presenter = newItemPresenter(newImport);
-        presentersByImports.put(newImport, presenter);
-        view.add(presenter.getView());
+        view.add(newItemPresenter(newImport).getView());
     }
 
     private ExternalDataObjectsItemPresenter newItemPresenter(final Import import_) {
-        return itemPresenters.get().setup(import_, this::removeImport);
+        return itemPresenters.get().setup(import_, this);
     }
 
     @Override

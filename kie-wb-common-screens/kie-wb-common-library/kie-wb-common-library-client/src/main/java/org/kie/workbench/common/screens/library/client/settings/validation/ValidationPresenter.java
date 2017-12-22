@@ -17,31 +17,23 @@
 package org.kie.workbench.common.screens.library.client.settings.validation;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.ProjectRepositories;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
-import static java.util.Comparator.comparing;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
-import static org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 
 public class ValidationPresenter implements SettingsPresenter.Section {
 
     private final View view;
     private final ManagedInstance<ValidationItemPresenter> validationItemPresenters;
 
-    private Map<String, ValidationItemPresenter> itemPresenters;
-    private Set<ProjectRepository> repositories;
+    private ProjectRepositories repositories;
 
     public interface View extends SettingsPresenter.View.Section<ValidationPresenter> {
 
@@ -60,23 +52,13 @@ public class ValidationPresenter implements SettingsPresenter.Section {
     public void setup(final HasBusyIndicator container,
                       final ProjectScreenModel model) {
 
-        repositories = model.getRepositories().getRepositories();
+        repositories = model.getRepositories();
 
-        itemPresenters = repositories.stream()
-                .map(repository -> validationItemPresenters.get().setup(repository))
-                .collect(toMap(ValidationItemPresenter::getId, identity()));
-
-        view.setItems(itemPresenters.values()
+        view.init(this);
+        view.setItems(repositories.getRepositories()
                               .stream()
-                              .sorted(comparing(ValidationItemPresenter::getId))
-                              .map(ValidationItemPresenter::getView)
+                              .map(repository -> validationItemPresenters.get().setup(repository).getView())
                               .collect(toList()));
-    }
-
-    @Override
-    public Promise<Void> beforeSave() {
-        repositories.forEach(repository -> repository.setIncluded(itemPresenters.get(repository.getMetadata().getId()).getInclude()));
-        return Promises.resolve();
     }
 
     @Override

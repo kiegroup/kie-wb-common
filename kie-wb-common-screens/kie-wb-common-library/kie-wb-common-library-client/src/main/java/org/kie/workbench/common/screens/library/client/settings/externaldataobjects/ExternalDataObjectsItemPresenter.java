@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
-import java.util.function.Consumer;
-
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -29,7 +27,7 @@ public class ExternalDataObjectsItemPresenter {
     private final View view;
 
     private Import import_;
-    private Consumer<Import> onRemove;
+    private ExternalDataObjectsPresenter presenter;
 
     public interface View extends UberElemental<ExternalDataObjectsItemPresenter>,
                                   IsElement {
@@ -43,18 +41,23 @@ public class ExternalDataObjectsItemPresenter {
     }
 
     ExternalDataObjectsItemPresenter setup(final Import import_,
-                                           final Consumer<Import> onRemove) {
-        view.init(this);
+                                           final ExternalDataObjectsPresenter presenter) {
 
         this.import_ = import_;
-        this.onRemove = onRemove;
+        this.presenter = presenter;
 
+        view.init(this);
         view.setTypeName(import_.getType());
+
         return this;
     }
 
     public void remove() {
-        onRemove.accept(import_);
+        presenter.remove(this);
+    }
+
+    public Import getImport() {
+        return import_;
     }
 
     public View getView() {
