@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -29,6 +29,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.commons.uuid.UUID;
 
 @Templated
 public class DependenciesItemView implements DependenciesItemPresenter.View,
@@ -40,41 +41,39 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     private TranslationService translationService;
 
     @Inject
-    @DataField("selected")
-    private HTMLInputElement selected;
+    @DataField("package-white-list-all")
+    private HTMLInputElement packageWhiteListAll;
 
     @Inject
-    @DataField("group-id")
-    private HTMLDivElement groupId;
+    @DataField("package-white-list-none")
+    private HTMLInputElement packageWhiteListNone;
 
     @Inject
-    @DataField("artifact-id")
-    private HTMLDivElement artifactId;
-
-    @Inject
-    @DataField("version")
-    private HTMLDivElement version;
-
-    @Inject
-    @DataField("package-white-list")
     @Named("span")
-    private HTMLElement packageWhiteList;
+    @DataField("group-id")
+    private HTMLElement groupId;
 
     @Inject
-    @DataField("white-list-add-all")
-    private HTMLInputElement whiteListAll;
+    @Named("span")
+    @DataField("artifact-id")
+    private HTMLElement artifactId;
 
     @Inject
-    @DataField("white-list-add-none")
-    private HTMLInputElement whiteListNone;
+    @Named("span")
+    @DataField("version")
+    private HTMLElement version;
 
     @Inject
-    @DataField("delete")
-    private HTMLAnchorElement delete;
+    @DataField("remove-button")
+    private HTMLAnchorElement removeButton;
+
+    private final String packageWhiteListRadioGroupName = UUID.uuid();
 
     @Override
     public void init(final DependenciesItemPresenter presenter) {
         this.presenter = presenter;
+        this.packageWhiteListAll.name = packageWhiteListRadioGroupName;
+        this.packageWhiteListNone.name = packageWhiteListRadioGroupName;
     }
 
     @Override
@@ -93,22 +92,30 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     }
 
     @Override
-    public void setPackageWhiteList(final String packageWhiteListKey) {
-        this.packageWhiteList.innerHTML = translationService.format(packageWhiteListKey);
+    public void setPackageWhiteList(final boolean allPackagesWhitelisted) {
+
+        packageWhiteListNone.checked = false;
+        packageWhiteListAll.checked = false;
+
+        if (allPackagesWhitelisted) {
+            packageWhiteListAll.checked = true;
+        } else {
+            packageWhiteListNone.checked = true;
+        }
     }
 
-    @EventHandler("white-list-add-all")
-    public void whiteListAddAll(final ClickEvent event) {
-        presenter.whiteListAddAll();
+    @EventHandler("package-white-list-all")
+    public void addAllPackagesToWhiteList(final ClickEvent event) {
+        presenter.addAllPackagesToWhiteList();
     }
 
-    @EventHandler("white-list-add-none")
-    public void whiteListAddNone(final ClickEvent event) {
-        presenter.whiteListAddNone();
+    @EventHandler("package-white-list-none")
+    public void removeAllPackagesFromWhiteList(final ClickEvent event) {
+        presenter.removeAllPackagesFromWhiteList();
     }
 
-    @EventHandler("delete")
+    @EventHandler("remove-button")
     public void delete(final ClickEvent event) {
-        presenter.delete();
+        presenter.remove();
     }
 }

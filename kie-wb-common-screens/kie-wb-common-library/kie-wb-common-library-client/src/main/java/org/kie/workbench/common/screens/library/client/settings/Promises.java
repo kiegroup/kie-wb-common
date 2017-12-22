@@ -35,6 +35,10 @@ public class Promises {
 
     // Reducers
 
+    static <T, O> Promise<O> all(final List<T> objects, final Function<T, Promise<O>> f) {
+        return objects.stream().map(f).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
+    }
+
     static <T, O> Promise<O> reduceLazily(final O identity,
                                           final List<T> objects,
                                           final Function<T, Promise<O>> f) {

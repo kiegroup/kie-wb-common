@@ -56,7 +56,7 @@ public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.Vie
     @Override
     public void setItems(final List<View> itemViews) {
         table.innerHTML = "";
-        itemViews.forEach(view -> table.appendChild(view.getElement()));
+        itemViews.forEach(this::add);
     }
 
     @Override

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -66,7 +68,13 @@ public class DependenciesView implements DependenciesPresenter.View,
     }
 
     @Override
-    public void addItem(final DependenciesItemPresenter.View dependenciesItemView) {
-        table.appendChild(dependenciesItemView.getElement());
+    public void add(final DependenciesItemPresenter.View itemView) {
+        table.appendChild(itemView.getElement());
+    }
+
+    @Override
+    public void setItems(final List<DependenciesItemPresenter.View> itemViews) {
+        table.innerHTML = "";
+        itemViews.forEach(this::add);
     }
 }

@@ -16,57 +16,95 @@
 
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.DependencySelectorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
+import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.NewDependencyPopup;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencies;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
-import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+
+import static java.util.stream.Collectors.toList;
 
 public class DependenciesPresenter implements SettingsPresenter.Section {
 
     public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
 
-        void addItem(DependenciesItemPresenter.View dependenciesItemView);
+        void add(DependenciesItemPresenter.View itemView);
+
+        void setItems(List<DependenciesItemPresenter.View> itemViews);
     }
 
     private final View view;
+    private final DependencySelectorPopup dependencySelectorPopup;
+    private final NewDependencyPopup newDependencyPopup;
     private final EnhancedDependenciesManager enhancedDependenciesManager;
-    private final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters;
+    private final ManagedInstance<DependenciesItemPresenter> presenters;
 
     @Inject
     public DependenciesPresenter(final View view,
+                                 final DependencySelectorPopup dependencySelectorPopup,
+                                 final NewDependencyPopup newDependencyPopup,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
-                                 final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters) {
+                                 final ManagedInstance<DependenciesItemPresenter> presenters) {
         this.view = view;
+        this.dependencySelectorPopup = dependencySelectorPopup;
+        this.newDependencyPopup = newDependencyPopup;
         this.enhancedDependenciesManager = enhancedDependenciesManager;
-        this.dependenciesItemPresenters = dependenciesItemPresenters;
+        this.presenters = presenters;
     }
 
     @Override
-    public void setup(final HasBusyIndicator container,
-                      final ProjectScreenModel model) {
+    public Promise<Void> setup(final ProjectScreenModel model) {
 
         view.init(this);
 
-        enhancedDependenciesManager.init(model.getPOM(), enhancedDependencies -> {
-            for (final EnhancedDependency enhancedDependency : enhancedDependencies) {
-                final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
-                dependenciesItemPresenter.setup(enhancedDependency, model.getWhiteList());
-                view.addItem(dependenciesItemPresenter.getView());
-            }
-            container.hideBusyIndicator();
+        dependencySelectorPopup.addSelectionHandler(gav -> {
+            final Dependency dependency = new Dependency(gav);
+            dependency.setScope("compile");
+            add(dependency);
+        });
+
+        return new Promise<>((resolve, reject) -> {
+            enhancedDependenciesManager.init(model.getPOM(), dependencies -> {
+                view.setItems(buildDependencyViews(model, dependencies));
+                resolve.onInvoke(Promises.resolve());
+            });
+
+            enhancedDependenciesManager.update();
         });
     }
 
+    private List<DependenciesItemPresenter.View> buildDependencyViews(ProjectScreenModel model, EnhancedDependencies dependencies) {
+        return StreamSupport
+                .stream(dependencies.spliterator(), false)
+                .map(dependency -> presenters.get().setup(dependency, model.getWhiteList(), this).getView())
+                .collect(toList());
+    }
+
+    private void add(final Dependency dependency) {
+        enhancedDependenciesManager.addNew(dependency);
+    }
+
     public void add() {
-        //TODO
+        newDependencyPopup.show(this::add);
     }
 
     public void addFromRepository() {
-        //TODO
+        dependencySelectorPopup.show();
+    }
+
+    public void remove(final EnhancedDependency enhancedDependency) {
+        enhancedDependenciesManager.delete(enhancedDependency);
     }
 
     @Override

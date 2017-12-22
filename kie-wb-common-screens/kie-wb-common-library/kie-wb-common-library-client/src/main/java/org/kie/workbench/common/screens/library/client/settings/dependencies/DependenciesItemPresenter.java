@@ -16,13 +16,9 @@
 
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
-import java.util.Set;
-
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Dependency;
-import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
-import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
 import org.uberfire.client.mvp.UberElemental;
@@ -37,29 +33,27 @@ public class DependenciesItemPresenter {
 
         void setVersion(String version);
 
-        void setPackageWhiteList(String packageWhiteList);
+        void setPackageWhiteList(boolean packageWhiteList);
     }
 
-    private View view;
-
-    private EnhancedDependenciesManager enhancedDependenciesManager;
-
-    private EnhancedDependency enhancedDependency;
+    private final View view;
 
     private WhiteList whiteList;
+    private DependenciesPresenter dependenciesPresenter;
+    private EnhancedDependency enhancedDependency;
 
     @Inject
-    public DependenciesItemPresenter(final View view,
-                                     final EnhancedDependenciesManager enhancedDependenciesManager) {
+    public DependenciesItemPresenter(final View view) {
         this.view = view;
-        this.enhancedDependenciesManager = enhancedDependenciesManager;
     }
 
     public DependenciesItemPresenter setup(final EnhancedDependency enhancedDependency,
-                                           final WhiteList whiteList) {
+                                           final WhiteList whiteList,
+                                           final DependenciesPresenter dependenciesPresenter) {
 
-        this.enhancedDependency = enhancedDependency;
         this.whiteList = whiteList;
+        this.enhancedDependency = enhancedDependency;
+        this.dependenciesPresenter = dependenciesPresenter;
 
         final Dependency dependency = enhancedDependency.getDependency();
 
@@ -67,34 +61,21 @@ public class DependenciesItemPresenter {
         view.setGroupId(dependency.getGroupId());
         view.setArtifactId(dependency.getArtifactId());
         view.setVersion(dependency.getVersion());
-        if (whiteList.isEmpty()) {
-            view.setPackageWhiteList(LibraryConstants.AllPackagesIncluded);
-        }
-
-        final Set<String> packages = enhancedDependency.getPackages();
-        if (packages.isEmpty()) {
-            view.setPackageWhiteList(LibraryConstants.PackagesNotIncluded);
-        } else if (whiteList.containsAll(packages)) {
-            view.setPackageWhiteList(LibraryConstants.AllPackagesIncluded);
-        } else if (whiteList.containsAny(packages)) {
-            view.setPackageWhiteList(LibraryConstants.SomePackagesIncluded);
-        } else {
-            view.setPackageWhiteList(LibraryConstants.PackagesNotIncluded);
-        }
+        view.setPackageWhiteList(whiteList.isEmpty() || whiteList.containsAll(enhancedDependency.getPackages()));
 
         return this;
     }
 
-    public void whiteListAddAll() {
+    public void addAllPackagesToWhiteList() {
         whiteList.addAll(enhancedDependency.getPackages());
     }
 
-    public void whiteListAddNone() {
+    public void removeAllPackagesFromWhiteList() {
         whiteList.removeAll(enhancedDependency.getPackages());
     }
 
-    public void delete() {
-        enhancedDependenciesManager.delete(enhancedDependency);
+    public void remove() {
+        dependenciesPresenter.remove(enhancedDependency);
     }
 
     public View getView() {

@@ -20,13 +20,14 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
-import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 import static java.util.stream.Collectors.toList;
 
@@ -58,8 +59,7 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public void setup(final HasBusyIndicator container,
-                      final ProjectScreenModel model) {
+    public Promise<Void> setup(final ProjectScreenModel model) {
 
         imports = model.getProjectImports().getImports();
 
@@ -69,6 +69,8 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
                               .map(this::newItemPresenter)
                               .map(ExternalDataObjectsItemPresenter::getView)
                               .collect(toList()));
+
+        return Promises.resolve();
     }
 
     public void openAddPopup() {

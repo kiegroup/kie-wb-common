@@ -29,8 +29,6 @@ import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
-import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
-import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 
@@ -112,8 +110,7 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     // Save
 
     @Override
-    public void setup(final HasBusyIndicator container,
-                      final ProjectScreenModel projectScreenModel) {
+    public Promise<Void> setup(final ProjectScreenModel projectScreenModel) {
 
         this.projectScreenModel = projectScreenModel;
 
@@ -127,15 +124,15 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         view.setArtifactId(pom.getGav().getArtifactId());
         view.setVersion(pom.getGav().getVersion());
 
-        gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
-                            gavPreferences -> {
-                                view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
-                                view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
-                                container.hideBusyIndicator();
-                            },
-                            throwable -> {
-                                new DefaultErrorCallback().error(null, throwable);
-                            });
+        return new Promise<>((resolve, reject) -> {
+            gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
+                                gavPreferences -> {
+                                    view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
+                                    view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
+                                    resolve.onInvoke(Promises.resolve());
+                                },
+                                reject::onInvoke);
+        });
     }
 
     @Override

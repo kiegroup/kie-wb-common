@@ -25,7 +25,6 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
@@ -58,8 +57,8 @@ import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static elemental2.promise.Promise.resolve;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.reduceLazily;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
@@ -78,7 +77,9 @@ public class SettingsPresenter {
 
         String getSaveSuccessMessage();
 
-        String getSavingMessage();
+        String getSaveErrorMessage();
+
+        String getLoadErrorMessage();
 
         interface Section<T> extends UberElemental<T>,
                                      IsElement {
@@ -154,19 +155,32 @@ public class SettingsPresenter {
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
-            this.model = model;
-            getSectionsInDisplayOrder().forEach(section -> section.setup(getView(), model));
-            goTo(currentSection);
-            view.hideBusyIndicator();
-            return resolve();
-        });
+        Promises.<Void>resolve()
+                .then(ignore -> Promises.<ProjectScreenService, ProjectScreenModel>
+                        promisify(projectScreenService, service -> service.load(pathToPom)))
+                .then(model -> {
+                    this.model = model;
+                    return Promises.<Section, Void>
+                            all(getSectionsInDisplayOrder(), section -> section.setup(model));
+                })
+                .then(ignore -> {
+                    goTo(currentSection);
+                    view.hideBusyIndicator();
+                    return resolve();
+                })
+                .catch_(e -> Promises.handleExceptionOr(e, ignore -> {
+                    notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
+                    return resolve();
+                }))
+                .catch_(this::defaultErrorResolution);
     }
 
     public void save() {
 
-        reduceLazily(null, getSectionsInDisplayOrder(), Section::validate)
-                .then(o -> {
+        Promises.<Void>resolve()
+                .then(ignore -> Promises.
+                        reduceLazily(null, getSectionsInDisplayOrder(), Section::validate))
+                .then(ignore -> {
                     savePopUpPresenter.show(comment -> executeSave(comment, DeploymentMode.VALIDATED));
                     return resolve();
                 })
@@ -182,16 +196,19 @@ public class SettingsPresenter {
                              final DeploymentMode mode) {
 
         Promises.<Void>resolve()
-                .then(ignore -> Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::beforeSave))
-                .then(ignore -> Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
-                .then(ignore -> Promises.<SavingStep, Void>reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
+                .then(ignore -> Promises.
+                        reduceLazily(null, getSectionsInDisplayOrder(), Section::beforeSave))
+                .then(ignore -> Promises.
+                        reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
+                .then(ignore -> Promises.<SavingStep, Void>
+                        reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
                 .then(ignore -> {
                     view.hideBusyIndicator();
                     notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
                     return resolve();
                 })
                 .catch_(e -> Promises.handleExceptionOr(e, (final Void ignore) -> {
-                    notificationEvent.fire(new NotificationEvent("An error has occurred while saving settings", ERROR)); //FIXME: tiago: improve error message
+                    notificationEvent.fire(new NotificationEvent(view.getSaveErrorMessage(), ERROR));
                     return resolve();
                 }))
                 .catch_(this::defaultErrorResolution);
@@ -220,7 +237,7 @@ public class SettingsPresenter {
     private Promise<Void> checkConcurrentPomUpdate(final String comment, final Supplier<Promise<Void>> chain) {
         return new Promise<>((resolve, reject) -> {
             if (this.concurrentPomUpdateInfo == null) {
-                resolve.onInvoke((Void) null);
+                resolve.onInvoke(Promises.resolve());
             } else {
                 newConcurrentUpdate(this.concurrentPomUpdateInfo.getPath(),
                                     this.concurrentPomUpdateInfo.getIdentity(),
@@ -323,27 +340,20 @@ public class SettingsPresenter {
 
     public interface Section {
 
-        //FIXME: remove default
         default Promise<Void> beforeSave() {
-            DomGlobal.console.info("Before saving " + getClass().getSimpleName());
             return resolve();
         }
 
-        //FIXME: remove default
         default Promise<Void> save() {
-            DomGlobal.console.info("Saving " + getClass().getSimpleName());
             return resolve();
         }
 
-        //FIXME: remove default
         default Promise<Object> validate() {
-            DomGlobal.console.info("Validating " + getClass().getSimpleName());
-            return Promise.resolve(true);
+            return resolve();
         }
 
-        //FIXME: remove default
-        default void setup(final HasBusyIndicator container, ProjectScreenModel model) {
-            DomGlobal.console.info("Setting up " + getClass().getSimpleName());
+        default Promise<Void> setup(final ProjectScreenModel model) {
+            return resolve();
         }
 
         View.Section getView();

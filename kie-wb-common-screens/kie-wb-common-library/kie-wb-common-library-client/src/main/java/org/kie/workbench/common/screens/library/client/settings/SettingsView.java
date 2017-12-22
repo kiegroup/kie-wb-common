@@ -142,8 +142,13 @@ public class SettingsView implements SettingsPresenter.View,
     }
 
     @Override
-    public String getSavingMessage() {
-        return translationService.format(LibraryConstants.Saving);
+    public String getSaveErrorMessage() {
+        return translationService.format(LibraryConstants.SettingsSaveError);
+    }
+
+    @Override
+    public String getLoadErrorMessage() {
+        return translationService.format(LibraryConstants.SettingsLoadError);
     }
 
     @Override

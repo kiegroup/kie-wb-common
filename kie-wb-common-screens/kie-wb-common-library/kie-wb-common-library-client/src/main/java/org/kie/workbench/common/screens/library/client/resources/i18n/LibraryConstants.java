@@ -292,4 +292,10 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String SettingsSaveSuccess = "SettingsSaveSuccess";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SettingsSaveError = "SettingsSaveError";
+
+    @TranslationKey(defaultValue = "")
+    public static final String SettingsLoadError = "SettingsLoadError";
 }
