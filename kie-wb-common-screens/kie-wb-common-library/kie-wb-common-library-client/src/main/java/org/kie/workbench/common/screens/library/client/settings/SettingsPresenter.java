@@ -180,10 +180,10 @@ public class SettingsPresenter {
     private void executeSave(final String comment,
                              final DeploymentMode mode) {
 
-        resolve()
-                .then(ignore -> reduceLazily(null, getSectionsInDisplayOrder(), Section::beforeSave))
-                .then(ignore -> reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
-                .then(ignore -> reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
+        Promises.<Void>resolve()
+                .then(ignore -> Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::beforeSave))
+                .then(ignore -> Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
+                .then(ignore -> Promises.<SavingStep, Void>reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
                 .then(ignore -> {
                     view.hideBusyIndicator();
                     notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
