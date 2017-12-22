@@ -28,10 +28,6 @@ public class ValidationItemPresenter {
 
     private final View view;
 
-    public View getView() {
-        return view;
-    }
-
     public interface View extends UberElemental<ValidationItemPresenter>,
                                   IsElement {
 
@@ -63,5 +59,17 @@ public class ValidationItemPresenter {
         view.setUrl(projectRepository.getMetadata().getUrl());
         view.setSource(projectRepository.getMetadata().getSource().name());
         return this;
+    }
+
+    public String getId() {
+        return view.getId();
+    }
+
+    public boolean getInclude() {
+        return view.getInclude();
+    }
+
+    public View getView() {
+        return view;
     }
 }

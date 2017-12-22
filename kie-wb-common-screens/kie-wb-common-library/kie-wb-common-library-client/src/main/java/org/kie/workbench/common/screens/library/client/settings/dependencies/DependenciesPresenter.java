@@ -18,12 +18,11 @@ package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.services.shared.whitelist.WhiteList;
+import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 
 public class DependenciesPresenter implements SettingsPresenter.Section {
@@ -36,8 +35,6 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
     private final View view;
     private final EnhancedDependenciesManager enhancedDependenciesManager;
     private final ManagedInstance<DependenciesItemPresenter> dependenciesItemPresenters;
-
-    private WhiteList whiteList;
 
     @Inject
     public DependenciesPresenter(final View view,
@@ -53,17 +50,14 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
                       final ProjectScreenModel model) {
 
         view.init(this);
-        this.whiteList = null; //FIXME: tiago
 
         enhancedDependenciesManager.init(model.getPOM(), enhancedDependencies -> {
+            for (final EnhancedDependency enhancedDependency : enhancedDependencies) {
+                final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
+                dependenciesItemPresenter.setup(enhancedDependency, model.getWhiteList());
+                view.addItem(dependenciesItemPresenter.getView());
+            }
             container.hideBusyIndicator();
-            GWT.log("Dependencies section Setup success");
-//
-//        for (final EnhancedDependency enhancedDependency : enhancedDependencies) {
-//            final DependenciesItemPresenter dependenciesItemPresenter = dependenciesItemPresenters.get();
-//            dependenciesItemPresenter.setup(enhancedDependency, whiteList);
-//            view.addItem(dependenciesItemPresenter.getView());
-//        }
         });
     }
 

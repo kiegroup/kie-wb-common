@@ -40,7 +40,7 @@ public class ValidationPresenter implements SettingsPresenter.Section {
     private final View view;
     private final ManagedInstance<ValidationItemPresenter> validationItemPresenters;
 
-    private Map<String, ValidationItemPresenter.View> itemViews;
+    private Map<String, ValidationItemPresenter> itemPresenters;
     private Set<ProjectRepository> repositories;
 
     public interface View extends SettingsPresenter.View.Section<ValidationPresenter> {
@@ -62,19 +62,20 @@ public class ValidationPresenter implements SettingsPresenter.Section {
 
         repositories = model.getRepositories().getRepositories();
 
-        itemViews = repositories.stream()
-                .map(repository -> validationItemPresenters.get().setup(repository).getView())
-                .collect(toMap(ValidationItemPresenter.View::getId, identity()));
+        itemPresenters = repositories.stream()
+                .map(repository -> validationItemPresenters.get().setup(repository))
+                .collect(toMap(ValidationItemPresenter::getId, identity()));
 
-        view.setItems(itemViews.values()
+        view.setItems(itemPresenters.values()
                               .stream()
-                              .sorted(comparing(ValidationItemPresenter.View::getId))
+                              .sorted(comparing(ValidationItemPresenter::getId))
+                              .map(ValidationItemPresenter::getView)
                               .collect(toList()));
     }
 
     @Override
     public Promise<Void> beforeSave() {
-        repositories.forEach(repository -> repository.setIncluded(itemViews.get(repository.getMetadata().getId()).getInclude()));
+        repositories.forEach(repository -> repository.setIncluded(itemPresenters.get(repository.getMetadata().getId()).getInclude()));
         return Promises.resolve();
     }
 

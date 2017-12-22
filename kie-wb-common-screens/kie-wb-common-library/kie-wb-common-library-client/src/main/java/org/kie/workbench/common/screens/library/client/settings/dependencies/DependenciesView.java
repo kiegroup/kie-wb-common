@@ -17,18 +17,16 @@
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLDivElement;
-import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
-import org.uberfire.ext.widgets.common.client.common.BusyPopup;
 
 @Templated
 public class DependenciesView implements DependenciesPresenter.View,
@@ -40,16 +38,13 @@ public class DependenciesView implements DependenciesPresenter.View,
     private TranslationService translationService;
 
     @Inject
+    @Named("tbody")
     @DataField("table")
-    private HTMLDivElement table;
+    private HTMLTableSectionElement table;
 
     @Inject
-    @DataField("select-all")
-    private HTMLInputElement selectAll;
-
-    @Inject
-    @DataField("add")
-    private HTMLButtonElement add;
+    @DataField("add-dependency")
+    private HTMLButtonElement addDependency;
 
     @Inject
     @DataField("add-from-repository")
@@ -60,13 +55,13 @@ public class DependenciesView implements DependenciesPresenter.View,
         this.presenter = presenter;
     }
 
-    @EventHandler("add")
-    public void add(final ClickEvent event) {
+    @EventHandler("add-dependency")
+    public void add(final ClickEvent ignore) {
         presenter.add();
     }
 
     @EventHandler("add-from-repository")
-    public void addFromRepository(final ClickEvent event) {
+    public void addFromRepository(final ClickEvent ignore) {
         presenter.addFromRepository();
     }
 

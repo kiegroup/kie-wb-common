@@ -16,33 +16,29 @@
 
 <div class="tab-pane active" id="kieSettingsDependencies">
     <h3 data-i18n-key="Dependencies"></h3>
-    <div class="list-pf" data-field="table">
-        <div class="list-pf-item kie-list-pf-item--header">
-            <div class="list-pf-container kie-list-pf-container--header">
-                <div class="list-pf-select">
-                    <input type="checkbox" data-field="select-all">
-                </div>
-                <div class="list-pf-content list-pf-content-flex">
-                    <div class="list-pf-content-wrapper">
-                        <div class="list-pf-main-content ">
-                            <div class="list-pf-title" data-i18n-key="GroupId"></div>
-                            <div class="list-pf-description text-overflow-pf" data-i18n-key="ArtifactId"></div>
-                        </div>
-                        <div class="list-pf-additional-content">
-                            <div data-i18n-key="Version"></div>
-                        </div>
-                        <div class="list-pf-additional-content">
-                            <div data-i18n-key="PackageWhiteList"></div>
-                        </div>
-                    </div>
-                    <div class="list-pf-actions kie-list-pf-actions--fixed">
-                        <a data-i18n-key="DeleteSelected"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <table class="table table-hover kie-tablelist">
+        <thead>
+        <tr class="kie-tablelist__row kie-tablelist__row--header">
+            <th class="kie-tablelist__cell kie-tablelist__cell--header">Group ID</th>
+            <th class="kie-tablelist__cell kie-tablelist__cell--header">Artifact ID</th>
+            <th class="kie-tablelist__cell kie-tablelist__cell--header">Version</th>
+            <th class="kie-tablelist__cell kie-tablelist__cell--header">Package White List</th>
+            <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+            </th>
+        </tr>
+        </thead>
+        <tbody data-field="table">
+        </tbody>
+    </table>
     <br>
-    <button type="button" class="btn btn-default" data-field="add" data-i18n-key="Add"></button>
-    <button type="button" class="btn btn-default" data-field="add-from-repository" data-i18n-key="AddFromRepository"></button>
+
+    <button type="button" class="btn btn-link" data-field="add-dependency">
+        <span class="pficon pficon-add-circle-o"></span>
+        <span data-i18n-key="Add"></span>
+    </button>
+
+    <button type="button" class="btn btn-link" data-field="add-from-repository">
+        <span class="pficon pficon-add-circle-o"></span>
+        <span data-i18n-key="AddFromRepository"></span>
+    </button>
 </div>

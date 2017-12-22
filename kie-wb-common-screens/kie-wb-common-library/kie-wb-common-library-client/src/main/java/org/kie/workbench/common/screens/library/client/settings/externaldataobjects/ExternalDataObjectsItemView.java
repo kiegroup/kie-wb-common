@@ -16,56 +16,44 @@
 
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLTableSectionElement;
+import elemental2.dom.HTMLElement;
+import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.settings.externaldataobjects.ExternalDataObjectsItemPresenter.View;
 
 @Templated
-public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.View {
+public class ExternalDataObjectsItemView implements ExternalDataObjectsItemPresenter.View {
 
     @Inject
-    @Named("tbody")
-    @DataField("table")
-    private HTMLTableSectionElement table;
+    @Named("span")
+    @DataField("type-name")
+    private HTMLElement typeName;
 
     @Inject
-    @DataField("add-button")
-    private HTMLButtonElement addButton;
+    @DataField("remove-button")
+    private HTMLAnchorElement removeButton;
 
-    private ExternalDataObjectsPresenter presenter;
+    private ExternalDataObjectsItemPresenter presenter;
+
+    @EventHandler("remove-button")
+    public void onRemove(final ClickEvent ignore) {
+        presenter.remove();
+    }
 
     @Override
-    public void init(final ExternalDataObjectsPresenter presenter) {
+    public void init(final ExternalDataObjectsItemPresenter presenter) {
         this.presenter = presenter;
     }
 
-    @EventHandler("add-button")
-    public void onAdd(final ClickEvent ignore) {
-        presenter.openAddPopup();
-    }
-
     @Override
-    public void setItems(final List<View> itemViews) {
-        table.innerHTML = "";
-        itemViews.forEach(view -> table.appendChild(view.getElement()));
-    }
-
-    @Override
-    public void remove(final View view) {
-        table.removeChild(view.getElement());
-    }
-
-    @Override
-    public void add(final View view) {
-        table.appendChild(view.getElement());
+    public void setTypeName(final String typeName) {
+        this.typeName.innerHTML = typeName;
     }
 }

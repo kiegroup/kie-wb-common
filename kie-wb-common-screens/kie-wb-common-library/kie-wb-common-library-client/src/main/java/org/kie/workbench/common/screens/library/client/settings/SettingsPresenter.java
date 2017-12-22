@@ -60,7 +60,6 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.reduceLazily;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.reduceLazilyChaining;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
@@ -75,7 +74,7 @@ public class SettingsPresenter {
 
         void showBusyIndicator();
 
-        void setContent(final Section contentView);
+        void setSection(final Section contentView);
 
         String getSaveSuccessMessage();
 
@@ -108,6 +107,7 @@ public class SettingsPresenter {
     private ObservablePath pathToPom;
     private ObservablePath.OnConcurrentUpdateEvent concurrentPomUpdateInfo = null;
     private ProjectScreenModel model;
+    private Section currentSection;
 
     @Inject
     public SettingsPresenter(final View view,
@@ -139,6 +139,7 @@ public class SettingsPresenter {
         this.projectContext = projectContext;
         this.observablePaths = observablePaths;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
+        this.currentSection = generalSettingsSection;
     }
 
     @PostConstruct
@@ -156,7 +157,7 @@ public class SettingsPresenter {
         promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
             this.model = model;
             getSectionsInDisplayOrder().forEach(section -> section.setup(getView(), model));
-            goTo(generalSettingsSection);
+            goTo(currentSection);
             view.hideBusyIndicator();
             return resolve();
         });
@@ -294,7 +295,8 @@ public class SettingsPresenter {
     }
 
     private void goTo(final Section section) {
-        view.setContent(section.getView());
+        currentSection = section;
+        view.setSection(section.getView());
     }
 
     private List<Section> getSectionsInDisplayOrder() {

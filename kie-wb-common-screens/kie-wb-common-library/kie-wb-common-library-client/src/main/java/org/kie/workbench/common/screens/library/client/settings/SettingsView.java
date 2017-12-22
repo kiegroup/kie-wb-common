@@ -130,9 +130,10 @@ public class SettingsView implements SettingsPresenter.View,
     }
 
     @Override
-    public void setContent(final Section section) {
+    public void setSection(final Section section) {
         content.innerHTML = "";
         content.appendChild(section.getElement());
+        //FIXME: set active section css class active=true
     }
 
     @Override
