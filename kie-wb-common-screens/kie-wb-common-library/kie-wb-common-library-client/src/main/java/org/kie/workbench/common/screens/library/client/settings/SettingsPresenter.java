@@ -217,7 +217,7 @@ public class SettingsPresenter {
                              final DeploymentMode mode) {
 
         Promises.<Void>resolve()
-                .then(i -> Promises.
+                .then(i -> Promises.<Section, Void>
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
                 .then(i -> Promises.<SavingStep, Void>
                         reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
@@ -233,7 +233,9 @@ public class SettingsPresenter {
                 .catch_(this::defaultErrorResolution);
     }
 
-    private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain, final SavingStep savingStep) {
+    private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain,
+                                            final SavingStep savingStep) {
+
         return savingStep.execute(chain);
     }
 
@@ -246,7 +248,7 @@ public class SettingsPresenter {
 
     private Promise<Void> resetDirtyIndicator(final Section section) {
         originalHashCodes.put(section, section.currentHashCode());
-        onSettingsSectionChanged(new SettingsSectionChange(section));
+        updateDirtyIndicator(section);
         return resolve();
     }
 
@@ -263,7 +265,7 @@ public class SettingsPresenter {
     private Promise<Void> checkConcurrentPomUpdate(final String comment, final Supplier<Promise<Void>> chain) {
         return new Promise<>((resolve, reject) -> {
             if (this.concurrentPomUpdateInfo == null) {
-                resolve.onInvoke(Promises.resolve());
+                resolve.onInvoke(resolve());
             } else {
                 newConcurrentUpdate(this.concurrentPomUpdateInfo.getPath(),
                                     this.concurrentPomUpdateInfo.getIdentity(),
@@ -306,7 +308,11 @@ public class SettingsPresenter {
     }
 
     public void onSettingsSectionChanged(@Observes final SettingsSectionChange settingsSectionChange) {
-        final Section changedSection = settingsSectionChange.getSection();
+        updateDirtyIndicator(settingsSectionChange.getSection());
+    }
+
+    private void updateDirtyIndicator(final Section changedSection) {
+
         final boolean isDirty = isDirty(changedSection);
 
         if (changedSection.equals(dependenciesSettingsSection)) {
