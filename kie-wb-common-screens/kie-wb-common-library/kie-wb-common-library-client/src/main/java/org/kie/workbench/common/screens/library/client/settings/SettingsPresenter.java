@@ -93,8 +93,6 @@ public class SettingsPresenter {
 
         String getSaveSuccessMessage();
 
-        String getSaveErrorMessage();
-
         String getLoadErrorMessage();
 
         interface Section<T> extends UberElemental<T>,
@@ -221,16 +219,13 @@ public class SettingsPresenter {
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
                 .then(i -> Promises.<SavingStep, Void>
                         reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
-                .then(i -> {
-                    view.hideBusyIndicator();
-                    notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
-                    return resolve();
-                })
-                .catch_(e -> Promises.handleExceptionOr(e, (final Void i) -> {
-                    notificationEvent.fire(new NotificationEvent(view.getSaveErrorMessage(), ERROR));
-                    return resolve();
-                }))
                 .catch_(this::defaultErrorResolution);
+    }
+
+    private Promise<Void> displaySuccessMessage() {
+        view.hideBusyIndicator();
+        notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
+        return resolve();
     }
 
     private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain,
@@ -243,7 +238,8 @@ public class SettingsPresenter {
                                             final DeploymentMode mode) {
 
         return Arrays.asList(chain -> saveProjectScreenModel(comment, mode, chain),
-                             chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator));
+                             chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator),
+                             chain -> displaySuccessMessage());
     }
 
     private Promise<Void> resetDirtyIndicator(final Section section) {

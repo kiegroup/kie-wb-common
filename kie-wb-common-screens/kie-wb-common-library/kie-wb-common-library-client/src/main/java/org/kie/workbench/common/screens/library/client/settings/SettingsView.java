@@ -199,11 +199,6 @@ public class SettingsView implements SettingsPresenter.View,
     }
 
     @Override
-    public String getSaveErrorMessage() {
-        return translationService.format(LibraryConstants.SettingsSaveError);
-    }
-
-    @Override
     public String getLoadErrorMessage() {
         return translationService.format(LibraryConstants.SettingsLoadError);
     }
