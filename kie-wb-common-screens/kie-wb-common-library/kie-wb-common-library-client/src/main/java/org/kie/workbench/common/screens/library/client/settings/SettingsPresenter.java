@@ -219,6 +219,7 @@ public class SettingsPresenter {
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
                 .then(i -> Promises.<SavingStep, Void>
                         reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
+                .catch_(e -> Promises.handleExceptionOr(e, i -> resolve()))
                 .catch_(this::defaultErrorResolution);
     }
 
