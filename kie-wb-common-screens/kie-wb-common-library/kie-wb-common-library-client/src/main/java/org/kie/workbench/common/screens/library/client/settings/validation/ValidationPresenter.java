@@ -18,16 +18,13 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 
 import java.util.List;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.ProjectRepositories;
-import org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 
 import static java.util.stream.Collectors.toList;
@@ -38,7 +35,6 @@ public class ValidationPresenter implements SettingsPresenter.Section {
     private final ManagedInstance<ValidationItemPresenter> validationItemPresenters;
 
     private ProjectRepositories repositories;
-    private int originalHashCode;
 
     public interface View extends SettingsPresenter.View.Section<ValidationPresenter> {
 
@@ -58,8 +54,6 @@ public class ValidationPresenter implements SettingsPresenter.Section {
 
         repositories = model.getRepositories();
 
-        originalHashCode = repositories.hashCode();
-
         view.init(this);
         view.setItems(repositories.getRepositories()
                               .stream()
@@ -70,8 +64,8 @@ public class ValidationPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public boolean isDirty() {
-        return originalHashCode != repositories.hashCode();
+    public int currentHashCode() {
+        return repositories.getRepositories().hashCode();
     }
 
     @Override

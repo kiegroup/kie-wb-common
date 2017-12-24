@@ -39,6 +39,10 @@ public class SettingsView implements SettingsPresenter.View,
     private SettingsPresenter presenter;
 
     @Inject
+    @Named("sup")
+    private HTMLElement dirtyIndicator;
+
+    @Inject
     private TranslationService translationService;
 
     @Inject
@@ -68,41 +72,6 @@ public class SettingsView implements SettingsPresenter.View,
     @Inject
     @DataField("persistence-section")
     private HTMLAnchorElement persistenceSection;
-
-    @Inject
-    @Named("span")
-    @DataField("general-section-dirty-indicator")
-    private HTMLElement generalSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("dependencies-section-dirty-indicator")
-    private HTMLElement dependenciesSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("knowledge-bases-section-dirty-indicator")
-    private HTMLElement knowledgeBasesSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("external-data-objects-section-dirty-indicator")
-    private HTMLElement externalDataObjectsSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("validation-section-dirty-indicator")
-    private HTMLElement validationSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("deployments-section-dirty-indicator")
-    private HTMLElement deploymentsSectionDirtyIndicator;
-
-    @Inject
-    @Named("span")
-    @DataField("persistence-section-dirty-indicator")
-    private HTMLElement persistenceSectionDirtyIndicator;
 
     @Inject
     @DataField("save")
@@ -168,47 +137,53 @@ public class SettingsView implements SettingsPresenter.View,
 
     @Override
     public void setGeneralSectionDirty(final boolean dirty) {
-        markAsDirty(generalSectionDirtyIndicator, dirty);
+        markAsDirty(generalSection, dirty);
     }
 
     @Override
     public void setDependenciesSectionDirty(final boolean dirty) {
-        markAsDirty(dependenciesSectionDirtyIndicator, dirty);
+        markAsDirty(dependenciesSection, dirty);
     }
 
     @Override
     public void setKnowledgeBasesSectionDirty(final boolean dirty) {
-        markAsDirty(knowledgeBasesSectionDirtyIndicator, dirty);
+        markAsDirty(knowledgeBasesSection, dirty);
     }
 
     @Override
     public void setExternalDataObjectsSectionDirty(final boolean dirty) {
-        markAsDirty(externalDataObjectsSectionDirtyIndicator, dirty);
+        markAsDirty(externalDataObjectsSection, dirty);
     }
 
     @Override
     public void setValidationSectionDirty(final boolean dirty) {
-        markAsDirty(validationSectionDirtyIndicator, dirty);
+        markAsDirty(validationSection, dirty);
     }
 
     @Override
     public void setDeploymentsSectionDirty(final boolean dirty) {
-        markAsDirty(deploymentsSectionDirtyIndicator, dirty);
+        markAsDirty(deploymentsSection, dirty);
     }
 
     @Override
     public void setPersistenceSectionDirty(final boolean dirty) {
-        markAsDirty(persistenceSectionDirtyIndicator, dirty);
+        markAsDirty(persistenceSection, dirty);
     }
 
-    private void markAsDirty(final HTMLElement dirtyIndicator,
+    private void markAsDirty(final HTMLElement sectionMenuItem,
                              final boolean dirty) {
 
-        if (dirty) {
-            dirtyIndicator.innerHTML = "*";
-        } else {
-            dirtyIndicator.innerHTML = "";
+        if (dirty && sectionMenuItem.childElementCount == 0) {
+            sectionMenuItem.appendChild(newDirtyIndicator());
+        } else if (!dirty && sectionMenuItem.childElementCount > 0) {
+            sectionMenuItem.removeChild(sectionMenuItem.lastElementChild);
         }
+    }
+
+    private HTMLElement newDirtyIndicator() {
+        final HTMLElement dirtyIndicator = (HTMLElement) this.dirtyIndicator.cloneNode(false);
+        dirtyIndicator.innerHTML = " *";
+        return dirtyIndicator;
     }
 
     @Override

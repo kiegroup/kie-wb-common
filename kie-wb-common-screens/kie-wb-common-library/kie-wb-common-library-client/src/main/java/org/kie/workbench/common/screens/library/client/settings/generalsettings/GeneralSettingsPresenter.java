@@ -98,7 +98,6 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
     private POM pom;
-    private int originalHashCode;
 
     @Inject
     public GeneralSettingsPresenter(final View view,
@@ -133,8 +132,6 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                                 gavPreferences -> {
                                     view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
                                     view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
-
-                                    originalHashCode = pom.hashCode() + gavPreferencesHashCode();
 
                                     resolve.onInvoke(Promises.resolve());
                                 },
@@ -231,14 +228,11 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
         });
     }
 
-    private int gavPreferencesHashCode() {
-        return (gavPreferences.isChildGAVEditEnabled() ? 1 : 2) +
-                (gavPreferences.isConflictingGAVCheckDisabled() ? 3 : 7);
-    }
-
     @Override
-    public boolean isDirty() {
-        return originalHashCode != pom.hashCode() + gavPreferencesHashCode();
+    public int currentHashCode() {
+        return pom.hashCode() +
+                (gavPreferences.isChildGAVEditEnabled() ? 1 : 2) +
+                (gavPreferences.isConflictingGAVCheckDisabled() ? 4 : 8);
     }
 
     @Override

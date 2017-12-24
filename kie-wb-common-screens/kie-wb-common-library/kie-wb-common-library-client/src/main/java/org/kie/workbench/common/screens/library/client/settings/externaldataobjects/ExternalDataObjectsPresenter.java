@@ -40,7 +40,6 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     private final AddImportPopup addImportPopup;
 
     private Imports imports;
-    private int originalHashCode;
 
     private final Event<SettingsSectionChange> settingsSectionChangeEvent;
 
@@ -69,8 +68,6 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     public Promise<Void> setup(final ProjectScreenModel model) {
 
         imports = model.getProjectImports().getImports();
-
-        originalHashCode = imports.hashCode();
 
         view.init(this);
         view.setItems(imports.getImports()
@@ -106,8 +103,8 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public boolean isDirty() {
-        return originalHashCode != imports.hashCode();
+    public int currentHashCode() {
+        return imports.hashCode();
     }
 
     @Override
