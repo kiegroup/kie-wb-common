@@ -170,6 +170,7 @@ public class SettingsPresenter {
         }
 
         originalHashCodes = new HashMap<>();
+        concurrentPomUpdateInfo = null;
 
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
