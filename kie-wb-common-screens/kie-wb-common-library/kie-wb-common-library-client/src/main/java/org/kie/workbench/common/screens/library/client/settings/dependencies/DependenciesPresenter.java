@@ -48,18 +48,23 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
     private final View view;
     private final DependencySelectorPopup dependencySelectorPopup;
+    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final NewDependencyPopup newDependencyPopup;
     private final EnhancedDependenciesManager enhancedDependenciesManager;
     private final ManagedInstance<DependenciesItemPresenter> presenters;
 
+    private int currentHashCode = 0;
+
     @Inject
     public DependenciesPresenter(final View view,
                                  final DependencySelectorPopup dependencySelectorPopup,
+                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                  final NewDependencyPopup newDependencyPopup,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
                                  final ManagedInstance<DependenciesItemPresenter> presenters) {
         this.view = view;
         this.dependencySelectorPopup = dependencySelectorPopup;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.newDependencyPopup = newDependencyPopup;
         this.enhancedDependenciesManager = enhancedDependenciesManager;
         this.presenters = presenters;
@@ -78,15 +83,18 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
         return new Promise<>((resolve, reject) -> {
             enhancedDependenciesManager.init(model.getPOM(), dependencies -> {
+                currentHashCode = dependencies.asList().hashCode();
                 view.setItems(buildDependencyViews(model, dependencies));
                 resolve.onInvoke(Promises.resolve());
+                fireChangeEvent();
             });
 
             enhancedDependenciesManager.update();
         });
     }
 
-    private List<DependenciesItemPresenter.View> buildDependencyViews(ProjectScreenModel model, EnhancedDependencies dependencies) {
+    private List<DependenciesItemPresenter.View> buildDependencyViews(final ProjectScreenModel model,
+                                                                      final EnhancedDependencies dependencies) {
         return StreamSupport
                 .stream(dependencies.spliterator(), false)
                 .map(dependency -> presenters.get().setup(dependency, model.getWhiteList(), this).getView())
@@ -107,6 +115,15 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
     public void remove(final EnhancedDependency enhancedDependency) {
         enhancedDependenciesManager.delete(enhancedDependency);
+    }
+
+    @Override
+    public int currentHashCode() {
+        return currentHashCode;
+    }
+
+    public void fireChangeEvent() {
+        fireChangeEvent(settingsSectionChangeEvent);
     }
 
     @Override

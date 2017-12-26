@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
@@ -201,7 +202,7 @@ public class SettingsPresenter {
                 .then(i -> Promises.
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::validate))
                 .then(i -> {
-                    savePopUpPresenter.show(comment -> executeSave(comment));
+                    savePopUpPresenter.show(this::executeSave);
                     return resolve();
                 })
                 .catch_(e -> Promises.handleExceptionOr(e, (final Section section) -> {
@@ -329,7 +330,9 @@ public class SettingsPresenter {
     }
 
     private boolean isDirty(final Section changedSection) {
-        return !originalHashCodes.get(changedSection).equals(changedSection.currentHashCode());
+        return Optional.ofNullable(originalHashCodes.get(changedSection))
+                .map(s -> !s.equals(changedSection.currentHashCode()))
+                .orElse(false);
     }
 
     public void reset() {

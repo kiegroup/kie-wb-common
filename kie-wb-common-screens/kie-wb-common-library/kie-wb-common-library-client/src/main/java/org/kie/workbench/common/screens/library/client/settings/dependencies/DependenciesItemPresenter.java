@@ -68,10 +68,12 @@ public class DependenciesItemPresenter {
 
     public void addAllPackagesToWhiteList() {
         whiteList.addAll(enhancedDependency.getPackages());
+        dependenciesPresenter.fireChangeEvent();
     }
 
     public void removeAllPackagesFromWhiteList() {
         whiteList.removeAll(enhancedDependency.getPackages());
+        dependenciesPresenter.fireChangeEvent();
     }
 
     public void remove() {
