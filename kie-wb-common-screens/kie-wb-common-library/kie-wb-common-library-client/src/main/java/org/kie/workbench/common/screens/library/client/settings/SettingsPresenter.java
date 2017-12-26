@@ -201,7 +201,7 @@ public class SettingsPresenter {
                 .then(i -> Promises.
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::validate))
                 .then(i -> {
-                    savePopUpPresenter.show(comment -> executeSave(comment, DeploymentMode.VALIDATED));
+                    savePopUpPresenter.show(comment -> executeSave(comment));
                     return resolve();
                 })
                 .catch_(e -> Promises.handleExceptionOr(e, (final Section section) -> {
@@ -212,14 +212,13 @@ public class SettingsPresenter {
                 .catch_(this::defaultErrorResolution);
     }
 
-    private void executeSave(final String comment,
-                             final DeploymentMode mode) {
+    private void executeSave(final String comment) {
 
         Promises.<Void>resolve()
                 .then(i -> Promises.<Section, Void>
                         reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
                 .then(i -> Promises.<SavingStep, Void>
-                        reduceLazilyChaining(null, getSavingSteps(comment, mode), this::executeSavingStep))
+                        reduceLazilyChaining(null, getSavingSteps(comment), this::executeSavingStep))
                 .catch_(e -> Promises.handleExceptionOr(e, i -> resolve()))
                 .catch_(this::defaultErrorResolution);
     }
@@ -236,10 +235,9 @@ public class SettingsPresenter {
         return savingStep.execute(chain);
     }
 
-    private List<SavingStep> getSavingSteps(final String comment,
-                                            final DeploymentMode mode) {
+    private List<SavingStep> getSavingSteps(final String comment) {
 
-        return Arrays.asList(chain -> saveProjectScreenModel(comment, mode, chain),
+        return Arrays.asList(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
                              chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator),
                              chain -> displaySuccessMessage());
     }
