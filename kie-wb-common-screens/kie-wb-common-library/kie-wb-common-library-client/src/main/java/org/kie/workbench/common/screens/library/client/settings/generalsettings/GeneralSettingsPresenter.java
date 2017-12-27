@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -220,7 +221,9 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
     }
 
     @Override
-    public Promise<Void> save() {
+    public Promise<Void> save(final String comment,
+                              final Supplier<Promise<Void>> chain) {
+
         return new Promise<>((resolve, reject) -> {
             gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
                                 () -> resolve.onInvoke(resolve()),

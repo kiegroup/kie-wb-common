@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import elemental2.promise.Promise.PromiseExecutorCallbackFn.RejectCallbackFn;
@@ -132,6 +133,8 @@ public class Promises {
     @SuppressWarnings("unchecked")
     public static <V> Promise<Object> handleExceptionOr(final Object o,
                                                         final Function<V, Promise<Object>> f) {
+
+        DomGlobal.console.info(o.getClass().getCanonicalName() + "");
 
         if (o instanceof RuntimeException) {
             throw (RuntimeException) o;

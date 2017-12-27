@@ -14,6 +14,77 @@
   ~ limitations under the License.
   -->
 
-<div>
-    Persistence
+<div class="tab-pane kie-tab-pane active">
+    <h3>Persistence</h3>
+
+    <p> <!-- Empty --> </p>
+
+    <hr>
+
+    <form role="form">
+
+        <div class="form-group">
+            <label>Persistence Unit</label>
+            <input type="text" class="form-control" data-field="persistence-unit">
+        </div>
+
+        <div class="form-group">
+            <label>Persistence Provider</label>
+            <input type="text" class="form-control" data-field="persistence-provider">
+        </div>
+
+        <div class="form-group">
+            <label>Data Source</label>
+            <input type="text" class="form-control" data-field="data-source">
+        </div>
+
+        <h3>Properties</h3>
+        <table class="table table-hover  kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Value</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="properties-table">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-property-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add property</span>
+        </button>
+
+        <br/>
+
+
+        <h3>Project Persistable Data Objects</h3>
+        <table class="table table-hover  kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Class Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Action</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="persistable-data-objects-table">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-persistable-data-object-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add project persistable data object</span>
+        </button>
+
+        <br/>
+
+    </form>
+
 </div>

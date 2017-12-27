@@ -182,7 +182,7 @@ public class SettingsView implements SettingsPresenter.View,
 
     private HTMLElement newDirtyIndicator() {
         final HTMLElement dirtyIndicator = (HTMLElement) this.dirtyIndicator.cloneNode(false);
-        dirtyIndicator.innerHTML = " *";
+        dirtyIndicator.textContent = " *";
         return dirtyIndicator;
     }
 

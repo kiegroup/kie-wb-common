@@ -31,10 +31,6 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 public class ValidationItemView implements ValidationItemPresenter.View {
 
     @Inject
-    @DataField("tr-top")
-    private HTMLDivElement tr;
-
-    @Inject
     @DataField("include")
     private HTMLInputElement include;
 
@@ -56,7 +52,7 @@ public class ValidationItemView implements ValidationItemPresenter.View {
     private ValidationItemPresenter presenter;
 
     @EventHandler("include")
-    public void includeChanged(final ClickEvent event) {
+    public void onIncludeChanged(final ClickEvent event) {
         presenter.setInclude(include.checked);
     }
 
@@ -72,21 +68,16 @@ public class ValidationItemView implements ValidationItemPresenter.View {
 
     @Override
     public void setId(final String id) {
-        this.identifier.innerHTML = id;
+        this.identifier.textContent = id;
     }
 
     @Override
     public void setUrl(final String url) {
-        this.url.innerHTML = url;
+        this.url.textContent = url;
     }
 
     @Override
     public void setSource(final String source) {
-        this.source.innerHTML = source;
-    }
-
-    @Override
-    public HTMLElement getElement() {
-        return tr;
+        this.source.textContent = source;
     }
 }

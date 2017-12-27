@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
@@ -60,6 +61,7 @@ import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.all;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
@@ -216,11 +218,12 @@ public class SettingsPresenter {
     private void executeSave(final String comment) {
 
         Promises.<Void>resolve()
-                .then(i -> Promises.<Section, Void>
-                        reduceLazily(null, getSectionsInDisplayOrder(), Section::save))
                 .then(i -> Promises.<SavingStep, Void>
                         reduceLazilyChaining(null, getSavingSteps(comment), this::executeSavingStep))
-                .catch_(e -> Promises.handleExceptionOr(e, i -> resolve()))
+                .catch_(e -> Promises.handleExceptionOr(e, (final Section section) -> {
+                    goTo(section);
+                    return resolve();
+                }))
                 .catch_(this::defaultErrorResolution);
     }
 
@@ -238,9 +241,16 @@ public class SettingsPresenter {
 
     private List<SavingStep> getSavingSteps(final String comment) {
 
-        return Arrays.asList(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
-                             chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator),
-                             chain -> displaySuccessMessage());
+        final Stream<SavingStep> saveSectionsSteps =
+                getSectionsInDisplayOrder().stream()
+                        .map(section -> chain -> section.save(comment, chain));
+
+        final Stream<SavingStep> commonSavingSteps =
+                Stream.of(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
+                          chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator),
+                          chain -> displaySuccessMessage());
+
+        return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
     }
 
     private Promise<Void> resetDirtyIndicator(final Section section) {
@@ -270,7 +280,7 @@ public class SettingsPresenter {
                                     () -> {
                                     },
                                     this::setup).show();
-                reject.onInvoke(null);
+                reject.onInvoke(currentSection);
             }
         });
     }
@@ -292,15 +302,16 @@ public class SettingsPresenter {
     }
 
     private void forceSave(final String comment,
-                           final Supplier<Promise<Void>> saveChain) {
+                           final Supplier<Promise<Void>> chain) {
 
         concurrentPomUpdateInfo = null;
         conflictingRepositoriesPopup.hide();
-        saveProjectScreenModel(comment, DeploymentMode.FORCED, saveChain).then(i -> saveChain.get());
+        saveProjectScreenModel(comment, DeploymentMode.FORCED, chain).then(i -> chain.get());
     }
 
     private Promise<Void> defaultErrorResolution(final Object e) {
         new DefaultErrorCallback().error(null, (Throwable) e);
+        view.hideBusyIndicator();
         return resolve();
     }
 
@@ -396,7 +407,9 @@ public class SettingsPresenter {
 
     public interface Section {
 
-        default Promise<Void> save() {
+        default Promise<Void> save(final String comment,
+                                   final Supplier<Promise<Void>> chain) {
+
             return resolve();
         }
 

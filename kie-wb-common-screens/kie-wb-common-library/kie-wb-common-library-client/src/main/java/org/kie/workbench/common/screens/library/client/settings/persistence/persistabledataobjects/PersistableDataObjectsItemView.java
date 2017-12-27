@@ -14,33 +14,36 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
+package org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class ExternalDataObjectsItemView implements ExternalDataObjectsItemPresenter.View {
-
-    @Inject
-    @Named("span")
-    @DataField("type-name")
-    private HTMLElement typeName;
+public class PersistableDataObjectsItemView implements PersistableDataObjectsItemPresenter.View {
 
     @Inject
     @DataField("remove-button")
     private HTMLAnchorElement removeButton;
 
-    private ExternalDataObjectsItemPresenter presenter;
+    @Inject
+    @Named("span")
+    @DataField("class-name")
+    private HTMLElement className;
+
+    private PersistableDataObjectsItemPresenter presenter;
+
+    @Override
+    public void init(final PersistableDataObjectsItemPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     @EventHandler("remove-button")
     public void onRemove(final ClickEvent ignore) {
@@ -48,12 +51,7 @@ public class ExternalDataObjectsItemView implements ExternalDataObjectsItemPrese
     }
 
     @Override
-    public void init(final ExternalDataObjectsItemPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setTypeName(final String typeName) {
-        this.typeName.textContent = typeName;
+    public void setClassName(final String className) {
+        this.className.textContent = className;
     }
 }

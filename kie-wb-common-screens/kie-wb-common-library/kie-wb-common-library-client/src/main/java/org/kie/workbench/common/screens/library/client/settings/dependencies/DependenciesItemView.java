@@ -78,17 +78,17 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
 
     @Override
     public void setGroupId(final String groupId) {
-        this.groupId.innerHTML = groupId;
+        this.groupId.textContent = groupId;
     }
 
     @Override
     public void setArtifactId(final String artifactId) {
-        this.artifactId.innerHTML = artifactId;
+        this.artifactId.textContent = artifactId;
     }
 
     @Override
     public void setVersion(final String version) {
-        this.version.innerHTML = version;
+        this.version.textContent = version;
     }
 
     @Override

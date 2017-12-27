@@ -16,21 +16,212 @@
 
 package org.kie.workbench.common.screens.library.client.settings.persistence;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Supplier;
+
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.promise.Promise;
+import org.guvnor.common.services.project.context.ProjectContext;
+import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceDescriptorEditorContent;
+import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceUnitModel;
+import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
+import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
+import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorEditorService;
+import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorService;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.uberfire.backend.vfs.ObservablePath;
+import org.uberfire.backend.vfs.PathFactory;
+import org.uberfire.workbench.events.NotificationEvent;
+
+import static java.util.stream.Collectors.toList;
+import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 
 public class PersistencePresenter implements SettingsPresenter.Section {
 
     private final View view;
+    private final ProjectContext projectContext;
+    private final Event<NotificationEvent> notificationEvent;
+    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
+    private final ManagedInstance<ObservablePath> observablePaths;
+    private final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters;
+    private final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters;
+    private final Caller<PersistenceDescriptorEditorService> editorService;
+    private final Caller<PersistenceDescriptorService> descriptorService;
+    private final Caller<DataModelerService> dataModelerService;
+
+    private ObservablePath pathToPersistenceXml;
+    private PersistenceDescriptorEditorContent persistenceDescriptorEditorContent;
+    private ObservablePath.OnConcurrentUpdateEvent concurrentPersistenceXmlUpdateInfo;
 
     public interface View extends SettingsPresenter.View.Section<PersistencePresenter> {
 
+        void setPersistenceUnit(String persistenceUnit);
+
+        void setPersistenceProvider(String persistenceProvider);
+
+        void setDataSource(String dataSource);
+
+        void setPropertiesItems(final List<PropertiesItemPresenter.View> items);
+
+        void add(PropertiesItemPresenter.View propertyItem);
+
+        void setPersistableDataObjectsItems(final List<PersistableDataObjectsItemPresenter.View> items);
+
+        void add(PersistableDataObjectsItemPresenter.View persistableDataObjectItem);
+
+        void remove(PersistableDataObjectsItemPresenter.View view);
+
+        void remove(PropertiesItemPresenter.View view);
     }
 
     @Inject
-    public PersistencePresenter(final PersistencePresenter.View view) {
+    public PersistencePresenter(final PersistencePresenter.View view,
+                                final ProjectContext projectContext,
+                                final Event<NotificationEvent> notificationEvent,
+                                final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                final ManagedInstance<ObservablePath> observablePaths,
+                                final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters,
+                                final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters,
+                                final Caller<PersistenceDescriptorEditorService> editorService,
+                                final Caller<PersistenceDescriptorService> descriptorService,
+                                final Caller<DataModelerService> dataModelerService) {
+
         this.view = view;
+        this.projectContext = projectContext;
+        this.notificationEvent = notificationEvent;
+        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
+        this.observablePaths = observablePaths;
+        this.propertiesItemPresenters = propertiesItemPresenters;
+        this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
+        this.editorService = editorService;
+        this.descriptorService = descriptorService;
+        this.dataModelerService = dataModelerService;
+    }
+
+    @Override
+    public Promise<Void> setup(final ProjectScreenModel model) {
+        return setup();
+    }
+
+    private Promise<Void> setup() {
+        view.init(this);
+
+        final String persistenceXmlUri = projectContext.getActiveProject()
+                .getRootPath().toURI() + "/src/main/resources/META-INF/persistence.xml";
+
+        pathToPersistenceXml = observablePaths.get().wrap(PathFactory.newPath(
+                "persistence.xml",
+                persistenceXmlUri,
+                new HashMap<String, Object>() {{
+                    put(PathFactory.VERSION_PROPERTY, true);
+                }}));
+
+        pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
+
+        return Promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
+            persistenceDescriptorEditorContent = m;
+
+            view.setPersistenceUnit(getPersistenceUnitModel().getName());
+            view.setPersistenceProvider(getPersistenceUnitModel().getProvider());
+            view.setDataSource(getPersistenceUnitModel().getJtaDataSource());
+
+            view.setPropertiesItems(
+                    getPersistenceUnitModel().getProperties()
+                            .stream()
+                            .map(property -> propertiesItemPresenters.get().setup(property, this))
+                            .map(PropertiesItemPresenter::getView)
+                            .collect(toList()));
+
+            view.setPersistableDataObjectsItems(
+                    getPersistenceUnitModel().getClasses()
+                            .stream()
+                            .map(className -> persistableDataObjectsItemPresenters.get().setup(className, this))
+                            .map(PersistableDataObjectsItemPresenter::getView)
+                            .collect(toList()));
+
+            return resolve();
+        });
+    }
+
+    @Override
+    public Promise<Void> save(final String comment,
+                              final Supplier<Promise<Void>> chain) {
+
+        return new Promise<>((resolve, reject) -> {
+            if (concurrentPersistenceXmlUpdateInfo == null) {
+                resolve.onInvoke(save(comment));
+            } else {
+                setup();
+                //FIXME: put msg in the right place
+                final String msg = "Persistence configuration was reloaded because someone else's edited it concurrently.";
+                notificationEvent.fire(new NotificationEvent(msg, NotificationEvent.NotificationType.WARNING));
+                resolve.onInvoke(resolve());
+            }
+        });
+    }
+
+    private Promise<Void> save(final String comment) {
+        return Promises.promisify(editorService,
+                                  s -> s.save(pathToPersistenceXml,
+                                              persistenceDescriptorEditorContent,
+                                              persistenceDescriptorEditorContent.getOverview().getMetadata(),
+                                              comment)).then(i -> resolve());
+    }
+
+    public void add(final String className) {
+        getPersistenceUnitModel().getClasses().add(className);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void add(final Property property) {
+        getPersistenceUnitModel().addProperty(property);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void remove(final PersistableDataObjectsItemPresenter itemPresenter) {
+        getPersistenceUnitModel().getClasses().remove(itemPresenter.getClassName());
+        view.remove(itemPresenter.getView());
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void remove(final PropertiesItemPresenter itemPresenter) {
+        getPersistenceUnitModel().getProperties().remove(itemPresenter.getProperty());
+        view.remove(itemPresenter.getView());
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void setDataSource(final String dataSource) {
+        getPersistenceUnitModel().setJtaDataSource(dataSource);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void setPersistenceUnit(final String persistenceUnit) {
+        getPersistenceUnitModel().setName(persistenceUnit);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void setPersistenceProvider(final String persistenceProvider) {
+        getPersistenceUnitModel().setProvider(persistenceProvider);
+        fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    private PersistenceUnitModel getPersistenceUnitModel() {
+        return this.persistenceDescriptorEditorContent.getDescriptorModel().getPersistenceUnit();
+    }
+
+    @Override
+    public int currentHashCode() {
+        return getPersistenceUnitModel().hashCode();
     }
 
     @Override
