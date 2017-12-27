@@ -65,6 +65,7 @@ import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.all;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
+import static org.kie.workbench.common.screens.library.client.settings.Promises.throwOrExecute;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
@@ -178,59 +179,33 @@ public class SettingsPresenter {
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        Promises.<Void>resolve()
-                .then(i -> Promises.<ProjectScreenService, ProjectScreenModel>
-                        promisify(projectScreenService, s -> s.load(pathToPom)))
-                .then(model -> {
-                    this.model = model;
-                    return Promises.<Section, Void>all(getSectionsInDisplayOrder(), section ->
-                            section.setup(this.model).then(i -> resetDirtyIndicator(section)));
-                })
-                .then(i -> {
-                    goTo(currentSection);
-                    view.hideBusyIndicator();
-                    return resolve();
-                })
-                .catch_(e -> Promises.handleExceptionOr(e, i -> {
-                    notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
-                    return resolve();
-                }))
-                .catch_(this::defaultErrorResolution);
+        Promises.promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
+            this.model = model;
+            return Promises.all(getSectionsInDisplayOrder(), (final Section section) ->
+                    section.setup(this.model).then(i -> resetDirtyIndicator(section)));
+        }).then(i -> {
+            view.hideBusyIndicator();
+            return goTo(currentSection);
+        }).catch_(e -> throwOrExecute(e, i -> {
+            notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
+            return resolve();
+        })).catch_(this::defaultErrorResolution);
     }
 
-    public void save() {
-
-        Promises.<Void>resolve()
-                .then(i -> Promises.
-                        reduceLazily(null, getSectionsInDisplayOrder(), Section::validate))
-                .then(i -> {
-                    savePopUpPresenter.show(this::executeSave);
-                    return resolve();
-                })
-                .catch_(e -> Promises.handleExceptionOr(e, (final Section section) -> {
-                    view.hideBusyIndicator();
-                    goTo(section);
-                    return resolve();
-                }))
-                .catch_(this::defaultErrorResolution);
+    public void showSavePopup() {
+        Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::validate).then(i -> {
+            savePopUpPresenter.show(this::save);
+            return resolve();
+        }).catch_(e -> throwOrExecute(e, (final Section section) -> {
+            view.hideBusyIndicator();
+            return goTo(section);
+        })).catch_(this::defaultErrorResolution);
     }
 
-    private void executeSave(final String comment) {
-
-        Promises.<Void>resolve()
-                .then(i -> Promises.<SavingStep, Void>
-                        reduceLazilyChaining(null, getSavingSteps(comment), this::executeSavingStep))
-                .catch_(e -> Promises.handleExceptionOr(e, (final Section section) -> {
-                    goTo(section);
-                    return resolve();
-                }))
+    private void save(final String comment) {
+        Promises.reduceLazilyChaining(null, getSavingSteps(comment), this::executeSavingStep)
+                .catch_(e -> throwOrExecute(e, this::goTo))
                 .catch_(this::defaultErrorResolution);
-    }
-
-    private Promise<Void> displaySuccessMessage() {
-        view.hideBusyIndicator();
-        notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
-        return resolve();
     }
 
     private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain,
@@ -253,6 +228,12 @@ public class SettingsPresenter {
         return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
     }
 
+    private Promise<Void> displaySuccessMessage() {
+        view.hideBusyIndicator();
+        notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
+        return resolve();
+    }
+
     private Promise<Void> resetDirtyIndicator(final Section section) {
         originalHashCodes.put(section, section.currentHashCode());
         updateDirtyIndicator(section);
@@ -269,7 +250,9 @@ public class SettingsPresenter {
                                      onSaveProjectScreenModelError(comment, chain)::error));
     }
 
-    private Promise<Void> checkConcurrentPomUpdate(final String comment, final Supplier<Promise<Void>> chain) {
+    private Promise<Void> checkConcurrentPomUpdate(final String comment,
+                                                   final Supplier<Promise<Void>> chain) {
+
         return new Promise<>((resolve, reject) -> {
             if (this.concurrentPomUpdateInfo == null) {
                 resolve.onInvoke(resolve());
@@ -321,7 +304,9 @@ public class SettingsPresenter {
 
     private void updateDirtyIndicator(final Section changedSection) {
 
-        final boolean isDirty = isDirty(changedSection);
+        final boolean isDirty = Optional.ofNullable(originalHashCodes.get(changedSection))
+                .map(originalHashCode -> !originalHashCode.equals(changedSection.currentHashCode()))
+                .orElse(false);
 
         if (changedSection.equals(dependenciesSettingsSection)) {
             view.setDependenciesSectionDirty(isDirty);
@@ -338,12 +323,6 @@ public class SettingsPresenter {
         } else if (changedSection.equals(validationSettingsSection)) {
             view.setValidationSectionDirty(isDirty);
         }
-    }
-
-    private boolean isDirty(final Section changedSection) {
-        return Optional.ofNullable(originalHashCodes.get(changedSection))
-                .map(s -> !s.equals(changedSection.currentHashCode()))
-                .orElse(false);
     }
 
     public void reset() {
@@ -378,9 +357,10 @@ public class SettingsPresenter {
         goTo(persistenceSettingsSection);
     }
 
-    private void goTo(final Section section) {
+    private Promise<Object> goTo(final Section section) {
         currentSection = section;
         view.setSection(section.getView());
+        return resolve();
     }
 
     private List<Section> getSectionsInDisplayOrder() {

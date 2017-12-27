@@ -131,10 +131,10 @@ public class Promises {
     }
 
     @SuppressWarnings("unchecked")
-    public static <V> Promise<Object> handleExceptionOr(final Object o,
-                                                        final Function<V, Promise<Object>> f) {
+    public static <V> Promise<Object> throwOrExecute(final Object o,
+                                                     final Function<V, Promise<Object>> f) {
 
-        DomGlobal.console.info(o.getClass().getCanonicalName() + "");
+        DomGlobal.console.debug(o.getClass().getCanonicalName() + "");
 
         if (o instanceof RuntimeException) {
             throw (RuntimeException) o;

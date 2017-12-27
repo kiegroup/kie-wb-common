@@ -33,7 +33,9 @@ import org.kie.workbench.common.screens.library.client.settings.SettingsSectionC
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 
+import static elemental2.promise.Promise.reject;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
+import static org.kie.workbench.common.screens.library.client.settings.Promises.throwOrExecute;
 
 public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
@@ -152,9 +154,9 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                 .then(o -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()))
                 .then(o -> validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage()))
                 .then(o -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()))
-                .catch_(e -> Promises.handleExceptionOr(e, (final String errorMessage) -> {
+                .catch_(e -> throwOrExecute(e, (final String errorMessage) -> {
                     view.showError(errorMessage);
-                    return Promise.reject(this);
+                    return reject(this);
                 }));
     }
 
