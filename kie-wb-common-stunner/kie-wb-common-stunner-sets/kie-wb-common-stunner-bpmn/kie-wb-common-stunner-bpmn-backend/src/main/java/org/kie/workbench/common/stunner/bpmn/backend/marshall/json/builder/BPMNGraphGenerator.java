@@ -143,15 +143,20 @@ public class BPMNGraphGenerator extends JsonGenerator {
     @SuppressWarnings("unchecked")
     public void close() throws IOException {
         logBuilders();
-        this.graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
-                                                                            diagramDefinitionSetClass);
+        this.isClosed = true;
+        this.graph = createGraph();
+    }
+
+    private Graph<DefinitionSet, Node> createGraph() {
+        Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
+                diagramDefinitionSetClass);
         // TODO: Where are the BPMN diagram bounds in the Oryx json structure? Exist?
         if (null == graph.getContent().getBounds()) {
             graph.getContent().setBounds(new BoundsImpl(
                     new BoundImpl(0d,
-                                  0d),
+                            0d),
                     new BoundImpl(BPMNGraphFactory.GRAPH_DEFAULT_WIDTH,
-                                  BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
+                            BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
             ));
         }
         builderContext
@@ -166,8 +171,11 @@ public class BPMNGraphGenerator extends JsonGenerator {
         }
         Node<View<BPMNDefinition>, Edge> diagramNode = (Node<View<BPMNDefinition>, Edge>) diagramBuilder.build(builderContext);
         graph.addNode(diagramNode);
-        this.isClosed = true;
+
+        return graph;
     }
+
+
 
     @SuppressWarnings("unchecked")
     protected NodeObjectBuilder getDiagramBuilder(final GraphObjectBuilder.BuilderContext context) {
