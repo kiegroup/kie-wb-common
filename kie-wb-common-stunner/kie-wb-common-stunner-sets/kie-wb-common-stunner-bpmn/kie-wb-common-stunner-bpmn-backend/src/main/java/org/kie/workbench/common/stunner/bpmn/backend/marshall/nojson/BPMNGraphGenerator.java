@@ -14,26 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder;
+package org.kie.workbench.common.stunner.bpmn.backend.marshall.nojson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Stack;
-
-import com.fasterxml.jackson.core.Base64Variant;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonStreamContext;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.core.SerializableString;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.core.*;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilder;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.NodeObjectBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -59,10 +45,19 @@ import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.UUID;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Stack;
+
 /**
  * Support for a basic single process hierarchy
  */
-public class BPMNGraphGenerator extends JsonGenerator {
+public class BPMNGraphGenerator implements Closeable {
 
     private final GraphObjectBuilderFactory bpmnGraphBuilderFactory;
     private final DefinitionManager definitionManager;
@@ -104,37 +99,31 @@ public class BPMNGraphGenerator extends JsonGenerator {
         this.isClosed = false;
     }
 
-    @Override
+
     public void writeStartObject() throws IOException, JsonGenerationException {
         parsers.peek().writeStartObject();
     }
 
-    @Override
     public void writeEndObject() throws IOException, JsonGenerationException {
         parsers.peek().writeEndObject();
     }
 
-    @Override
     public void writeFieldName(final String s) throws IOException, JsonGenerationException {
         parsers.peek().writeFieldName(s);
     }
 
-    @Override
     public void writeObject(final Object o) throws IOException, JsonProcessingException {
         parsers.peek().writeObject(o);
     }
 
-    @Override
     public void writeStartArray() throws IOException, JsonGenerationException {
         parsers.peek().writeStartArray();
     }
 
-    @Override
     public void writeEndArray() throws IOException, JsonGenerationException {
         parsers.peek().writeEndArray();
     }
 
-    @Override
     public boolean isClosed() {
         return this.isClosed;
     }
@@ -143,9 +132,11 @@ public class BPMNGraphGenerator extends JsonGenerator {
     @SuppressWarnings("unchecked")
     public void close() throws IOException {
         logBuilders();
+        this.isClosed = true;
+        this.graph = createGraph();
     }
 
-    public Graph<DefinitionSet, Node> createGraph() {
+    private Graph<DefinitionSet, Node> createGraph() {
         Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
                 diagramDefinitionSetClass);
         // TODO: Where are the BPMN diagram bounds in the Oryx json structure? Exist?
@@ -170,8 +161,6 @@ public class BPMNGraphGenerator extends JsonGenerator {
         Node<View<BPMNDefinition>, Edge> diagramNode = (Node<View<BPMNDefinition>, Edge>) diagramBuilder.build(builderContext);
         graph.addNode(diagramNode);
 
-        logBuilders();
-
         return graph;
     }
 
@@ -193,6 +182,11 @@ public class BPMNGraphGenerator extends JsonGenerator {
             }
         }
         return null;
+    }
+
+    public Graph<DefinitionSet, Node> getGraph() {
+        //assert isClosed();
+        return this.graph;
     }
 
     final GraphObjectBuilder.BuilderContext builderContext = new GraphObjectBuilder.BuilderContext() {
@@ -250,10 +244,23 @@ public class BPMNGraphGenerator extends JsonGenerator {
 
     // For local testing...
     private void logBuilders() {
-        log("Logging builders at creation time...");
+        log("Logging builders at close time...");
         for (GraphObjectBuilder<?, ?> builder : builders) {
             log(builder.toString());
         }
+    }
+
+    public final void writeObjectField(String fieldName, Object pojo) throws IOException {
+        this.writeFieldName(fieldName);
+        this.writeObject(pojo);
+    }
+
+    public void writeObjectFieldStart(String stencilset) {
+        // MOCK
+    }
+
+    public void writeArrayFieldStart(String ssextensions) {
+        // MOCK
     }
 
     private interface GraphObjectParser {
@@ -597,195 +604,5 @@ public class BPMNGraphGenerator extends JsonGenerator {
         System.out.println(message);
     }
 
-    /***********************************************************************************
-     * NOT IMPLEMENTED METHODS.
-     ***********************************************************************************/
-    @Override
-    public void flush() throws IOException {
-        // Not called...
-    }
-
-    @Override
-    public JsonGenerator enable(final Feature feature) {
-        return null;
-    }
-
-    @Override
-    public JsonGenerator disable(final Feature feature) {
-        return null;
-    }
-
-    @Override
-    public boolean isEnabled(final Feature feature) {
-        return false;
-    }
-
-    @Override
-    public JsonGenerator setCodec(final ObjectCodec objectCodec) {
-        return null;
-    }
-
-    @Override
-    public ObjectCodec getCodec() {
-        return null;
-    }
-
-    @Override
-    public JsonGenerator useDefaultPrettyPrinter() {
-        return null;
-    }
-
-    @Override
-    public void writeString(final String s) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeString(final char[] chars,
-                            final int i,
-                            final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRawUTF8String(final byte[] bytes,
-                                   final int i,
-                                   final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeUTF8String(final byte[] bytes,
-                                final int i,
-                                final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRaw(final String s) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRaw(final String s,
-                         final int i,
-                         final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRaw(final char[] chars,
-                         final int i,
-                         final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRaw(final char c) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRawValue(final String s) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRawValue(final String s,
-                              final int i,
-                              final int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeRawValue(char[] chars,
-                              int i,
-                              int i1) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final int i) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final long l) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final BigInteger bigInteger) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final double v) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final float v) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final BigDecimal bigDecimal) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNumber(final String s) throws IOException, JsonGenerationException, UnsupportedOperationException {
-    }
-
-    @Override
-    public void writeBoolean(final boolean b) throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeNull() throws IOException, JsonGenerationException {
-    }
-
-    @Override
-    public void writeTree(final TreeNode treeNode) throws IOException, JsonProcessingException {
-    }
-
-    @Override
-    public void copyCurrentEvent(final JsonParser jsonParser) throws IOException, JsonProcessingException {
-    }
-
-    @Override
-    public void copyCurrentStructure(final JsonParser jsonParser) throws IOException, JsonProcessingException {
-    }
-
-    @Override
-    public JsonStreamContext getOutputContext() {
-        return null;
-    }
-
-    @Override
-    public Version version() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int getFeatureMask() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public JsonGenerator setFeatureMask(int values) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void writeFieldName(SerializableString name) throws IOException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void writeString(SerializableString text) throws IOException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void writeBinary(Base64Variant bv, byte[] data, int offset, int len) throws IOException {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public int writeBinary(Base64Variant bv, InputStream data, int dataLength) throws IOException {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }
 

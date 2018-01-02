@@ -14,29 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.marshall.json;
-
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+package org.kie.workbench.common.stunner.bpmn.backend.marshall.nojson;
 
 import bpsim.impl.BpsimPackageImpl;
 import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
-import org.eclipse.bpmn2.DocumentRoot;
 import org.eclipse.bpmn2.util.Bpmn2ResourceFactoryImpl;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.jboss.drools.util.DroolsResourceFactoryImpl;
-import org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonMarshaller;
-import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.BPMNGraphGenerator;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.profile.IDiagramProfile;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -49,11 +39,13 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFact
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
-import org.kie.workbench.common.stunner.core.util.UUID;
 
-public class Bpmn2UnMarshaller extends Bpmn2JsonMarshaller {
+import java.io.IOException;
+
+public class Bpmn2UnMarshaller {
 
     final static ResourceSet resourceSet = new ResourceSetImpl();
+    final Bpmn2JsonMarshaller marshaller = new Bpmn2JsonMarshaller();
 
     static {
         resourceSet.getPackageRegistry().put(DroolsPackage.eNS_URI,
@@ -90,33 +82,17 @@ public class Bpmn2UnMarshaller extends Bpmn2JsonMarshaller {
                                                          diagramDefinitionClass);
     }
 
-    public Graph unmarshall(final String content) throws IOException {
-        final XMLResource outResource = (XMLResource) resourceSet.createResource(URI.createURI("inputStream://" + UUID.uuid() + ".xml"));
-        outResource.getDefaultLoadOptions().put(XMLResource.OPTION_ENCODING,
-                                                "UTF-8");
-        outResource.setEncoding("UTF-8");
-
-        final Map<String, Object> options = new HashMap<String, Object>();
-        options.put(XMLResource.OPTION_ENCODING,
-                    "UTF-8");
-        outResource.load(new BufferedInputStream(new ByteArrayInputStream(content.getBytes("UTF-8"))),
-                         options);
-
-        final DocumentRoot root = (DocumentRoot) outResource.getContents().get(0);
-        final Definitions definitions = root.getDefinitions();
-
-        return unmarshall(definitions,
-                          null);
+    public void setProfile(IDiagramProfile profile) {
+        marshaller.setProfile(profile);
     }
 
-    public Graph unmarshall(final Definitions def,
-                            final String preProcessingData) throws IOException {
+    public Graph unmarshall(final Definitions def) throws IOException {
         DroolsPackageImpl.init();
         BpsimPackageImpl.init();
-        super.marshall(bpmnGraphGenerator,
+        marshaller.marshall(bpmnGraphGenerator,
                        def,
-                       preProcessingData);
+                       null);
         bpmnGraphGenerator.close();
-        return bpmnGraphGenerator.createGraph();
+        return bpmnGraphGenerator.getGraph();
     }
 }
