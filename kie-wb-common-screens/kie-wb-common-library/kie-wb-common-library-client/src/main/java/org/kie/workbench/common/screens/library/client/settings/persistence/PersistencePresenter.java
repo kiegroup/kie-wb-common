@@ -37,6 +37,8 @@ import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPersistableDataObjectPopupPresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPropertyPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -55,6 +57,8 @@ public class PersistencePresenter implements SettingsPresenter.Section {
     private final ManagedInstance<ObservablePath> observablePaths;
     private final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters;
     private final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters;
+    private final NewPropertyPopupPresenter newPropertyPopupPresenter;
+    private final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<PersistenceDescriptorService> descriptorService;
     private final Caller<DataModelerService> dataModelerService;
@@ -92,6 +96,8 @@ public class PersistencePresenter implements SettingsPresenter.Section {
                                 final ManagedInstance<ObservablePath> observablePaths,
                                 final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters,
                                 final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters,
+                                final NewPropertyPopupPresenter newPropertyPopupPresenter,
+                                final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<PersistenceDescriptorService> descriptorService,
                                 final Caller<DataModelerService> dataModelerService) {
@@ -103,6 +109,8 @@ public class PersistencePresenter implements SettingsPresenter.Section {
         this.observablePaths = observablePaths;
         this.propertiesItemPresenters = propertiesItemPresenters;
         this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
+        this.newPropertyPopupPresenter = newPropertyPopupPresenter;
+        this.newPersistableDataObjectPopupPresenter = newPersistableDataObjectPopupPresenter;
         this.editorService = editorService;
         this.descriptorService = descriptorService;
         this.dataModelerService = dataModelerService;
@@ -127,6 +135,9 @@ public class PersistencePresenter implements SettingsPresenter.Section {
                 }}));
 
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
+
+        newPropertyPopupPresenter.setup(this);
+        newPersistableDataObjectPopupPresenter.setup(this);
 
         return Promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
             persistenceDescriptorEditorContent = m;
@@ -217,6 +228,14 @@ public class PersistencePresenter implements SettingsPresenter.Section {
 
     private PersistenceUnitModel getPersistenceUnitModel() {
         return this.persistenceDescriptorEditorContent.getDescriptorModel().getPersistenceUnit();
+    }
+
+    public void showNewPropertyPopup() {
+        newPropertyPopupPresenter.show();
+    }
+
+    public void showNewPersistableDataObjectPopup() {
+        newPersistableDataObjectPopupPresenter.show();
     }
 
     @Override

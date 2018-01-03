@@ -22,6 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
@@ -85,6 +86,17 @@ public class PersistenceView implements PersistencePresenter.View {
     public void onPersistenceProviderChanged(final ChangeEvent ignore) {
         presenter.setPersistenceProvider(persistenceProvider.value);
     }
+
+    @EventHandler("add-property-button")
+    public void onAddPropertyButtonClicked(final ClickEvent ignore) {
+        presenter.showNewPropertyPopup();
+    }
+
+    @EventHandler("add-persistable-data-object-button")
+    public void onAddPersistableDataObjectButtonClicked(final ClickEvent ignore) {
+        presenter.showNewPersistableDataObjectPopup();
+    }
+
 
     @Override
     public void setPersistenceUnit(final String persistenceUnit) {
