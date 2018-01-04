@@ -295,4 +295,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String SettingsLoadError = "SettingsLoadError";
+
+    @TranslationKey(defaultValue = "")
+    public static final String PersistenceXmlConcurrentUpdate = "PersistenceXmlConcurrentUpdate";
 }

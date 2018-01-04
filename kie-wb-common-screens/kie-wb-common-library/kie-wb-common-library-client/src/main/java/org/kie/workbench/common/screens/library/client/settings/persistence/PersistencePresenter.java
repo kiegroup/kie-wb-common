@@ -47,6 +47,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
 public class PersistencePresenter implements SettingsPresenter.Section {
 
@@ -86,6 +87,8 @@ public class PersistencePresenter implements SettingsPresenter.Section {
         void remove(PersistableDataObjectsItemPresenter.View view);
 
         void remove(PropertiesItemPresenter.View view);
+
+        String getConcurrentUpdateMessage();
     }
 
     @Inject
@@ -168,17 +171,12 @@ public class PersistencePresenter implements SettingsPresenter.Section {
     public Promise<Void> save(final String comment,
                               final Supplier<Promise<Void>> chain) {
 
-        return new Promise<>((resolve, reject) -> {
-            if (concurrentPersistenceXmlUpdateInfo == null) {
-                resolve.onInvoke(save(comment));
-            } else {
-                setup();
-                //FIXME: put msg in the right place
-                final String msg = "Persistence configuration was reloaded because someone else's edited it concurrently.";
-                notificationEvent.fire(new NotificationEvent(msg, NotificationEvent.NotificationType.WARNING));
-                resolve.onInvoke(resolve());
-            }
-        });
+        if (concurrentPersistenceXmlUpdateInfo == null) {
+            return save(comment);
+        } else {
+            notificationEvent.fire(new NotificationEvent(view.getConcurrentUpdateMessage(), WARNING));
+            return setup();
+        }
     }
 
     private Promise<Void> save(final String comment) {
@@ -191,12 +189,24 @@ public class PersistencePresenter implements SettingsPresenter.Section {
 
     public void add(final String className) {
         getPersistenceUnitModel().getClasses().add(className);
+        view.add(persistableDataObjectsItemPresenters.get().setup(className, this).getView());
         fireChangeEvent(settingsSectionChangeEvent);
     }
 
     public void add(final Property property) {
         getPersistenceUnitModel().addProperty(property);
+        view.add(propertiesItemPresenters.get().setup(property, this).getView());
         fireChangeEvent(settingsSectionChangeEvent);
+    }
+
+    public void addAllProjectsPersistableDataObjects() {
+        Promises.promisify(dataModelerService, s -> s.findPersistableClasses(pathToPersistenceXml)).then(classes -> {
+            classes.stream()
+                    .filter(c -> !getPersistenceUnitModel().getClasses().contains(c))
+                    .forEach(this::add);
+
+            return resolve();
+        });
     }
 
     public void remove(final PersistableDataObjectsItemPresenter itemPresenter) {

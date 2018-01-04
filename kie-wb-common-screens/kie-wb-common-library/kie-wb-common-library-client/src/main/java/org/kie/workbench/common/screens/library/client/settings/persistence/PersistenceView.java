@@ -26,11 +26,14 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
+
+import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.PersistenceXmlConcurrentUpdate;
 
 @Templated
 public class PersistenceView implements PersistencePresenter.View {
@@ -56,6 +59,10 @@ public class PersistenceView implements PersistencePresenter.View {
     private HTMLButtonElement addPersistableDataObjectButton;
 
     @Inject
+    @DataField("add-all-projects-persistable-data-objects-button")
+    private HTMLButtonElement addAllProjectsPersistableDataObjectsButton;
+
+    @Inject
     @Named("tbody")
     @DataField("properties-table")
     private HTMLTableSectionElement propertiesTable;
@@ -64,6 +71,9 @@ public class PersistenceView implements PersistencePresenter.View {
     @Named("tbody")
     @DataField("persistable-data-objects-table")
     private HTMLTableSectionElement persistableDataObjectsTable;
+
+    @Inject
+    private TranslationService translationService;
 
     private PersistencePresenter presenter;
 
@@ -95,6 +105,11 @@ public class PersistenceView implements PersistencePresenter.View {
     @EventHandler("add-persistable-data-object-button")
     public void onAddPersistableDataObjectButtonClicked(final ClickEvent ignore) {
         presenter.showNewPersistableDataObjectPopup();
+    }
+
+    @EventHandler("add-all-projects-persistable-data-objects-button")
+    public void onAddAllProjectsPersistableDataObjectsButtonClicked(final ClickEvent ignore) {
+        presenter.addAllProjectsPersistableDataObjects();
     }
 
 
@@ -143,5 +158,10 @@ public class PersistenceView implements PersistencePresenter.View {
     @Override
     public void remove(final PropertiesItemPresenter.View view) {
         propertiesTable.removeChild(view.getElement());
+    }
+
+    @Override
+    public String getConcurrentUpdateMessage() {
+        return translationService.format(PersistenceXmlConcurrentUpdate);
     }
 }
