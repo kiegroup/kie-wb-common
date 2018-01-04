@@ -39,7 +39,7 @@ public class DependenciesItemPresenter {
     private final View view;
 
     private WhiteList whiteList;
-    private DependenciesPresenter dependenciesPresenter;
+    private DependenciesPresenter parentPresenter;
     private EnhancedDependency enhancedDependency;
 
     @Inject
@@ -53,7 +53,7 @@ public class DependenciesItemPresenter {
 
         this.whiteList = whiteList;
         this.enhancedDependency = enhancedDependency;
-        this.dependenciesPresenter = dependenciesPresenter;
+        this.parentPresenter = dependenciesPresenter;
 
         final Dependency dependency = enhancedDependency.getDependency();
 
@@ -68,16 +68,17 @@ public class DependenciesItemPresenter {
 
     public void addAllPackagesToWhiteList() {
         whiteList.addAll(enhancedDependency.getPackages());
-        dependenciesPresenter.fireChangeEvent();
+        parentPresenter.fireChangeEvent();
     }
 
     public void removeAllPackagesFromWhiteList() {
         whiteList.removeAll(enhancedDependency.getPackages());
-        dependenciesPresenter.fireChangeEvent();
+        parentPresenter.fireChangeEvent();
     }
 
     public void remove() {
-        dependenciesPresenter.remove(enhancedDependency);
+        parentPresenter.remove(enhancedDependency);
+        parentPresenter.fireChangeEvent();
     }
 
     public View getView() {

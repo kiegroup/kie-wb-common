@@ -17,12 +17,13 @@
 package org.kie.workbench.common.screens.library.client.settings.persistence;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Supplier;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.dom.Element;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.jboss.errai.common.client.api.Caller;
@@ -36,33 +37,33 @@ import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescript
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.NewPersistableDataObjectPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPersistableDataObjectPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPropertyPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
-public class PersistencePresenter implements SettingsPresenter.Section {
+public class PersistencePresenter extends SettingsPresenter.Section {
 
     private final View view;
     private final ProjectContext projectContext;
     private final Event<NotificationEvent> notificationEvent;
-    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final ManagedInstance<ObservablePath> observablePaths;
-    private final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters;
-    private final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters;
     private final NewPropertyPopupPresenter newPropertyPopupPresenter;
     private final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<PersistenceDescriptorService> descriptorService;
     private final Caller<DataModelerService> dataModelerService;
+
+    private final PropertiesListPresenter propertiesItemPresenters;
+    private final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters;
 
     private ObservablePath pathToPersistenceXml;
     private PersistenceDescriptorEditorContent persistenceDescriptorEditorContent;
@@ -76,47 +77,39 @@ public class PersistencePresenter implements SettingsPresenter.Section {
 
         void setDataSource(String dataSource);
 
-        void setPropertiesItems(final List<PropertiesItemPresenter.View> items);
-
-        void add(PropertiesItemPresenter.View propertyItem);
-
-        void setPersistableDataObjectsItems(final List<PersistableDataObjectsItemPresenter.View> items);
-
-        void add(PersistableDataObjectsItemPresenter.View persistableDataObjectItem);
-
-        void remove(PersistableDataObjectsItemPresenter.View view);
-
-        void remove(PropertiesItemPresenter.View view);
-
         String getConcurrentUpdateMessage();
+
+        Element getPropertiesTable();
+
+        Element getPersistableDataObjectsTable();
     }
 
     @Inject
-    public PersistencePresenter(final PersistencePresenter.View view,
+    public PersistencePresenter(final View view,
                                 final ProjectContext projectContext,
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
-                                final ManagedInstance<PropertiesItemPresenter> propertiesItemPresenters,
-                                final ManagedInstance<PersistableDataObjectsItemPresenter> persistableDataObjectsItemPresenters,
                                 final NewPropertyPopupPresenter newPropertyPopupPresenter,
                                 final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<PersistenceDescriptorService> descriptorService,
-                                final Caller<DataModelerService> dataModelerService) {
+                                final Caller<DataModelerService> dataModelerService,
+                                final PropertiesListPresenter propertiesItemPresenters,
+                                final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters) {
 
+        super(settingsSectionChangeEvent);
         this.view = view;
         this.projectContext = projectContext;
         this.notificationEvent = notificationEvent;
-        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.observablePaths = observablePaths;
-        this.propertiesItemPresenters = propertiesItemPresenters;
-        this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
         this.newPropertyPopupPresenter = newPropertyPopupPresenter;
         this.newPersistableDataObjectPopupPresenter = newPersistableDataObjectPopupPresenter;
         this.editorService = editorService;
         this.descriptorService = descriptorService;
         this.dataModelerService = dataModelerService;
+        this.propertiesItemPresenters = propertiesItemPresenters;
+        this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
     }
 
     @Override
@@ -149,19 +142,15 @@ public class PersistencePresenter implements SettingsPresenter.Section {
             view.setPersistenceProvider(getPersistenceUnitModel().getProvider());
             view.setDataSource(getPersistenceUnitModel().getJtaDataSource());
 
-            view.setPropertiesItems(
-                    getPersistenceUnitModel().getProperties()
-                            .stream()
-                            .map(property -> propertiesItemPresenters.get().setup(property, this))
-                            .map(PropertiesItemPresenter::getView)
-                            .collect(toList()));
+            propertiesItemPresenters.setup(
+                    view.getPropertiesTable(),
+                    getPersistenceUnitModel().getProperties(),
+                    (property, presenter) -> presenter.setup(property, this));
 
-            view.setPersistableDataObjectsItems(
-                    getPersistenceUnitModel().getClasses()
-                            .stream()
-                            .map(className -> persistableDataObjectsItemPresenters.get().setup(className, this))
-                            .map(PersistableDataObjectsItemPresenter::getView)
-                            .collect(toList()));
+            persistableDataObjectsItemPresenters.setup(
+                    view.getPersistableDataObjectsTable(),
+                    getPersistenceUnitModel().getClasses(),
+                    (className, presenter) -> presenter.setup(className, this));
 
             return resolve();
         });
@@ -188,15 +177,13 @@ public class PersistencePresenter implements SettingsPresenter.Section {
     }
 
     public void add(final String className) {
-        getPersistenceUnitModel().getClasses().add(className);
-        view.add(persistableDataObjectsItemPresenters.get().setup(className, this).getView());
-        fireChangeEvent(settingsSectionChangeEvent);
+        persistableDataObjectsItemPresenters.add(className);
+        fireChangeEvent();
     }
 
     public void add(final Property property) {
-        getPersistenceUnitModel().addProperty(property);
-        view.add(propertiesItemPresenters.get().setup(property, this).getView());
-        fireChangeEvent(settingsSectionChangeEvent);
+        propertiesItemPresenters.add(property);
+        fireChangeEvent();
     }
 
     public void addAllProjectsPersistableDataObjects() {
@@ -209,31 +196,19 @@ public class PersistencePresenter implements SettingsPresenter.Section {
         });
     }
 
-    public void remove(final PersistableDataObjectsItemPresenter itemPresenter) {
-        getPersistenceUnitModel().getClasses().remove(itemPresenter.getClassName());
-        view.remove(itemPresenter.getView());
-        fireChangeEvent(settingsSectionChangeEvent);
-    }
-
-    public void remove(final PropertiesItemPresenter itemPresenter) {
-        getPersistenceUnitModel().getProperties().remove(itemPresenter.getProperty());
-        view.remove(itemPresenter.getView());
-        fireChangeEvent(settingsSectionChangeEvent);
-    }
-
     public void setDataSource(final String dataSource) {
         getPersistenceUnitModel().setJtaDataSource(dataSource);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     public void setPersistenceUnit(final String persistenceUnit) {
         getPersistenceUnitModel().setName(persistenceUnit);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     public void setPersistenceProvider(final String persistenceProvider) {
         getPersistenceUnitModel().setProvider(persistenceProvider);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     private PersistenceUnitModel getPersistenceUnitModel() {
@@ -256,5 +231,23 @@ public class PersistencePresenter implements SettingsPresenter.Section {
     @Override
     public SettingsPresenter.View.Section getView() {
         return view;
+    }
+
+    @Dependent
+    public static class PropertiesListPresenter extends ListPresenter<Property, PropertiesItemPresenter> {
+
+        @Inject
+        public PropertiesListPresenter(final ManagedInstance<PropertiesItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
+    }
+
+    @Dependent
+    public static class PersistableDataObjectsListPresenter extends ListPresenter<String, PersistableDataObjectsItemPresenter> {
+
+        @Inject
+        public PersistableDataObjectsListPresenter(final ManagedInstance<PersistableDataObjectsItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
     }
 }

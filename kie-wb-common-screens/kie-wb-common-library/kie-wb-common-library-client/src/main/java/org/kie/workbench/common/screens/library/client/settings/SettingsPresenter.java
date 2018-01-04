@@ -188,6 +188,7 @@ public class SettingsPresenter {
             return goTo(currentSection);
         }).catch_(e -> throwOrExecute(e, i -> {
             notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
+            view.hideBusyIndicator();
             return resolve();
         })).catch_(this::defaultErrorResolution);
     }
@@ -385,30 +386,31 @@ public class SettingsPresenter {
         return view;
     }
 
-    public interface Section {
+    public static abstract class Section {
 
-        default Promise<Void> save(final String comment,
-                                   final Supplier<Promise<Void>> chain) {
+        private final Event<SettingsSectionChange> settingsSectionChangeEvent;
 
+        protected Section(final Event<SettingsSectionChange> settingsSectionChangeEvent) {
+            this.settingsSectionChangeEvent = settingsSectionChangeEvent;
+        }
+
+        public abstract View.Section getView();
+
+        public abstract int currentHashCode();
+
+        public Promise<Void> save(final String comment, final Supplier<Promise<Void>> chain) {
             return resolve();
         }
 
-        default Promise<Object> validate() {
+        public Promise<Object> validate() {
             return resolve();
         }
 
-        default Promise<Void> setup(final ProjectScreenModel model) {
+        public Promise<Void> setup(final ProjectScreenModel model) {
             return resolve();
         }
 
-        View.Section getView();
-
-        //FIXME; remove default
-        default int currentHashCode() {
-            return 0;
-        }
-
-        default void fireChangeEvent(final Event<SettingsSectionChange> settingsSectionChangeEvent) {
+        public void fireChangeEvent() {
             settingsSectionChangeEvent.fire(new SettingsSectionChange(this));
         }
     }

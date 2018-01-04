@@ -37,7 +37,7 @@ import static elemental2.promise.Promise.reject;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.kie.workbench.common.screens.library.client.settings.Promises.throwOrExecute;
 
-public class GeneralSettingsPresenter implements SettingsPresenter.Section {
+public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
     public interface View extends SettingsPresenter.View.Section<GeneralSettingsPresenter> {
 
@@ -96,7 +96,6 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
     private final View view;
     private final Caller<ValidationService> validationService;
-    private Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final GAVPreferences gavPreferences;
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
@@ -108,9 +107,10 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
                                     final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
+
+        super(settingsSectionChangeEvent);
         this.view = view;
         this.validationService = validationService;
-        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.gavPreferences = gavPreferences;
         this.projectScopedResolutionStrategySupplier = projectScopedResolutionStrategySupplier;
     }
@@ -177,49 +177,49 @@ public class GeneralSettingsPresenter implements SettingsPresenter.Section {
 
         return Promises.promisify(validationService,
                                   call,
-                                  Promises::noOpOnError,
+                                  Promises::throwException,
                                   errorMessage,
                                   isValid -> isValid);
     }
 
     void setVersion(final String version) {
         pom.getGav().setVersion(version);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void setArtifactId(final String artifactId) {
         pom.getGav().setArtifactId(artifactId);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void setGroupId(final String groupId) {
         pom.getGav().setGroupId(groupId);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void setUrl(final String url) {
         pom.setUrl(url);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void setDescription(final String description) {
         pom.setDescription(description);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void setName(final String name) {
         pom.setName(name);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void disableGavConflictCheck(final boolean value) {
         gavPreferences.setConflictingGAVCheckDisabled(value);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     void allowChildGavEdition(final boolean value) {
         gavPreferences.setChildGAVEditEnabled(value);
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     @Override

@@ -22,13 +22,14 @@ import javax.inject.Named;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class PropertiesItemView implements PropertiesItemPresenter.View {
+public class PropertiesItemView implements PropertiesItemPresenter.View,
+                                           IsElement {
 
     @Inject
     @DataField("remove-button")

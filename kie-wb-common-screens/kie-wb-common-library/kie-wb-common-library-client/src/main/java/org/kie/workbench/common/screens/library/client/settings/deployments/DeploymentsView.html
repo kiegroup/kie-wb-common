@@ -14,6 +14,152 @@
   ~ limitations under the License.
   -->
 
-<div>
-    Deployments
+<div class="tab-pane kie-tab-pane active" id="kieSettingsDeployments">
+
+    <h3>
+        Deployments
+    </h3>
+
+    <p>Lorem ipsum crimson beige kumquat mauve dolor sunt.</p>
+
+    <hr>
+
+    <form role="form">
+
+        <div class="form-group">
+            <label>Runtime Strategy</label>
+            <select class="selectpicker form-control" data-field="runtime-strategy" tabindex="-98">
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Persistence Unit Name</label>
+            <input type="text" class="form-control" data-field="persistence-unit-name">
+        </div>
+
+        <div class="form-group">
+            <label>Persistence Mode</label>
+            <select class="selectpicker form-control" data-field="persistence-mode" tabindex="-98">
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Audit Persistence Unit Name</label>
+            <input type="text" class="form-control" data-field="audit-persistence-unit-name">
+        </div>
+
+        <div class="form-group">
+            <label>Audit Mode</label>
+            <select class="selectpicker form-control" data-field="audit-mode" tabindex="-98">
+            </select>
+        </div>
+
+        <br>
+
+        <!-- MARSHALLING STRATEGIES -->
+        <h3>Marshalling Strategies </h3>
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="marshalling-strategies">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-marshalling-strategy-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add Marshalling Strategy</span>
+        </button>
+
+        <br>
+        <br>
+
+        <!-- EVENT LISTENERS -->
+        <h3>Event Listeners</h3>
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="event-listeners">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-event-listener-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add Event Listener</span>
+        </button>
+
+        <br>
+        <br>
+
+        <!-- GLOBAL -->
+        <h3>Global</h3>
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="globals">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-global-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add Global</span>
+        </button>
+
+
+        <br>
+        <br>
+
+        <!-- REQUIRED ROLES -->
+        <h3>Required Roles</h3>
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr class="kie-tablelist__row kie-tablelist__row--header">
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
+                    <!-- no label -->
+                </th>
+            </tr>
+            </thead>
+            <tbody data-field="required-roles">
+            </tbody>
+
+        </table>
+
+        <button type="button" class="btn btn-link" data-field="add-required-role-button">
+            <span class="pficon pficon-add-circle-o"></span>
+            <span>Add Required Role</span>
+        </button>
+
+    </form>
+
+    <br>
+
 </div>

@@ -20,32 +20,31 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
-import org.uberfire.client.mvp.UberElemental;
 
 @Dependent
-public class PersistableDataObjectsItemPresenter {
+public class PersistableDataObjectsItemPresenter extends ListItemPresenter<String, PersistencePresenter, PersistableDataObjectsItemPresenter.View> {
 
-    public interface View extends UberElemental<PersistableDataObjectsItemPresenter>,
+    public interface View extends UberElementalListItem<PersistableDataObjectsItemPresenter>,
                                   IsElement {
 
         void setClassName(String className);
     }
 
-    private final View view;
-
-    private PersistencePresenter presenter;
+    private PersistencePresenter parentPresenter;
     private String className;
 
     @Inject
     public PersistableDataObjectsItemPresenter(final View view) {
-        this.view = view;
+        super(view);
     }
 
     public PersistableDataObjectsItemPresenter setup(final String className,
-                                                     final PersistencePresenter validationPresenter) {
+                                                     final PersistencePresenter parentPresenter) {
 
-        this.presenter = validationPresenter;
+        this.parentPresenter = parentPresenter;
         this.className = className;
 
         view.init(this);
@@ -54,12 +53,14 @@ public class PersistableDataObjectsItemPresenter {
         return this;
     }
 
-    public void remove() {
-        presenter.remove(this);
+    @Override
+    public String getObject() {
+        return className;
     }
 
-    public String getClassName() {
-        return className;
+    public void remove() {
+        super.remove();
+        parentPresenter.fireChangeEvent();
     }
 
     public View getView() {

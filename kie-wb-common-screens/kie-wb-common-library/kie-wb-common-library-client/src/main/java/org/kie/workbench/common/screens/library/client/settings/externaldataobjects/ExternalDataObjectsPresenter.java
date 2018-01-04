@@ -33,15 +33,13 @@ import org.kie.workbench.common.widgets.configresource.client.widget.unbound.Add
 
 import static java.util.stream.Collectors.toList;
 
-public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
+public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
 
     private final View view;
     private final ManagedInstance<ExternalDataObjectsItemPresenter> itemPresenters;
     private final AddImportPopup addImportPopup;
 
     private Imports imports;
-
-    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
 
     public interface View extends SettingsPresenter.View.Section<ExternalDataObjectsPresenter> {
 
@@ -58,10 +56,10 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
                                         final ManagedInstance<ExternalDataObjectsItemPresenter> itemPresenters,
                                         final Event<SettingsSectionChange> settingsSectionChangeEvent) {
 
+        super(settingsSectionChangeEvent);
         this.view = view;
         this.itemPresenters = itemPresenters;
         this.addImportPopup = addImportPopup;
-        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
     }
 
     @Override
@@ -80,7 +78,6 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     }
 
     public void openAddPopup() {
-        //FIXME: create new popup?
         addImportPopup.show();
         addImportPopup.setCommand(() -> addImport(addImportPopup.getImportType()));
     }
@@ -88,14 +85,14 @@ public class ExternalDataObjectsPresenter implements SettingsPresenter.Section {
     void remove(final ExternalDataObjectsItemPresenter itemPresenter) {
         imports.removeImport(itemPresenter.getImport());
         view.remove(itemPresenter.getView());
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     private void addImport(final String typeName) {
         final Import newImport = new Import(typeName);
         imports.addImport(newImport);
         view.add(newItemPresenter(newImport).getView());
-        fireChangeEvent(settingsSectionChangeEvent);
+        fireChangeEvent();
     }
 
     private ExternalDataObjectsItemPresenter newItemPresenter(final Import import_) {

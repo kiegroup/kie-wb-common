@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.persistence.properties;
+package org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects;
 
 import javax.inject.Inject;
 

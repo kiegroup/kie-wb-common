@@ -37,7 +37,7 @@ import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 
 import static java.util.stream.Collectors.toList;
 
-public class DependenciesPresenter implements SettingsPresenter.Section {
+public class DependenciesPresenter extends SettingsPresenter.Section {
 
     public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
 
@@ -48,7 +48,6 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
 
     private final View view;
     private final DependencySelectorPopup dependencySelectorPopup;
-    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
     private final NewDependencyPopup newDependencyPopup;
     private final EnhancedDependenciesManager enhancedDependenciesManager;
     private final ManagedInstance<DependenciesItemPresenter> presenters;
@@ -62,9 +61,10 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
                                  final NewDependencyPopup newDependencyPopup,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
                                  final ManagedInstance<DependenciesItemPresenter> presenters) {
+
+        super(settingsSectionChangeEvent);
         this.view = view;
         this.dependencySelectorPopup = dependencySelectorPopup;
-        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
         this.newDependencyPopup = newDependencyPopup;
         this.enhancedDependenciesManager = enhancedDependenciesManager;
         this.presenters = presenters;
@@ -120,10 +120,6 @@ public class DependenciesPresenter implements SettingsPresenter.Section {
     @Override
     public int currentHashCode() {
         return currentHashCode;
-    }
-
-    public void fireChangeEvent() {
-        fireChangeEvent(settingsSectionChangeEvent);
     }
 
     @Override

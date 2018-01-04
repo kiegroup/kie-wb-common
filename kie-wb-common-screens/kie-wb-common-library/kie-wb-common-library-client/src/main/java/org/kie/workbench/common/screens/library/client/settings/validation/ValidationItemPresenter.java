@@ -17,18 +17,17 @@
 package org.kie.workbench.common.screens.library.client.settings.validation;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.uberfire.client.mvp.UberElemental;
+import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
 @Dependent
-public class ValidationItemPresenter {
+public class ValidationItemPresenter extends ListItemPresenter<ProjectRepository, ValidationPresenter, ValidationItemPresenter.View> {
 
-    public interface View extends UberElemental<ValidationItemPresenter>,
+    public interface View extends UberElementalListItem<ValidationItemPresenter>,
                                   IsElement {
 
         void setInclude(boolean included);
@@ -40,24 +39,20 @@ public class ValidationItemPresenter {
         void setSource(String source);
     }
 
-    private final View view;
-    private final Event<SettingsSectionChange> settingsSectionChangeEvent;
-
     private ProjectRepository projectRepository;
-    private ValidationPresenter presenter;
+    private ValidationPresenter parentPresenter;
 
     @Inject
-    public ValidationItemPresenter(final View view,
-                                   final Event<SettingsSectionChange> settingsSectionChangeEvent) {
-        this.view = view;
-        this.settingsSectionChangeEvent = settingsSectionChangeEvent;
+    public ValidationItemPresenter(final View view) {
+        super(view);
     }
 
-    ValidationItemPresenter setup(final ProjectRepository projectRepository,
-                                  final ValidationPresenter validationPresenter) {
+    @Override
+    public ValidationItemPresenter setup(final ProjectRepository projectRepository,
+                                         final ValidationPresenter parentPresenter) {
 
         this.projectRepository = projectRepository;
-        this.presenter = validationPresenter;
+        this.parentPresenter = parentPresenter;
 
         view.init(this);
         view.setInclude(projectRepository.isIncluded());
@@ -70,10 +65,11 @@ public class ValidationItemPresenter {
 
     public void setInclude(final boolean include) {
         projectRepository.setIncluded(include);
-        presenter.fireChangeEvent(settingsSectionChangeEvent);
+        parentPresenter.fireChangeEvent();
     }
 
-    public View getView() {
-        return view;
+    @Override
+    public ProjectRepository getObject() {
+        return projectRepository;
     }
 }

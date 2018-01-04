@@ -14,56 +14,45 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.persistence.properties;
+package org.kie.workbench.common.screens.library.client.settings.deployments.eventlisteners;
 
-import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
+import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
-import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
 
-@Dependent
-public class PropertiesItemPresenter extends ListItemPresenter<Property, PersistencePresenter, PropertiesItemPresenter.View> {
+public class EventListenerItemPresenter extends ListItemPresenter<Object, DeploymentsPresenter, EventListenerItemView> {
 
-    public interface View extends UberElementalListItem<PropertiesItemPresenter> {
-
-        void setName(String name);
-
-        void setValue(String value);
-    }
-
-    private PersistencePresenter parentPresenter;
-    private Property property;
+    private Object eventListener;
+    private DeploymentsPresenter parentPresenter;
 
     @Inject
-    public PropertiesItemPresenter(final View view) {
+    public EventListenerItemPresenter(final EventListenerItemView view) {
         super(view);
     }
 
     @Override
-    public PropertiesItemPresenter setup(final Property property,
-                                         final PersistencePresenter parentPresenter) {
+    public EventListenerItemPresenter setup(final Object eventListener,
+                                            final DeploymentsPresenter parentPresenter) {
 
-        this.property = property;
+        this.eventListener = eventListener;
         this.parentPresenter = parentPresenter;
-
-        view.init(this);
-        view.setName(property.getName());
-        view.setValue(property.getValue());
-
         return this;
     }
 
     @Override
-    public Property getObject() {
-        return property;
+    public Object getObject() {
+        return eventListener;
     }
 
     @Override
     public void remove() {
         super.remove();
         parentPresenter.fireChangeEvent();
+    }
+
+    public interface View extends UberElementalListItem<EventListenerItemPresenter> {
+
     }
 }

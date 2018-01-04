@@ -16,11 +16,13 @@
 
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 
-public class KnowledgeBasesPresenter implements SettingsPresenter.Section {
+public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
     private final View view;
 
@@ -29,12 +31,20 @@ public class KnowledgeBasesPresenter implements SettingsPresenter.Section {
     }
 
     @Inject
-    public KnowledgeBasesPresenter(final KnowledgeBasesPresenter.View view) {
+    public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                   final KnowledgeBasesPresenter.View view) {
+
+        super(settingsSectionChangeEvent);
         this.view = view;
     }
 
     @Override
     public SettingsPresenter.View.Section getView() {
         return view;
+    }
+
+    @Override
+    public int currentHashCode() {
+        return 0;
     }
 }

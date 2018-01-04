@@ -76,7 +76,7 @@ public class Promises {
     public static <T, S> Promise<S> promisify(final Caller<T> caller,
                                               final Function<T, S> call) {
 
-        return promisify(caller, call, Promises::noOpOnError, null, ignore -> true);
+        return promisify(caller, call, Promises::throwException, null, ignore -> true);
     }
 
     public static <T, S, M> Promise<S> promisify(final Caller<T> caller,
@@ -123,7 +123,8 @@ public class Promises {
         };
     }
 
-    public static <M> void noOpOnError(final M o, final Throwable t) {
+    public static <M> void throwException(final M o, final Throwable t) {
+        throw new RuntimeException(t);
     }
 
     public static <T> Promise<T> resolve() {
@@ -134,7 +135,7 @@ public class Promises {
     public static <V> Promise<Object> throwOrExecute(final Object o,
                                                      final Function<V, Promise<Object>> f) {
 
-        DomGlobal.console.debug(o.getClass().getCanonicalName() + "");
+        DomGlobal.console.info(o.getClass().getCanonicalName() + "");
 
         if (o instanceof RuntimeException) {
             throw (RuntimeException) o;

@@ -16,13 +16,12 @@
 
 package org.kie.workbench.common.screens.library.client.settings.persistence;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
@@ -30,8 +29,6 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
 
 import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.PersistenceXmlConcurrentUpdate;
 
@@ -112,7 +109,6 @@ public class PersistenceView implements PersistencePresenter.View {
         presenter.addAllProjectsPersistableDataObjects();
     }
 
-
     @Override
     public void setPersistenceUnit(final String persistenceUnit) {
         this.persistenceUnit.value = persistenceUnit;
@@ -129,39 +125,17 @@ public class PersistenceView implements PersistencePresenter.View {
     }
 
     @Override
-    public void setPropertiesItems(final List<PropertiesItemPresenter.View> items) {
-        propertiesTable.innerHTML = "";
-        items.forEach(this::add);
-    }
-
-    @Override
-    public void add(final PropertiesItemPresenter.View propertyItem) {
-        propertiesTable.appendChild(propertyItem.getElement());
-    }
-
-    @Override
-    public void setPersistableDataObjectsItems(final List<PersistableDataObjectsItemPresenter.View> items) {
-        persistableDataObjectsTable.innerHTML = "";
-        items.forEach(this::add);
-    }
-
-    @Override
-    public void add(final PersistableDataObjectsItemPresenter.View persistableDataObjectItem) {
-        persistableDataObjectsTable.appendChild(persistableDataObjectItem.getElement());
-    }
-
-    @Override
-    public void remove(final PersistableDataObjectsItemPresenter.View view) {
-        persistableDataObjectsTable.removeChild(view.getElement());
-    }
-
-    @Override
-    public void remove(final PropertiesItemPresenter.View view) {
-        propertiesTable.removeChild(view.getElement());
-    }
-
-    @Override
     public String getConcurrentUpdateMessage() {
         return translationService.format(PersistenceXmlConcurrentUpdate);
+    }
+
+    @Override
+    public Element getPropertiesTable() {
+        return propertiesTable;
+    }
+
+    @Override
+    public Element getPersistableDataObjectsTable() {
+        return persistableDataObjectsTable;
     }
 }

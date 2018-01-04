@@ -14,30 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.validation;
+package org.kie.workbench.common.screens.library.client.settings.deployments.eventlisteners;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import elemental2.dom.Element;
-import elemental2.dom.HTMLTableSectionElement;
-import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class ValidationView implements ValidationPresenter.View {
-
-    @Inject
-    @Named("tbody")
-    @DataField("repositories")
-    private HTMLTableSectionElement repositories;
+public class EventListenerItemView implements EventListenerItemPresenter.View,
+                                              IsElement {
 
     @Override
-    public void init(final ValidationPresenter presenter) {
-    }
+    public void init(final EventListenerItemPresenter presenter) {
 
-    @Override
-    public Element getRepositoriesTable() {
-        return repositories;
     }
 }
