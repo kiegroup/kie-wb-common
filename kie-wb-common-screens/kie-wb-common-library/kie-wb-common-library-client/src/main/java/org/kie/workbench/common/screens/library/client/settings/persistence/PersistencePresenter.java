@@ -37,12 +37,12 @@ import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescript
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.NewPersistableDataObjectPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPropertyPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -57,7 +57,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final Event<NotificationEvent> notificationEvent;
     private final ManagedInstance<ObservablePath> observablePaths;
     private final NewPropertyPopupPresenter newPropertyPopupPresenter;
-    private final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter;
+    private final TextBoxFormPopup textBoxFormPopup;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<PersistenceDescriptorService> descriptorService;
     private final Caller<DataModelerService> dataModelerService;
@@ -91,7 +91,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
                                 final NewPropertyPopupPresenter newPropertyPopupPresenter,
-                                final NewPersistableDataObjectPopupPresenter newPersistableDataObjectPopupPresenter,
+                                final TextBoxFormPopup textBoxFormPopup,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<PersistenceDescriptorService> descriptorService,
                                 final Caller<DataModelerService> dataModelerService,
@@ -104,7 +104,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         this.notificationEvent = notificationEvent;
         this.observablePaths = observablePaths;
         this.newPropertyPopupPresenter = newPropertyPopupPresenter;
-        this.newPersistableDataObjectPopupPresenter = newPersistableDataObjectPopupPresenter;
+        this.textBoxFormPopup = textBoxFormPopup;
         this.editorService = editorService;
         this.descriptorService = descriptorService;
         this.dataModelerService = dataModelerService;
@@ -133,7 +133,6 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
         newPropertyPopupPresenter.setup(this);
-        newPersistableDataObjectPopupPresenter.setup(this);
 
         return Promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
             persistenceDescriptorEditorContent = m;
@@ -189,7 +188,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     public void addAllProjectsPersistableDataObjects() {
         Promises.promisify(dataModelerService, s -> s.findPersistableClasses(pathToPersistenceXml)).then(classes -> {
             classes.stream()
-                    .filter(c -> !getPersistenceUnitModel().getClasses().contains(c))
+                    .filter(clazz -> !getPersistenceUnitModel().getClasses().contains(clazz))
                     .forEach(this::add);
 
             return resolve();
@@ -220,7 +219,10 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void showNewPersistableDataObjectPopup() {
-        newPersistableDataObjectPopupPresenter.show();
+        textBoxFormPopup.show(className -> {
+            add(className);
+            fireChangeEvent();
+        });
     }
 
     @Override

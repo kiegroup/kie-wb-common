@@ -29,10 +29,12 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListItemPre
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
+import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 
 @Dependent
 public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
 
+    private final TextBoxFormPopup textBoxFormPopup;
     private final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter;
     private final PackageListPresenter packageListPresenter;
     private KBaseModel kBaseModel;
@@ -41,9 +43,11 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
     @Inject
     public KnowledgeBaseItemPresenter(final View view,
+                                      final TextBoxFormPopup textBoxFormPopup,
                                       final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter,
                                       final PackageListPresenter packageListPresenter) {
         super(view);
+        this.textBoxFormPopup = textBoxFormPopup;
         this.includedKnowledgeBasesListPresenter = includedKnowledgeBasesListPresenter;
         this.packageListPresenter = packageListPresenter;
     }
@@ -62,7 +66,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         includedKnowledgeBasesListPresenter.setup(
                 view.getIncludedKnowledgeBasesListElement(),
                 kBaseModel.getIncludes(),
-                (kbaseName, presenter) -> presenter.setup(kbaseName, this));
+                (kBaseName, presenter) -> presenter.setup(kBaseName, this));
 
         packageListPresenter.setup(
                 view.getPackagesListElement(),
@@ -88,13 +92,17 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
     }
 
     public void showNewIncludedKnowledgeBasePopup() {
-        includedKnowledgeBasesListPresenter.add("Test" + System.currentTimeMillis());
-        parentPresenter.fireChangeEvent();
+        textBoxFormPopup.show(kBaseName -> {
+            includedKnowledgeBasesListPresenter.add(kBaseName);
+            parentPresenter.fireChangeEvent();
+        });
     }
 
     public void showNewPackagePopup() {
-        packageListPresenter.add("Test" + System.currentTimeMillis());
-        parentPresenter.fireChangeEvent();
+        textBoxFormPopup.show(packageName -> {
+            packageListPresenter.add(packageName);
+            parentPresenter.fireChangeEvent();
+        });
     }
 
     public void setDefault(final boolean isDefault) {

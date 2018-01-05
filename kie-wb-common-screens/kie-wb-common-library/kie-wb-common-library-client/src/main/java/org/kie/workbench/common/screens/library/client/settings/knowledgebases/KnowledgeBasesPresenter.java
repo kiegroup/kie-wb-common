@@ -33,6 +33,7 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListPresent
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
+import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
@@ -40,6 +41,7 @@ import static org.kie.workbench.common.screens.library.client.settings.Promises.
 
 public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
+    private final TextBoxFormPopup textBoxFormPopup;
     private final KnowledgeBaseListPresenter knowledgeBaseListPresenter;
     private final View view;
 
@@ -53,9 +55,11 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     @Inject
     public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                    final View view,
+                                   final TextBoxFormPopup textBoxFormPopup,
                                    final KnowledgeBaseListPresenter knowledgeBaseListPresenter) {
 
         super(settingsSectionChangeEvent);
+        this.textBoxFormPopup = textBoxFormPopup;
         this.knowledgeBaseListPresenter = knowledgeBaseListPresenter;
         this.view = view;
     }
@@ -88,15 +92,12 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     }
 
     public void openAddKnowledgeBasePopup() {
-        String name = "Test" + System.currentTimeMillis();
-        addKnowledgeBase(name);
-    }
-
-    private void addKnowledgeBase(String name) {
-        final KBaseModel kBaseModel = new KBaseModel();
-        kBaseModel.setName(name);
-        knowledgeBaseListPresenter.add(kBaseModel);
-        fireChangeEvent();
+        textBoxFormPopup.show(kBaseName -> {
+            final KBaseModel kBaseModel = new KBaseModel();
+            kBaseModel.setName(kBaseName);
+            knowledgeBaseListPresenter.add(kBaseModel);
+            fireChangeEvent();
+        });
     }
 
     @Override
