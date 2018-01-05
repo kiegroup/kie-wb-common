@@ -22,6 +22,7 @@ import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.ControlHandleList;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.WiresShapeControlHandleList;
+import com.ait.lienzo.client.core.types.BoundingBox;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.ViewEventHandlerManager;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
@@ -104,6 +105,19 @@ public class DecoratedShapeView<T extends WiresShapeViewExt>
                              width,
                              height);
         refresh();
+        return (T) this;
+    }
+
+    @Override
+    public T setSizeConstraints(final double minWidth,
+                                final double minHeight,
+                                final double maxWidth,
+                                final double maxHeight)
+    {
+        getPath().setSizeConstraints(new BoundingBox(minWidth,
+                                                     minHeight,
+                                                     maxWidth,
+                                                     maxHeight));
         return (T) this;
     }
 
