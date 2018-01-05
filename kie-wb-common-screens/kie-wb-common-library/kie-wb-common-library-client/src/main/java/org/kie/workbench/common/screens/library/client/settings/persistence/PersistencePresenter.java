@@ -234,19 +234,19 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     @Dependent
-    public static class PropertiesListPresenter extends ListPresenter<Property, PropertiesItemPresenter> {
+    public static class PersistableDataObjectsListPresenter extends ListPresenter<String, PersistableDataObjectsItemPresenter> {
 
         @Inject
-        public PropertiesListPresenter(final ManagedInstance<PropertiesItemPresenter> itemPresenters) {
+        public PersistableDataObjectsListPresenter(final ManagedInstance<PersistableDataObjectsItemPresenter> itemPresenters) {
             super(itemPresenters);
         }
     }
 
     @Dependent
-    public static class PersistableDataObjectsListPresenter extends ListPresenter<String, PersistableDataObjectsItemPresenter> {
+    public static class PropertiesListPresenter extends ListPresenter<Property, PropertiesItemPresenter> {
 
         @Inject
-        public PersistableDataObjectsListPresenter(final ManagedInstance<PersistableDataObjectsItemPresenter> itemPresenters) {
+        public PropertiesListPresenter(final ManagedInstance<PropertiesItemPresenter> itemPresenters) {
             super(itemPresenters);
         }
     }

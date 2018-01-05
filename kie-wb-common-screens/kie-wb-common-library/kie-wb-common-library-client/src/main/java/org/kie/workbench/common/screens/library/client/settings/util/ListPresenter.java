@@ -49,26 +49,24 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
-        list.forEach(this::add);
+        this.listElement.innerHTML = "";
+        this.list.forEach(this::addToListElement);
     }
 
-    public P add(final T o) {
+    public void add(final T o) {
+        addToListElement(o);
+        list.add(o);
+    }
+
+    private void addToListElement(final T o) {
+        listElement.appendChild((newPresenterFor(o)).getView().getElement());
+    }
+
+    private P newPresenterFor(final T o) {
         final P listItemPresenter = this.itemPresenters.get();
         listItemPresenter.setListPresenter(this);
         itemPresenterConfigurator.accept(o, listItemPresenter);
-        add(listItemPresenter);
         return listItemPresenter;
-    }
-
-    void add(final ListItemPresenter<T, ?, ?> listItemPresenter) {
-        list.add(listItemPresenter.getObject());
-        listElement.appendChild(listItemPresenter.getView().getElement());
-    }
-
-    private void setItems(final List<P> listItemPresenters) {
-        list.clear();
-        listElement.innerHTML = "";
-        listItemPresenters.forEach(this::add);
     }
 
     public void remove(final ListItemPresenter<T, ?, ?> listItemPresenter) {
@@ -78,5 +76,10 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
 
     public List<T> getList() {
         return list;
+    }
+
+    @Override
+    public int hashCode() {
+        return list.hashCode();
     }
 }

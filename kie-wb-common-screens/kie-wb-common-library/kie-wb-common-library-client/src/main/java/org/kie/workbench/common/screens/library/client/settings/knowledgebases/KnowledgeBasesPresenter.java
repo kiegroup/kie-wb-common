@@ -16,26 +16,81 @@
 
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
 
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.dom.Element;
+import elemental2.promise.Promise;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
+import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
+
+import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
+import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 
 public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
+    private final KnowledgeBaseListPresenter knowledgeBaseListPresenter;
     private final View view;
+
+    private KModuleModel kModuleModel;
 
     public interface View extends SettingsPresenter.View.Section<KnowledgeBasesPresenter> {
 
+        Element getKnowledgeBasesTable();
     }
 
     @Inject
     public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
-                                   final KnowledgeBasesPresenter.View view) {
+                                   final View view,
+                                   final KnowledgeBaseListPresenter knowledgeBaseListPresenter) {
 
         super(settingsSectionChangeEvent);
+        this.knowledgeBaseListPresenter = knowledgeBaseListPresenter;
         this.view = view;
+    }
+
+    @Override
+    public Promise<Void> setup(final ProjectScreenModel model) {
+
+        this.kModuleModel = model.getKModule();
+
+        view.init(this);
+
+        knowledgeBaseListPresenter.setup(
+                view.getKnowledgeBasesTable(),
+                model.getKModule().getKBases().values().stream().sorted(comparing(KBaseModel::getName)).collect(Collectors.toList()),
+                (kbase, presenter) -> presenter.setup(kbase, this));
+
+        return resolve();
+    }
+
+    @Override
+    public Promise<Void> save(final String comment,
+                              final Supplier<Promise<Void>> chain) {
+
+        kModuleModel.getKBases().clear();
+        kModuleModel.getKBases().putAll(
+                knowledgeBaseListPresenter.getList().stream()
+                        .collect(Collectors.toMap(KBaseModel::getName, identity())));
+
+        return resolve();
+    }
+
+    public void openAddKnowledgeBasePopup() {
+        final KBaseModel kBaseModel = new KBaseModel();
+        kBaseModel.setName("Test");
+        knowledgeBaseListPresenter.add(kBaseModel);
+        fireChangeEvent();
     }
 
     @Override
@@ -45,6 +100,15 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
     @Override
     public int currentHashCode() {
-        return 0;
+        return knowledgeBaseListPresenter.hashCode();
+    }
+
+    @Dependent
+    public static class KnowledgeBaseListPresenter extends ListPresenter<KBaseModel, KnowledgeBaseItemPresenter> {
+
+        @Inject
+        public KnowledgeBaseListPresenter(final ManagedInstance<KnowledgeBaseItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
     }
 }

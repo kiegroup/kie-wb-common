@@ -20,16 +20,15 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.soup.project.datamodel.imports.Import;
-import org.uberfire.client.mvp.UberElemental;
+import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
-public class ExternalDataObjectsItemPresenter {
-
-    private final View view;
+public class ExternalDataObjectsItemPresenter extends ListItemPresenter<Import, ExternalDataObjectsPresenter, ExternalDataObjectsItemPresenter.View> {
 
     private Import import_;
-    private ExternalDataObjectsPresenter presenter;
+    private ExternalDataObjectsPresenter parentPresenter;
 
-    public interface View extends UberElemental<ExternalDataObjectsItemPresenter>,
+    public interface View extends UberElementalListItem<ExternalDataObjectsItemPresenter>,
                                   IsElement {
 
         void setTypeName(final String typeName);
@@ -37,14 +36,15 @@ public class ExternalDataObjectsItemPresenter {
 
     @Inject
     public ExternalDataObjectsItemPresenter(final View view) {
-        this.view = view;
+        super(view);
     }
 
-    ExternalDataObjectsItemPresenter setup(final Import import_,
-                                           final ExternalDataObjectsPresenter presenter) {
+    @Override
+    public ExternalDataObjectsItemPresenter setup(final Import import_,
+                                                  final ExternalDataObjectsPresenter parentPresenter) {
 
         this.import_ = import_;
-        this.presenter = presenter;
+        this.parentPresenter = parentPresenter;
 
         view.init(this);
         view.setTypeName(import_.getType());
@@ -53,10 +53,12 @@ public class ExternalDataObjectsItemPresenter {
     }
 
     public void remove() {
-        presenter.remove(this);
+        super.remove();
+        parentPresenter.fireChangeEvent();
     }
 
-    public Import getImport() {
+    @Override
+    public Import getObject() {
         return import_;
     }
 

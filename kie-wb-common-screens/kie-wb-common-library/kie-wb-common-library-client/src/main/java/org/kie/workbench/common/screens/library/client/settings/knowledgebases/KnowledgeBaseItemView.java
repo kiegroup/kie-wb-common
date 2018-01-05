@@ -19,40 +19,27 @@ package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.Element;
-import elemental2.dom.HTMLButtonElement;
-import elemental2.dom.HTMLTableSectionElement;
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class KnowledgeBasesView implements KnowledgeBasesPresenter.View {
+public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @Inject
-    @Named("tbody")
-    @DataField("knowledge-bases-table")
-    private HTMLTableSectionElement knowledgeBasesTable;
+    @Named("span")
+    @DataField("name")
+    private HTMLElement name;
 
-    @Inject
-    @DataField("add-knowledge-base-button")
-    private HTMLButtonElement addKnowledgeBaseButton;
-
-    private KnowledgeBasesPresenter presenter;
+    private KnowledgeBaseItemPresenter presenter;
 
     @Override
-    public void init(final KnowledgeBasesPresenter presenter) {
+    public void init(final KnowledgeBaseItemPresenter presenter) {
         this.presenter = presenter;
     }
 
-    @EventHandler("add-knowledge-base-button")
-    private void onAddKnowledgeBaseButtonClicked(final ClickEvent ignore) {
-        presenter.openAddKnowledgeBasePopup();
-    }
-
     @Override
-    public Element getKnowledgeBasesTable() {
-        return knowledgeBasesTable;
+    public void setName(final String name) {
+        this.name.textContent = name;
     }
 }

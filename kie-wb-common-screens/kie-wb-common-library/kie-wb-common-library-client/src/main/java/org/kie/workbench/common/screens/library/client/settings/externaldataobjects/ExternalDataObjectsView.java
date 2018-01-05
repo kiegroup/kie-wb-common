@@ -16,12 +16,11 @@
 
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -54,12 +53,6 @@ public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.Vie
     }
 
     @Override
-    public void setItems(final List<View> itemViews) {
-        table.innerHTML = "";
-        itemViews.forEach(this::add);
-    }
-
-    @Override
     public void remove(final View view) {
         table.removeChild(view.getElement());
     }
@@ -67,5 +60,10 @@ public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.Vie
     @Override
     public void add(final View view) {
         table.appendChild(view.getElement());
+    }
+
+    @Override
+    public Element getImportsTable() {
+        return table;
     }
 }

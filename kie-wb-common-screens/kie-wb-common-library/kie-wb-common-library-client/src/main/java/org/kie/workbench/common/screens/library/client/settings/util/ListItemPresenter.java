@@ -39,10 +39,6 @@ public abstract class ListItemPresenter<T, ParentPresenter, View extends UberEle
         this.listPresenter = listPresenter;
     }
 
-    public void add() {
-        listPresenter.add(this);
-    }
-
     public void remove() {
         listPresenter.remove(this);
     }
