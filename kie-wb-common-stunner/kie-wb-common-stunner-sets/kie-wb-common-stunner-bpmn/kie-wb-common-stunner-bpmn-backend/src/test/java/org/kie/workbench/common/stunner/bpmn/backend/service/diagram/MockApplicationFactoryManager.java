@@ -18,7 +18,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.BPMNDiagramMarshallerTest.BPMN_DEF_SET_ID;
+import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.BPMNDirectDiagramMarshallerTest.BPMN_DEF_SET_ID;
 
 public class MockApplicationFactoryManager extends ApplicationFactoryManager {
     final GraphFactory bpmnGraphFactory;
