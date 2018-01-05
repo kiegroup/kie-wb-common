@@ -147,14 +147,14 @@ public class BPMNGraphGenerator extends JsonGenerator {
 
     public Graph<DefinitionSet, Node> createGraph() {
         Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
-                diagramDefinitionSetClass);
+                                                                                                  diagramDefinitionSetClass);
         // TODO: Where are the BPMN diagram bounds in the Oryx json structure? Exist?
         if (null == graph.getContent().getBounds()) {
             graph.getContent().setBounds(new BoundsImpl(
                     new BoundImpl(0d,
-                            0d),
+                                  0d),
                     new BoundImpl(BPMNGraphFactory.GRAPH_DEFAULT_WIDTH,
-                            BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
+                                  BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
             ));
         }
         builderContext
@@ -174,8 +174,6 @@ public class BPMNGraphGenerator extends JsonGenerator {
 
         return graph;
     }
-
-
 
     @SuppressWarnings("unchecked")
     protected NodeObjectBuilder getDiagramBuilder(final GraphObjectBuilder.BuilderContext context) {
