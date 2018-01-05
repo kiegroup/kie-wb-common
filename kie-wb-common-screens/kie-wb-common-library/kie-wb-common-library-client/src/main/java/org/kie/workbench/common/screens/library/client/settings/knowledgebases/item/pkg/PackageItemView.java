@@ -14,46 +14,43 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
+package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.HTMLAnchorElement;
-import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLElement;
-import elemental2.dom.MouseEvent;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-@Templated("#root")
-public class ExternalDataObjectsItemView implements ExternalDataObjectsItemPresenter.View {
+@Templated
+public class PackageItemView implements PackageItemPresenter.View {
 
     @Inject
     @Named("span")
-    @DataField("type-name")
-    private HTMLElement typeName;
+    @DataField("name")
+    private HTMLElement name;
 
     @Inject
+    @Named("span")
     @DataField("remove-button")
-    private HTMLAnchorElement removeButton;
+    private HTMLElement removeButton;
+    private PackageItemPresenter presenter;
 
-    private ExternalDataObjectsItemPresenter presenter;
+    @Override
+    public void init(final PackageItemPresenter presenter) {
+        this.presenter = presenter;
+    }
 
     @EventHandler("remove-button")
-    public void onRemove(final ClickEvent ignore) {
+    private void onRemoveButtonClicked(final ClickEvent ignore) {
         presenter.remove();
     }
 
     @Override
-    public void init(final ExternalDataObjectsItemPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void setTypeName(final String typeName) {
-        this.typeName.textContent = typeName;
+    public void setName(final String name) {
+        this.name.textContent = name;
     }
 }

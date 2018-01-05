@@ -67,6 +67,7 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
         imports = model.getProjectImports().getImports();
 
         view.init(this);
+
         itemPresenters.setup(view.getImportsTable(),
                              imports.getImports(),
                              (import_, presenter) -> presenter.setup(import_, this));

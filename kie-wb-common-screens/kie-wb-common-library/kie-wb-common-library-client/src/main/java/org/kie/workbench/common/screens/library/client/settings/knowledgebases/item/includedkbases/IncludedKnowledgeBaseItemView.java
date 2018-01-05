@@ -14,28 +14,40 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
+package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedkbases;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
+import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
+public class IncludedKnowledgeBaseItemView implements IncludedKnowledgeBaseItemPresenter.View {
 
     @Inject
     @Named("span")
     @DataField("name")
     private HTMLElement name;
 
-    private KnowledgeBaseItemPresenter presenter;
+    @Inject
+    @Named("span")
+    @DataField("remove-button")
+    private HTMLElement removeButton;
+
+    private IncludedKnowledgeBaseItemPresenter presenter;
 
     @Override
-    public void init(final KnowledgeBaseItemPresenter presenter) {
+    public void init(final IncludedKnowledgeBaseItemPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @EventHandler("remove-button")
+    private void onRemoveButtonClicked(final ClickEvent ignore) {
+        presenter.remove();
     }
 
     @Override

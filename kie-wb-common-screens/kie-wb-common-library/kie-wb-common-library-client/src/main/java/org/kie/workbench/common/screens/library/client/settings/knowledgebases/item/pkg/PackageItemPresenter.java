@@ -14,47 +14,51 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.knowledgebases;
+package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
-import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 
 @Dependent
-public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
+public class PackageItemPresenter extends ListItemPresenter<String, KnowledgeBaseItemPresenter, PackageItemPresenter.View> {
 
-    private KBaseModel kBaseModel;
-
-    private KnowledgeBasesPresenter knowledgeBasesPresenter;
+    private String packageName;
+    private KnowledgeBaseItemPresenter parentPresenter;
 
     @Inject
-    public KnowledgeBaseItemPresenter(final View view) {
+    public PackageItemPresenter(final View view) {
         super(view);
     }
 
     @Override
-    public KnowledgeBaseItemPresenter setup(final KBaseModel kBaseModel,
-                                            final KnowledgeBasesPresenter knowledgeBasesPresenter) {
-        this.kBaseModel = kBaseModel;
-        this.knowledgeBasesPresenter = knowledgeBasesPresenter;
+    public PackageItemPresenter setup(final String packageName,
+                                      final KnowledgeBaseItemPresenter parentPresenter) {
+        this.packageName = packageName;
+        this.parentPresenter = parentPresenter;
 
         view.init(this);
-
-        view.setName(kBaseModel.getName());
+        view.setName(packageName);
 
         return this;
     }
 
     @Override
-    public KBaseModel getObject() {
-        return kBaseModel;
+    public String getObject() {
+        return packageName;
     }
 
-    public interface View extends UberElementalListItem<KnowledgeBaseItemPresenter>,
+    @Override
+    public void remove() {
+        super.remove();
+        parentPresenter.fireChangeEvent();
+    }
+
+    public interface View extends UberElementalListItem<PackageItemPresenter>,
                                   IsElement {
 
         void setName(final String name);

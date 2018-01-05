@@ -15,8 +15,9 @@
   -->
 
 
-<div>
-    <tr class="kie-tablelist__row">
+<table>
+    <tbody>
+    <tr class="kie-tablelist__row" data-field="root">
         <td class="kie-tablelist__cell"><span data-field="group-id"></span></td>
         <td class="kie-tablelist__cell"><span data-field="artifact-id"></span></td>
         <td class="kie-tablelist__cell"><span data-field="version"></span></td>
@@ -34,37 +35,5 @@
             </a>
         </td>
     </tr>
-</div>
-
-<div class="list-pf-item">
-    <div class="list-pf-container">
-        <div class="list-pf-content list-pf-content-flex">
-            <div class="list-pf-content-wrapper">
-                <div class="list-pf-main-content">
-                    <div class="list-pf-title" data-field="group-id"></div>
-                    <div class="list-pf-description text-overflow-pf" data-field="artifact-id"></div>
-                </div>
-                <div class="list-pf-additional-content">
-                    <div data-field="version"></div>
-                </div>
-                <div class="list-pf-additional-content">
-                    <span data-field="package-white-list"></span>
-                    <div class="btn-group">
-                        <span class="dropdown dropdown-kebab-pf">
-                            <button class="btn btn-link dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="fa fa-cog"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right">
-                                <li><a data-field="white-list-add-all" data-i18n-key="AddAll"></a></li>
-                                <li><a data-field="white-list-add-none" data-i18n-key="AddNone"></a></li>
-                            </ul>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="list-pf-actions kie-list-pf-actions--fixed">
-                <a data-field="delete"><span class="fa fa-trash-o"></span></a>
-            </div>
-        </div>
-    </div>
-</div>
+    </tbody>
+</table>

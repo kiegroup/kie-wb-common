@@ -28,6 +28,7 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
@@ -87,8 +88,13 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     }
 
     public void openAddKnowledgeBasePopup() {
+        String name = "Test" + System.currentTimeMillis();
+        addKnowledgeBase(name);
+    }
+
+    private void addKnowledgeBase(String name) {
         final KBaseModel kBaseModel = new KBaseModel();
-        kBaseModel.setName("Test");
+        kBaseModel.setName(name);
         knowledgeBaseListPresenter.add(kBaseModel);
         fireChangeEvent();
     }

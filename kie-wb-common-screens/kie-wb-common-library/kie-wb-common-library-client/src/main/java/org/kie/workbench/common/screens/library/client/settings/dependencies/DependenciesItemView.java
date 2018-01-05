@@ -31,7 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.uberfire.commons.uuid.UUID;
 
-@Templated
+@Templated("#root")
 public class DependenciesItemView implements DependenciesItemPresenter.View,
                                              IsElement {
 

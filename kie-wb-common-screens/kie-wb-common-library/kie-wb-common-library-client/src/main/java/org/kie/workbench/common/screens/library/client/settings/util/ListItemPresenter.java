@@ -22,7 +22,7 @@ public abstract class ListItemPresenter<T, ParentPresenter, View extends UberEle
 
     private ListPresenter<T, ? extends ListItemPresenter<T, ?, ?>> listPresenter;
 
-    protected ListItemPresenter(final View view) {
+    public ListItemPresenter(final View view) {
         this.view = view;
     }
 
