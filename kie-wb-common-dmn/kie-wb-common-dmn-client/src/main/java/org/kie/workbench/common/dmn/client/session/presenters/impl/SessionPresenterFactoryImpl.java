@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.client.widgets.event.SessionDiagramOpenedEvent;
-import org.kie.workbench.common.stunner.core.client.event.screen.ScreenResizeEventObserver;
 import org.kie.workbench.common.stunner.client.widgets.notification.NotificationsObserver;
 import org.kie.workbench.common.stunner.client.widgets.palette.factory.BS3PaletteFactory;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionDiagramPreview;
@@ -34,6 +33,7 @@ import org.kie.workbench.common.stunner.client.widgets.views.WidgetWrapperView;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
+import org.kie.workbench.common.stunner.core.client.event.screen.ScreenResizeEventObserver;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientSession;
 
 @DMNEditor
@@ -44,15 +44,14 @@ public class SessionPresenterFactoryImpl extends org.kie.workbench.common.stunne
     public SessionPresenterFactoryImpl(final SessionManager sessionManager,
                                        final ManagedInstance<CanvasCommandManager<AbstractCanvasHandler>> commandManagerInstances,
                                        final ManagedInstance<ViewerToolbarFactory> viewerToolbarFactoryInstances,
-                                       final @DMNEditor ManagedInstance<EditorToolbarFactory> editorToolbarFactoryInstances,
+                                       final ManagedInstance<EditorToolbarFactory> editorToolbarFactoryInstances,
                                        final @DMNEditor ManagedInstance<SessionDiagramPreview<AbstractClientSession>> sessionPreviewInstances,
                                        final ManagedInstance<WidgetWrapperView> diagramViewerViewInstances,
                                        final ManagedInstance<SessionPresenter.View> viewInstances,
                                        final ManagedInstance<NotificationsObserver> notificationsObserverInstances,
                                        final BS3PaletteFactory paletteWidgetFactory,
                                        final Event<SessionDiagramOpenedEvent> sessionDiagramOpenedEventInstances,
-                                       final ScreenResizeEventObserver screenResizeEventObserver
-    ) {
+                                       final ScreenResizeEventObserver screenResizeEventObserver) {
         super(sessionManager,
               commandManagerInstances,
               viewerToolbarFactoryInstances,
@@ -64,6 +63,6 @@ public class SessionPresenterFactoryImpl extends org.kie.workbench.common.stunne
               paletteWidgetFactory,
               sessionDiagramOpenedEventInstances,
               screenResizeEventObserver
-              );
+        );
     }
 }

@@ -31,6 +31,12 @@ public class OrganizationalUnit extends BusinessContextElement {
     private List<DMNElementReference> decisionOwned;
 
     public OrganizationalUnit() {
+        this(new Id(),
+             new Description(),
+             new Name(),
+             "",
+             null,
+             null);
     }
 
     public OrganizationalUnit(final @MapsTo("id") Id id,

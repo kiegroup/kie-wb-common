@@ -30,6 +30,11 @@ public class Relation extends Expression {
     private java.util.List<List> row;
 
     public Relation() {
+        this(new Id(),
+             new Description(),
+             new QName(),
+             null,
+             null);
     }
 
     public Relation(final @MapsTo("id") Id id,

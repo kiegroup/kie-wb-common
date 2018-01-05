@@ -44,6 +44,20 @@ public class Definitions extends NamedElement {
     private String exporterVersion;
 
     public Definitions() {
+        this(new Id(),
+             new Description(),
+             new Name(),
+             null,
+             null,
+             null,
+             null,
+             null,
+             null,
+             "",
+             "",
+             "",
+             "",
+             "");
     }
 
     public Definitions(final @MapsTo("id") Id id,

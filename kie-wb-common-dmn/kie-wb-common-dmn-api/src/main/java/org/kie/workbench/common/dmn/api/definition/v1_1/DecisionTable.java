@@ -36,6 +36,16 @@ public class DecisionTable extends Expression {
     private String outputLabel;
 
     public DecisionTable() {
+        this(new Id(),
+             new Description(),
+             new QName(),
+             null,
+             null,
+             null,
+             HitPolicy.ANY,
+             null,
+             DecisionTableOrientation.RULE_AS_ROW,
+             "");
     }
 
     public DecisionTable(final @MapsTo("id") Id id,
