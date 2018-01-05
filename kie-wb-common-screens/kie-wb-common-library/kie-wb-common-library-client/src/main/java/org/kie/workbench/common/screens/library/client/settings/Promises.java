@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -36,7 +37,13 @@ public class Promises {
 
     // Reducers
 
-    static <T, O> Promise<O> all(final List<T> objects, final Function<T, Promise<O>> f) {
+
+    @SafeVarargs
+    public static <T, O> Promise<O> all(final Promise<O>... promises) {
+        return Arrays.stream(promises).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
+    }
+
+    public static <T, O> Promise<O> all(final List<T> objects, final Function<T, Promise<O>> f) {
         return objects.stream().map(f).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
     }
 

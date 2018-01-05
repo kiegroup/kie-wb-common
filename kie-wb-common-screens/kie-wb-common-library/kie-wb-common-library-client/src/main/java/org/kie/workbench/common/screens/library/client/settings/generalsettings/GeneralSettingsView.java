@@ -207,7 +207,8 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
 
     @Override
     public void showError(final String errorMessage) {
-        this.errorMessage.innerHTML = errorMessage;
+        this.errorMessage.innerHTML += errorMessage;
+        this.errorMessage.innerHTML += "<br/>";
         this.error.hidden = false;
     }
 

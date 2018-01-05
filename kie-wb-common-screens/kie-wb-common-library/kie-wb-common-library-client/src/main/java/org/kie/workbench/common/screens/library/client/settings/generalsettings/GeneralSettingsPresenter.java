@@ -145,19 +145,32 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     @Override
     public Promise<Object> validate() {
         view.hideError();
-        return resolve()
-                .then(o -> validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage()))
-                .then(o -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()))
-                .then(o -> validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage()))
-                .then(o -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()))
-                .then(o -> validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage()))
-                .then(o -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()))
-                .then(o -> validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage()))
-                .then(o -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()))
-                .catch_(e -> throwOrExecute(e, (final String errorMessage) -> {
-                    view.showError(errorMessage);
-                    return reject(this);
-                }));
+
+        return Promises.all(
+
+                validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
+                        .then(o -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()))
+                        .catch_(this::showErrorAndReject),
+
+                validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage())
+                        .then(o -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()))
+                        .catch_(this::showErrorAndReject),
+
+                validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage())
+                        .then(o -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()))
+                        .catch_(this::showErrorAndReject),
+
+                validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage())
+                        .then(o -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()))
+                        .catch_(this::showErrorAndReject)
+        );
+    }
+
+    private Promise<Object> showErrorAndReject(final Object e) {
+        return throwOrExecute(e, (final String errorMessage) -> {
+            view.showError(errorMessage);
+            return reject(this);
+        });
     }
 
     private Promise<Boolean> validateStringIsNotEmpty(final String string,
