@@ -14,36 +14,40 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.deployments.eventlisteners;
+package org.kie.workbench.common.screens.library.client.settings.deployments.items;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.BlergsModel;
 import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
-public class EventListenerItemPresenter extends ListItemPresenter<Object, DeploymentsPresenter, EventListenerItemView> {
+@Dependent
+public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemView> {
 
-    private Object eventListener;
+    private BlergsModel blergs;
     private DeploymentsPresenter parentPresenter;
 
     @Inject
-    public EventListenerItemPresenter(final EventListenerItemView view) {
+    public TableItemPresenter(final TableItemView view) {
         super(view);
     }
 
     @Override
-    public EventListenerItemPresenter setup(final Object eventListener,
-                                            final DeploymentsPresenter parentPresenter) {
-
-        this.eventListener = eventListener;
+    public TableItemPresenter setup(final BlergsModel blergs,
+                                    final DeploymentsPresenter parentPresenter) {
+        this.blergs = blergs;
         this.parentPresenter = parentPresenter;
-        return this;
-    }
 
-    @Override
-    public Object getObject() {
-        return eventListener;
+        view.init(this);
+
+        view.setName(blergs.getName());
+        view.setResolver(blergs.getResolver());
+        view.setParametersCount(blergs.getParameters().size());
+
+        return this;
     }
 
     @Override
@@ -52,7 +56,12 @@ public class EventListenerItemPresenter extends ListItemPresenter<Object, Deploy
         parentPresenter.fireChangeEvent();
     }
 
-    public interface View extends UberElementalListItem<EventListenerItemPresenter> {
+    @Override
+    public BlergsModel getObject() {
+        return blergs;
+    }
+
+    public interface View extends UberElementalListItem<TableItemPresenter> {
 
     }
 }

@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.settings.deployments;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
@@ -52,7 +53,6 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @DataField("audit-mode")
     private HTMLSelectElement auditMode;
 
-
     @Inject
     @Named("tbody")
     @DataField("marshalling-strategies")
@@ -61,7 +61,6 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Inject
     @DataField("add-marshalling-strategy-button")
     private HTMLButtonElement addMarshallingStrategyButton;
-
 
     @Inject
     @Named("tbody")
@@ -72,7 +71,6 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @DataField("add-event-listener-button")
     private HTMLButtonElement addEventListenerButton;
 
-
     @Inject
     @Named("tbody")
     @DataField("globals")
@@ -81,7 +79,6 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Inject
     @DataField("add-global-button")
     private HTMLButtonElement addGlobalButton;
-
 
     @Inject
     @Named("tbody")
@@ -97,6 +94,31 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Override
     public void init(final DeploymentsPresenter presenter) {
         this.presenter = presenter;
+    }
+
+    @EventHandler("runtime-strategy")
+    public void onRuntimeStrategyChanged(final ChangeEvent ignore) {
+        presenter.setRuntimeStrategy(runtimeStrategy.value);
+    }
+
+    @EventHandler("persistence-unit-name")
+    public void onPersistenceUnitNameChanged(final ChangeEvent ignore) {
+        presenter.setPersistenceUnitName(persistenceUnitName.value);
+    }
+
+    @EventHandler("persistence-mode")
+    public void onPersistenceModeChanged(final ChangeEvent ignore) {
+        presenter.setPersistenceMode(persistenceMode.value);
+    }
+
+    @EventHandler("audit-persistence-unit-name")
+    public void onAuditPersistenceUnitNameChanged(final ChangeEvent ignore) {
+        presenter.setAuditPersistenceUnitName(auditPersistenceUnitName.value);
+    }
+
+    @EventHandler("audit-mode")
+    public void onAuditModeChanged(final ChangeEvent ignore) {
+        presenter.setAuditMode(auditMode.value);
     }
 
     @EventHandler("add-marshalling-strategy-button")
@@ -137,5 +159,30 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Override
     public Element getRequiredRolesTable() {
         return requiredRolesTable;
+    }
+
+    @Override
+    public void setRuntimeStrategy(final String runtimeStrategy) {
+        this.runtimeStrategy.value = runtimeStrategy;
+    }
+
+    @Override
+    public void setPersistenceUnitName(final String persistenceUnitName) {
+        this.persistenceUnitName.value = persistenceUnitName;
+    }
+
+    @Override
+    public void setPersistenceMode(final String persistenceMode) {
+        this.persistenceMode.value = persistenceMode;
+    }
+
+    @Override
+    public void setAuditPersistenceUnitName(final String auditPersistenceUnitName) {
+        this.auditPersistenceUnitName.value = auditPersistenceUnitName;
+    }
+
+    @Override
+    public void setAuditMode(final String auditMode) {
+        this.auditMode.value = auditMode;
     }
 }
