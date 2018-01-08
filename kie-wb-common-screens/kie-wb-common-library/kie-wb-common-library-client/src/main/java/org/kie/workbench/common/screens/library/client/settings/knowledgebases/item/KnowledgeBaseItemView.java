@@ -59,6 +59,14 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
     private HTMLDivElement includedKnowledgeBasesList;
 
     @Inject
+    @DataField("equals-behavior-select-container")
+    private HTMLDivElement equalsBehaviorSelectContainer;
+
+    @Inject
+    @DataField("event-processing-model-select-container")
+    private HTMLDivElement eventProcessingModelSelectContainer;
+
+    @Inject
     @DataField("packages-list")
     private HTMLDivElement packagesList;
 
@@ -107,5 +115,15 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
     @Override
     public void setDefault(final boolean isDefault) {
         this.isDefault.checked = isDefault;
+    }
+
+    @Override
+    public Element getEqualsBehaviorSelectContainer() {
+        return equalsBehaviorSelectContainer;
+    }
+
+    @Override
+    public Element getEventProcessingModelSelectContainer() {
+        return eventProcessingModelSelectContainer;
     }
 }

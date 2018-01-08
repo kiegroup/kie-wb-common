@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -31,8 +34,9 @@ import org.kie.workbench.common.screens.datamodeller.service.KieDeploymentDescri
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.kie.workbench.common.screens.library.client.settings.deployments.items.TableItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.deployments.items.NewTableItemPopupPresenter;
+import org.kie.workbench.common.screens.library.client.settings.deployments.items.TableItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -51,12 +55,14 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
     private final EventListenersListPresenter eventListenerPresenters;
     private final GlobalsListPresenter globalPresenters;
     private final RequiredRolesListPresenter requiredRolePresenters;
+    private final KieSelectElement runtimeStrategiesSelect;
+    private final KieSelectElement persistenceModesSelect;
+    private final KieSelectElement auditModesSelect;
 
     private ObservablePath pathToDeploymentsXml;
     private ObservablePath.OnConcurrentUpdateEvent concurrentDeploymentsXmlUpdateInfo;
     private KieDeploymentDescriptorContent model;
     private NewTableItemPopupPresenter newTableItemPopup;
-    private String runtimeStrategy;
 
     public interface View extends SettingsPresenter.View.Section<DeploymentsPresenter> {
 
@@ -68,19 +74,22 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
         Element getRequiredRolesTable();
 
-        void setRuntimeStrategy(final String runtimeStrategy);
-
         void setPersistenceUnitName(final String persistenceUnitName);
-
-        void setPersistenceMode(final String persistenceMode);
 
         void setAuditPersistenceUnitName(final String auditPersistenceUnitName);
 
-        void setAuditMode(final String auditMode);
+        Element getRuntimeStrategiesContainer();
+
+        Element getPersistenceModesContainer();
+
+        Element getAuditModesContainer();
     }
 
     @Inject
     public DeploymentsPresenter(final View view,
+                                final KieSelectElement runtimeStrategiesSelect,
+                                final KieSelectElement persistenceModesSelect,
+                                final KieSelectElement auditModesSelect,
                                 final NewTableItemPopupPresenter newTableItemPopup,
                                 final ProjectContext projectContext,
                                 final Caller<KieDeploymentDescriptorService> kieDeploymentDescriptorService,
@@ -93,6 +102,9 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
         super(settingsSectionChangeEvent);
         this.view = view;
+        this.runtimeStrategiesSelect = runtimeStrategiesSelect;
+        this.persistenceModesSelect = persistenceModesSelect;
+        this.auditModesSelect = auditModesSelect;
         this.newTableItemPopup = newTableItemPopup;
         this.projectContext = projectContext;
         this.kieDeploymentDescriptorService = kieDeploymentDescriptorService;
@@ -121,11 +133,29 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
             this.model = model;
 
-            view.setRuntimeStrategy(model.getRuntimeStrategy());
+            runtimeStrategiesSelect.setup(view.getRuntimeStrategiesContainer(), getOptions());
+            runtimeStrategiesSelect.setValue(model.getRuntimeStrategy());
+            runtimeStrategiesSelect.onChange(runtimeStrategy -> {
+                model.setRuntimeStrategy(runtimeStrategy);
+                fireChangeEvent();
+            });
+
+            persistenceModesSelect.setup(view.getPersistenceModesContainer(), getOptions());
+            persistenceModesSelect.setValue(model.getPersistenceMode());
+            persistenceModesSelect.onChange(persistenceMode -> {
+                model.setPersistenceMode(persistenceMode);
+                fireChangeEvent();
+            });
+
+            auditModesSelect.setup(view.getAuditModesContainer(), getOptions());
+            auditModesSelect.setValue(model.getAuditMode());
+            auditModesSelect.onChange(auditMode -> {
+                model.setAuditMode(auditMode);
+                fireChangeEvent();
+            });
+
             view.setPersistenceUnitName(model.getPersistenceUnitName());
-            view.setPersistenceMode(model.getPersistenceMode());
             view.setAuditPersistenceUnitName(model.getAuditPersistenceUnitName());
-            view.setAuditMode(model.getAuditMode());
 
             marshallingStrategyPresenters.setup(
                     view.getMarshallingStrategiesTable(),
@@ -149,6 +179,11 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
             return resolve();
         });
+    }
+
+    private List<KieSelectElement.Option> getOptions() {
+        return Arrays.asList(new KieSelectElement.Option("Test 1", "test1"),
+                             new KieSelectElement.Option("Test 2", "test2"));
     }
 
     public void openNewMarshallingStrategyPopup() {
@@ -179,28 +214,13 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
         });
     }
 
-    public void setRuntimeStrategy(final String runtimeStrategy) {
-        model.setRuntimeStrategy(runtimeStrategy);
-        fireChangeEvent();
-    }
-
     public void setPersistenceUnitName(final String persistenceUnitName) {
         model.setPersistenceUnitName(persistenceUnitName);
         fireChangeEvent();
     }
 
-    public void setPersistenceMode(final String persistenceMode) {
-        model.setPersistenceMode(persistenceMode);
-        fireChangeEvent();
-    }
-
     public void setAuditPersistenceUnitName(final String auditPersistenceUnitName) {
         model.setAuditPersistenceUnitName(auditPersistenceUnitName);
-        fireChangeEvent();
-    }
-
-    public void setAuditMode(final String auditMode) {
-        model.setAuditMode(auditMode);
         fireChangeEvent();
     }
 

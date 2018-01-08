@@ -23,8 +23,8 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLInputElement;
-import elemental2.dom.HTMLSelectElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -34,24 +34,24 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 public class DeploymentsView implements DeploymentsPresenter.View {
 
     @Inject
-    @DataField("runtime-strategy")
-    private HTMLSelectElement runtimeStrategy;
+    @DataField("runtime-strategies")
+    private HTMLDivElement runtimeStrategies;
 
     @Inject
     @DataField("persistence-unit-name")
     private HTMLInputElement persistenceUnitName;
 
     @Inject
-    @DataField("persistence-mode")
-    private HTMLSelectElement persistenceMode;
+    @DataField("persistence-modes")
+    private HTMLDivElement persistenceModes;
 
     @Inject
     @DataField("audit-persistence-unit-name")
     private HTMLInputElement auditPersistenceUnitName;
 
     @Inject
-    @DataField("audit-mode")
-    private HTMLSelectElement auditMode;
+    @DataField("audit-modes")
+    private HTMLDivElement auditModes;
 
     @Inject
     @Named("tbody")
@@ -96,29 +96,14 @@ public class DeploymentsView implements DeploymentsPresenter.View {
         this.presenter = presenter;
     }
 
-    @EventHandler("runtime-strategy")
-    public void onRuntimeStrategyChanged(final ChangeEvent ignore) {
-        presenter.setRuntimeStrategy(runtimeStrategy.value);
-    }
-
     @EventHandler("persistence-unit-name")
     public void onPersistenceUnitNameChanged(final ChangeEvent ignore) {
         presenter.setPersistenceUnitName(persistenceUnitName.value);
     }
 
-    @EventHandler("persistence-mode")
-    public void onPersistenceModeChanged(final ChangeEvent ignore) {
-        presenter.setPersistenceMode(persistenceMode.value);
-    }
-
     @EventHandler("audit-persistence-unit-name")
     public void onAuditPersistenceUnitNameChanged(final ChangeEvent ignore) {
         presenter.setAuditPersistenceUnitName(auditPersistenceUnitName.value);
-    }
-
-    @EventHandler("audit-mode")
-    public void onAuditModeChanged(final ChangeEvent ignore) {
-        presenter.setAuditMode(auditMode.value);
     }
 
     @EventHandler("add-marshalling-strategy-button")
@@ -162,18 +147,8 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     }
 
     @Override
-    public void setRuntimeStrategy(final String runtimeStrategy) {
-        this.runtimeStrategy.value = runtimeStrategy;
-    }
-
-    @Override
     public void setPersistenceUnitName(final String persistenceUnitName) {
         this.persistenceUnitName.value = persistenceUnitName;
-    }
-
-    @Override
-    public void setPersistenceMode(final String persistenceMode) {
-        this.persistenceMode.value = persistenceMode;
     }
 
     @Override
@@ -182,7 +157,17 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     }
 
     @Override
-    public void setAuditMode(final String auditMode) {
-        this.auditMode.value = auditMode;
+    public Element getRuntimeStrategiesContainer() {
+        return runtimeStrategies;
+    }
+
+    @Override
+    public Element getAuditModesContainer() {
+        return auditModes;
+    }
+
+    @Override
+    public Element getPersistenceModesContainer() {
+        return persistenceModes;
     }
 }

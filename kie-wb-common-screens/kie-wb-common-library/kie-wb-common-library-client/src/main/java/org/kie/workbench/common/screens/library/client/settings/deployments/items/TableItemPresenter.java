@@ -16,38 +16,56 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments.items;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import elemental2.dom.Element;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.BlergsModel;
 import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
 @Dependent
 public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemView> {
 
-    private BlergsModel blergs;
+    private BlergsModel model;
+    private KieSelectElement resolvers;
     private DeploymentsPresenter parentPresenter;
 
     @Inject
-    public TableItemPresenter(final TableItemView view) {
+    public TableItemPresenter(final TableItemView view,
+                              final KieSelectElement resolvers) {
         super(view);
+        this.resolvers = resolvers;
     }
 
     @Override
-    public TableItemPresenter setup(final BlergsModel blergs,
+    public TableItemPresenter setup(final BlergsModel model,
                                     final DeploymentsPresenter parentPresenter) {
-        this.blergs = blergs;
+        this.model = model;
         this.parentPresenter = parentPresenter;
+
+        resolvers.setup(view.getResolversContainer(), getResolversSelectOptions());
+        resolvers.setValue(model.getResolver());
+        resolvers.onChange(resolver -> {
+            model.setResolver(resolver);
+            parentPresenter.fireChangeEvent();
+        });
 
         view.init(this);
 
-        view.setName(blergs.getName());
-        view.setResolver(blergs.getResolver());
-        view.setParametersCount(blergs.getParameters().size());
+        view.setName(model.getName());
+        view.setParametersCount(model.getParameters().size());
 
         return this;
+    }
+
+    private List<KieSelectElement.Option> getResolversSelectOptions() {
+        return Arrays.asList(new KieSelectElement.Option("MVEL", "mvel"));
     }
 
     @Override
@@ -58,10 +76,11 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
 
     @Override
     public BlergsModel getObject() {
-        return blergs;
+        return model;
     }
 
     public interface View extends UberElementalListItem<TableItemPresenter> {
 
+        Element getResolversContainer();
     }
 }

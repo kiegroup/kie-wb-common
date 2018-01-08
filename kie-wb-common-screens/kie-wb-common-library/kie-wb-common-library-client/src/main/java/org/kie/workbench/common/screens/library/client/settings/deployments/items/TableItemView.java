@@ -20,7 +20,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.Element;
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -37,9 +39,8 @@ public class TableItemView implements TableItemPresenter.View,
     private HTMLElement name;
 
     @Inject
-    @Named("span")
-    @DataField("resolver")
-    private HTMLElement resolver;
+    @DataField("resolvers")
+    private HTMLDivElement resolversContainer;
 
     @Inject
     @Named("span")
@@ -66,11 +67,12 @@ public class TableItemView implements TableItemPresenter.View,
         this.name.textContent = name;
     }
 
-    public void setResolver(final String resolver) {
-        this.resolver.textContent = resolver;
-    }
-
     public void setParametersCount(final int parametersCount) {
         this.parametersCount.textContent = Integer.toString(parametersCount);
+    }
+
+    @Override
+    public Element getResolversContainer() {
+        return resolversContainer;
     }
 }
