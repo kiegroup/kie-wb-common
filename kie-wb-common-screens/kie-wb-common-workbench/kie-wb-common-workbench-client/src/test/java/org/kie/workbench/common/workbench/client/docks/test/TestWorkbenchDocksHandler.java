@@ -19,19 +19,20 @@ package org.kie.workbench.common.workbench.client.docks.test;
 import java.util.Collection;
 import java.util.List;
 
+import org.kie.workbench.common.workbench.client.docks.WorkbenchDockEntry;
 import org.kie.workbench.common.workbench.client.docks.impl.AbstractWorkbenchDocksHandler;
 import org.uberfire.client.workbench.docks.UberfireDock;
 
 public class TestWorkbenchDocksHandler extends AbstractWorkbenchDocksHandler {
 
-    private List<UberfireDock> docks;
+    private List<WorkbenchDockEntry> docks;
 
-    public TestWorkbenchDocksHandler(List<UberfireDock> docks) {
+    public TestWorkbenchDocksHandler(List<WorkbenchDockEntry> docks) {
         this.docks = docks;
     }
 
     @Override
-    public Collection<UberfireDock> provideDocks(String perspectiveIdentifier) {
+    public Collection<WorkbenchDockEntry> provideDocks(String perspectiveIdentifier) {
         return docks;
     }
 

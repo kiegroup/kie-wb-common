@@ -127,6 +127,8 @@ public class AuthoringWorkbenchDocks {
             // disable docks
             uberfireDocks.hide(UberfireDockPosition.EAST,
                                   currentPerspectiveIdentifier);
+            uberfireDocks.hide(UberfireDockPosition.WEST,
+                               currentPerspectiveIdentifier);
         } else {
             // first remove the existing docks
             if (activeDocks != null) {
@@ -134,11 +136,28 @@ public class AuthoringWorkbenchDocks {
             }
 
             // getting docks from the handler and  refreshing
-            Collection<UberfireDock> docks = activeHandler.provideDocks(currentPerspectiveIdentifier);
-            activeDocks = docks.toArray(new UberfireDock[docks.size()]);
-            uberfireDocks.add(activeDocks);
+            Collection<WorkbenchDockEntry> docks = activeHandler.provideDocks(currentPerspectiveIdentifier);
+
+            activeDocks = new UberfireDock[docks.size()];
+            int activeDocksIndex = 0;
+
+            for(WorkbenchDockEntry entry: docks) {
+                UberfireDock dock = entry.getDock();
+                uberfireDocks.add(dock);
+                activeDocks[activeDocksIndex++] = dock;
+            }
+
             uberfireDocks.show(UberfireDockPosition.EAST,
-                                 currentPerspectiveIdentifier);
+                               currentPerspectiveIdentifier);
+            uberfireDocks.show(UberfireDockPosition.WEST,
+                               currentPerspectiveIdentifier);
+
+            for(WorkbenchDockEntry entry: docks) {
+                UberfireDock dock = entry.getDock();
+                if (entry.isOpenByDefault()) {
+                    uberfireDocks.open(dock);
+                }
+            }
         }
     }
 
