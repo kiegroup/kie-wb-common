@@ -53,7 +53,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.impl.Restri
 @Dependent
 public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
-    private static final double VP_SCALE = 1.0;
+    static final double VP_SCALE = 1.0;
 
     private ExpressionEditorView.Presenter presenter;
 
@@ -179,5 +179,10 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     @EventHandler("exitButton")
     void onClickExitButton(final ClickEvent event) {
         presenter.exit();
+    }
+
+    @Override
+    public void onResize() {
+        gridPanel.onResize();
     }
 }
