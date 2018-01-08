@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
 import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
@@ -25,7 +26,9 @@ import com.ait.lienzo.client.core.event.NodeMouseExitHandler;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.SelectionListener;
 import com.ait.lienzo.client.core.shape.wires.SelectionManager;
+import com.ait.lienzo.client.core.shape.wires.WiresLayer;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
+import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -36,9 +39,11 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresShapeViewExt;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.Layer;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.MapSelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasDrawnEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
@@ -93,10 +98,19 @@ public class LienzoMultipleSelectionControlTest {
     private com.ait.lienzo.client.core.shape.Layer lienzoLayer;
 
     @Mock
+    private WiresLayer wiresLayer;
+
+    @Mock
+    private com.ait.lienzo.client.core.shape.Layer overLayer;
+
+    @Mock
     private WiresManager wiresManager;
 
     @Mock
     private SelectionManager selectionManager;
+
+    @Mock
+    private SelectionManager.SelectedItems selectedItems;
 
     @Mock
     private Object definition;
@@ -113,6 +127,9 @@ public class LienzoMultipleSelectionControlTest {
     @Mock
     private SelectionManager.SelectionShapeProvider delegateShapeProvider;
 
+    @Mock
+    private ShapeLocationsChangedEvent shapeLocationsChangedEvent;
+
     private LienzoMultipleSelectionControl<AbstractCanvasHandler> tested;
     private SelectionListener selectionListener;
     private LienzoMultipleSelectionControl.CursoredSelectionShapeProvider selectionShapeProvider;
@@ -121,6 +138,10 @@ public class LienzoMultipleSelectionControlTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+
+        when(wiresManager.getLayer()).thenReturn(wiresLayer);
+        when(wiresLayer.getLayer()).thenReturn(lienzoLayer);
+        when(lienzoLayer.getOverLayer()).thenReturn(overLayer);
         when(wiresManager.getSelectionManager()).thenReturn(selectionManager);
         doAnswer(new Answer() {
             @Override
@@ -223,6 +244,60 @@ public class LienzoMultipleSelectionControlTest {
         tested.onSelect(Collections.singletonList(ELEMENT_UUID));
         verify(selectedItems, times(1)).add(eq(shapeView));
         verify(selectionControl, never()).clearSelection();
+    }
+
+    @Test
+    public void testOnShapeLocationsChanged() {
+        //Different canvas
+        when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(mock(CanvasHandler.class));
+        tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
+
+        verify(selectedItems, never()).rebuildBoundingBox();
+        verify(selectionManager, never()).drawSelectionShape(eq(0d),
+                                                             eq(0d),
+                                                             eq(100d),
+                                                             eq(100d),
+                                                             eq(overLayer),
+                                                             eq(10.0));
+
+        //Same canvas no selectedItems
+
+        when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
+        when(shapeLocationsChangedEvent.getUuids()).thenReturn(new ArrayList<String>());
+        tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
+
+        verify(selectedItems, never()).rebuildBoundingBox();
+        verify(selectionManager, never()).drawSelectionShape(eq(0d),
+                                                             eq(0d),
+                                                             eq(100d),
+                                                             eq(100d),
+                                                             eq(overLayer),
+                                                             eq(10.0));
+
+        //Same canvas with selected items
+
+        when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
+
+        ArrayList<String> selectedUUIds = new ArrayList<String>();
+        selectedUUIds.add("TestUUID");
+
+        when(shapeLocationsChangedEvent.getUuids()).thenReturn(selectedUUIds);
+        when(tested.getSelectedItems()).thenReturn(selectedUUIds);
+
+        when(delegateShapeProvider.getShape()).thenReturn(mock(com.ait.lienzo.client.core.shape.Shape.class));
+        when(selectionManager.getSelectedItems()).thenReturn(selectedItems);
+        when(selectedItems.getBoundingBox()).thenReturn(new BoundingBox(0d, 0d, 100d, 100d));
+        when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
+
+        tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
+
+        verify(selectedItems, times(1)).rebuildBoundingBox();
+        verify(selectionManager, times(1)).drawSelectionShape(eq(0d),
+                                                              eq(0d),
+                                                              eq(100d),
+                                                              eq(100d),
+                                                              eq(overLayer),
+                                                              eq(10.0));
     }
 
     @Test
