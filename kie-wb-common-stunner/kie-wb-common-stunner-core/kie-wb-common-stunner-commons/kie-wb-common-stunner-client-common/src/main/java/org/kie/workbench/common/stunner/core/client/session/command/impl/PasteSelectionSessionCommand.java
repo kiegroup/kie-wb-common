@@ -46,6 +46,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientFullSession;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.command.AbstractClientSessionCommand;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
@@ -176,9 +177,14 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
         if (CommandUtils.isError(nodesResult)) {
             return nodesResult;
         }
-
-        // Processing connectors: after all nodes has been cloned
+        // Processing connectors: after all nodes has been cloned (this is necessary because we need the cloned nodes UUIDs to than clone the Connectors
         CommandResult<CanvasViolation> connectorsResult = processConnectors(processedNodesCountdown);
+
+        //After nodes and connectors command execution than it is necessary to update the command registry (to allow a single undo/redo)
+        if(!CommandUtils.isError(connectorsResult)) {
+            updateCommandsRegistry();
+        }
+
         return new CanvasCommandResultBuilder()
                 .setType(nodesResult.getType())
                 .addViolations((Objects.nonNull(nodesResult.getViolations()) ?
@@ -188,6 +194,16 @@ public class PasteSelectionSessionCommand extends AbstractClientSessionCommand<C
                         StreamSupport.stream(connectorsResult.getViolations().spliterator(), false).collect(Collectors.toList()) :
                         Collections.emptyList()))
                 .build();
+    }
+
+    private void updateCommandsRegistry() {
+        Command<AbstractCanvasHandler, CanvasViolation> connectorsExecutedCommand = sessionCommandManager.getRegistry().pop();
+        Command<AbstractCanvasHandler, CanvasViolation> nodesExecutedCommand = sessionCommandManager.getRegistry().pop();
+        sessionCommandManager.getRegistry().register(new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
+                                                             .addCommand(nodesExecutedCommand)
+                                                             .addCommand(connectorsExecutedCommand)
+                                                             .reverse()
+                                                             .build());
     }
 
     private CommandResult<CanvasViolation> processConnectors(Counter processedNodesCountdown) {

@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 
 import javax.enterprise.event.Event;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,6 +43,7 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.command.ClientSessionCommand;
+import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -53,11 +55,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand.DEFAULT_PADDING;
 import static org.mockito.Matchers.any;
@@ -92,6 +96,9 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+
+    @Mock
+    private CommandRegistry commandRegistry;
 
     @Mock
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
@@ -176,6 +183,7 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
         when(clone2.getUUID()).thenReturn(CLONE2_UUID);
         when(session.getClipboardControl()).thenReturn(clipboardControl);
         when(sessionCommandFactory.newCopySelectionCommand()).thenReturn(copySelectionSessionCommand);
+        when(sessionCommandManager.getRegistry()).thenReturn(commandRegistry);
 
         cloneMap = new HashMap() {{
             put(node, clone);
@@ -285,6 +293,13 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
 
         verify(canvasCommandFactory, times(1))
                 .cloneConnector(eq(graphInstance.edge1), anyString(), anyString(), anyString(), any());
+
+        //check command registry update after execution to allow a single undo/redo
+        verify(commandRegistry, times(2)).pop();
+        ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
+        verify(commandRegistry, times(1)).register(commandArgumentCaptor.capture());
+        assertTrue(commandArgumentCaptor.getValue() instanceof CompositeCommand);
+        assertEquals(((CompositeCommand)commandArgumentCaptor.getValue()).size(), 2);
     }
 
     @Override
