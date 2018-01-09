@@ -26,14 +26,15 @@ import javax.inject.Inject;
 import elemental2.dom.Element;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
-import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
@@ -41,7 +42,7 @@ import static org.kie.workbench.common.screens.library.client.settings.Promises.
 
 public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
-    private final TextBoxFormPopup textBoxFormPopup;
+    private final AddSingleValueModal addKnowledgeBaseModal;
     private final KnowledgeBaseListPresenter knowledgeBaseListPresenter;
     private final View view;
 
@@ -55,11 +56,11 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     @Inject
     public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                    final View view,
-                                   final TextBoxFormPopup textBoxFormPopup,
+                                   final AddSingleValueModal addKnowledgeBaseModal,
                                    final KnowledgeBaseListPresenter knowledgeBaseListPresenter) {
 
         super(settingsSectionChangeEvent);
-        this.textBoxFormPopup = textBoxFormPopup;
+        this.addKnowledgeBaseModal = addKnowledgeBaseModal;
         this.knowledgeBaseListPresenter = knowledgeBaseListPresenter;
         this.view = view;
     }
@@ -70,6 +71,8 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
         this.kModuleModel = model.getKModule();
 
         view.init(this);
+
+        addKnowledgeBaseModal.setup(LibraryConstants.AddKnowledgeBase, LibraryConstants.Name);
 
         knowledgeBaseListPresenter.setup(
                 view.getKnowledgeBasesTable(),
@@ -91,10 +94,10 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
         return resolve();
     }
 
-    public void openAddKnowledgeBasePopup() {
-        textBoxFormPopup.show(kBaseName -> {
+    public void openAddKnowledgeBaseModal() {
+        addKnowledgeBaseModal.show(knowledgeBaseName -> {
             final KBaseModel kBaseModel = new KBaseModel();
-            kBaseModel.setName(kBaseName);
+            kBaseModel.setName(knowledgeBaseName);
             knowledgeBaseListPresenter.add(kBaseModel);
             fireChangeEvent();
         });

@@ -34,14 +34,15 @@ import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDepl
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.Resolver;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.RuntimeStrategy;
 import org.kie.workbench.common.screens.datamodeller.service.KieDeploymentDescriptorService;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.deployments.items.TableItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 
@@ -52,13 +53,16 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
     private final View view;
 
     private final ProjectContext projectContext;
-    private final TextBoxFormPopup textBoxFormPopup;
     private final Caller<KieDeploymentDescriptorService> kieDeploymentDescriptorService;
     private final ManagedInstance<ObservablePath> observablePaths;
     private final MarshallingStrategiesListPresenter marshallingStrategyPresenters;
     private final EventListenersListPresenter eventListenerPresenters;
     private final GlobalsListPresenter globalPresenters;
     private final RequiredRolesListPresenter requiredRolePresenters;
+    private final AddSingleValueModal addMarshallingStrategyModal;
+    private final AddSingleValueModal addEventListenerModal;
+    private final AddSingleValueModal addGlobalModal;
+    private final AddSingleValueModal addRequiredRoleModal;
     private final KieEnumSelectElement<RuntimeStrategy> runtimeStrategiesSelect;
     private final KieEnumSelectElement<PersistenceMode> persistenceModesSelect;
     private final KieEnumSelectElement<AuditMode> auditModesSelect;
@@ -90,7 +94,10 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public DeploymentsPresenter(final View view,
-                                final TextBoxFormPopup textBoxFormPopup,
+                                final AddSingleValueModal addMarshallingStrategyModal,
+                                final AddSingleValueModal addEventListenerModal,
+                                final AddSingleValueModal addGlobalModal,
+                                final AddSingleValueModal addRequiredRoleModal,
                                 final KieEnumSelectElement<RuntimeStrategy> runtimeStrategiesSelect,
                                 final KieEnumSelectElement<PersistenceMode> persistenceModesSelect,
                                 final KieEnumSelectElement<AuditMode> auditModesSelect,
@@ -105,7 +112,10 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
         super(settingsSectionChangeEvent);
         this.view = view;
-        this.textBoxFormPopup = textBoxFormPopup;
+        this.addMarshallingStrategyModal = addMarshallingStrategyModal;
+        this.addEventListenerModal = addEventListenerModal;
+        this.addGlobalModal = addGlobalModal;
+        this.addRequiredRoleModal = addRequiredRoleModal;
         this.runtimeStrategiesSelect = runtimeStrategiesSelect;
         this.persistenceModesSelect = persistenceModesSelect;
         this.auditModesSelect = auditModesSelect;
@@ -135,6 +145,11 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
         return Promises.promisify(kieDeploymentDescriptorService, s -> s.load(pathToDeploymentsXml)).then(model -> {
 
             this.model = model;
+
+            addMarshallingStrategyModal.setup(LibraryConstants.AddMarshallingStrategy, LibraryConstants.Id);
+            addEventListenerModal.setup(LibraryConstants.AddEventListener, LibraryConstants.Id);
+            addGlobalModal.setup(LibraryConstants.AddGlobal, LibraryConstants.Id);
+            addRequiredRoleModal.setup(LibraryConstants.AddRequiredRole, LibraryConstants.Role);
 
             runtimeStrategiesSelect.setup(view.getRuntimeStrategiesContainer(), RuntimeStrategy.values());
             runtimeStrategiesSelect.setValue(model.getRuntimeStrategy());
@@ -184,29 +199,29 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
         });
     }
 
-    public void openNewMarshallingStrategyPopup() {
-        textBoxFormPopup.show(id -> {
+    public void openNewMarshallingStrategyModal() {
+        addMarshallingStrategyModal.show(id -> {
             marshallingStrategyPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
-    public void openNewEventListenerPopup() {
-        textBoxFormPopup.show(id -> {
+    public void openNewEventListenerModal() {
+        addEventListenerModal.show(id -> {
             eventListenerPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
-    public void openNewGlobalPopup() {
-        textBoxFormPopup.show(id -> {
+    public void openNewGlobalModal() {
+        addGlobalModal.show(id -> {
             globalPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
-    public void openNewRequiredRolePopup() {
-        textBoxFormPopup.show(id -> {
+    public void openNewRequiredRoleModal() {
+        addRequiredRoleModal.show(id -> {
             requiredRolePresenters.add(newTableItem(id));
             fireChangeEvent();
         });

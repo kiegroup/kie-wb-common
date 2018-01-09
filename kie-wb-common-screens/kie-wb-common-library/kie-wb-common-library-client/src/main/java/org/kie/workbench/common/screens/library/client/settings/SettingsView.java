@@ -92,7 +92,7 @@ public class SettingsView implements SettingsPresenter.View,
 
     @EventHandler("save")
     public void save(final ClickEvent event) {
-        presenter.showSavePopup();
+        presenter.showSaveModal();
     }
 
     @EventHandler("reset")

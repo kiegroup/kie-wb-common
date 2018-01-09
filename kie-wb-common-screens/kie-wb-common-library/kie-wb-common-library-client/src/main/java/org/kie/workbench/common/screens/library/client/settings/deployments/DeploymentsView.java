@@ -108,22 +108,22 @@ public class DeploymentsView implements DeploymentsPresenter.View {
 
     @EventHandler("add-marshalling-strategy-button")
     public void onAddMarshallingStrategyButtonClicked(final ClickEvent ignore) {
-        presenter.openNewMarshallingStrategyPopup();
+        presenter.openNewMarshallingStrategyModal();
     }
 
     @EventHandler("add-event-listener-button")
     public void onAddEventListenerButtonClicked(final ClickEvent ignore) {
-        presenter.openNewEventListenerPopup();
+        presenter.openNewEventListenerModal();
     }
 
     @EventHandler("add-global-button")
     public void onAddGlobalButtonClicked(final ClickEvent ignore) {
-        presenter.openNewGlobalPopup();
+        presenter.openNewGlobalModal();
     }
 
     @EventHandler("add-required-role-button")
     public void onAddRequiredRoleButtonClicked(final ClickEvent ignore) {
-        presenter.openNewRequiredRolePopup();
+        presenter.openNewRequiredRoleModal();
     }
 
     @Override

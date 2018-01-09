@@ -79,12 +79,12 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @EventHandler("add-included-knowledge-base-button")
     private void onAddIncludedKnowledgeBaseButtonClicked(final ClickEvent ignore) {
-        presenter.showNewIncludedKnowledgeBasePopup();
+        presenter.showNewIncludedKnowledgeBaseModal();
     }
 
     @EventHandler("add-package-button")
     private void onAddPackageButtonClicked(final ClickEvent ignore) {
-        presenter.showNewPackagePopup();
+        presenter.showNewPackageModal();
     }
 
     @EventHandler("is-default")

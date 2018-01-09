@@ -298,4 +298,40 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String PersistenceXmlConcurrentUpdate = "PersistenceXmlConcurrentUpdate";
+
+    @TranslationKey(defaultValue = "")
+    public static final String Class = "Class";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddPersistableDataObject = "AddPersistableDataObject";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddMarshallingStrategy = "AddMarshallingStrategy";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddEventListener = "AddEventListener";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddGlobal = "AddGlobal";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddRequiredRole = "AddRequiredRole";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddKnowledgeBase = "AddKnowledgeBase";
+
+    @TranslationKey(defaultValue = "")
+    public static final String Id = "Id";
+
+    @TranslationKey(defaultValue = "")
+    public static final String Role = "Role";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddIncludedKnowledgeBase = "AddIncludedKnowledgeBase";
+
+    @TranslationKey(defaultValue = "")
+    public static final String PackageName = "PackageName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddPackage = "AddPackage";
 }

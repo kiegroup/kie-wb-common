@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import elemental2.dom.Element;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
-import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedkbases.IncludedKnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg.PackageItemPresenter;
@@ -30,37 +30,37 @@ import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSele
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSingleValueModal;
 import org.kie.workbench.common.services.shared.kmodule.AssertBehaviorOption;
 import org.kie.workbench.common.services.shared.kmodule.EventProcessingOption;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
-import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 
 @Dependent
 public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
 
-    private final TranslationService translationService;
     private final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect;
     private final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect;
-    private final TextBoxFormPopup textBoxFormPopup;
+    private final AddSingleValueModal addIncludedKnowledgeBaseModal;
+    private final AddSingleValueModal addPackageModal;
     private final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter;
     private final PackageListPresenter packageListPresenter;
-    private KBaseModel kBaseModel;
 
+    private KBaseModel kBaseModel;
     private KnowledgeBasesPresenter parentPresenter;
 
     @Inject
     public KnowledgeBaseItemPresenter(final View view,
-                                      final TranslationService translationService,
                                       final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect,
                                       final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect,
-                                      final TextBoxFormPopup textBoxFormPopup,
+                                      final AddSingleValueModal addIncludedKnowledgeBaseModal,
+                                      final AddSingleValueModal addPackageModal,
                                       final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter,
                                       final PackageListPresenter packageListPresenter) {
         super(view);
-        this.translationService = translationService;
         this.equalsBehaviorSelect = equalsBehaviorSelect;
         this.eventProcessingModeSelect = eventProcessingModeSelect;
-        this.textBoxFormPopup = textBoxFormPopup;
+        this.addIncludedKnowledgeBaseModal = addIncludedKnowledgeBaseModal;
+        this.addPackageModal = addPackageModal;
         this.includedKnowledgeBasesListPresenter = includedKnowledgeBasesListPresenter;
         this.packageListPresenter = packageListPresenter;
     }
@@ -75,6 +75,9 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
         view.setName(kBaseModel.getName());
         view.setDefault(kBaseModel.isDefault());
+
+        addIncludedKnowledgeBaseModal.setup(LibraryConstants.AddIncludedKnowledgeBase, LibraryConstants.Name);
+        addPackageModal.setup(LibraryConstants.AddPackage, LibraryConstants.PackageName);
 
         equalsBehaviorSelect.setup(view.getEqualsBehaviorSelectContainer(), AssertBehaviorOption.values());
         equalsBehaviorSelect.setValue(kBaseModel.getEqualsBehavior());
@@ -93,7 +96,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         includedKnowledgeBasesListPresenter.setup(
                 view.getIncludedKnowledgeBasesListElement(),
                 kBaseModel.getIncludes(),
-                (kBaseName, presenter) -> presenter.setup(kBaseName, this));
+                (knowledgeBaseName, presenter) -> presenter.setup(knowledgeBaseName, this));
 
         packageListPresenter.setup(
                 view.getPackagesListElement(),
@@ -118,15 +121,15 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         return kBaseModel;
     }
 
-    public void showNewIncludedKnowledgeBasePopup() {
-        textBoxFormPopup.show(kBaseName -> {
+    public void showNewIncludedKnowledgeBaseModal() {
+        addIncludedKnowledgeBaseModal.show(kBaseName -> {
             includedKnowledgeBasesListPresenter.add(kBaseName);
             parentPresenter.fireChangeEvent();
         });
     }
 
-    public void showNewPackagePopup() {
-        textBoxFormPopup.show(packageName -> {
+    public void showNewPackageModal() {
+        addPackageModal.show(packageName -> {
             packageListPresenter.add(packageName);
             parentPresenter.fireChangeEvent();
         });

@@ -19,45 +19,49 @@ package org.kie.workbench.common.screens.library.client.settings.persistence.pro
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
-import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
-import org.uberfire.client.mvp.UberElemental;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2ModalPresenter;
 
 @Dependent
-public class NewPropertyPopupPresenter {
+public class NewPropertyModalPresenter extends Elemental2ModalPresenter<NewPropertyModalPresenter.View> {
 
-    public interface View extends UberElemental<NewPropertyPopupPresenter>,
-                                  IsElement {
+    public interface View extends Elemental2ModalPresenter.View<NewPropertyModalPresenter> {
+
+        void focus();
 
         String getName();
 
         String getValue();
-    }
 
-    private final View view;
+        void clearForm();
+    }
 
     private PersistencePresenter presenter;
 
     @Inject
-    public NewPropertyPopupPresenter(final View view) {
-        this.view = view;
+    public NewPropertyModalPresenter(final View view) {
+        super(view);
     }
 
     public void setup(final PersistencePresenter presenter) {
+        super.setup();
         this.presenter = presenter;
     }
 
+    @Override
     public void show() {
-        DomGlobal.console.info("Opening new Property popup");
+        getView().clearForm();
+        super.show();
+        getView().focus();
     }
 
     public void add() {
-        presenter.add(new Property(view.getName(), view.getValue()));
+        presenter.add(new Property(getView().getName(), getView().getValue()));
+        hide();
     }
 
     public void cancel() {
-
+        hide();
     }
 }

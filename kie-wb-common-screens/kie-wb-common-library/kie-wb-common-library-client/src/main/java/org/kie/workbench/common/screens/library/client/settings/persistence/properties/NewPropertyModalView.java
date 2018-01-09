@@ -20,13 +20,27 @@ import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class NewPropertyPopupView implements NewPropertyPopupPresenter.View {
+public class NewPropertyModalView implements NewPropertyModalPresenter.View {
+
+    @Inject
+    @DataField("header")
+    private HTMLDivElement header;
+
+    @Inject
+    @DataField("body")
+    private HTMLDivElement body;
+
+    @Inject
+    @DataField("footer")
+    private HTMLDivElement footer;
 
     @Inject
     @DataField("name")
@@ -44,10 +58,10 @@ public class NewPropertyPopupView implements NewPropertyPopupPresenter.View {
     @DataField("cancel-button")
     private HTMLButtonElement cancelButton;
 
-    private NewPropertyPopupPresenter presenter;
+    private NewPropertyModalPresenter presenter;
 
     @Override
-    public void init(final NewPropertyPopupPresenter presenter) {
+    public void init(final NewPropertyModalPresenter presenter) {
         this.presenter = presenter;
     }
 
@@ -62,6 +76,17 @@ public class NewPropertyPopupView implements NewPropertyPopupPresenter.View {
     }
 
     @Override
+    public void clearForm() {
+        name.value = "";
+        value.value = "";
+    }
+
+    @Override
+    public void focus() {
+        name.focus();
+    }
+
+    @Override
     public String getName() {
         return name.value;
     }
@@ -69,5 +94,20 @@ public class NewPropertyPopupView implements NewPropertyPopupPresenter.View {
     @Override
     public String getValue() {
         return value.value;
+    }
+
+    @Override
+    public String getHeader() {
+        return header.textContent;
+    }
+
+    @Override
+    public HTMLElement getBody() {
+        return body;
+    }
+
+    @Override
+    public HTMLElement getFooter() {
+        return footer;
     }
 }

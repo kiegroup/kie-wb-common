@@ -193,7 +193,7 @@ public class SettingsPresenter {
         })).catch_(this::defaultErrorResolution);
     }
 
-    public void showSavePopup() {
+    public void showSaveModal() {
         Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::validate).then(i -> {
             savePopUpPresenter.show(this::save);
             return resolve();

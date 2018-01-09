@@ -14,20 +14,25 @@
   ~ limitations under the License.
   -->
 
-<div class="">
-    <form role="form">
+<div>
+    <div data-field="header" data-i18n-key="AddProperty"></div>
 
-        <div class="form-group">
-            <label>Name</label>
-            <input type="text" class="form-control" data-field="name">
-        </div>
+    <div data-field="body">
+        <form role="form">
+            <div class="form-group">
+                <label data-i18n-key="Name"></label>
+                <input type="text" class="form-control" data-field="name">
+            </div>
 
-        <div class="form-group">
-            <label>Value</label>
-            <input type="text" class="form-control" data-field="value">
-        </div>
+            <div class="form-group">
+                <label data-i18n-key="Value"></label>
+                <input type="text" class="form-control" data-field="value">
+            </div>
+        </form>
+    </div>
 
+    <div data-field="footer">
         <button data-field="add-button" class="btn btn-default btn-primary" data-i18n-key="Add"></button>
         <button data-field="cancel-button" class="btn btn-default" data-i18n-key="Cancel"></button>
-    </form>
+    </div>
 </div>
