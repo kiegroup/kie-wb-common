@@ -42,7 +42,7 @@ public class KieSelectElementView implements KieSelectElement.View,
     private KieSelectElement presenter;
 
     @Override
-    public void init(KieSelectElement presenter) {
+    public void init(final KieSelectElement presenter) {
         this.presenter = presenter;
     }
 

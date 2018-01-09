@@ -16,16 +16,14 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments.items;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Element;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.BlergsModel;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.Resolver;
 import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
+import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
@@ -33,14 +31,14 @@ import org.kie.workbench.common.screens.library.client.settings.util.UberElement
 public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemView> {
 
     private BlergsModel model;
-    private KieSelectElement resolvers;
+    private KieEnumSelectElement<Resolver> resolversSelect;
     private DeploymentsPresenter parentPresenter;
 
     @Inject
     public TableItemPresenter(final TableItemView view,
-                              final KieSelectElement resolvers) {
+                              final KieEnumSelectElement<Resolver> resolversSelect) {
         super(view);
-        this.resolvers = resolvers;
+        this.resolversSelect = resolversSelect;
     }
 
     @Override
@@ -49,23 +47,19 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
         this.model = model;
         this.parentPresenter = parentPresenter;
 
-        resolvers.setup(view.getResolversContainer(), getResolversSelectOptions());
-        resolvers.setValue(model.getResolver());
-        resolvers.onChange(resolver -> {
+        resolversSelect.setup(view.getResolversContainer(), Resolver.values());
+        resolversSelect.setValue(model.getResolver());
+        resolversSelect.onChange(resolver -> {
             model.setResolver(resolver);
             parentPresenter.fireChangeEvent();
         });
 
         view.init(this);
 
-        view.setName(model.getName());
+        view.setName(model.getId());
         view.setParametersCount(model.getParameters().size());
 
         return this;
-    }
-
-    private List<KieSelectElement.Option> getResolversSelectOptions() {
-        return Arrays.asList(new KieSelectElement.Option("MVEL", "mvel"));
     }
 
     @Override

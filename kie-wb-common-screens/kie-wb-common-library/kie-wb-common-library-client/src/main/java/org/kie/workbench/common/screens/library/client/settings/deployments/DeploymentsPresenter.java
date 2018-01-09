@@ -16,8 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -29,16 +28,20 @@ import org.guvnor.common.services.project.context.ProjectContext;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.AuditMode;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.BlergsModel;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.PersistenceMode;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.Resolver;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.RuntimeStrategy;
 import org.kie.workbench.common.screens.datamodeller.service.KieDeploymentDescriptorService;
 import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.kie.workbench.common.screens.library.client.settings.deployments.items.NewTableItemPopupPresenter;
 import org.kie.workbench.common.screens.library.client.settings.deployments.items.TableItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
+import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 
@@ -49,20 +52,20 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
     private final View view;
 
     private final ProjectContext projectContext;
+    private final TextBoxFormPopup textBoxFormPopup;
     private final Caller<KieDeploymentDescriptorService> kieDeploymentDescriptorService;
     private final ManagedInstance<ObservablePath> observablePaths;
     private final MarshallingStrategiesListPresenter marshallingStrategyPresenters;
     private final EventListenersListPresenter eventListenerPresenters;
     private final GlobalsListPresenter globalPresenters;
     private final RequiredRolesListPresenter requiredRolePresenters;
-    private final KieSelectElement runtimeStrategiesSelect;
-    private final KieSelectElement persistenceModesSelect;
-    private final KieSelectElement auditModesSelect;
+    private final KieEnumSelectElement<RuntimeStrategy> runtimeStrategiesSelect;
+    private final KieEnumSelectElement<PersistenceMode> persistenceModesSelect;
+    private final KieEnumSelectElement<AuditMode> auditModesSelect;
 
     private ObservablePath pathToDeploymentsXml;
     private ObservablePath.OnConcurrentUpdateEvent concurrentDeploymentsXmlUpdateInfo;
     private KieDeploymentDescriptorContent model;
-    private NewTableItemPopupPresenter newTableItemPopup;
 
     public interface View extends SettingsPresenter.View.Section<DeploymentsPresenter> {
 
@@ -87,10 +90,10 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public DeploymentsPresenter(final View view,
-                                final KieSelectElement runtimeStrategiesSelect,
-                                final KieSelectElement persistenceModesSelect,
-                                final KieSelectElement auditModesSelect,
-                                final NewTableItemPopupPresenter newTableItemPopup,
+                                final TextBoxFormPopup textBoxFormPopup,
+                                final KieEnumSelectElement<RuntimeStrategy> runtimeStrategiesSelect,
+                                final KieEnumSelectElement<PersistenceMode> persistenceModesSelect,
+                                final KieEnumSelectElement<AuditMode> auditModesSelect,
                                 final ProjectContext projectContext,
                                 final Caller<KieDeploymentDescriptorService> kieDeploymentDescriptorService,
                                 final ManagedInstance<ObservablePath> observablePaths,
@@ -102,10 +105,10 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
         super(settingsSectionChangeEvent);
         this.view = view;
+        this.textBoxFormPopup = textBoxFormPopup;
         this.runtimeStrategiesSelect = runtimeStrategiesSelect;
         this.persistenceModesSelect = persistenceModesSelect;
         this.auditModesSelect = auditModesSelect;
-        this.newTableItemPopup = newTableItemPopup;
         this.projectContext = projectContext;
         this.kieDeploymentDescriptorService = kieDeploymentDescriptorService;
         this.observablePaths = observablePaths;
@@ -133,21 +136,21 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
             this.model = model;
 
-            runtimeStrategiesSelect.setup(view.getRuntimeStrategiesContainer(), getOptions());
+            runtimeStrategiesSelect.setup(view.getRuntimeStrategiesContainer(), RuntimeStrategy.values());
             runtimeStrategiesSelect.setValue(model.getRuntimeStrategy());
             runtimeStrategiesSelect.onChange(runtimeStrategy -> {
                 model.setRuntimeStrategy(runtimeStrategy);
                 fireChangeEvent();
             });
 
-            persistenceModesSelect.setup(view.getPersistenceModesContainer(), getOptions());
+            persistenceModesSelect.setup(view.getPersistenceModesContainer(), PersistenceMode.values());
             persistenceModesSelect.setValue(model.getPersistenceMode());
             persistenceModesSelect.onChange(persistenceMode -> {
                 model.setPersistenceMode(persistenceMode);
                 fireChangeEvent();
             });
 
-            auditModesSelect.setup(view.getAuditModesContainer(), getOptions());
+            auditModesSelect.setup(view.getAuditModesContainer(), AuditMode.values());
             auditModesSelect.setValue(model.getAuditMode());
             auditModesSelect.onChange(auditMode -> {
                 model.setAuditMode(auditMode);
@@ -181,37 +184,40 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
         });
     }
 
-    private List<KieSelectElement.Option> getOptions() {
-        return Arrays.asList(new KieSelectElement.Option("Test 1", "test1"),
-                             new KieSelectElement.Option("Test 2", "test2"));
-    }
-
     public void openNewMarshallingStrategyPopup() {
-        newTableItemPopup.show(m -> {
-            marshallingStrategyPresenters.add(m);
+        textBoxFormPopup.show(id -> {
+            marshallingStrategyPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
     public void openNewEventListenerPopup() {
-        newTableItemPopup.show(m -> {
-            eventListenerPresenters.add(m);
+        textBoxFormPopup.show(id -> {
+            eventListenerPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
     public void openNewGlobalPopup() {
-        newTableItemPopup.show(m -> {
-            globalPresenters.add(m);
+        textBoxFormPopup.show(id -> {
+            globalPresenters.add(newTableItem(id));
             fireChangeEvent();
         });
     }
 
     public void openNewRequiredRolePopup() {
-        newTableItemPopup.show(m -> {
-            requiredRolePresenters.add(m);
+        textBoxFormPopup.show(id -> {
+            requiredRolePresenters.add(newTableItem(id));
             fireChangeEvent();
         });
+    }
+
+    private BlergsModel newTableItem(final String id) {
+        final BlergsModel model = new BlergsModel();
+        model.setId(id);
+        model.setResolver(Resolver.MVEL);
+        model.setParameters(new HashMap<>());
+        return model;
     }
 
     public void setPersistenceUnitName(final String persistenceUnitName) {

@@ -25,18 +25,18 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class KieDeploymentDescriptorContent {
 
-    private String runtimeStrategy;
+    private RuntimeStrategy runtimeStrategy;
     private String persistenceUnitName;
-    private String persistenceMode;
+    private PersistenceMode persistenceMode;
     private String auditPersistenceUnitName;
-    private String auditMode;
+    private AuditMode auditMode;
 
     private List<BlergsModel> marshallingStrategies;
     private List<BlergsModel> eventListeners;
     private List<BlergsModel> globals;
     private List<BlergsModel> requiredRoles;
 
-    public String getRuntimeStrategy() {
+    public RuntimeStrategy getRuntimeStrategy() {
         return runtimeStrategy;
     }
 
@@ -44,7 +44,7 @@ public class KieDeploymentDescriptorContent {
         return persistenceUnitName;
     }
 
-    public String getPersistenceMode() {
+    public PersistenceMode getPersistenceMode() {
         return persistenceMode;
     }
 
@@ -52,7 +52,7 @@ public class KieDeploymentDescriptorContent {
         return auditPersistenceUnitName;
     }
 
-    public String getAuditMode() {
+    public AuditMode getAuditMode() {
         return auditMode;
     }
 
@@ -72,7 +72,7 @@ public class KieDeploymentDescriptorContent {
         return requiredRoles;
     }
 
-    public void setRuntimeStrategy(final String runtimeStrategy) {
+    public void setRuntimeStrategy(final RuntimeStrategy runtimeStrategy) {
         this.runtimeStrategy = runtimeStrategy;
     }
 
@@ -80,7 +80,7 @@ public class KieDeploymentDescriptorContent {
         this.persistenceUnitName = persistenceUnitName;
     }
 
-    public void setPersistenceMode(final String persistenceMode) {
+    public void setPersistenceMode(final PersistenceMode persistenceMode) {
         this.persistenceMode = persistenceMode;
     }
 
@@ -88,7 +88,7 @@ public class KieDeploymentDescriptorContent {
         this.auditPersistenceUnitName = auditPersistenceUnitName;
     }
 
-    public void setAuditMode(final String auditMode) {
+    public void setAuditMode(final AuditMode auditMode) {
         this.auditMode = auditMode;
     }
 
@@ -111,23 +111,23 @@ public class KieDeploymentDescriptorContent {
     @Portable
     public static class BlergsModel {
 
-        private String name;
-        private String resolver;
+        private String id;
+        private Resolver resolver;
         private Map<String, String> parameters;
 
-        public String getName() {
-            return name;
+        public String getId() {
+            return id;
         }
 
-        public void setName(final String name) {
-            this.name = name;
+        public void setId(final String id) {
+            this.id = id;
         }
 
-        public String getResolver() {
+        public Resolver getResolver() {
             return resolver;
         }
 
-        public void setResolver(final String resolver) {
+        public void setResolver(final Resolver resolver) {
             this.resolver = resolver;
         }
 
@@ -172,5 +172,28 @@ public class KieDeploymentDescriptorContent {
                             eventListeners,
                             globals,
                             requiredRoles);
+    }
+
+    public enum RuntimeStrategy {
+        SINGLETON,
+        PER_REQUEST,
+        PER_PROCESS_INSTANCE
+    }
+
+    public enum PersistenceMode {
+        JPA,
+        NONE;
+    }
+
+    public enum AuditMode {
+        JPA,
+        JMS,
+        NONE;
+    }
+
+    public enum Resolver {
+        MVEL,
+        REFLECTION,
+        SPRING;
     }
 }

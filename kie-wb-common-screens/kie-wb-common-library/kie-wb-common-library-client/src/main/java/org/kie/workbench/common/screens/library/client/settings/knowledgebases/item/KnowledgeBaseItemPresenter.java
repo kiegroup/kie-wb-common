@@ -16,19 +16,17 @@
 
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item;
 
-import java.util.Arrays;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Element;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedkbases.IncludedKnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg.PackageItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
-import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement.Option;
+import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
@@ -37,13 +35,12 @@ import org.kie.workbench.common.services.shared.kmodule.EventProcessingOption;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.widgets.client.popups.text.TextBoxFormPopup;
 
-import static java.util.stream.Collectors.toList;
-
 @Dependent
 public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
 
-    private final KieSelectElement equalsBehaviorSelect;
-    private final KieSelectElement eventProcessingModeSelect;
+    private final TranslationService translationService;
+    private final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect;
+    private final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect;
     private final TextBoxFormPopup textBoxFormPopup;
     private final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter;
     private final PackageListPresenter packageListPresenter;
@@ -53,12 +50,14 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
     @Inject
     public KnowledgeBaseItemPresenter(final View view,
-                                      final KieSelectElement equalsBehaviorSelect,
-                                      final KieSelectElement eventProcessingModeSelect,
+                                      final TranslationService translationService,
+                                      final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect,
+                                      final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect,
                                       final TextBoxFormPopup textBoxFormPopup,
                                       final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter,
                                       final PackageListPresenter packageListPresenter) {
         super(view);
+        this.translationService = translationService;
         this.equalsBehaviorSelect = equalsBehaviorSelect;
         this.eventProcessingModeSelect = eventProcessingModeSelect;
         this.textBoxFormPopup = textBoxFormPopup;
@@ -77,27 +76,17 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         view.setName(kBaseModel.getName());
         view.setDefault(kBaseModel.isDefault());
 
-        equalsBehaviorSelect.setup(
-                view.getEqualsBehaviorSelectContainer(),
-                Arrays.stream(AssertBehaviorOption.values())
-                        .map(s -> new Option(s.getMode(), s.name()))
-                        .collect(toList()));
-
-        equalsBehaviorSelect.setValue(kBaseModel.getEqualsBehavior().name());
+        equalsBehaviorSelect.setup(view.getEqualsBehaviorSelectContainer(), AssertBehaviorOption.values());
+        equalsBehaviorSelect.setValue(kBaseModel.getEqualsBehavior());
         equalsBehaviorSelect.onChange(equalsBehavior -> {
-            kBaseModel.setEqualsBehavior(AssertBehaviorOption.valueOf(equalsBehavior));
+            kBaseModel.setEqualsBehavior(equalsBehavior);
             fireChangeEvent();
         });
 
-        eventProcessingModeSelect.setup(
-                view.getEventProcessingModelSelectContainer(),
-                Arrays.stream(EventProcessingOption.values())
-                        .map(s -> new Option(s.getMode(), s.name()))
-                        .collect(toList()));
-
-        eventProcessingModeSelect.setValue(kBaseModel.getEventProcessingMode().name());
+        eventProcessingModeSelect.setup(view.getEventProcessingModelSelectContainer(), EventProcessingOption.values());
+        eventProcessingModeSelect.setValue(kBaseModel.getEventProcessingMode());
         eventProcessingModeSelect.onChange(eventProcessingMode -> {
-            kBaseModel.setEventProcessingMode(EventProcessingOption.valueOf(eventProcessingMode));
+            kBaseModel.setEventProcessingMode(eventProcessingMode);
             fireChangeEvent();
         });
 

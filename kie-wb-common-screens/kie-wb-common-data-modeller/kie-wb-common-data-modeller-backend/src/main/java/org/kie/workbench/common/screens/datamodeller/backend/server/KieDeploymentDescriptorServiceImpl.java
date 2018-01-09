@@ -30,11 +30,15 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.RuntimeStrategy;
 import org.kie.workbench.common.screens.datamodeller.service.KieDeploymentDescriptorService;
 import org.kie.workbench.common.services.backend.service.KieService;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
+
+import static org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.AuditMode;
+import static org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.PersistenceMode;
 
 @Service
 @ApplicationScoped
@@ -63,11 +67,11 @@ public class KieDeploymentDescriptorServiceImpl
             kieDeploymentDescriptor.setGlobals(new ArrayList<>());
             kieDeploymentDescriptor.setRequiredRoles(new ArrayList<>());
 
-            kieDeploymentDescriptor.setRuntimeStrategy("Runtime strategy test");
-            kieDeploymentDescriptor.setPersistenceUnitName("Persistence unit name test");
-            kieDeploymentDescriptor.setPersistenceMode("Persistence mode test");
-            kieDeploymentDescriptor.setAuditPersistenceUnitName("Audit persistence unit name test");
-            kieDeploymentDescriptor.setAuditMode("Audit mode test");
+            kieDeploymentDescriptor.setRuntimeStrategy(RuntimeStrategy.SINGLETON);
+            kieDeploymentDescriptor.setPersistenceUnitName("org.jbpm.domain");
+            kieDeploymentDescriptor.setPersistenceMode(PersistenceMode.JPA);
+            kieDeploymentDescriptor.setAuditPersistenceUnitName("org.jbpm.domain");
+            kieDeploymentDescriptor.setAuditMode(AuditMode.JPA);
 
             return kieDeploymentDescriptor;
         } else {
