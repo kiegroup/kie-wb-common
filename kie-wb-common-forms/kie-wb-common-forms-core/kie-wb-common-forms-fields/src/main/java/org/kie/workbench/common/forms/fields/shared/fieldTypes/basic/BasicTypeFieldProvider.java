@@ -72,14 +72,14 @@ public abstract class BasicTypeFieldProvider<FIELD extends FieldDefinition> impl
         Assert.notNull("Field cannot be null",
                        field);
 
-        if (getFieldType().equals(field.getFieldType().getClass())) {
+        if (getFieldType().equals(field.getFieldType())) {
             return true;
         }
 
         return isSupported(field.getFieldTypeInfo());
     }
 
-    protected boolean isSupported(TypeInfo typeInfo) {
+    public boolean isSupported(TypeInfo typeInfo) {
         for (String type : getSupportedTypes()) {
             if (type.equals(typeInfo.getClassName())) {
                 return true;

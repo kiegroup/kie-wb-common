@@ -82,6 +82,12 @@ public class FieldManagerTest {
             MyTestEnum.class,
     };
 
+    protected final Class[] basicMultipleTypesSupported = new Class[]{
+            String.class,
+            Integer.class,
+            int.class,
+    };
+
     @Before
     public void initTest() {
         fieldManager = new TestFieldManager();
@@ -112,6 +118,15 @@ public class FieldManagerTest {
             checkFieldExists(typeInfo);
         }
 
+        for (Class clazz : basicMultipleTypesSupported) {
+
+            TypeInfo typeInfo = new TypeInfoImpl(TypeKind.BASE,
+                                                 clazz.getName(),
+                                                 true);
+
+            checkFieldExists(typeInfo);
+        }
+
         // check nested form
         checkFieldExists(new TypeInfoImpl(TypeKind.OBJECT,
                                           Object.class.getName(),
@@ -121,6 +136,8 @@ public class FieldManagerTest {
         checkFieldExists(new TypeInfoImpl(TypeKind.OBJECT,
                                           Object.class.getName(),
                                           true));
+
+
     }
 
     protected void checkFieldExists(TypeInfo typeInfo) {
@@ -172,6 +189,21 @@ public class FieldManagerTest {
                 } catch (ClassNotFoundException e) {
                     // swallow error caused by looking up simple types
                 }
+            }
+        }
+    }
+
+    @Test
+    public void testGettingAllMultipleProvidersDefinitions() {
+        for (BasicTypeFieldProvider provider : fieldManager.getAllBasicMultipleTypeProviders()) {
+            for (String className : provider.getSupportedTypes()) {
+                TypeInfo typeInfo = new TypeInfoImpl(TypeKind.BASE,
+                                                     className,
+                                                     true);
+
+                FieldDefinition fieldDefinition = fieldManager.getFieldFromProvider(provider.getFieldTypeName(),
+                                                                                    typeInfo);
+                Assertions.assertThat(fieldDefinition).isNotNull();
             }
         }
     }

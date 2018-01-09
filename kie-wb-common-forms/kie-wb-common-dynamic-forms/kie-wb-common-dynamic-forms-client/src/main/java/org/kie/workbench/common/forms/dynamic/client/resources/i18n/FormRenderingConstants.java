@@ -43,4 +43,31 @@ public interface FormRenderingConstants {
 
     @TranslationKey(defaultValue = "")
     String ListBoxFieldRendererEmptyOptionText = "ListBoxFieldRenderer.emptyOptionText";
+
+    @TranslationKey(defaultValue = "")
+    String EditableColumnGeneratorValueHeader = "EditableColumnGenerator.valueHeader";
+
+    @TranslationKey(defaultValue = "")
+    String LOVCreationComponentViewImplNoItems = "LOVCreationComponentViewImpl.noItems";
+
+    @TranslationKey(defaultValue = "")
+    String LOVCreationComponentViewImplAddButton = "LOVCreationComponentViewImpl.addButton";
+
+    @TranslationKey(defaultValue = "")
+    String LOVCreationComponentViewImplRemoveButton = "LOVCreationComponentViewImpl.removeButton";
+
+    @TranslationKey(defaultValue = "")
+    String LOVCreationComponentViewImplMoveUp = "LOVCreationComponentViewImpl.moveUp";
+
+    @TranslationKey(defaultValue = "")
+    String LOVCreationComponentViewImplMoveDown = "LOVCreationComponentViewImpl.moveDown";
+
+    @TranslationKey(defaultValue = "")
+    String CharacterEditableColumnGeneratorValidationError = "CharacterEditableColumnGenerator.validationError";
+
+    @TranslationKey(defaultValue = "")
+    String IntegerEditableColumnGeneratorInvalidNumber = "IntegerEditableColumnGenerator.invalidNumber";
+
+    @TranslationKey(defaultValue = "")
+    String DecimalEditableColumnGeneratorInvalidNumber = "DecimalEditableColumnGenerator.invalidNumber";
 }
