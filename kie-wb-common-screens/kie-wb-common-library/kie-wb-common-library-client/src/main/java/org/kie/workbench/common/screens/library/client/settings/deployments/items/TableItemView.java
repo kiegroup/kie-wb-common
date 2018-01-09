@@ -35,8 +35,8 @@ public class TableItemView implements TableItemPresenter.View,
 
     @Inject
     @Named("span")
-    @DataField("name")
-    private HTMLElement name;
+    @DataField("id")
+    private HTMLElement id;
 
     @Inject
     @DataField("resolvers")
@@ -63,10 +63,12 @@ public class TableItemView implements TableItemPresenter.View,
         presenter.remove();
     }
 
-    public void setName(final String name) {
-        this.name.textContent = name;
+    @Override
+    public void setId(final String id) {
+        this.id.textContent = id;
     }
 
+    @Override
     public void setParametersCount(final int parametersCount) {
         this.parametersCount.textContent = Integer.toString(parametersCount);
     }

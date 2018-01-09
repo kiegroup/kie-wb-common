@@ -28,14 +28,14 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListItemPre
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
 @Dependent
-public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemView> {
+public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemPresenter.View> {
 
     private BlergsModel model;
     private KieEnumSelectElement<Resolver> resolversSelect;
     private DeploymentsPresenter parentPresenter;
 
     @Inject
-    public TableItemPresenter(final TableItemView view,
+    public TableItemPresenter(final View view,
                               final KieEnumSelectElement<Resolver> resolversSelect) {
         super(view);
         this.resolversSelect = resolversSelect;
@@ -56,7 +56,7 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
 
         view.init(this);
 
-        view.setName(model.getId());
+        view.setId(model.getId());
         view.setParametersCount(model.getParameters().size());
 
         return this;
@@ -76,5 +76,9 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
     public interface View extends UberElementalListItem<TableItemPresenter> {
 
         Element getResolversContainer();
+
+        void setId(final String id);
+
+        void setParametersCount(final int size);
     }
 }
