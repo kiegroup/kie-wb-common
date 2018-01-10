@@ -23,32 +23,26 @@ import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSingleValueModal;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
 import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
 
 @Dependent
 public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsModal.View> {
 
-    private final AddSingleValueModal addKnowledgeSessionModal;
     private final KnowledgeBasesListPresenter knowledgeBasesListPresenter;
 
     private KnowledgeBaseItemPresenter parentPresenter;
 
     @Inject
     public KnowledgeSessionsModal(final View view,
-                                  final AddSingleValueModal addKnowledgeSessionModal,
                                   final KnowledgeBasesListPresenter knowledgeBasesListPresenter) {
         super(view);
-        this.addKnowledgeSessionModal = addKnowledgeSessionModal;
         this.knowledgeBasesListPresenter = knowledgeBasesListPresenter;
     }
 
     public void setup(final KnowledgeBaseItemPresenter parentPresenter) {
 
         this.parentPresenter = parentPresenter;
-
-        addKnowledgeSessionModal.setup();
 
         knowledgeBasesListPresenter.setup(
                 getView().getKnowledgeSessionsTable(),
@@ -61,12 +55,10 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
     }
 
     public void add() {
-        addKnowledgeSessionModal.show(name -> {
-            final KSessionModel kSessionModel = new KSessionModel();
-            kSessionModel.setName(name);
-            knowledgeBasesListPresenter.add(kSessionModel);
-            signalKnowledgeBaseAddedOrRemoved();
-        });
+        final KSessionModel kSessionModel = new KSessionModel();
+        kSessionModel.setName("");
+        knowledgeBasesListPresenter.add(kSessionModel);
+        signalKnowledgeBaseAddedOrRemoved();
     }
 
     public void signalKnowledgeBaseAddedOrRemoved() {

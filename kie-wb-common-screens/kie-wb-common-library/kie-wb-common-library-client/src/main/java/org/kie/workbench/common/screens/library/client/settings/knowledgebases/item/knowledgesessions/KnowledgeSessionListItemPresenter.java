@@ -74,6 +74,16 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
         return kSessionModel;
     }
 
+    public void setName(final String name) {
+        kSessionModel.setName(name);
+        parentPresenter.fireChangeEvent();
+    }
+
+    public void setType(final String type) {
+        kSessionModel.setType(type);
+        parentPresenter.fireChangeEvent();
+    }
+
     public interface View extends UberElementalListItem<KnowledgeSessionListItemPresenter>,
                                   IsElement {
 

@@ -21,26 +21,30 @@
             <input type="radio" name="kieKnowledgeSessionDefault" data-field="is-default">
         </td>
         <td class="kie-tablelist__cell">
-            <span data-field="name"></span>
+            <input type="text" data-field="name">
         </td>
         <td class="kie-tablelist__cell">
-            <span data-field="type"></span>
+            <input type="text" data-field="type">
         </td>
         <td class="kie-tablelist__cell">
             <div data-field="clock-select-container"></div>
         </td>
         <td class="kie-tablelist__cell">
             <a data-field="listeners-link">
-                <span>Listeners (</span>
-                <span data-field="listeners-count"></span>
-                <span>)</span>
+                <div class="list-view-pf-expand">
+                    <span class="fa fa-angle-right"></span>
+                    <strong data-field="listeners-count"></strong>
+                    <span>Listeners</span>
+                </div>
             </a>
         </td>
         <td class="kie-tablelist__cell">
             <a data-field="work-item-handlers-link">
-                <span>Work Item Handlers (</span>
-                <span data-field="work-item-handlers-count"></span>
-                <span>)</span>
+                <div class="list-view-pf-expand">
+                    <span class="fa fa-angle-right"></span>
+                    <strong data-field="work-item-handlers-count"></strong>
+                    <span>Work Item Handlers</span>
+                </div>
             </a>
         </td>
         <td class="kie-tablelist__cell kie-tablelist__cell--actions">

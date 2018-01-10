@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.settings.knowledgebases.
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
@@ -37,14 +38,12 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     private HTMLInputElement isDefault;
 
     @Inject
-    @Named("span")
     @DataField("name")
-    private HTMLElement name;
+    private HTMLInputElement name;
 
     @Inject
-    @Named("span")
     @DataField("type")
-    private HTMLElement type;
+    private HTMLInputElement type;
 
     @Inject
     @DataField("clock-select-container")
@@ -55,7 +54,7 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     private HTMLAnchorElement listenersLink;
 
     @Inject
-    @Named("span")
+    @Named("strong")
     @DataField("listeners-count")
     private HTMLElement listenersCount;
 
@@ -64,7 +63,7 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     private HTMLAnchorElement workItemHandlersLink;
 
     @Inject
-    @Named("span")
+    @Named("strong")
     @DataField("work-item-handlers-count")
     private HTMLElement workItemHandlersCount;
 
@@ -79,6 +78,16 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
         this.presenter = presenter;
     }
 
+    @EventHandler("name")
+    public void onNameChanged(final ChangeEvent ignore) {
+        this.presenter.setName(name.value);
+    }
+
+    @EventHandler("type")
+    public void onTypeChanged(final ChangeEvent ignore) {
+        this.presenter.setType(type.value);
+    }
+
     @EventHandler("remove-button")
     public void onRemoveButtonClicked(final ClickEvent ignore) {
         this.presenter.remove();
@@ -91,12 +100,12 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
 
     @Override
     public void setName(final String name) {
-        this.name.textContent = name;
+        this.name.value = name;
     }
 
     @Override
     public void setType(final String type) {
-        this.type.textContent = type;
+        this.type.value = type;
     }
 
     @Override
