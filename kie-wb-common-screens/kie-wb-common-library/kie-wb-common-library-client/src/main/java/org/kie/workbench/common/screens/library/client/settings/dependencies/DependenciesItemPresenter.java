@@ -16,10 +16,14 @@
 
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
+import java.util.Collections;
+import java.util.Set;
+
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Dependency;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
+import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
 import org.uberfire.client.mvp.UberElemental;
 
@@ -33,12 +37,13 @@ public class DependenciesItemPresenter {
 
         void setVersion(String version);
 
-        void setAllPackagesWhiteListed(final boolean packageWhiteList);
+        void setPackagesWhiteListedState(final WhiteListedPackagesState state);
+
+        void setTransitiveDependency(final boolean disabled);
     }
 
     private final View view;
 
-    private WhiteList whiteList;
     private DependenciesPresenter parentPresenter;
     private EnhancedDependency enhancedDependency;
 
@@ -51,7 +56,6 @@ public class DependenciesItemPresenter {
                                            final WhiteList whiteList,
                                            final DependenciesPresenter dependenciesPresenter) {
 
-        this.whiteList = whiteList;
         this.enhancedDependency = enhancedDependency;
         this.parentPresenter = dependenciesPresenter;
 
@@ -61,27 +65,45 @@ public class DependenciesItemPresenter {
         view.setGroupId(dependency.getGroupId());
         view.setArtifactId(dependency.getArtifactId());
         view.setVersion(dependency.getVersion());
-        view.setAllPackagesWhiteListed(whiteList.isEmpty() || whiteList.containsAll(enhancedDependency.getPackages()));
+        view.setPackagesWhiteListedState(WhiteListedPackagesState.from(whiteList, enhancedDependency.getPackages()));
+        view.setTransitiveDependency(enhancedDependency instanceof TransitiveEnhancedDependency);
 
         return this;
     }
 
     public void addAllPackagesToWhiteList() {
-        whiteList.addAll(enhancedDependency.getPackages());
-        parentPresenter.fireChangeEvent();
+        parentPresenter.addAllToWhiteList(enhancedDependency.getPackages());
     }
 
     public void removeAllPackagesFromWhiteList() {
-        whiteList.removeAll(enhancedDependency.getPackages());
-        parentPresenter.fireChangeEvent();
+        parentPresenter.removeAllFromWhiteList(enhancedDependency.getPackages());
     }
 
     public void remove() {
         parentPresenter.remove(enhancedDependency);
-        parentPresenter.fireChangeEvent();
     }
 
     public View getView() {
         return view;
+    }
+
+    public enum WhiteListedPackagesState {
+        ALL,
+        SOME,
+        NONE;
+
+        public static WhiteListedPackagesState from(final Set<String> whiteList,
+                                                    final Set<String> packages) {
+
+            if (whiteList.containsAll(packages)) {
+                return ALL;
+            }
+
+            if (!Collections.disjoint(whiteList, packages)) {
+                return SOME;
+            }
+
+            return NONE;
+        }
     }
 }

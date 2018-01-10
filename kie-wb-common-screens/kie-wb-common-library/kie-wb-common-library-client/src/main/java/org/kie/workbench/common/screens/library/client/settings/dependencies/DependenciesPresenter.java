@@ -17,11 +17,12 @@
 package org.kie.workbench.common.screens.library.client.settings.dependencies;
 
 import java.util.List;
-import java.util.stream.StreamSupport;
+import java.util.Set;
 
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -35,9 +36,12 @@ import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencies;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class DependenciesPresenter extends SettingsPresenter.Section {
+
+    private ProjectScreenModel model;
 
     public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
 
@@ -73,6 +77,8 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
     @Override
     public Promise<Void> setup(final ProjectScreenModel model) {
 
+        this.model = model;
+
         view.init(this);
 
         dependencySelectorPopup.addSelectionHandler(gav -> {
@@ -95,8 +101,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
     private List<DependenciesItemPresenter.View> buildDependencyViews(final ProjectScreenModel model,
                                                                       final EnhancedDependencies dependencies) {
-        return StreamSupport
-                .stream(dependencies.spliterator(), false)
+        return dependencies.asList().stream()
                 .map(dependency -> presenters.get().setup(dependency, model.getWhiteList(), this).getView())
                 .collect(toList());
     }
@@ -109,12 +114,25 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
         newDependencyPopup.show(this::add);
     }
 
+    public void addAllToWhiteList(final Set<String> packages) {
+        model.getWhiteList().addAll(packages);
+        enhancedDependenciesManager.update();
+        fireChangeEvent();
+    }
+
+    public void removeAllFromWhiteList(final Set<String> packages) {
+        model.getWhiteList().removeAll(packages);
+        enhancedDependenciesManager.update();
+        fireChangeEvent();
+    }
+
     public void addFromRepository() {
         dependencySelectorPopup.show();
     }
 
     public void remove(final EnhancedDependency enhancedDependency) {
         enhancedDependenciesManager.delete(enhancedDependency);
+        fireChangeEvent();
     }
 
     @Override

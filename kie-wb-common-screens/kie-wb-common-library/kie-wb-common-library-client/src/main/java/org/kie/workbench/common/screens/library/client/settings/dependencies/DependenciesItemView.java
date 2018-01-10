@@ -20,8 +20,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLAnchorElement;
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
@@ -39,6 +39,10 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
 
     @Inject
     private TranslationService translationService;
+
+    @Inject
+    @DataField("white-listed-packages-indicator")
+    private HTMLDivElement whiteListedPackagesIndicator;
 
     @Inject
     @DataField("package-white-list-all")
@@ -68,6 +72,7 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     private HTMLAnchorElement removeButton;
 
     private final String packageWhiteListRadioGroupName = UUID.uuid();
+    private DependenciesItemPresenter.WhiteListedPackagesState whiteListedPackagesState;
 
     @Override
     public void init(final DependenciesItemPresenter presenter) {
@@ -92,15 +97,29 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     }
 
     @Override
-    public void setAllPackagesWhiteListed(final boolean allPackagesWhitelisted) {
+    public void setPackagesWhiteListedState(final DependenciesItemPresenter.WhiteListedPackagesState state) {
+        this.whiteListedPackagesState = state;
 
-        packageWhiteListNone.checked = false;
         packageWhiteListAll.checked = false;
+        packageWhiteListNone.checked = false;
 
-        if (allPackagesWhitelisted) {
-            packageWhiteListAll.checked = true;
-        } else {
-            packageWhiteListNone.checked = true;
+        switch (state) {
+            case ALL:
+                packageWhiteListAll.checked = true;
+                break;
+            case NONE:
+                packageWhiteListNone.checked = true;
+                break;
+        }
+    }
+
+    @Override
+    public void setTransitiveDependency(final boolean disabled) {
+        if (disabled) {
+            removeButton.remove();
+            whiteListedPackagesIndicator.innerHTML = "";
+            whiteListedPackagesIndicator.textContent = translationService.format(whiteListedPackagesState.name());
+            getElement().classList.add("transitive");
         }
     }
 

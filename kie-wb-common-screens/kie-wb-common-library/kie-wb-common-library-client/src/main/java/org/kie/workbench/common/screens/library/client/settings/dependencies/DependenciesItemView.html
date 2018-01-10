@@ -22,12 +22,14 @@
         <td class="kie-tablelist__cell"><span data-field="artifact-id"></span></td>
         <td class="kie-tablelist__cell"><span data-field="version"></span></td>
         <td class="kie-tablelist__cell">
-            <label class="radio-inline">
-                <input data-field="package-white-list-all" checked="" type="radio" name="" value="all"> All
-            </label>
-            <label class="radio-inline">
-                <input data-field="package-white-list-none" type="radio" name="" value="none"> None
-            </label>
+            <div data-field="white-listed-packages-indicator">
+                <label class="radio-inline">
+                    <input data-field="package-white-list-all" checked="" type="radio" name="" value="all"> All
+                </label>
+                <label class="radio-inline">
+                    <input data-field="package-white-list-none" type="radio" name="" value="none"> None
+                </label>
+            </div>
         </td>
         <td class="kie-tablelist__cell--actions">
             <a href="#0" class="btn btn-link" data-field="remove-button">
