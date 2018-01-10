@@ -20,6 +20,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Element;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.BlergsModel;
 import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.Resolver;
 import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
@@ -87,14 +88,7 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
         return model;
     }
 
-    public void add(final ParametersModal.Parameter parameter) {
-        model.getParameters().put(parameter.getName(), parameter.getValue());
-        view.setParametersCount(model.getParameters().size());
-        fireChangeEvent();
-    }
-
-    public void remove(final ParametersModal.Parameter parameter) {
-        model.getParameters().remove(parameter.getName());
+    public void signalParameterAddedOrRemoved() {
         view.setParametersCount(model.getParameters().size());
         fireChangeEvent();
     }

@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -231,7 +231,7 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
         final BlergsModel model = new BlergsModel();
         model.setId(id);
         model.setResolver(Resolver.MVEL);
-        model.setParameters(new HashMap<>());
+        model.setParameters(new ArrayList<>());
         return model;
     }
 

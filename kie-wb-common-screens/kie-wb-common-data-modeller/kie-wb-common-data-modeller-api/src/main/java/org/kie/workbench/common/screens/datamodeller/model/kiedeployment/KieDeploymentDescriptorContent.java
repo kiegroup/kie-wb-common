@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.datamodeller.model.kiedeployment;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -113,7 +112,7 @@ public class KieDeploymentDescriptorContent {
 
         private String id;
         private Resolver resolver;
-        private Map<String, String> parameters;
+        private List<Parameter> parameters;
 
         public String getId() {
             return id;
@@ -131,11 +130,11 @@ public class KieDeploymentDescriptorContent {
             this.resolver = resolver;
         }
 
-        public Map<String, String> getParameters() {
+        public List<Parameter> getParameters() {
             return parameters;
         }
 
-        public void setParameters(final Map<String, String> parameters) {
+        public void setParameters(final List<Parameter> parameters) {
             this.parameters = parameters;
         }
     }
@@ -174,26 +173,63 @@ public class KieDeploymentDescriptorContent {
                             requiredRoles);
     }
 
+    @Portable
     public enum RuntimeStrategy {
         SINGLETON,
         PER_REQUEST,
         PER_PROCESS_INSTANCE
     }
 
+    @Portable
     public enum PersistenceMode {
         JPA,
         NONE;
     }
 
+    @Portable
     public enum AuditMode {
         JPA,
         JMS,
         NONE;
     }
 
+    @Portable
     public enum Resolver {
         MVEL,
         REFLECTION,
         SPRING;
+    }
+
+    @Portable
+    public static class Parameter {
+
+        private String name;
+        private String value;
+
+        public Parameter() {
+        }
+
+        public Parameter(final String name,
+                         final String value) {
+
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public void setValue(final String value) {
+            this.value = value;
+        }
     }
 }

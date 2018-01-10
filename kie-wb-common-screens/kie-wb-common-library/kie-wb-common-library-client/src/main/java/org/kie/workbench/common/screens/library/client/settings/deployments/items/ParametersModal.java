@@ -16,17 +16,14 @@
 
 package org.kie.workbench.common.screens.library.client.settings.deployments.items;
 
-import java.util.List;
-
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.datamodeller.model.kiedeployment.KieDeploymentDescriptorContent.Parameter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
-
-import static java.util.stream.Collectors.toList;
 
 @Dependent
 public class ParametersModal extends Elemental2Modal<ParametersModalView> {
@@ -46,16 +43,9 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
 
         this.parentPresenter = parentPresenter;
 
-        final List<Parameter> parametersList = parentPresenter.getObject()
-                .getParameters()
-                .entrySet()
-                .stream()
-                .map(s -> new Parameter(s.getKey(), s.getValue()))
-                .collect(toList());
-
         parametersListPresenter.setup(
                 getView().getParametersTable(),
-                parametersList,
+                parentPresenter.getObject().getParameters(),
                 (parameter, presenter) -> presenter.setup(parameter, this));
 
         super.setup();
@@ -63,17 +53,12 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
 
     public void add() {
         final Parameter parameter = new Parameter("", "");
-        add(parameter);
-    }
-
-    public void add(final Parameter parameter) {
         parametersListPresenter.add(parameter);
-        parentPresenter.add(parameter);
+        parentPresenter.signalParameterAddedOrRemoved();
     }
 
-    public void remove(final ParameterItemPresenter parameterItemPresenter) {
-        parametersListPresenter.remove(parameterItemPresenter);
-        parentPresenter.remove(parameterItemPresenter.getObject());
+    public void signalParameterAddedOrRemoved() {
+        parentPresenter.signalParameterAddedOrRemoved();
     }
 
     public void fireChangeEvent() {
@@ -120,48 +105,18 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
 
         @Override
         public void remove() {
-            parentPresenter.remove(this);
+            super.remove();
+            parentPresenter.signalParameterAddedOrRemoved();
         }
 
         public void setName(final String name) {
-            parentPresenter.remove(this);
             parameter.setName(name);
-            parentPresenter.add(parameter);
             parentPresenter.fireChangeEvent();
         }
 
         public void setValue(final String value) {
-            parentPresenter.remove(this);
             parameter.setValue(value);
-            parentPresenter.add(parameter);
             parentPresenter.fireChangeEvent();
-        }
-    }
-
-    public static class Parameter {
-
-        private String name;
-        private String value;
-
-        public Parameter(final String name, final String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public void setValue(final String value) {
-            this.value = value;
         }
     }
 }
