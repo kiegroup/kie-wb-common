@@ -32,28 +32,19 @@ import static java.util.stream.Collectors.toList;
 public class ParametersModal extends Elemental2Modal<ParametersModalView> {
 
     private final ParametersListPresenter parametersListPresenter;
-    private final AddParameterModal addParameterModal;
     private TableItemPresenter parentPresenter;
 
     @Inject
     public ParametersModal(final ParametersModalView view,
-                           final ParametersListPresenter parametersListPresenter,
-                           final AddParameterModal addParameterModal) {
+                           final ParametersListPresenter parametersListPresenter) {
 
         super(view);
         this.parametersListPresenter = parametersListPresenter;
-        this.addParameterModal = addParameterModal;
-    }
-
-    public void showAddParameterModal() {
-        addParameterModal.show();
     }
 
     public void setup(final TableItemPresenter parentPresenter) {
 
         this.parentPresenter = parentPresenter;
-
-        addParameterModal.setup(this);
 
         final List<Parameter> parametersList = parentPresenter.getObject()
                 .getParameters()
@@ -70,6 +61,11 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
         super.setup();
     }
 
+    public void add() {
+        final Parameter parameter = new Parameter("", "");
+        add(parameter);
+    }
+
     public void add(final Parameter parameter) {
         parametersListPresenter.add(parameter);
         parentPresenter.add(parameter);
@@ -78,6 +74,10 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
     public void remove(final ParameterItemPresenter parameterItemPresenter) {
         parametersListPresenter.remove(parameterItemPresenter);
         parentPresenter.remove(parameterItemPresenter.getObject());
+    }
+
+    public void fireChangeEvent() {
+        parentPresenter.fireChangeEvent();
     }
 
     @Dependent
@@ -108,8 +108,8 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
             this.parentPresenter = parentPresenter;
 
             view.init(this);
-            view.setName(parameter.name);
-            view.setValue(parameter.value);
+            view.setName(parameter.getName());
+            view.setValue(parameter.getValue());
             return this;
         }
 
@@ -122,15 +122,45 @@ public class ParametersModal extends Elemental2Modal<ParametersModalView> {
         public void remove() {
             parentPresenter.remove(this);
         }
+
+        public void setName(final String name) {
+            parentPresenter.remove(this);
+            parameter.setName(name);
+            parentPresenter.add(parameter);
+            parentPresenter.fireChangeEvent();
+        }
+
+        public void setValue(final String value) {
+            parentPresenter.remove(this);
+            parameter.setValue(value);
+            parentPresenter.add(parameter);
+            parentPresenter.fireChangeEvent();
+        }
     }
 
     public static class Parameter {
 
-        public final String name;
-        public final String value;
+        private String name;
+        private String value;
 
         public Parameter(final String name, final String value) {
             this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setName(final String name) {
+            this.name = name;
+        }
+
+        public void setValue(final String value) {
             this.value = value;
         }
     }

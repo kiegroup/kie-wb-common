@@ -71,6 +71,10 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
     @Override
     public void remove() {
         super.remove();
+        fireChangeEvent();
+    }
+
+    public void fireChangeEvent() {
         parentPresenter.fireChangeEvent();
     }
 
@@ -84,15 +88,15 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
     }
 
     public void add(final ParametersModal.Parameter parameter) {
-        model.getParameters().put(parameter.name, parameter.value);
+        model.getParameters().put(parameter.getName(), parameter.getValue());
         view.setParametersCount(model.getParameters().size());
-        parentPresenter.fireChangeEvent();
+        fireChangeEvent();
     }
 
     public void remove(final ParametersModal.Parameter parameter) {
-        model.getParameters().remove(parameter.name);
+        model.getParameters().remove(parameter.getName());
         view.setParametersCount(model.getParameters().size());
-        parentPresenter.fireChangeEvent();
+        fireChangeEvent();
     }
 
     public interface View extends UberElementalListItem<TableItemPresenter> {

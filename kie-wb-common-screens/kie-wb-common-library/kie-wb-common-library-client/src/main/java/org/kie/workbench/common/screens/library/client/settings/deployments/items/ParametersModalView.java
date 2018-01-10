@@ -19,10 +19,12 @@ package org.kie.workbench.common.screens.library.client.settings.deployments.ite
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -68,7 +70,7 @@ public class ParametersModalView implements Elemental2Modal.View<ParametersModal
 
     @EventHandler("add-parameter-button")
     public void onAddParameterButtonClicked(final ClickEvent ignore) {
-        presenter.showAddParameterModal();
+        presenter.add();
     }
 
     @EventHandler("done-button")
@@ -100,14 +102,12 @@ public class ParametersModalView implements Elemental2Modal.View<ParametersModal
                                              IsElement {
 
         @Inject
-        @Named("span")
         @DataField("name")
-        private HTMLElement name;
+        private HTMLInputElement name;
 
         @Inject
-        @Named("span")
         @DataField("value")
-        private HTMLElement value;
+        private HTMLInputElement value;
 
         @Inject
         @DataField("remove-button")
@@ -125,12 +125,22 @@ public class ParametersModalView implements Elemental2Modal.View<ParametersModal
             presenter.remove();
         }
 
+        @EventHandler("name")
+        public void onNameChanged(final ChangeEvent ignore) {
+            presenter.setName(name.value);
+        }
+
+        @EventHandler("value")
+        public void onValueChanged(final ChangeEvent ignore) {
+            presenter.setValue(value.value);
+        }
+
         public void setName(final String name) {
-            this.name.textContent = name;
+            this.name.value = name;
         }
 
         public void setValue(final String value) {
-            this.value.textContent = value;
+            this.value.value = value;
         }
     }
 }
