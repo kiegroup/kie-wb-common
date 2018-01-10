@@ -28,7 +28,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class NewPropertyModalView implements NewPropertyModalPresenter.View {
+public class AddPropertyModalView implements AddPropertyModalPresenter.View {
 
     @Inject
     @DataField("header")
@@ -58,10 +58,10 @@ public class NewPropertyModalView implements NewPropertyModalPresenter.View {
     @DataField("cancel-button")
     private HTMLButtonElement cancelButton;
 
-    private NewPropertyModalPresenter presenter;
+    private AddPropertyModalPresenter presenter;
 
     @Override
-    public void init(final NewPropertyModalPresenter presenter) {
+    public void init(final AddPropertyModalPresenter presenter) {
         this.presenter = presenter;
     }
 

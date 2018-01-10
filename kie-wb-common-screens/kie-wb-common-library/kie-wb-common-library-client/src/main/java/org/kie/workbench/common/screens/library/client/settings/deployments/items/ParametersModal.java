@@ -24,12 +24,12 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2ModalPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
 
 import static java.util.stream.Collectors.toList;
 
 @Dependent
-public class ParametersModal extends Elemental2ModalPresenter<ParametersModalView> {
+public class ParametersModal extends Elemental2Modal<ParametersModalView> {
 
     private final ParametersListPresenter parametersListPresenter;
     private final AddParameterModal addParameterModal;

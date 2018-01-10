@@ -70,6 +70,16 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
     @DataField("packages-list")
     private HTMLDivElement packagesList;
 
+    @Inject
+    @DataField("knowledge-sessions-link")
+    private HTMLAnchorElement knowledgeSessionsLink;
+
+    @Inject
+    @Named("span")
+    @DataField("knowledge-sessions-count")
+    private HTMLElement knowledgeSessionsCount;
+
+
     private KnowledgeBaseItemPresenter presenter;
 
     @EventHandler("remove-button")
@@ -84,7 +94,12 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
 
     @EventHandler("add-package-button")
     private void onAddPackageButtonClicked(final ClickEvent ignore) {
-        presenter.showNewPackageModal();
+        presenter.showAddPackageModal();
+    }
+
+    @EventHandler("knowledge-sessions-link")
+    private void onKnowledgeSessionsLinkClicked(final ClickEvent ignore) {
+        presenter.showKnowledgeSessionsModal();
     }
 
     @EventHandler("is-default")
@@ -125,5 +140,10 @@ public class KnowledgeBaseItemView implements KnowledgeBaseItemPresenter.View {
     @Override
     public Element getEventProcessingModelSelectContainer() {
         return eventProcessingModelSelectContainer;
+    }
+
+    @Override
+    public void setKnowledgeSessionsCount(final int size) {
+        knowledgeSessionsCount.textContent = Integer.toString(size);
     }
 }

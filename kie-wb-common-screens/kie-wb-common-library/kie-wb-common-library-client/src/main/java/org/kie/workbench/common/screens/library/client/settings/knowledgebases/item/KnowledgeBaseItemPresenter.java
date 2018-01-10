@@ -24,8 +24,9 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
-import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedkbases.IncludedKnowledgeBaseItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg.PackageItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedknowledgebases.IncludedKnowledgeBaseItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.KnowledgeSessionsModal;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.packages.PackageItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
@@ -34,6 +35,7 @@ import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSi
 import org.kie.workbench.common.services.shared.kmodule.AssertBehaviorOption;
 import org.kie.workbench.common.services.shared.kmodule.EventProcessingOption;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
+import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
 
 @Dependent
 public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
@@ -42,6 +44,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
     private final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect;
     private final AddSingleValueModal addIncludedKnowledgeBaseModal;
     private final AddSingleValueModal addPackageModal;
+    private final KnowledgeSessionsModal knowledgeSessionsModal;
     private final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter;
     private final PackageListPresenter packageListPresenter;
 
@@ -54,6 +57,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
                                       final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect,
                                       final AddSingleValueModal addIncludedKnowledgeBaseModal,
                                       final AddSingleValueModal addPackageModal,
+                                      final KnowledgeSessionsModal knowledgeSessionsModal,
                                       final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter,
                                       final PackageListPresenter packageListPresenter) {
         super(view);
@@ -61,6 +65,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         this.eventProcessingModeSelect = eventProcessingModeSelect;
         this.addIncludedKnowledgeBaseModal = addIncludedKnowledgeBaseModal;
         this.addPackageModal = addPackageModal;
+        this.knowledgeSessionsModal = knowledgeSessionsModal;
         this.includedKnowledgeBasesListPresenter = includedKnowledgeBasesListPresenter;
         this.packageListPresenter = packageListPresenter;
     }
@@ -75,6 +80,9 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
         view.setName(kBaseModel.getName());
         view.setDefault(kBaseModel.isDefault());
+        view.setKnowledgeSessionsCount(kBaseModel.getKSessions().size());
+
+        knowledgeSessionsModal.setup(this);
 
         addIncludedKnowledgeBaseModal.setup(LibraryConstants.AddIncludedKnowledgeBase, LibraryConstants.Name);
         addPackageModal.setup(LibraryConstants.AddPackage, LibraryConstants.PackageName);
@@ -128,11 +136,20 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         });
     }
 
-    public void showNewPackageModal() {
+    public void showAddPackageModal() {
         addPackageModal.show(packageName -> {
             packageListPresenter.add(packageName);
             parentPresenter.fireChangeEvent();
         });
+    }
+
+    public void showKnowledgeSessionsModal() {
+        knowledgeSessionsModal.show();
+    }
+
+    public void signalAddedOrRemoved() {
+        view.setKnowledgeSessionsCount(kBaseModel.getKSessions().size());
+        parentPresenter.fireChangeEvent();
     }
 
     public void setDefault(final boolean isDefault) {
@@ -148,11 +165,13 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
         Element getIncludedKnowledgeBasesListElement();
 
-        void setDefault(boolean isDefault);
+        void setDefault(final boolean isDefault);
 
         Element getEqualsBehaviorSelectContainer();
 
         Element getEventProcessingModelSelectContainer();
+
+        void setKnowledgeSessionsCount(final int size);
     }
 
     @Dependent

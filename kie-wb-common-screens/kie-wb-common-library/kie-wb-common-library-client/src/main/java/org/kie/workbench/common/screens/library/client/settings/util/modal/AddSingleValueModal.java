@@ -24,13 +24,13 @@ import javax.inject.Inject;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 
 @Dependent
-public class AddSingleValueModal extends Elemental2ModalPresenter<AddSingleValueModal.View> {
+public class AddSingleValueModal extends Elemental2Modal<AddSingleValueModal.View> {
 
     private final TranslationService translationService;
 
     private Consumer<String> onAdd;
 
-    public interface View extends Elemental2ModalPresenter.View<AddSingleValueModal> {
+    public interface View extends Elemental2Modal.View<AddSingleValueModal> {
 
         void focus();
 

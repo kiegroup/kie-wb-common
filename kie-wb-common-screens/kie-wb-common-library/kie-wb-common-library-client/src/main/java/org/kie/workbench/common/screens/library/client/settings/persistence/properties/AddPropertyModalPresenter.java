@@ -21,12 +21,12 @@ import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
-import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2ModalPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
 
 @Dependent
-public class NewPropertyModalPresenter extends Elemental2ModalPresenter<NewPropertyModalPresenter.View> {
+public class AddPropertyModalPresenter extends Elemental2Modal<AddPropertyModalPresenter.View> {
 
-    public interface View extends Elemental2ModalPresenter.View<NewPropertyModalPresenter> {
+    public interface View extends Elemental2Modal.View<AddPropertyModalPresenter> {
 
         void focus();
 
@@ -40,7 +40,7 @@ public class NewPropertyModalPresenter extends Elemental2ModalPresenter<NewPrope
     private PersistencePresenter presenter;
 
     @Inject
-    public NewPropertyModalPresenter(final View view) {
+    public AddPropertyModalPresenter(final View view) {
         super(view);
     }
 

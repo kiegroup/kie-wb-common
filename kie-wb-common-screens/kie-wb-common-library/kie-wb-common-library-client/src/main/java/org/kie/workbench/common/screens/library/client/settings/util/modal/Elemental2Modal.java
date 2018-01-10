@@ -23,10 +23,10 @@ import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.editor.commons.client.file.popups.CommonModalBuilder;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
 
-public abstract class Elemental2ModalPresenter<V extends Elemental2ModalPresenter.View> {
+public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
 
-    public interface View<P extends Elemental2ModalPresenter<? extends View>> extends UberElemental<P>,
-                                                                                      IsElement {
+    public interface View<P extends Elemental2Modal<? extends View>> extends UberElemental<P>,
+                                                                             IsElement {
 
         String getHeader();
 
@@ -39,7 +39,7 @@ public abstract class Elemental2ModalPresenter<V extends Elemental2ModalPresente
 
     private BaseModal modal;
 
-    public Elemental2ModalPresenter(final V view) {
+    public Elemental2Modal(final V view) {
         this.view = view;
     }
 
@@ -68,6 +68,10 @@ public abstract class Elemental2ModalPresenter<V extends Elemental2ModalPresente
 
     public void show() {
         modal.show();
+    }
+
+    protected void setWidth(final String width) {
+        modal.setWidth(width);
     }
 
     public void hide() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.pkg;
+package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.packages;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;

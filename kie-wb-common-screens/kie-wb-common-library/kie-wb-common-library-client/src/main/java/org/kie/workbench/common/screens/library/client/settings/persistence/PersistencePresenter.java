@@ -39,7 +39,7 @@ import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.properties.NewPropertyModalPresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.properties.AddPropertyModalPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.AddSingleValueModal;
@@ -57,7 +57,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final ProjectContext projectContext;
     private final Event<NotificationEvent> notificationEvent;
     private final ManagedInstance<ObservablePath> observablePaths;
-    private final NewPropertyModalPresenter newPropertyModalPresenter;
+    private final AddPropertyModalPresenter newPropertyModalPresenter;
     private final AddSingleValueModal newPersistableDataObjectModalPresenter;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<PersistenceDescriptorService> descriptorService;
@@ -91,7 +91,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
-                                final NewPropertyModalPresenter newPropertyModalPresenter,
+                                final AddPropertyModalPresenter newPropertyModalPresenter,
                                 final AddSingleValueModal newPersistableDataObjectModalPresenter,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<PersistenceDescriptorService> descriptorService,

@@ -19,12 +19,12 @@ package org.kie.workbench.common.screens.library.client.settings.deployments.ite
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2ModalPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
 
 @Dependent
-public class AddParameterModal extends Elemental2ModalPresenter<AddParameterModal.View> {
+public class AddParameterModal extends Elemental2Modal<AddParameterModal.View> {
 
-    public interface View extends Elemental2ModalPresenter.View<AddParameterModal> {
+    public interface View extends Elemental2Modal.View<AddParameterModal> {
 
         void focus();
 
