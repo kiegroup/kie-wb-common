@@ -43,6 +43,10 @@ public class TableItemView implements TableItemPresenter.View,
     private HTMLDivElement resolversContainer;
 
     @Inject
+    @DataField("parameters-link")
+    private HTMLAnchorElement parametersLink;
+
+    @Inject
     @Named("span")
     @DataField("parameters-count")
     private HTMLElement parametersCount;
@@ -61,6 +65,11 @@ public class TableItemView implements TableItemPresenter.View,
     @EventHandler("remove-button")
     private void onRemoveButtonClicked(final ClickEvent ignore) {
         presenter.remove();
+    }
+
+    @EventHandler("parameters-link")
+    private void onParametersLinkClicked(final ClickEvent ignore) {
+        presenter.showParametersModal();
     }
 
     @Override

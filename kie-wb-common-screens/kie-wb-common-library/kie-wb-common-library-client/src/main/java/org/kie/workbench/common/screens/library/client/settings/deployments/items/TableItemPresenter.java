@@ -30,14 +30,18 @@ import org.kie.workbench.common.screens.library.client.settings.util.UberElement
 @Dependent
 public class TableItemPresenter extends ListItemPresenter<BlergsModel, DeploymentsPresenter, TableItemPresenter.View> {
 
+    private final ParametersModal parametersModal;
+    private final KieEnumSelectElement<Resolver> resolversSelect;
+
     private BlergsModel model;
-    private KieEnumSelectElement<Resolver> resolversSelect;
     private DeploymentsPresenter parentPresenter;
 
     @Inject
     public TableItemPresenter(final View view,
+                              final ParametersModal parametersModal,
                               final KieEnumSelectElement<Resolver> resolversSelect) {
         super(view);
+        this.parametersModal = parametersModal;
         this.resolversSelect = resolversSelect;
     }
 
@@ -46,6 +50,8 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
                                     final DeploymentsPresenter parentPresenter) {
         this.model = model;
         this.parentPresenter = parentPresenter;
+
+        parametersModal.setup(this);
 
         resolversSelect.setup(view.getResolversContainer(), Resolver.values());
         resolversSelect.setValue(model.getResolver());
@@ -68,9 +74,25 @@ public class TableItemPresenter extends ListItemPresenter<BlergsModel, Deploymen
         parentPresenter.fireChangeEvent();
     }
 
+    public void showParametersModal() {
+        parametersModal.show();
+    }
+
     @Override
     public BlergsModel getObject() {
         return model;
+    }
+
+    public void add(final ParametersModal.Parameter parameter) {
+        model.getParameters().put(parameter.name, parameter.value);
+        view.setParametersCount(model.getParameters().size());
+        parentPresenter.fireChangeEvent();
+    }
+
+    public void remove(final ParametersModal.Parameter parameter) {
+        model.getParameters().remove(parameter.name);
+        view.setParametersCount(model.getParameters().size());
+        parentPresenter.fireChangeEvent();
     }
 
     public interface View extends UberElementalListItem<TableItemPresenter> {

@@ -17,8 +17,8 @@
 package org.kie.workbench.common.screens.library.client.settings.util.modal;
 
 import elemental2.dom.HTMLElement;
-import jsinterop.base.Js;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.shared.TemplateUtil;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.ext.editor.commons.client.file.popups.CommonModalBuilder;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
@@ -59,11 +59,11 @@ public abstract class Elemental2ModalPresenter<V extends Elemental2ModalPresente
     }
 
     private org.jboss.errai.common.client.dom.HTMLElement getFooter() {
-        return Js.cast(view.getFooter());
+        return TemplateUtil.asErraiElement(view.getFooter());
     }
 
     private org.jboss.errai.common.client.dom.HTMLElement getBody() {
-        return Js.cast(view.getBody());
+        return TemplateUtil.asErraiElement(view.getBody());
     }
 
     public void show() {
