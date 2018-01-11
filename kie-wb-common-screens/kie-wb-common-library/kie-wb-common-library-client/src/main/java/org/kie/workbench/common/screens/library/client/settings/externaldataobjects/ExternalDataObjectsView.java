@@ -22,6 +22,7 @@ import javax.inject.Named;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -39,6 +40,11 @@ public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.Vie
     @Inject
     @DataField("add-button")
     private HTMLButtonElement addButton;
+
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
 
     private ExternalDataObjectsPresenter presenter;
 
@@ -65,5 +71,10 @@ public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.Vie
     @Override
     public Element getImportsTable() {
         return table;
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

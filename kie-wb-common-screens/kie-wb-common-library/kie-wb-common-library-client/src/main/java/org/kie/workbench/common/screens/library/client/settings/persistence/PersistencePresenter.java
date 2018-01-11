@@ -88,6 +88,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     @Inject
     public PersistencePresenter(final View view,
                                 final ProjectContext projectContext,
+                                final SettingsPresenter.MenuItem menuItem,
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
@@ -99,7 +100,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final PropertiesListPresenter propertiesItemPresenters,
                                 final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.projectContext = projectContext;
         this.notificationEvent = notificationEvent;

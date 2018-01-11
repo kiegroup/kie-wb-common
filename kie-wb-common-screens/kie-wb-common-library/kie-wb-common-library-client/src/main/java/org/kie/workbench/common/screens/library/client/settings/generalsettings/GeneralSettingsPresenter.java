@@ -103,12 +103,13 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public GeneralSettingsPresenter(final View view,
+                                    final SettingsPresenter.MenuItem menuItem,
                                     final Caller<ValidationService> validationService,
                                     final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.validationService = validationService;
         this.gavPreferences = gavPreferences;

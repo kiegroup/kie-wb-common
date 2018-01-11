@@ -22,7 +22,6 @@ import java.util.Set;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
@@ -36,7 +35,6 @@ import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependencies;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 public class DependenciesPresenter extends SettingsPresenter.Section {
@@ -60,13 +58,14 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
     @Inject
     public DependenciesPresenter(final View view,
+                                 final SettingsPresenter.MenuItem menuItem,
                                  final DependencySelectorPopup dependencySelectorPopup,
                                  final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                  final NewDependencyPopup newDependencyPopup,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
                                  final ManagedInstance<DependenciesItemPresenter> presenters) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.dependencySelectorPopup = dependencySelectorPopup;
         this.newDependencyPopup = newDependencyPopup;

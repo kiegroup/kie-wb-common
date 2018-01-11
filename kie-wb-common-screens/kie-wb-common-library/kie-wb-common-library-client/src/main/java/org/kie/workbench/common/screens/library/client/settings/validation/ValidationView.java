@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import elemental2.dom.Element;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -32,6 +33,11 @@ public class ValidationView implements ValidationPresenter.View {
     @DataField("repositories")
     private HTMLTableSectionElement repositories;
 
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
+
     @Override
     public void init(final ValidationPresenter presenter) {
     }
@@ -39,5 +45,10 @@ public class ValidationView implements ValidationPresenter.View {
     @Override
     public Element getRepositoriesTable() {
         return repositories;
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

@@ -24,6 +24,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -88,6 +89,11 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Inject
     @DataField("add-required-role-button")
     private HTMLButtonElement addRequiredRoleButton;
+
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
 
     private DeploymentsPresenter presenter;
 
@@ -169,5 +175,10 @@ public class DeploymentsView implements DeploymentsPresenter.View {
     @Override
     public Element getPersistenceModesContainer() {
         return persistenceModes;
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

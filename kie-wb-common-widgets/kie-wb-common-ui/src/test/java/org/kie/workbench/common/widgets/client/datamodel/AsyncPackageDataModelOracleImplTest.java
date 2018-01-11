@@ -816,14 +816,14 @@ public class AsyncPackageDataModelOracleImplTest {
         }
 
         @Override
-        public <S> IncrementalDataModelService call(RemoteCallback<S> remoteCallback) {
+        public IncrementalDataModelService call(RemoteCallback<?> remoteCallback) {
             callback = (RemoteCallback<PackageDataModelOracleIncrementalPayload>) remoteCallback;
             return service;
         }
 
         @Override
-        public <S, E> IncrementalDataModelService call(RemoteCallback<S> remoteCallback,
-                                                ErrorCallback<E> errorCallback) {
+        public IncrementalDataModelService call(RemoteCallback<?> remoteCallback,
+                                                ErrorCallback<?> errorCallback) {
             callback = (RemoteCallback<PackageDataModelOracleIncrementalPayload>) remoteCallback;
             return service;
         }

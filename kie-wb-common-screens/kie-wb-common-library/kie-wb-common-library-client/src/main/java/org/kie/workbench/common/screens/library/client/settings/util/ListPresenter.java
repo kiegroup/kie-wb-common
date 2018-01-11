@@ -22,6 +22,8 @@ import java.util.function.BiConsumer;
 import elemental2.dom.Element;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 
+import static java.util.stream.Collectors.toList;
+
 public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
 
     private final ManagedInstance<P> itemPresenters;
@@ -53,13 +55,29 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.list.forEach(this::addToListElement);
     }
 
+    public void setupWithPresenters(final Element listElement,
+                                    final List<P> presenters,
+                                    final BiConsumer<T, P> itemPresenterConfigurator) {
+
+        this.list = presenters.stream().map(p -> p.getObject()).collect(toList());
+        this.listElement = listElement;
+        this.itemPresenterConfigurator = itemPresenterConfigurator;
+
+        this.listElement.innerHTML = "";
+        presenters.forEach(this::addPresenter);
+    }
+
     public void add(final T o) {
         addToListElement(o);
         list.add(o);
     }
 
     private void addToListElement(final T o) {
-        listElement.appendChild((newPresenterFor(o)).getView().getElement());
+        addPresenter(newPresenterFor(o));
+    }
+
+    private void addPresenter(final P presenter) {
+        listElement.appendChild(presenter.getView().getElement());
     }
 
     private P newPresenterFor(final T o) {

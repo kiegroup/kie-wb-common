@@ -48,10 +48,11 @@ public class ValidationPresenter extends SettingsPresenter.Section {
 
     @Inject
     public ValidationPresenter(final ValidationPresenter.View view,
+                               final SettingsPresenter.MenuItem menuItem,
                                final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                final ValidationListPresenter validationItemPresenters) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.validationItemPresenters = validationItemPresenters;
     }

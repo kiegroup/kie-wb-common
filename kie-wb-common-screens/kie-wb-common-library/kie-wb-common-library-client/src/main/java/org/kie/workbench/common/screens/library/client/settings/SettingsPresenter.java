@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +24,12 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
@@ -40,17 +41,14 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
-import org.kie.workbench.common.screens.library.client.settings.dependencies.DependenciesPresenter;
-import org.kie.workbench.common.screens.library.client.settings.deployments.DeploymentsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.externaldataobjects.ExternalDataObjectsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.generalsettings.GeneralSettingsPresenter;
-import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
-import org.kie.workbench.common.screens.library.client.settings.validation.ValidationPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
+import org.uberfire.annotations.Customizable;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
@@ -79,21 +77,9 @@ public class SettingsPresenter {
 
         void showBusyIndicator();
 
-        void setGeneralSectionDirty(boolean value);
-
-        void setDependenciesSectionDirty(boolean value);
-
-        void setKnowledgeBasesSectionDirty(boolean value);
-
-        void setExternalDataObjectsSectionDirty(boolean value);
-
-        void setValidationSectionDirty(boolean value);
-
-        void setDeploymentsSectionDirty(boolean value);
-
-        void setPersistenceSectionDirty(boolean value);
-
         void setSection(final Section contentView);
+
+        HTMLElement getMenuItemsContainer();
 
         String getSaveSuccessMessage();
 
@@ -102,24 +88,18 @@ public class SettingsPresenter {
         interface Section<T> extends UberElemental<T>,
                                      IsElement {
 
+            String getTitle();
         }
     }
 
     private final View view;
     private final Event<NotificationEvent> notificationEvent;
+    private final SettingsSections settingsSections;
     private final SavePopUpPresenter savePopUpPresenter;
-
-    // Sections
-    private final DependenciesPresenter dependenciesSettingsSection;
-    private final DeploymentsPresenter deploymentsSettingsSection;
-    private final ExternalDataObjectsPresenter externalDataObjectsSettingsSection;
-    private final GeneralSettingsPresenter generalSettingsSection;
-    private final KnowledgeBasesPresenter knowledgeBasesSettingsSection;
-    private final PersistencePresenter persistenceSettingsSection;
-    private final ValidationPresenter validationSettingsSection;
 
     private final Caller<ProjectScreenService> projectScreenService;
     private final ProjectContext projectContext;
+    private final MenuItemsListPresenter menuItemsListPresenter;
     private final ManagedInstance<ObservablePath> observablePaths;
     private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
 
@@ -133,35 +113,24 @@ public class SettingsPresenter {
     @Inject
     public SettingsPresenter(final View view,
                              final Event<NotificationEvent> notificationEvent,
+                             final @Customizable SettingsSections settingsSections,
                              final SavePopUpPresenter savePopUpPresenter,
-                             final DependenciesPresenter dependenciesSettingsSection,
-                             final DeploymentsPresenter deploymentsSettingsSection,
-                             final ExternalDataObjectsPresenter externalDataObjectsSettingsSection,
-                             final GeneralSettingsPresenter generalSettingsSection,
-                             final KnowledgeBasesPresenter knowledgeBasesSettingsSection,
-                             final PersistencePresenter persistenceSettingsSection,
-                             final ValidationPresenter validationSettingsSection,
                              final Caller<ProjectScreenService> projectScreenService,
                              final ProjectContext projectContext,
+                             final MenuItemsListPresenter menuItemsListPresenter,
                              final ManagedInstance<ObservablePath> observablePaths,
                              final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
         this.view = view;
         this.notificationEvent = notificationEvent;
+        this.settingsSections = settingsSections;
         this.savePopUpPresenter = savePopUpPresenter;
-
-        this.dependenciesSettingsSection = dependenciesSettingsSection;
-        this.deploymentsSettingsSection = deploymentsSettingsSection;
-        this.externalDataObjectsSettingsSection = externalDataObjectsSettingsSection;
-        this.generalSettingsSection = generalSettingsSection;
-        this.knowledgeBasesSettingsSection = knowledgeBasesSettingsSection;
-        this.persistenceSettingsSection = persistenceSettingsSection;
-        this.validationSettingsSection = validationSettingsSection;
 
         this.projectScreenService = projectScreenService;
         this.projectContext = projectContext;
+        this.menuItemsListPresenter = menuItemsListPresenter;
         this.observablePaths = observablePaths;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.currentSection = generalSettingsSection;
+        this.currentSection = settingsSections.getList().get(0);
     }
 
     @PostConstruct
@@ -181,9 +150,14 @@ public class SettingsPresenter {
 
         Promises.promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
             this.model = model;
-            return Promises.all(getSectionsInDisplayOrder(), (final Section section) ->
-                    section.setup(this.model).then(i -> resetDirtyIndicator(section)));
+            return Promises.all(getSections(), (final Section section) -> setupSection(model, section));
         }).then(i -> {
+
+            menuItemsListPresenter.setupWithPresenters(
+                    view.getMenuItemsContainer(),
+                    getSections().stream().map(Section::getMenuItem).collect(toList()),
+                    (section, presenter) -> presenter.setup(section, this));
+
             view.hideBusyIndicator();
             return goTo(currentSection);
         }).catch_(e -> throwOrExecute(e, i -> {
@@ -193,8 +167,18 @@ public class SettingsPresenter {
         })).catch_(this::defaultErrorResolution);
     }
 
+    private Promise<Object> setupSection(final ProjectScreenModel model,
+                                         final Section section) {
+
+        return section.setup(model).then(i -> {
+            section.getMenuItem().setup(section, this);
+            resetDirtyIndicator(section);
+            return resolve();
+        });
+    }
+
     public void showSaveModal() {
-        Promises.reduceLazily(null, getSectionsInDisplayOrder(), Section::validate).then(i -> {
+        Promises.reduceLazily(null, getSections(), Section::validate).then(i -> {
             savePopUpPresenter.show(this::save);
             return resolve();
         }).catch_(e -> throwOrExecute(e, (final Section section) -> {
@@ -218,12 +202,12 @@ public class SettingsPresenter {
     private List<SavingStep> getSavingSteps(final String comment) {
 
         final Stream<SavingStep> saveSectionsSteps =
-                getSectionsInDisplayOrder().stream()
+                getSections().stream()
                         .map(section -> chain -> section.save(comment, chain));
 
         final Stream<SavingStep> commonSavingSteps =
                 Stream.of(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
-                          chain -> all(getSectionsInDisplayOrder(), this::resetDirtyIndicator),
+                          chain -> all(getSections(), this::resetDirtyIndicator),
                           chain -> displaySuccessMessage());
 
         return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
@@ -309,53 +293,11 @@ public class SettingsPresenter {
                 .map(originalHashCode -> !originalHashCode.equals(changedSection.currentHashCode()))
                 .orElse(false);
 
-        if (changedSection.equals(dependenciesSettingsSection)) {
-            view.setDependenciesSectionDirty(isDirty);
-        } else if (changedSection.equals(deploymentsSettingsSection)) {
-            view.setDeploymentsSectionDirty(isDirty);
-        } else if (changedSection.equals(externalDataObjectsSettingsSection)) {
-            view.setExternalDataObjectsSectionDirty(isDirty);
-        } else if (changedSection.equals(generalSettingsSection)) {
-            view.setGeneralSectionDirty(isDirty);
-        } else if (changedSection.equals(knowledgeBasesSettingsSection)) {
-            view.setKnowledgeBasesSectionDirty(isDirty);
-        } else if (changedSection.equals(persistenceSettingsSection)) {
-            view.setPersistenceSectionDirty(isDirty);
-        } else if (changedSection.equals(validationSettingsSection)) {
-            view.setValidationSectionDirty(isDirty);
-        }
+        changedSection.setDirty(isDirty);
     }
 
     public void reset() {
         setup();
-    }
-
-    public void goToGeneralSettingsSection() {
-        goTo(generalSettingsSection);
-    }
-
-    public void goToDependenciesSection() {
-        goTo(dependenciesSettingsSection);
-    }
-
-    public void goToKnowledgeBasesSection() {
-        goTo(knowledgeBasesSettingsSection);
-    }
-
-    public void goToExternalDataObjectsSection() {
-        goTo(externalDataObjectsSettingsSection);
-    }
-
-    public void goToValidationSection() {
-        goTo(validationSettingsSection);
-    }
-
-    public void goToDeploymentsSection() {
-        goTo(deploymentsSettingsSection);
-    }
-
-    public void goToPersistenceSection() {
-        goTo(persistenceSettingsSection);
     }
 
     private Promise<Object> goTo(final Section section) {
@@ -364,16 +306,8 @@ public class SettingsPresenter {
         return resolve();
     }
 
-    private List<Section> getSectionsInDisplayOrder() {
-        return Arrays.asList(
-                generalSettingsSection,
-                dependenciesSettingsSection,
-                knowledgeBasesSettingsSection,
-                externalDataObjectsSettingsSection,
-                validationSettingsSection,
-                deploymentsSettingsSection,
-                persistenceSettingsSection
-        );
+    private List<Section> getSections() {
+        return settingsSections.getList();
     }
 
     @WorkbenchPartTitle
@@ -386,12 +320,25 @@ public class SettingsPresenter {
         return view;
     }
 
+    @Dependent
+    public static class MenuItemsListPresenter extends ListPresenter<Section, MenuItem> {
+
+        @Inject
+        public MenuItemsListPresenter(final ManagedInstance<MenuItem> itemPresenters) {
+            super(itemPresenters);
+        }
+    }
+
     public static abstract class Section {
 
         private final Event<SettingsSectionChange> settingsSectionChangeEvent;
+        private final SettingsPresenter.MenuItem menuItem;
 
-        protected Section(final Event<SettingsSectionChange> settingsSectionChangeEvent) {
+        protected Section(final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                          final MenuItem menuItem) {
+
             this.settingsSectionChangeEvent = settingsSectionChangeEvent;
+            this.menuItem = menuItem;
         }
 
         public abstract View.Section getView();
@@ -412,6 +359,63 @@ public class SettingsPresenter {
 
         public void fireChangeEvent() {
             settingsSectionChangeEvent.fire(new SettingsSectionChange(this));
+        }
+
+        public SettingsPresenter.MenuItem getMenuItem() {
+            return menuItem;
+        }
+
+        public void setDirty(final boolean dirty) {
+            menuItem.markAsDirty(dirty);
+        }
+    }
+
+    @Dependent
+    public static class MenuItem extends ListItemPresenter<Section, SettingsPresenter, SettingsPresenter.MenuItem.View> {
+
+        private final SettingsPresenter.MenuItem.View view;
+
+        private Section section;
+        private SettingsPresenter settingsPresenter;
+
+        @Inject
+        public MenuItem(final SettingsPresenter.MenuItem.View view) {
+            super(view);
+            this.view = view;
+        }
+
+        public void showSection() {
+            settingsPresenter.goTo(section);
+        }
+
+        public void markAsDirty(final boolean dirty) {
+            view.markAsDirty(dirty);
+        }
+
+        @Override
+        public MenuItem setup(final Section section,
+                              final SettingsPresenter settingsPresenter) {
+
+            this.section = section;
+            this.settingsPresenter = settingsPresenter;
+
+            this.view.init(this);
+            this.view.setLabel(section.getView().getTitle());
+
+            return this;
+        }
+
+        @Override
+        public Section getObject() {
+            return section;
+        }
+
+        public interface View extends UberElementalListItem<MenuItem>,
+                                      IsElement {
+
+            void setLabel(final String label);
+
+            void markAsDirty(final boolean dirty);
         }
     }
 

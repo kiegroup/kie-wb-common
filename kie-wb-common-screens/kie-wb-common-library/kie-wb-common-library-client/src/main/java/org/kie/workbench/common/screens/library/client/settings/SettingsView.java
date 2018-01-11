@@ -24,6 +24,7 @@ import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLUListElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -39,39 +40,7 @@ public class SettingsView implements SettingsPresenter.View,
     private SettingsPresenter presenter;
 
     @Inject
-    @Named("sup")
-    private HTMLElement dirtyIndicator;
-
-    @Inject
     private TranslationService translationService;
-
-    @Inject
-    @DataField("general-section")
-    private HTMLAnchorElement generalSection;
-
-    @Inject
-    @DataField("dependencies-section")
-    private HTMLAnchorElement dependenciesSection;
-
-    @Inject
-    @DataField("knowledge-bases-section")
-    private HTMLAnchorElement knowledgeBasesSection;
-
-    @Inject
-    @DataField("external-data-objects-section")
-    private HTMLAnchorElement externalDataObjectsSection;
-
-    @Inject
-    @DataField("validation-section")
-    private HTMLAnchorElement validationSection;
-
-    @Inject
-    @DataField("deployments-section")
-    private HTMLAnchorElement deploymentsSection;
-
-    @Inject
-    @DataField("persistence-section")
-    private HTMLAnchorElement persistenceSection;
 
     @Inject
     @DataField("save")
@@ -84,6 +53,10 @@ public class SettingsView implements SettingsPresenter.View,
     @Inject
     @DataField("content")
     private HTMLDivElement content;
+
+    @Inject
+    @DataField("menu-items-container")
+    private HTMLUListElement menuItemsContainer;
 
     @Override
     public void init(final SettingsPresenter presenter) {
@@ -100,97 +73,16 @@ public class SettingsView implements SettingsPresenter.View,
         presenter.reset();
     }
 
-    @EventHandler("general-section")
-    public void goToGeneralSection(final ClickEvent event) {
-        presenter.goToGeneralSettingsSection();
-    }
-
-    @EventHandler("dependencies-section")
-    public void goToDependenciesSection(final ClickEvent event) {
-        presenter.goToDependenciesSection();
-    }
-
-    @EventHandler("knowledge-bases-section")
-    public void goToKnowledgeBasesSection(final ClickEvent event) {
-        presenter.goToKnowledgeBasesSection();
-    }
-
-    @EventHandler("external-data-objects-section")
-    public void goToExternalDataObjectsSection(final ClickEvent event) {
-        presenter.goToExternalDataObjectsSection();
-    }
-
-    @EventHandler("validation-section")
-    public void goToValidationSection(final ClickEvent event) {
-        presenter.goToValidationSection();
-    }
-
-    @EventHandler("deployments-section")
-    public void goToDeploymentsSection(final ClickEvent event) {
-        presenter.goToDeploymentsSection();
-    }
-
-    @EventHandler("persistence-section")
-    public void goToPersistenceSection(final ClickEvent event) {
-        presenter.goToPersistenceSection();
-    }
-
-    @Override
-    public void setGeneralSectionDirty(final boolean dirty) {
-        markAsDirty(generalSection, dirty);
-    }
-
-    @Override
-    public void setDependenciesSectionDirty(final boolean dirty) {
-        markAsDirty(dependenciesSection, dirty);
-    }
-
-    @Override
-    public void setKnowledgeBasesSectionDirty(final boolean dirty) {
-        markAsDirty(knowledgeBasesSection, dirty);
-    }
-
-    @Override
-    public void setExternalDataObjectsSectionDirty(final boolean dirty) {
-        markAsDirty(externalDataObjectsSection, dirty);
-    }
-
-    @Override
-    public void setValidationSectionDirty(final boolean dirty) {
-        markAsDirty(validationSection, dirty);
-    }
-
-    @Override
-    public void setDeploymentsSectionDirty(final boolean dirty) {
-        markAsDirty(deploymentsSection, dirty);
-    }
-
-    @Override
-    public void setPersistenceSectionDirty(final boolean dirty) {
-        markAsDirty(persistenceSection, dirty);
-    }
-
-    private void markAsDirty(final HTMLElement sectionMenuItem,
-                             final boolean dirty) {
-
-        if (dirty && sectionMenuItem.childElementCount == 0) {
-            sectionMenuItem.appendChild(newDirtyIndicator());
-        } else if (!dirty && sectionMenuItem.childElementCount > 0) {
-            sectionMenuItem.removeChild(sectionMenuItem.lastElementChild);
-        }
-    }
-
-    private HTMLElement newDirtyIndicator() {
-        final HTMLElement dirtyIndicator = (HTMLElement) this.dirtyIndicator.cloneNode(false);
-        dirtyIndicator.textContent = " *";
-        return dirtyIndicator;
-    }
-
     @Override
     public void setSection(final Section section) {
         content.innerHTML = "";
         content.appendChild(section.getElement());
         //FIXME: set active section css class active=true
+    }
+
+    @Override
+    public HTMLElement getMenuItemsContainer() {
+        return menuItemsContainer;
     }
 
     @Override
@@ -216,5 +108,49 @@ public class SettingsView implements SettingsPresenter.View,
     @Override
     public void hideBusyIndicator() {
         BusyPopup.close();
+    }
+
+    @Templated("SettingsView.html#section-menu-item")
+    public static class MenuItem implements SettingsPresenter.MenuItem.View {
+
+        @Inject
+        @Named("sup")
+        private HTMLElement dirtyIndicator;
+
+        @Inject
+        @DataField("section-menu-item-link")
+        private HTMLAnchorElement sectionMenuItemLink;
+
+        private SettingsPresenter.MenuItem presenter;
+
+        @Override
+        public void init(final SettingsPresenter.MenuItem presenter) {
+            this.presenter = presenter;
+        }
+
+        @EventHandler("section-menu-item-link")
+        public void onSectionMenuItemLinkClicked(final ClickEvent ignore) {
+            presenter.showSection();
+        }
+
+        @Override
+        public void setLabel(final String label) {
+            sectionMenuItemLink.textContent = label;
+        }
+
+        @Override
+        public void markAsDirty(final boolean dirty) {
+            if (dirty && sectionMenuItemLink.childElementCount == 0) {
+                sectionMenuItemLink.appendChild(newDirtyIndicator());
+            } else if (!dirty && sectionMenuItemLink.childElementCount > 0) {
+                sectionMenuItemLink.removeChild(sectionMenuItemLink.lastElementChild);
+            }
+        }
+
+        private HTMLElement newDirtyIndicator() {
+            final HTMLElement dirtyIndicator = (HTMLElement) this.dirtyIndicator.cloneNode(false);
+            dirtyIndicator.textContent = " *";
+            return dirtyIndicator;
+        }
     }
 }

@@ -94,6 +94,7 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public DeploymentsPresenter(final View view,
+                                final SettingsPresenter.MenuItem menuItem,
                                 final AddSingleValueModal addMarshallingStrategyModal,
                                 final AddSingleValueModal addEventListenerModal,
                                 final AddSingleValueModal addGlobalModal,
@@ -110,7 +111,7 @@ public class DeploymentsPresenter extends SettingsPresenter.Section {
                                 final GlobalsListPresenter globalPresenters,
                                 final RequiredRolesListPresenter requiredRolePresenters) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.addMarshallingStrategyModal = addMarshallingStrategyModal;
         this.addEventListenerModal = addEventListenerModal;

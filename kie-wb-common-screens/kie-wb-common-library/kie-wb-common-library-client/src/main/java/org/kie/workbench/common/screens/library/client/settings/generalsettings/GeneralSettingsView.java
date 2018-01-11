@@ -22,6 +22,7 @@ import javax.inject.Named;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTextAreaElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -78,6 +79,11 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     @Inject
     @DataField("version")
     private HTMLInputElement version;
+
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
 
     @Override
     public void init(final GeneralSettingsPresenter presenter) {
@@ -264,5 +270,10 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     public String getInvalidVersionMessage() {
         return translationService.format(LibraryConstants.InvalidFieldValidation,
                                          translationService.getTranslation(LibraryConstants.Version));
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

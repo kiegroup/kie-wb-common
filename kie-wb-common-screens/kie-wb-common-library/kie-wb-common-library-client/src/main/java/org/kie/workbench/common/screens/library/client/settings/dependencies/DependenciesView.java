@@ -23,6 +23,8 @@ import javax.inject.Named;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLDivElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -52,6 +54,11 @@ public class DependenciesView implements DependenciesPresenter.View,
     @DataField("add-from-repository")
     private HTMLButtonElement addFromRepository;
 
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
+
     @Override
     public void init(final DependenciesPresenter presenter) {
         this.presenter = presenter;
@@ -76,5 +83,10 @@ public class DependenciesView implements DependenciesPresenter.View,
     public void setItems(final List<DependenciesItemPresenter.View> itemViews) {
         table.innerHTML = "";
         itemViews.forEach(this::add);
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

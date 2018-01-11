@@ -51,11 +51,12 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public ExternalDataObjectsPresenter(final View view,
+                                        final SettingsPresenter.MenuItem menuItem,
                                         final AddImportPopup addImportPopup,
                                         final ImportsListPresenter itemPresenters,
                                         final Event<SettingsSectionChange> settingsSectionChangeEvent) {
 
-        super(settingsSectionChangeEvent);
+        super(settingsSectionChangeEvent, menuItem);
         this.view = view;
         this.itemPresenters = itemPresenters;
         this.addImportPopup = addImportPopup;

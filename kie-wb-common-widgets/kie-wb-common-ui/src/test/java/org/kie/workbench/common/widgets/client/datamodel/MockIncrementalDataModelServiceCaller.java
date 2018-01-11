@@ -67,14 +67,14 @@ public class MockIncrementalDataModelServiceCaller implements Caller<Incremental
     }
 
     @Override
-    public <S> IncrementalDataModelService call(final RemoteCallback<S> remoteCallback) {
+    public IncrementalDataModelService call(final RemoteCallback<?> remoteCallback) {
         service.setCallback(remoteCallback);
         return service;
     }
 
     @Override
-    public <S, E> IncrementalDataModelService call(final RemoteCallback<S> remoteCallback,
-                                            final ErrorCallback<E> errorCallback) {
+    public IncrementalDataModelService call(final RemoteCallback<?> remoteCallback,
+                                            final ErrorCallback<?> errorCallback) {
         service.setCallback(remoteCallback);
         return service;
     }

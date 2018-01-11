@@ -22,6 +22,7 @@ import javax.inject.Named;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
@@ -39,6 +40,11 @@ public class KnowledgeBasesView implements KnowledgeBasesPresenter.View {
     @DataField("add-knowledge-base-button")
     private HTMLButtonElement addKnowledgeBaseButton;
 
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
+
     private KnowledgeBasesPresenter presenter;
 
     @Override
@@ -54,5 +60,10 @@ public class KnowledgeBasesView implements KnowledgeBasesPresenter.View {
     @Override
     public Element getKnowledgeBasesTable() {
         return knowledgeBasesTable;
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

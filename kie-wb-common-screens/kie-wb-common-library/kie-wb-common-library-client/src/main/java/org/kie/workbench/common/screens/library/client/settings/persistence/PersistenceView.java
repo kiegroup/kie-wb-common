@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.Element;
 import elemental2.dom.HTMLButtonElement;
+import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -68,6 +69,11 @@ public class PersistenceView implements PersistencePresenter.View {
     @Named("tbody")
     @DataField("persistable-data-objects-table")
     private HTMLTableSectionElement persistableDataObjectsTable;
+
+    @Inject
+    @Named("h3")
+    @DataField("title")
+    private HTMLHeadingElement title;
 
     @Inject
     private TranslationService translationService;
@@ -137,5 +143,10 @@ public class PersistenceView implements PersistencePresenter.View {
     @Override
     public Element getPersistableDataObjectsTable() {
         return persistableDataObjectsTable;
+    }
+
+    @Override
+    public String getTitle() {
+        return title.textContent;
     }
 }

@@ -149,14 +149,14 @@ public class DiscussionWidgetPresenterTest {
         }
 
         @Override
-        public <S> AppConfigService call(RemoteCallback<S> remoteCallback) {
+        public AppConfigService call(RemoteCallback<?> remoteCallback) {
             callback = remoteCallback;
             return service;
         }
 
         @Override
-        public <S, E> AppConfigService call(RemoteCallback<S> remoteCallback,
-                                     ErrorCallback<E> errorCallback) {
+        public AppConfigService call(RemoteCallback<?> remoteCallback,
+                                     ErrorCallback<?> errorCallback) {
             callback = remoteCallback;
             return service;
         }
