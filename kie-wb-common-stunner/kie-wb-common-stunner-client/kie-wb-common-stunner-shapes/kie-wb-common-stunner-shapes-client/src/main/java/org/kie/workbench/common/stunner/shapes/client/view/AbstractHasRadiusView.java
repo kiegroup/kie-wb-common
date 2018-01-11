@@ -42,9 +42,4 @@ public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView> ext
 
         return cast();
     }
-
-    @SuppressWarnings("unchecked")
-    private T cast() {
-        return (T) this;
-    }
 }

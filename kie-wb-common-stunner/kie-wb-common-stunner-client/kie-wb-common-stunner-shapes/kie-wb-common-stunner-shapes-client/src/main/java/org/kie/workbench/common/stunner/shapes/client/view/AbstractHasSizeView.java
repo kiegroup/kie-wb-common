@@ -38,9 +38,4 @@ public abstract class AbstractHasSizeView<T extends AbstractHasSizeView> extends
                                                      maxHeight));
         return cast();
     }
-
-    @SuppressWarnings("unchecked")
-    private T cast() {
-        return (T) this;
-    }
 }
