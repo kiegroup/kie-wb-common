@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,11 @@ import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresCont
 import org.kie.workbench.common.stunner.core.client.shape.view.HasRadius;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 
-public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView>
-        extends WiresContainerShapeView<T>
-        implements HasRadius<T>
+public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView> extends WiresContainerShapeView<T>
+        implements HasRadius<T> {
 
-{
     public AbstractHasRadiusView(final ViewEventType[] supportedEventTypes,
-                               final MultiPath path) {
+                                 final MultiPath path) {
         super(supportedEventTypes, path);
     }
 
@@ -47,6 +45,6 @@ public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView>
 
     @SuppressWarnings("unchecked")
     private T cast() {
-        return (T)this;
+        return (T) this;
     }
 }
