@@ -18,7 +18,10 @@ package org.kie.workbench.common.screens.library.client.screens.organizationalun
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
@@ -42,9 +45,17 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrganizationalUnitsScreenTest {
@@ -108,11 +119,14 @@ public class OrganizationalUnitsScreenTest {
                                                          "owner3",
                                                          "defaultGroupId3");
 
-        List<OrganizationalUnit> organizationalUnits = new ArrayList<>();
+        final Map<OrganizationalUnit, Integer> numberOfProjects = new HashMap<>();
+        final List<OrganizationalUnit> organizationalUnits = new ArrayList<>();
         organizationalUnits.add(organizationalUnit1);
         organizationalUnits.add(organizationalUnit2);
         organizationalUnits.add(organizationalUnit3);
+
         doReturn(organizationalUnits).when(libraryService).getOrganizationalUnits();
+        doReturn(numberOfProjects).when(libraryService).getNumberOfProjectsByOrganizationalUnit(organizationalUnits);
 
         presenter = spy(new OrganizationalUnitsScreen(view,
                                                       libraryPlaces,
@@ -211,6 +225,7 @@ public class OrganizationalUnitsScreenTest {
 
     @Test
     public void refreshTest() {
+        presenter.numberOfProjectsByOrganizationalUnit = new HashMap<>();
         presenter.organizationalUnits = new ArrayList<>();
         presenter.organizationalUnits.add(organizationalUnit1);
         presenter.organizationalUnits.add(organizationalUnit2);
@@ -243,5 +258,19 @@ public class OrganizationalUnitsScreenTest {
                                 any());
         verify(view,
                times(3)).addOrganizationalUnit(any());
+    }
+
+    @Test
+    public void getNumberOfProjectsTest() {
+
+        presenter.numberOfProjectsByOrganizationalUnit = new HashMap<OrganizationalUnit, Integer>() {{
+            put(organizationalUnit1, 1);
+            put(organizationalUnit2, 2);
+            put(organizationalUnit3, 3);
+        }};
+
+        assertEquals(1, presenter.getNumberOfProjects(organizationalUnit1));
+        assertEquals(2, presenter.getNumberOfProjects(organizationalUnit2));
+        assertEquals(3, presenter.getNumberOfProjects(organizationalUnit3));
     }
 }

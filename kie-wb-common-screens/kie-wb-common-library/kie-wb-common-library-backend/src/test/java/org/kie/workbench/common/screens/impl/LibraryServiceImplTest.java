@@ -20,8 +20,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Sets;
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.ext.uberfire.social.activities.service.SocialUserRepositoryAPI;
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
@@ -71,10 +73,21 @@ import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.authz.AuthorizationManager;
 
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LibraryServiceImplTest {
@@ -678,6 +691,103 @@ public class LibraryServiceImplTest {
                      users.get(0).getUserName());
         assertEquals("user",
                      users.get(1).getUserName());
+    }
+
+    @Test
+    public void getNumberOfProjectsByOrganizationalUnitTest() {
+
+        final Project project1 = mockProject("project1");
+        final Project project2 = mockProject("project2");
+        final Project project3 = mockProject("project3");
+        final OrganizationalUnit organizationalUnit1 = mock(OrganizationalUnit.class);
+        final OrganizationalUnit organizationalUnit2 = mock(OrganizationalUnit.class);
+        final List<OrganizationalUnit> organizationalUnits = Arrays.asList(organizationalUnit1, organizationalUnit2);
+
+        doReturn(Sets.newHashSet(project1)).when(libraryService).getProjects(organizationalUnit1);
+        doReturn(Sets.newHashSet(project2, project3)).when(libraryService).getProjects(organizationalUnit2);
+
+        final Map<OrganizationalUnit, Integer> numberOfProjects = libraryService.getNumberOfProjectsByOrganizationalUnit(organizationalUnits);
+
+        assertEquals(1, numberOfProjects.get(organizationalUnit1).intValue());
+        assertEquals(2, numberOfProjects.get(organizationalUnit2).intValue());
+    }
+
+    @Test
+    public void getProjectsByOrganizationalUnitTest() {
+
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        final Repository repository1 = mock(Repository.class);
+        final Repository repository2 = mock(Repository.class);
+
+        doReturn(Sets.newHashSet(repository1, repository2)).when(libraryService).getAuthorizedRepositories(organizationalUnit);
+        doReturn(Sets.newHashSet("project1")).when(libraryService).getProjects(repository1);
+        doReturn(Sets.newHashSet("project2")).when(libraryService).getProjects(repository2);
+
+        final Set<String> projects = libraryService.getProjects(organizationalUnit);
+
+        assertEquals(2, projects.size());
+        assertTrue(projects.contains("project1"));
+        assertTrue(projects.contains("project2"));
+    }
+
+    @Test
+    public void getProjectsByRepositoryTest() {
+
+        final Project project1 = mockProject("project1");
+        final Project project2 = mockProject("project2");
+        final Project project3 = mockProject("project3");
+
+        doReturn(Sets.newHashSet(project1, project2)).when(kieProjectService).getProjects(repo1, "repo1-branch1");
+        doReturn(Sets.newHashSet(project1, project3)).when(kieProjectService).getProjects(repo1, "repo1-branch2");
+
+        final Set<String> projects = libraryService.getProjects(repo1);
+
+        assertEquals(3, projects.size());
+        assertTrue(projects.contains(project1.getIdentifier()));
+        assertTrue(projects.contains(project2.getIdentifier()));
+        assertTrue(projects.contains(project2.getIdentifier()));
+    }
+
+    private Project mockProject(final String identifier) {
+
+        final Project project = mock(Project.class);
+
+        doReturn(identifier).when(project).getIdentifier();
+
+        return project;
+    }
+
+    @Test
+    public void isGetAuthorizedRepositoriesTest() {
+
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        final Repository repository1 = mock(Repository.class);
+        final Repository repository2 = mock(Repository.class);
+        final Repository repository3 = mock(Repository.class);
+
+        doReturn(true).when(libraryService).isAuthorize(repository1);
+        doReturn(true).when(libraryService).isAuthorize(repository2);
+        doReturn(false).when(libraryService).isAuthorize(repository3);
+
+        doReturn(Arrays.asList(repository1, repository2, repository3)).when(organizationalUnit).getRepositories();
+
+        final Set<Repository> authorizedRepositories = libraryService.getAuthorizedRepositories(organizationalUnit);
+
+        assertTrue(authorizedRepositories.contains(repository1));
+        assertTrue(authorizedRepositories.contains(repository2));
+        assertFalse(authorizedRepositories.contains(repository3));
+    }
+
+    @Test
+    public void isAuthorizeTest() {
+
+        final User user = mock(User.class);
+
+        doReturn(user).when(sessionInfo).getIdentity();
+
+        libraryService.isAuthorize(repo1);
+
+        verify(authorizationManager).authorize(repo1, user);
     }
 
     private void organizationalUnitWithSecondaryRepositoryExistent(final OrganizationalUnit organizationalUnit,

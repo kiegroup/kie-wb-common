@@ -17,6 +17,8 @@
 package org.kie.workbench.common.screens.library.client.screens.organizationalunit;
 
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -27,6 +29,7 @@ import org.guvnor.structure.client.security.OrganizationalUnitController;
 import org.guvnor.structure.events.AfterCreateOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.api.LibraryService;
@@ -45,20 +48,9 @@ import org.uberfire.client.mvp.UberElement;
         owningPerspective = LibraryPerspective.class)
 public class OrganizationalUnitsScreen {
 
-    public interface View extends UberElement<OrganizationalUnitsScreen> {
+    List<OrganizationalUnit> organizationalUnits;
 
-        void clearOrganizationalUnits();
-
-        void hideCreateOrganizationalUnitAction();
-
-        void addOrganizationalUnit(TileWidget tileWidget);
-
-        String getNumberOfContributorsLabel(int numberOfContributors);
-
-        String getNumberOfRepositoriesLabel(int numberOfRepositories);
-
-        void showNoOrganizationalUnits(HTMLElement view);
-    }
+    Map<OrganizationalUnit, Integer> numberOfProjectsByOrganizationalUnit;
 
     private View view;
 
@@ -77,8 +69,6 @@ public class OrganizationalUnitsScreen {
     private LibraryInternalPreferences libraryInternalPreferences;
 
     private EmptyOrganizationalUnitsScreen emptyOrganizationalUnitsScreen;
-
-    List<OrganizationalUnit> organizationalUnits;
 
     @Inject
     public OrganizationalUnitsScreen(final View view,
@@ -114,29 +104,55 @@ public class OrganizationalUnitsScreen {
     }
 
     private void setupOrganizationalUnits() {
-        if (organizationalUnitController.canReadOrgUnits()) {
-            libraryService.call((List<OrganizationalUnit> allOrganizationalUnits) -> {
-                organizationalUnits = allOrganizationalUnits;
-                if (allOrganizationalUnits.isEmpty()) {
-                    view.showNoOrganizationalUnits(emptyOrganizationalUnitsScreen.getView().getElement());
-                } else {
-                    refresh();
-                }
-            }).getOrganizationalUnits();
+        if (!organizationalUnitController.canReadOrgUnits()) {
+            return;
         }
+
+        loadOrganizationalUnits(organizationalUnits -> {
+            this.organizationalUnits = organizationalUnits;
+
+            loadNumberOfProjectsByOrganizationalUnit(organizationalUnits, numberOfProjects -> {
+                this.numberOfProjectsByOrganizationalUnit = numberOfProjects;
+
+                setupOrganizationalUnitScreen();
+                refresh();
+            });
+        });
+    }
+
+    private void setupOrganizationalUnitScreen() {
+        if (organizationalUnits.isEmpty()) {
+            view.showNoOrganizationalUnits(emptyOrganizationalUnitsScreen.getView().getElement());
+        }
+    }
+
+    private void loadNumberOfProjectsByOrganizationalUnit(final List<OrganizationalUnit> organizationalUnits,
+                                                          final RemoteCallback<Map<OrganizationalUnit, Integer>> callback) {
+        libraryService.call(callback).getNumberOfProjectsByOrganizationalUnit(organizationalUnits);
+    }
+
+    private void loadOrganizationalUnits(final RemoteCallback<List<OrganizationalUnit>> callback) {
+        libraryService.call(callback).getOrganizationalUnits();
     }
 
     public void refresh() {
         view.clearOrganizationalUnits();
         organizationalUnits.forEach(organizationalUnit -> {
             final TileWidget tileWidget = organizationalUnitTileWidgets.get();
+            final int numberOfProjects = getNumberOfProjects(organizationalUnit);
+
             tileWidget.init(organizationalUnit.getName(),
                             view.getNumberOfContributorsLabel(organizationalUnit.getContributors().size()),
-                            String.valueOf(organizationalUnit.getRepositories().size()),
-                            view.getNumberOfRepositoriesLabel(organizationalUnit.getRepositories().size()),
+                            String.valueOf(numberOfProjects),
+                            view.getNumberOfProjectsLabel(numberOfProjects),
                             () -> open(organizationalUnit));
             view.addOrganizationalUnit(tileWidget);
         });
+    }
+
+    int getNumberOfProjects(final OrganizationalUnit organizationalUnit) {
+        final Integer count = numberOfProjectsByOrganizationalUnit.get(organizationalUnit);
+        return count != null ? count.intValue() : 0;
     }
 
     public OrganizationalUnitRepositoryInfo open(OrganizationalUnit organizationalUnit) {
@@ -188,5 +204,20 @@ public class OrganizationalUnitsScreen {
     @WorkbenchPartView
     public UberElement<OrganizationalUnitsScreen> getView() {
         return view;
+    }
+
+    public interface View extends UberElement<OrganizationalUnitsScreen> {
+
+        void clearOrganizationalUnits();
+
+        void hideCreateOrganizationalUnitAction();
+
+        void addOrganizationalUnit(TileWidget tileWidget);
+
+        String getNumberOfContributorsLabel(int numberOfContributors);
+
+        String getNumberOfProjectsLabel(int numberOfRepositories);
+
+        void showNoOrganizationalUnits(HTMLElement view);
     }
 }

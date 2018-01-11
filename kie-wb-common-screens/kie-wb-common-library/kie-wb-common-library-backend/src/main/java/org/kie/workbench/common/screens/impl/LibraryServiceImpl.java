@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -363,6 +365,60 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public List<OrganizationalUnit> getOrganizationalUnits() {
         return new ArrayList<>(ouService.getOrganizationalUnits());
+    }
+
+    @Override
+    public Map<OrganizationalUnit, Integer> getNumberOfProjectsByOrganizationalUnit(final List<OrganizationalUnit> organizationalUnits) {
+
+        final Map<OrganizationalUnit, Integer> numberOfProjectsByOrganizationalUnit = new HashMap<>();
+
+        for (final OrganizationalUnit organizationalUnit : organizationalUnits) {
+            numberOfProjectsByOrganizationalUnit.put(organizationalUnit, numberOfProjects(organizationalUnit));
+        }
+
+        return numberOfProjectsByOrganizationalUnit;
+    }
+
+    private int numberOfProjects(final OrganizationalUnit organizationalUnit) {
+        return getProjects(organizationalUnit).size();
+    }
+
+    Set<String> getProjects(final OrganizationalUnit organizationalUnit) {
+
+        final Set<String> projects = new HashSet<>();
+
+        for (final Repository repository : getAuthorizedRepositories(organizationalUnit)) {
+            getProjects(repository).forEach(projects::add);
+        }
+
+        return projects;
+    }
+
+    Set<String> getProjects(final Repository repository) {
+        return repository
+                .getBranches()
+                .stream()
+                .flatMap(branch -> {
+
+                    final Optional<Set<Project>> optional = Optional.ofNullable(kieProjectService.getProjects(repository, branch));
+                    final Set<Project> projects = optional.orElse(new HashSet<>());
+
+                    return projects.stream();
+                })
+                .map(Project::getIdentifier)
+                .collect(Collectors.toSet());
+    }
+
+    Set<Repository> getAuthorizedRepositories(final OrganizationalUnit organizationalUnit) {
+        return organizationalUnit
+                .getRepositories()
+                .stream()
+                .filter(this::isAuthorize)
+                .collect(Collectors.toSet());
+    }
+
+    boolean isAuthorize(final Repository repository) {
+        return authorizationManager.authorize(repository, sessionInfo.getIdentity());
     }
 
     @Override

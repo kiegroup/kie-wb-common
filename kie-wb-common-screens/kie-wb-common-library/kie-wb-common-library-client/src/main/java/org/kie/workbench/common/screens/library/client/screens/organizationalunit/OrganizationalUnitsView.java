@@ -35,25 +35,20 @@ import org.kie.workbench.common.screens.library.client.widgets.common.TileWidget
 public class OrganizationalUnitsView implements OrganizationalUnitsScreen.View,
                                                 IsElement {
 
-    private OrganizationalUnitsScreen presenter;
-
-    @Inject
-    private TranslationService ts;
-
-    @Inject
-    private TranslationUtils translationUtils;
-
     @Inject
     @DataField("title")
     Div title;
-
     @Inject
     @DataField("create-organizational-unit")
     Button createOrganizationalUnit;
-
     @Inject
     @DataField("cards-container")
     Div cardsContainer;
+    private OrganizationalUnitsScreen presenter;
+    @Inject
+    private TranslationService ts;
+    @Inject
+    private TranslationUtils translationUtils;
 
     @Override
     public void init(OrganizationalUnitsScreen presenter) {
@@ -85,9 +80,9 @@ public class OrganizationalUnitsView implements OrganizationalUnitsScreen.View,
     }
 
     @Override
-    public String getNumberOfRepositoriesLabel(int numberOfRepositories) {
-        return ts.format(LibraryConstants.NumberOfRepositories,
-                         numberOfRepositories);
+    public String getNumberOfProjectsLabel(int numberOfProjects) {
+        return ts.format(LibraryConstants.NumberOfProjects0,
+                         numberOfProjects);
     }
 
     @Override
