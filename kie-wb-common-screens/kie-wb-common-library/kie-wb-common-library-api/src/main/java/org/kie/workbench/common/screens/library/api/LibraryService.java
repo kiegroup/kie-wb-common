@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.api;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ext.uberfire.social.activities.model.SocialUser;
@@ -80,6 +81,8 @@ public interface LibraryService {
     Project importProject(final ExampleProject exampleProject);
 
     List<OrganizationalUnit> getOrganizationalUnits();
+
+    Map<OrganizationalUnit, Integer> getNumberOfProjectsByOrganizationalUnit(final List<OrganizationalUnit> organizationalUnits);
 
     GAV createGAV(final String projectName,
                   final OrganizationalUnit selectedOrganizationalUnit);
