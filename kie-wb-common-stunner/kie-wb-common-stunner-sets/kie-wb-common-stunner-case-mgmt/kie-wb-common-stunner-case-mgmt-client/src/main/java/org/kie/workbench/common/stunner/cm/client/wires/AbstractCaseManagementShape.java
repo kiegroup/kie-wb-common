@@ -186,9 +186,4 @@ public abstract class AbstractCaseManagementShape<T extends WiresContainerShapeV
     }
 
     protected abstract AbstractCaseManagementShape createGhost();
-
-    @SuppressWarnings("unchecked")
-    private T cast() {
-        return (T) this;
-    }
 }
