@@ -16,50 +16,47 @@
 
 <div class="tab-pane kie-tab-pane active" id="kieSettingsDeployments">
 
-    <h3>
-        Deployments
+    <h3 data-i18n-key="Deployments">
     </h3>
-
-    <p>Lorem ipsum crimson beige kumquat mauve dolor sunt.</p>
 
     <hr>
 
     <form role="form">
         <div class="form-group">
-            <label>Runtime Strategy</label>
+            <label data-i18n-key="RuntimeStrategy"></label>
             <div data-field="runtime-strategies"></div>
         </div>
 
         <div class="form-group">
-            <label>Persistence Unit Name</label>
+            <label data-i18n-key="PersistenceUnitName"></label>
             <input type="text" class="form-control" data-field="persistence-unit-name">
         </div>
 
         <div class="form-group">
-            <label>Persistence Mode</label>
+            <label data-i18n-key="PersistenceMode"></label>
             <div data-field="persistence-modes"></div>
         </div>
 
         <div class="form-group">
-            <label>Audit Persistence Unit Name</label>
+            <label data-i18n-key="AuditPersistenceUnitName"></label>
             <input type="text" class="form-control" data-field="audit-persistence-unit-name">
         </div>
 
         <div class="form-group">
-            <label>Audit Mode</label>
+            <label data-i18n-key="AuditMode"></label>
             <div data-field="audit-modes"></div>
         </div>
 
         <br>
 
         <!-- MARSHALLING STRATEGIES -->
-        <h3>Marshalling Strategies </h3>
+        <h3 data-i18n-key="MarshallingStrategies"></h3>
         <table class="table table-hover kie-tablelist">
             <thead>
             <tr class="kie-tablelist__row kie-tablelist__row--header">
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Name"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Resolver"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Parameters"></th>
                 <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
                     <!-- no label -->
                 </th>
@@ -72,20 +69,20 @@
 
         <button type="button" class="btn btn-link" data-field="add-marshalling-strategy-button">
             <span class="pficon pficon-add-circle-o"></span>
-            <span>Add Marshalling Strategy</span>
+            <span data-i18n-key="AddMarshallingStrategy"></span>
         </button>
 
         <br>
         <br>
 
         <!-- EVENT LISTENERS -->
-        <h3>Event Listeners</h3>
+        <h3 data-i18n-key="EventListeners"></h3>
         <table class="table table-hover kie-tablelist">
             <thead>
             <tr class="kie-tablelist__row kie-tablelist__row--header">
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Name"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Resolver"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Parameters"></th>
                 <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
                     <!-- no label -->
                 </th>
@@ -98,20 +95,20 @@
 
         <button type="button" class="btn btn-link" data-field="add-event-listener-button">
             <span class="pficon pficon-add-circle-o"></span>
-            <span>Add Event Listener</span>
+            <span data-i18n-key="AddEventListener"></span>
         </button>
 
         <br>
         <br>
 
         <!-- GLOBAL -->
-        <h3>Global</h3>
+        <h3 data-i18n-key="Global"></h3>
         <table class="table table-hover kie-tablelist">
             <thead>
             <tr class="kie-tablelist__row kie-tablelist__row--header">
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Name"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Resolver"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Parameters"></th>
                 <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
                     <!-- no label -->
                 </th>
@@ -124,7 +121,7 @@
 
         <button type="button" class="btn btn-link" data-field="add-global-button">
             <span class="pficon pficon-add-circle-o"></span>
-            <span>Add Global</span>
+            <span data-i18n-key="AddGlobal"></span>
         </button>
 
 
@@ -132,13 +129,13 @@
         <br>
 
         <!-- REQUIRED ROLES -->
-        <h3>Required Roles</h3>
+        <h3 data-i18n-key="RequiredRoles"></h3>
         <table class="table table-hover kie-tablelist">
             <thead>
             <tr class="kie-tablelist__row kie-tablelist__row--header">
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Name</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Resolver</th>
-                <th class="kie-tablelist__cell kie-tablelist__cell--header">Parameters</th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Name"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Resolver"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Parameters"></th>
                 <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions">
                     <!-- no label -->
                 </th>
@@ -151,7 +148,7 @@
 
         <button type="button" class="btn btn-link" data-field="add-required-role-button">
             <span class="pficon pficon-add-circle-o"></span>
-            <span>Add Required Role</span>
+            <span data-i18n-key="AddRequiredRole"></span>
         </button>
 
     </form>
