@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.settings.knowledgebases.
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
@@ -47,11 +48,11 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
         knowledgeBasesListPresenter.setup(
                 getView().getKnowledgeSessionsTable(),
                 parentPresenter.getObject().getKSessions(),
-                (kSessionModel, preenter) -> preenter.setup(kSessionModel, this));
+                (kSessionModel, presenter) -> presenter.setup(kSessionModel, this));
 
         super.setup();
 
-        setWidth("900px"); //FIXME: ugly
+        setWidth("1200px"); //FIXME: ugly
     }
 
     public void add() {
@@ -69,9 +70,14 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
         parentPresenter.fireChangeEvent();
     }
 
+    public void done() {
+        knowledgeBasesListPresenter.getPresenters().forEach(p -> p.closeAllExpandableListItems());
+        hide();
+    }
+
     public interface View extends Elemental2Modal.View<KnowledgeSessionsModal> {
 
-        HTMLTableSectionElement getKnowledgeSessionsTable();
+        HTMLElement getKnowledgeSessionsTable();
     }
 
     @Dependent

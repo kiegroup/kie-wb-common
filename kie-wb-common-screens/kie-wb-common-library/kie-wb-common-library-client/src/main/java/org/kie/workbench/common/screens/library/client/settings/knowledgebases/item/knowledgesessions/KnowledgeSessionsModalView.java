@@ -44,9 +44,8 @@ public class KnowledgeSessionsModalView implements KnowledgeSessionsModal.View {
     private HTMLDivElement footer;
 
     @Inject
-    @Named("tbody")
     @DataField("knowledge-sessions-table")
-    private HTMLTableSectionElement knowledgeSessionsTable;
+    private HTMLDivElement knowledgeSessionsTable;
 
     @Inject
     @DataField("add-knowledge-session-button")
@@ -65,7 +64,7 @@ public class KnowledgeSessionsModalView implements KnowledgeSessionsModal.View {
 
     @EventHandler("done-button")
     public void onDoneButtonClicked(final ClickEvent ignore) {
-        presenter.hide();
+        presenter.done();
     }
 
     @EventHandler("add-knowledge-session-button")
@@ -89,7 +88,7 @@ public class KnowledgeSessionsModalView implements KnowledgeSessionsModal.View {
     }
 
     @Override
-    public HTMLTableSectionElement getKnowledgeSessionsTable() {
+    public HTMLElement getKnowledgeSessionsTable() {
         return knowledgeSessionsTable;
     }
 }

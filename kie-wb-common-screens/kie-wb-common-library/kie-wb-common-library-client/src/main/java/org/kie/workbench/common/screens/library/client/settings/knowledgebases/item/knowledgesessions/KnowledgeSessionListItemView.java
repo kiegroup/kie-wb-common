@@ -26,11 +26,12 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-@Templated("#root")
+@Templated
 public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPresenter.View {
 
     @Inject
@@ -50,8 +51,8 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     private HTMLDivElement clockSelectContainer;
 
     @Inject
-    @DataField("listeners-link")
-    private HTMLAnchorElement listenersLink;
+    @DataField("listeners-button")
+    private HTMLDivElement listenersButton;
 
     @Inject
     @Named("strong")
@@ -59,13 +60,31 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     private HTMLElement listenersCount;
 
     @Inject
-    @DataField("work-item-handlers-link")
-    private HTMLAnchorElement workItemHandlersLink;
+    @Named("tbody")
+    @DataField("listeners-container")
+    private HTMLTableSectionElement listenersContainer;
+
+    @Inject
+    @DataField("add-listener-button")
+    private HTMLButtonElement addListenerButton;
+
+    @Inject
+    @DataField("work-item-handlers-button")
+    private HTMLDivElement workItemHandlersButton;
 
     @Inject
     @Named("strong")
     @DataField("work-item-handlers-count")
     private HTMLElement workItemHandlersCount;
+
+    @Inject
+    @Named("tbody")
+    @DataField("work-item-handlers-container")
+    private HTMLTableSectionElement workItemHandlersContainer;
+
+    @Inject
+    @DataField("add-work-item-handler-button")
+    private HTMLButtonElement addWorkItemHandlerButton;
 
     @Inject
     @DataField("remove-button")
@@ -88,10 +107,83 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
         this.presenter.setType(type.value);
     }
 
+    @EventHandler("add-listener-button")
+    public void onAddListenerButtonClicked(final ClickEvent ignore) {
+        this.presenter.addListener();
+    }
+
+    @EventHandler("add-work-item-handler-button")
+    public void onAddWorkItemHandlerButtonClicked(final ClickEvent ignore) {
+        this.presenter.addWorkItemHandler();
+    }
+
     @EventHandler("remove-button")
     public void onRemoveButtonClicked(final ClickEvent ignore) {
         this.presenter.remove();
     }
+
+    @Override
+    public void initListViewCompoundExpandableItems() {
+        initListViewCompoundExpandableItem(listenersButton);
+        initListViewCompoundExpandableItem(workItemHandlersButton);
+    }
+
+    public native void initListViewCompoundExpandableItem(final HTMLElement element) /*-{
+        $wnd.jQuery(element).on("click", function () {
+            var $this = $wnd.jQuery(this);
+            var $heading = $this.parents(".list-group-item");
+            var $subPanels = $heading.find(".list-group-item-container");
+            var index = $heading.find(".list-view-pf-expand").index(this);
+
+            //Remove all active status
+            $heading.find(".list-view-pf-expand.active").find(".fa-angle-right").removeClass("fa-angle-down")
+                    .end().removeClass("active")
+                    .end().removeClass("list-view-pf-expand-active");
+
+            // Add active to the clicked item
+            $this.addClass("active")
+                    .parents(".list-group-item").addClass("list-view-pf-expand-active")
+                    .end().find(".fa-angle-right").addClass("fa-angle-down");
+
+            // check if it needs to hide
+            if ($subPanels.eq(index).hasClass("hidden")) {
+                $heading.find(".list-group-item-container:visible").addClass("hidden");
+                $subPanels.eq(index).removeClass("hidden");
+            } else {
+                $subPanels.eq(index).addClass("hidden");
+                $heading.find(".list-view-pf-expand.active").find(".fa-angle-right").removeClass("fa-angle-down")
+                        .end().removeClass("active")
+                        .end().removeClass("list-view-pf-expand-active");
+            }
+
+            // close icon
+            $subPanels.find(".close").on("click", function () {
+                var $this = $wnd.jQuery(this);
+                var $panel = $this.parent();
+
+                // close the container and remove the active status
+                $panel.addClass("hidden")
+                        .parent().removeClass("list-view-pf-expand-active")
+                        .find(".list-view-pf-expand.active").removeClass("active")
+                        .find(".fa-angle-right").removeClass("fa-angle-down")
+            });
+        });
+
+    }-*/;
+
+    @Override
+    public void closeAllExpandableListItems() {
+        close(listenersButton);
+        close(workItemHandlersButton);
+    }
+
+    private native void close(final HTMLElement element) /*-{
+        $wnd.jQuery(element)
+                .parents(".list-group-item")
+                .find(".list-group-item-container")
+                .find(".close")
+                .click();
+    }-*/;
 
     @Override
     public void setIsDefault(final boolean isDefault) {
@@ -106,6 +198,16 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
     @Override
     public void setType(final String type) {
         this.type.value = type;
+    }
+
+    @Override
+    public HTMLElement getListenersContainer() {
+        return listenersContainer;
+    }
+
+    @Override
+    public HTMLElement getWorkItemHandlersContainer() {
+        return workItemHandlersContainer;
     }
 
     @Override

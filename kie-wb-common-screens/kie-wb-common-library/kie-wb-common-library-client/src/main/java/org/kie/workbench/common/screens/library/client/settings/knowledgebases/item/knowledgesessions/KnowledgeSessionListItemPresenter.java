@@ -16,26 +16,39 @@
 
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import org.guvnor.common.services.project.model.WorkItemHandlerModel;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.listener.ListenerListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.workitemhandler.WorkItemHandlerListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 import org.kie.workbench.common.services.shared.kmodule.ClockTypeOption;
 import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
+import org.kie.workbench.common.services.shared.kmodule.ListenerModel;
 
 public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessionModel, KnowledgeSessionsModal, KnowledgeSessionListItemPresenter.View> {
 
+    private final WorkItemHandlersListPresenter workItemHandlersListPresenter;
+    private final ListenersListPresenter listenersListPresenter;
     private final KieEnumSelectElement<ClockTypeOption> clockSelect;
     private KSessionModel kSessionModel;
     private KnowledgeSessionsModal parentPresenter;
 
     @Inject
     public KnowledgeSessionListItemPresenter(final View view,
+                                             final WorkItemHandlersListPresenter workItemHandlersListPresenter,
+                                             final ListenersListPresenter listenersListPresenter,
                                              final KieEnumSelectElement<ClockTypeOption> clockSelect) {
         super(view);
+        this.workItemHandlersListPresenter = workItemHandlersListPresenter;
+        this.listenersListPresenter = listenersListPresenter;
         this.clockSelect = clockSelect;
     }
 
@@ -53,12 +66,24 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
         view.setListenersCount(kSessionModel.getListeners().size());
         view.setWorkItemHandlersCount(kSessionModel.getWorkItemHandelerModels().size());
 
+        listenersListPresenter.setup(
+                view.getListenersContainer(),
+                kSessionModel.getListeners(),
+                (listener, presenter) -> presenter.setup(listener, this));
+
+        workItemHandlersListPresenter.setup(
+                view.getWorkItemHandlersContainer(),
+                kSessionModel.getWorkItemHandelerModels(),
+                (workItemHandler, presenter) -> presenter.setup(workItemHandler, this));
+
         clockSelect.setup(view.getClockSelectContainer(), ClockTypeOption.values());
         clockSelect.setValue(kSessionModel.getClockType());
         clockSelect.onChange(clockTypeOption -> {
             kSessionModel.setClockType(clockTypeOption);
             parentPresenter.fireChangeEvent();
         });
+
+        view.initListViewCompoundExpandableItems();
 
         return this;
     }
@@ -84,8 +109,54 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
         parentPresenter.fireChangeEvent();
     }
 
+    public void addListener() {
+        listenersListPresenter.add(new ListenerModel());
+        signalListenerAddedOrRemoved();
+    }
+
+    public void addWorkItemHandler() {
+        workItemHandlersListPresenter.add(new WorkItemHandlerModel());
+        signalWorkItemHandlerAddedOrRemoved();
+    }
+
+    public void fireChangeEvent() {
+        parentPresenter.fireChangeEvent();
+    }
+
+    public void closeAllExpandableListItems() {
+        view.closeAllExpandableListItems();
+    }
+
+    public void signalWorkItemHandlerAddedOrRemoved() {
+        view.setWorkItemHandlersCount(kSessionModel.getWorkItemHandelerModels().size());
+    }
+
+    public void signalListenerAddedOrRemoved() {
+        view.setListenersCount(kSessionModel.getListeners().size());
+    }
+
+    @Dependent
+    public static class ListenersListPresenter extends ListPresenter<ListenerModel, ListenerListItemPresenter> {
+
+        @Inject
+        public ListenersListPresenter(final ManagedInstance<ListenerListItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
+    }
+
+    @Dependent
+    public static class WorkItemHandlersListPresenter extends ListPresenter<WorkItemHandlerModel, WorkItemHandlerListItemPresenter> {
+
+        @Inject
+        public WorkItemHandlersListPresenter(final ManagedInstance<WorkItemHandlerListItemPresenter> itemPresenters) {
+            super(itemPresenters);
+        }
+    }
+
     public interface View extends UberElementalListItem<KnowledgeSessionListItemPresenter>,
                                   IsElement {
+
+        void initListViewCompoundExpandableItems();
 
         void setIsDefault(final boolean isDefault);
 
@@ -95,8 +166,14 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
 
         HTMLElement getClockSelectContainer();
 
+        HTMLElement getListenersContainer();
+
+        HTMLElement getWorkItemHandlersContainer();
+
         void setListenersCount(final int listenersCount);
 
         void setWorkItemHandlersCount(final int workItemHandlersCount);
+
+        void closeAllExpandableListItems();
     }
 }

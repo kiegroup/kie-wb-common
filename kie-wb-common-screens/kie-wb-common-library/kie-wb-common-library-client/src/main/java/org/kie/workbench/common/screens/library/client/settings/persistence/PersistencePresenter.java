@@ -17,6 +17,9 @@
 package org.kie.workbench.common.screens.library.client.settings.persistence;
 
 import java.util.HashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.enterprise.context.Dependent;
@@ -56,8 +59,8 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final ProjectContext projectContext;
     private final Event<NotificationEvent> notificationEvent;
     private final ManagedInstance<ObservablePath> observablePaths;
-    private final AddDoubleValueModal newPropertyModalPresenter;
-    private final AddSingleValueModal newPersistableDataObjectModalPresenter;
+    private final AddDoubleValueModal newPropertyModal;
+    private final AddSingleValueModal newPersistableDataObjectModal;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<DataModelerService> dataModelerService;
 
@@ -90,8 +93,8 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
-                                final AddDoubleValueModal newPropertyModalPresenter,
-                                final AddSingleValueModal newPersistableDataObjectModalPresenter,
+                                final AddDoubleValueModal newPropertyModal,
+                                final AddSingleValueModal newPersistableDataObjectModal,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<DataModelerService> dataModelerService,
                                 final PropertiesListPresenter propertiesItemPresenters,
@@ -102,8 +105,8 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         this.projectContext = projectContext;
         this.notificationEvent = notificationEvent;
         this.observablePaths = observablePaths;
-        this.newPropertyModalPresenter = newPropertyModalPresenter;
-        this.newPersistableDataObjectModalPresenter = newPersistableDataObjectModalPresenter;
+        this.newPropertyModal = newPropertyModal;
+        this.newPersistableDataObjectModal = newPersistableDataObjectModal;
         this.editorService = editorService;
         this.dataModelerService = dataModelerService;
         this.propertiesItemPresenters = propertiesItemPresenters;
@@ -131,13 +134,6 @@ public class PersistencePresenter extends SettingsPresenter.Section {
 
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
-        newPropertyModalPresenter.setup(LibraryConstants.AddProperty,
-                                        LibraryConstants.Name,
-                                        LibraryConstants.Value);
-
-        newPersistableDataObjectModalPresenter.setup(LibraryConstants.AddPersistableDataObject,
-                                                     LibraryConstants.Class);
-
         return Promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
             persistenceDescriptorEditorContent = m;
 
@@ -145,18 +141,32 @@ public class PersistencePresenter extends SettingsPresenter.Section {
             view.setPersistenceProvider(getPersistenceUnitModel().getProvider());
             view.setDataSource(getPersistenceUnitModel().getJtaDataSource());
 
-            propertiesItemPresenters.setup(
-                    view.getPropertiesTable(),
-                    getPersistenceUnitModel().getProperties(),
-                    (property, presenter) -> presenter.setup(property, this));
-
-            persistableDataObjectsItemPresenters.setup(
-                    view.getPersistableDataObjectsTable(),
-                    getPersistenceUnitModel().getClasses(),
-                    (className, presenter) -> presenter.setup(className, this));
+            setupPropertiesTable();
+            setupPersistableDataObjectsTable();
 
             return resolve();
         });
+    }
+
+    private void setupPropertiesTable() {
+        newPropertyModal.setup(LibraryConstants.AddProperty,
+                               LibraryConstants.Name,
+                               LibraryConstants.Value);
+
+        propertiesItemPresenters.setup(
+                view.getPropertiesTable(),
+                getPersistenceUnitModel().getProperties(),
+                (property, presenter) -> presenter.setup(property, this));
+    }
+
+    private void setupPersistableDataObjectsTable() {
+        newPersistableDataObjectModal.setup(LibraryConstants.AddPersistableDataObject,
+                                            LibraryConstants.Class);
+
+        persistableDataObjectsItemPresenters.setup(
+                view.getPersistableDataObjectsTable(),
+                getPersistenceUnitModel().getClasses(),
+                (className, presenter) -> presenter.setup(className, this));
     }
 
     @Override
@@ -219,14 +229,14 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void showNewPropertyModal() {
-        newPropertyModalPresenter.show((name, value) -> {
+        newPropertyModal.show((name, value) -> {
             add(new Property(name, value));
             fireChangeEvent();
         });
     }
 
     public void showNewPersistableDataObjectModal() {
-        newPersistableDataObjectModalPresenter.show(className -> {
+        newPersistableDataObjectModal.show(className -> {
             add(className);
             fireChangeEvent();
         });

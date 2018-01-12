@@ -89,7 +89,7 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
         kModuleModel.getKBases().clear();
         kModuleModel.getKBases().putAll(
-                knowledgeBaseListPresenter.getList().stream()
+                knowledgeBaseListPresenter.getObjectsList().stream()
                         .collect(Collectors.toMap(KBaseModel::getName, identity())));
 
         return resolve();

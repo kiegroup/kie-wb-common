@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.settings.util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -28,7 +29,8 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
 
     private final ManagedInstance<P> itemPresenters;
 
-    private List<T> list;
+    private List<T> objects;
+    private List<P> presenters;
     private Element listElement;
     private BiConsumer<T, P> itemPresenterConfigurator;
 
@@ -44,22 +46,24 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     }
 
     public void setup(final Element listElement,
-                      final List<T> list,
+                      final List<T> objects,
                       final BiConsumer<T, P> itemPresenterConfigurator) {
 
-        this.list = list;
+        this.objects = objects;
+        this.presenters = new ArrayList<>();
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
         this.listElement.innerHTML = "";
-        this.list.forEach(this::addToListElement);
+        this.objects.forEach(this::addToListElement);
     }
 
     public void setupWithPresenters(final Element listElement,
                                     final List<P> presenters,
                                     final BiConsumer<T, P> itemPresenterConfigurator) {
 
-        this.list = presenters.stream().map(p -> p.getObject()).collect(toList());
+        this.objects = presenters.stream().map(p -> p.getObject()).collect(toList());
+        this.presenters = presenters;
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
@@ -69,7 +73,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
 
     public void add(final T o) {
         addToListElement(o);
-        list.add(o);
+        objects.add(o);
     }
 
     private void addToListElement(final T o) {
@@ -77,6 +81,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     }
 
     private void addPresenter(final P presenter) {
+        presenters.add(presenter);
         listElement.appendChild(presenter.getView().getElement());
     }
 
@@ -88,16 +93,20 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     }
 
     public void remove(final ListItemPresenter<T, ?, ?> listItemPresenter) {
-        list.remove(listItemPresenter.getObject());
+        objects.remove(listItemPresenter.getObject());
         listElement.removeChild(listItemPresenter.getView().getElement());
     }
 
-    public List<T> getList() {
-        return list;
+    public List<T> getObjectsList() {
+        return objects;
+    }
+
+    public List<P> getPresenters() {
+        return presenters;
     }
 
     @Override
     public int hashCode() {
-        return list.hashCode();
+        return objects.hashCode();
     }
 }

@@ -14,44 +14,90 @@
   ~ limitations under the License.
   -->
 
-<table>
-    <tbody>
-    <tr data-field="root">
-        <td class="kie-tablelist__cell">
-            <input type="radio" name="kieKnowledgeSessionDefault" data-field="is-default">
-        </td>
-        <td class="kie-tablelist__cell">
-            <input type="text" data-field="name">
-        </td>
-        <td class="kie-tablelist__cell">
-            <input type="text" data-field="type">
-        </td>
-        <td class="kie-tablelist__cell">
-            <div data-field="clock-select-container"></div>
-        </td>
-        <td class="kie-tablelist__cell">
-            <a data-field="listeners-link">
-                <div class="list-view-pf-expand">
-                    <span class="fa fa-angle-right"></span>
-                    <strong data-field="listeners-count"></strong>
-                    <span>Listeners</span>
+<div class="list-group-item">
+    <div class="list-view-pf-actions">
+        <a href="#0" class="btn btn-link" data-field="remove-button">
+            <span class="fa fa-trash-o"></span>
+        </a>
+    </div>
+
+    <div class="list-view-pf-main-info">
+        <div class="list-view-pf-body">
+            <div class="list-view-pf-description">
+                <div class="list-group-item-text ksessions-list-group-item-text-content">
+                    <input type="radio" data-field="is-default" name="kieKnowledgeSessionDefaultRadio">
+                    <input type="text" data-field="name">
+                    <input type="text" data-field="type">
+                    <div data-field="clock-select-container"></div>
                 </div>
-            </a>
-        </td>
-        <td class="kie-tablelist__cell">
-            <a data-field="work-item-handlers-link">
-                <div class="list-view-pf-expand">
-                    <span class="fa fa-angle-right"></span>
-                    <strong data-field="work-item-handlers-count"></strong>
-                    <span>Work Item Handlers</span>
+            </div>
+            <div class="list-view-pf-additional-info">
+                <div class="list-view-pf-additional-info-item">
+                    <div class="list-view-pf-expand" data-field="listeners-button">
+                        <span class="fa fa-angle-right"></span>
+                        <strong data-field="listeners-count"></strong> Listeners
+                    </div>
                 </div>
-            </a>
-        </td>
-        <td class="kie-tablelist__cell kie-tablelist__cell--actions">
-            <a href="#0" class="btn btn-link" data-field="remove-button">
-                <span class="fa fa-trash-o"></span>
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
+                <div class="list-view-pf-additional-info-item">
+                    <div class="list-view-pf-expand" data-field="work-item-handlers-button">
+                        <span class="fa fa-angle-right"></span>
+                        <strong data-field="work-item-handlers-count"></strong> Work Item Handlers
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="list-group-item-container container-fluid hidden">
+        <div class="close">
+            <span class="pficon pficon-close"></span>
+        </div>
+
+        <br>
+        <br>
+
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Type"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Kind"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions"></th>
+            </tr>
+            </thead>
+            <tbody data-field="listeners-container">
+            </tbody>
+        </table>
+        <div>
+            <button type="button" class="btn btn-link" data-field="add-listener-button">
+                <span class="pficon pficon-add-circle-o"></span>
+                <span data-i18n-key="AddListener"></span>
+            </button>
+        </div>
+    </div>
+
+    <div class="list-group-item-container container-fluid hidden">
+        <div class="close">
+            <span class="pficon pficon-close"></span>
+        </div>
+
+        <br>
+        <br>
+
+        <table class="table table-hover kie-tablelist">
+            <thead>
+            <tr>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Type"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header" data-i18n-key="Name"></th>
+                <th class="kie-tablelist__cell kie-tablelist__cell--header kie-tablelist__cell--actions"></th>
+            </tr>
+            </thead>
+            <tbody data-field="work-item-handlers-container">
+            </tbody>
+        </table>
+        <div>
+            <button type="button" class="btn btn-link" data-field="add-work-item-handler-button">
+                <span class="pficon pficon-add-circle-o"></span>
+                <span data-i18n-key="AddWorkItemHandler"></span>
+            </button>
+        </div>
+    </div>
+</div>
