@@ -42,4 +42,9 @@ public class LiteralExpressionColumnHeaderMetaData extends EditableHeaderMetaDat
         // No implementation of equals/hashCode as each instance is considered different to another
         return this == o;
     }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
