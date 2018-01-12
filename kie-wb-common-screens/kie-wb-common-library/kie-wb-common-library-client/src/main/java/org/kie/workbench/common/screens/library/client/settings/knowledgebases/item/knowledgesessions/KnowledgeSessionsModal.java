@@ -20,7 +20,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
@@ -58,6 +57,7 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
     public void add() {
         final KSessionModel kSessionModel = new KSessionModel();
         kSessionModel.setName("");
+        kSessionModel.setDefault(knowledgeBasesListPresenter.getObjectsList().isEmpty());
         knowledgeBasesListPresenter.add(kSessionModel);
         signalKnowledgeBaseAddedOrRemoved();
     }

@@ -17,6 +17,8 @@
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.Element;
@@ -39,6 +41,7 @@ import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 @Dependent
 public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, KnowledgeBasesPresenter, KnowledgeBaseItemPresenter.View> {
 
+    private final Event<DefaultKnowledgeBaseChange> defaultKnowledgeBaseChangeEvent;
     private final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect;
     private final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect;
     private final AddSingleValueModal addIncludedKnowledgeBaseModal;
@@ -52,6 +55,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
 
     @Inject
     public KnowledgeBaseItemPresenter(final View view,
+                                      final Event<DefaultKnowledgeBaseChange> defaultKnowledgeBaseChangeEvent,
                                       final KieEnumSelectElement<AssertBehaviorOption> equalsBehaviorSelect,
                                       final KieEnumSelectElement<EventProcessingOption> eventProcessingModeSelect,
                                       final AddSingleValueModal addIncludedKnowledgeBaseModal,
@@ -60,6 +64,7 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
                                       final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter,
                                       final PackageListPresenter packageListPresenter) {
         super(view);
+        this.defaultKnowledgeBaseChangeEvent = defaultKnowledgeBaseChangeEvent;
         this.equalsBehaviorSelect = equalsBehaviorSelect;
         this.eventProcessingModeSelect = eventProcessingModeSelect;
         this.addIncludedKnowledgeBaseModal = addIncludedKnowledgeBaseModal;
@@ -152,7 +157,15 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
     }
 
     public void setDefault(final boolean isDefault) {
-        this.kBaseModel.setDefault(isDefault);
+        kBaseModel.setDefault(isDefault);
+        defaultKnowledgeBaseChangeEvent.fire(new DefaultKnowledgeBaseChange(kBaseModel));
+        parentPresenter.fireChangeEvent();
+    }
+
+    public void onDefaultKnowledgeSessionChanged(@Observes final DefaultKnowledgeBaseChange event) {
+        if (!event.getNewDefault().equals(kBaseModel)) {
+            kBaseModel.setDefault(false);
+        }
     }
 
     public interface View extends UberElementalListItem<KnowledgeBaseItemPresenter>,

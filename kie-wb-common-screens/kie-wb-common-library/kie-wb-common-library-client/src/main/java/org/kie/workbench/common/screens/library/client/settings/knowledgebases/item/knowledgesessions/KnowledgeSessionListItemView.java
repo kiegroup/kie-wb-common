@@ -107,6 +107,11 @@ public class KnowledgeSessionListItemView implements KnowledgeSessionListItemPre
         this.presenter.setType(type.value);
     }
 
+    @EventHandler("is-default")
+    public void onDefaultChanged(final ChangeEvent ignore) {
+        presenter.setDefault(isDefault.checked);
+    }
+
     @EventHandler("add-listener-button")
     public void onAddListenerButtonClicked(final ClickEvent ignore) {
         this.presenter.addListener();

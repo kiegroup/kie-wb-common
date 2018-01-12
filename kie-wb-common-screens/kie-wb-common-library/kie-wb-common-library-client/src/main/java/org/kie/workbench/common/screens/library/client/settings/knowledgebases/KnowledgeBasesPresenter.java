@@ -99,6 +99,7 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
         addKnowledgeBaseModal.show(knowledgeBaseName -> {
             final KBaseModel kBaseModel = new KBaseModel();
             kBaseModel.setName(knowledgeBaseName);
+            kBaseModel.setDefault(knowledgeBaseListPresenter.getObjectsList().isEmpty());
             knowledgeBaseListPresenter.add(kBaseModel);
             fireChangeEvent();
         });

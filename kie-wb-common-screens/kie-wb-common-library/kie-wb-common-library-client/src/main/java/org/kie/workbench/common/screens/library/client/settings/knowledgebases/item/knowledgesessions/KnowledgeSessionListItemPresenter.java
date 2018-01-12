@@ -17,6 +17,8 @@
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
@@ -35,6 +37,7 @@ import org.kie.workbench.common.services.shared.kmodule.ListenerModel;
 
 public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessionModel, KnowledgeSessionsModal, KnowledgeSessionListItemPresenter.View> {
 
+    private final Event<DefaultKnowledgeSessionChange> defaultKnowledgeSessionChangeEvent;
     private final WorkItemHandlersListPresenter workItemHandlersListPresenter;
     private final ListenersListPresenter listenersListPresenter;
     private final KieEnumSelectElement<ClockTypeOption> clockSelect;
@@ -43,10 +46,12 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
 
     @Inject
     public KnowledgeSessionListItemPresenter(final View view,
+                                             final Event<DefaultKnowledgeSessionChange> defaultKnowledgeSessionChangeEvent,
                                              final WorkItemHandlersListPresenter workItemHandlersListPresenter,
                                              final ListenersListPresenter listenersListPresenter,
                                              final KieEnumSelectElement<ClockTypeOption> clockSelect) {
         super(view);
+        this.defaultKnowledgeSessionChangeEvent = defaultKnowledgeSessionChangeEvent;
         this.workItemHandlersListPresenter = workItemHandlersListPresenter;
         this.listenersListPresenter = listenersListPresenter;
         this.clockSelect = clockSelect;
@@ -133,6 +138,18 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
 
     public void signalListenerAddedOrRemoved() {
         view.setListenersCount(kSessionModel.getListeners().size());
+    }
+
+    public void setDefault(final boolean isDefault) {
+        kSessionModel.setDefault(isDefault);
+        defaultKnowledgeSessionChangeEvent.fire(new DefaultKnowledgeSessionChange(kSessionModel));
+        parentPresenter.fireChangeEvent();
+    }
+
+    public void onDefaultKnowledgeSessionChanged(@Observes final DefaultKnowledgeSessionChange event) {
+        if (!event.getNewDefault().equals(kSessionModel)) {
+            kSessionModel.setDefault(false);
+        }
     }
 
     @Dependent
