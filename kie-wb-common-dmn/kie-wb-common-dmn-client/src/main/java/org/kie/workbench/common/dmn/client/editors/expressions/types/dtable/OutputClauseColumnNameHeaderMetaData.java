@@ -44,6 +44,7 @@ public class OutputClauseColumnNameHeaderMetaData extends ClauseColumnHeaderMeta
 
     @Override
     public int hashCode() {
+        // This default implementation is needed because of the CheckStyle plugin
         return super.hashCode();
     }
 }
