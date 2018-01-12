@@ -17,6 +17,7 @@ package org.kie.workbench.common.widgets.client.datamodel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +31,8 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.validation.client.dynamic.DynamicValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
 import org.kie.soup.project.datamodel.oracle.DataType;
@@ -47,7 +50,19 @@ import org.uberfire.client.callbacks.Callback;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(Parameterized.class)
 public class AsyncPackageDataModelOracleImplTest {
+
+    @Parameterized.Parameters
+    public static Iterable<? extends Object> data() {
+        return Arrays.asList(createImports(), createOldImports());
+    }
+
+    private Imports imports;
+
+    public AsyncPackageDataModelOracleImplTest(Imports imports) {
+        this.imports = imports;
+    }
 
     private AsyncPackageDataModelOracle oracle;
     private PackageDataModelOracleIncrementalPayload personPayload;
@@ -78,7 +93,7 @@ public class AsyncPackageDataModelOracleImplTest {
         oracle.addPackageNames(createPackageNames());
         oracle.addCollectionTypes(createCollectionTypes());
 
-        oracle.filter(createImports());
+        oracle.filter(imports);
 
         this.oracle = oracle;
     }
@@ -150,7 +165,7 @@ public class AsyncPackageDataModelOracleImplTest {
         return map;
     }
 
-    private Imports createImports() {
+    private static Imports createImports() {
         Imports imports = new Imports();
         imports.addImport(new Import("org.test.Person"));
         imports.addImport(new Import("java.lang.String"));
@@ -158,6 +173,17 @@ public class AsyncPackageDataModelOracleImplTest {
         imports.addImport(new Import("java.util.List"));
         imports.addImport(new Import("java.util.HashSet"));
         imports.addImport(new Import("org.SeemsAsCollection"));
+        return imports;
+    }
+
+    private static Imports createOldImports() {
+        Imports imports = new Imports();
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("org.test.Person"));
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("java.lang.String"));
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("org.globals.GiantContainerOfInformation"));
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("java.util.List"));
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("java.util.HashSet"));
+        imports.addImport(new org.drools.workbench.models.datamodel.imports.Import("org.SeemsAsCollection"));
         return imports;
     }
 
