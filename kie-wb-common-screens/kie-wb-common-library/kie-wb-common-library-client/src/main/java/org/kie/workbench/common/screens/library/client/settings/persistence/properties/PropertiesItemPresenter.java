@@ -20,9 +20,9 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
+import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
-import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
 
 @Dependent
 public class PropertiesItemPresenter extends ListItemPresenter<Property, PersistencePresenter, PropertiesItemPresenter.View> {

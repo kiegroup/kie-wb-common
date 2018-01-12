@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.screens.library.client.settings.util;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;

@@ -29,7 +29,6 @@ import javax.enterprise.context.Dependent;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import elemental2.dom.DomGlobal;
-import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
 import elemental2.promise.Promise.PromiseExecutorCallbackFn.RejectCallbackFn;
 import org.jboss.errai.common.client.api.Caller;
@@ -100,7 +99,7 @@ public final class Promises {
                                              final E rejectObject,
                                              final Predicate<S> validate) {
 
-        return new Promise<>((resolve, reject) -> call.apply(caller.call(
+        return create((resolve, reject) -> call.apply(caller.call(
                 (S response) -> {
                     if (validate.test(response)) {
                         resolve.onInvoke(response);
@@ -116,7 +115,7 @@ public final class Promises {
                                              final BiConsumer<M, Throwable> onError,
                                              final E rejectObject) {
 
-        return new Promise<>((resolve, reject) -> call.accept(caller.call(
+        return create((resolve, reject) -> call.accept(caller.call(
                 (RemoteCallback<S>) resolve::onInvoke,
                 defaultErrorCallback(onError, rejectObject, reject))));
     }
@@ -135,10 +134,6 @@ public final class Promises {
         throw new RuntimeException(t);
     }
 
-    public <T> Promise<T> resolve() {
-        return Promise.resolve((IThenable<T>) null);
-    }
-
     @SuppressWarnings("unchecked")
     public <V> Promise<Object> catchOrExecute(final Object o,
                                               final Function<RuntimeException, Promise<Object>> c,
@@ -153,5 +148,25 @@ public final class Promises {
         } else {
             return f.apply((V) o);
         }
+    }
+
+    public <T> Promise<T> resolve() {
+        return resolve(null);
+    }
+
+    private <T> Promise<T> resolve(final T object) {
+        return create((resolve, reject) -> resolve.onInvoke(object));
+    }
+
+    private <T> Promise<T> resolve(final Promise<T> promise) {
+        return create((resolve, reject) -> resolve.onInvoke(promise));
+    }
+
+    public <T> Promise<T> reject(final Object o) {
+        return create((resolve, reject) -> reject.onInvoke(o));
+    }
+
+    public <T> Promise<T> create(final Promise.PromiseExecutorCallbackFn<T> executor) {
+        return new Promise<>(executor);
     }
 }

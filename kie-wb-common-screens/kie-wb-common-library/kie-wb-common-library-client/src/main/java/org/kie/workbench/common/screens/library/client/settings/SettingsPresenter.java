@@ -236,9 +236,8 @@ public class SettingsPresenter {
     private Promise<Void> checkConcurrentPomUpdate(final String comment,
                                                    final Supplier<Promise<Void>> chain) {
 
-        return new Promise<>((resolve, reject) -> {
             if (this.concurrentPomUpdateInfo == null) {
-                resolve.onInvoke(promises.resolve());
+                return promises.resolve();
             } else {
                 newConcurrentUpdate(this.concurrentPomUpdateInfo.getPath(),
                                     this.concurrentPomUpdateInfo.getIdentity(),
@@ -246,9 +245,9 @@ public class SettingsPresenter {
                                     () -> {
                                     },
                                     this::setup).show();
-                reject.onInvoke(currentSection);
+
+                return promises.reject(currentSection);
             }
-        });
     }
 
     private ErrorCallback<Message> onSaveProjectScreenModelError(final String comment,

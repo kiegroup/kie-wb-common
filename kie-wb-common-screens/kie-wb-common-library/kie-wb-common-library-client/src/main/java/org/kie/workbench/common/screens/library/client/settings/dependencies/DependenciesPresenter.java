@@ -87,7 +87,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
             add(dependency);
         });
 
-        return new Promise<>((resolve, reject) -> {
+        return promises.create((resolve, reject) -> {
             enhancedDependenciesManager.init(model.getPOM(), dependencies -> {
                 currentHashCode = dependencies.asList().hashCode();
                 view.setItems(buildDependencyViews(model, dependencies));

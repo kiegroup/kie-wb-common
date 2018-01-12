@@ -20,7 +20,6 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
-import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.KnowledgeSessionListItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;

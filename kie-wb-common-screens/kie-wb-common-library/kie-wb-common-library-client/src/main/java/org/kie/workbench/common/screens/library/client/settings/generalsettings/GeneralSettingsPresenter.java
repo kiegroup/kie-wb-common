@@ -33,8 +33,6 @@ import org.kie.workbench.common.screens.library.client.settings.SettingsSectionC
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 
-import static elemental2.promise.Promise.reject;
-
 public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
     public interface View extends SettingsPresenter.View.Section<GeneralSettingsPresenter> {
@@ -130,7 +128,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         view.setArtifactId(pom.getGav().getArtifactId());
         view.setVersion(pom.getGav().getVersion());
 
-        return new Promise<>((resolve, reject) -> {
+        return promises.create((resolve, reject) -> {
             gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
                                 gavPreferences -> {
                                     view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
@@ -169,17 +167,17 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     private Promise<Object> showErrorAndReject(final Object o) {
         return promises.catchOrExecute(o, e -> {
             view.showError(e.getMessage());
-            return reject(this);
+            return promises.reject(this);
         }, (final String errorMessage) -> {
             view.showError(errorMessage);
-            return reject(this);
+            return promises.reject(this);
         });
     }
 
     private Promise<Boolean> validateStringIsNotEmpty(final String string,
                                                       final String errorMessage) {
 
-        return new Promise<>((resolve, reject) -> {
+        return promises.create((resolve, reject) -> {
             if (string == null || string.isEmpty()) {
                 reject.onInvoke(errorMessage);
             } else {
@@ -242,7 +240,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     public Promise<Void> save(final String comment,
                               final Supplier<Promise<Void>> chain) {
 
-        return new Promise<>((resolve, reject) -> {
+        return promises.create((resolve, reject) -> {
             gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
                                 () -> resolve.onInvoke(promises.resolve()),
                                 (throwable) -> reject.onInvoke(this));
