@@ -264,12 +264,9 @@ public class Builder implements Serializable {
             }
         }
 
-        //The KieModule has been built at this point so we do not need to check whether it's been built
-        final KieModule kieModule = ((InternalKieBuilder) kieBuilder).getKieModuleIgnoringErrors();
-        final KieModuleMetaData kieModuleMetaData = KieModuleMetaData.Factory.newKieModuleMetaData(kieModule,
+        //Store the project dependencies ClassLoader for optimization purposes.
+        final KieModuleMetaData kieModuleMetaData = KieModuleMetaData.Factory.newKieModuleMetaData(getKieModuleIgnoringErrors(),
                                                                                                    DependencyFilter.COMPILE_FILTER);
-
-        //store the project dependencies ClassLoader for optimization purposes.
         updateDependenciesClassLoader(project,
                                       kieModuleMetaData);
 
@@ -563,7 +560,9 @@ public class Builder implements Serializable {
         if (!isBuilt()) {
             build();
         }
-        return kieBuilder.getKieModule();
+        synchronized (kieFileSystem) {
+            return kieBuilder.getKieModule();
+        }
     }
 
     public KieModule getKieModuleIgnoringErrors() {
@@ -571,7 +570,9 @@ public class Builder implements Serializable {
         if (!isBuilt()) {
             build();
         }
-        return ((InternalKieBuilder) kieBuilder).getKieModuleIgnoringErrors();
+        synchronized (kieFileSystem) {
+            return ((InternalKieBuilder) kieBuilder).getKieModuleIgnoringErrors();
+        }
     }
 
     public KieModuleMetaData getKieModuleMetaDataIgnoringErrors() {
