@@ -24,6 +24,7 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
+import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
 
 @Dependent
@@ -52,6 +53,10 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
         super.setup();
 
         setWidth("1200px"); //FIXME: ugly
+    }
+
+    public KBaseModel getObject() {
+        return parentPresenter.getObject();
     }
 
     public void add() {

@@ -142,12 +142,12 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
 
     public void setDefault(final boolean isDefault) {
         kSessionModel.setDefault(isDefault);
-        defaultKnowledgeSessionChangeEvent.fire(new DefaultKnowledgeSessionChange(kSessionModel));
+        defaultKnowledgeSessionChangeEvent.fire(new DefaultKnowledgeSessionChange(parentPresenter.getObject(), kSessionModel));
         parentPresenter.fireChangeEvent();
     }
 
     public void onDefaultKnowledgeSessionChanged(@Observes final DefaultKnowledgeSessionChange event) {
-        if (!event.getNewDefault().equals(kSessionModel)) {
+        if (event.getKBaseModel().equals(parentPresenter.getObject()) && !event.getNewDefault().equals(kSessionModel)) {
             kSessionModel.setDefault(false);
         }
     }

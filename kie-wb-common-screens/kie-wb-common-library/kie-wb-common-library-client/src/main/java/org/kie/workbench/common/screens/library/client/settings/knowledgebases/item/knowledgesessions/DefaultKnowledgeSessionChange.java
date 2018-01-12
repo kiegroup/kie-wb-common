@@ -16,17 +16,26 @@
 
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions;
 
+import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.services.shared.kmodule.KSessionModel;
 
 public class DefaultKnowledgeSessionChange {
 
+    private final KBaseModel kBaseModel;
     private final KSessionModel newDefault;
 
-    public DefaultKnowledgeSessionChange(final KSessionModel newDefault) {
+    public DefaultKnowledgeSessionChange(final KBaseModel kBaseModel,
+                                         final KSessionModel newDefault) {
+
+        this.kBaseModel = kBaseModel;
         this.newDefault = newDefault;
     }
 
     public KSessionModel getNewDefault() {
         return newDefault;
+    }
+
+    public KBaseModel getKBaseModel() {
+        return kBaseModel;
     }
 }
