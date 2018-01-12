@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.util.modal.doublev;
+package org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue;
 
 import java.util.function.BiConsumer;
 

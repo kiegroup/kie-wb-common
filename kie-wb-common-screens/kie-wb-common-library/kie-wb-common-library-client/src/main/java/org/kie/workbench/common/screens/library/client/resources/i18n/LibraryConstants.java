@@ -337,4 +337,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String Value = "Value";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddProperty = "AddProperty";
 }

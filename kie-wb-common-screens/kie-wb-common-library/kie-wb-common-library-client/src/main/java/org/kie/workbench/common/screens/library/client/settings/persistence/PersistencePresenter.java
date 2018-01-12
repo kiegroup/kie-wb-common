@@ -38,9 +38,9 @@ import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
-import org.kie.workbench.common.screens.library.client.settings.persistence.properties.AddPropertyModalPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue.AddDoubleValueModal;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -56,7 +56,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final ProjectContext projectContext;
     private final Event<NotificationEvent> notificationEvent;
     private final ManagedInstance<ObservablePath> observablePaths;
-    private final AddPropertyModalPresenter newPropertyModalPresenter;
+    private final AddDoubleValueModal newPropertyModalPresenter;
     private final AddSingleValueModal newPersistableDataObjectModalPresenter;
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<DataModelerService> dataModelerService;
@@ -90,7 +90,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
-                                final AddPropertyModalPresenter newPropertyModalPresenter,
+                                final AddDoubleValueModal newPropertyModalPresenter,
                                 final AddSingleValueModal newPersistableDataObjectModalPresenter,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<DataModelerService> dataModelerService,
@@ -131,7 +131,10 @@ public class PersistencePresenter extends SettingsPresenter.Section {
 
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
-        newPropertyModalPresenter.setup(this);
+        newPropertyModalPresenter.setup(LibraryConstants.AddProperty,
+                                        LibraryConstants.Name,
+                                        LibraryConstants.Value);
+
         newPersistableDataObjectModalPresenter.setup(LibraryConstants.AddPersistableDataObject,
                                                      LibraryConstants.Class);
 
@@ -216,7 +219,10 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void showNewPropertyModal() {
-        newPropertyModalPresenter.show();
+        newPropertyModalPresenter.show((name, value) -> {
+            add(new Property(name, value));
+            fireChangeEvent();
+        });
     }
 
     public void showNewPersistableDataObjectModal() {

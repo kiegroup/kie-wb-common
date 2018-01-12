@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.persistence.properties;
+package org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue;
 
 import javax.inject.Inject;
 
@@ -23,12 +23,13 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLLabelElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class AddPropertyModalView implements AddPropertyModalPresenter.View {
+public class AddDoubleValueModalView implements AddDoubleValueModal.View {
 
     @Inject
     @DataField("header")
@@ -58,10 +59,18 @@ public class AddPropertyModalView implements AddPropertyModalPresenter.View {
     @DataField("cancel-button")
     private HTMLButtonElement cancelButton;
 
-    private AddPropertyModalPresenter presenter;
+    @Inject
+    @DataField("name-label")
+    private HTMLLabelElement nameLabel;
+
+    @Inject
+    @DataField("value-label")
+    private HTMLLabelElement valueLabel;
+
+    private AddDoubleValueModal presenter;
 
     @Override
-    public void init(final AddPropertyModalPresenter presenter) {
+    public void init(final AddDoubleValueModal presenter) {
         this.presenter = presenter;
     }
 
@@ -77,7 +86,6 @@ public class AddPropertyModalView implements AddPropertyModalPresenter.View {
 
     @Override
     public void clearForm() {
-        name.value = "";
         value.value = "";
     }
 
@@ -87,18 +95,23 @@ public class AddPropertyModalView implements AddPropertyModalPresenter.View {
     }
 
     @Override
-    public String getName() {
-        return name.value;
-    }
-
-    @Override
     public String getValue() {
         return value.value;
     }
 
     @Override
+    public String getName() {
+        return name.value;
+    }
+
+    @Override
     public String getHeader() {
         return header.textContent;
+    }
+
+    @Override
+    public void setHeader(final String header) {
+        this.header.textContent = header;
     }
 
     @Override
@@ -109,5 +122,15 @@ public class AddPropertyModalView implements AddPropertyModalPresenter.View {
     @Override
     public HTMLElement getFooter() {
         return footer;
+    }
+
+    @Override
+    public void setNameLabel(final String label) {
+        this.nameLabel.textContent = label;
+    }
+
+    @Override
+    public void setValueLabel(final String label) {
+        this.valueLabel.textContent = label;
     }
 }
