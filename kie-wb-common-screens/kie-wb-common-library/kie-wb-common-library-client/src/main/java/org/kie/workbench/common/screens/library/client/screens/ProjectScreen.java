@@ -100,7 +100,6 @@ public class ProjectScreen {
     private TranslationService ts;
     private Caller<LibraryService> libraryService;
     private Classifier assetClassifier;
-    private Event<AssetDetailEvent> assetDetailEvent;
     private BusyIndicatorView busyIndicatorView;
     private ProjectController projectController;
     private ProjectInfo projectInfo;
@@ -117,7 +116,6 @@ public class ProjectScreen {
                          final TranslationService ts,
                          final Caller<LibraryService> libraryService,
                          final Classifier assetClassifier,
-                         final Event<AssetDetailEvent> assetDetailEvent,
                          final BusyIndicatorView busyIndicatorView,
                          final ProjectController projectController) {
         this.view = view;
@@ -126,7 +124,6 @@ public class ProjectScreen {
         this.ts = ts;
         this.libraryService = libraryService;
         this.assetClassifier = assetClassifier;
-        this.assetDetailEvent = assetDetailEvent;
         this.busyIndicatorView = busyIndicatorView;
         this.projectController = projectController;
     }
@@ -171,8 +168,7 @@ public class ProjectScreen {
     }
 
     public void goToSettings() {
-        assetDetailEvent.fire(new AssetDetailEvent(projectInfo,
-                                                   null));
+        libraryPlaces.goToSettings(projectInfo);
     }
 
     public String getProjectName() {

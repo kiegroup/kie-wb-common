@@ -58,6 +58,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
     @Inject
     public DependenciesPresenter(final View view,
+                                 final Promises promises,
                                  final SettingsPresenter.MenuItem menuItem,
                                  final DependencySelectorPopup dependencySelectorPopup,
                                  final Event<SettingsSectionChange> settingsSectionChangeEvent,
@@ -65,7 +66,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
                                  final ManagedInstance<DependenciesItemPresenter> presenters) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.dependencySelectorPopup = dependencySelectorPopup;
         this.newDependencyPopup = newDependencyPopup;
@@ -90,7 +91,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
             enhancedDependenciesManager.init(model.getPOM(), dependencies -> {
                 currentHashCode = dependencies.asList().hashCode();
                 view.setItems(buildDependencyViews(model, dependencies));
-                resolve.onInvoke(Promises.resolve());
+                resolve.onInvoke(promises.resolve());
                 fireChangeEvent();
             });
 

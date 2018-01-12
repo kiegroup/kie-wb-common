@@ -48,11 +48,12 @@ public class ValidationPresenter extends SettingsPresenter.Section {
 
     @Inject
     public ValidationPresenter(final ValidationPresenter.View view,
+                               final Promises promises,
                                final SettingsPresenter.MenuItem menuItem,
                                final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                final ValidationListPresenter validationItemPresenters) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.validationItemPresenters = validationItemPresenters;
     }
@@ -69,7 +70,7 @@ public class ValidationPresenter extends SettingsPresenter.Section {
                 repositories.getRepositories().stream().sorted(comparing(r -> r.getMetadata().getId())).collect(toList()),
                 (repository, presenter) -> presenter.setup(repository, this));
 
-        return Promises.resolve();
+        return promises.resolve();
     }
 
     @Override

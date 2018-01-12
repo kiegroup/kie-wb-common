@@ -17,9 +17,6 @@
 package org.kie.workbench.common.screens.library.client.settings.persistence;
 
 import java.util.HashMap;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.enterprise.context.Dependent;
@@ -50,7 +47,6 @@ import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
 public class PersistencePresenter extends SettingsPresenter.Section {
@@ -89,6 +85,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     @Inject
     public PersistencePresenter(final View view,
                                 final ProjectContext projectContext,
+                                final Promises promises,
                                 final SettingsPresenter.MenuItem menuItem,
                                 final Event<NotificationEvent> notificationEvent,
                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
@@ -100,7 +97,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final PropertiesListPresenter propertiesItemPresenters,
                                 final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.projectContext = projectContext;
         this.notificationEvent = notificationEvent;
@@ -134,7 +131,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
 
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
-        return Promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
+        return promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
             persistenceDescriptorEditorContent = m;
 
             view.setPersistenceUnit(getPersistenceUnitModel().getName());
@@ -144,7 +141,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
             setupPropertiesTable();
             setupPersistableDataObjectsTable();
 
-            return resolve();
+            return promises.resolve();
         });
     }
 
@@ -182,11 +179,11 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     private Promise<Void> save(final String comment) {
-        return Promises.promisify(editorService,
+        return promises.promisify(editorService,
                                   s -> s.save(pathToPersistenceXml,
                                               persistenceDescriptorEditorContent,
                                               persistenceDescriptorEditorContent.getOverview().getMetadata(),
-                                              comment)).then(i -> resolve());
+                                              comment)).then(i -> promises.resolve());
     }
 
     public void add(final String className) {
@@ -200,12 +197,12 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void addAllProjectsPersistableDataObjects() {
-        Promises.promisify(dataModelerService, s -> s.findPersistableClasses(pathToPersistenceXml)).then(classes -> {
+        promises.promisify(dataModelerService, s -> s.findPersistableClasses(pathToPersistenceXml)).then(classes -> {
             classes.stream()
                     .filter(clazz -> !getPersistenceUnitModel().getClasses().contains(clazz))
                     .forEach(this::add);
 
-            return resolve();
+            return promises.resolve();
         });
     }
 

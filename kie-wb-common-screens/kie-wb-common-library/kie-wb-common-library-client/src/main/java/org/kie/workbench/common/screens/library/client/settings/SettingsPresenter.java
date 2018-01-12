@@ -60,10 +60,6 @@ import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.all;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.promisify;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.throwOrExecute;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
@@ -93,6 +89,7 @@ public class SettingsPresenter {
     }
 
     private final View view;
+    private final Promises promises;
     private final Event<NotificationEvent> notificationEvent;
     private final SettingsSections settingsSections;
     private final SavePopUpPresenter savePopUpPresenter;
@@ -112,6 +109,7 @@ public class SettingsPresenter {
 
     @Inject
     public SettingsPresenter(final View view,
+                             final Promises promises,
                              final Event<NotificationEvent> notificationEvent,
                              final @Customizable SettingsSections settingsSections,
                              final SavePopUpPresenter savePopUpPresenter,
@@ -121,6 +119,7 @@ public class SettingsPresenter {
                              final ManagedInstance<ObservablePath> observablePaths,
                              final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
         this.view = view;
+        this.promises = promises;
         this.notificationEvent = notificationEvent;
         this.settingsSections = settingsSections;
         this.savePopUpPresenter = savePopUpPresenter;
@@ -148,9 +147,9 @@ public class SettingsPresenter {
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        Promises.promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
+        promises.promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
             this.model = model;
-            return Promises.all(getSections(), (final Section section) -> setupSection(model, section));
+            return promises.all(getSections(), (final Section section) -> setupSection(model, section));
         }).then(i -> {
 
             menuItemsListPresenter.setupWithPresenters(
@@ -160,11 +159,11 @@ public class SettingsPresenter {
 
             view.hideBusyIndicator();
             return goTo(currentSection);
-        }).catch_(e -> throwOrExecute(e, i -> {
+        }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, i -> {
             notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
             view.hideBusyIndicator();
-            return resolve();
-        })).catch_(this::defaultErrorResolution);
+            return promises.resolve();
+        }));
     }
 
     private Promise<Object> setupSection(final ProjectScreenModel model,
@@ -173,24 +172,23 @@ public class SettingsPresenter {
         return section.setup(model).then(i -> {
             section.getMenuItem().setup(section, this);
             resetDirtyIndicator(section);
-            return resolve();
+            return promises.resolve();
         });
     }
 
     public void showSaveModal() {
-        Promises.reduceLazily(null, getSections(), Section::validate).then(i -> {
+        promises.reduceLazily(getSections(), Section::validate).then(i -> {
             savePopUpPresenter.show(this::save);
-            return resolve();
-        }).catch_(e -> throwOrExecute(e, (final Section section) -> {
+            return promises.resolve();
+        }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, (final Section section) -> {
             view.hideBusyIndicator();
             return goTo(section);
-        })).catch_(this::defaultErrorResolution);
+        }));
     }
 
     private void save(final String comment) {
-        Promises.reduceLazilyChaining(null, getSavingSteps(comment), this::executeSavingStep)
-                .catch_(e -> throwOrExecute(e, this::goTo))
-                .catch_(this::defaultErrorResolution);
+        promises.reduceLazilyChaining(getSavingSteps(comment), this::executeSavingStep)
+                .catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, this::goTo));
     }
 
     private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain,
@@ -207,7 +205,7 @@ public class SettingsPresenter {
 
         final Stream<SavingStep> commonSavingSteps =
                 Stream.of(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
-                          chain -> all(getSections(), this::resetDirtyIndicator),
+                          chain -> promises.all(getSections(), this::resetDirtyIndicator),
                           chain -> displaySuccessMessage());
 
         return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
@@ -216,13 +214,13 @@ public class SettingsPresenter {
     private Promise<Void> displaySuccessMessage() {
         view.hideBusyIndicator();
         notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
-        return resolve();
+        return promises.resolve();
     }
 
     private Promise<Void> resetDirtyIndicator(final Section section) {
         originalHashCodes.put(section, section.currentHashCode());
         updateDirtyIndicator(section);
-        return resolve();
+        return promises.resolve();
     }
 
     private Promise<Void> saveProjectScreenModel(final String comment,
@@ -230,9 +228,9 @@ public class SettingsPresenter {
                                                  final Supplier<Promise<Void>> chain) {
 
         return checkConcurrentPomUpdate(comment, chain)
-                .then(i -> promisify(projectScreenService,
-                                     s -> s.save(pathToPom, model, comment, mode),
-                                     onSaveProjectScreenModelError(comment, chain)::error));
+                .then(i -> promises.promisify(projectScreenService,
+                                              s -> s.save(pathToPom, model, comment, mode),
+                                              onSaveProjectScreenModelError(comment, chain)::error));
     }
 
     private Promise<Void> checkConcurrentPomUpdate(final String comment,
@@ -240,7 +238,7 @@ public class SettingsPresenter {
 
         return new Promise<>((resolve, reject) -> {
             if (this.concurrentPomUpdateInfo == null) {
-                resolve.onInvoke(resolve());
+                resolve.onInvoke(promises.resolve());
             } else {
                 newConcurrentUpdate(this.concurrentPomUpdateInfo.getPath(),
                                     this.concurrentPomUpdateInfo.getIdentity(),
@@ -277,10 +275,10 @@ public class SettingsPresenter {
         saveProjectScreenModel(comment, DeploymentMode.FORCED, chain).then(i -> chain.get());
     }
 
-    private Promise<Void> defaultErrorResolution(final Object e) {
-        new DefaultErrorCallback().error(null, (Throwable) e);
+    private Promise<Object> defaultErrorResolution(final RuntimeException e) {
+        new DefaultErrorCallback().error(null, e);
         view.hideBusyIndicator();
-        return resolve();
+        return promises.resolve();
     }
 
     public void onSettingsSectionChanged(@Observes final SettingsSectionChange settingsSectionChange) {
@@ -303,7 +301,7 @@ public class SettingsPresenter {
     private Promise<Object> goTo(final Section section) {
         currentSection = section;
         view.setSection(section.getView());
-        return resolve();
+        return promises.resolve();
     }
 
     private List<Section> getSections() {
@@ -331,12 +329,15 @@ public class SettingsPresenter {
 
     public static abstract class Section {
 
+        protected final Promises promises;
         private final Event<SettingsSectionChange> settingsSectionChangeEvent;
         private final SettingsPresenter.MenuItem menuItem;
 
         protected Section(final Event<SettingsSectionChange> settingsSectionChangeEvent,
-                          final MenuItem menuItem) {
+                          final MenuItem menuItem,
+                          final Promises promises) {
 
+            this.promises = promises;
             this.settingsSectionChangeEvent = settingsSectionChangeEvent;
             this.menuItem = menuItem;
         }
@@ -346,15 +347,15 @@ public class SettingsPresenter {
         public abstract int currentHashCode();
 
         public Promise<Void> save(final String comment, final Supplier<Promise<Void>> chain) {
-            return resolve();
+            return promises.resolve();
         }
 
         public Promise<Object> validate() {
-            return resolve();
+            return promises.resolve();
         }
 
         public Promise<Void> setup(final ProjectScreenModel model) {
-            return resolve();
+            return promises.resolve();
         }
 
         public void fireChangeEvent() {

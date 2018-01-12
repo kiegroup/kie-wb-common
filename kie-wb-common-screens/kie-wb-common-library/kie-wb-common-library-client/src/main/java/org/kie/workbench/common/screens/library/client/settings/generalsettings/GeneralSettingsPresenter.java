@@ -34,8 +34,6 @@ import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 
 import static elemental2.promise.Promise.reject;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.throwOrExecute;
 
 public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
@@ -103,13 +101,14 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public GeneralSettingsPresenter(final View view,
+                                    final Promises promises,
                                     final SettingsPresenter.MenuItem menuItem,
                                     final Caller<ValidationService> validationService,
                                     final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.validationService = validationService;
         this.gavPreferences = gavPreferences;
@@ -137,7 +136,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
                                     view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
                                     view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
 
-                                    resolve.onInvoke(Promises.resolve());
+                                    resolve.onInvoke(promises.resolve());
                                 },
                                 reject::onInvoke);
         });
@@ -147,7 +146,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     public Promise<Object> validate() {
         view.hideError();
 
-        return Promises.all(
+        return promises.all(
 
                 validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
                         .then(o -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()))
@@ -167,8 +166,11 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         );
     }
 
-    private Promise<Object> showErrorAndReject(final Object e) {
-        return throwOrExecute(e, (final String errorMessage) -> {
+    private Promise<Object> showErrorAndReject(final Object o) {
+        return promises.catchOrExecute(o, e -> {
+            view.showError(e.getMessage());
+            return reject(this);
+        }, (final String errorMessage) -> {
             view.showError(errorMessage);
             return reject(this);
         });
@@ -189,9 +191,9 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
                                                final String errorMessage) {
 
-        return Promises.promisify(validationService,
+        return promises.promisify(validationService,
                                   call,
-                                  Promises::throwException,
+                                  promises::throwException,
                                   errorMessage,
                                   isValid -> isValid);
     }
@@ -242,7 +244,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
         return new Promise<>((resolve, reject) -> {
             gavPreferences.save(projectScopedResolutionStrategySupplier.get(),
-                                () -> resolve.onInvoke(resolve()),
+                                () -> resolve.onInvoke(promises.resolve()),
                                 (throwable) -> reject.onInvoke(this));
         });
     }

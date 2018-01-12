@@ -51,12 +51,13 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
 
     @Inject
     public ExternalDataObjectsPresenter(final View view,
+                                        final Promises promises,
                                         final SettingsPresenter.MenuItem menuItem,
                                         final AddImportPopup addImportPopup,
                                         final ImportsListPresenter itemPresenters,
                                         final Event<SettingsSectionChange> settingsSectionChangeEvent) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.itemPresenters = itemPresenters;
         this.addImportPopup = addImportPopup;
@@ -73,7 +74,7 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
                              imports.getImports(),
                              (import_, presenter) -> presenter.setup(import_, this));
 
-        return Promises.resolve();
+        return promises.resolve();
     }
 
     public void openAddPopup() {

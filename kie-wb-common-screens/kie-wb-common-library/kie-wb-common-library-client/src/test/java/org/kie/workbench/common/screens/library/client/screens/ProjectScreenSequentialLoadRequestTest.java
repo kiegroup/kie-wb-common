@@ -53,7 +53,6 @@ public class ProjectScreenSequentialLoadRequestTest
                                               ts,
                                               new CallerMock<>(libraryService),
                                               assetClassifier,
-                                              assetDetailEvent,
                                               busyIndicatorView,
                                               projectController) {
             @Override

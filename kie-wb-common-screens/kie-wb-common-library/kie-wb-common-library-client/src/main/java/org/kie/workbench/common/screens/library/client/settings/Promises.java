@@ -25,6 +25,9 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import javax.enterprise.context.Dependent;
+
+import com.google.gwt.core.client.JavaScriptObject;
 import elemental2.dom.DomGlobal;
 import elemental2.promise.IThenable;
 import elemental2.promise.Promise;
@@ -33,71 +36,69 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
-public class Promises {
+@Dependent
+public final class Promises {
 
     // Reducers
 
-
     @SafeVarargs
-    public static <T, O> Promise<O> all(final Promise<O>... promises) {
+    public final <T, O> Promise<O> all(final Promise<O>... promises) {
         return Arrays.stream(promises).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
     }
 
-    public static <T, O> Promise<O> all(final List<T> objects, final Function<T, Promise<O>> f) {
+    public <T, O> Promise<O> all(final List<T> objects, final Function<T, Promise<O>> f) {
         return objects.stream().map(f).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
     }
 
-    static <T, O> Promise<O> reduceLazily(final O identity,
-                                          final List<T> objects,
-                                          final Function<T, Promise<O>> f) {
+    <T, O> Promise<O> reduceLazily(final List<T> objects,
+                                   final Function<T, Promise<O>> f) {
         return objects.stream()
                 .<Supplier<Promise<O>>>
                         map(o -> () -> f.apply(o))
                 .<Supplier<Promise<O>>>
-                        reduce(() -> Promise.resolve(identity),
+                        reduce(this::resolve,
                                (p1, p2) -> () -> p1.get().then(ignore -> p2.get())
                 )
                 .get();
     }
 
-    static <T, O> Promise<O> reduceLazilyChaining(final O identity,
-                                                  final List<T> objects,
-                                                  final BiFunction<Supplier<Promise<O>>, T, Promise<O>> f) {
+    <T, O> Promise<O> reduceLazilyChaining(final List<T> objects,
+                                           final BiFunction<Supplier<Promise<O>>, T, Promise<O>> f) {
 
         return objects.stream()
                 .<Function<Supplier<Promise<O>>, Supplier<Promise<O>>>>
                         map(o -> next -> () -> f.apply(next, o))
                 .<Function<Supplier<Promise<O>>, Supplier<Promise<O>>>>
-                        reduce(next -> () -> Promise.resolve(identity),
+                        reduce(next -> this::resolve,
                                (p1, p2) -> uberNext -> () -> {
                                    final Supplier<Promise<O>> next = p2.apply(uberNext);
                                    final Supplier<Promise<O>> chain = () -> next.get().then(ignore -> uberNext.get());
                                    return p1.apply(chain).get().then(ignore -> next.get());
                                }
                 )
-                .apply(Promises::resolve).get();
+                .apply(this::resolve).get();
     }
 
     // Callers
 
-    public static <T, S> Promise<S> promisify(final Caller<T> caller,
-                                              final Function<T, S> call) {
+    public <T, S> Promise<S> promisify(final Caller<T> caller,
+                                       final Function<T, S> call) {
 
-        return promisify(caller, call, Promises::throwException, null, ignore -> true);
+        return promisify(caller, call, this::throwException, null, ignore -> true);
     }
 
-    public static <T, S, M> Promise<S> promisify(final Caller<T> caller,
-                                                 final Consumer<T> call,
-                                                 final BiConsumer<M, Throwable> onError) {
+    public <T, S, M> Promise<S> promisify(final Caller<T> caller,
+                                          final Consumer<T> call,
+                                          final BiConsumer<M, Throwable> onError) {
 
         return promisify(caller, call, onError, null);
     }
 
-    public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
-                                                    final Function<T, S> call,
-                                                    final BiConsumer<M, Throwable> onError,
-                                                    final E rejectObject,
-                                                    final Predicate<S> validate) {
+    public <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
+                                             final Function<T, S> call,
+                                             final BiConsumer<M, Throwable> onError,
+                                             final E rejectObject,
+                                             final Predicate<S> validate) {
 
         return new Promise<>((resolve, reject) -> call.apply(caller.call(
                 (S response) -> {
@@ -110,19 +111,19 @@ public class Promises {
                 defaultErrorCallback(onError, rejectObject, reject))));
     }
 
-    public static <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
-                                                    final Consumer<T> call,
-                                                    final BiConsumer<M, Throwable> onError,
-                                                    final E rejectObject) {
+    public <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
+                                             final Consumer<T> call,
+                                             final BiConsumer<M, Throwable> onError,
+                                             final E rejectObject) {
 
         return new Promise<>((resolve, reject) -> call.accept(caller.call(
                 (RemoteCallback<S>) resolve::onInvoke,
                 defaultErrorCallback(onError, rejectObject, reject))));
     }
 
-    private static <E, M> ErrorCallback<M> defaultErrorCallback(final BiConsumer<M, Throwable> onError,
-                                                                final E rejectObject,
-                                                                final RejectCallbackFn reject) {
+    private <E, M> ErrorCallback<M> defaultErrorCallback(final BiConsumer<M, Throwable> onError,
+                                                         final E rejectObject,
+                                                         final RejectCallbackFn reject) {
         return (M o, Throwable throwable) -> {
             onError.accept(o, throwable);
             reject.onInvoke(rejectObject);
@@ -130,24 +131,25 @@ public class Promises {
         };
     }
 
-    public static <M> void throwException(final M o, final Throwable t) {
+    public <M> void throwException(final M o, final Throwable t) {
         throw new RuntimeException(t);
     }
 
-    public static <T> Promise<T> resolve() {
+    public <T> Promise<T> resolve() {
         return Promise.resolve((IThenable<T>) null);
     }
 
     @SuppressWarnings("unchecked")
-    public static <V> Promise<Object> throwOrExecute(final Object o,
-                                                     final Function<V, Promise<Object>> f) {
+    public <V> Promise<Object> catchOrExecute(final Object o,
+                                              final Function<RuntimeException, Promise<Object>> c,
+                                              final Function<V, Promise<Object>> f) {
 
-        DomGlobal.console.info(o.getClass().getCanonicalName() + "");
-
-        if (o instanceof RuntimeException) {
-            throw (RuntimeException) o;
-        } if (o instanceof Error) {
-            throw (Error) o;
+        if (o instanceof JavaScriptObject) {
+            // A RuntimeException occurred inside a promise and was transformed in a JavaScriptObject
+            DomGlobal.console.error(o);
+            return c.apply(new RuntimeException(o.toString()));
+        } else if (o instanceof RuntimeException) {
+            return c.apply((RuntimeException) o);
         } else {
             return f.apply((V) o);
         }

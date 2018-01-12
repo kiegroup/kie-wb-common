@@ -27,6 +27,7 @@ import elemental2.dom.Element;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
@@ -38,7 +39,6 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
-import static org.kie.workbench.common.screens.library.client.settings.Promises.resolve;
 
 public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
@@ -56,11 +56,12 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     @Inject
     public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                    final View view,
+                                   final Promises promises,
                                    final SettingsPresenter.MenuItem menuItem,
                                    final AddSingleValueModal addKnowledgeBaseModal,
                                    final KnowledgeBaseListPresenter knowledgeBaseListPresenter) {
 
-        super(settingsSectionChangeEvent, menuItem);
+        super(settingsSectionChangeEvent, menuItem, promises);
         this.addKnowledgeBaseModal = addKnowledgeBaseModal;
         this.knowledgeBaseListPresenter = knowledgeBaseListPresenter;
         this.view = view;
@@ -80,7 +81,7 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
                 model.getKModule().getKBases().values().stream().sorted(comparing(KBaseModel::getName)).collect(Collectors.toList()),
                 (kbase, presenter) -> presenter.setup(kbase, this));
 
-        return resolve();
+        return promises.resolve();
     }
 
     @Override
@@ -92,7 +93,7 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
                 knowledgeBaseListPresenter.getObjectsList().stream()
                         .collect(Collectors.toMap(KBaseModel::getName, identity())));
 
-        return resolve();
+        return promises.resolve();
     }
 
     public void openAddKnowledgeBaseModal() {
