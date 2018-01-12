@@ -60,7 +60,6 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final AddPropertyModalPresenter newPropertyModalPresenter;
     private final AddSingleValueModal newPersistableDataObjectModalPresenter;
     private final Caller<PersistenceDescriptorEditorService> editorService;
-    private final Caller<PersistenceDescriptorService> descriptorService;
     private final Caller<DataModelerService> dataModelerService;
 
     private final PropertiesListPresenter propertiesItemPresenters;
@@ -95,7 +94,6 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final AddPropertyModalPresenter newPropertyModalPresenter,
                                 final AddSingleValueModal newPersistableDataObjectModalPresenter,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
-                                final Caller<PersistenceDescriptorService> descriptorService,
                                 final Caller<DataModelerService> dataModelerService,
                                 final PropertiesListPresenter propertiesItemPresenters,
                                 final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters) {
@@ -108,7 +106,6 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         this.newPropertyModalPresenter = newPropertyModalPresenter;
         this.newPersistableDataObjectModalPresenter = newPersistableDataObjectModalPresenter;
         this.editorService = editorService;
-        this.descriptorService = descriptorService;
         this.dataModelerService = dataModelerService;
         this.propertiesItemPresenters = propertiesItemPresenters;
         this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
@@ -125,6 +122,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         final String persistenceXmlUri = projectContext.getActiveProject()
                 .getRootPath().toURI() + "/src/main/resources/META-INF/persistence.xml";
 
+        concurrentPersistenceXmlUpdateInfo = null;
         pathToPersistenceXml = observablePaths.get().wrap(PathFactory.newPath(
                 "persistence.xml",
                 persistenceXmlUri,
