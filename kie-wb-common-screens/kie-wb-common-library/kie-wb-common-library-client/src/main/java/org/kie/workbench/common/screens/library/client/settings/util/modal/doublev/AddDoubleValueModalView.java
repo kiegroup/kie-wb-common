@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.util.modal;
+package org.kie.workbench.common.screens.library.client.settings.util.modal.doublev;
 
 import javax.inject.Inject;
 
@@ -29,7 +29,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 @Templated
-public class AddSingleValueModalView implements AddSingleValueModal.View {
+public class AddDoubleValueModalView implements AddDoubleValueModal.View {
 
     @Inject
     @DataField("header")
@@ -44,6 +44,10 @@ public class AddSingleValueModalView implements AddSingleValueModal.View {
     private HTMLDivElement footer;
 
     @Inject
+    @DataField("name")
+    private HTMLInputElement name;
+
+    @Inject
     @DataField("value")
     private HTMLInputElement value;
 
@@ -56,13 +60,17 @@ public class AddSingleValueModalView implements AddSingleValueModal.View {
     private HTMLButtonElement cancelButton;
 
     @Inject
-    @DataField("label")
-    private HTMLLabelElement label;
+    @DataField("name-label")
+    private HTMLLabelElement nameLabel;
 
-    private AddSingleValueModal presenter;
+    @Inject
+    @DataField("value-label")
+    private HTMLLabelElement valueLabel;
+
+    private AddDoubleValueModal presenter;
 
     @Override
-    public void init(final AddSingleValueModal presenter) {
+    public void init(final AddDoubleValueModal presenter) {
         this.presenter = presenter;
     }
 
@@ -83,12 +91,17 @@ public class AddSingleValueModalView implements AddSingleValueModal.View {
 
     @Override
     public void focus() {
-        value.focus();
+        name.focus();
     }
 
     @Override
     public String getValue() {
         return value.value;
+    }
+
+    @Override
+    public String getName() {
+        return name.value;
     }
 
     @Override
@@ -112,7 +125,12 @@ public class AddSingleValueModalView implements AddSingleValueModal.View {
     }
 
     @Override
-    public void setLabel(final String label) {
-        this.label.textContent = label;
+    public void setNameLabel(final String label) {
+        this.nameLabel.textContent = label;
+    }
+
+    @Override
+    public void setValueLabel(final String label) {
+        this.valueLabel.textContent = label;
     }
 }

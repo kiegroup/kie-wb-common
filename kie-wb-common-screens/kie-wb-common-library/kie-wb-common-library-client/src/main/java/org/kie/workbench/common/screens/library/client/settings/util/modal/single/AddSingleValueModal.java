@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings.util.modal;
+package org.kie.workbench.common.screens.library.client.settings.util.modal.single;
 
 import java.util.function.Consumer;
 
@@ -22,6 +22,7 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.Elemental2Modal;
 
 @Dependent
 public class AddSingleValueModal extends Elemental2Modal<AddSingleValueModal.View> {
