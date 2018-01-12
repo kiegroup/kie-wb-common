@@ -18,9 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.backend;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionsConverters;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.ProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
@@ -62,11 +63,18 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                             final InputStream inputStream) throws IOException {
         LOG.debug("Starting diagram unmarshalling...");
 
-        TypedFactoryManager typedFactoryManager = new TypedFactoryManager(this.factoryManager);
-        ProcessConverter processConverter = new ProcessConverter(typedFactoryManager);
-
         final Definitions definitions = BPMN2Definitions.parse(inputStream);
-        Process processDiagram = (Process) definitions.getRootElements().get(0);
+
+        DefinitionResolver definitionResolver = new DefinitionResolver(definitions);
+
+        TypedFactoryManager typedFactoryManager = new TypedFactoryManager(this.factoryManager);
+        ProcessConverter processConverter = new ProcessConverter(typedFactoryManager, definitionResolver);
+
+        Process processDiagram =
+                (Process) DefinitionsConverters.asStream(definitions)
+                        .filter(el -> el instanceof Process)
+                        .findFirst().get();
+
         Graph<DefinitionSet, Node> graph = processConverter.convert(processDiagram);
 
         // Update diagram's settings.

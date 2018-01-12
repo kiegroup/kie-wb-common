@@ -3,7 +3,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 import org.eclipse.bpmn2.*;
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -24,13 +23,16 @@ import static java.util.stream.Collectors.toList;
 
 public class ProcessConverter {
     private static final Logger _logger = LoggerFactory.getLogger(ProcessConverter.class);
+
+    private final TypedFactoryManager factoryManager;
+    private final DefinitionResolver definitionResolver;
+
     private final FlowElementConverter flowElementConverter;
 
-    private TypedFactoryManager factoryManager;
-
-    public ProcessConverter(TypedFactoryManager factoryManager) {
+    public ProcessConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
-        this.flowElementConverter = new FlowElementConverter(factoryManager);
+        this.definitionResolver = definitionResolver;
+        this.flowElementConverter = new FlowElementConverter(factoryManager, definitionResolver);
     }
 
     public Graph<DefinitionSet, Node> convert(Process process) {
@@ -41,9 +43,9 @@ public class ProcessConverter {
         Element<View<BPMNDiagramImpl>> diagramView = convertDiagram(process);
         graph.addNode(diagramView.asNode());
 
-        List<Element<View<BPMNViewDefinition>>> elements = convertFlowElements(process);
-        for (Element<View<BPMNViewDefinition>> element : elements) {
-            Node<View<BPMNViewDefinition>, Edge> node = element.asNode();
+        List<Element<? extends View<? extends BPMNViewDefinition>>> elements = convertFlowElements(process);
+        for (Element<? extends View<? extends BPMNViewDefinition>> element : elements) {
+            Node<? extends View<? extends BPMNViewDefinition>, Edge> node = element.asNode();
             if (node != null) graph.addNode(node);
         }
 
@@ -59,7 +61,7 @@ public class ProcessConverter {
         return diagramNode;
     }
 
-    public List<Element<View<BPMNViewDefinition>>> convertFlowElements(Process process) {
+    public List<Element<? extends View<? extends BPMNViewDefinition>>> convertFlowElements(Process process) {
         return process.getFlowElements()
                         .stream()
                         // we are ignoring SequenceFlows

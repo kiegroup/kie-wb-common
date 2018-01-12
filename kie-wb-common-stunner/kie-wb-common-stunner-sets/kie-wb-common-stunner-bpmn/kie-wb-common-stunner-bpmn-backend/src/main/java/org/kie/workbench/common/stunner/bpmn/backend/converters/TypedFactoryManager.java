@@ -13,6 +13,10 @@ public class TypedFactoryManager {
         this.factoryManager = factoryManager;
     }
 
+    public FactoryManager untyped() {
+        return factoryManager;
+    }
+
     public <R, U extends R> Node<View<R>, Edge> newNode(String s, Class<U> aClass) {
         return (Node<View<R>, Edge>) factoryManager.newElement(s, aClass);
     }
