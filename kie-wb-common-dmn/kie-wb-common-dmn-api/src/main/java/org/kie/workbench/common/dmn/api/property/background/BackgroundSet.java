@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.type.SliderFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldType;
@@ -41,7 +40,6 @@ import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldType;
 )
 public class BackgroundSet implements DMNPropertySet {
 
-    @Name
     @FieldLabel
     public static final transient String propertySetName = "Background Set";
 

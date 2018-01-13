@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 
@@ -37,9 +36,8 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 @FormDefinition
 public class ExclusiveGatewayExecutionSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Implementation/Execution";
+    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField(
@@ -63,10 +61,6 @@ public class ExclusiveGatewayExecutionSet implements BPMNPropertySet {
 
     public ExclusiveGatewayExecutionSet(final String defaultRoute) {
         this.defaultRoute = new DefaultRoute(defaultRoute);
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public DefaultRoute getDefaultRoute() {

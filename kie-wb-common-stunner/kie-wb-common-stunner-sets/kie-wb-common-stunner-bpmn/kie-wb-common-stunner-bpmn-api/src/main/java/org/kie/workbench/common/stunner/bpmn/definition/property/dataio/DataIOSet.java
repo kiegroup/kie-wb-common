@@ -26,7 +26,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.forms.model.AssignmentsEditorFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 
@@ -38,9 +37,8 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 )
 public class DataIOSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Task Data";
+    public static final transient String caption = "Task Data";
 
     @Property
     @FormField(
@@ -59,10 +57,6 @@ public class DataIOSet implements BPMNPropertySet {
 
     public DataIOSet(final String assignmentsinfo) {
         this.assignmentsinfo = new AssignmentsInfo(assignmentsinfo);
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public AssignmentsInfo getAssignmentsinfo() {

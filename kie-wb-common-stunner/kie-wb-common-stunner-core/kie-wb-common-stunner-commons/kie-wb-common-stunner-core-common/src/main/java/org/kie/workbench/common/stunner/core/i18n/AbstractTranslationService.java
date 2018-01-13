@@ -29,7 +29,6 @@ public abstract class AbstractTranslationService implements StunnerTranslationSe
     public static final String CATEGORY_SUFFIX = "category";
     public static final String DESCRIPTION_SUFFIX = "description";
     public static final String CAPTION_SUFFIX = "caption";
-    public static final String PROPERTY_SET_NAME_SUFFIX = "propertySetName";
 
     public abstract String getKeyValue(String key);
 
@@ -45,7 +44,7 @@ public abstract class AbstractTranslationService implements StunnerTranslationSe
 
     @Override
     public String getPropertySetName(String proepSetId) {
-        return getKeyValue(proepSetId + I18N_SEPARATOR + PROPERTY_SET_NAME_SUFFIX);
+        return getKeyValue(proepSetId + I18N_SEPARATOR + CAPTION_SUFFIX);
     }
 
     @Override

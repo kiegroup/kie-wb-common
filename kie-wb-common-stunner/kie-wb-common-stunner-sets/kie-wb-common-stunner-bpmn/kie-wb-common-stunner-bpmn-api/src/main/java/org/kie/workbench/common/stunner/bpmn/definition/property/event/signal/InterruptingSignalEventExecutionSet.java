@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.checkBox.ty
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -39,9 +38,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(startElement = "isInterrupting")
 public class InterruptingSignalEventExecutionSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Implementation/Execution";
+    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField(type = CheckBoxFieldType.class)
@@ -67,10 +65,6 @@ public class InterruptingSignalEventExecutionSet implements BPMNPropertySet {
                                                final @MapsTo("signalRef") SignalRef signalRef) {
         this.isInterrupting = isInterrupting;
         this.signalRef = signalRef;
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public IsInterrupting getIsInterrupting() {

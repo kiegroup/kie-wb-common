@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.type.SliderFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -42,9 +41,8 @@ import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldType;
 )
 public class BackgroundSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Background Set";
+    public static final transient String caption = "Background Set";
 
     @Property
     @FormField(
@@ -94,10 +92,6 @@ public class BackgroundSet implements BPMNPropertySet {
         this.bgColor = new BgColor(bgColor);
         this.borderColor = new BorderColor(borderColor);
         this.borderSize = new BorderSize(borderSize);
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public BgColor getBgColor() {

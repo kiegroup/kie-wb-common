@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -40,9 +39,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         policy = FieldPolicy.ONLY_MARKED)
 public class InterruptingErrorEventExecutionSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Implementation/Execution";
+    public static final transient String caption = "Implementation/Execution";
 
     @Property
     private IsInterrupting isInterrupting;
@@ -65,10 +63,6 @@ public class InterruptingErrorEventExecutionSet implements BPMNPropertySet {
                                               final @MapsTo("errorRef") ErrorRef errorRef) {
         this.isInterrupting = isInterrupting;
         this.errorRef = errorRef;
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public IsInterrupting getIsInterrupting() {

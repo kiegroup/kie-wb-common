@@ -26,7 +26,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -37,9 +36,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(startElement = "messageRef")
 public class MessageEventExecutionSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Implementation/Execution";
+    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField(type = ComboBoxFieldType.class)
@@ -56,10 +54,6 @@ public class MessageEventExecutionSet implements BPMNPropertySet {
 
     public MessageEventExecutionSet(final @MapsTo("messageRef") MessageRef messageRef) {
         this.messageRef = messageRef;
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public MessageRef getMessageRef() {

@@ -23,16 +23,9 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.Fiel
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
-import org.kie.workbench.common.stunner.core.definition.annotation.Description;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
-import org.kie.workbench.common.stunner.core.definition.annotation.property.Caption;
-import org.kie.workbench.common.stunner.core.definition.annotation.property.DefaultValue;
-import org.kie.workbench.common.stunner.core.definition.annotation.property.Optional;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.ReadOnly;
-import org.kie.workbench.common.stunner.core.definition.annotation.property.Type;
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
-import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
-import org.kie.workbench.common.stunner.core.definition.property.type.StringType;
 
 @Portable
 @Bindable
@@ -40,21 +33,8 @@ import org.kie.workbench.common.stunner.core.definition.property.type.StringType
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class MessageRef implements BPMNProperty {
 
-    @Caption
     @FieldLabel
     public static final transient String caption = "MessageRef";
-
-    @Description
-    public static final transient String description = "Message Reference";
-
-    @Optional
-    public static final Boolean optional = false;
-
-    @Type
-    public static final PropertyType type = new StringType();
-
-    @DefaultValue
-    public static final transient String defaultValue = "";
 
     @ReadOnly
     @FieldReadOnly
@@ -62,37 +42,18 @@ public class MessageRef implements BPMNProperty {
 
     @Value
     @FieldValue
-    private String value = defaultValue;
+    private String value;
 
     public MessageRef() {
+        this("");
     }
 
     public MessageRef(final String value) {
         this.value = value;
     }
 
-    public String getCaption() {
-        return caption;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     public boolean isReadOnly() {
         return readOnly;
-    }
-
-    public boolean isOptional() {
-        return optional;
-    }
-
-    public PropertyType getType() {
-        return type;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
     }
 
     public String getValue() {

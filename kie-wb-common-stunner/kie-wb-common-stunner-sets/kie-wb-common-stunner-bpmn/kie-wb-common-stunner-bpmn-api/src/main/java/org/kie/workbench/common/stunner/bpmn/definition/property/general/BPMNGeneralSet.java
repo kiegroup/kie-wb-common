@@ -35,11 +35,11 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(
         startElement = "name"
 )
-public class BPMNGeneralSet implements BPMNPropertySet, BPMNBaseInfo {
+public class BPMNGeneralSet implements BPMNPropertySet,
+                                       BPMNBaseInfo {
 
-    @org.kie.workbench.common.stunner.core.definition.annotation.Name
     @FieldLabel
-    public static final transient String propertySetName = "General";
+    public static final transient String caption = "General";
 
     @Property
     @FormField
@@ -72,10 +72,6 @@ public class BPMNGeneralSet implements BPMNPropertySet, BPMNBaseInfo {
     public BPMNGeneralSet(String name) {
         this.name = new Name(name);
         this.documentation = new Documentation();
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     @Override

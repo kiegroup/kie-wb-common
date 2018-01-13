@@ -29,7 +29,6 @@ import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.l
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -40,9 +39,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition
 public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Implementation/Execution";
+    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField(
@@ -118,10 +116,6 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this.scriptLanguage = scriptLanguage;
         this.isAsync = isAsync;
         this.adHocAutostart = adHocAutostart;
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public RuleFlowGroup getRuleFlowGroup() {

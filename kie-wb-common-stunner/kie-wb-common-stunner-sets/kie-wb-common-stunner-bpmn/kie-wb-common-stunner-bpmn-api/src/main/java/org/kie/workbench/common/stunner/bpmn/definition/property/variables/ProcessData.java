@@ -26,7 +26,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.forms.model.VariablesEditorFieldType;
-import org.kie.workbench.common.stunner.core.definition.annotation.Name;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 
@@ -36,9 +35,8 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 @FormDefinition
 public class ProcessData implements BPMNPropertySet {
 
-    @Name
     @FieldLabel
-    public static final transient String propertySetName = "Process Data";
+    public static final transient String caption = "Process Data";
 
     @Property
     @FormField(
@@ -57,10 +55,6 @@ public class ProcessData implements BPMNPropertySet {
 
     public ProcessData(final String processVariables) {
         this.processVariables = new ProcessVariables(processVariables);
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public ProcessVariables getProcessVariables() {
