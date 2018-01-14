@@ -28,6 +28,20 @@
   <properties>
     <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
   </properties>
+  <dependencyManagement>
+      <dependencies>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>jaxrs-cdi</artifactId>
+            <version>${version.org.wildfly.swarm}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.swarm</groupId>
+            <artifactId>container</artifactId>
+            <version>${version.org.wildfly.swarm}</version>
+        </dependency>
+      </dependencies>
+  </dependencyManagement>
   <dependencies>
     <!-- Swarm Fractions -->
     <dependency>
