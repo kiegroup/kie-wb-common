@@ -75,6 +75,7 @@ import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapte
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.service.FactoryService;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
@@ -273,7 +274,7 @@ public class CaseManagementDefinitionSetPaletteBuilderImplTest {
                    items.stream().filter((i) -> i.getDefinitionId().equals(defId)).findFirst().isPresent());
     }
 
-    private static class ClassOrSubclassMatcher<T> extends BaseMatcher<Class<T>> {
+    private static class ClassOrSubclassMatcher<T> implements ArgumentMatcher<Class<T>> {
 
         private final Class<T> targetClass;
 
@@ -282,7 +283,7 @@ public class CaseManagementDefinitionSetPaletteBuilderImplTest {
         }
 
         @SuppressWarnings("unchecked")
-        public boolean matches(final Object obj) {
+        public boolean matches(final Class obj) {
             if (obj != null) {
                 return targetClass.isAssignableFrom(obj.getClass());
             }

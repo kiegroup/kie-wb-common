@@ -84,7 +84,6 @@ public class PipelineExecutorTaskManagerImplTestBase {
         stringCaptor = ArgumentCaptor.forClass(String.class);
 
         configExecutors = mockConfigExecutors(CONFIG_EXECUTORS_SIZE);
-        when(configExecutorsInstance.iterator()).thenReturn(configExecutors.iterator());
 
         externalListeners = mockEventListeners(PIPELINE_EVENT_LISTENERS);
         when(eventListenersInstance.iterator()).thenReturn(externalListeners.iterator());
@@ -122,7 +121,6 @@ public class PipelineExecutorTaskManagerImplTestBase {
         List<Stage> result = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Stage stage = mock(Stage.class);
-            when(stage.getName()).thenReturn("Stage.name." + Integer.toString(i));
             result.add(stage);
         }
         return result;

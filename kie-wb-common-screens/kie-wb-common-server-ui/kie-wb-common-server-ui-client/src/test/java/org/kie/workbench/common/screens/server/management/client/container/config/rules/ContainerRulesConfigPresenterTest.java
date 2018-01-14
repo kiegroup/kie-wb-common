@@ -89,8 +89,7 @@ public class ContainerRulesConfigPresenterTest {
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                releaseId.setVersion(invocation.getArgumentAt(1,
-                                                              ReleaseId.class).getVersion());
+                releaseId.setVersion(((ReleaseId)invocation.getArgument(1)).getVersion());
                 return null;
             }
         }).when(ruleCapabilitiesService).upgradeContainer(any(ContainerSpecKey.class),

@@ -63,7 +63,7 @@ public class BuildCanvasShapeEventTest {
 
     @Test
     public void testBuildWithoutTransform() {
-        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D(invocation.getArgumentAt(0, Double.class), invocation.getArgumentAt(1, Double.class))));
+        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D(invocation.getArgument(0), invocation.getArgument(1))));
         tested = new BuildCanvasShapeEvent(canvasHandler, null, null, 0, 0);
         assertEquals(0, tested.getX(), ALLOWED_ERROR);
         assertEquals(0, tested.getY(), ALLOWED_ERROR);
@@ -75,7 +75,7 @@ public class BuildCanvasShapeEventTest {
 
     @Test
     public void testBuildWithPan() {
-        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D(invocation.getArgumentAt(0, Double.class) + 5, invocation.getArgumentAt(1, Double.class) - 10)));
+        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D((Double)invocation.getArgument(0) + 5, (Double)invocation.getArgument(1) - 10)));
 
         tested = new BuildCanvasShapeEvent(canvasHandler, null, null, 0, 0);
         assertEquals(5, tested.getX(), ALLOWED_ERROR);
@@ -88,7 +88,7 @@ public class BuildCanvasShapeEventTest {
 
     @Test
     public void testBuildWithZoom() {
-        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D(invocation.getArgumentAt(0, Double.class) * 0.5, invocation.getArgumentAt(1, Double.class) * 2)));
+        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D((Double)invocation.getArgument(0) * 0.5, (Double)invocation.getArgument(1) * 2)));
 
         tested = new BuildCanvasShapeEvent(canvasHandler, null, null, 0, 0);
         assertEquals(0, tested.getX(), ALLOWED_ERROR);
@@ -101,7 +101,7 @@ public class BuildCanvasShapeEventTest {
 
     @Test
     public void testBuildWithPanAndZoom() {
-        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D((invocation.getArgumentAt(0, Double.class) + 5) * 0.5, (invocation.getArgumentAt(1, Double.class) - 5) * 2)));
+        when(transform.inverse(anyDouble(), anyDouble())).thenAnswer((invocation -> new Point2D(((Double)invocation.getArgument(0) + 5) * 0.5, ((Double)invocation.getArgument(1) - 5) * 2)));
 
         tested = new BuildCanvasShapeEvent(canvasHandler, null, null, 0, 0);
         assertEquals(2.5, tested.getX(), ALLOWED_ERROR);

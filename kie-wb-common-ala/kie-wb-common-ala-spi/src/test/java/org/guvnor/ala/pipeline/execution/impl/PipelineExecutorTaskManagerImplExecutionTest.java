@@ -30,6 +30,8 @@ import org.guvnor.ala.pipeline.execution.PipelineExecutorTask;
 import org.guvnor.ala.pipeline.execution.PipelineExecutorTaskDef;
 import org.guvnor.ala.pipeline.execution.PipelineExecutorTaskManager;
 import org.guvnor.ala.pipeline.execution.PipelineExecutorTrace;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -204,7 +206,6 @@ public class PipelineExecutorTaskManagerImplExecutionTest
 
     private void testStopTaskInNonStopeableState(PipelineExecutorTask.Status notStopeableStatus) throws PipelineExecutorException {
         PipelineExecutorTaskImpl task = mock(PipelineExecutorTaskImpl.class);
-        when(task.getId()).thenReturn(TASK_ID);
         when(task.getPipelineStatus()).thenReturn(notStopeableStatus);
         PipelineExecutorTaskManagerImpl.TaskEntry taskEntry = mock(PipelineExecutorTaskManagerImpl.TaskEntry.class);
         when(taskEntry.isAsync()).thenReturn(true);
@@ -213,9 +214,27 @@ public class PipelineExecutorTaskManagerImplExecutionTest
                                      taskEntry);
 
         taskManager.init();
-        expectedException.expectMessage(new StartsWith("A PipelineExecutorTask in status: " + notStopeableStatus.name() +
+        expectedException.expectMessage(new HamcrestStartsWith("A PipelineExecutorTask in status: " + notStopeableStatus.name() +
                                                                " can not be stopped. Stop operation is available for the following status set:"));
         taskManager.stop(TASK_ID);
+    }
+
+    private static class HamcrestStartsWith extends BaseMatcher<String> {
+        private final String prefix;
+
+        public HamcrestStartsWith(String prefix) {
+            this.prefix = prefix;
+        }
+
+        @Override
+        public boolean matches(Object item) {
+            return new StartsWith(prefix).matches(item.toString());
+        }
+
+        @Override
+        public void describeTo(Description description) {
+
+        }
     }
 
     @Test
@@ -271,7 +290,7 @@ public class PipelineExecutorTaskManagerImplExecutionTest
         PipelineExecutorTaskManagerImpl.TaskEntry taskEntry = mock(PipelineExecutorTaskManagerImpl.TaskEntry.class);
         taskManager.currentTasks.put(TASK_ID,
                                      taskEntry);
-        expectedException.expectMessage(new StartsWith("An active PipelineExecutorTask was found for taskId: " + TASK_ID));
+        expectedException.expectMessage(new HamcrestStartsWith("An active PipelineExecutorTask was found for taskId: " + TASK_ID));
         taskManager.delete(TASK_ID);
     }
 
@@ -292,7 +311,7 @@ public class PipelineExecutorTaskManagerImplExecutionTest
         when(trace.getTask()).thenReturn(task);
         when(pipelineExecutorRegistry.getExecutorTrace(TASK_ID)).thenReturn(trace);
 
-        expectedException.expectMessage(new StartsWith("A PipelineExecutorTask in status: "
+        expectedException.expectMessage(new HamcrestStartsWith("A PipelineExecutorTask in status: "
                                                                + nonStopeableStatus + " can not" +
                                                                " be deleted. Delete operation is available for the following status set:"));
         taskManager.delete(TASK_ID);
@@ -332,9 +351,6 @@ public class PipelineExecutorTaskManagerImplExecutionTest
             when(task.getPipelineStatus()).thenReturn(PipelineExecutorTask.Status.RUNNING);
             PipelineExecutorTaskDef taskDef = mock(PipelineExecutorTaskDef.class);
             when(task.getTaskDef()).thenReturn(taskDef);
-            Pipeline pipeline = mock(Pipeline.class);
-            when(pipeline.getStages()).thenReturn(mock(List.class));
-            when(taskDef.getPipeline()).thenReturn(PIPELINE_ID);
 
             PipelineExecutorTaskManagerImpl.TaskEntry taskEntry = mock(PipelineExecutorTaskManagerImpl.TaskEntry.class);
             when(taskEntry.isAsync()).thenReturn(true);
@@ -360,8 +376,6 @@ public class PipelineExecutorTaskManagerImplExecutionTest
         //mock the execution inputs
         pipeline = mock(Pipeline.class);
         stages = mockStages(PIPELINE_STAGES_SIZE);
-        when(pipeline.getStages()).thenReturn(stages);
-        when(pipeline.getName()).thenReturn(PIPELINE_ID);
         when(pipelineRegistry.getPipelineByName(PIPELINE_ID)).thenReturn(pipeline);
 
         taskDef = mock(PipelineExecutorTaskDef.class);
