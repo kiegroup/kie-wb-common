@@ -37,7 +37,6 @@ import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
@@ -46,8 +45,6 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListPresent
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
-import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
 import org.uberfire.annotations.Customizable;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -101,11 +98,11 @@ public class SettingsPresenter {
     private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
 
     private ObservablePath pathToPom;
-    private ObservablePath.OnConcurrentUpdateEvent concurrentPomUpdateInfo = null;
+    ObservablePath.OnConcurrentUpdateEvent concurrentPomUpdateInfo = null;
 
-    private ProjectScreenModel model;
-    private Section currentSection;
-    private Map<Section, Integer> originalHashCodes;
+    ProjectScreenModel model;
+    Section currentSection;
+    Map<Section, Integer> originalHashCodes;
 
     @Inject
     public SettingsPresenter(final View view,
@@ -129,11 +126,13 @@ public class SettingsPresenter {
         this.menuItemsListPresenter = menuItemsListPresenter;
         this.observablePaths = observablePaths;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
-        this.currentSection = settingsSections.getList().get(0);
     }
 
     @PostConstruct
     public void setup() {
+
+        currentSection = settingsSections.getList().get(0);
+
         view.init(this);
         view.showBusyIndicator();
 
@@ -147,7 +146,9 @@ public class SettingsPresenter {
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        promises.promisify(projectScreenService, s -> s.load(pathToPom)).then(model -> {
+        promises.promisify(projectScreenService, s -> {
+            return s.load(pathToPom);
+        }).then(model -> {
             this.model = model;
             return promises.all(getSections(), (final Section section) -> setupSection(model, section));
         }).then(i -> {
@@ -166,8 +167,8 @@ public class SettingsPresenter {
         }));
     }
 
-    private Promise<Object> setupSection(final ProjectScreenModel model,
-                                         final Section section) {
+    Promise<Object> setupSection(final ProjectScreenModel model,
+                                 final Section section) {
 
         return section.setup(model).then(i -> {
             section.getMenuItem().setup(section, this);
@@ -186,7 +187,7 @@ public class SettingsPresenter {
         }));
     }
 
-    private void save(final String comment) {
+    void save(final String comment) {
         promises.reduceLazilyChaining(getSavingSteps(comment), this::executeSavingStep)
                 .catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, this::goTo));
     }
@@ -200,8 +201,7 @@ public class SettingsPresenter {
     private List<SavingStep> getSavingSteps(final String comment) {
 
         final Stream<SavingStep> saveSectionsSteps =
-                getSections().stream()
-                        .map(section -> chain -> section.save(comment, chain));
+                getSections().stream().map(section -> chain -> section.save(comment, chain));
 
         final Stream<SavingStep> commonSavingSteps =
                 Stream.of(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
@@ -211,70 +211,80 @@ public class SettingsPresenter {
         return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
     }
 
-    private Promise<Void> displaySuccessMessage() {
+    Promise<Void> displaySuccessMessage() {
         view.hideBusyIndicator();
         notificationEvent.fire(new NotificationEvent(view.getSaveSuccessMessage(), SUCCESS));
         return promises.resolve();
     }
 
-    private Promise<Void> resetDirtyIndicator(final Section section) {
+    Promise<Void> resetDirtyIndicator(final Section section) {
         originalHashCodes.put(section, section.currentHashCode());
         updateDirtyIndicator(section);
         return promises.resolve();
     }
 
-    private Promise<Void> saveProjectScreenModel(final String comment,
-                                                 final DeploymentMode mode,
-                                                 final Supplier<Promise<Void>> chain) {
+    Promise<Void> saveProjectScreenModel(final String comment,
+                                         final DeploymentMode mode,
+                                         final Supplier<Promise<Void>> chain) {
 
-        return checkConcurrentPomUpdate(comment, chain)
-                .then(i -> promises.promisify(projectScreenService,
-                                              s -> s.save(pathToPom, model, comment, mode),
-                                              onSaveProjectScreenModelError(comment, chain)::error));
+        if (concurrentPomUpdateInfo != null) {
+            handlePomConcurrentUpdate(comment, chain);
+            return promises.reject(currentSection);
+        }
+
+        return promises.promisify(projectScreenService, s -> {
+            s.save(pathToPom, model, comment, mode);
+        }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, (final Promises.Error<Message> error) -> {
+            return handleSaveProjectScreenModelError(comment, chain, error.getThrowable());
+        }));
     }
 
-    private Promise<Void> checkConcurrentPomUpdate(final String comment,
-                                                   final Supplier<Promise<Void>> chain) {
+    Promise<Void> handleSaveProjectScreenModelError(final String comment,
+                                                    final Supplier<Promise<Void>> chain,
+                                                    final Throwable throwable) {
 
-            if (this.concurrentPomUpdateInfo == null) {
-                return promises.resolve();
-            } else {
-                newConcurrentUpdate(this.concurrentPomUpdateInfo.getPath(),
-                                    this.concurrentPomUpdateInfo.getIdentity(),
-                                    () -> forceSave(comment, chain),
-                                    () -> {
-                                    },
-                                    this::setup).show();
-
-                return promises.reject(currentSection);
-            }
+        if (throwable instanceof GAVAlreadyExistsException) {
+            return handlePomConcurrentUpdate(comment, chain, (GAVAlreadyExistsException) throwable);
+        } else {
+            return defaultErrorResolution(throwable);
+        }
     }
 
-    private ErrorCallback<Message> onSaveProjectScreenModelError(final String comment,
-                                                                 final Supplier<Promise<Void>> saveChain) {
+    void handlePomConcurrentUpdate(final String comment,
+                                   final Supplier<Promise<Void>> chain) {
 
-        return new CommandWithThrowableDrivenErrorCallback(view, new HashMap<Class<? extends Throwable>, CommandWithThrowable>() {{
-            put(GAVAlreadyExistsException.class,
-                e -> {
-                    view.hideBusyIndicator();
-                    conflictingRepositoriesPopup.setContent(model.getPOM().getGav(),
-                                                            ((GAVAlreadyExistsException) e).getRepositories(),
-                                                            () -> forceSave(comment, saveChain));
-
-                    conflictingRepositoriesPopup.show();
-                });
-        }});
+        newConcurrentUpdate(concurrentPomUpdateInfo.getPath(),
+                            concurrentPomUpdateInfo.getIdentity(),
+                            () -> forceSave(comment, chain),
+                            () -> {
+                            },
+                            this::setup).show();
     }
 
-    private void forceSave(final String comment,
-                           final Supplier<Promise<Void>> chain) {
+    Promise<Void> handlePomConcurrentUpdate(final String comment,
+                                            final Supplier<Promise<Void>> saveChain,
+                                            final GAVAlreadyExistsException exception) {
+
+        view.hideBusyIndicator();
+
+        conflictingRepositoriesPopup.setContent(
+                model.getPOM().getGav(),
+                exception.getRepositories(),
+                () -> forceSave(comment, saveChain));
+
+        conflictingRepositoriesPopup.show();
+        return promises.reject(currentSection);
+    }
+
+    void forceSave(final String comment,
+                   final Supplier<Promise<Void>> chain) {
 
         concurrentPomUpdateInfo = null;
         conflictingRepositoriesPopup.hide();
         saveProjectScreenModel(comment, DeploymentMode.FORCED, chain).then(i -> chain.get());
     }
 
-    private Promise<Object> defaultErrorResolution(final RuntimeException e) {
+    Promise<Void> defaultErrorResolution(final Throwable e) {
         new DefaultErrorCallback().error(null, e);
         view.hideBusyIndicator();
         return promises.resolve();
@@ -284,7 +294,7 @@ public class SettingsPresenter {
         updateDirtyIndicator(settingsSectionChange.getSection());
     }
 
-    private void updateDirtyIndicator(final Section changedSection) {
+    void updateDirtyIndicator(final Section changedSection) {
 
         final boolean isDirty = Optional.ofNullable(originalHashCodes.get(changedSection))
                 .map(originalHashCode -> !originalHashCode.equals(changedSection.currentHashCode()))
@@ -297,7 +307,7 @@ public class SettingsPresenter {
         setup();
     }
 
-    private Promise<Object> goTo(final Section section) {
+    Promise<Void> goTo(final Section section) {
         currentSection = section;
         view.setSection(section.getView());
         return promises.resolve();

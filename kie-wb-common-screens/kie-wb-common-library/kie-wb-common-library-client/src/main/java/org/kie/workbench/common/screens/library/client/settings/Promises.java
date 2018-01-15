@@ -18,7 +18,6 @@ package org.kie.workbench.common.screens.library.client.settings;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -36,12 +35,12 @@ import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.common.client.api.RemoteCallback;
 
 @Dependent
-public final class Promises {
+public class Promises {
 
     // Reducers
 
     @SafeVarargs
-    public final <T, O> Promise<O> all(final Promise<O>... promises) {
+    public final <O> Promise<O> all(final Promise<O>... promises) {
         return Arrays.stream(promises).reduce(resolve(), (p1, p2) -> p1.then(ignore -> p2));
     }
 
@@ -83,61 +82,43 @@ public final class Promises {
     public <T, S> Promise<S> promisify(final Caller<T> caller,
                                        final Function<T, S> call) {
 
-        return promisify(caller, call, this::throwException, null, ignore -> true);
+        return promisify(caller, call, ignore -> true);
     }
 
-    public <T, S, M> Promise<S> promisify(final Caller<T> caller,
-                                          final Consumer<T> call,
-                                          final BiConsumer<M, Throwable> onError) {
-
-        return promisify(caller, call, onError, null);
-    }
-
-    public <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
-                                             final Function<T, S> call,
-                                             final BiConsumer<M, Throwable> onError,
-                                             final E rejectObject,
-                                             final Predicate<S> validate) {
-
-        return create((resolve, reject) -> call.apply(caller.call(
-                (S response) -> {
-                    if (validate.test(response)) {
-                        resolve.onInvoke(response);
-                    } else {
-                        reject.onInvoke(rejectObject);
-                    }
-                },
-                defaultErrorCallback(onError, rejectObject, reject))));
-    }
-
-    public <T, S, E, M> Promise<S> promisify(final Caller<T> caller,
-                                             final Consumer<T> call,
-                                             final BiConsumer<M, Throwable> onError,
-                                             final E rejectObject) {
+    public <T, S> Promise<S> promisify(final Caller<T> caller,
+                                       final Consumer<T> call) {
 
         return create((resolve, reject) -> call.accept(caller.call(
                 (RemoteCallback<S>) resolve::onInvoke,
-                defaultErrorCallback(onError, rejectObject, reject))));
+                defaultErrorCallback(reject))));
     }
 
-    private <E, M> ErrorCallback<M> defaultErrorCallback(final BiConsumer<M, Throwable> onError,
-                                                         final E rejectObject,
-                                                         final RejectCallbackFn reject) {
-        return (M o, Throwable throwable) -> {
-            onError.accept(o, throwable);
-            reject.onInvoke(rejectObject);
+    public <T, S> Promise<S> promisify(final Caller<T> caller,
+                                       final Function<T, S> call,
+                                       final Predicate<S> validate) {
+
+        return create((resolve, reject) -> call.apply(caller.call(
+                (final S response) -> {
+                    if (validate.test(response)) {
+                        resolve.onInvoke(response);
+                    } else {
+                        reject.onInvoke(response);
+                    }
+                },
+                defaultErrorCallback(reject))));
+    }
+
+    private <M> ErrorCallback<M> defaultErrorCallback(final RejectCallbackFn reject) {
+        return (final M o, final Throwable throwable) -> {
+            reject.onInvoke(new Error<>(o, throwable));
             return true;
         };
     }
 
-    public <M> void throwException(final M o, final Throwable t) {
-        throw new RuntimeException(t);
-    }
-
     @SuppressWarnings("unchecked")
-    public <V> Promise<Object> catchOrExecute(final Object o,
-                                              final Function<RuntimeException, Promise<Object>> c,
-                                              final Function<V, Promise<Object>> f) {
+    public <V, T> Promise<T> catchOrExecute(final Object o,
+                                            final Function<RuntimeException, Promise<T>> c,
+                                            final Function<V, Promise<T>> f) {
 
         if (o instanceof JavaScriptObject) {
             // A RuntimeException occurred inside a promise and was transformed in a JavaScriptObject
@@ -154,19 +135,35 @@ public final class Promises {
         return resolve(null);
     }
 
-    private <T> Promise<T> resolve(final T object) {
+    public <T> Promise<T> resolve(final T object) {
         return create((resolve, reject) -> resolve.onInvoke(object));
     }
 
-    private <T> Promise<T> resolve(final Promise<T> promise) {
-        return create((resolve, reject) -> resolve.onInvoke(promise));
-    }
-
-    public <T> Promise<T> reject(final Object o) {
-        return create((resolve, reject) -> reject.onInvoke(o));
+    public <T> Promise<T> reject(final Object object) {
+        return create((resolve, reject) -> reject.onInvoke(object));
     }
 
     public <T> Promise<T> create(final Promise.PromiseExecutorCallbackFn<T> executor) {
         return new Promise<>(executor);
+    }
+
+    public static class Error<T> {
+
+        private final T o;
+
+        private final Throwable throwable;
+
+        public Error(final T o, final Throwable throwable) {
+            this.o = o;
+            this.throwable = throwable;
+        }
+
+        public T getObject() {
+            return o;
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
+        }
     }
 }

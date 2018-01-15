@@ -131,7 +131,9 @@ public class PersistencePresenter extends SettingsPresenter.Section {
 
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
-        return promises.promisify(editorService, s -> s.loadContent(pathToPersistenceXml, true)).then(m -> {
+        return promises.promisify(editorService, s -> {
+            return s.loadContent(pathToPersistenceXml, true);
+        }).then(m -> {
             persistenceDescriptorEditorContent = m;
 
             view.setPersistenceUnit(getPersistenceUnitModel().getName());
@@ -179,11 +181,12 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     private Promise<Void> save(final String comment) {
-        return promises.promisify(editorService,
-                                  s -> s.save(pathToPersistenceXml,
-                                              persistenceDescriptorEditorContent,
-                                              persistenceDescriptorEditorContent.getOverview().getMetadata(),
-                                              comment)).then(i -> promises.resolve());
+        return promises.promisify(editorService, s -> {
+            s.save(pathToPersistenceXml,
+                   persistenceDescriptorEditorContent,
+                   persistenceDescriptorEditorContent.getOverview().getMetadata(),
+                   comment);
+        });
     }
 
     public void add(final String className) {
@@ -197,7 +200,9 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void addAllProjectsPersistableDataObjects() {
-        promises.promisify(dataModelerService, s -> s.findPersistableClasses(pathToPersistenceXml)).then(classes -> {
+        promises.promisify(dataModelerService, s -> {
+            return s.findPersistableClasses(pathToPersistenceXml);
+        }).then(classes -> {
             classes.stream()
                     .filter(clazz -> !getPersistenceUnitModel().getClasses().contains(clazz))
                     .forEach(this::add);

@@ -189,11 +189,14 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
                                                final String errorMessage) {
 
-        return promises.promisify(validationService,
-                                  call,
-                                  promises::throwException,
-                                  errorMessage,
-                                  isValid -> isValid);
+        return promises
+                .promisify(validationService, call, isValid -> isValid)
+                .catch_(e -> promises.catchOrExecute(
+                        e,
+                        runtimeException -> {
+                            throw runtimeException;
+                        },
+                        ignore -> promises.reject(errorMessage)));
     }
 
     void setVersion(final String version) {
