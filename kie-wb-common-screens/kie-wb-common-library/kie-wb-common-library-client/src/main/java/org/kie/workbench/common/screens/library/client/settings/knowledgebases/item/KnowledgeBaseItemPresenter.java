@@ -91,19 +91,23 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
         addIncludedKnowledgeBaseModal.setup(LibraryConstants.AddIncludedKnowledgeBase, LibraryConstants.Name);
         addPackageModal.setup(LibraryConstants.AddPackage, LibraryConstants.PackageName);
 
-        equalsBehaviorSelect.setup(view.getEqualsBehaviorSelectContainer(), AssertBehaviorOption.values());
-        equalsBehaviorSelect.setValue(kBaseModel.getEqualsBehavior());
-        equalsBehaviorSelect.onChange(equalsBehavior -> {
-            kBaseModel.setEqualsBehavior(equalsBehavior);
-            fireChangeEvent();
-        });
+        equalsBehaviorSelect.setup(
+                view.getEqualsBehaviorSelectContainer(),
+                AssertBehaviorOption.values(),
+                kBaseModel.getEqualsBehavior(),
+                equalsBehavior -> {
+                    kBaseModel.setEqualsBehavior(equalsBehavior);
+                    fireChangeEvent();
+                });
 
-        eventProcessingModeSelect.setup(view.getEventProcessingModelSelectContainer(), EventProcessingOption.values());
-        eventProcessingModeSelect.setValue(kBaseModel.getEventProcessingMode());
-        eventProcessingModeSelect.onChange(eventProcessingMode -> {
-            kBaseModel.setEventProcessingMode(eventProcessingMode);
-            fireChangeEvent();
-        });
+        eventProcessingModeSelect.setup(
+                view.getEventProcessingModelSelectContainer(),
+                EventProcessingOption.values(),
+                kBaseModel.getEventProcessingMode(),
+                eventProcessingMode -> {
+                    kBaseModel.setEventProcessingMode(eventProcessingMode);
+                    fireChangeEvent();
+                });
 
         includedKnowledgeBasesListPresenter.setup(
                 view.getIncludedKnowledgeBasesListElement(),

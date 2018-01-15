@@ -3,6 +3,7 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 import javax.enterprise.event.Event;
 
 import elemental2.promise.Promise;
+import org.guvnor.common.services.project.model.ProjectImports;
 import org.guvnor.common.services.project.model.ProjectRepositories;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +58,10 @@ public class ValidationPresenterTest {
     @Test
     public void testSetup() {
 
-        final Promise<Void> result = validationPresenter.setup(mock(ProjectScreenModel.class));
+        final ProjectScreenModel model = mock(ProjectScreenModel.class);
+        doReturn(new ProjectRepositories()).when(model).getRepositories();
+
+        final Promise<Void> result = validationPresenter.setup(model);
 
         assertPromiseStatusEquals(result, SyncPromises.Status.RESOLVED);
 

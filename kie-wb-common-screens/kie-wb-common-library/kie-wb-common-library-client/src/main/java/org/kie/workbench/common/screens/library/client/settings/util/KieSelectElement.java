@@ -55,7 +55,9 @@ public class KieSelectElement {
     }
 
     public void setup(final Element element,
-                      final List<Option> options) {
+                      final List<Option> options,
+                      final String initialValue,
+                      final Consumer<String> onChange) {
 
         element.innerHTML = "";
         element.appendChild(view.getElement());
@@ -69,22 +71,11 @@ public class KieSelectElement {
                 options,
                 (item, presenter) -> presenter.setup(item, this));
 
-        view.initSelect();
-    }
+        view.setValue(initialValue);
 
-    public void setup(final Element element,
-                      final Map<String, String> options) {
-
-        setup(element,
-              options.entrySet()
-                      .stream()
-                      .map(e -> new Option(e.getKey(), e.getValue()))
-                      .sorted(comparing(o -> o.label))
-                      .collect(toList()));
-    }
-
-    public void onChange(final Consumer<String> onChange) {
         this.onChange = onChange;
+
+        view.initSelect();
     }
 
     public void onChange() {

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.settings.util;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
 
 import javax.enterprise.context.Dependent;
@@ -37,33 +38,32 @@ public class KieEnumSelectElement<T extends Enum<T>> {
     @Inject
     public KieEnumSelectElement(final KieSelectElement kieSelectElement,
                                 final TranslationService translationService) {
+
         this.kieSelectElement = kieSelectElement;
         this.translationService = translationService;
     }
 
     @SuppressWarnings("unchecked")
     public void setup(final Element element,
-                      final T[] values) {
+                      final T[] values,
+                      final T initialValue,
+                      final Consumer<T> onChange) {
 
         componentType = (Class<T>) values.getClass().getComponentType();
 
-        kieSelectElement.setup(element, Arrays.stream(values)
+        final List<KieSelectElement.Option> options = Arrays.stream(values)
                 .map(e -> new KieSelectElement.Option(translationService.format(e.name()), e.name()))
-                .collect(toList()));
+                .collect(toList());
+
+        kieSelectElement.setup(
+                element,
+                options,
+                initialValue.name(),
+                name -> onChange.accept(toEnum(name)));
     }
 
     public T getValue() {
         return toEnum(kieSelectElement.getValue());
-    }
-
-    public void setValue(final T value) {
-        kieSelectElement.setValue(value.name());
-    }
-
-    public void onChange(final Consumer<T> onChange) {
-        this.kieSelectElement.onChange(name -> {
-            onChange.accept(toEnum(name));
-        });
     }
 
     private T toEnum(final String value) {

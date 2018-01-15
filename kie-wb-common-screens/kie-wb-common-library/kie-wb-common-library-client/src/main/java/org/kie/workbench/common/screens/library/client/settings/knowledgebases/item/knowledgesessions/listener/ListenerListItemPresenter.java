@@ -52,12 +52,14 @@ public class ListenerListItemPresenter extends ListItemPresenter<ListenerModel, 
         view.init(this);
         view.setType(model.getType());
 
-        kindSelect.setup(view.getKindSelectContainer(), ListenerModel.Kind.values());
-        kindSelect.setValue(model.getKind());
-        kindSelect.onChange(kind -> {
-            model.setKind(kind);
-            parentPresenter.fireChangeEvent();
-        });
+        kindSelect.setup(
+                view.getKindSelectContainer(),
+                ListenerModel.Kind.values(),
+                model.getKind(),
+                kind -> {
+                    model.setKind(kind);
+                    parentPresenter.fireChangeEvent();
+                });
 
         return this;
     }
@@ -86,5 +88,4 @@ public class ListenerListItemPresenter extends ListItemPresenter<ListenerModel, 
 
         HTMLElement getKindSelectContainer();
     }
-
 }

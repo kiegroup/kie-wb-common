@@ -206,9 +206,7 @@ public class ProjectScreenTest
     @Test
     public void goToSettingsTest() {
         projectScreen.goToSettings();
-
-        verify(assetDetailEvent).fire(new AssetDetailEvent(projectInfo,
-                                                           null));
+        verify(libraryPlaces).goToSettings(eq(projectInfo));
     }
 
     @Test

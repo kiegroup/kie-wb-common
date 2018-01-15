@@ -81,12 +81,14 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
                 kSessionModel.getWorkItemHandelerModels(),
                 (workItemHandler, presenter) -> presenter.setup(workItemHandler, this));
 
-        clockSelect.setup(view.getClockSelectContainer(), ClockTypeOption.values());
-        clockSelect.setValue(kSessionModel.getClockType());
-        clockSelect.onChange(clockTypeOption -> {
-            kSessionModel.setClockType(clockTypeOption);
-            parentPresenter.fireChangeEvent();
-        });
+        clockSelect.setup(
+                view.getClockSelectContainer(),
+                ClockTypeOption.values(),
+                kSessionModel.getClockType(),
+                clockTypeOption -> {
+                    kSessionModel.setClockType(clockTypeOption);
+                    parentPresenter.fireChangeEvent();
+                });
 
         view.initListViewCompoundExpandableItems();
 
