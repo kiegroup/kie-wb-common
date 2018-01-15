@@ -46,7 +46,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateTimerEvent extends BaseCatchingIntermediateEvent {
+public class IntermediateTimerEvent extends BaseCatchingIntermediateEvent implements Executable<CancellingTimerEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

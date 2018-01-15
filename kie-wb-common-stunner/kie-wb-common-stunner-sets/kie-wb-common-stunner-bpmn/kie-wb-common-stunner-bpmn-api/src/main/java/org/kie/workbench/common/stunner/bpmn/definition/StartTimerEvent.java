@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
@@ -47,7 +48,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartTimerEvent extends BaseStartEvent {
+public class StartTimerEvent extends BaseStartEvent implements Executable<InterruptingTimerEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

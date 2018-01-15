@@ -51,7 +51,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartMessageEvent extends BaseStartEvent implements DataIOModel {
+public class StartMessageEvent extends BaseStartEvent implements DataIOModel, Executable<InterruptingMessageEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

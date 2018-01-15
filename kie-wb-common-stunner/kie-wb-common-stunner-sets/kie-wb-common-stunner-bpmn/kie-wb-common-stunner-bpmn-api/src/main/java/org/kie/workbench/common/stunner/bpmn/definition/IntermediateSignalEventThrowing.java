@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -47,7 +48,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEvent {
+public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEvent implements Executable<ScopedSignalEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

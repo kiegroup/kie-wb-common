@@ -49,7 +49,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class EndSignalEvent extends BaseEndEvent {
+public class EndSignalEvent extends BaseEndEvent implements Executable<ScopedSignalEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

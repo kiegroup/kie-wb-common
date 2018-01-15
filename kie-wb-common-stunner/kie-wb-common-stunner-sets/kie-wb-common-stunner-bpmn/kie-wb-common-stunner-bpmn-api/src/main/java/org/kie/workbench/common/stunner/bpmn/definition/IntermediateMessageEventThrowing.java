@@ -49,7 +49,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateMessageEventThrowing extends BaseThrowingIntermediateEvent {
+public class IntermediateMessageEventThrowing extends BaseThrowingIntermediateEvent implements Executable<MessageEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

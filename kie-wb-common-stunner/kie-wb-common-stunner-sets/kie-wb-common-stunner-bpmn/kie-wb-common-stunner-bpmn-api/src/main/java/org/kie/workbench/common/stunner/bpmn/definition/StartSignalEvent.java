@@ -48,7 +48,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartSignalEvent extends BaseStartEvent {
+public class StartSignalEvent extends BaseStartEvent implements Executable<InterruptingSignalEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

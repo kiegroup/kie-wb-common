@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "cancelActivity")
-public class CancellingTimerEventExecutionSet implements BPMNPropertySet {
+public class CancellingTimerEventExecutionSet implements BPMNPropertySet, TimerExecutionSet {
 
     @Property
     @FormField

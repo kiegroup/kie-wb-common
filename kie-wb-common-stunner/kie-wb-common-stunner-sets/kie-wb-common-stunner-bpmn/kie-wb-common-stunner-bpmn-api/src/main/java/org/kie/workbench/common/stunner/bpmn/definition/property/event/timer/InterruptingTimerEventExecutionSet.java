@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "isInterrupting")
-public class InterruptingTimerEventExecutionSet implements BPMNPropertySet {
+public class InterruptingTimerEventExecutionSet implements BPMNPropertySet, TimerExecutionSet {
 
     @Property
     @FormField

@@ -29,10 +29,19 @@ public class IntermediateCatchEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final DefinitionResolver definitionResolver;
+    private final MessageEventDefinitionConverter messageEventDefinitionConverter;
+    private final SignalEventDefinitionConverter signalEventDefinitionConverter;
+    private final ErrorEventDefinitionConverter errorEventDefinitionConverter;
+    private final TimerEventDefinitionConverter timerEventDefinitionConverter;
 
     public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
+        this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
+        this.errorEventDefinitionConverter = new ErrorEventDefinitionConverter(factoryManager);
+        this.signalEventDefinitionConverter = new SignalEventDefinitionConverter(factoryManager, definitionResolver);
+        this.timerEventDefinitionConverter = new TimerEventDefinitionConverter(factoryManager);
+
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateCatchEvent catchEvent) {
@@ -50,30 +59,10 @@ public class IntermediateCatchEventConverter {
                 throw new UnsupportedOperationException("An intermediate catch event should contain exactly one definition");
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseCatchingIntermediateEvent.class)
-                        .when(TimerEventDefinition.class, e -> {
-                            Node<View<IntermediateTimerEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateTimerEvent.class);
-                            CancellingTimerEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
-                            TimerSettings timerSettingsValue = convertTimerEventDefinition(e);
-                            executionSet.setTimerSettings(timerSettingsValue);
-                            return node;
-                        })
-                        .when(SignalEventDefinition.class, e -> {
-                            Node<View<IntermediateSignalEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class);
-                            SignalRef signalRef = node.getContent().getDefinition().getExecutionSet().getSignalRef();
-                            definitionResolver.resolveSignal(e.getSignalRef())
-                                    .ifPresent(signal -> signalRef.setValue(signal.getName()));
-                            return node;
-                        })
-                        .when(MessageEventDefinition.class, e -> {
-                            Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
-                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
-                            return node;
-                        })
-                        .when(ErrorEventDefinition.class, e -> {
-                            Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
-                            node.getContent().getDefinition().getExecutionSet().getErrorRef().setValue(e.getErrorRef().getErrorCode());
-                            return node;
-                        })
+                        .when(TimerEventDefinition.class, e -> timerEventDefinitionConverter.convert(e, nodeId, IntermediateTimerEvent.class))
+                        .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventCatching.class))
+                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventCatching.class))
+                        .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, IntermediateErrorEventCatching.class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
                         //.when(ConditionalEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))
@@ -83,19 +72,6 @@ public class IntermediateCatchEventConverter {
         }
     }
 
-    private TimerSettings convertTimerEventDefinition(TimerEventDefinition e) {
-        TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
-        FormalExpression timeCycle = (FormalExpression) e.getTimeCycle();
-        timerSettingsValue.setTimeCycle(timeCycle.getMixed().getValue(0).toString());
-        timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
-
-        FormalExpression timeDate = (FormalExpression) e.getTimeDate();
-        timerSettingsValue.setTimeDate(timeDate.getMixed().getValue(0).toString());
-
-        FormalExpression timeDateDuration = (FormalExpression) e.getTimeDuration();
-        timerSettingsValue.setTimeDuration(timeDateDuration.getMixed().getValue(0).toString());
-        return new TimerSettings(timerSettingsValue);
-    }
 
     private void copyGeneralInfo(IntermediateCatchEvent startEvent, Node<? extends View<? extends BaseCatchingIntermediateEvent>, ?> convertedEndEvent) {
         BaseCatchingIntermediateEvent definition = convertedEndEvent.getContent().getDefinition();

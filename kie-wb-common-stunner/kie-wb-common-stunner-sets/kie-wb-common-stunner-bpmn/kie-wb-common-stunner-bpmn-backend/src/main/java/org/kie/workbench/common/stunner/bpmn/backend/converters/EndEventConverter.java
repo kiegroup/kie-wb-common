@@ -27,9 +27,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class EndEventConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final MessageEventDefinitionConverter messageEventDefinitionConverter;
+    private final ErrorEventDefinitionConverter errorEventDefinitionConverter;
 
     public EndEventConverter(TypedFactoryManager factoryManager) {
         this.factoryManager = factoryManager;
+        this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
+        this.errorEventDefinitionConverter = new ErrorEventDefinitionConverter(factoryManager);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(EndEvent endEvent) {
@@ -69,12 +73,8 @@ public class EndEventConverter {
 
                         })
                         .when(SignalEventDefinition.class, e -> factoryManager.newNode(nodeId, EndSignalEvent.class))
-                        .when(MessageEventDefinition.class, e -> {
-                            Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
-                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
-                            return node;
-                        })
-                        .when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, EndErrorEvent.class))
+                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, EndMessageEvent.class))
+                        .when(ErrorEventDefinition.class,   e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
                         //.when(CancelEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))

@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "isInterrupting")
-public class InterruptingMessageEventExecutionSet implements BPMNPropertySet {
+public class InterruptingMessageEventExecutionSet implements BPMNPropertySet, MessageRefExecutionSet {
 
     @Property
     @FormField(type = CheckBoxFieldType.class)

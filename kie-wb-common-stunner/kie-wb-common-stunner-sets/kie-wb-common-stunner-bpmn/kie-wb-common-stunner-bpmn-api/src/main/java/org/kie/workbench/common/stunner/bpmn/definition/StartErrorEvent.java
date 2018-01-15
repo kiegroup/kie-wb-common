@@ -48,7 +48,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartErrorEvent extends BaseStartEvent {
+public class StartErrorEvent extends BaseStartEvent implements Executable<InterruptingErrorEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")

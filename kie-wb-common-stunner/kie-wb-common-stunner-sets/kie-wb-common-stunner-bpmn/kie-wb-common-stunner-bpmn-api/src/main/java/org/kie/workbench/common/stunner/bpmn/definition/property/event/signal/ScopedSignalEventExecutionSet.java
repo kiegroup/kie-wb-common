@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "signalRef")
-public class ScopedSignalEventExecutionSet implements BPMNPropertySet {
+public class ScopedSignalEventExecutionSet implements BPMNPropertySet, SignalExecutionSet {
 
     @Property
     @FormField(type = ComboBoxFieldType.class)

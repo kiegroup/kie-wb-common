@@ -10,6 +10,7 @@ import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
@@ -25,10 +26,14 @@ public class IntermediateThrowEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final DefinitionResolver definitionResolver;
+    private final MessageEventDefinitionConverter messageEventDefinitionConverter;
+    private final SignalEventDefinitionConverter signalEventDefinitionConverter;
 
     public IntermediateThrowEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
+        this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
+        this.signalEventDefinitionConverter = new SignalEventDefinitionConverter(factoryManager, definitionResolver);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateThrowEvent throwEvent) {
@@ -46,18 +51,8 @@ public class IntermediateThrowEventConverter {
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseThrowingIntermediateEvent.class)
-                        .when(SignalEventDefinition.class, e -> {
-                            Node<View<IntermediateSignalEventThrowing>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class);
-                            SignalRef signalRef = node.getContent().getDefinition().getExecutionSet().getSignalRef();
-                            definitionResolver.resolveSignal(e.getSignalRef())
-                                    .ifPresent(signal -> signalRef.setValue(signal.getName()));
-                            return node;
-                        })
-                        .when(MessageEventDefinition.class, e -> {
-                            Node<View<IntermediateMessageEventThrowing>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class);
-                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
-                            return node;
-                        })
+                        .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventThrowing.class))
+                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventThrowing.class))
                         //.when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateErrorEventT....class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
@@ -66,20 +61,6 @@ public class IntermediateThrowEventConverter {
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate throw event");
         }
-    }
-
-    private TimerSettings convertTimerEventDefinition(TimerEventDefinition e) {
-        TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
-        FormalExpression timeCycle = (FormalExpression) e.getTimeCycle();
-        timerSettingsValue.setTimeCycle(timeCycle.getMixed().getValue(0).toString());
-        timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
-
-        FormalExpression timeDate = (FormalExpression) e.getTimeDate();
-        timerSettingsValue.setTimeDate(timeDate.getMixed().getValue(0).toString());
-
-        FormalExpression timeDateDuration = (FormalExpression) e.getTimeDuration();
-        timerSettingsValue.setTimeDuration(timeDateDuration.getMixed().getValue(0).toString());
-        return new TimerSettings(timerSettingsValue);
     }
 
     private void copyGeneralInfo(IntermediateThrowEvent startEvent, Node<? extends View<? extends BaseThrowingIntermediateEvent>, ?> convertedEndEvent) {

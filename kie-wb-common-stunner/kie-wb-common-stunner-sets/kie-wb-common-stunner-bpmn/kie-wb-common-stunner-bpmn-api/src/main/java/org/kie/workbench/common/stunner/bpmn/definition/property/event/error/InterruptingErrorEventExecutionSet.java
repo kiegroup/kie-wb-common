@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @PropertySet
 @FormDefinition(startElement = "errorRef",
         policy = FieldPolicy.ONLY_MARKED)
-public class InterruptingErrorEventExecutionSet implements BPMNPropertySet {
+public class InterruptingErrorEventExecutionSet implements BPMNPropertySet, ErrorExecutionSet {
 
     @Property
     private IsInterrupting isInterrupting;
