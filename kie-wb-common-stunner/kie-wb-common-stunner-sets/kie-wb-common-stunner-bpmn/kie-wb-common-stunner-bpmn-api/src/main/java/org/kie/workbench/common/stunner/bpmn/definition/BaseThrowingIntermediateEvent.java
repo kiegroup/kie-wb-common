@@ -26,6 +26,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -38,7 +39,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @MorphBase(defaultType = IntermediateSignalEventThrowing.class)
 public abstract class BaseThrowingIntermediateEvent
         implements BPMNViewDefinition,
-                   DataIOModel {
+                   DataIOModel,
+                   HasDataIOSet {
 
     @Category
     public static final transient String category = Categories.EVENTS;

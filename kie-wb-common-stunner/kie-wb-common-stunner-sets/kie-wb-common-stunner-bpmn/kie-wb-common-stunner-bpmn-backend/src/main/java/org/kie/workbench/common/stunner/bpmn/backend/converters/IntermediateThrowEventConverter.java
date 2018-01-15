@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.EventDefinition;
@@ -8,6 +9,7 @@ import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.eclipse.bpmn2.impl.OutputSetImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
@@ -52,7 +54,20 @@ public class IntermediateThrowEventConverter {
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseThrowingIntermediateEvent.class)
                         .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventThrowing.class))
-                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventThrowing.class))
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<IntermediateMessageEventThrowing>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventThrowing.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            throwEvent.getDataInputs(),
+                                            throwEvent.getInputSet(),
+                                            throwEvent.getDataInputAssociation(),
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList()
+                                    )
+                            );
+                            return node;
+                        })
                         //.when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateErrorEventT....class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))

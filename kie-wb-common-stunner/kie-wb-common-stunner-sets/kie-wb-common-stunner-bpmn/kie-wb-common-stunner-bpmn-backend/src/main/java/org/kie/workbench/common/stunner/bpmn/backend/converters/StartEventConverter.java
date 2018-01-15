@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.ErrorEventDefinition;
@@ -69,14 +70,40 @@ public class StartEventConverter {
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseStartEvent.class)
                         .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, StartSignalEvent.class))
-                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, StartMessageEvent.class))
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<StartMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, StartMessageEvent.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList(),
+                                            startEvent.getDataOutputs(),
+                                            startEvent.getOutputSet(),
+                                            startEvent.getDataOutputAssociation()
+                                    )
+                            );
+                            return node;
+                        })
                         .when(TimerEventDefinition.class, e -> {
                             Node<View<StartTimerEvent>, Edge> node = timerEventDefinitionConverter.convert(e, nodeId, StartTimerEvent.class);
                             InterruptingTimerEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
                             executionSet.setIsInterrupting(new IsInterrupting(startEvent.isIsInterrupting()));
                             return node;
                         })
-                        .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, StartErrorEvent.class))
+                        .when(ErrorEventDefinition.class, e -> {
+                            Node<View<StartErrorEvent>, Edge> node = errorEventDefinitionConverter.convert(e, nodeId, StartErrorEvent.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList(),
+                                            startEvent.getDataOutputs(),
+                                            startEvent.getOutputSet(),
+                                            startEvent.getDataOutputAssociation()
+                                    )
+                            );
+                            return node;
+                        })
                         // .when(ConditionalEventDefinition.class, e -> factoryManager.newNode(nodeId, StartConditionalEvent.class))
                         // .when(EscalationEventDefinition.class,  e -> factoryManager.newNode(nodeId, StartEscalationEvent.class))
                         // .when(CompensateEventDefinition.class,  e -> factoryManager.newNode(nodeId, StartCompensationEvent.class))

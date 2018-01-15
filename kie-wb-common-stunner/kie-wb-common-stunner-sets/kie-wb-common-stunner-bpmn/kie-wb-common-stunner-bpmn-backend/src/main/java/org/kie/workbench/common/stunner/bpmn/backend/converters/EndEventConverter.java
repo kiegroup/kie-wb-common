@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.EndEvent;
@@ -72,8 +73,34 @@ public class EndEventConverter {
                             return node;
 
                         })
-                        .when(SignalEventDefinition.class, e -> factoryManager.newNode(nodeId, EndSignalEvent.class))
-                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, EndMessageEvent.class))
+                        .when(SignalEventDefinition.class, e -> {
+                            Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            endEvent.getDataInputs(),
+                                            endEvent.getInputSet(),
+                                            endEvent.getDataInputAssociation(),
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList()
+                                    )
+                            );
+                            return node;
+                        })
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<EndMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, EndMessageEvent.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            endEvent.getDataInputs(),
+                                            endEvent.getInputSet(),
+                                            endEvent.getDataInputAssociation(),
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList()
+                                    )
+                            );
+                            return node;
+                        })
                         .when(ErrorEventDefinition.class,   e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))

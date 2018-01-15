@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.ErrorEventDefinition;
@@ -60,9 +61,48 @@ public class IntermediateCatchEventConverter {
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseCatchingIntermediateEvent.class)
                         .when(TimerEventDefinition.class, e -> timerEventDefinitionConverter.convert(e, nodeId, IntermediateTimerEvent.class))
-                        .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventCatching.class))
-                        .when(MessageEventDefinition.class, e -> messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventCatching.class))
-                        .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, IntermediateErrorEventCatching.class))
+                        .when(SignalEventDefinition.class, e -> {
+                            Node<View<IntermediateSignalEventCatching>, Edge> node = signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventCatching.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList(),
+                                            catchEvent.getDataOutputs(),
+                                            catchEvent.getOutputSet(),
+                                            catchEvent.getDataOutputAssociation()
+                                    )
+                            );
+                            return node;
+                        })
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<IntermediateMessageEventCatching>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventCatching.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList(),
+                                            catchEvent.getDataOutputs(),
+                                            catchEvent.getOutputSet(),
+                                            catchEvent.getDataOutputAssociation()
+                                    )
+                            );
+                            return node;
+                        })
+                        .when(ErrorEventDefinition.class, e -> {
+                            Node<View<IntermediateErrorEventCatching>, Edge> node = errorEventDefinitionConverter.convert(e, nodeId, IntermediateErrorEventCatching.class);
+                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
+                                    AssignmentsInfoStringBuilder.makeString(
+                                            Collections.emptyList(),
+                                            null,
+                                            Collections.emptyList(),
+                                            catchEvent.getDataOutputs(),
+                                            catchEvent.getOutputSet(),
+                                            catchEvent.getDataOutputAssociation()
+                                    )
+                            );
+                            return node;
+                        })
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
                         //.when(ConditionalEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))
