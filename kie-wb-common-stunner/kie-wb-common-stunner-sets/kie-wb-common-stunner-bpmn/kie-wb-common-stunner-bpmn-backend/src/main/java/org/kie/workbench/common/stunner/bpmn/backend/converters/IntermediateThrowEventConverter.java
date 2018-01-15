@@ -2,24 +2,17 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.List;
 
-import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.FormalExpression;
-import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
-import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
-import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
-import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -30,10 +23,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class IntermediateThrowEventConverter {
 
-    TypedFactoryManager factoryManager;
+    private final TypedFactoryManager factoryManager;
+    private final DefinitionResolver definitionResolver;
 
-    public IntermediateThrowEventConverter(TypedFactoryManager factoryManager) {
+    public IntermediateThrowEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
+        this.definitionResolver = definitionResolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateThrowEvent throwEvent) {
@@ -51,8 +46,18 @@ public class IntermediateThrowEventConverter {
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseThrowingIntermediateEvent.class)
-                        .when(SignalEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class))
-                        .when(MessageEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class))
+                        .when(SignalEventDefinition.class, e -> {
+                            Node<View<IntermediateSignalEventThrowing>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class);
+                            SignalRef signalRef = node.getContent().getDefinition().getExecutionSet().getSignalRef();
+                            definitionResolver.resolveSignal(e.getSignalRef())
+                                    .ifPresent(signal -> signalRef.setValue(signal.getName()));
+                            return node;
+                        })
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<IntermediateMessageEventThrowing>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class);
+                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
+                            return node;
+                        })
                         //.when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateErrorEventT....class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))

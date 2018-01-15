@@ -64,8 +64,16 @@ public class IntermediateCatchEventConverter {
                                     .ifPresent(signal -> signalRef.setValue(signal.getName()));
                             return node;
                         })
-                        .when(MessageEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class))
-                        .when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class))
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
+                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
+                            return node;
+                        })
+                        .when(ErrorEventDefinition.class, e -> {
+                            Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
+                            node.getContent().getDefinition().getExecutionSet().getErrorRef().setValue(e.getErrorRef().getErrorCode());
+                            return node;
+                        })
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
                         //.when(ConditionalEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))

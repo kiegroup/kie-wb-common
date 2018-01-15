@@ -18,6 +18,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
@@ -67,10 +68,16 @@ public class StartEventConverter {
                             Node<View<StartSignalEvent>, Edge> node = factoryManager.newNode(nodeId, StartSignalEvent.class);
                             InterruptingSignalEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
                             executionSet.setIsInterrupting(new IsInterrupting(startEvent.isIsInterrupting()));
-                            executionSet.setSignalRef(new SignalRef(e.getSignalRef()));
+                            definitionResolver.resolveSignal(e.getSignalRef())
+                                    .ifPresent(signal -> executionSet.getSignalRef().setValue(signal.getName()));
                             return node;
                         })
-                        .when(MessageEventDefinition.class, e -> factoryManager.newNode(nodeId, StartMessageEvent.class))
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<StartMessageEvent>, Edge> node = factoryManager.newNode(nodeId, StartMessageEvent.class);
+                            InterruptingMessageEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+                            executionSet.getMessageRef().setValue(e.getMessageRef().getName());
+                            return node;
+                        })
                         .when(TimerEventDefinition.class, e -> {
                             Node<View<StartTimerEvent>, Edge> node = factoryManager.newNode(nodeId, StartTimerEvent.class);
                             InterruptingTimerEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
@@ -80,9 +87,7 @@ public class StartEventConverter {
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<StartErrorEvent>, Edge> node = factoryManager.newNode(nodeId, StartErrorEvent.class);
                             InterruptingErrorEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
-                            definitionResolver.resolveError(
-                                    e.getErrorRef().getId()).ifPresent(
-                                            err -> executionSet.getErrorRef().setValue(err.getErrorCode()));
+                            executionSet.getErrorRef().setValue(e.getErrorRef().getErrorCode());
                             return node;
                         })
                         // .when(ConditionalEventDefinition.class, e -> factoryManager.newNode(nodeId, StartConditionalEvent.class))

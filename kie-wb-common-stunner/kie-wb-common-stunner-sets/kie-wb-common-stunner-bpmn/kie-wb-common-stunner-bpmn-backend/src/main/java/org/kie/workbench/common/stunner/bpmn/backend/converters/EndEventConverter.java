@@ -69,7 +69,11 @@ public class EndEventConverter {
 
                         })
                         .when(SignalEventDefinition.class, e -> factoryManager.newNode(nodeId, EndSignalEvent.class))
-                        .when(MessageEventDefinition.class, e -> factoryManager.newNode(nodeId, EndMessageEvent.class))
+                        .when(MessageEventDefinition.class, e -> {
+                            Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
+                            node.getContent().getDefinition().getExecutionSet().getMessageRef().setValue(e.getMessageRef().getName());
+                            return node;
+                        })
                         .when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, EndErrorEvent.class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
