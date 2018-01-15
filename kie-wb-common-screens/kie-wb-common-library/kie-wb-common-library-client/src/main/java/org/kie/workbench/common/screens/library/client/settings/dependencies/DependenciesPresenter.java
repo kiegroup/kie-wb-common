@@ -39,8 +39,6 @@ import static java.util.stream.Collectors.toList;
 
 public class DependenciesPresenter extends SettingsPresenter.Section {
 
-    private ProjectScreenModel model;
-
     public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
 
         void add(DependenciesItemPresenter.View itemView);
@@ -55,6 +53,8 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
     private final ManagedInstance<DependenciesItemPresenter> presenters;
 
     private int currentHashCode = 0;
+
+    ProjectScreenModel model;
 
     @Inject
     public DependenciesPresenter(final View view,
@@ -106,7 +106,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
                 .collect(toList());
     }
 
-    private void add(final Dependency dependency) {
+    void add(final Dependency dependency) {
         enhancedDependenciesManager.addNew(dependency);
     }
 

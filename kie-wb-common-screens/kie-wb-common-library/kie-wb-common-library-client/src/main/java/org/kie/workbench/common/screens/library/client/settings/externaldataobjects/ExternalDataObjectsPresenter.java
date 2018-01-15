@@ -82,7 +82,7 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
         addImportPopup.setCommand(() -> addImport(addImportPopup.getImportType()));
     }
 
-    private void addImport(final String typeName) {
+    void addImport(final String typeName) {
         itemPresenters.add(new Import(typeName));
         fireChangeEvent();
     }

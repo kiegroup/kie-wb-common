@@ -76,7 +76,7 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
     }
 
     public void done() {
-        knowledgeBasesListPresenter.getPresenters().forEach(p -> p.closeAllExpandableListItems());
+        knowledgeBasesListPresenter.getPresenters().forEach(KnowledgeSessionListItemPresenter::closeAllExpandableListItems);
         hide();
     }
 

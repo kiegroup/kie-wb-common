@@ -39,8 +39,9 @@ public class ValidationItemPresenter extends ListItemPresenter<ProjectRepository
         void setSource(String source);
     }
 
-    private ProjectRepository projectRepository;
-    private ValidationPresenter parentPresenter;
+    ProjectRepository projectRepository;
+
+    ValidationPresenter parentPresenter;
 
     @Inject
     public ValidationItemPresenter(final View view) {
