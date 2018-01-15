@@ -80,8 +80,9 @@ public class StartEventConverter {
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<StartErrorEvent>, Edge> node = factoryManager.newNode(nodeId, StartErrorEvent.class);
                             InterruptingErrorEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
-                            // fixme still broken
-                            definitionResolver.resolveError(e.getErrorRef().getId()).ifPresent(err -> executionSet.getErrorRef().setValue(err.getName()));
+                            definitionResolver.resolveError(
+                                    e.getErrorRef().getId()).ifPresent(
+                                            err -> executionSet.getErrorRef().setValue(err.getErrorCode()));
                             return node;
                         })
                         // .when(ConditionalEventDefinition.class, e -> factoryManager.newNode(nodeId, StartConditionalEvent.class))
