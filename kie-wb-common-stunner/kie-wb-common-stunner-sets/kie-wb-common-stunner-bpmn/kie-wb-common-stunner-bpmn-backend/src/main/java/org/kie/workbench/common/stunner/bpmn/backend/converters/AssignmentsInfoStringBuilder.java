@@ -1,11 +1,13 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.DataOutput;
@@ -13,11 +15,38 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.OutputSet;
-import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
+import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 public class AssignmentsInfoStringBuilder {
+    public static void setAssignmentsInfo(ThrowEvent event, AssignmentsInfo assignmentsInfo) {
+        assignmentsInfo.setValue(
+                AssignmentsInfoStringBuilder.makeString(
+                        event.getDataInputs(),
+                        event.getInputSet(),
+                        event.getDataInputAssociation(),
+                        Collections.emptyList(),
+                        null,
+                        Collections.emptyList()
+                )
+        );
+    }
+
+    public static void setAssignmentsInfo(CatchEvent event, AssignmentsInfo assignmentsInfo) {
+        assignmentsInfo.setValue(
+                AssignmentsInfoStringBuilder.makeString(
+                        Collections.emptyList(),
+                        null,
+                        Collections.emptyList(),
+                        event.getDataOutputs(),
+                        event.getOutputSet(),
+                        event.getDataOutputAssociation()
+                )
+        );
+    }
+
     public static String makeString(
             final List<DataInput> datainput,
             final InputSet inputSets,
@@ -37,14 +66,12 @@ public class AssignmentsInfoStringBuilder {
         String associationString =
                 dataInputAssociationsToString + dataOutputAssociationsToString;
 
-
         return Arrays.asList(dataInputString,
                              inputSetsToString,
                              dataOutputString,
                              outputSetsToString,
                              associationString
-                             ).stream().collect(Collectors.joining("|"));
-
+        ).stream().collect(Collectors.joining("|"));
     }
 
     private static String outputSetsToString(List<OutputSet> dataoutputset) {
@@ -62,7 +89,6 @@ public class AssignmentsInfoStringBuilder {
                 .map(AssignmentsInfoStringBuilder::toString)
                 .collect(Collectors.joining(","));
     }
-
 
     private static String toString(OutputSet outputSet) {
         return "";
@@ -102,30 +128,13 @@ public class AssignmentsInfoStringBuilder {
     }
 
     public static String outAssociationsToString(List<DataOutputAssociation> outputAssociations) {
-            StringBuffer doutassociationbuff = new StringBuffer();
-            for (DataOutputAssociation doa : outputAssociations) {
-                String doaName = ((DataOutput) doa.getSourceRef().get(0)).getName();
-                if (doaName != null && doaName.length() > 0) {
-                    doutassociationbuff.append("[dout]" + doaName);
-                    doutassociationbuff.append("->");
-                    doutassociationbuff.append(doa.getTargetRef().getId());
-                    doutassociationbuff.append(",");
-                }
-            }
-            if (doutassociationbuff.length() > 0) {
-                doutassociationbuff.setLength(doutassociationbuff.length() - 1);
-            }
-            return doutassociationbuff.toString();
-    }
-
-    public static String inAssociationsToString(List<DataInputAssociation> inputAssociations) {
         StringBuffer doutassociationbuff = new StringBuffer();
-        for (DataInputAssociation dia : inputAssociations) {
-            String doaName = dia.getSourceRef().get(0).getId();
+        for (DataOutputAssociation doa : outputAssociations) {
+            String doaName = ((DataOutput) doa.getSourceRef().get(0)).getName();
             if (doaName != null && doaName.length() > 0) {
-                doutassociationbuff.append("[din]" + doaName);
+                doutassociationbuff.append("[dout]" + doaName);
                 doutassociationbuff.append("->");
-                doutassociationbuff.append(((DataInput)dia.getTargetRef()).getName());
+                doutassociationbuff.append(doa.getTargetRef().getId());
                 doutassociationbuff.append(",");
             }
         }
@@ -135,6 +144,22 @@ public class AssignmentsInfoStringBuilder {
         return doutassociationbuff.toString();
     }
 
+    public static String inAssociationsToString(List<DataInputAssociation> inputAssociations) {
+        StringBuffer doutassociationbuff = new StringBuffer();
+        for (DataInputAssociation dia : inputAssociations) {
+            String doaName = dia.getSourceRef().get(0).getId();
+            if (doaName != null && doaName.length() > 0) {
+                doutassociationbuff.append("[din]" + doaName);
+                doutassociationbuff.append("->");
+                doutassociationbuff.append(((DataInput) dia.getTargetRef()).getName());
+                doutassociationbuff.append(",");
+            }
+        }
+        if (doutassociationbuff.length() > 0) {
+            doutassociationbuff.setLength(doutassociationbuff.length() - 1);
+        }
+        return doutassociationbuff.toString();
+    }
 
     public static String toString(DataInput dataInput) {
         String name = dataInput.getName();
@@ -148,8 +173,6 @@ public class AssignmentsInfoStringBuilder {
         return dtype.isEmpty() ? name : name + ':' + dtype;
     }
 
-
-
     private static String extractDtype(BaseElement el) {
         return getAnyAttributeValue(el, "dtype"); // fixme: look for a safer way to do this
     }
@@ -161,21 +184,5 @@ public class AssignmentsInfoStringBuilder {
             }
         }
         return "";
-    }
-
-    @Deprecated
-    private String setAssignmentsInfoProperty(
-            final String datainput,
-            final String datainputset,
-            final String dataoutput,
-            final String dataoutputset,
-            final String assignments) {
-
-        return Arrays.asList(datainput,
-                      datainputset,
-                      dataoutput,
-                      dataoutputset,
-                      assignments).stream().collect(Collectors.joining("|"));
-
     }
 }

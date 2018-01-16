@@ -16,9 +16,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -71,37 +68,20 @@ public class EndEventConverter {
 //                            executionSet.setIsInterrupting(new IsInterrupting(endEvent.is()));
 //                            executionSet.setSignalRef(new SignalRef(e.getSignalRef()));
                             return node;
-
                         })
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            endEvent.getDataInputs(),
-                                            endEvent.getInputSet(),
-                                            endEvent.getDataInputAssociation(),
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    endEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<EndMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, EndMessageEvent.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            endEvent.getDataInputs(),
-                                            endEvent.getInputSet(),
-                                            endEvent.getDataInputAssociation(),
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    endEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
-                        .when(ErrorEventDefinition.class,   e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
+                        .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
                         //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
                         //.when(CancelEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))

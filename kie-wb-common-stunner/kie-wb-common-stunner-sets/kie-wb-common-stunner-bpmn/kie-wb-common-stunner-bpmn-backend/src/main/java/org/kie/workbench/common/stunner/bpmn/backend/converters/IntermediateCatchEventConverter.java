@@ -63,44 +63,20 @@ public class IntermediateCatchEventConverter {
                         .when(TimerEventDefinition.class, e -> timerEventDefinitionConverter.convert(e, nodeId, IntermediateTimerEvent.class))
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<IntermediateSignalEventCatching>, Edge> node = signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventCatching.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList(),
-                                            catchEvent.getDataOutputs(),
-                                            catchEvent.getOutputSet(),
-                                            catchEvent.getDataOutputAssociation()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    catchEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<IntermediateMessageEventCatching>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventCatching.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList(),
-                                            catchEvent.getDataOutputs(),
-                                            catchEvent.getOutputSet(),
-                                            catchEvent.getDataOutputAssociation()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    catchEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<IntermediateErrorEventCatching>, Edge> node = errorEventDefinitionConverter.convert(e, nodeId, IntermediateErrorEventCatching.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList(),
-                                            catchEvent.getDataOutputs(),
-                                            catchEvent.getOutputSet(),
-                                            catchEvent.getDataOutputAssociation()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    catchEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))

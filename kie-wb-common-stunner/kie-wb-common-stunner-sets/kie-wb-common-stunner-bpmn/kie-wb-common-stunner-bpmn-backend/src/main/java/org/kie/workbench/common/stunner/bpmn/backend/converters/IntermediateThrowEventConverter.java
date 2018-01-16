@@ -56,16 +56,8 @@ public class IntermediateThrowEventConverter {
                         .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventThrowing.class))
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<IntermediateMessageEventThrowing>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventThrowing.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            throwEvent.getDataInputs(),
-                                            throwEvent.getInputSet(),
-                                            throwEvent.getDataInputAssociation(),
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    throwEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         //.when(ErrorEventDefinition.class, e -> factoryManager.newNode(nodeId, IntermediateErrorEventT....class))

@@ -72,16 +72,8 @@ public class StartEventConverter {
                         .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, StartSignalEvent.class))
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<StartMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, StartMessageEvent.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList(),
-                                            startEvent.getDataOutputs(),
-                                            startEvent.getOutputSet(),
-                                            startEvent.getDataOutputAssociation()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    startEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         .when(TimerEventDefinition.class, e -> {
@@ -92,16 +84,8 @@ public class StartEventConverter {
                         })
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<StartErrorEvent>, Edge> node = errorEventDefinitionConverter.convert(e, nodeId, StartErrorEvent.class);
-                            node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo().setValue(
-                                    AssignmentsInfoStringBuilder.makeString(
-                                            Collections.emptyList(),
-                                            null,
-                                            Collections.emptyList(),
-                                            startEvent.getDataOutputs(),
-                                            startEvent.getOutputSet(),
-                                            startEvent.getDataOutputAssociation()
-                                    )
-                            );
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    startEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
                         // .when(ConditionalEventDefinition.class, e -> factoryManager.newNode(nodeId, StartConditionalEvent.class))
