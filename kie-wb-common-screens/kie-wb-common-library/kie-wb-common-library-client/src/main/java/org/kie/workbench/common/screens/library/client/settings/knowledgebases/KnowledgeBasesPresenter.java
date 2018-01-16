@@ -46,7 +46,7 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     private final KnowledgeBaseListPresenter knowledgeBaseListPresenter;
     private final View view;
 
-    private KModuleModel kModuleModel;
+    KModuleModel kModuleModel;
 
     public interface View extends SettingsPresenter.View.Section<KnowledgeBasesPresenter> {
 
@@ -54,8 +54,8 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     }
 
     @Inject
-    public KnowledgeBasesPresenter(final Event<SettingsSectionChange> settingsSectionChangeEvent,
-                                   final View view,
+    public KnowledgeBasesPresenter(final View view,
+                                   final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                    final Promises promises,
                                    final SettingsPresenter.MenuItem menuItem,
                                    final AddSingleValueModal addKnowledgeBaseModal,
@@ -96,14 +96,18 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
         return promises.resolve();
     }
 
-    public void openAddKnowledgeBaseModal() {
+    void openAddKnowledgeBaseModal() {
         addKnowledgeBaseModal.show(knowledgeBaseName -> {
-            final KBaseModel kBaseModel = new KBaseModel();
-            kBaseModel.setName(knowledgeBaseName);
-            kBaseModel.setDefault(knowledgeBaseListPresenter.getObjectsList().isEmpty());
-            knowledgeBaseListPresenter.add(kBaseModel);
+            knowledgeBaseListPresenter.add(newKBaseModel(knowledgeBaseName));
             fireChangeEvent();
         });
+    }
+
+    KBaseModel newKBaseModel(final String knowledgeBaseName) {
+        final KBaseModel kBaseModel = new KBaseModel();
+        kBaseModel.setName(knowledgeBaseName);
+        kBaseModel.setDefault(knowledgeBaseListPresenter.getObjectsList().isEmpty());
+        return kBaseModel;
     }
 
     @Override

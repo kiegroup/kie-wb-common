@@ -44,8 +44,8 @@ public class DependenciesItemPresenter {
 
     private final View view;
 
-    private DependenciesPresenter parentPresenter;
-    private EnhancedDependency enhancedDependency;
+    DependenciesPresenter parentPresenter;
+    EnhancedDependency enhancedDependency;
 
     @Inject
     public DependenciesItemPresenter(final View view) {

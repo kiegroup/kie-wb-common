@@ -75,6 +75,9 @@ public class SettingsPresenterTest {
     @Mock
     private ProjectScreenService projectScreenService;
 
+    @Mock
+    private SettingsPresenter.MenuItemsListPresenter menuItemsListPresenter;
+
     private final SyncPromises promises = new SyncPromises();
 
     private SettingsPresenter settingsPresenter;
@@ -87,6 +90,7 @@ public class SettingsPresenterTest {
 
         doReturn(mock(Project.class)).when(projectContext).getActiveProject();
 
+        menuItemsListPresenter = mock(SettingsPresenter.MenuItemsListPresenter.class);
         settingsPresenter = spy(new SettingsPresenter(
                 view,
                 promises,
@@ -95,7 +99,7 @@ public class SettingsPresenterTest {
                 savePopUpPresenter,
                 new CallerMock<>(projectScreenService),
                 projectContext,
-                mock(SettingsPresenter.MenuItemsListPresenter.class),
+                menuItemsListPresenter,
                 observablePaths,
                 conflictingRepositoriesPopup));
     }
@@ -109,6 +113,8 @@ public class SettingsPresenterTest {
 
         settingsPresenter.setup();
 
+        verify(menuItemsListPresenter).setupWithPresenters(any(), any(), any());
+        verify(projectScreenService).load(any());
         verify(settingsPresenter, times(2)).setupSection(any(), any());
         verify(settingsPresenter).goTo(section1);
     }

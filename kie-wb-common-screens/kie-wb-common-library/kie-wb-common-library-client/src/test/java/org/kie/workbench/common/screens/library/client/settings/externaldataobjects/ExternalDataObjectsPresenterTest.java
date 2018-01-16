@@ -1,11 +1,10 @@
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
-import javax.enterprise.event.Event;
-
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
-import elemental2.dom.EventSource;
+import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.ProjectImports;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +15,6 @@ import org.kie.workbench.common.screens.library.client.settings.SyncPromises;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.mockito.Matchers.any;
@@ -47,7 +45,7 @@ public class ExternalDataObjectsPresenterTest {
     private EventSourceMock<SettingsSectionChange> settingsSectionChangeEvent;
 
     private final Promises promises = new SyncPromises();
-    
+
     @Before
     public void before() {
         externalDataObjectsPresenter = spy(new ExternalDataObjectsPresenter(view,
@@ -63,7 +61,10 @@ public class ExternalDataObjectsPresenterTest {
         final ProjectScreenModel model = mock(ProjectScreenModel.class);
         doReturn(new ProjectImports()).when(model).getProjectImports();
 
-        externalDataObjectsPresenter.setup(model);
+        externalDataObjectsPresenter.setup(model).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         verify(view).init(eq(externalDataObjectsPresenter));
         verify(itemPresenters).setup(any(), any(), any());

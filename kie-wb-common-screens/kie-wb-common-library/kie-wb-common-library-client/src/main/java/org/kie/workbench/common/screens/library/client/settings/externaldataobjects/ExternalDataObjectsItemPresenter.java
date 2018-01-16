@@ -26,7 +26,8 @@ import org.kie.workbench.common.screens.library.client.settings.util.UberElement
 public class ExternalDataObjectsItemPresenter extends ListItemPresenter<Import, ExternalDataObjectsPresenter, ExternalDataObjectsItemPresenter.View> {
 
     private Import import_;
-    private ExternalDataObjectsPresenter parentPresenter;
+
+    ExternalDataObjectsPresenter parentPresenter;
 
     public interface View extends UberElementalListItem<ExternalDataObjectsItemPresenter>,
                                   IsElement {
@@ -52,6 +53,7 @@ public class ExternalDataObjectsItemPresenter extends ListItemPresenter<Import, 
         return this;
     }
 
+    @Override
     public void remove() {
         super.remove();
         parentPresenter.fireChangeEvent();

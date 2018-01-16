@@ -60,11 +60,15 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
     }
 
     public void add() {
+        knowledgeBasesListPresenter.add(newKSessionModel());
+        signalKnowledgeBaseAddedOrRemoved();
+    }
+
+    KSessionModel newKSessionModel() {
         final KSessionModel kSessionModel = new KSessionModel();
         kSessionModel.setName("");
         kSessionModel.setDefault(knowledgeBasesListPresenter.getObjectsList().isEmpty());
-        knowledgeBasesListPresenter.add(kSessionModel);
-        signalKnowledgeBaseAddedOrRemoved();
+        return kSessionModel;
     }
 
     public void signalKnowledgeBaseAddedOrRemoved() {

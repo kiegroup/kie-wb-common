@@ -1,15 +1,44 @@
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.packages;
 
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class PackageItemPresenterTest {
 
-    private PackageItemPresenterTest packageItemPresenterTest;
+    private PackageItemPresenter packageItemPresenter;
+
+    @Mock
+    private PackageItemPresenter.View view;
 
     @Before
     public void before() {
-        packageItemPresenterTest = spy(null);
+        packageItemPresenter = spy(new PackageItemPresenter(view));
+    }
+
+    @Test
+    public void testSetup() {
+        packageItemPresenter.setup("Name", mock(KnowledgeBaseItemPresenter.class));
+        verify(view).init(eq(packageItemPresenter));
+        verify(view).setName(eq("Name"));
+    }
+
+    @Test
+    public void testRemove() {
+        final KnowledgeBaseItemPresenter parentPresenter = mock(KnowledgeBaseItemPresenter.class);
+        packageItemPresenter.setup("Name", parentPresenter);
+
+        packageItemPresenter.remove();
+
+        verify(parentPresenter).fireChangeEvent();
     }
 }

@@ -1,15 +1,48 @@
 package org.kie.workbench.common.screens.library.client.settings.externaldataobjects;
 
 import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.soup.project.datamodel.imports.Import;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ExternalDataObjectsItemPresenterTest {
 
     private ExternalDataObjectsItemPresenter externalDataObjectsItemPresenter;
 
+    @Mock
+    private ExternalDataObjectsItemPresenter.View view;
+
     @Before
     public void before() {
-        externalDataObjectsItemPresenter = spy(null);
+        externalDataObjectsItemPresenter = spy(new ExternalDataObjectsItemPresenter(view));
+    }
+
+    @Test
+    public void testSetup() {
+        final Import import_ = new Import("type");
+        externalDataObjectsItemPresenter.setup(import_, mock(ExternalDataObjectsPresenter.class));
+
+        verify(view).init(eq(externalDataObjectsItemPresenter));
+        verify(view).setTypeName(eq("type"));
+        assertEquals(import_, externalDataObjectsItemPresenter.getObject());
+    }
+
+    @Test
+    public void testRemove() {
+        final ExternalDataObjectsPresenter parentPresenter = mock(ExternalDataObjectsPresenter.class);
+        externalDataObjectsItemPresenter.parentPresenter = parentPresenter;
+
+        externalDataObjectsItemPresenter.remove();
+
+        verify(parentPresenter).fireChangeEvent();
     }
 }

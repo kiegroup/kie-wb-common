@@ -41,8 +41,9 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
     private final WorkItemHandlersListPresenter workItemHandlersListPresenter;
     private final ListenersListPresenter listenersListPresenter;
     private final KieEnumSelectElement<ClockTypeOption> clockSelect;
-    private KSessionModel kSessionModel;
-    private KnowledgeSessionsModal parentPresenter;
+
+    KSessionModel kSessionModel;
+    KnowledgeSessionsModal parentPresenter;
 
     @Inject
     public KnowledgeSessionListItemPresenter(final View view,

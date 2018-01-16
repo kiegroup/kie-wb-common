@@ -50,8 +50,8 @@ public class KnowledgeBaseItemPresenter extends ListItemPresenter<KBaseModel, Kn
     private final IncludedKnowledgeBasesListPresenter includedKnowledgeBasesListPresenter;
     private final PackageListPresenter packageListPresenter;
 
-    private KBaseModel kBaseModel;
-    private KnowledgeBasesPresenter parentPresenter;
+    KBaseModel kBaseModel;
+    KnowledgeBasesPresenter parentPresenter;
 
     @Inject
     public KnowledgeBaseItemPresenter(final View view,

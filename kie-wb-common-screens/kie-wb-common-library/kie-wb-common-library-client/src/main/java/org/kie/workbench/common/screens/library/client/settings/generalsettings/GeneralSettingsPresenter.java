@@ -95,7 +95,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     private final GAVPreferences gavPreferences;
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
 
-    private POM pom;
+    POM pom;
 
     @Inject
     public GeneralSettingsPresenter(final View view,
@@ -146,25 +146,25 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
 
         return promises.all(
 
-                validateStringIsNotEmpty(view.getName(), view.getEmptyNameMessage())
-                        .then(o -> executeValidation(s -> s.isProjectNameValid(view.getName()), view.getInvalidNameMessage()))
+                validateStringIsNotEmpty(pom.getName(), view.getEmptyNameMessage())
+                        .then(o -> executeValidation(s -> s.isProjectNameValid(pom.getName()), view.getInvalidNameMessage()))
                         .catch_(this::showErrorAndReject),
 
-                validateStringIsNotEmpty(view.getGroupId(), view.getEmptyGroupIdMessage())
-                        .then(o -> executeValidation(s -> s.validateGroupId(view.getGroupId()), view.getInvalidGroupIdMessage()))
+                validateStringIsNotEmpty(pom.getGav().getGroupId(), view.getEmptyGroupIdMessage())
+                        .then(o -> executeValidation(s -> s.validateGroupId(pom.getGav().getGroupId()), view.getInvalidGroupIdMessage()))
                         .catch_(this::showErrorAndReject),
 
-                validateStringIsNotEmpty(view.getArtifactId(), view.getEmptyArtifactIdMessage())
-                        .then(o -> executeValidation(s -> s.validateArtifactId(view.getArtifactId()), view.getInvalidArtifactIdMessage()))
+                validateStringIsNotEmpty(pom.getGav().getArtifactId(), view.getEmptyArtifactIdMessage())
+                        .then(o -> executeValidation(s -> s.validateArtifactId(pom.getGav().getArtifactId()), view.getInvalidArtifactIdMessage()))
                         .catch_(this::showErrorAndReject),
 
-                validateStringIsNotEmpty(view.getVersion(), view.getEmptyVersionMessage())
-                        .then(o -> executeValidation(s -> s.validateGAVVersion(view.getVersion()), view.getInvalidVersionMessage()))
+                validateStringIsNotEmpty(pom.getGav().getVersion(), view.getEmptyVersionMessage())
+                        .then(o -> executeValidation(s -> s.validateGAVVersion(pom.getGav().getVersion()), view.getInvalidVersionMessage()))
                         .catch_(this::showErrorAndReject)
         );
     }
 
-    private Promise<Object> showErrorAndReject(final Object o) {
+    Promise<Object> showErrorAndReject(final Object o) {
         return promises.catchOrExecute(o, e -> {
             view.showError(e.getMessage());
             return promises.reject(this);
@@ -174,8 +174,8 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         });
     }
 
-    private Promise<Boolean> validateStringIsNotEmpty(final String string,
-                                                      final String errorMessage) {
+    Promise<Boolean> validateStringIsNotEmpty(final String string,
+                                              final String errorMessage) {
 
         return promises.create((resolve, reject) -> {
             if (string == null || string.isEmpty()) {
@@ -186,17 +186,12 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         });
     }
 
-    private Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
-                                               final String errorMessage) {
+    Promise<Boolean> executeValidation(final Function<ValidationService, Boolean> call,
+                                       final String errorMessage) {
 
         return promises
-                .promisify(validationService, call, isValid -> isValid)
-                .catch_(e -> promises.catchOrExecute(
-                        e,
-                        runtimeException -> {
-                            throw runtimeException;
-                        },
-                        ignore -> promises.reject(errorMessage)));
+                .promisify(validationService, call)
+                .then(valid -> valid ? promises.resolve(true) : promises.reject(errorMessage));
     }
 
     void setVersion(final String version) {

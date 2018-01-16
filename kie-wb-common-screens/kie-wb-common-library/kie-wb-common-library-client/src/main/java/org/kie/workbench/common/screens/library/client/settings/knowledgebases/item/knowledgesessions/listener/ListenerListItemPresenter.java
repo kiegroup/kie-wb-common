@@ -32,8 +32,8 @@ public class ListenerListItemPresenter extends ListItemPresenter<ListenerModel, 
 
     private final KieEnumSelectElement<ListenerModel.Kind> kindSelect;
 
-    private ListenerModel model;
-    private KnowledgeSessionListItemPresenter parentPresenter;
+    ListenerModel model;
+    KnowledgeSessionListItemPresenter parentPresenter;
 
     @Inject
     public ListenerListItemPresenter(final View view,
