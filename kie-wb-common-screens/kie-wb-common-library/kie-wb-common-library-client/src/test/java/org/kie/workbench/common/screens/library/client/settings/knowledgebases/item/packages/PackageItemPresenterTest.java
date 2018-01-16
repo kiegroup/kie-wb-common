@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter.PackageListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -35,10 +36,14 @@ public class PackageItemPresenterTest {
     @Test
     public void testRemove() {
         final KnowledgeBaseItemPresenter parentPresenter = mock(KnowledgeBaseItemPresenter.class);
-        packageItemPresenter.setup("Name", parentPresenter);
+        final PackageListPresenter listPresenter = mock(PackageListPresenter.class);
+
+        packageItemPresenter.parentPresenter = parentPresenter;
+        packageItemPresenter.setListPresenter(listPresenter);
 
         packageItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(packageItemPresenter));
         verify(parentPresenter).fireChangeEvent();
     }
 }

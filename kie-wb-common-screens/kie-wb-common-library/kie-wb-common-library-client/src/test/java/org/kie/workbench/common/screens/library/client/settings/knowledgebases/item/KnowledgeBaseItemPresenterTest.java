@@ -20,6 +20,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -159,5 +160,16 @@ public class KnowledgeBaseItemPresenterTest {
         knowledgeBaseItemPresenter.onDefaultKnowledgeSessionChanged(new DefaultKnowledgeBaseChange(mock(KBaseModel.class)));
 
         Assert.assertFalse(kBaseModel.isDefault());
+    }
+
+    @Test
+    public void testRemove() {
+        knowledgeBaseItemPresenter.setListPresenter(mock(KnowledgeBasesPresenter.KnowledgeBaseListPresenter.class));
+        doNothing().when(this.knowledgeBaseItemPresenter).fireChangeEvent();
+
+        knowledgeBaseItemPresenter.remove();
+
+        verify(knowledgeBaseItemPresenter).remove();
+        verify(knowledgeBaseItemPresenter).fireChangeEvent();
     }
 }

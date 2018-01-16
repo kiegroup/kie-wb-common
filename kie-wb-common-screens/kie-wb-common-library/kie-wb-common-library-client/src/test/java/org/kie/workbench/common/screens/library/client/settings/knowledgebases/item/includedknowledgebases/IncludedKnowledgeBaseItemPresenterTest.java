@@ -7,6 +7,7 @@ import org.kie.workbench.common.screens.library.client.settings.knowledgebases.i
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter.IncludedKnowledgeBasesListPresenter;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -35,10 +36,14 @@ public class IncludedKnowledgeBaseItemPresenterTest {
     @Test
     public void testRemove() {
         final KnowledgeBaseItemPresenter parentPresenter = mock(KnowledgeBaseItemPresenter.class);
-        includedKnowledgeBaseItemPresenter.setup("Name", parentPresenter);
+        final IncludedKnowledgeBasesListPresenter listPresenter = mock(IncludedKnowledgeBasesListPresenter.class);
+
+        includedKnowledgeBaseItemPresenter.parentPresenter = parentPresenter;
+        includedKnowledgeBaseItemPresenter.setListPresenter(listPresenter);
 
         includedKnowledgeBaseItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(includedKnowledgeBaseItemPresenter));
         verify(parentPresenter).fireChangeEvent();
     }
 }

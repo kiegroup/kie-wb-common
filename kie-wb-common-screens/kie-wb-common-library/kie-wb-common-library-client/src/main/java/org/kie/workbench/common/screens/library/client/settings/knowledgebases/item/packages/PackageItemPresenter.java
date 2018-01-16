@@ -28,7 +28,7 @@ import org.kie.workbench.common.screens.library.client.settings.util.UberElement
 public class PackageItemPresenter extends ListItemPresenter<String, KnowledgeBaseItemPresenter, PackageItemPresenter.View> {
 
     private String packageName;
-    private KnowledgeBaseItemPresenter parentPresenter;
+    KnowledgeBaseItemPresenter parentPresenter;
 
     @Inject
     public PackageItemPresenter(final View view) {

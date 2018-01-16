@@ -34,7 +34,7 @@ public class PropertiesItemPresenter extends ListItemPresenter<Property, Persist
         void setValue(String value);
     }
 
-    private PersistencePresenter parentPresenter;
+    PersistencePresenter parentPresenter;
     private Property property;
 
     @Inject

@@ -33,7 +33,7 @@ public class PersistableDataObjectsItemPresenter extends ListItemPresenter<Strin
         void setClassName(String className);
     }
 
-    private PersistencePresenter parentPresenter;
+    PersistencePresenter parentPresenter;
     private String className;
 
     @Inject

@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter.PropertiesListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -37,10 +38,14 @@ public class PropertiesItemPresenterTest {
     @Test
     public void testRemove() {
         final PersistencePresenter parentPresenter = mock(PersistencePresenter.class);
-        propertiesItemPresenter.setup(new Property("Name", "Value"), parentPresenter);
+        final PropertiesListPresenter listPresenter = mock(PropertiesListPresenter.class);
+
+        propertiesItemPresenter.parentPresenter = parentPresenter;
+        propertiesItemPresenter.setListPresenter(listPresenter);
 
         propertiesItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(propertiesItemPresenter));
         verify(parentPresenter).fireChangeEvent();
     }
 }

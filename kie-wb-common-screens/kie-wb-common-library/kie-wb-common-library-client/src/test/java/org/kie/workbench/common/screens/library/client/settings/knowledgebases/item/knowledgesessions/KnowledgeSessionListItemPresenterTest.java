@@ -1,14 +1,12 @@
 package org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import javax.enterprise.event.Event;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.KnowledgeSessionsModal.KnowledgeBasesListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.services.shared.kmodule.ClockTypeOption;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
@@ -117,11 +115,15 @@ public class KnowledgeSessionListItemPresenterTest {
     @Test
     public void testRemove() {
         final KnowledgeSessionsModal parentPresenter = mock(KnowledgeSessionsModal.class);
+        final KnowledgeBasesListPresenter listPresenter = mock(KnowledgeBasesListPresenter.class);
+
         knowledgeSessionListItemPresenter.parentPresenter = parentPresenter;
+        knowledgeSessionListItemPresenter.setListPresenter(listPresenter);
 
         knowledgeSessionListItemPresenter.remove();
 
-        verify(parentPresenter).fireChangeEvent();
+        verify(listPresenter).remove(eq(knowledgeSessionListItemPresenter));
+        verify(parentPresenter).signalKnowledgeBaseAddedOrRemoved();
     }
 
     @Test

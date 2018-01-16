@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.KnowledgeSessionListItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.knowledgesessions.KnowledgeSessionListItemPresenter.ListenersListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.KieEnumSelectElement;
 import org.kie.workbench.common.services.shared.kmodule.ListenerModel;
 import org.mockito.Mock;
@@ -70,10 +71,14 @@ public class ListenerListItemPresenterTest {
     @Test
     public void testRemove() {
         final KnowledgeSessionListItemPresenter parentPresenter = mock(KnowledgeSessionListItemPresenter.class);
+        final ListenersListPresenter listPresenter = mock(ListenersListPresenter.class);
+
         listenerListItemPresenter.parentPresenter = parentPresenter;
+        listenerListItemPresenter.setListPresenter(listPresenter);
 
         listenerListItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(listenerListItemPresenter));
         verify(parentPresenter).fireChangeEvent();
         verify(parentPresenter).signalListenerAddedOrRemoved();
     }

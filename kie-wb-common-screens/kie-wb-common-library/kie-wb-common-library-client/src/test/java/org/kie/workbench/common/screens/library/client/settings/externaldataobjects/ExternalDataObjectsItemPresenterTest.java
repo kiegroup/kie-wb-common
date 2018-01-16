@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.soup.project.datamodel.imports.Import;
+import org.kie.workbench.common.screens.library.client.settings.externaldataobjects.ExternalDataObjectsPresenter.ImportsListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -39,10 +40,14 @@ public class ExternalDataObjectsItemPresenterTest {
     @Test
     public void testRemove() {
         final ExternalDataObjectsPresenter parentPresenter = mock(ExternalDataObjectsPresenter.class);
+        final ImportsListPresenter listPresenter = mock(ImportsListPresenter.class);
+
         externalDataObjectsItemPresenter.parentPresenter = parentPresenter;
+        externalDataObjectsItemPresenter.setListPresenter(listPresenter);
 
         externalDataObjectsItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(externalDataObjectsItemPresenter));
         verify(parentPresenter).fireChangeEvent();
     }
 }

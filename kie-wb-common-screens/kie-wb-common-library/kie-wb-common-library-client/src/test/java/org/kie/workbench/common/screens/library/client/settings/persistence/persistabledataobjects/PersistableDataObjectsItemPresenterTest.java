@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter.PersistableDataObjectsListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -35,10 +36,14 @@ public class PersistableDataObjectsItemPresenterTest {
     @Test
     public void testRemove() {
         final PersistencePresenter parentPresenter = mock(PersistencePresenter.class);
-        persistableDataObjectsItemPresenter.setup("ClassName", parentPresenter);
+        final PersistableDataObjectsListPresenter listPresenter = mock(PersistableDataObjectsListPresenter.class);
+
+        persistableDataObjectsItemPresenter.parentPresenter = parentPresenter;
+        persistableDataObjectsItemPresenter.setListPresenter(listPresenter);
 
         persistableDataObjectsItemPresenter.remove();
 
+        verify(listPresenter).remove(eq(persistableDataObjectsItemPresenter));
         verify(parentPresenter).fireChangeEvent();
     }
 }
