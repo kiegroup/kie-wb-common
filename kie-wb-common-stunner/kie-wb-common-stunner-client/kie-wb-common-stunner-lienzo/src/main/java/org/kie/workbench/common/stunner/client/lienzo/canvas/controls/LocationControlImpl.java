@@ -17,10 +17,13 @@
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -77,6 +80,10 @@ public class LocationControlImpl
         extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
         implements LocationControl<AbstractCanvasHandler, Element> {
 
+    private final double LARGE_DISTANCE = 25d;
+    private final double NORMAL_DISTANCE = 5d;
+    private final double SHORT_DISTANCE = 1d;
+
     private static Logger LOGGER = Logger.getLogger(LocationControlImpl.class.getName());
 
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
@@ -122,18 +129,21 @@ public class LocationControlImpl
             return;
         }
 
-        final double multiplier = 10d;
-        final double divider = 5d;
+        double movementDistance = NORMAL_DISTANCE;
 
-        double movementDistance = 5d;
+        if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.CONTROL)) {
+            movementDistance = LARGE_DISTANCE;
+        } else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.SHIFT)) {
+            movementDistance = SHORT_DISTANCE;
+        }
 
         double horizontalDistance = 0d;
         double verticalDistance = 0d;
 
-        if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.CONTROL)){
-            movementDistance *= multiplier;
-        } else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.SHIFT)){
-            movementDistance /= divider;
+        if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_LEFT)) {
+            horizontalDistance = -movementDistance;
+        } else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_RIGHT)) {
+            horizontalDistance = movementDistance;
         }
 
         if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_UP)) {
@@ -143,31 +153,59 @@ public class LocationControlImpl
             verticalDistance = movementDistance;
         }
 
-        if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_LEFT)) {
-            horizontalDistance = -movementDistance;
-        }else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_RIGHT)) {
-            horizontalDistance = movementDistance;
-        }
-
         if (verticalDistance == 0 && horizontalDistance == 0) {
             return;
         }
 
-        ArrayList<Element> moveNodes = new ArrayList<>();
-        ArrayList<Point2D> movePositions = new ArrayList<>();
+        List<Element> moveNodes = new ArrayList<>();
+        List<Point2D> movePositions = new ArrayList<>();
 
         for (String uuid : selectedIDs) {
-            final Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
-            if (node != null) {
-                final Point2D nodePosition = GraphUtils.getPosition(node.getContent());
-                final Point2D movePosition = new Point2D(nodePosition.getX() + horizontalDistance, nodePosition.getY() + verticalDistance);
-
-                moveNodes.add(node);
-                movePositions.add(movePosition);
+            if (isValidPosition(uuid, horizontalDistance, verticalDistance)) {
+                final Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
+                if (node != null) {
+                    final Point2D nodePosition = GraphUtils.getPosition(node.getContent());
+                    final Point2D movePosition = new Point2D(nodePosition.getX() + horizontalDistance, nodePosition.getY() + verticalDistance);
+                    moveNodes.add(node);
+                    movePositions.add(movePosition);
+                }
+            } else {
+                return;
             }
+
         }
 
         move(moveNodes.toArray(new Element[] {}), movePositions.toArray(new Point2D[] {}));
+    }
+
+    private boolean isValidPosition(String uuid, double horizontalDistance, double verticalDistance) {
+
+        AbstractCanvas canvas = canvasHandler.getAbstractCanvas();
+        ShapeView shapeView = canvas.getShape(uuid).getShapeView();
+        Point2D position = shapeView.getShapeAbsoluteLocation();
+
+        double newPositionX = position.getX() + horizontalDistance;
+        double newPositionY = position.getY() + verticalDistance;
+
+        if (newPositionX < 0 || newPositionY < 0) {
+            return false;
+        }
+
+        org.kie.workbench.common.stunner.core.client.shape.view.BoundingBox bb = shapeView.getBoundingBox();
+        double width = bb.getWidth();
+        double height = bb.getHeight();
+
+        double canvasWidth = canvas.getWidth();
+        double canvasHeight = canvas.getHeight();
+
+        newPositionX += width;
+        newPositionY += height;
+
+        if (newPositionX > canvasWidth || newPositionY > canvasHeight) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -261,10 +299,7 @@ public class LocationControlImpl
                                                                                   command);
 
         if (!CommandUtils.isError(result) && shapeLocationsChangedEvent != null) {
-            Collection<String> uuids = new ArrayList<>();
-            for (final Element element : elements) {
-                uuids.add(element.getUUID());
-            }
+            List<String> uuids = Arrays.stream(elements).map(Element::getUUID).collect(Collectors.toList());
             shapeLocationsChangedEvent.fire(new ShapeLocationsChangedEvent(uuids, canvasHandler));
         }
 

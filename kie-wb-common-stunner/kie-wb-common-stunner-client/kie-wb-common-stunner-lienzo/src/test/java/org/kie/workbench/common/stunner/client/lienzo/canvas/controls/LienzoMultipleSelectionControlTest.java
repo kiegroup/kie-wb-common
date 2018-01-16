@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import com.ait.lienzo.client.core.event.NodeMouseEnterEvent;
 import com.ait.lienzo.client.core.event.NodeMouseEnterHandler;
@@ -73,8 +74,15 @@ import static org.mockito.Mockito.when;
 public class LienzoMultipleSelectionControlTest {
 
     private static final String ELEMENT_UUID = "element-uuid1";
-    private static ViewEventType[] viewEventTypes = {};
     private final static MultiPath PATH = new MultiPath();
+
+    private final static double MIN_WIDTH = 0D;
+    private final static double MIN_HEIGHT = 0D;
+    private final static double MAX_WIDTH = 100D;
+    private final static double MAX_HEIGHT = 100D;
+    private final static double PADDING = SelectionManager.SELECTION_PADDING;
+
+    private static ViewEventType[] viewEventTypes = {};
 
     @Mock
     private EventSourceMock<CanvasSelectionEvent> canvasSelectionEvent;
@@ -248,56 +256,57 @@ public class LienzoMultipleSelectionControlTest {
 
     @Test
     public void testOnShapeLocationsChanged() {
+
         //Different canvas
         when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(mock(CanvasHandler.class));
         tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
 
         verify(selectedItems, never()).rebuildBoundingBox();
-        verify(selectionManager, never()).drawSelectionShape(eq(0d),
-                                                             eq(0d),
-                                                             eq(100d),
-                                                             eq(100d),
+        verify(selectionManager, never()).drawSelectionShape(eq(MIN_WIDTH),
+                                                             eq(MIN_HEIGHT),
+                                                             eq(MAX_WIDTH),
+                                                             eq(MAX_HEIGHT),
                                                              eq(overLayer),
-                                                             eq(10.0));
+                                                             eq(PADDING));
 
         //Same canvas no selectedItems
 
         when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
-        when(shapeLocationsChangedEvent.getUuids()).thenReturn(new ArrayList<String>());
+        when(shapeLocationsChangedEvent.getUuids()).thenReturn(new ArrayList<>());
         tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
 
         verify(selectedItems, never()).rebuildBoundingBox();
-        verify(selectionManager, never()).drawSelectionShape(eq(0d),
-                                                             eq(0d),
-                                                             eq(100d),
-                                                             eq(100d),
+        verify(selectionManager, never()).drawSelectionShape(eq(MIN_WIDTH),
+                                                             eq(MIN_HEIGHT),
+                                                             eq(MAX_WIDTH),
+                                                             eq(MAX_HEIGHT),
                                                              eq(overLayer),
-                                                             eq(10.0));
+                                                             eq(PADDING));
 
         //Same canvas with selected items
 
         when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
 
-        ArrayList<String> selectedUUIds = new ArrayList<String>();
-        selectedUUIds.add("TestUUID");
+        List<String> selectedUUIds = new ArrayList<>();
+        selectedUUIds.add("ELEMENT_UUID");
 
         when(shapeLocationsChangedEvent.getUuids()).thenReturn(selectedUUIds);
         when(tested.getSelectedItems()).thenReturn(selectedUUIds);
 
         when(delegateShapeProvider.getShape()).thenReturn(mock(com.ait.lienzo.client.core.shape.Shape.class));
         when(selectionManager.getSelectedItems()).thenReturn(selectedItems);
-        when(selectedItems.getBoundingBox()).thenReturn(new BoundingBox(0d, 0d, 100d, 100d));
+        when(selectedItems.getBoundingBox()).thenReturn(new BoundingBox(MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT));
         when(shapeLocationsChangedEvent.getCanvasHandler()).thenReturn(canvasHandler);
 
         tested.onShapeLocationsChanged(shapeLocationsChangedEvent);
 
         verify(selectedItems, times(1)).rebuildBoundingBox();
-        verify(selectionManager, times(1)).drawSelectionShape(eq(0d),
-                                                              eq(0d),
-                                                              eq(100d),
-                                                              eq(100d),
+        verify(selectionManager, times(1)).drawSelectionShape(eq(MIN_WIDTH),
+                                                              eq(MIN_HEIGHT),
+                                                              eq(MAX_WIDTH),
+                                                              eq(MAX_HEIGHT),
                                                               eq(overLayer),
-                                                              eq(10.0));
+                                                              eq(PADDING));
     }
 
     @Test

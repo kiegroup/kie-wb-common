@@ -12,7 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 package org.kie.workbench.common.stunner.core.client.canvas.event;
@@ -21,21 +20,16 @@ import java.util.Collection;
 
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 
-public class ShapeLocationsChangedEvent {
+public class ShapeLocationsChangedEvent extends AbstractCanvasHandlerEvent {
 
     private final Collection<String> uuids;
-    private final CanvasHandler canvasHandler;
 
     public ShapeLocationsChangedEvent(final Collection<String> uuids, CanvasHandler canvasHandler) {
+        super(canvasHandler);
         this.uuids = uuids;
-        this.canvasHandler = canvasHandler;
     }
 
     public Collection<String> getUuids() {
         return uuids;
-    }
-
-    public CanvasHandler getCanvasHandler() {
-        return canvasHandler;
     }
 }
