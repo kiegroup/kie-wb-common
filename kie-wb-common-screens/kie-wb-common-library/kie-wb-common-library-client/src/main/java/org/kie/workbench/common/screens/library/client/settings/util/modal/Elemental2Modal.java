@@ -44,6 +44,10 @@ public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
     }
 
     public void setup() {
+        superSetup();
+    }
+
+    public void superSetup() {
 
         view.init(this);
 

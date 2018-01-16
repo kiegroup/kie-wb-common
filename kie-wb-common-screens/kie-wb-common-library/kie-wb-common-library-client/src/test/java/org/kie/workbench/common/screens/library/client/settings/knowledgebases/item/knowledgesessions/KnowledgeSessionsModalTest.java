@@ -40,11 +40,14 @@ public class KnowledgeSessionsModalTest {
 
     @Test
     public void testSetup() {
-        KnowledgeBaseItemPresenter parentPresenter = mock(KnowledgeBaseItemPresenter.class);
+        final KnowledgeBaseItemPresenter parentPresenter = mock(KnowledgeBaseItemPresenter.class);
         doReturn(new KBaseModel()).when(parentPresenter).getObject();
+        doNothing().when(knowledgeSessionsModal).superSetup();
+        doNothing().when(knowledgeSessionsModal).setWidth(any());
 
         knowledgeSessionsModal.setup(parentPresenter);
 
+        verify(knowledgeSessionsModal).superSetup();
         verify(knowledgeBasesListPresenter).setup(any(), any(), any());
     }
 

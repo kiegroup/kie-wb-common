@@ -50,9 +50,14 @@ public class KnowledgeSessionsModal extends Elemental2Modal<KnowledgeSessionsMod
                 parentPresenter.getObject().getKSessions(),
                 (kSessionModel, presenter) -> presenter.setup(kSessionModel, this));
 
-        super.setup();
+        superSetup();
 
-        setWidth("1200px"); //FIXME: ugly
+        setWidth("1200px");
+    }
+
+    @Override
+    public void setWidth(final String width) {
+        super.setWidth(width);
     }
 
     public KBaseModel getObject() {
