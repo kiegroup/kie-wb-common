@@ -27,7 +27,7 @@ import org.guvnor.common.services.project.client.preferences.ProjectScopedResolu
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
 import org.jboss.errai.common.client.api.Caller;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
+import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;

@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
+import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.DependencySelectorPopup;

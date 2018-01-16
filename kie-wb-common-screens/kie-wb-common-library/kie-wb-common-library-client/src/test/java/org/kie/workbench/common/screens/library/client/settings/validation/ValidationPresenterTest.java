@@ -2,23 +2,19 @@ package org.kie.workbench.common.screens.library.client.settings.validation;
 
 import javax.enterprise.event.Event;
 
-import elemental2.promise.Promise;
-import org.guvnor.common.services.project.model.ProjectImports;
 import org.guvnor.common.services.project.model.ProjectRepositories;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.kie.workbench.common.screens.library.client.settings.SyncPromises;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.promise.Promises;
+import org.uberfire.promise.SyncPromises;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -61,9 +57,10 @@ public class ValidationPresenterTest {
         final ProjectScreenModel model = mock(ProjectScreenModel.class);
         doReturn(new ProjectRepositories()).when(model).getRepositories();
 
-        final Promise<Void> result = validationPresenter.setup(model);
-
-        assertPromiseStatusEquals(result, SyncPromises.Status.RESOLVED);
+        validationPresenter.setup(model).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         verify(view).init(eq(validationPresenter));
         verify(validationItemPresenters).setup(any(), any(), any());
@@ -84,12 +81,5 @@ public class ValidationPresenterTest {
         repositories.getRepositories().add(mock(ProjectRepositories.ProjectRepository.class));
         int updatedHashCode = validationPresenter.currentHashCode();
         Assert.assertEquals(repositories.getRepositories().hashCode(), updatedHashCode);
-    }
-
-    private static void assertPromiseStatusEquals(final Promise<Void> promise,
-                                                  final SyncPromises.Status status) {
-
-        assertTrue(promise instanceof SyncPromises.SyncPromise);
-        assertEquals(status, ((SyncPromises.SyncPromise<?>) promise).status);
     }
 }

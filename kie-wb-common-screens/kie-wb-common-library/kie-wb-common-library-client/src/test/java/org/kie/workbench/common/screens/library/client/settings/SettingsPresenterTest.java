@@ -14,11 +14,11 @@ import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter.Section;
-import org.kie.workbench.common.screens.library.client.settings.SyncPromises.SyncPromise;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.mockito.Mock;
@@ -27,12 +27,11 @@ import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.ext.editor.commons.client.file.Customizable;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.mocks.CallerMock;
+import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.kie.workbench.common.screens.library.client.settings.SyncPromises.Status.REJECTED;
-import static org.kie.workbench.common.screens.library.client.settings.SyncPromises.Status.RESOLVED;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -43,6 +42,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.uberfire.promise.SyncPromises.Status.REJECTED;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsPresenterTest {
@@ -64,9 +64,6 @@ public class SettingsPresenterTest {
     private ProjectContext projectContext;
 
     @Mock
-    private ObservablePath observablePathMock;
-
-    @Mock
     private SavePopUpPresenter savePopUpPresenter;
 
     @Mock
@@ -85,12 +82,12 @@ public class SettingsPresenterTest {
     @Before
     public void before() {
 
-        doReturn(observablePathMock).when(observablePathMock).wrap(any());
-        doReturn(observablePathMock).when(observablePaths).get();
+        final ObservablePath observablePath = mock(ObservablePath.class);
+        doReturn(observablePath).when(observablePath).wrap(any());
+        doReturn(observablePath).when(observablePaths).get();
 
         doReturn(mock(Project.class)).when(projectContext).getActiveProject();
 
-        menuItemsListPresenter = mock(SettingsPresenter.MenuItemsListPresenter.class);
         settingsPresenter = spy(new SettingsPresenter(
                 view,
                 promises,
@@ -179,9 +176,9 @@ public class SettingsPresenterTest {
         final Promise<Object> setupResult =
                 settingsPresenter.setupSection(mock(ProjectScreenModel.class), section);
 
-        assertTrue(setupResult instanceof SyncPromise);
-        assertEquals(((SyncPromise<?>) setupResult).status, REJECTED);
-        assertEquals(((SyncPromise<?>) setupResult).value, section);
+        assertTrue(setupResult instanceof SyncPromises.SyncPromise);
+        assertEquals(((SyncPromises.SyncPromise<?>) setupResult).status, REJECTED);
+        assertEquals(((SyncPromises.SyncPromise<?>) setupResult).value, section);
 
         verify(section).setup(any());
         verify(settingsPresenter, never()).resetDirtyIndicator(section);
@@ -307,9 +304,10 @@ public class SettingsPresenterTest {
 
     @Test
     public void testDisplaySuccessMessage() {
-        final Promise<Void> result = settingsPresenter.displaySuccessMessage();
-
-        assertPromiseStatusEquals(result, RESOLVED);
+        settingsPresenter.displaySuccessMessage().catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         verify(view).hideBusyIndicator();
         verify(notificationEvent).fire(any());
@@ -332,9 +330,11 @@ public class SettingsPresenterTest {
     @Test
     public void testSaveProjectScreenModel() {
 
-        final Promise<Void> result = settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null);
-
-        assertPromiseStatusEquals(result, RESOLVED);
+        settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
+        ;
 
         verify(projectScreenService).save(any(), any(), eq("Test comment"), eq(DeploymentMode.VALIDATED));
         verify(settingsPresenter, never()).handlePomConcurrentUpdate(any(), any());
@@ -348,9 +348,11 @@ public class SettingsPresenterTest {
         settingsPresenter.concurrentPomUpdateInfo = mock(ObservablePath.OnConcurrentUpdateEvent.class);
         doNothing().when(settingsPresenter).handlePomConcurrentUpdate(eq("Test comment"), any());
 
-        final Promise<Void> result = settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null);
-
-        assertPromiseStatusEquals(result, REJECTED);
+        settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+        ;
 
         verify(projectScreenService, never()).save(any(), any(), any(), any());
         verify(settingsPresenter).handlePomConcurrentUpdate(eq("Test comment"), any());
@@ -365,9 +367,10 @@ public class SettingsPresenterTest {
         doThrow(testException).when(projectScreenService).save(any(), any(), any(), any());
         doReturn(promises.resolve()).when(settingsPresenter).handleSaveProjectScreenModelError(any(), any(), any());
 
-        final Promise<Void> result = settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null);
-
-        assertPromiseStatusEquals(result, RESOLVED);
+        settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).catch_(i -> {
+            Assert.fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         verify(projectScreenService).save(any(), any(), eq("Test comment"), eq(DeploymentMode.VALIDATED));
         verify(settingsPresenter, never()).handlePomConcurrentUpdate(any(), any());
@@ -406,8 +409,10 @@ public class SettingsPresenterTest {
         settingsPresenter.model = mock(ProjectScreenModel.class);
         doReturn(mock(POM.class)).when(settingsPresenter.model).getPOM();
 
-        final Promise<Void> result = settingsPresenter.handlePomConcurrentUpdate("Test comment", null, new GAVAlreadyExistsException());
-        assertPromiseStatusEquals(result, REJECTED);
+        settingsPresenter.handlePomConcurrentUpdate("Test comment", null, new GAVAlreadyExistsException()).then(i -> {
+            Assert.fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
 
         verify(view).hideBusyIndicator();
         verify(conflictingRepositoriesPopup).setContent(any(), any(), any());
@@ -481,13 +486,6 @@ public class SettingsPresenterTest {
 
         assertEquals(section, settingsPresenter.currentSection);
         verify(view).setSection(eq(section.getView()));
-    }
-
-    private static void assertPromiseStatusEquals(final Promise<Void> promise,
-                                                  final SyncPromises.Status status) {
-
-        assertTrue(promise instanceof SyncPromise);
-        assertEquals(status, ((SyncPromise<?>) promise).status);
     }
 
     private void mockSections(final Section... sections) {

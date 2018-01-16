@@ -25,7 +25,7 @@ import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.ProjectRepositories;
 import org.guvnor.common.services.project.model.ProjectRepositories.ProjectRepository;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
+import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;

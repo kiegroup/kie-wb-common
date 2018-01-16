@@ -34,7 +34,6 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorEditorService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
-import org.kie.workbench.common.screens.library.client.settings.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
@@ -45,6 +44,7 @@ import org.kie.workbench.common.screens.library.client.settings.util.modal.singl
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.PathFactory;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
@@ -60,12 +60,12 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     private final Caller<PersistenceDescriptorEditorService> editorService;
     private final Caller<DataModelerService> dataModelerService;
 
-    private final PropertiesListPresenter propertiesItemPresenters;
-    private final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters;
+    private final PropertiesListPresenter propertiesListPresenter;
+    private final PersistableDataObjectsListPresenter persistableDataObjectsListPresenter;
 
     private ObservablePath pathToPersistenceXml;
-    private PersistenceDescriptorEditorContent persistenceDescriptorEditorContent;
-    private ObservablePath.OnConcurrentUpdateEvent concurrentPersistenceXmlUpdateInfo;
+    PersistenceDescriptorEditorContent persistenceDescriptorEditorContent;
+    ObservablePath.OnConcurrentUpdateEvent concurrentPersistenceXmlUpdateInfo;
 
     public interface View extends SettingsPresenter.View.Section<PersistencePresenter> {
 
@@ -94,8 +94,8 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                 final AddSingleValueModal newPersistableDataObjectModal,
                                 final Caller<PersistenceDescriptorEditorService> editorService,
                                 final Caller<DataModelerService> dataModelerService,
-                                final PropertiesListPresenter propertiesItemPresenters,
-                                final PersistableDataObjectsListPresenter persistableDataObjectsItemPresenters) {
+                                final PropertiesListPresenter propertiesListPresenter,
+                                final PersistableDataObjectsListPresenter persistableDataObjectsListPresenter) {
 
         super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
@@ -106,8 +106,8 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         this.newPersistableDataObjectModal = newPersistableDataObjectModal;
         this.editorService = editorService;
         this.dataModelerService = dataModelerService;
-        this.propertiesItemPresenters = propertiesItemPresenters;
-        this.persistableDataObjectsItemPresenters = persistableDataObjectsItemPresenters;
+        this.propertiesListPresenter = propertiesListPresenter;
+        this.persistableDataObjectsListPresenter = persistableDataObjectsListPresenter;
     }
 
     @Override
@@ -115,13 +115,12 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         return setup();
     }
 
-    private Promise<Void> setup() {
+    Promise<Void> setup() {
         view.init(this);
 
         final String persistenceXmlUri = projectContext.getActiveProject()
                 .getRootPath().toURI() + "/src/main/resources/META-INF/persistence.xml";
 
-        concurrentPersistenceXmlUpdateInfo = null;
         pathToPersistenceXml = observablePaths.get().wrap(PathFactory.newPath(
                 "persistence.xml",
                 persistenceXmlUri,
@@ -129,6 +128,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                     put(PathFactory.VERSION_PROPERTY, true);
                 }}));
 
+        concurrentPersistenceXmlUpdateInfo = null;
         pathToPersistenceXml.onConcurrentUpdate(info -> concurrentPersistenceXmlUpdateInfo = info);
 
         return promises.promisify(editorService, s -> {
@@ -152,7 +152,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
                                LibraryConstants.Name,
                                LibraryConstants.Value);
 
-        propertiesItemPresenters.setup(
+        propertiesListPresenter.setup(
                 view.getPropertiesTable(),
                 getPersistenceUnitModel().getProperties(),
                 (property, presenter) -> presenter.setup(property, this));
@@ -162,7 +162,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         newPersistableDataObjectModal.setup(LibraryConstants.AddPersistableDataObject,
                                             LibraryConstants.Class);
 
-        persistableDataObjectsItemPresenters.setup(
+        persistableDataObjectsListPresenter.setup(
                 view.getPersistableDataObjectsTable(),
                 getPersistenceUnitModel().getClasses(),
                 (className, presenter) -> presenter.setup(className, this));
@@ -180,7 +180,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
         }
     }
 
-    private Promise<Void> save(final String comment) {
+    Promise<Void> save(final String comment) {
         return promises.promisify(editorService, s -> {
             s.save(pathToPersistenceXml,
                    persistenceDescriptorEditorContent,
@@ -190,12 +190,12 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     public void add(final String className) {
-        persistableDataObjectsItemPresenters.add(className);
+        persistableDataObjectsListPresenter.add(className);
         fireChangeEvent();
     }
 
     public void add(final Property property) {
-        propertiesItemPresenters.add(property);
+        propertiesListPresenter.add(property);
         fireChangeEvent();
     }
 
@@ -227,7 +227,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     private PersistenceUnitModel getPersistenceUnitModel() {
-        return this.persistenceDescriptorEditorContent.getDescriptorModel().getPersistenceUnit();
+        return persistenceDescriptorEditorContent.getDescriptorModel().getPersistenceUnit();
     }
 
     public void showNewPropertyModal() {
