@@ -33,7 +33,8 @@ public class KieEnumSelectElement<T extends Enum<T>> {
 
     private final KieSelectElement kieSelectElement;
     private final TranslationService translationService;
-    private Class<T> componentType;
+
+    Class<T> componentType;
 
     @Inject
     public KieEnumSelectElement(final KieSelectElement kieSelectElement,
@@ -51,22 +52,30 @@ public class KieEnumSelectElement<T extends Enum<T>> {
 
         componentType = (Class<T>) values.getClass().getComponentType();
 
-        final List<KieSelectElement.Option> options = Arrays.stream(values)
-                .map(e -> new KieSelectElement.Option(translationService.format(e.name()), e.name()))
-                .collect(toList());
-
         kieSelectElement.setup(
                 element,
-                options,
+                buildOptions(values),
                 initialValue.name(),
                 name -> onChange.accept(toEnum(name)));
+    }
+
+    List<KieSelectElement.Option> buildOptions(final T[] values) {
+        return Arrays.stream(values).map(this::newOption).collect(toList());
+    }
+
+    KieSelectElement.Option newOption(final T e) {
+        return new KieSelectElement.Option(getLabel(e), e.name());
+    }
+
+    String getLabel(final T e) {
+        return translationService.format(e.name());
     }
 
     public T getValue() {
         return toEnum(kieSelectElement.getValue());
     }
 
-    private T toEnum(final String value) {
+    T toEnum(final String value) {
         return Enum.valueOf(componentType, value);
     }
 }

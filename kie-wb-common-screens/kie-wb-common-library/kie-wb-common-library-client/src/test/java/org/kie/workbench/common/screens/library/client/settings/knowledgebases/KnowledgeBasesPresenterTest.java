@@ -9,16 +9,16 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.uberfire.promise.SyncPromises;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.promise.Promises;
+import org.uberfire.promise.SyncPromises;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;

@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.settings.util;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
@@ -29,16 +28,13 @@ import elemental2.dom.HTMLSelectElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.uberfire.client.mvp.UberElemental;
 
-import static java.util.Comparator.comparing;
-import static java.util.stream.Collectors.toList;
-
 @Dependent
 public class KieSelectElement {
 
     private final View view;
     private final OptionsListPresenter optionsListPresenter;
 
-    private Consumer<String> onChange;
+    Consumer<String> onChange;
 
     @Inject
     public KieSelectElement(final View view,
@@ -61,10 +57,6 @@ public class KieSelectElement {
 
         element.innerHTML = "";
         element.appendChild(view.getElement());
-
-        if (!options.isEmpty()) {
-            view.setValue(options.get(0).label);
-        }
 
         optionsListPresenter.setup(
                 view.getSelect(),

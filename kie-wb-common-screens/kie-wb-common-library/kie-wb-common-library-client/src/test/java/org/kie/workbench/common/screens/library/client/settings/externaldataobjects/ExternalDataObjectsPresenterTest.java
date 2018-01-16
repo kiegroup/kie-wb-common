@@ -7,14 +7,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
-import org.uberfire.promise.SyncPromises;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 import org.mockito.Mock;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.mocks.EventSourceMock;
+import org.uberfire.promise.SyncPromises;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
