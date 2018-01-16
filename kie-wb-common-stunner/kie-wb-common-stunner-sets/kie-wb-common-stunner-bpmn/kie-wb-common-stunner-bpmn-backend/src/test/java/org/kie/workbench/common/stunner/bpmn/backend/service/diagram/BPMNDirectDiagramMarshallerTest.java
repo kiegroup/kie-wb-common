@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.io.ByteArrayInputStream;
 import java.util.Iterator;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,11 +27,15 @@ import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
@@ -38,6 +43,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventC
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
+import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
@@ -46,11 +54,16 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ReusableSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimeDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimeDefinitionSetAdapter;
@@ -63,11 +76,18 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
+import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
+import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
@@ -201,6 +221,113 @@ public class BPMNDirectDiagramMarshallerTest {
 
     @Test
     @SuppressWarnings("unchecked")
+    public void testUnmarshallEvaluation() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVALUATION);
+        assertDiagram(diagram,
+                      8);
+        assertEquals("Evaluation",
+                     diagram.getMetadata().getTitle());
+        Node<? extends View, ?> task1 = diagram.getGraph().getNode("_88233779-B395-4B8C-A086-9EF43698426C");
+        Node<? extends View, ?> task2 = diagram.getGraph().getNode("_AE5BF0DC-B720-4FDE-9499-5ED89D41FB1A");
+        Node<? extends View, ?> task3 = diagram.getGraph().getNode("_6063D302-9D81-4C86-920B-E808A45377C2");
+        assertTrue(task1.getContent().getDefinition() instanceof UserTask);
+        assertTrue(task2.getContent().getDefinition() instanceof UserTask);
+        assertTrue(task3.getContent().getDefinition() instanceof UserTask);
+        // Assert bounds.
+        Bounds task1Bounds = task1.getContent().getBounds();
+        Bounds.Bound task1ULBound = task1Bounds.getUpperLeft();
+        Bounds.Bound task1LRBound = task1Bounds.getLowerRight();
+        assertEquals(648d,
+                     task1ULBound.getX(),
+                     0);
+        assertEquals(149d,
+                     task1ULBound.getY(),
+                     0);
+        assertEquals(784d,
+                     task1LRBound.getX(),
+                     0);
+        assertEquals(197d,
+                     task1LRBound.getY(),
+                     0);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallProcessVariables() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_PROCESSVARIABLES);
+        assertDiagram(diagram,
+                      8);
+        assertEquals("ProcessVariables",
+                     diagram.getMetadata().getTitle());
+        ProcessVariables variables = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof BPMNDiagram) {
+                    BPMNDiagramImpl bpmnDiagram = (BPMNDiagramImpl) oDefinition;
+                    variables = bpmnDiagram.getProcessData().getProcessVariables();
+                    break;
+                }
+            }
+        }
+        assertEquals(variables.getValue(),
+                     "employee:java.lang.String,reason:java.lang.String,performance:java.lang.String");
+        Node<? extends Definition, ?> diagramNode = diagram.getGraph().getNode("_luRBMdEjEeWXpsZ1tNStKQ");
+        assertTrue(diagramNode.getContent().getDefinition() instanceof BPMNDiagram);
+        BPMNDiagramImpl bpmnDiagram = (BPMNDiagramImpl) diagramNode.getContent().getDefinition();
+        assertTrue(bpmnDiagram.getProcessData() != null);
+        assertTrue(bpmnDiagram.getProcessData().getProcessVariables() != null);
+        variables = bpmnDiagram.getProcessData().getProcessVariables();
+        assertEquals(variables.getValue(),
+                     "employee:java.lang.String,reason:java.lang.String,performance:java.lang.String");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallProcessProperties() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_PROCESSPROPERTIES);
+        assertDiagram(diagram,
+                      4);
+        assertEquals("BPSimple",
+                     diagram.getMetadata().getTitle());
+        DiagramSet diagramProperties = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof BPMNDiagram) {
+                    BPMNDiagramImpl bpmnDiagram = (BPMNDiagramImpl) oDefinition;
+                    diagramProperties = bpmnDiagram.getDiagramSet();
+                    break;
+                }
+            }
+        }
+        assertEquals("BPSimple",
+                     diagramProperties.getName().getValue());
+        assertEquals("This is a\n" +
+                             "simple\n" +
+                             "process",
+                     diagramProperties.getDocumentation().getValue());
+        assertEquals("JDLProj.BPSimple",
+                     diagramProperties.getId().getValue());
+        assertEquals("org.jbpm",
+                     diagramProperties.getPackageProperty().getValue());
+        assertEquals(Boolean.valueOf(true),
+                     diagramProperties.getExecutable().getValue());
+        assertEquals(Boolean.valueOf(true),
+                     diagramProperties.getAdHoc().getValue());
+        assertEquals("This is the\n" +
+                             "Process\n" +
+                             "Instance\n" +
+                             "Description",
+                     diagramProperties.getProcessInstanceDescription().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void testUnmarshallUserTaskAssignments() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_USERTASKASSIGNMENTS);
         assertDiagram(diagram,
@@ -215,6 +342,24 @@ public class BPMNDirectDiagramMarshallerTest {
         AssignmentsInfo assignmentsinfo = executionSet.getAssignmentsinfo();
          assertEquals(assignmentsinfo.getValue(),
                       "|reason:com.test.Reason,Comment:Object,Skippable:Object||performance:Object|[din]reason->reason,[dout]performance->performance");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallBusinessRuleTaskAssignments() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_BUSINESSRULETASKASSIGNMENTS);
+        assertDiagram(diagram,
+                      4);
+        assertEquals("BusinessRuleTaskAssignments",
+                     diagram.getMetadata().getTitle());
+        Node<? extends Definition, ?> businessRuleNode = diagram.getGraph().getNode("_45C2C340-D1D0-4D63-8419-EF38F9E73507");
+        BusinessRuleTask businessRuleTask = (BusinessRuleTask) businessRuleNode.getContent().getDefinition();
+        assertEquals(businessRuleTask.getTaskType().getValue(),
+                     TaskTypes.BUSINESS_RULE);
+        DataIOSet dataIOSet = businessRuleTask.getDataIOSet();
+        AssignmentsInfo assignmentsinfo = dataIOSet.getAssignmentsinfo();
+        assertEquals(assignmentsinfo.getValue(),
+                     "|input1:String,input2:String||output1:String,output2:String|[din]pv1->input1,[din]pv2->input2,[dout]output1->pv2,[dout]output2->pv2");
     }
 
     @Test
@@ -563,4 +708,448 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("myErrorEventInput:String||||[din]var1->myErrorEventInput",
                      assignmentsInfo.getValue());
     }
+
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallUserTaskAssignees() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_USERTASKASSIGNEES);
+        assertDiagram(diagram,
+                      6);
+        assertEquals("UserGroups",
+                     diagram.getMetadata().getTitle());
+        UserTaskExecutionSet executionSet = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof UserTask) {
+                    UserTask userTask = (UserTask) oDefinition;
+                    executionSet = userTask.getExecutionSet();
+                    break;
+                }
+            }
+        }
+        assertEquals("user,user1",
+                     executionSet.getActors().getValue());
+        assertEquals("admin,kiemgmt",
+                     executionSet.getGroupid().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallUserTaskProperties() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_USERTASKPROPERTIES);
+        assertDiagram(diagram,
+                      4);
+        assertEquals("MyBP",
+                     diagram.getMetadata().getTitle());
+        UserTaskExecutionSet userTaskExecutionSet = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof UserTask) {
+                    UserTask userTask = (UserTask) oDefinition;
+                    userTaskExecutionSet = userTask.getExecutionSet();
+                    break;
+                }
+            }
+        }
+        assertEquals("MyUserTask",
+                     userTaskExecutionSet.getTaskName().getValue());
+        assertEquals("true",
+                     userTaskExecutionSet.getIsAsync().getValue().toString());
+
+        assertEquals("false",
+                     userTaskExecutionSet.getSkippable().getValue().toString());
+
+        assertEquals("my subject",
+                     userTaskExecutionSet.getSubject().getValue());
+
+        assertEquals("admin",
+                     userTaskExecutionSet.getCreatedBy().getValue());
+
+        assertEquals("my description",
+                     userTaskExecutionSet.getDescription().getValue());
+
+        assertEquals("3",
+                     userTaskExecutionSet.getPriority().getValue());
+
+        assertEquals("true",
+                     userTaskExecutionSet.getAdHocAutostart().getValue().toString());
+
+        assertEquals("System.out.println(\"Hello\");",
+                     userTaskExecutionSet.getOnEntryAction().getValue());
+
+        assertEquals("System.out.println(\"Bye\");",
+                     userTaskExecutionSet.getOnExitAction().getValue());
+
+        assertEquals("java",
+                     userTaskExecutionSet.getScriptLanguage().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallSimulationProperties() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SIMULATIONPROPERTIES);
+        assertDiagram(diagram,
+                      4);
+        assertEquals("SimulationProperties",
+                     diagram.getMetadata().getTitle());
+
+        SimulationSet simulationSet = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof UserTask) {
+                    UserTask userTask = (UserTask) oDefinition;
+                    simulationSet = userTask.getSimulationSet();
+                    break;
+                }
+            }
+        }
+
+        assertEquals(Double.valueOf(111),
+                     simulationSet.getQuantity().getValue());
+        assertEquals("poisson",
+                     simulationSet.getDistributionType().getValue());
+        assertEquals(Double.valueOf(123),
+                     simulationSet.getUnitCost().getValue());
+        assertEquals(Double.valueOf(999),
+                     simulationSet.getWorkingHours().getValue());
+        assertEquals(Double.valueOf(321),
+                     simulationSet.getMean().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallNotBoundaryEvents() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_NOT_BOUNDARY_EVENTS);
+        assertEquals("Not Boundary Event",
+                     diagram.getMetadata().getTitle());
+        assertDiagram(diagram,
+                      6);
+        // Assert than the intermediate event is connected using a view connector,
+        // so not boundary to the task ( not docked ).
+        Node event = diagram.getGraph().getNode("_CB178D55-8DC2-4CAA-8C42-4F5028D4A1F6");
+        List<Edge> inEdges = event.getInEdges();
+        boolean foundViewConnector = false;
+        for (Edge e : inEdges) {
+            if (e.getContent() instanceof ViewConnector) {
+                foundViewConnector = true;
+            }
+        }
+        assertTrue(foundViewConnector);
+        // Assert absolute position as the node is not docked.
+        Bounds bounds = ((View) event.getContent()).getBounds();
+        Bounds.Bound ul = bounds.getUpperLeft();
+        Bounds.Bound lr = bounds.getLowerRight();
+        assertEquals(305,
+                     ul.getX(),
+                     0);
+        assertEquals(300,
+                     ul.getY(),
+                     0);
+        assertEquals(335,
+                     lr.getX(),
+                     0);
+        assertEquals(330,
+                     lr.getY(),
+                     0);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallBoundaryEvents() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_BOUNDARY_EVENTS);
+        // Basic assertions.
+        assertEquals("Boundary Event",
+                     diagram.getMetadata().getTitle());
+        assertDiagram(diagram,
+                      6);
+        // Assert than the intermediate event is connected using a dock connector,
+        // so boundary to the task.
+        Node event = diagram.getGraph().getNode("_CB178D55-8DC2-4CAA-8C42-4F5028D4A1F6");
+        List<Edge> inEdges = event.getInEdges();
+        boolean foundDockConector = false;
+        for (Edge e : inEdges) {
+            if (e.getContent() instanceof Dock) {
+                foundDockConector = true;
+            }
+        }
+        assertTrue(foundDockConector);
+        // Assert relative position for the docked node.
+        Bounds bounds = ((View) event.getContent()).getBounds();
+        Bounds.Bound ul = bounds.getUpperLeft();
+        Bounds.Bound lr = bounds.getLowerRight();
+        assertEquals(57,
+                     ul.getX(),
+                     0);
+        assertEquals(70,
+                     ul.getY(),
+                     0);
+        assertEquals(87,
+                     lr.getX(),
+                     0);
+        assertEquals(100,
+                     lr.getY(),
+                     0);
+    }
+
+    @Test
+    public void testUnmarshallScriptTask() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SCRIPTTASK);
+        ScriptTask javascriptScriptTask = null;
+        ScriptTask javaScriptTask = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof ScriptTask) {
+                    ScriptTask task = (ScriptTask) oDefinition;
+                    if ("Javascript Script Task".equals(task.getGeneral().getName().getValue())) {
+                        javascriptScriptTask = task;
+                    } else if ("Java Script Task".equals(task.getGeneral().getName().getValue())) {
+                        javaScriptTask = task;
+                    }
+                }
+            }
+        }
+        assertNotNull(javascriptScriptTask);
+        assertNotNull(javascriptScriptTask.getExecutionSet());
+        assertNotNull(javascriptScriptTask.getExecutionSet().getScript());
+        assertNotNull(javascriptScriptTask.getExecutionSet().getScriptLanguage());
+        assertEquals(javascriptScriptTask.getTaskType().getValue(),
+                     TaskTypes.SCRIPT);
+        assertEquals("Javascript Script Task",
+                     javascriptScriptTask.getGeneral().getName().getValue());
+        assertEquals("var str = FirstName + LastName;",
+                     javascriptScriptTask.getExecutionSet().getScript().getValue());
+        assertEquals("javascript",
+                     javascriptScriptTask.getExecutionSet().getScriptLanguage().getValue());
+        assertEquals("true",
+                     javascriptScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+
+        assertEquals("true",
+                     javascriptScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+
+        assertNotNull(javaScriptTask);
+        assertNotNull(javaScriptTask.getExecutionSet());
+        assertNotNull(javaScriptTask.getExecutionSet().getScript());
+        assertNotNull(javaScriptTask.getExecutionSet().getScriptLanguage());
+        assertEquals(javaScriptTask.getTaskType().getValue(),
+                     TaskTypes.SCRIPT);
+        assertEquals("Java Script Task",
+                     javaScriptTask.getGeneral().getName().getValue());
+        assertEquals("if (name.toString().equals(\"Jay\")) {\n" +
+                             "\n" +
+                             "      System.out.println(\"Hello\\n\" + name.toString() + \"\\n\");\n" +
+                             "\n" +
+                             "} else {\n" +
+                             "\n" +
+                             "\n" +
+                             "  System.out.println(\"Hi\\n\" + name.toString() + \"\\n\");\n" +
+                             "\n" +
+                             "\n" +
+                             "}\n",
+                     javaScriptTask.getExecutionSet().getScript().getValue());
+        assertEquals("java",
+                     javaScriptTask.getExecutionSet().getScriptLanguage().getValue());
+        assertEquals("true",
+                     javaScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+
+        assertEquals("true",
+                     javaScriptTask.getExecutionSet().getIsAsync().getValue().toString());
+    }
+
+    @Test
+    public void testUnmarshallSequenceFlow() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SEQUENCEFLOW);
+        SequenceFlow sequenceFlow1 = null;
+        SequenceFlow sequenceFlow2 = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof ExclusiveDatabasedGateway) {
+                    List<Edge> outEdges = ((NodeImpl) element).getOutEdges();
+                    for (Edge edge : outEdges) {
+                        SequenceFlow flow = (SequenceFlow) ((ViewConnectorImpl) ((EdgeImpl) edge).getContent()).getDefinition();
+                        if ("route1".equals(flow.getGeneral().getName().getValue())) {
+                            sequenceFlow1 = flow;
+                        }
+                        if ("route2".equals(flow.getGeneral().getName().getValue())) {
+                            sequenceFlow2 = flow;
+                        }
+                    }
+                }
+            }
+        }
+        assertNotNull(sequenceFlow1);
+        assertNotNull(sequenceFlow1.getExecutionSet());
+        assertNotNull(sequenceFlow1.getExecutionSet().getConditionExpression());
+        assertNotNull(sequenceFlow1.getExecutionSet().getConditionExpressionLanguage());
+        assertNotNull(sequenceFlow1.getExecutionSet().getPriority());
+        assertNotNull(sequenceFlow1.getGeneral());
+        assertNotNull(sequenceFlow1.getGeneral().getName());
+        assertEquals("route1",
+                     sequenceFlow1.getGeneral().getName().getValue());
+        assertEquals("age >= 10;",
+                     sequenceFlow1.getExecutionSet().getConditionExpression().getValue());
+        assertEquals("javascript",
+                     sequenceFlow1.getExecutionSet().getConditionExpressionLanguage().getValue());
+        assertEquals("2",
+                     sequenceFlow1.getExecutionSet().getPriority().getValue());
+
+        assertNotNull(sequenceFlow2);
+        assertNotNull(sequenceFlow2.getExecutionSet());
+        assertNotNull(sequenceFlow2.getExecutionSet().getConditionExpression());
+        assertNotNull(sequenceFlow2.getExecutionSet().getConditionExpressionLanguage());
+        assertNotNull(sequenceFlow2.getExecutionSet().getPriority());
+        assertNotNull(sequenceFlow2.getGeneral());
+        assertNotNull(sequenceFlow2.getGeneral().getName());
+        assertEquals("route2",
+                     sequenceFlow2.getGeneral().getName().getValue());
+        assertEquals("age\n" +
+                             "<\n" +
+                             "10;",
+                     sequenceFlow2.getExecutionSet().getConditionExpression().getValue());
+        assertEquals("java",
+                     sequenceFlow2.getExecutionSet().getConditionExpressionLanguage().getValue());
+        assertEquals("1",
+                     sequenceFlow2.getExecutionSet().getPriority().getValue());
+    }
+
+    @Test
+    public void testUnmarshallBusinessRuleTask() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_BUSINESSRULETASKRULEFLOWGROUP);
+        BusinessRuleTask businessRuleTask = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof BusinessRuleTask) {
+                    businessRuleTask = (BusinessRuleTask) oDefinition;
+                    break;
+                }
+            }
+        }
+        assertNotNull(businessRuleTask);
+        assertNotNull(businessRuleTask.getExecutionSet());
+        assertNotNull(businessRuleTask.getExecutionSet().getRuleFlowGroup());
+        assertNotNull(businessRuleTask.getGeneral());
+        assertNotNull(businessRuleTask.getGeneral().getName());
+        assertEquals(businessRuleTask.getTaskType().getValue(),
+                     TaskTypes.BUSINESS_RULE);
+        assertEquals("my business rule task",
+                     businessRuleTask.getGeneral().getName().getValue());
+        assertEquals("my-ruleflow-group",
+                     businessRuleTask.getExecutionSet().getRuleFlowGroup().getValue());
+        assertEquals("true",
+                     businessRuleTask.getExecutionSet().getIsAsync().getValue().toString());
+
+        assertEquals("true",
+                     businessRuleTask.getExecutionSet().getIsAsync().getValue().toString());
+
+        assertEquals("System.out.println(\"Hello\");",
+                     businessRuleTask.getExecutionSet().getOnEntryAction().getValue());
+
+        assertEquals("System.out.println(\"Bye\");",
+                     businessRuleTask.getExecutionSet().getOnExitAction().getValue());
+
+        assertEquals("java",
+                     businessRuleTask.getExecutionSet().getScriptLanguage().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallXorGateway() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_XORGATEWAY);
+        assertDiagram(diagram,
+                      7);
+        assertEquals(diagram.getMetadata().getTitle(),
+                     "XORGateway");
+        Graph graph = diagram.getGraph();
+        Node<? extends Definition, ?> gatewayNode = graph.getNode("_877EA035-1A14-42E9-8CAA-43E9BF908C70");
+        ExclusiveDatabasedGateway xorGateway = (ExclusiveDatabasedGateway) gatewayNode.getContent().getDefinition();
+        assertEquals("AgeSplit",
+                     xorGateway.getGeneral().getName().getValue());
+        assertEquals("under 10 : _5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD",
+                     xorGateway.getExecutionSet().getDefaultRoute().getValue());
+        SequenceFlow sequenceFlow1 = null;
+        SequenceFlow sequenceFlow2 = null;
+        List<Edge> outEdges = (List<Edge>) gatewayNode.getOutEdges();
+        if (outEdges != null) {
+            for (Edge edge : outEdges) {
+                if ("_C72E00C3-70DC-4BC9-A08E-761B4263A239".equals(edge.getUUID())) {
+                    sequenceFlow1 = (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition();
+                } else if ("_5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD".equals(edge.getUUID())) {
+                    sequenceFlow2 = (SequenceFlow) ((ViewConnector) edge.getContent()).getDefinition();
+                }
+            }
+        }
+        Node<? extends Definition, ?> sequenceFlowNode1 = graph.getNode("_C72E00C3-70DC-4BC9-A08E-761B4263A239");
+        assertNotNull(sequenceFlow1);
+        assertEquals("10 and over",
+                     sequenceFlow1.getGeneral().getName().getValue());
+        assertNotNull(sequenceFlow2);
+        assertEquals("under 10",
+                     sequenceFlow2.getGeneral().getName().getValue());
+    }
+
+    @Test
+    public void testUnmarshallReusableSubprocess() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_REUSABLE_SUBPROCESS);
+        ReusableSubprocess reusableSubprocess = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof ReusableSubprocess) {
+                    reusableSubprocess = (ReusableSubprocess) oDefinition;
+                    break;
+                }
+            }
+        }
+        assertNotNull(reusableSubprocess);
+        assertNotNull(reusableSubprocess.getExecutionSet());
+        assertNotNull(reusableSubprocess.getExecutionSet().getCalledElement());
+        assertNotNull(reusableSubprocess.getGeneral());
+
+        BPMNGeneralSet generalSet = reusableSubprocess.getGeneral();
+        ReusableSubprocessTaskExecutionSet executionSet = reusableSubprocess.getExecutionSet();
+        assertNotNull(generalSet);
+        assertNotNull(executionSet);
+
+        assertEquals("my subprocess",
+                     generalSet.getName().getValue());
+        assertEquals("my-called-element",
+                     executionSet.getCalledElement().getValue());
+        assertEquals(false,
+                     executionSet.getIndependent().getValue());
+        assertEquals(false,
+                     executionSet.getWaitForCompletion().getValue());
+
+        String assignmentsInfo = reusableSubprocess.getDataIOSet().getAssignmentsinfo().getValue();
+        assertEquals("|input1:String,input2:Float||output1:String,output2:Float|[din]pv1->input1,[din]pv2->input2,[dout]output1->pv1,[dout]output2->pv2",
+                     assignmentsInfo);
+
+        assertEquals("true",
+                     reusableSubprocess.getExecutionSet().getIsAsync().getValue().toString());
+    }
+
+    @SuppressWarnings("unchecked")
+    private Iterator<Element> nodesIterator(Diagram<Graph, Metadata> diagram) {
+        return (Iterator<Element>) diagram.getGraph().nodes().iterator();
+    }
+
 }

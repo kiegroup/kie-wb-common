@@ -1,9 +1,12 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
@@ -21,14 +24,28 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 public class AssignmentsInfoStringBuilder {
+    public static void setAssignmentsInfo(Activity activity, AssignmentsInfo assignmentsInfo) {
+        assignmentsInfo.setValue(
+                AssignmentsInfoStringBuilder.makeString(
+                        activity.getIoSpecification().getDataInputs(),
+                        activity.getIoSpecification().getInputSets(),
+                        activity.getDataInputAssociations(),
+                        activity.getIoSpecification().getDataOutputs(),
+                        activity.getIoSpecification().getOutputSets(),
+                        activity.getDataOutputAssociations()
+                )
+        );
+    }
+
+
     public static void setAssignmentsInfo(ThrowEvent event, AssignmentsInfo assignmentsInfo) {
         assignmentsInfo.setValue(
                 AssignmentsInfoStringBuilder.makeString(
                         event.getDataInputs(),
-                        event.getInputSet(),
+                        Collections.singletonList(event.getInputSet()),
                         event.getDataInputAssociation(),
                         Collections.emptyList(),
-                        null,
+                        Collections.emptyList(),
                         Collections.emptyList()
                 )
         );
@@ -38,10 +55,10 @@ public class AssignmentsInfoStringBuilder {
         assignmentsInfo.setValue(
                 AssignmentsInfoStringBuilder.makeString(
                         Collections.emptyList(),
-                        null,
+                        Collections.emptyList(),
                         Collections.emptyList(),
                         event.getDataOutputs(),
-                        event.getOutputSet(),
+                        Collections.singletonList(event.getOutputSet()),
                         event.getDataOutputAssociation()
                 )
         );
@@ -49,43 +66,54 @@ public class AssignmentsInfoStringBuilder {
 
     public static String makeString(
             final List<DataInput> datainput,
-            final InputSet inputSets,
+            final List<InputSet> inputSets,
             final List<DataInputAssociation> inputAssociations,
             final List<DataOutput> dataoutput,
-            final OutputSet dataoutputset,
+            final List<OutputSet> dataoutputset,
             final List<DataOutputAssociation> outputAssociations) {
 
         String dataInputString = dataInputsToString(datainput);
-        String inputSetsToString = toString(inputSets);
-        String dataInputAssociationsToString = inAssociationsToString(inputAssociations);
+        String inputSetsToString = inputSetsToString(inputSets);
+        List<String> dataInputAssociationsToString = inAssociationsToString(inputAssociations);
 
         String dataOutputString = dataOutputsToString(dataoutput);
-        String outputSetsToString = toString(dataoutputset);
-        String dataOutputAssociationsToString = outAssociationsToString(outputAssociations);
+        String outputSetsToString = outputSetsToString(dataoutputset);
+        List<String> dataOutputAssociationsToString = outAssociationsToString(outputAssociations);
 
         String associationString =
-                dataInputAssociationsToString + dataOutputAssociationsToString;
+                Stream.concat(dataInputAssociationsToString.stream(), dataOutputAssociationsToString.stream())
+                .collect(Collectors.joining(","));
 
-        return Arrays.asList(dataInputString,
-                             inputSetsToString,
-                             dataOutputString,
-                             outputSetsToString,
-                             associationString
-        ).stream().collect(Collectors.joining("|"));
+        return Stream.of(dataInputString,
+                         inputSetsToString,
+                         dataOutputString,
+                         outputSetsToString,
+                         associationString)
+                .collect(Collectors.joining("|"));
     }
 
-    private static String outputSetsToString(List<OutputSet> dataoutputset) {
-        return null;
+    private static String inputSetsToString(List<InputSet> inputSets) {
+        return inputSets.stream()
+                .map(AssignmentsInfoStringBuilder::toString)
+                .collect(Collectors.joining(","));
+    }
+
+    private static String outputSetsToString(List<OutputSet> outputSets) {
+        return outputSets.stream()
+                .map(AssignmentsInfoStringBuilder::toString)
+                .collect(Collectors.joining(","));
     }
 
     public static String dataInputsToString(List<DataInput> dataInputs) {
         return dataInputs.stream()
+                .filter(o -> !extractDtype(o).isEmpty())
                 .map(AssignmentsInfoStringBuilder::toString)
                 .collect(Collectors.joining(","));
     }
 
     public static String dataOutputsToString(List<DataOutput> dataInputs) {
         return dataInputs.stream()
+                .filter(o -> !extractDtype(o).isEmpty())
                 .map(AssignmentsInfoStringBuilder::toString)
                 .collect(Collectors.joining(","));
     }
@@ -127,38 +155,36 @@ public class AssignmentsInfoStringBuilder {
         }
     }
 
-    public static String outAssociationsToString(List<DataOutputAssociation> outputAssociations) {
-        StringBuffer doutassociationbuff = new StringBuffer();
+    public static List<String> outAssociationsToString(List<DataOutputAssociation> outputAssociations) {
+        List<String> result = new ArrayList<>();
         for (DataOutputAssociation doa : outputAssociations) {
             String doaName = ((DataOutput) doa.getSourceRef().get(0)).getName();
             if (doaName != null && doaName.length() > 0) {
-                doutassociationbuff.append("[dout]" + doaName);
-                doutassociationbuff.append("->");
-                doutassociationbuff.append(doa.getTargetRef().getId());
-                doutassociationbuff.append(",");
+
+                if (doaName != null && doaName.length() > 0) {
+                    result.add(
+                            String.format("[dout]%s->%s", doaName, doa.getTargetRef().getId()));
+                }
+
             }
         }
-        if (doutassociationbuff.length() > 0) {
-            doutassociationbuff.setLength(doutassociationbuff.length() - 1);
-        }
-        return doutassociationbuff.toString();
+        return result;
     }
 
-    public static String inAssociationsToString(List<DataInputAssociation> inputAssociations) {
-        StringBuffer doutassociationbuff = new StringBuffer();
+    public static List<String> inAssociationsToString(List<DataInputAssociation> inputAssociations) {
+        List<String> result = new ArrayList<>();
+
         for (DataInputAssociation dia : inputAssociations) {
-            String doaName = dia.getSourceRef().get(0).getId();
+            List<ItemAwareElement> sourceRef = dia.getSourceRef();
+            if (sourceRef.isEmpty()) continue;
+            String doaName = sourceRef.get(0).getId();
             if (doaName != null && doaName.length() > 0) {
-                doutassociationbuff.append("[din]" + doaName);
-                doutassociationbuff.append("->");
-                doutassociationbuff.append(((DataInput) dia.getTargetRef()).getName());
-                doutassociationbuff.append(",");
+                result.add(
+                        String.format("[din]%s->%s", doaName, ((DataInput) dia.getTargetRef()).getName()));
             }
         }
-        if (doutassociationbuff.length() > 0) {
-            doutassociationbuff.setLength(doutassociationbuff.length() - 1);
-        }
-        return doutassociationbuff.toString();
+
+        return result;
     }
 
     public static String toString(DataInput dataInput) {
