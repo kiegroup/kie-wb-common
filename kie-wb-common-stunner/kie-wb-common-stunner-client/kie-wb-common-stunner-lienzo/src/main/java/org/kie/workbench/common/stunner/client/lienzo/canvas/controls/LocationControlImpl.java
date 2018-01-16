@@ -80,9 +80,9 @@ public class LocationControlImpl
         extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
         implements LocationControl<AbstractCanvasHandler, Element> {
 
-    private final double LARGE_DISTANCE = 25d;
-    private final double NORMAL_DISTANCE = 5d;
-    private final double SHORT_DISTANCE = 1d;
+    private final static double LARGE_DISTANCE = 25d;
+    private final static double NORMAL_DISTANCE = 5d;
+    private final static double SHORT_DISTANCE = 1d;
 
     private static Logger LOGGER = Logger.getLogger(LocationControlImpl.class.getName());
 
