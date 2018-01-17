@@ -3,8 +3,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 import java.util.function.Function;
 
 import org.eclipse.bpmn2.BoundaryEvent;
+import org.eclipse.bpmn2.CallActivity;
 import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.FlowElement;
+import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.ParallelGateway;
@@ -22,7 +24,7 @@ public class FlowElementConverter {
     private final StartEventConverter startEventConverter;
     private final TaskConverter taskConverter;
     private final SequenceFlowConverter sequenceFlowConverter;
-    private final ParallelGatewayConverter parallelGatewayConverter;
+    private final GatewayConverter gatewayConverter;
     private final BoundaryEventConverter boundaryEventConverter;
     private DefinitionResolver definitionResolver;
     private final EndEventConverter endEventConverter;
@@ -37,7 +39,7 @@ public class FlowElementConverter {
         this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, definitionResolver);
         this.taskConverter = new TaskConverter(factoryManager);
         this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager);
-        this.parallelGatewayConverter = new ParallelGatewayConverter(factoryManager);
+        this.gatewayConverter = new GatewayConverter(factoryManager);
         this.boundaryEventConverter = new BoundaryEventConverter(factoryManager);
         this.definitionResolver = definitionResolver;
     }
@@ -49,8 +51,9 @@ public class FlowElementConverter {
                 .when(BoundaryEvent.class, boundaryEventConverter::convert)
                 .when(IntermediateCatchEvent.class, intermediateCatchEventConverter::convert)
                 .when(IntermediateThrowEvent.class, intermediateThrowEventConverter::convert)
+                .when(CallActivity.class, e -> { throw new UnsupportedOperationException("call activity not yet implemented"); } )
                 .when(Task.class, taskConverter::convert)
-                .when(ParallelGateway.class, parallelGatewayConverter::convert)
+                .when(Gateway.class, gatewayConverter::convert)
                 .apply(flowElement)
                 .value();
     }
