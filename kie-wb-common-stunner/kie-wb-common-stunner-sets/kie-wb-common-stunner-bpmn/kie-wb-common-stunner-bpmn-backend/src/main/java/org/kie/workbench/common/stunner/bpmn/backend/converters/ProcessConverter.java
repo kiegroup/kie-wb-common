@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.ADHOCPROCESS;
@@ -65,7 +66,16 @@ public class ProcessConverter {
         View<BPMNDiagram> diagram = diagramNode.getContent();
         BPMNDiagram definition = diagram.getDefinition();
         putMetadata(process, definition);
+        putVariables(process, definition);
         return diagramNode;
+    }
+
+    public void putVariables(Process process, BPMNDiagram definition) {
+        String joinedVariables = process.getProperties()
+                .stream()
+                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
+                .collect(Collectors.joining(","));
+        definition.getProcessData().getProcessVariables().setValue(joinedVariables);
     }
 
     public void putMetadata(Process process, BPMNDiagram definition) {
