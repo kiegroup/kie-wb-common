@@ -1,12 +1,17 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.PotentialOwner;
+import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsPackage;
@@ -78,6 +83,9 @@ public class TaskConverter {
                     executionSet.getPriority().setValue(findValue(task, "Priority"));
                     executionSet.getCreatedBy().setValue(findValue(task, "CreatedBy"));
 
+                    executionSet.getActors().setValue(join(getActors(task)));
+                    executionSet.getGroupid().setValue(findValue(task, "GroupId"));
+
                     setScriptProperties(task, executionSet);
                     return node;
                 })
@@ -88,7 +96,24 @@ public class TaskConverter {
                 .value();
     }
 
-    public void setScriptProperties(Task task, ScriptableExecutionSet executionSet) {
+    private String join(List<String> strings) {
+        return strings.stream().collect(Collectors.joining(","));
+    }
+
+    private List<String> getActors(Task task) {
+        // get the user task actors
+        List<ResourceRole> roles = task.getResources();
+        List<String> users = new ArrayList<>();
+        for (ResourceRole role : roles) {
+            if (role instanceof PotentialOwner) {
+                FormalExpression fe = (FormalExpression) role.getResourceAssignmentExpression().getExpression();
+                users.add(fe.getBody());
+            }
+        }
+        return users;
+    }
+
+    private void setScriptProperties(Task task, ScriptableExecutionSet executionSet) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
                 (List<OnEntryScriptType>) task.getExtensionValues().get(0).getValue()
