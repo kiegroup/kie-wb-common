@@ -131,8 +131,11 @@ public class SettingsPresenter {
 
     @PostConstruct
     public void setup() {
+        setup(settingsSections.getList().get(0));
+    }
 
-        currentSection = settingsSections.getList().get(0);
+    private void setup(final Section activeSection) {
+        currentSection = activeSection;
 
         view.init(this);
         view.showBusyIndicator();
@@ -305,7 +308,7 @@ public class SettingsPresenter {
     }
 
     public void reset() {
-        setup();
+        setup(currentSection);
     }
 
     Promise<Void> goTo(final Section section) {
