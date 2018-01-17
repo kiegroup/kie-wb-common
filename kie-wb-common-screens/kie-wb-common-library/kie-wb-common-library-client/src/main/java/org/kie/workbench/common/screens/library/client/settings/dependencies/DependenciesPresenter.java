@@ -89,7 +89,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
         return promises.create((resolve, reject) -> {
             enhancedDependenciesManager.init(model.getPOM(), dependencies -> {
-                currentHashCode = dependencies.asList().hashCode();
+                updateHashCode(dependencies);
                 view.setItems(buildDependencyViews(model, dependencies));
                 resolve.onInvoke(promises.resolve());
                 fireChangeEvent();
@@ -97,6 +97,10 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
             enhancedDependenciesManager.update();
         });
+    }
+
+    private void updateHashCode(final EnhancedDependencies enhancedDependencies) {
+        currentHashCode = enhancedDependencies.asList().hashCode() + model.getWhiteList().hashCode();
     }
 
     private List<DependenciesItemPresenter.View> buildDependencyViews(final ProjectScreenModel model,
@@ -117,13 +121,11 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
     public void addAllToWhiteList(final Set<String> packages) {
         model.getWhiteList().addAll(packages);
         enhancedDependenciesManager.update();
-        fireChangeEvent();
     }
 
     public void removeAllFromWhiteList(final Set<String> packages) {
         model.getWhiteList().removeAll(packages);
         enhancedDependenciesManager.update();
-        fireChangeEvent();
     }
 
     public void addFromRepository() {
@@ -132,7 +134,6 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
 
     public void remove(final EnhancedDependency enhancedDependency) {
         enhancedDependenciesManager.delete(enhancedDependency);
-        fireChangeEvent();
     }
 
     @Override
