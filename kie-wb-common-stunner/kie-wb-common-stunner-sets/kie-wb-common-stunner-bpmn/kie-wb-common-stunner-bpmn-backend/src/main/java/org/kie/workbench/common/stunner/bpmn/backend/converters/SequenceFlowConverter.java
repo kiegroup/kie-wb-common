@@ -1,8 +1,10 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import org.eclipse.bpmn2.SequenceFlow;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +17,12 @@ public class SequenceFlowConverter {
 
         this.factoryManager = factoryManager;
     }
-    public Edge<View<BPMNViewDefinition>, ?> convert(SequenceFlow seq) {
-        return factoryManager.newEdge(seq.getId(), org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow.class);
+    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq, Graph<DefinitionSet, Node> graph) {
+        Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
+        Node source = graph.getNode(seq.getSourceRef().getId());
+        Node target = graph.getNode(seq.getTargetRef().getId());
+        edge.setSourceNode(source);
+        edge.setTargetNode(target);
+        return edge;
     }
 }

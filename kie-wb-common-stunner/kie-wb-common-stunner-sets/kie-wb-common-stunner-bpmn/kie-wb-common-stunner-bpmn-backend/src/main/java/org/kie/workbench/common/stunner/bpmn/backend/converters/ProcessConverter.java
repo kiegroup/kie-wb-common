@@ -2,16 +2,13 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import org.eclipse.bpmn2.*;
 import org.eclipse.bpmn2.Process;
-import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.jboss.drools.DroolsPackage;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
@@ -26,9 +23,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
-import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.ADHOCPROCESS;
-import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.PACKAGE;
-import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.VERSION;
 
 public class ProcessConverter {
     private static final Logger _logger = LoggerFactory.getLogger(ProcessConverter.class);
@@ -45,18 +39,12 @@ public class ProcessConverter {
     }
 
     public Graph<DefinitionSet, Node> convert(Process process) {
-
         Graph<DefinitionSet, Node> graph =
                 factoryManager.newGraph(process.getId(), BPMNDefinitionSet.class);
 
-        Element<View<BPMNDiagram>> diagramView = convertDiagram(process);
-        graph.addNode(diagramView.asNode());
-
-        List<Element<? extends View<? extends BPMNViewDefinition>>> elements = convertFlowElements(process);
-        for (Element<? extends View<? extends BPMNViewDefinition>> element : elements) {
-            Node<? extends View<? extends BPMNViewDefinition>, Edge> node = element.asNode();
-            if (node != null) graph.addNode(node);
-        }
+        graph.addNode(convertDiagram(process));
+        convertNodes(process).forEach(graph::addNode);
+        convertEdges(process, graph);
 
         return graph;
     }
@@ -101,7 +89,7 @@ public class ProcessConverter {
         diagramSet.getProcessInstanceDescription().setValue(Utils.getMetaDataValue(process.getExtensionValues(), "customDescription"));
     }
 
-    public List<Element<? extends View<? extends BPMNViewDefinition>>> convertFlowElements(Process process) {
+    public List<Node<? extends View<? extends BPMNViewDefinition>, ?>> convertNodes(Process process) {
         return process.getFlowElements()
                         .stream()
                         // we are ignoring SequenceFlows
@@ -109,4 +97,15 @@ public class ProcessConverter {
                         .map(flowElementConverter::convertNode)
                         .collect(toList());
     }
+
+    public List<Edge<? extends View<? extends BPMNViewDefinition>, ?>> convertEdges(Process process, Graph<DefinitionSet, Node> graph) {
+        return process.getFlowElements()
+                .stream()
+                // we are ignoring SequenceFlows
+                .filter(x -> ! (x instanceof SequenceFlow))
+                .map(flow -> flowElementConverter.convertEdge(flow, graph))
+                .collect(toList());
+
+    }
+
 }

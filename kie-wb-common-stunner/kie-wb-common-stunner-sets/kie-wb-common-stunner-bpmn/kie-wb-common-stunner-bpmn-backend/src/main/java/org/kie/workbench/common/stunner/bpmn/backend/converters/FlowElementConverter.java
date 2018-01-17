@@ -15,7 +15,9 @@ import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class FlowElementConverter {
@@ -58,13 +60,9 @@ public class FlowElementConverter {
                 .value();
     }
 
-    private Function<StartEvent, Node<? extends View<BPMNViewDefinition>, ?>> getStartEventNodeFunction() {
-        return x -> null;
-    }
-
-    public Edge<View<BPMNViewDefinition>, ?> convertEdge(FlowElement flowElement) {
+    public Edge<? extends View<? extends BPMNViewDefinition>, ?> convertEdge(FlowElement flowElement, Graph<DefinitionSet, Node> graph) {
         return Match.ofEdge(FlowElement.class, BPMNViewDefinition.class)
-                .when(SequenceFlow.class, sequenceFlowConverter::convert)
+                .when(SequenceFlow.class, seq -> sequenceFlowConverter.convert(seq, graph))
                 .apply(flowElement).value();
     }
 }
