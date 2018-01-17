@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +25,13 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
@@ -55,15 +58,17 @@ import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
+import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
-@WorkbenchScreen(identifier = "project-settings",
-        owningPerspective = LibraryPerspective.class)
+@ApplicationScoped
+@WorkbenchScreen(identifier = "project-settings", owningPerspective = LibraryPerspective.class)
 public class SettingsPresenter {
 
     public interface View extends UberElemental<SettingsPresenter>,
@@ -78,6 +83,8 @@ public class SettingsPresenter {
         String getSaveSuccessMessage();
 
         String getLoadErrorMessage();
+
+        String getSectionSetupErrorMessage(final String title);
 
         interface Section<T> extends UberElemental<T>,
                                      IsElement {
@@ -104,6 +111,7 @@ public class SettingsPresenter {
     ProjectScreenModel model;
     Section currentSection;
     Map<Section, Integer> originalHashCodes;
+    List<Section> sections;
 
     @Inject
     public SettingsPresenter(final View view,
@@ -131,10 +139,11 @@ public class SettingsPresenter {
 
     @PostConstruct
     public void setup() {
-        setup(settingsSections.getList().get(0));
+        sections = new ArrayList<>(settingsSections.getList());
+        currentSection = sections.get(0);
     }
 
-    private void setup(final Section activeSection) {
+    public void setup(final Section activeSection) {
         currentSection = activeSection;
 
         view.init(this);
@@ -154,16 +163,15 @@ public class SettingsPresenter {
             return s.load(pathToPom);
         }).then(model -> {
             this.model = model;
-            return promises.all(getSections(), (final Section section) -> setupSection(model, section));
+            return setupSections(model);
         }).then(i -> {
-
-            menuItemsListPresenter.setupWithPresenters(
-                    view.getMenuItemsContainer(),
-                    getSections().stream().map(Section::getMenuItem).collect(toList()),
-                    (section, presenter) -> presenter.setup(section, this));
-
+            setupMenuItems();
             view.hideBusyIndicator();
-            return goTo(currentSection);
+            if (sections.contains(currentSection)) {
+                return goTo(currentSection);
+            } else {
+                return goTo(sections.get(0));
+            }
         }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, i -> {
             notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
             view.hideBusyIndicator();
@@ -171,18 +179,50 @@ public class SettingsPresenter {
         }));
     }
 
+    void setupMenuItems() {
+        menuItemsListPresenter.setupWithPresenters(
+                view.getMenuItemsContainer(),
+                sections.stream().map(Section::getMenuItem).collect(toList()),
+                (section, presenter) -> presenter.setup(section, this));
+    }
+
+    Promise<Object> setupSections(final ProjectScreenModel model) {
+        // Sections can be removed inside setupSection method, so we create
+        // a new ArrayList containing a copy of the original sections
+        final List<Section> sections = new ArrayList<>(this.sections);
+
+        final Promise<Object> setupResult = promises.all(sections, (final Section section) -> setupSection(model, section));
+
+        if (this.sections.isEmpty()) {
+            return promises.reject("No sections available");
+        }
+
+        return setupResult;
+    }
+
     Promise<Object> setupSection(final ProjectScreenModel model,
                                  final Section section) {
 
-        return section.setup(model).then(i -> {
+        return promises.resolve().then(ignore -> section.setup(model)).catch_(e -> {
+            sections.remove(section);
+            notificationEvent.fire(new NotificationEvent(getSectionSetupErrorMessage(section), WARNING));
+            return promises.reject(e);
+        }).then(i -> {
             section.getMenuItem().setup(section, this);
             resetDirtyIndicator(section);
+            return promises.resolve();
+        }).catch_(e -> {
+            DomGlobal.console.info(e);
             return promises.resolve();
         });
     }
 
+    String getSectionSetupErrorMessage(final Section section) {
+        return view.getSectionSetupErrorMessage(section.getView().getTitle());
+    }
+
     public void showSaveModal() {
-        promises.reduceLazily(getSections(), Section::validate).then(i -> {
+        promises.reduceLazily(sections, Section::validate).then(i -> {
             savePopUpPresenter.show(this::save);
             return promises.resolve();
         }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, (final Section section) -> {
@@ -205,11 +245,11 @@ public class SettingsPresenter {
     private List<SavingStep> getSavingSteps(final String comment) {
 
         final Stream<SavingStep> saveSectionsSteps =
-                getSections().stream().map(section -> chain -> section.save(comment, chain));
+                sections.stream().map(section -> chain -> section.save(comment, chain));
 
         final Stream<SavingStep> commonSavingSteps =
                 Stream.of(chain -> saveProjectScreenModel(comment, DeploymentMode.VALIDATED, chain),
-                          chain -> promises.all(getSections(), this::resetDirtyIndicator),
+                          chain -> promises.all(sections, this::resetDirtyIndicator),
                           chain -> displaySuccessMessage());
 
         return Stream.concat(saveSectionsSteps, commonSavingSteps).collect(toList());
@@ -262,7 +302,7 @@ public class SettingsPresenter {
                             () -> forceSave(comment, chain),
                             () -> {
                             },
-                            this::setup).show();
+                            this::reset).show();
     }
 
     Promise<Void> handlePomConcurrentUpdate(final String comment,
@@ -307,6 +347,11 @@ public class SettingsPresenter {
         changedSection.setDirty(isDirty);
     }
 
+    @OnOpen
+    public void onOpen() {
+        setup(sections.get(0));
+    }
+
     public void reset() {
         setup(currentSection);
     }
@@ -315,10 +360,6 @@ public class SettingsPresenter {
         currentSection = section;
         view.setSection(section.getView());
         return promises.resolve();
-    }
-
-    private List<Section> getSections() {
-        return settingsSections.getList();
     }
 
     @WorkbenchPartTitle

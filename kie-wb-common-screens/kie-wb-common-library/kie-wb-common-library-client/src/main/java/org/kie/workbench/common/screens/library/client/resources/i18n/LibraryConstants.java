@@ -297,6 +297,9 @@ public class LibraryConstants {
     public static final String SettingsLoadError = "SettingsLoadError";
 
     @TranslationKey(defaultValue = "")
+    public static final String SettingsSectionSetupError = "SettingsSectionSetupError";
+
+    @TranslationKey(defaultValue = "")
     public static final String PersistenceXmlConcurrentUpdate = "PersistenceXmlConcurrentUpdate";
 
     @TranslationKey(defaultValue = "")

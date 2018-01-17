@@ -1,12 +1,15 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.enterprise.event.Event;
 
-import elemental2.promise.Promise;
+import elemental2.dom.Console;
+import elemental2.dom.DomGlobal;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.model.POM;
@@ -14,7 +17,6 @@ import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +32,11 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.promise.SyncPromises;
 import org.uberfire.workbench.events.NotificationEvent;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -42,7 +47,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.uberfire.promise.SyncPromises.Status.REJECTED;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsPresenterTest {
@@ -82,6 +86,12 @@ public class SettingsPresenterTest {
     @Before
     public void before() {
 
+        DomGlobal.console = new Console() {
+            @Override
+            public void info(final Object... objects) {
+            }
+        };
+
         final ObservablePath observablePath = mock(ObservablePath.class);
         doReturn(observablePath).when(observablePath).wrap(any());
         doReturn(observablePath).when(observablePaths).get();
@@ -105,33 +115,36 @@ public class SettingsPresenterTest {
     public void testSetup() {
         final Section section1 = newMockedSection();
         final Section section2 = newMockedSection();
+        final List<Section> sections = Arrays.asList(section1, section2);
 
-        mockSections(section1, section2);
+        doReturn(sections).when(settingsSections).getList();
+        doNothing().when(settingsPresenter).setup(section1);
 
         settingsPresenter.setup();
 
-        verify(menuItemsListPresenter).setupWithPresenters(any(), any(), any());
-        verify(projectScreenService).load(any());
-        verify(settingsPresenter, times(2)).setupSection(any(), any());
-        verify(settingsPresenter).goTo(section1);
+        assertEquals(2, settingsPresenter.sections.size());
+        assertTrue(settingsPresenter.sections.containsAll(sections));
+        verify(settingsPresenter).setup(eq(section1));
     }
 
     @Test
-    public void testSetupFailWithSectionSetupThrowingException() {
+    public void testSetupWithSection() {
 
         final Section section = newMockedSection();
-        final RuntimeException testException = new RuntimeException("Test exception");
 
-        mockSections(section);
-        doThrow(testException).when(section).setup(any());
-        doReturn(promises.resolve()).when(settingsPresenter).defaultErrorResolution(testException);
+        settingsPresenter.sections = new ArrayList<>(singletonList(section));
+        doNothing().when(settingsPresenter).setupMenuItems();
+        doReturn(promises.resolve()).when(settingsPresenter).setupSections(any());
 
-        settingsPresenter.setup();
+        settingsPresenter.setup(section);
 
-        verify(settingsPresenter).setupSection(any(), any());
-        verify(settingsPresenter, never()).goTo(any());
+        assertEquals(section, settingsPresenter.currentSection);
+        verify(view).init(eq(settingsPresenter));
+        verify(projectScreenService).load(any());
+        verify(settingsPresenter).setupSections(any());
+        verify(settingsPresenter).setupMenuItems();
+        verify(settingsPresenter).goTo(eq(section));
         verify(notificationEvent, never()).fire(any());
-        verify(settingsPresenter).defaultErrorResolution(testException);
     }
 
     @Test
@@ -140,47 +153,113 @@ public class SettingsPresenterTest {
         final Section section1 = newMockedSection();
         final Section section2 = newMockedSection();
 
-        mockSections(section1, section2);
-        doReturn(promises.reject(section1)).when(section1).setup(any());
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
+        doReturn(promises.reject("Test")).when(settingsPresenter).setupSections(any());
 
-        settingsPresenter.setup();
+        settingsPresenter.setup(section1);
 
         // All sections are setup regardless of exceptions/rejections
-        verify(settingsPresenter).setupSection(any(), eq(section1));
-        verify(settingsPresenter).setupSection(any(), eq(section2));
+        verify(projectScreenService).load(any());
+        verify(settingsPresenter).setupSections(any());
+        verify(settingsPresenter, never()).setupMenuItems();
         verify(settingsPresenter, never()).goTo(any());
         verify(notificationEvent).fire(any());
     }
 
     @Test
+    public void testSetupSections() {
+        final Section section1 = newMockedSection();
+        final Section section2 = newMockedSection();
+
+        final List<Section> sections = new ArrayList<>(Arrays.asList(section1, section2));
+        settingsPresenter.sections = sections;
+        doReturn(promises.resolve()).when(settingsPresenter).setupSection(any(), any());
+
+        settingsPresenter.setupSections(mock(ProjectScreenModel.class)).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
+
+        assertEquals(sections, settingsPresenter.sections);
+        verify(settingsPresenter, times(2)).setupSection(any(), any());
+    }
+
+    @Test
+    public void testSetupSectionsWithOneError() {
+        final Section section1 = newMockedSection();
+        final Section section2 = newMockedSection();
+
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
+
+        doThrow(new RuntimeException("Test exception")).when(section1).setup(any());
+        doReturn(promises.resolve()).when(section2).setup(any());
+
+        settingsPresenter.setupSections(mock(ProjectScreenModel.class)).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
+
+        assertEquals(singletonList(section2), settingsPresenter.sections);
+        verify(settingsPresenter, times(2)).setupSection(any(), any());
+    }
+
+    @Test
+    public void testSetupSectionsWithAllErrors() {
+        final Section section1 = newMockedSection();
+        final Section section2 = newMockedSection();
+
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
+
+        doThrow(new RuntimeException("Test exception")).when(section1).setup(any());
+        doThrow(new RuntimeException("Test exception")).when(section2).setup(any());
+
+        settingsPresenter.setupSections(mock(ProjectScreenModel.class)).then(i -> {
+            fail("Promise should've not been resolved!");
+            return promises.resolve();
+        });
+
+        assertTrue(settingsPresenter.sections.isEmpty());
+        verify(settingsPresenter, times(2)).setupSection(any(), any());
+    }
+
+    @Test
     public void testSetupSection() {
         final Section section = newMockedSection();
-        final SettingsPresenter.MenuItem menuItem = mock(SettingsPresenter.MenuItem.class);
 
-        doReturn(menuItem).when(section).getMenuItem();
-        doReturn(promises.resolve()).when(settingsPresenter).resetDirtyIndicator(section);
+        final List<Section> sections = new ArrayList<>(singletonList(section));
+        settingsPresenter.sections = sections;
+        doReturn(promises.resolve()).when(section).setup(any());
 
-        settingsPresenter.setupSection(mock(ProjectScreenModel.class), section);
+        settingsPresenter.setupSection(mock(ProjectScreenModel.class), section).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
+        assertEquals(sections, settingsPresenter.sections);
         verify(section).setup(any());
-        verify(menuItem).setup(section, settingsPresenter);
+        verify(section.getMenuItem()).setup(any(), any());
         verify(settingsPresenter).resetDirtyIndicator(section);
+        verify(notificationEvent, never()).fire(any());
     }
 
     @Test
     public void testSetupSectionRejected() {
         final Section section = newMockedSection();
 
+        settingsPresenter.sections = new ArrayList<>(singletonList(section));
         doReturn(promises.reject(section)).when(section).setup(any());
+        doReturn("Message").when(settingsPresenter).getSectionSetupErrorMessage(eq(section));
 
-        final Promise<Object> setupResult =
-                settingsPresenter.setupSection(mock(ProjectScreenModel.class), section);
+        settingsPresenter.setupSection(mock(ProjectScreenModel.class), section).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
-        assertTrue(setupResult instanceof SyncPromises.SyncPromise);
-        assertEquals(((SyncPromises.SyncPromise<?>) setupResult).status, REJECTED);
-        assertEquals(((SyncPromises.SyncPromise<?>) setupResult).value, section);
-
+        assertFalse(settingsPresenter.sections.contains(section));
+        assertTrue(settingsPresenter.sections.isEmpty());
         verify(section).setup(any());
+        verify(notificationEvent).fire(any());
+        verify(section.getMenuItem(), never()).setup(any(), any());
         verify(settingsPresenter, never()).resetDirtyIndicator(section);
     }
 
@@ -189,7 +268,7 @@ public class SettingsPresenterTest {
         final Section section1 = newMockedSection();
         final Section section2 = newMockedSection();
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
         doReturn(promises.resolve()).when(section1).validate();
         doReturn(promises.resolve()).when(section2).validate();
 
@@ -206,7 +285,7 @@ public class SettingsPresenterTest {
         final Section section1 = newMockedSection();
         final Section section2 = newMockedSection();
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
         doReturn(promises.reject(section1)).when(section1).validate();
         doReturn(promises.resolve()).when(section2).validate();
 
@@ -225,7 +304,7 @@ public class SettingsPresenterTest {
         final Section section2 = newMockedSection();
         final RuntimeException testException = new RuntimeException("Test exception");
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
         doThrow(testException).when(section1).validate();
         doReturn(promises.resolve()).when(section2).validate();
         doReturn(promises.resolve()).when(settingsPresenter).defaultErrorResolution(any());
@@ -248,7 +327,7 @@ public class SettingsPresenterTest {
         doReturn(promises.resolve()).when(settingsPresenter).resetDirtyIndicator(eq(section1));
         doReturn(promises.resolve()).when(settingsPresenter).resetDirtyIndicator(eq(section2));
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
 
         settingsPresenter.save("Test comment");
 
@@ -268,7 +347,7 @@ public class SettingsPresenterTest {
         doReturn(promises.reject(section1)).when(section1).save(any(), any());
         doReturn(promises.resolve()).when(section2).save(any(), any());
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
 
         settingsPresenter.save("Test comment");
 
@@ -290,7 +369,7 @@ public class SettingsPresenterTest {
         doReturn(promises.resolve()).when(section2).save(any(), any());
         doReturn(promises.resolve()).when(settingsPresenter).defaultErrorResolution(testException);
 
-        mockSections(section1, section2);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
 
         settingsPresenter.save("Test comment");
 
@@ -305,7 +384,7 @@ public class SettingsPresenterTest {
     @Test
     public void testDisplaySuccessMessage() {
         settingsPresenter.displaySuccessMessage().catch_(i -> {
-            Assert.fail("Promise should've been resolved!");
+            fail("Promise should've been resolved!");
             return promises.resolve();
         });
 
@@ -331,7 +410,7 @@ public class SettingsPresenterTest {
     public void testSaveProjectScreenModel() {
 
         settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).catch_(i -> {
-            Assert.fail("Promise should've been resolved!");
+            fail("Promise should've been resolved!");
             return promises.resolve();
         });
         ;
@@ -349,7 +428,7 @@ public class SettingsPresenterTest {
         doNothing().when(settingsPresenter).handlePomConcurrentUpdate(eq("Test comment"), any());
 
         settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).then(i -> {
-            Assert.fail("Promise should've not been resolved!");
+            fail("Promise should've not been resolved!");
             return promises.resolve();
         });
         ;
@@ -368,7 +447,7 @@ public class SettingsPresenterTest {
         doReturn(promises.resolve()).when(settingsPresenter).handleSaveProjectScreenModelError(any(), any(), any());
 
         settingsPresenter.saveProjectScreenModel("Test comment", DeploymentMode.VALIDATED, null).catch_(i -> {
-            Assert.fail("Promise should've been resolved!");
+            fail("Promise should've been resolved!");
             return promises.resolve();
         });
 
@@ -410,7 +489,7 @@ public class SettingsPresenterTest {
         doReturn(mock(POM.class)).when(settingsPresenter.model).getPOM();
 
         settingsPresenter.handlePomConcurrentUpdate("Test comment", null, new GAVAlreadyExistsException()).then(i -> {
-            Assert.fail("Promise should've not been resolved!");
+            fail("Promise should've not been resolved!");
             return promises.resolve();
         });
 
@@ -454,7 +533,7 @@ public class SettingsPresenterTest {
     public void testUpdateDirtyIndicatorExistentDirtySection() {
         final Section section = newMockedSection();
         doReturn(42).when(section).currentHashCode();
-        mockSections(section);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section));
 
         settingsPresenter.originalHashCodes = new HashMap<>();
         settingsPresenter.originalHashCodes.put(section, 32);
@@ -468,7 +547,7 @@ public class SettingsPresenterTest {
     public void testUpdateDirtyIndicatorExistentNotDirtySection() {
         final Section section = newMockedSection();
         doReturn(42).when(section).currentHashCode();
-        mockSections(section);
+        settingsPresenter.sections = new ArrayList<>(Arrays.asList(section));
 
         settingsPresenter.originalHashCodes = new HashMap<>();
         settingsPresenter.originalHashCodes.put(section, 42);
@@ -486,10 +565,6 @@ public class SettingsPresenterTest {
 
         assertEquals(section, settingsPresenter.currentSection);
         verify(view).setSection(eq(section.getView()));
-    }
-
-    private void mockSections(final Section... sections) {
-        doReturn(Arrays.asList(sections)).when(settingsSections).getList();
     }
 
     private Section newMockedSection() {

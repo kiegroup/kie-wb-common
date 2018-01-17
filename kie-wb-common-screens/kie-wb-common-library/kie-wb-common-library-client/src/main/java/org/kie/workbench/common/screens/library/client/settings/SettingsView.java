@@ -24,6 +24,7 @@ import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLLIElement;
 import elemental2.dom.HTMLUListElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -77,7 +78,6 @@ public class SettingsView implements SettingsPresenter.View,
     public void setSection(final Section section) {
         content.innerHTML = "";
         content.appendChild(section.getElement());
-        //FIXME: set active section css class active=true
     }
 
     @Override
@@ -93,6 +93,11 @@ public class SettingsView implements SettingsPresenter.View,
     @Override
     public String getLoadErrorMessage() {
         return translationService.format(LibraryConstants.SettingsLoadError);
+    }
+
+    @Override
+    public String getSectionSetupErrorMessage(final String title) {
+        return translationService.format(LibraryConstants.SettingsSectionSetupError, title);
     }
 
     @Override
