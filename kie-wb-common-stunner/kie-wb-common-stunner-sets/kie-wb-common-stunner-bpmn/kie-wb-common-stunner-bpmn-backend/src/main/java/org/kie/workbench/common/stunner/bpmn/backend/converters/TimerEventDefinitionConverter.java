@@ -37,14 +37,20 @@ public class TimerEventDefinitionConverter {
     private TimerSettings convertTimerEventDefinition(TimerEventDefinition e) {
         TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
         FormalExpression timeCycle = (FormalExpression) e.getTimeCycle();
-        timerSettingsValue.setTimeCycle(timeCycle.getMixed().getValue(0).toString());
-        timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
+        if (timeCycle != null) {
+            timerSettingsValue.setTimeCycle(timeCycle.getMixed().getValue(0).toString());
+            timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
+        }
 
         FormalExpression timeDate = (FormalExpression) e.getTimeDate();
-        timerSettingsValue.setTimeDate(timeDate.getMixed().getValue(0).toString());
+        if (timeDate != null) {
+            timerSettingsValue.setTimeDate(timeDate.getMixed().getValue(0).toString());
+        }
 
         FormalExpression timeDateDuration = (FormalExpression) e.getTimeDuration();
-        timerSettingsValue.setTimeDuration(timeDateDuration.getMixed().getValue(0).toString());
+        if (timeDateDuration != null) {
+            timerSettingsValue.setTimeDuration(timeDateDuration.getMixed().getValue(0).toString());
+        }
         return new TimerSettings(timerSettingsValue);
     }
 

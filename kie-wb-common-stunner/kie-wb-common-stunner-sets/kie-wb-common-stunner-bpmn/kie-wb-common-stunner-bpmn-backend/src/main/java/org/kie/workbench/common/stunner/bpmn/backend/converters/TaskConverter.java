@@ -8,6 +8,7 @@ import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.Task;
+import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
@@ -17,9 +18,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptableExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -35,8 +38,24 @@ public class TaskConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.Task task) {
         return Match.ofNode(Task.class, BPMNViewDefinition.class)
-                .when(org.eclipse.bpmn2.BusinessRuleTask.class, t ->
-                        factoryManager.newNode(t.getId(), BusinessRuleTask.class))
+                .when(org.eclipse.bpmn2.BusinessRuleTask.class, t -> {
+                    Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(t.getId(), BusinessRuleTask.class);
+                    BusinessRuleTask taskDef = node.getContent().getDefinition();
+                    AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                            task, taskDef.getDataIOSet().getAssignmentsinfo());
+
+                    taskDef.getGeneral().getName().setValue(t.getName());
+                    BusinessRuleTaskExecutionSet executionSet = taskDef.getExecutionSet();
+                    executionSet.getIsAsync().setValue(findMetaBoolean(t, "customAsync"));
+
+                    for (FeatureMap.Entry entry : t.getAnyAttribute()) {
+                        if (entry.getEStructuralFeature().getName().equals("ruleFlowGroup")) {
+                            executionSet.getRuleFlowGroup().setValue(entry.getValue().toString());
+                        }
+                    }
+                    setScriptProperties(t, executionSet);
+                    return node;
+                })
                 .when(org.eclipse.bpmn2.ScriptTask.class, t ->
                         factoryManager.newNode(t.getId(), ScriptTask.class)
                 )
@@ -59,21 +78,7 @@ public class TaskConverter {
                     executionSet.getPriority().setValue(findValue(task, "Priority"));
                     executionSet.getCreatedBy().setValue(findValue(task, "CreatedBy"));
 
-                    @SuppressWarnings("unchecked")
-                    List<OnEntryScriptType> onEntryExtensions =
-                            (List<OnEntryScriptType>) task.getExtensionValues().get(0).getValue()
-                                    .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
-                    @SuppressWarnings("unchecked")
-                    List<OnExitScriptType> onExitExtensions =
-                            (List<OnExitScriptType>) task.getExtensionValues().get(0).getValue()
-                                    .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT, true);
-
-                    executionSet.setOnEntryAction(new OnEntryAction(onEntryExtensions.get(0).getScript()));
-                    executionSet.setOnExitAction(new OnExitAction(onExitExtensions.get(0).getScript()));
-                    executionSet.setScriptLanguage(new ScriptLanguage(extractScriptLanguage(onEntryExtensions.get(0).getScriptFormat())));
-
-//                executionSet.getSubject().setValue("");
-                    //executionSet.getAdHocAutostart().setValue(Boolean.parseBoolean(findValue(task, "adhocautostart")));
+                    setScriptProperties(task, executionSet);
                     return node;
                 })
                 .orElse(t ->
@@ -83,15 +88,36 @@ public class TaskConverter {
                 .value();
     }
 
+    public void setScriptProperties(Task task, ScriptableExecutionSet executionSet) {
+        @SuppressWarnings("unchecked")
+        List<OnEntryScriptType> onEntryExtensions =
+                (List<OnEntryScriptType>) task.getExtensionValues().get(0).getValue()
+                        .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
+        @SuppressWarnings("unchecked")
+        List<OnExitScriptType> onExitExtensions =
+                (List<OnExitScriptType>) task.getExtensionValues().get(0).getValue()
+                        .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT, true);
+
+        if (!onEntryExtensions.isEmpty()) {
+            executionSet.setOnEntryAction(new OnEntryAction(onEntryExtensions.get(0).getScript()));
+            executionSet.setScriptLanguage(new ScriptLanguage(extractScriptLanguage(onEntryExtensions.get(0).getScriptFormat())));
+        }
+
+        if (!onExitExtensions.isEmpty()) {
+            executionSet.setOnExitAction(new OnExitAction(onExitExtensions.get(0).getScript()));
+        }
+    }
+
     private String extractScriptLanguage(String format) {
-        if (format.equals("http://www.java.com/java")) {
-            return "java";
-        } else if (format.equals("http://www.mvel.org/2.0")) {
-            return "mvel";
-        } else if (format.equals("http://www.javascript.com/javascript")) {
-            return "javascript";
-        } else {
-            return "java";
+        switch (format) {
+            case "http://www.java.com/java":
+                return "java";
+            case "http://www.mvel.org/2.0":
+                return "mvel";
+            case "http://www.javascript.com/javascript":
+                return "javascript";
+            default:
+                return "java";
         }
     }
 

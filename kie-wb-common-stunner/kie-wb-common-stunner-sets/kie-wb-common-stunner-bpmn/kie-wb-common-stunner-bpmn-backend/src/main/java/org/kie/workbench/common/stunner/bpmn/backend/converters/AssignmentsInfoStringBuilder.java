@@ -15,6 +15,7 @@ import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
+import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.OutputSet;
@@ -25,16 +26,31 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 
 public class AssignmentsInfoStringBuilder {
     public static void setAssignmentsInfo(Activity activity, AssignmentsInfo assignmentsInfo) {
-        assignmentsInfo.setValue(
-                AssignmentsInfoStringBuilder.makeString(
-                        activity.getIoSpecification().getDataInputs(),
-                        activity.getIoSpecification().getInputSets(),
-                        activity.getDataInputAssociations(),
-                        activity.getIoSpecification().getDataOutputs(),
-                        activity.getIoSpecification().getOutputSets(),
-                        activity.getDataOutputAssociations()
-                )
-        );
+        InputOutputSpecification ioSpecification = activity.getIoSpecification();
+        if (ioSpecification == null) {
+            assignmentsInfo.setValue(
+                    AssignmentsInfoStringBuilder.makeString(
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            activity.getDataInputAssociations(),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            activity.getDataOutputAssociations()
+                    )
+            );
+        } else {
+            assignmentsInfo.setValue(
+                    AssignmentsInfoStringBuilder.makeString(
+                            ioSpecification.getDataInputs(),
+                            ioSpecification.getInputSets(),
+                            activity.getDataInputAssociations(),
+                            ioSpecification.getDataOutputs(),
+                            ioSpecification.getOutputSets(),
+                            activity.getDataOutputAssociations()
+                    )
+            );
+
+        }
     }
 
 

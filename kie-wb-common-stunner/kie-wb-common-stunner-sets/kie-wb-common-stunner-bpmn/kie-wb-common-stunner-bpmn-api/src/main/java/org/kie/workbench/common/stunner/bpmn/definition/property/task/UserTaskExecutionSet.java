@@ -43,7 +43,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(
         startElement = "taskName"
 )
-public class UserTaskExecutionSet implements BPMNPropertySet {
+public class UserTaskExecutionSet implements BPMNPropertySet,
+                                             ScriptableExecutionSet {
 
     @Property
     @FormField

@@ -36,7 +36,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition
-public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
+public class BusinessRuleTaskExecutionSet implements BPMNPropertySet,
+                                                     ScriptableExecutionSet {
 
     @Property
     @FormField(
@@ -122,26 +123,32 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this.ruleFlowGroup = ruleFlowGroup;
     }
 
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
 
+    @Override
     public void setOnEntryAction(OnEntryAction onEntryAction) {
         this.onEntryAction = onEntryAction;
     }
 
+    @Override
     public OnExitAction getOnExitAction() {
         return onExitAction;
     }
 
+    @Override
     public void setOnExitAction(OnExitAction onExitAction) {
         this.onExitAction = onExitAction;
     }
 
+    @Override
     public ScriptLanguage getScriptLanguage() {
         return scriptLanguage;
     }
 
+    @Override
     public void setScriptLanguage(ScriptLanguage scriptLanguage) {
         this.scriptLanguage = scriptLanguage;
     }

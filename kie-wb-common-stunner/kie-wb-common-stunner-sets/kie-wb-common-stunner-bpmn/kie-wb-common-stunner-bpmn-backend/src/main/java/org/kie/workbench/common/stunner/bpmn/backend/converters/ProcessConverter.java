@@ -2,7 +2,11 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import org.eclipse.bpmn2.*;
 import org.eclipse.bpmn2.Process;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.util.FeatureMap;
+import org.jboss.drools.DroolsPackage;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -20,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
+import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.ADHOCPROCESS;
+import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.PACKAGE;
+import static org.kie.workbench.common.stunner.bpmn.backend.legacy.Bpmn2JsonPropertyIds.VERSION;
 
 public class ProcessConverter {
     private static final Logger _logger = LoggerFactory.getLogger(ProcessConverter.class);
@@ -57,7 +64,26 @@ public class ProcessConverter {
         View<BPMNDiagramImpl> diagram = diagramNode.getContent();
         BPMNDiagramImpl definition = diagram.getDefinition();
         DiagramSet diagramSet = definition.getDiagramSet();
-        diagramSet.setName(new Name(process.getName()));
+        diagramSet.getName().setValue(process.getName());
+        diagramSet.getId().setValue(process.getId());
+
+        for (FeatureMap.Entry entry : process.getAnyAttribute()) {
+            if (entry.getEStructuralFeature().getName().equals("packageName")) {
+                diagramSet.getPackageProperty().setValue(entry.getValue().toString());
+            }
+            if (entry.getEStructuralFeature().getName().equals("version")) {
+                diagramSet.getVersion().setValue(entry.getValue().toString());
+            }
+            if (entry.getEStructuralFeature().getName().equals("adHoc")) {
+                diagramSet.getAdHoc().setValue(Boolean.parseBoolean(entry.getValue().toString()));
+            }
+        }
+
+        List<Documentation> documentation = process.getDocumentation();
+        if (!documentation.isEmpty())
+            diagramSet.getDocumentation().setValue(documentation.get(0).getText());
+        diagramSet.getProcessInstanceDescription().setValue(Utils.getMetaDataValue(process.getExtensionValues(), "customDescription"));
+
         return diagramNode;
     }
 
