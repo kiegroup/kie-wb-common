@@ -7,6 +7,7 @@ import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
+import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TerminateEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -16,6 +17,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -27,11 +29,13 @@ public class EndEventConverter {
     private final TypedFactoryManager factoryManager;
     private final MessageEventDefinitionConverter messageEventDefinitionConverter;
     private final ErrorEventDefinitionConverter errorEventDefinitionConverter;
+    private final DefinitionResolver definitionResolver;
 
-    public EndEventConverter(TypedFactoryManager factoryManager) {
+    public EndEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
         this.errorEventDefinitionConverter = new ErrorEventDefinitionConverter(factoryManager);
+        this.definitionResolver = definitionResolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(EndEvent endEvent) {
@@ -73,6 +77,10 @@ public class EndEventConverter {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
                             AssignmentsInfoStringBuilder.setAssignmentsInfo(
                                     endEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
+                            ScopedSignalEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+                            executionSet.getSignalScope().setValue(Properties.findMetaValue(endEvent.getExtensionValues(), "customScope"));
+                            executionSet.getSignalRef().setValue(definitionResolver.resolveSignal(e.getSignalRef()).map(Signal::getName).orElse(""));
+
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {

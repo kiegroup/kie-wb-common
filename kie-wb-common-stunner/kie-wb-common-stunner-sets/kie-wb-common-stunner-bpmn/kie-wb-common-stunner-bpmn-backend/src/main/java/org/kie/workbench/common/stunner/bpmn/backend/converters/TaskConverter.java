@@ -2,13 +2,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
-import org.eclipse.bpmn2.Assignment;
-import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.PotentialOwner;
 import org.eclipse.bpmn2.ResourceRole;
@@ -17,7 +14,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
-import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
@@ -33,6 +29,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.*;
+
 public class TaskConverter {
 
     private TypedFactoryManager factoryManager;
@@ -42,6 +40,9 @@ public class TaskConverter {
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.Task task) {
+        List<ExtensionAttributeValue> extensionValues = task.getExtensionValues();
+        List<DataInputAssociation> inputAssociations = task.getDataInputAssociations();
+
         return Match.ofNode(Task.class, BPMNViewDefinition.class)
                 .when(org.eclipse.bpmn2.BusinessRuleTask.class, t -> {
                     Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(t.getId(), BusinessRuleTask.class);
@@ -51,7 +52,7 @@ public class TaskConverter {
 
                     taskDef.getGeneral().getName().setValue(t.getName());
                     BusinessRuleTaskExecutionSet executionSet = taskDef.getExecutionSet();
-                    executionSet.getIsAsync().setValue(findMetaBoolean(t, "customAsync"));
+                    executionSet.getIsAsync().setValue(findMetaBoolean(extensionValues, "customAsync"));
 
                     for (FeatureMap.Entry entry : t.getAnyAttribute()) {
                         if (entry.getEStructuralFeature().getName().equals("ruleFlowGroup")) {
@@ -73,18 +74,18 @@ public class TaskConverter {
                             task, executionSet.getAssignmentsinfo());
 
                     executionSet.getTaskName().setValue(t.getName());
-                    executionSet.getIsAsync().setValue(findMetaBoolean(t, "customAsync"));
-                    executionSet.getAdHocAutostart().setValue(findMetaBoolean(t, "customAutoStart"));
+                    executionSet.getIsAsync().setValue(findMetaBoolean(extensionValues, "customAsync"));
+                    executionSet.getAdHocAutostart().setValue(findMetaBoolean(extensionValues, "customAutoStart"));
 
-                    executionSet.getSubject().setValue(findValue(task, "Comment"));
-                    executionSet.getTaskName().setValue(findValue(task, "TaskName"));
-                    executionSet.getSkippable().setValue(findBoolean(task, "Skippable"));
-                    executionSet.getDescription().setValue(findValue(task, "Description"));
-                    executionSet.getPriority().setValue(findValue(task, "Priority"));
-                    executionSet.getCreatedBy().setValue(findValue(task, "CreatedBy"));
+                    executionSet.getSubject().setValue(findInputValue(inputAssociations, "Comment"));
+                    executionSet.getTaskName().setValue(findInputValue(inputAssociations, "TaskName"));
+                    executionSet.getSkippable().setValue(findInputBooleans(inputAssociations, "Skippable"));
+                    executionSet.getDescription().setValue(findInputValue(inputAssociations, "Description"));
+                    executionSet.getPriority().setValue(findInputValue(inputAssociations, "Priority"));
+                    executionSet.getCreatedBy().setValue(findInputValue(inputAssociations, "CreatedBy"));
 
                     executionSet.getActors().setValue(join(getActors(task)));
-                    executionSet.getGroupid().setValue(findValue(task, "GroupId"));
+                    executionSet.getGroupid().setValue(findInputValue(inputAssociations, "GroupId"));
 
                     setScriptProperties(task, executionSet);
                     return node;
@@ -146,34 +147,4 @@ public class TaskConverter {
         }
     }
 
-    private boolean findMetaBoolean(org.eclipse.bpmn2.Task task, String name) {
-        return Boolean.parseBoolean(findMetaValue(task, name));
-    }
-
-    private String findMetaValue(org.eclipse.bpmn2.Task t, String name) {
-        return Utils.getMetaDataValue(t.getExtensionValues(), name);
-    }
-
-    private boolean findBoolean(org.eclipse.bpmn2.Task task, String name) {
-        return Boolean.parseBoolean(findValue(task, name));
-    }
-
-    private String findValue(org.eclipse.bpmn2.Task task, String name) {
-        for (DataInputAssociation din : task.getDataInputAssociations()) {
-            DataInput targetRef = (DataInput) (din.getTargetRef());
-            if (targetRef.getName().equalsIgnoreCase(name)) {
-                Assignment assignment = din.getAssignment().get(0);
-                return evaluate(assignment).toString();
-            }
-        }
-        return "";
-    }
-
-    private Object evaluate(Assignment assignment) {
-        return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
-    }
-
-    private Optional<DataInput> findByName(List<DataInput> dataInputs, String name) {
-        return dataInputs.stream().filter(in -> in.getName().equals(name)).findFirst();
-    }
 }

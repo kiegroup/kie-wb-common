@@ -7,6 +7,7 @@ import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
+import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.impl.OutputSetImpl;
@@ -15,6 +16,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediate
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
@@ -53,7 +55,19 @@ public class IntermediateThrowEventConverter {
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseThrowingIntermediateEvent.class)
-                        .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventThrowing.class))
+                        .when(SignalEventDefinition.class, e -> {
+                            Node<View<IntermediateSignalEventThrowing>, Edge> node = signalEventDefinitionConverter.convert(e, nodeId, IntermediateSignalEventThrowing.class);
+
+                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
+                                    throwEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
+
+                            ScopedSignalEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+
+                            executionSet.getSignalScope().setValue(Properties.findMetaValue(throwEvent.getExtensionValues(), "customScope"));
+                            executionSet.getSignalRef().setValue(definitionResolver.resolveSignal(e.getSignalRef()).map(Signal::getName).orElse(""));
+
+                            return node;
+                        })
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<IntermediateMessageEventThrowing>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, IntermediateMessageEventThrowing.class);
                             AssignmentsInfoStringBuilder.setAssignmentsInfo(
