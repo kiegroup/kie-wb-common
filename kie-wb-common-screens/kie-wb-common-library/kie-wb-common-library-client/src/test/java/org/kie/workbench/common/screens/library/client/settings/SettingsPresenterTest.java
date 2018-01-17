@@ -124,7 +124,6 @@ public class SettingsPresenterTest {
 
         assertEquals(2, settingsPresenter.sections.size());
         assertTrue(settingsPresenter.sections.containsAll(sections));
-        verify(settingsPresenter).setup(eq(section1));
     }
 
     @Test

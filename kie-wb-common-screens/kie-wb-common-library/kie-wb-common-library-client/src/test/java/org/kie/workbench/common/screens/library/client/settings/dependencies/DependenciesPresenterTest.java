@@ -106,7 +106,6 @@ public class DependenciesPresenterTest {
 
         assertEquals(2, dependenciesPresenter.model.getWhiteList().size());
         verify(enhancedDependenciesManager).update();
-        verify(dependenciesPresenter).fireChangeEvent();
     }
 
     @Test
@@ -121,7 +120,6 @@ public class DependenciesPresenterTest {
 
         assertEquals(0, dependenciesPresenter.model.getWhiteList().size());
         verify(enhancedDependenciesManager).update();
-        verify(dependenciesPresenter).fireChangeEvent();
     }
 
     @Test
@@ -137,6 +135,5 @@ public class DependenciesPresenterTest {
         dependenciesPresenter.remove(enhancedDependency);
 
         verify(enhancedDependenciesManager).delete(eq(enhancedDependency));
-        verify(dependenciesPresenter).fireChangeEvent();
     }
 }
