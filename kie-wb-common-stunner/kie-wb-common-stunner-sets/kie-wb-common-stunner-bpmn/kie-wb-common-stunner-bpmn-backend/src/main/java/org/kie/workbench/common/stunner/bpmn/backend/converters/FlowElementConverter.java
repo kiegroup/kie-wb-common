@@ -2,6 +2,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.function.Function;
 
+import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
@@ -22,6 +23,7 @@ public class FlowElementConverter {
     private final TaskConverter taskConverter;
     private final SequenceFlowConverter sequenceFlowConverter;
     private final ParallelGatewayConverter parallelGatewayConverter;
+    private final BoundaryEventConverter boundaryEventConverter;
     private DefinitionResolver definitionResolver;
     private final EndEventConverter endEventConverter;
     private final IntermediateThrowEventConverter intermediateThrowEventConverter;
@@ -36,6 +38,7 @@ public class FlowElementConverter {
         this.taskConverter = new TaskConverter(factoryManager);
         this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager);
         this.parallelGatewayConverter = new ParallelGatewayConverter(factoryManager);
+        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager);
         this.definitionResolver = definitionResolver;
     }
 
@@ -43,6 +46,7 @@ public class FlowElementConverter {
         return Match.ofNode(FlowElement.class, BPMNViewDefinition.class)
                 .when(StartEvent.class, startEventConverter::convert)
                 .when(EndEvent.class, endEventConverter::convert)
+                .when(BoundaryEvent.class, boundaryEventConverter::convert)
                 .when(IntermediateCatchEvent.class, intermediateCatchEventConverter::convert)
                 .when(IntermediateThrowEvent.class, intermediateThrowEventConverter::convert)
                 .when(Task.class, taskConverter::convert)

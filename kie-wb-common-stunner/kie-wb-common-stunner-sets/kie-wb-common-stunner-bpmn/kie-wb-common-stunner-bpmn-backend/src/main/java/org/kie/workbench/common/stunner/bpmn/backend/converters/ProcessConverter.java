@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
 import org.jboss.drools.DroolsPackage;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -47,7 +48,7 @@ public class ProcessConverter {
         Graph<DefinitionSet, Node> graph =
                 factoryManager.newGraph(process.getId(), BPMNDefinitionSet.class);
 
-        Element<View<BPMNDiagramImpl>> diagramView = convertDiagram(process);
+        Element<View<BPMNDiagram>> diagramView = convertDiagram(process);
         graph.addNode(diagramView.asNode());
 
         List<Element<? extends View<? extends BPMNViewDefinition>>> elements = convertFlowElements(process);
@@ -59,10 +60,15 @@ public class ProcessConverter {
         return graph;
     }
 
-    public Node<View<BPMNDiagramImpl>, ?> convertDiagram(Process process) {
-        Node<View<BPMNDiagramImpl>, Edge> diagramNode = factoryManager.newNode(UUID.uuid(), BPMNDiagramImpl.class);
-        View<BPMNDiagramImpl> diagram = diagramNode.getContent();
-        BPMNDiagramImpl definition = diagram.getDefinition();
+    public Node<View<BPMNDiagram>, ?> convertDiagram(Process process) {
+        Node<View<BPMNDiagram>, Edge> diagramNode = factoryManager.newNode(UUID.uuid(), BPMNDiagramImpl.class);
+        View<BPMNDiagram> diagram = diagramNode.getContent();
+        BPMNDiagram definition = diagram.getDefinition();
+        putMetadata(process, definition);
+        return diagramNode;
+    }
+
+    public void putMetadata(Process process, BPMNDiagram definition) {
         DiagramSet diagramSet = definition.getDiagramSet();
         diagramSet.getName().setValue(process.getName());
         diagramSet.getId().setValue(process.getId());
@@ -83,8 +89,6 @@ public class ProcessConverter {
         if (!documentation.isEmpty())
             diagramSet.getDocumentation().setValue(documentation.get(0).getText());
         diagramSet.getProcessInstanceDescription().setValue(Utils.getMetaDataValue(process.getExtensionValues(), "customDescription"));
-
-        return diagramNode;
     }
 
     public List<Element<? extends View<? extends BPMNViewDefinition>>> convertFlowElements(Process process) {

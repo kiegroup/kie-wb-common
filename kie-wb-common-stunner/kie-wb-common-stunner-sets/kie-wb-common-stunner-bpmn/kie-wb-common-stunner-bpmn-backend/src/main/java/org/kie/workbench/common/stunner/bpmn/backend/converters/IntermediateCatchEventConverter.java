@@ -48,7 +48,7 @@ public class IntermediateCatchEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateCatchEvent catchEvent) {
         List<EventDefinition> eventDefinitions = catchEvent.getEventDefinitions();
         Node<? extends View<? extends BaseCatchingIntermediateEvent>, ?> convertedEndEvent = convertCatchEvent(catchEvent, eventDefinitions);
-        copyGeneralInfo(catchEvent, convertedEndEvent);
+        GeneralSetConverter.copyGeneralInfo(catchEvent, convertedEndEvent);
 
         return convertedEndEvent;
     }
@@ -85,17 +85,6 @@ public class IntermediateCatchEventConverter {
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate catch event");
-        }
-    }
-
-
-    private void copyGeneralInfo(IntermediateCatchEvent startEvent, Node<? extends View<? extends BaseCatchingIntermediateEvent>, ?> convertedEndEvent) {
-        BaseCatchingIntermediateEvent definition = convertedEndEvent.getContent().getDefinition();
-        BPMNGeneralSet generalInfo = definition.getGeneral();
-        generalInfo.setName(new Name(startEvent.getName()));
-        List<org.eclipse.bpmn2.Documentation> documentation = startEvent.getDocumentation();
-        if (!documentation.isEmpty()) {
-            generalInfo.setDocumentation(new org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation(documentation.get(0).getText()));
         }
     }
 }
