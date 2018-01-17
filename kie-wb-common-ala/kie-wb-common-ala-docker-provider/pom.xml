@@ -69,7 +69,7 @@
     <dependency>
       <groupId>com.spotify</groupId>
       <artifactId>docker-client</artifactId>
-      <classifier>shaded</classifier>
+      <!--<classifier>shaded</classifier>-->
       <exclusions>
         <!-- These dependencies are bundled in the shaded jar and thus need to be excluded to avoid duplicated classes.
              The shaded jar should be replaced by the standard one, but the issue is that docker-client depends
