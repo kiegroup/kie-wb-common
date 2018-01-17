@@ -86,6 +86,7 @@ public class AddDoubleValueModalView implements AddDoubleValueModal.View {
 
     @Override
     public void clearForm() {
+        name.value = "";
         value.value = "";
     }
 
