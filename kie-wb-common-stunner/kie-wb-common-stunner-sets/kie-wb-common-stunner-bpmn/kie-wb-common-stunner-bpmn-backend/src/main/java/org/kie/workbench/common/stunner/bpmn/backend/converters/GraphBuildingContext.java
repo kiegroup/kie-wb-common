@@ -1,9 +1,8 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
+import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
@@ -12,18 +11,21 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.AddNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionSourceNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
 public class GraphBuildingContext {
-
-
 
     private final GraphCommandExecutionContext executionContext;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
-    private final List<AbstractGraphCommand> commands = new ArrayList<>();
 
-    public GraphBuildingContext(GraphCommandExecutionContext executionContext, GraphCommandFactory commandFactory, GraphCommandManager commandManager) {
+    public GraphBuildingContext(
+            GraphCommandExecutionContext executionContext,
+            GraphCommandFactory commandFactory,
+            GraphCommandManager commandManager) {
         this.executionContext = executionContext;
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
@@ -31,18 +33,43 @@ public class GraphBuildingContext {
 
     public void addNode(Node node) {
         AddNodeCommand addNodeCommand = commandFactory.addNode(node);
-        commandManager.execute(executionContext, addNodeCommand);
+        execute(addNodeCommand);
     }
 
-    public void addEdge(Edge<? extends View<?>, Node> edge, Node<? extends View<?>, Edge> source, Node<? extends View<?>, Edge> target) {
+    public void addEdge(
+            Edge<? extends View<?>, Node> edge,
+            Node<? extends View<?>, Edge> source,
+            Node<? extends View<?>, Edge> target) {
         SetConnectionSourceNodeCommand setSourceNode = commandFactory.setSourceNode(source, edge, null);
         SetConnectionTargetNodeCommand setTargetNode = commandFactory.setTargetNode(target, edge, null);
-        commandManager.execute(executionContext, setSourceNode);
-        commandManager.execute(executionContext, setTargetNode);
+        execute(setSourceNode);
+        execute(setTargetNode);
+    }
+
+    public void setEdgeSourceConnection(String edgeId, Connection connection) {
+        Edge edge = executionContext.getGraphIndex().getEdge(edgeId);
+        Node sourceNode = edge.getSourceNode();
+        SetConnectionSourceNodeCommand setSourceNode = commandFactory.setSourceNode(sourceNode, edge, connection);
+        execute(setSourceNode);
+    }
+
+    public void setEdgeTargetConnection(String edgeId, Connection connection) {
+        Edge edge = executionContext.getGraphIndex().getEdge(edgeId);
+        Node targetNode = edge.getTargetNode();
+        SetConnectionTargetNodeCommand setTargetNode = commandFactory.setTargetNode(targetNode, edge, connection);
+        execute(setTargetNode);
+    }
+
+    public void setBounds(String elementId, int x1, int y1, int x2, int y2) {
+        Element<? extends View<?>> element = executionContext.getGraphIndex().get(elementId);
+        element.getContent().setBounds(BoundsImpl.build(x1, y1, x2, y2));
+    }
+
+    private CommandResult<RuleViolation> execute(AbstractGraphCommand command) {
+        return commandManager.execute(executionContext, command);
     }
 
     public GraphCommandExecutionContext executionContext() {
         return executionContext;
     }
-
 }

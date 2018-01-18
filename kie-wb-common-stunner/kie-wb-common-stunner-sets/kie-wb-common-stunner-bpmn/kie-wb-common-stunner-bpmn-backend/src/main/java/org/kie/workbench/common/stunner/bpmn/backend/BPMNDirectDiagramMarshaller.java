@@ -21,7 +21,9 @@ import java.io.InputStream;
 
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionsConverters;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
@@ -36,7 +38,6 @@ import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshalle
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExecutionContext;
@@ -122,8 +123,11 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
         processConverter.processNodes(processDiagram, context);
         processConverter.processEdges(processDiagram, context);
 
+        BPMNPlane plane = definitions.getDiagrams().get(0).getPlane();
+
         Node<View<BPMNDiagram>, ?> diagramView = processConverter.convertDiagram(processDiagram);
         graph.addNode(diagramView.asNode());
+        graph.nodes().forEach(node -> Layout.updateNode(plane, node));
 
 
         // Update diagram's settings.

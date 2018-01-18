@@ -29,7 +29,9 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.*;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.findInputBooleans;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.findInputValue;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.findMetaBoolean;
 
 public class TaskConverter {
 
@@ -125,8 +127,8 @@ public class TaskConverter {
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT, true);
 
         if (!onEntryExtensions.isEmpty()) {
-            executionSet.setOnEntryAction(new OnEntryAction(onEntryExtensions.get(0).getScript()));
-            executionSet.setScriptLanguage(new ScriptLanguage(extractScriptLanguage(onEntryExtensions.get(0).getScriptFormat())));
+            executionSet.getOnEntryAction().setValue(onEntryExtensions.get(0).getScript());
+            executionSet.getScriptLanguage().setValue(ScriptLanguages.fromUri(onEntryExtensions.get(0).getScriptFormat()));
         }
 
         if (!onExitExtensions.isEmpty()) {
@@ -134,17 +136,5 @@ public class TaskConverter {
         }
     }
 
-    private String extractScriptLanguage(String format) {
-        switch (format) {
-            case "http://www.java.com/java":
-                return "java";
-            case "http://www.mvel.org/2.0":
-                return "mvel";
-            case "http://www.javascript.com/javascript":
-                return "javascript";
-            default:
-                return "java";
-        }
-    }
 
 }
