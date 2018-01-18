@@ -80,6 +80,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
+import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
@@ -91,6 +93,10 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImp
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
+import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
+import org.kie.workbench.common.stunner.core.rule.RuleManager;
+import org.kie.workbench.common.stunner.core.rule.RuleSet;
+import org.kie.workbench.common.stunner.core.rule.violations.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -140,7 +146,7 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_USERTASKPROPERTIES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/userTaskProperties.bpmn";
     private static final String BPMN_SEQUENCEFLOW = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/sequenceFlow.bpmn";
     private static final String BPMN_XORGATEWAY = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/xorGateway.bpmn";
-        private static final String BPMN_TIMER_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/timerEvent.bpmn";
+    private static final String BPMN_TIMER_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/timerEvent.bpmn";
     private static final String BPMN_SIMULATIONPROPERTIES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/simulationProperties.bpmn";
     private static final String BPMN_MAGNETDOCKERS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetDockers.bpmn";
     private static final String BPMN_MAGNETSINLANE = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetsInLane.bpmn";
@@ -154,6 +160,9 @@ public class BPMNDirectDiagramMarshallerTest {
 
     @Mock
     AdapterRegistry adapterRegistry;
+
+    @Mock
+    RuleManager rulesManager;
 
     ApplicationFactoryManager applicationFactoryManager;
 
@@ -175,6 +184,8 @@ public class BPMNDirectDiagramMarshallerTest {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
         // initApplicationFactoryManagerAlt();
+        when(rulesManager.evaluate(any(RuleSet.class),
+                                   any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
 
         DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
                                                               applicationFactoryManager);
@@ -193,8 +204,13 @@ public class BPMNDirectDiagramMarshallerTest {
                 new NodeFactoryImpl(definitionUtils)
         );
 
+        GraphCommandManagerImpl commandManager = new GraphCommandManagerImpl(null,
+                                                                             null,
+                                                                             null);
+        GraphCommandFactory commandFactory = new GraphCommandFactory();
+
         // The tested BPMN marshaller.
-        tested = new BPMNDirectDiagramMarshaller(applicationFactoryManager);
+        tested = new BPMNDirectDiagramMarshaller(definitionManager, rulesManager, applicationFactoryManager, commandFactory, commandManager);
     }
 
     private void mockAdapterRegistry(RuntimeDefinitionAdapter definitionAdapter, RuntimeDefinitionSetAdapter definitionSetAdapter, RuntimePropertySetAdapter propertySetAdapter, RuntimePropertyAdapter propertyAdapter) {
@@ -343,8 +359,8 @@ public class BPMNDirectDiagramMarshallerTest {
                      TaskTypes.USER);
         UserTaskExecutionSet executionSet = selfEvaluationTask.getExecutionSet();
         AssignmentsInfo assignmentsinfo = executionSet.getAssignmentsinfo();
-         assertEquals(assignmentsinfo.getValue(),
-                      "|reason:com.test.Reason,Comment:Object,Skippable:Object||performance:Object|[din]reason->reason,[dout]performance->performance");
+        assertEquals(assignmentsinfo.getValue(),
+                     "|reason:com.test.Reason,Comment:Object,Skippable:Object||performance:Object|[din]reason->reason,[dout]performance->performance");
     }
 
     @Test
@@ -382,7 +398,6 @@ public class BPMNDirectDiagramMarshallerTest {
                      startNoneEvent.getGeneral().getDocumentation().getValue());
     }
 
-
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallStartTimerEvent() throws Exception {
@@ -397,7 +412,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals(false,
                      isInterrupting.getValue());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
@@ -414,7 +428,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("sig1",
                      signalRef.getValue());
     }
-
 
     @Test
     public void testUnmarshallStartErrorEvent() throws Exception {
@@ -440,7 +453,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("||errorOutput_:String||[dout]errorOutput_->var1",
                      assignmentsInfo.getValue());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
@@ -711,7 +723,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertEquals("myErrorEventInput:String||||[din]var1->myErrorEventInput",
                      assignmentsInfo.getValue());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
@@ -1415,7 +1426,6 @@ public class BPMNDirectDiagramMarshallerTest {
                      0.1d);
     }
 
-
     private ViewConnector getInEdgeViewConnector(Node node) {
         List<Edge> edges = node.getInEdges();
         if (edges != null) {
@@ -1428,7 +1438,6 @@ public class BPMNDirectDiagramMarshallerTest {
         return null;
     }
 
-
     private ViewConnector getOutEdgeViewConnector(Node node) {
         List<Edge> edges = node.getOutEdges();
         if (edges != null) {
@@ -1440,7 +1449,6 @@ public class BPMNDirectDiagramMarshallerTest {
         }
         return null;
     }
-
 
     private Element findElementByContentType(Diagram<Graph, Metadata> diagram,
                                              Class contentClass) {
@@ -1461,5 +1469,4 @@ public class BPMNDirectDiagramMarshallerTest {
     private Iterator<Element> nodesIterator(Diagram<Graph, Metadata> diagram) {
         return (Iterator<Element>) diagram.getGraph().nodes().iterator();
     }
-
 }

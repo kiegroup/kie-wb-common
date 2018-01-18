@@ -6,6 +6,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,10 @@ public class SequenceFlowConverter {
 
         this.factoryManager = factoryManager;
     }
-    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq, Graph<DefinitionSet, Node> graph) {
+    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq, GraphBuildingContext context) {
         Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
-        Node source = graph.getNode(seq.getSourceRef().getId());
-        Node target = graph.getNode(seq.getTargetRef().getId());
-        edge.setSourceNode(source);
-        edge.setTargetNode(target);
+        Index<?, ?> graphIndex = context.executionContext().getGraphIndex();
+        context.addEdge(edge, graphIndex.getNode(seq.getSourceRef().getId()), graphIndex.getNode(seq.getTargetRef().getId()));
         return edge;
     }
 }

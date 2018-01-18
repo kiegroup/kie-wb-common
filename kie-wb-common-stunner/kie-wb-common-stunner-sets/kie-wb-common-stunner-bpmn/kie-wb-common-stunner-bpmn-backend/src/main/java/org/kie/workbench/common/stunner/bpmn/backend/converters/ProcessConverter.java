@@ -14,6 +14,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.util.UUID;
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 public class ProcessConverter {
+
     private static final Logger _logger = LoggerFactory.getLogger(ProcessConverter.class);
 
     private final TypedFactoryManager factoryManager;
@@ -32,19 +34,22 @@ public class ProcessConverter {
 
     private final FlowElementConverter flowElementConverter;
 
-    public ProcessConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public ProcessConverter(
+            TypedFactoryManager factoryManager,
+            DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
         this.flowElementConverter = new FlowElementConverter(factoryManager, definitionResolver);
     }
 
+    @Deprecated
     public Graph<DefinitionSet, Node> convert(Process process) {
         Graph<DefinitionSet, Node> graph =
                 factoryManager.newGraph(process.getId(), BPMNDefinitionSet.class);
 
-        graph.addNode(convertDiagram(process));
-        convertNodes(process).forEach(graph::addNode);
-        convertEdges(process, graph);
+//        graph.addNode(convertDiagram(process));
+//        processNodes(process,...
+//        List<Edge<? extends View<? extends BPMNViewDefinition>, ?>> edges = convertEdges(process, graph);
 
         return graph;
     }
@@ -84,28 +89,25 @@ public class ProcessConverter {
         }
 
         List<Documentation> documentation = process.getDocumentation();
-        if (!documentation.isEmpty())
+        if (!documentation.isEmpty()) {
             diagramSet.getDocumentation().setValue(documentation.get(0).getText());
+        }
         diagramSet.getProcessInstanceDescription().setValue(Utils.getMetaDataValue(process.getExtensionValues(), "customDescription"));
     }
 
-    public List<Node<? extends View<? extends BPMNViewDefinition>, ?>> convertNodes(Process process) {
-        return process.getFlowElements()
-                        .stream()
-                        // we are ignoring SequenceFlows
-                        .filter(x -> ! (x instanceof SequenceFlow))
-                        .map(flowElementConverter::convertNode)
-                        .collect(toList());
-    }
-
-    public List<Edge<? extends View<? extends BPMNViewDefinition>, ?>> convertEdges(Process process, Graph<DefinitionSet, Node> graph) {
-        return process.getFlowElements()
+    public void processNodes(Process process, GraphBuildingContext context) {
+        process.getFlowElements()
                 .stream()
-                // we are ignoring SequenceFlows
-                .filter(x -> ! (x instanceof SequenceFlow))
-                .map(flow -> flowElementConverter.convertEdge(flow, graph))
-                .collect(toList());
-
+                // we are excluding SequenceFlows
+                .filter(x -> !(x instanceof SequenceFlow))
+                .forEach(node -> flowElementConverter.convertNode(node, context));
     }
 
+    public void processEdges(Process process, GraphBuildingContext context) {
+        process.getFlowElements()
+                .stream()
+                // we are including only SequenceFlows
+                .filter(x -> x instanceof SequenceFlow)
+                .forEach(flow -> flowElementConverter.convertEdge(flow, context));
+    }
 }

@@ -46,23 +46,27 @@ public class FlowElementConverter {
         this.definitionResolver = definitionResolver;
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> convertNode(FlowElement flowElement) {
-        return Match.ofNode(FlowElement.class, BPMNViewDefinition.class)
+    public void convertNode(FlowElement flowElement, GraphBuildingContext context) {
+        Node<? extends View<? extends BPMNViewDefinition>, ?> result = Match.ofNode(FlowElement.class, BPMNViewDefinition.class)
                 .when(StartEvent.class, startEventConverter::convert)
                 .when(EndEvent.class, endEventConverter::convert)
                 .when(BoundaryEvent.class, boundaryEventConverter::convert)
                 .when(IntermediateCatchEvent.class, intermediateCatchEventConverter::convert)
                 .when(IntermediateThrowEvent.class, intermediateThrowEventConverter::convert)
-                .when(CallActivity.class, e -> { throw new UnsupportedOperationException("call activity not yet implemented"); } )
+                .when(CallActivity.class, e -> {
+                    throw new UnsupportedOperationException("call activity not yet implemented");
+                })
                 .when(Task.class, taskConverter::convert)
                 .when(Gateway.class, gatewayConverter::convert)
                 .apply(flowElement)
                 .value();
+
+        context.addNode(result);
     }
 
-    public Edge<? extends View<? extends BPMNViewDefinition>, ?> convertEdge(FlowElement flowElement, Graph<DefinitionSet, Node> graph) {
+    public Edge<? extends View<? extends BPMNViewDefinition>, ?> convertEdge(FlowElement flowElement, GraphBuildingContext context) {
         return Match.ofEdge(FlowElement.class, BPMNViewDefinition.class)
-                .when(SequenceFlow.class, seq -> sequenceFlowConverter.convert(seq, graph))
+                .when(SequenceFlow.class, seq -> sequenceFlowConverter.convert(seq, context))
                 .apply(flowElement).value();
     }
 }
