@@ -19,6 +19,8 @@ package org.kie.workbench.common.dmn.backend.definition.v1_1;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import javax.xml.XMLConstants;
+
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
@@ -41,11 +43,11 @@ public class FunctionDefinitionPropertyConverter {
                                                            typeRef,
                                                            expression);
 
+        result.getNsContext().putAll(dmn.getNsContext());
         for (Entry<javax.xml.namespace.QName, String> kv : dmn.getAdditionalAttributes().entrySet()) {
             QName convertedQName = QNamePropertyConverter.wbFromDMN(kv.getKey());
-            result.getOtherAttributes().put(convertedQName, kv.getValue());
+            result.getAdditionalAttributes().put(convertedQName, kv.getValue());
         }
-        result.getNsContext().putAll(dmn.getNsContext());
 
         for (org.kie.dmn.model.v1_1.InformationItem ii : dmn.getFormalParameter()) {
             InformationItem iiConverted = InformationItemPropertyConverter.wbFromDMN(ii);
@@ -66,13 +68,22 @@ public class FunctionDefinitionPropertyConverter {
                                             result::setTypeRef);
         result.setExpression(ExpressionPropertyConverter.dmnFromWB(wb.getExpression()));
 
-        for (Entry<QName, String> kv : wb.getOtherAttributes().entrySet()) {
+        result.getNsContext().putAll(wb.getNsContext());
+        for (Entry<QName, String> kv : wb.getAdditionalAttributes().entrySet()) {
             Optional<javax.xml.namespace.QName> convertedQName = QNamePropertyConverter.dmnFromWB(kv.getKey());
             if (convertedQName.isPresent()) {
-                result.getAdditionalAttributes().put(convertedQName.get(), kv.getValue());
+                javax.xml.namespace.QName qNameFromWB = convertedQName.get();
+                String determinePrefix = qNameFromWB.getPrefix();
+                if (XMLConstants.DEFAULT_NS_PREFIX.equals(determinePrefix)) {
+                    // if the QName for an "additional attribute" was created from WB side, it would not be aware of the prefix, so setting it manually in the direction WB->DMN.
+                    determinePrefix = result.getPrefixForNamespaceURI(qNameFromWB.getNamespaceURI()).orElse(XMLConstants.DEFAULT_NS_PREFIX);
+                }
+                javax.xml.namespace.QName qNameWithPrefix = new javax.xml.namespace.QName(qNameFromWB.getNamespaceURI(),
+                                                                                          qNameFromWB.getLocalPart(),
+                                                                                          determinePrefix);
+                result.getAdditionalAttributes().put(qNameWithPrefix, kv.getValue());
             }
         }
-        result.getNsContext().putAll(wb.getNsContext());
 
         for (InformationItem ii : wb.getFormalParameter()) {
             org.kie.dmn.model.v1_1.InformationItem iiConverted = InformationItemPropertyConverter.dmnFromWB(ii);

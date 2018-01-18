@@ -859,4 +859,19 @@ public class DMNMarshallerTest {
         assertEquals(DecisionEvaluationStatus.SUCCEEDED, adultResult.getEvaluationStatus());
         assertEquals(3, ((BigDecimal) adultResult.getResult()).intValue());
     }
+
+    @Test
+    public void test_hardcoded_decision_a_function() throws IOException {
+        final DMNRuntime runtime = roundTripUnmarshalMarshalThenUnmarshalDMN(this.getClass().getResourceAsStream("/hardcoded_decision_a_function.dmn"));
+        DMNModel dmnModel = runtime.getModels().get(0);
+
+        DMNContext emptyContext = runtime.newContext();
+        DMNResult dmnResult = runtime.evaluateAll(dmnModel, emptyContext);
+        assertFalse(dmnResult.getMessages().toString(), dmnResult.hasErrors());
+
+        DMNDecisionResult adultResult = dmnResult.getDecisionResultByName("hardcoded invokation");
+        assertEquals(DecisionEvaluationStatus.SUCCEEDED, adultResult.getEvaluationStatus());
+        assertEquals(3, ((BigDecimal) adultResult.getResult()).intValue());
+    }
+
 }
