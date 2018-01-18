@@ -137,10 +137,12 @@ public class KnowledgeSessionListItemPresenter extends ListItemPresenter<KSessio
 
     public void signalWorkItemHandlerAddedOrRemoved() {
         view.setWorkItemHandlersCount(kSessionModel.getWorkItemHandelerModels().size());
+        fireChangeEvent();
     }
 
     public void signalListenerAddedOrRemoved() {
         view.setListenersCount(kSessionModel.getListeners().size());
+        fireChangeEvent();
     }
 
     public void setDefault(final boolean isDefault) {

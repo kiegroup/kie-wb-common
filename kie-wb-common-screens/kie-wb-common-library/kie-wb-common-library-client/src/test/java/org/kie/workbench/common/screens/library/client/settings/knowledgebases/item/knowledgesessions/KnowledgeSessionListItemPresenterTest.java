@@ -18,6 +18,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -128,18 +129,22 @@ public class KnowledgeSessionListItemPresenterTest {
 
     @Test
     public void testAddListener() {
+        doNothing().when(knowledgeSessionListItemPresenter).fireChangeEvent();
         knowledgeSessionListItemPresenter.kSessionModel = new KSessionModel();
         knowledgeSessionListItemPresenter.addListener();
         verify(listenersListPresenter).add(any());
         verify(knowledgeSessionListItemPresenter).signalListenerAddedOrRemoved();
+        verify(knowledgeSessionListItemPresenter).fireChangeEvent();
     }
 
     @Test
     public void testAddWorkItemHandler() {
+        doNothing().when(knowledgeSessionListItemPresenter).fireChangeEvent();
         knowledgeSessionListItemPresenter.kSessionModel = new KSessionModel();
         knowledgeSessionListItemPresenter.addWorkItemHandler();
         verify(workItemHandlersListPresenter).add(any());
         verify(knowledgeSessionListItemPresenter).signalWorkItemHandlerAddedOrRemoved();
+        verify(knowledgeSessionListItemPresenter).fireChangeEvent();
     }
 
     @Test
