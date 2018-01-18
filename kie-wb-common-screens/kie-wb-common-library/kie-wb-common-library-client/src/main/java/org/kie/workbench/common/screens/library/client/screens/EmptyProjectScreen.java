@@ -119,7 +119,7 @@ public class EmptyProjectScreen {
     }
 
     public void goToSettings() {
-        libraryPlaces.goToSettings(projectInfo);
+        libraryPlaces.goToSettings();
     }
 
     public NewResourceHandler getUploadHandler() {

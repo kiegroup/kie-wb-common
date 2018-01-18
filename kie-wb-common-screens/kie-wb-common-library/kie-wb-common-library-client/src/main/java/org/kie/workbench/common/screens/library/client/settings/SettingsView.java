@@ -101,6 +101,16 @@ public class SettingsView implements SettingsPresenter.View,
     }
 
     @Override
+    public void hide() {
+        getElement().classList.add("settings-hidden");
+    }
+
+    @Override
+    public void show() {
+        getElement().classList.remove("settings-hidden");
+    }
+
+    @Override
     public void showBusyIndicator() {
         showBusyIndicator(translationService.format(LibraryConstants.Loading));
     }

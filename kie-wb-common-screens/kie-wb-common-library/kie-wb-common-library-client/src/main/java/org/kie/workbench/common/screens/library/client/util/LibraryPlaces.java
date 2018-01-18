@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -87,7 +88,7 @@ public class LibraryPlaces {
     public static final String ORG_UNITS_METRICS_SCREEN = "OrgUnitsMetricsScreen";
     public static final String PROJECT_METRICS_SCREEN = "ProjectMetricsScreen";
     public static final String ORGANIZATIONAL_UNITS_SCREEN = "LibraryOrganizationalUnitsScreen";
-    public static final String PROJECT_SETTINGS = "projectScreen";
+    public static final String PROJECT_SETTINGS = "ProjectSettings";
     public static final String PROJECT_EXPLORER = "org.kie.guvnor.explorer";
     public static final String MESSAGES = "org.kie.workbench.common.screens.messageconsole.MessageConsole";
     public static final String REPOSITORY_STRUCTURE_SCREEN = "repositoryStructureScreen";
@@ -694,8 +695,8 @@ public class LibraryPlaces {
         setupLibraryBreadCrumbsForImportProjects(repositoryUrl);
     }
 
-    public void goToSettings(final ProjectInfo projectInfo) {
-        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest("project-settings");
+    public void goToSettings() {
+        final DefaultPlaceRequest placeRequest = new DefaultPlaceRequest(PROJECT_SETTINGS);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
         part.setSelectable(false);
 

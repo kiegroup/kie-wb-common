@@ -168,7 +168,7 @@ public class ProjectScreen {
     }
 
     public void goToSettings() {
-        libraryPlaces.goToSettings(projectInfo);
+        libraryPlaces.goToSettings();
     }
 
     public String getProjectName() {

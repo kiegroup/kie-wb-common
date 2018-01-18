@@ -31,9 +31,13 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import elemental2.dom.CSSProperties;
+import elemental2.dom.CSSStyleDeclaration;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
+import jsinterop.base.JsPropertyMap;
+import jsinterop.base.JsPropertyMapOfAny;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.service.DeploymentMode;
@@ -62,13 +66,14 @@ import org.uberfire.lifecycle.OnOpen;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
+import static org.kie.workbench.common.screens.library.client.util.LibraryPlaces.PROJECT_SETTINGS;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
 @ApplicationScoped
-@WorkbenchScreen(identifier = "project-settings", owningPerspective = LibraryPerspective.class)
+@WorkbenchScreen(identifier = PROJECT_SETTINGS, owningPerspective = LibraryPerspective.class)
 public class SettingsPresenter {
 
     public interface View extends UberElemental<SettingsPresenter>,
@@ -85,6 +90,10 @@ public class SettingsPresenter {
         String getLoadErrorMessage();
 
         String getSectionSetupErrorMessage(final String title);
+
+        void show();
+
+        void hide();
 
         interface Section<T> extends UberElemental<T>,
                                      IsElement {
@@ -147,6 +156,7 @@ public class SettingsPresenter {
         currentSection = activeSection;
 
         view.init(this);
+        view.hide();
         view.showBusyIndicator();
 
         if (pathToPom != null) {
@@ -167,6 +177,7 @@ public class SettingsPresenter {
         }).then(i -> {
             setupMenuItems();
             view.hideBusyIndicator();
+            view.show();
             if (sections.contains(currentSection)) {
                 return goTo(currentSection);
             } else {

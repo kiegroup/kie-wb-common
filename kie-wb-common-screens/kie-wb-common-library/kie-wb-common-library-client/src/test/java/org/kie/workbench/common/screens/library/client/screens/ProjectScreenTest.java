@@ -206,7 +206,7 @@ public class ProjectScreenTest
     @Test
     public void goToSettingsTest() {
         projectScreen.goToSettings();
-        verify(libraryPlaces).goToSettings(eq(projectInfo));
+        verify(libraryPlaces).goToSettings();
     }
 
     @Test
