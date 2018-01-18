@@ -282,7 +282,6 @@ public class ExamplesServiceImpl implements ExamplesService {
             repositoryConfig.addConfigItem(configurationFactory.newConfigItem(EnvironmentParameters.AVOID_INDEX,
                                                                               "true"));
 
-            //NEED TO DO THIS HERE, @paulo we should check this in order to delete this
             repositoryConfig.addConfigItem(configurationFactory.newConfigItem(EnvironmentParameters.SPACE,
                                                                               "system"));
 
@@ -401,8 +400,8 @@ public class ExamplesServiceImpl implements ExamplesService {
 
     private String resolveRepositoryName(final OrganizationalUnit targetOU,
                                          final ExampleProject exampleProject) {
-        final String newRepositoryName = exampleProject.getName();
-        final String newTeamRepositoryName = targetOU.getName() + "-" + newRepositoryName;
+        final String newRepositoryName = exampleProject.getName().replace(' ', '-');
+        final String newTeamRepositoryName = targetOU.getName().replace(' ', '-') + "-" + newRepositoryName;
         final Space space = spaces.getSpace(targetOU.getName());
 
         if (repositoryService.getRepositoryFromSpace(space, newRepositoryName) == null) {

@@ -77,14 +77,6 @@ public class LibraryToolbarView implements LibraryToolbarPresenter.View,
         branchesLabel.setHidden(!visible);
     }
 
-    /**
-     * PAULO PLEASE TAKE A LOOK ON THIS ON REVIEW
-     */
-    @Override
-    public String getNotEnoughPermissionsToAccessLibraryMessage() {
-        return ts.format(LibraryConstants.NotEnoughPermissionsToAccessLibrary);
-    }
-
     Option createOption(String ou) {
         Option option = (Option) document.createElement("option");
         option.setText(ou);

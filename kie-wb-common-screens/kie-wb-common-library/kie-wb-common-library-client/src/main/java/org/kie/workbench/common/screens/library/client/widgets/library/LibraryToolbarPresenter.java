@@ -45,12 +45,6 @@ public class LibraryToolbarPresenter {
         void setSelectedBranch(final String branchName);
 
         void setBranchSelectorVisibility(boolean visible);
-
-        //@PAULO PLEASE TAKE A LOOK ON THIS the code diverged
-        // a lot and is a conflict with view
-        // WARNING ^
-
-        String getNotEnoughPermissionsToAccessLibraryMessage();
     }
 
     private WorkspaceProjectContext projectContext;

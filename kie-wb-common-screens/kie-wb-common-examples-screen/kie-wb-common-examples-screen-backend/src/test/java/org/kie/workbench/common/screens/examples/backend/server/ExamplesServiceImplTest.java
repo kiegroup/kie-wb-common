@@ -331,10 +331,12 @@ public class ExamplesServiceImplTest {
     public void testSetupExamples_NewOrganizationalUnitNewRepository() {
         final ExampleOrganizationalUnit exOU = mock(ExampleOrganizationalUnit.class);
         final ExampleProject exModule = mock(ExampleProject.class);
+        doReturn("module").when(exModule).getName();
         final List<ExampleProject> exModules = new ArrayList<ExampleProject>() {{
             add(exModule);
         }};
         final OrganizationalUnit ou = mock(OrganizationalUnit.class);
+        doReturn("ou").when(ou).getName();
         final GitRepository repository = mock(GitRepository.class);
         final Path repositoryRoot = mock(Path.class);
         final Path moduleRoot = mock(Path.class);
@@ -381,12 +383,15 @@ public class ExamplesServiceImplTest {
     public void testSetupExamples_ProjectCopy() {
         final ExampleOrganizationalUnit exOU = mock(ExampleOrganizationalUnit.class);
         final ExampleProject exProject1 = mock(ExampleProject.class);
+        doReturn("project 1").when(exProject1).getName();
         final ExampleProject exProject2 = mock(ExampleProject.class);
+        doReturn("project 2").when(exProject1).getName();
         final List<ExampleProject> exProjects = new ArrayList<ExampleProject>() {{
             add(exProject1);
             add(exProject2);
         }};
         final OrganizationalUnit ou = mock(OrganizationalUnit.class);
+        doReturn("ou").when(ou).getName();
         final GitRepository repository1 = mock(GitRepository.class);
         final Path repositoryRoot = mock(Path.class);
         final Path module1Root = mock(Path.class);
