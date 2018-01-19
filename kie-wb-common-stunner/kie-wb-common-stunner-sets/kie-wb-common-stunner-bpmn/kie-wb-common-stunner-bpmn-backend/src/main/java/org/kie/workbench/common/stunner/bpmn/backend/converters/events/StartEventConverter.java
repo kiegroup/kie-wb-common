@@ -72,7 +72,7 @@ public class StartEventConverter {
                         .when(TimerEventDefinition.class, e -> {
                             Node<View<StartTimerEvent>, Edge> node = timerEventDefinitionConverter.convert(e, nodeId, StartTimerEvent.class);
                             InterruptingTimerEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
-                            executionSet.setIsInterrupting(new IsInterrupting(startEvent.isIsInterrupting()));
+                            executionSet.getIsInterrupting().setValue(startEvent.isIsInterrupting());
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {

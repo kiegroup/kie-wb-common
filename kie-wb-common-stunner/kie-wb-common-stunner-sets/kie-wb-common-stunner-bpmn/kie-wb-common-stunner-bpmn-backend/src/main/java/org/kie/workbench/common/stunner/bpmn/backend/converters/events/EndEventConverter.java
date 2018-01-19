@@ -62,13 +62,8 @@ public class EndEventConverter {
                 return factoryManager.newNode(nodeId, EndNoneEvent.class);
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseEndEvent.class)
-                        .when(TerminateEventDefinition.class, e -> {
-                            Node<View<EndTerminateEvent>, Edge> node = factoryManager.newNode(nodeId, EndTerminateEvent.class);
-//                            InterruptingSignalEventExecutionSet executionSet = node.getContent().getDefinition().get();
-//                            executionSet.setIsInterrupting(new IsInterrupting(endEvent.is()));
-//                            executionSet.setSignalRef(new SignalRef(e.getSignalRef()));
-                            return node;
-                        })
+                        .when(TerminateEventDefinition.class, e ->
+                                factoryManager.newNode(nodeId, EndTerminateEvent.class))
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
                             AssignmentsInfoStringBuilder.setAssignmentsInfo(

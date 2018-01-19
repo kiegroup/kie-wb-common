@@ -3,6 +3,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 import java.util.List;
 
 import org.eclipse.bpmn2.BoundaryEvent;
+import org.eclipse.bpmn2.CompensateEventDefinition;
+import org.eclipse.bpmn2.ConditionalEventDefinition;
+import org.eclipse.bpmn2.ErrorEventDefinition;
+import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
@@ -43,24 +47,14 @@ public class BoundaryEventConverter {
                 return Match.ofNode(EventDefinition.class, BaseCatchingIntermediateEvent.class)
                         .when(SignalEventDefinition.class,
                               e -> factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class))
-
                         .when(TimerEventDefinition.class,
                               e -> factoryManager.newNode(nodeId, IntermediateTimerEvent.class))
-
-//                .when(EscalationEventDefinition.class,
-//                      e -> factoryManager.newNode(nodeId, IntermediateEscalationEvent.class))
-//
-//                .when(ErrorEventDefinition.class,
-//                      e -> factoryManager.newNode(nodeId, IntermediateErrorEvent.class))
-
-//                .when(CompensateEventDefinition.class,
-//                      e -> factoryManager.newNode(nodeId, IntermediateCompensationEventCatching.class))
-//
-//                .when(ConditionalEventDefinition.class,
-//                      e -> factoryManager.newNode(nodeId, IntermediateConditionalEvent.class))
-
                         .when(MessageEventDefinition.class,
                               e -> factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class))
+                        .missing(EscalationEventDefinition.class)
+                        .missing(ErrorEventDefinition.class)
+                        .missing(CompensateEventDefinition.class)
+                        .missing(ConditionalEventDefinition.class)
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for boundary event");
