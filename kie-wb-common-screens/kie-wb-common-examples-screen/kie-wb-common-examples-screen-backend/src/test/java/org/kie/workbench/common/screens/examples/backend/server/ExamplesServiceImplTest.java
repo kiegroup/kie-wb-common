@@ -580,6 +580,41 @@ public class ExamplesServiceImplTest {
     }
 
     @Test
+    public void resolveGitRepositoryNotClonedBeforeWithAuthentication() {
+        ExampleRepository importedRepository = new ExampleRepository("file:///home/user/folder/other",
+                                                                     "myuser",
+                                                                     "mypassword");
+
+        ConfigGroup configGroup = new ConfigGroup();
+        when(configurationFactory.newConfigGroup(any(ConfigType.class),
+                                                 anyString(),
+                                                 anyString())).thenReturn(configGroup);
+        doCallRealMethod().when(configurationFactory).newConfigItem(anyString(),
+                                                                    anyBoolean());
+        doCallRealMethod().when(configurationFactory).newConfigItem(anyString(),
+                                                                    anyString());
+        doCallRealMethod().when(configurationFactory).newConfigItem(anyString(),
+                                                                    any(Object.class));
+
+        Repository repository = mock(Repository.class);
+        when(repositoryFactory.newRepository(configGroup)).thenReturn(repository);
+
+        Repository result = service.resolveGitRepository(importedRepository);
+
+        assertEquals(repository,
+                     result);
+        assertEquals(false,
+                     configGroup.getConfigItem(EnvironmentParameters.MIRROR).getValue());
+        assertEquals("myuser",
+                     configGroup.getConfigItem("username").getValue());
+        assertEquals("mypassword",
+                     configGroup.getConfigItem("password").getValue());
+
+        verify(repositoryFactory,
+               times(1)).newRepository(configGroup);
+    }
+
+    @Test
     public void resolveGitRepositoryClonedBefore() {
         ExampleRepository playgroundRepository = new ExampleRepository("file:///home/user/folder/.kie-wb-playground");
         service.setPlaygroundRepository(playgroundRepository);

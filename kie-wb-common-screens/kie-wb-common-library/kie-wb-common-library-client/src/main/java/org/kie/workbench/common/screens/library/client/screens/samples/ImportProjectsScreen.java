@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.enterprise.event.Event;
+import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.context.ProjectContextChangeEvent;
@@ -122,36 +123,48 @@ public class ImportProjectsScreen {
                                                        view.getTrySamplesLabel());
         view.setTitle(title);
 
+        final String trySamples = placeRequest.getParameter("trySamples",
+                                                            "false");
         final String repositoryUrl = placeRequest.getParameter("repositoryUrl",
                                                                null);
 
-        view.showBusyIndicator(view.getLoadingMessage());
-        libraryService.call((Set<ExampleProject> projects) -> {
-                                view.hideBusyIndicator();
-                                if (projects == null || projects.isEmpty()) {
-                                    showNoProjects();
-                                    return;
-                                }
-
-                                projectWidgetsByName = new HashMap<>();
-                                projects.forEach(project -> {
-                                    TileWidget projectWidget = createProjectWidget(project);
-                                    projectWidgetsByName.put(project,
-                                                             projectWidget);
-                                });
-
-                                updateView(projectWidgetsByName.values());
-                            },
-                            new DefaultErrorCallback() {
-                                @Override
-                                public boolean error(final Message message,
-                                                     final Throwable throwable) {
+        if (repositoryUrl != null || Boolean.valueOf(trySamples)) {
+            view.showBusyIndicator(view.getLoadingMessage());
+            libraryService.call((Set<ExampleProject> projects) -> {
                                     view.hideBusyIndicator();
-                                    showNoProjects();
-                                    return super.error(message,
-                                                       throwable);
-                                }
-                            }).getProjects(repositoryUrl);
+                                    setupProjects(projects);
+                                },
+                                new DefaultErrorCallback() {
+                                    @Override
+                                    public boolean error(final Message message,
+                                                         final Throwable throwable) {
+                                        view.hideBusyIndicator();
+                                        showNoProjects();
+                                        return super.error(message,
+                                                           throwable);
+                                    }
+                                }).getProjects(repositoryUrl);
+        }
+    }
+
+    public void setupEvent(@Observes final ImportProjectsSetupEvent event) {
+        setupProjects(event.getProjects());
+    }
+
+    private void setupProjects(final Set<ExampleProject> projects) {
+        if (projects == null || projects.isEmpty()) {
+            showNoProjects();
+            return;
+        }
+
+        projectWidgetsByName = new HashMap<>();
+        projects.forEach(project -> {
+            TileWidget projectWidget = createProjectWidget(project);
+            projectWidgetsByName.put(project,
+                                     projectWidget);
+        });
+
+        updateView(projectWidgetsByName.values());
     }
 
     private TileWidget createProjectWidget(final ExampleProject project) {

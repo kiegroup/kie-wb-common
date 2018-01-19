@@ -328,11 +328,22 @@ public class LibraryServiceImpl implements LibraryService {
 
     @Override
     public Set<ExampleProject> getProjects(final String repositoryUrl) {
+        return getProjects(repositoryUrl,
+                           null,
+                           null);
+    }
+
+    @Override
+    public Set<ExampleProject> getProjects(final String repositoryUrl,
+                                           final String userName,
+                                           final String password) {
         if (repositoryUrl == null) {
             return getExampleProjects();
         }
 
-        final ExampleRepository repository = new ExampleRepository(repositoryUrl);
+        final ExampleRepository repository = new ExampleRepository(repositoryUrl,
+                                                                   userName,
+                                                                   password);
         return examplesService.getProjects(repository);
     }
 
