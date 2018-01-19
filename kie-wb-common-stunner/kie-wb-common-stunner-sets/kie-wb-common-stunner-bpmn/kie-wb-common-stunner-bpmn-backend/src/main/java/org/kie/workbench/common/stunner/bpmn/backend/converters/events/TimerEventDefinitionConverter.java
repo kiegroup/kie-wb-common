@@ -1,9 +1,10 @@
-package org.kie.workbench.common.stunner.bpmn.backend.converters;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 
 import org.eclipse.bpmn2.Error;
 import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;

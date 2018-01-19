@@ -1,14 +1,14 @@
-package org.kie.workbench.common.stunner.bpmn.backend.converters;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.jboss.drools.DroolsPackage;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.ScriptLanguages;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.slf4j.Logger;

@@ -1,7 +1,5 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import java.util.function.Function;
-
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CallActivity;
 import org.eclipse.bpmn2.EndEvent;
@@ -9,15 +7,20 @@ import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
-import org.eclipse.bpmn2.ParallelGateway;
 import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.Task;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.events.BoundaryEventConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.events.EndEventConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.events.IntermediateCatchEventConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.events.IntermediateThrowEventConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.events.StartEventConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.gateways.GatewayConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows.SequenceFlowConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.TaskConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class FlowElementConverter {

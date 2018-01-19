@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import bpsim.Scenario;
 import org.eclipse.bpmn2.*;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.emf.ecore.util.FeatureMap;
