@@ -2,15 +2,20 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import java.util.List;
 
+import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.Task;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptableExecutionSet;
 
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties.findMetaBoolean;
+
 public class Scripts {
+
     public static void setProperties(Task task, ScriptableExecutionSet executionSet) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
@@ -29,5 +34,10 @@ public class Scripts {
         if (!onExitExtensions.isEmpty()) {
             executionSet.setOnExitAction(new OnExitAction(onExitExtensions.get(0).getScript()));
         }
+    }
+
+    public static void setProperties(ScriptTask task, ScriptTaskExecutionSet executionSet) {
+        executionSet.getScript().setValue(task.getScript());
+        executionSet.getScriptLanguage().setValue(ScriptLanguages.fromUri(task.getScriptFormat()));
     }
 }
