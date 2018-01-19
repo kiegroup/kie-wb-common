@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
@@ -50,7 +51,7 @@ public abstract class BaseTask implements BPMNViewDefinition {
     @PropertySet
     @FormField
     @Valid
-    protected TaskGeneralSet general;
+    protected BPMNGeneralSet general;
 
     @Property
     @MorphProperty(binder = TaskTypeMorphPropertyBinding.class)
@@ -113,7 +114,7 @@ public abstract class BaseTask implements BPMNViewDefinition {
         this.taskType = new TaskType(type);
     }
 
-    public BaseTask(final @MapsTo("general") TaskGeneralSet general,
+    public BaseTask(final @MapsTo("general") BPMNGeneralSet general,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,
                     final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet,
@@ -135,7 +136,7 @@ public abstract class BaseTask implements BPMNViewDefinition {
         return labels;
     }
 
-    public TaskGeneralSet getGeneral() {
+    public BPMNGeneralSet getGeneral() {
         return general;
     }
 
@@ -147,7 +148,7 @@ public abstract class BaseTask implements BPMNViewDefinition {
         return fontSet;
     }
 
-    public void setGeneral(final TaskGeneralSet general) {
+    public void setGeneral(final BPMNGeneralSet general) {
         this.general = general;
     }
 

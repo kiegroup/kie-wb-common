@@ -28,6 +28,7 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
@@ -66,7 +67,7 @@ public class ScriptTask extends BaseTask {
 
         @Override
         public ScriptTask build() {
-            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
+            return new ScriptTask(new BPMNGeneralSet(new Name("Task"),
                                                      new Documentation("")),
                                   new ScriptTaskExecutionSet(),
                                   new BackgroundSet(),
@@ -81,7 +82,7 @@ public class ScriptTask extends BaseTask {
         super(TaskTypes.SCRIPT);
     }
 
-    public ScriptTask(final @MapsTo("general") TaskGeneralSet general,
+    public ScriptTask(final @MapsTo("general") BPMNGeneralSet general,
                       final @MapsTo("executionSet") ScriptTaskExecutionSet executionSet,
                       final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                       final @MapsTo("fontSet") FontSet fontSet,

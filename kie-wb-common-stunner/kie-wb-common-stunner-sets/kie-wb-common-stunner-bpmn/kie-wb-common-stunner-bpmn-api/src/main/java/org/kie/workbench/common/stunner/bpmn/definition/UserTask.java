@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
@@ -68,7 +69,7 @@ public class UserTask extends BaseTask implements DataIOModel {
 
         @Override
         public UserTask build() {
-            return new UserTask(new TaskGeneralSet(new Name("Task"),
+            return new UserTask(new BPMNGeneralSet(new Name("Task"),
                                                    new Documentation("")),
                                 new UserTaskExecutionSet(),
                                 new BackgroundSet(),
@@ -83,7 +84,7 @@ public class UserTask extends BaseTask implements DataIOModel {
         super(TaskTypes.USER);
     }
 
-    public UserTask(final @MapsTo("general") TaskGeneralSet general,
+    public UserTask(final @MapsTo("general") BPMNGeneralSet general,
                     final @MapsTo("executionSet") UserTaskExecutionSet executionSet,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,

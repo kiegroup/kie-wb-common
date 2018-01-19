@@ -37,6 +37,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.mockito.ArgumentCaptor;
@@ -104,7 +105,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     SequenceFlow sequenceFlow;
 
     @Mock
-    TaskGeneralSet taskGeneralSet;
+    BPMNGeneralSet taskGeneralSet;
 
     @Mock
     Name taskName;

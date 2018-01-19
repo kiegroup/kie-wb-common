@@ -28,6 +28,10 @@ import org.kie.workbench.common.stunner.core.definition.annotation.Property;
 import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
+/**
+ * @deprecated use {@link BPMNGeneralSet}
+ */
+@Deprecated
 @Portable
 @Bindable
 @PropertySet
