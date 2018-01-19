@@ -11,6 +11,7 @@ import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
@@ -24,9 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -52,19 +50,9 @@ public class StartEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(StartEvent startEvent) {
         List<EventDefinition> eventDefinitions = startEvent.getEventDefinitions();
         Node<? extends View<? extends BaseStartEvent>, ?> convertedStartEvent = convertStartEvent(startEvent, eventDefinitions);
-        copyGeneralInfo(startEvent, convertedStartEvent);
+        BPMNGeneralSets.setProperties(startEvent, convertedStartEvent.getContent().getDefinition().getGeneral());
 
         return convertedStartEvent;
-    }
-
-    private void copyGeneralInfo(StartEvent startEvent, Node<? extends View<? extends BaseStartEvent>, ?> convertedStartEvent) {
-        BaseStartEvent definition = convertedStartEvent.getContent().getDefinition();
-        BPMNGeneralSet generalInfo = definition.getGeneral();
-        generalInfo.setName(new Name(startEvent.getName()));
-        List<org.eclipse.bpmn2.Documentation> documentation = startEvent.getDocumentation();
-        if (!documentation.isEmpty()) {
-            generalInfo.setDocumentation(new Documentation(documentation.get(0).getText()));
-        }
     }
 
     private Node<? extends View<? extends BaseStartEvent>, ?> convertStartEvent(StartEvent startEvent, List<EventDefinition> eventDefinitions) {

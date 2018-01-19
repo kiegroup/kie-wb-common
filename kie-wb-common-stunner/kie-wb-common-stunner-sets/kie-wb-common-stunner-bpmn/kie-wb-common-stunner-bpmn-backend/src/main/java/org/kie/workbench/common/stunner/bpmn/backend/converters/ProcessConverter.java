@@ -51,7 +51,7 @@ public class ProcessConverter {
         diagramSet.getPackageProperty().setValue(packageName);
 
         String version = Properties.findAnyAttribute(process, "version");
-        diagramSet.getPackageProperty().setValue(version);
+        diagramSet.getVersion().setValue(version);
 
         boolean adHoc = Properties.findAnyAttributeBoolean(process, "adHoc");
         diagramSet.getAdHoc().setValue(adHoc);

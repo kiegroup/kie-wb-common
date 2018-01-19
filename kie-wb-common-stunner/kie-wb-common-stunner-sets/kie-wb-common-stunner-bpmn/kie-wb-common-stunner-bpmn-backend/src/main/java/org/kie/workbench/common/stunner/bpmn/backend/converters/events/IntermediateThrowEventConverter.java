@@ -11,6 +11,7 @@ import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
@@ -21,8 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediate
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -44,7 +43,7 @@ public class IntermediateThrowEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateThrowEvent throwEvent) {
         List<EventDefinition> eventDefinitions = throwEvent.getEventDefinitions();
         Node<? extends View<? extends BaseThrowingIntermediateEvent>, ?> convertedThrowEvent = convertThrowEvent(throwEvent, eventDefinitions);
-        copyGeneralInfo(throwEvent, convertedThrowEvent);
+        BPMNGeneralSets.setProperties(throwEvent, convertedThrowEvent.getContent().getDefinition().getGeneral());
 
         return convertedThrowEvent;
     }
@@ -82,16 +81,6 @@ public class IntermediateThrowEventConverter {
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate throw event");
-        }
-    }
-
-    private void copyGeneralInfo(IntermediateThrowEvent startEvent, Node<? extends View<? extends BaseThrowingIntermediateEvent>, ?> convertedEndEvent) {
-        BaseThrowingIntermediateEvent definition = convertedEndEvent.getContent().getDefinition();
-        BPMNGeneralSet generalInfo = definition.getGeneral();
-        generalInfo.setName(new Name(startEvent.getName()));
-        List<org.eclipse.bpmn2.Documentation> documentation = startEvent.getDocumentation();
-        if (!documentation.isEmpty()) {
-            generalInfo.setDocumentation(new org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation(documentation.get(0).getText()));
         }
     }
 }

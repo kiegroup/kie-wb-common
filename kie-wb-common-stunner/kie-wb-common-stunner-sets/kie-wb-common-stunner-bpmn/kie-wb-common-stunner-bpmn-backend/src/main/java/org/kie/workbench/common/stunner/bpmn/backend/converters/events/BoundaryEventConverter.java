@@ -7,6 +7,7 @@ import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -28,7 +29,7 @@ public class BoundaryEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(BoundaryEvent boundaryEvent) {
         List<EventDefinition> eventDefinitions = boundaryEvent.getEventDefinitions();
         Node<? extends View<? extends BaseCatchingIntermediateEvent>, ?> convertedEndEvent = convertBoundaryEvent(boundaryEvent, eventDefinitions);
-        GeneralSetConverter.copyGeneralInfo(boundaryEvent, convertedEndEvent);
+        BPMNGeneralSets.setProperties(boundaryEvent, convertedEndEvent.getContent().getDefinition().getGeneral());
         return convertedEndEvent;
     }
 

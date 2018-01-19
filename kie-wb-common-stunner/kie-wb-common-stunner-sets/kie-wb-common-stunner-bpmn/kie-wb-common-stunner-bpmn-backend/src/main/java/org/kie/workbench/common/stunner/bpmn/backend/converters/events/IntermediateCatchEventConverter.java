@@ -11,6 +11,7 @@ import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
@@ -47,7 +48,7 @@ public class IntermediateCatchEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateCatchEvent catchEvent) {
         List<EventDefinition> eventDefinitions = catchEvent.getEventDefinitions();
         Node<? extends View<? extends BaseCatchingIntermediateEvent>, ?> convertedEndEvent = convertCatchEvent(catchEvent, eventDefinitions);
-        GeneralSetConverter.copyGeneralInfo(catchEvent, convertedEndEvent);
+        BPMNGeneralSets.setProperties(catchEvent, convertedEndEvent.getContent().getDefinition().getGeneral());
 
         return convertedEndEvent;
     }

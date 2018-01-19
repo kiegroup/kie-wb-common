@@ -12,6 +12,7 @@ import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TerminateEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
@@ -25,8 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -51,19 +50,9 @@ public class EndEventConverter {
         //         startEvent.isIsInterrupting());
 
         Node<? extends View<? extends BaseEndEvent>, ?> convertedEndEvent = convertEndEvent(endEvent, eventDefinitions);
-        copyGeneralInfo(endEvent, convertedEndEvent);
+        BPMNGeneralSets.setProperties(endEvent, convertedEndEvent.getContent().getDefinition().getGeneral());
 
         return convertedEndEvent;
-    }
-
-    private void copyGeneralInfo(EndEvent startEvent, Node<? extends View<? extends BaseEndEvent>, ?> convertedEndEvent) {
-        BaseEndEvent definition = convertedEndEvent.getContent().getDefinition();
-        BPMNGeneralSet generalInfo = definition.getGeneral();
-        generalInfo.setName(new Name(startEvent.getName()));
-        List<org.eclipse.bpmn2.Documentation> documentation = startEvent.getDocumentation();
-        if (!documentation.isEmpty()) {
-            generalInfo.setDocumentation(new org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation(documentation.get(0).getText()));
-        }
     }
 
     public Node<? extends View<? extends BaseEndEvent>, ?> convertEndEvent(EndEvent endEvent, List<EventDefinition> eventDefinitions) {
