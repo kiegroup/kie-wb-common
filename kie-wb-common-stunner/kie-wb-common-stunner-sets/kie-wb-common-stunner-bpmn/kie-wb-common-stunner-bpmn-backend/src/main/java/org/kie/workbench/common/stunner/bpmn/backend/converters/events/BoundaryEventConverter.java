@@ -43,14 +43,14 @@ public class BoundaryEventConverter {
                         .when(SignalEventDefinition.class,
                               e -> factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class))
 
+                        .when(TimerEventDefinition.class,
+                              e -> factoryManager.newNode(nodeId, IntermediateTimerEvent.class))
+
 //                .when(EscalationEventDefinition.class,
 //                      e -> factoryManager.newNode(nodeId, IntermediateEscalationEvent.class))
 //
 //                .when(ErrorEventDefinition.class,
 //                      e -> factoryManager.newNode(nodeId, IntermediateErrorEvent.class))
-
-                        .when(TimerEventDefinition.class,
-                              e -> factoryManager.newNode(nodeId, IntermediateTimerEvent.class))
 
 //                .when(CompensateEventDefinition.class,
 //                      e -> factoryManager.newNode(nodeId, IntermediateCompensationEventCatching.class))

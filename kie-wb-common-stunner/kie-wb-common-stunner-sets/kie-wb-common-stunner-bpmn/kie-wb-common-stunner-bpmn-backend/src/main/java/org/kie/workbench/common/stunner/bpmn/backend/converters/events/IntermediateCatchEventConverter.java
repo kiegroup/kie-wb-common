@@ -2,7 +2,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 
 import java.util.List;
 
+import org.eclipse.bpmn2.CompensateEventDefinition;
+import org.eclipse.bpmn2.ConditionalEventDefinition;
 import org.eclipse.bpmn2.ErrorEventDefinition;
+import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
@@ -75,9 +78,9 @@ public class IntermediateCatchEventConverter {
                                     catchEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
-                        //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
-                        //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
-                        //.when(ConditionalEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))
+                        .missing(EscalationEventDefinition.class)
+                        .missing(CompensateEventDefinition.class)
+                        .missing(ConditionalEventDefinition.class)
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate catch event");

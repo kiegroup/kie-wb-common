@@ -27,8 +27,8 @@ public class TaskConverter {
                 .when(org.eclipse.bpmn2.BusinessRuleTask.class, businessRuleTaskConverter::convert)
                 .when(org.eclipse.bpmn2.ScriptTask.class, scriptTaskConverter::convert)
                 .when(org.eclipse.bpmn2.UserTask.class, userTaskConverter::convert)
-                //.when(org.eclipse.bpmn2.ServiceTask.class,      t -> null)
-                //.when(org.eclipse.bpmn2.ManualTask.class,       t -> null)
+                .missing(org.eclipse.bpmn2.ServiceTask.class)
+                .missing(org.eclipse.bpmn2.ManualTask.class)
                 .orElse(t ->
                                 factoryManager.newNode(t.getId(), NoneTask.class)
                 )

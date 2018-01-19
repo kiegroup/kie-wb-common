@@ -2,7 +2,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 
 import java.util.List;
 
+import org.eclipse.bpmn2.CompensateEventDefinition;
+import org.eclipse.bpmn2.ConditionalEventDefinition;
 import org.eclipse.bpmn2.ErrorEventDefinition;
+import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
@@ -90,9 +93,9 @@ public class StartEventConverter {
                                     startEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
                             return node;
                         })
-                        // .when(ConditionalEventDefinition.class, e -> factoryManager.newNode(nodeId, StartConditionalEvent.class))
-                        // .when(EscalationEventDefinition.class,  e -> factoryManager.newNode(nodeId, StartEscalationEvent.class))
-                        // .when(CompensateEventDefinition.class,  e -> factoryManager.newNode(nodeId, StartCompensationEvent.class))
+                        .missing(ConditionalEventDefinition.class)
+                        .missing(EscalationEventDefinition.class)
+                        .missing(CompensateEventDefinition.class)
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for start event");

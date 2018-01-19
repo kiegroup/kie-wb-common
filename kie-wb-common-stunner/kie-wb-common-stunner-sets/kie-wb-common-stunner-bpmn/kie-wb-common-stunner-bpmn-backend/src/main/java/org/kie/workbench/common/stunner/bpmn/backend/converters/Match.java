@@ -3,6 +3,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -107,6 +108,14 @@ public class Match<In, Out> {
         return this;
     }
 
+    /**
+     * handle a type by throwing an error.
+     * Use when the implementation is still missing, but expected to exist
+     */
+    public <Sub> Match<In, Out> missing(Class<Sub> type) {
+        return when(type, reportMissing(type));
+    }
+
     public Match<In, Out> orElse(Function<In, Out> then) {
         this.orElse = then;
         return this;
@@ -126,5 +135,16 @@ public class Match<In, Out> {
         } else {
             return Result.of(orElse.apply(value));
         }
+    }
+
+
+    static <T, U> Function<T, U> reportMissing(Class<?> expectedClass) {
+        return t -> {
+            throw new UnsupportedOperationException(
+                    "Not yet implemented: " +
+                            Optional.ofNullable(t)
+                                    .map(o -> o.getClass().getCanonicalName())
+                                    .orElse("null -- expected " + expectedClass.getCanonicalName()));
+        };
     }
 }

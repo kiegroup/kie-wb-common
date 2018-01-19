@@ -25,6 +25,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Scriptable
 
 public class Properties {
 
+    public static boolean findAnyAttributeBoolean(BaseElement element, String attributeId) {
+        return Boolean.parseBoolean(findAnyAttribute(element, attributeId));
+    }
+
     public static String findAnyAttribute(BaseElement element, String attributeId) {
         return element.getAnyAttribute().stream()
                 .filter(e -> e.getEStructuralFeature().getName().equals(attributeId))

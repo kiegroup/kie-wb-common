@@ -2,18 +2,21 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 
 import java.util.List;
 
+import org.eclipse.bpmn2.CancelEventDefinition;
+import org.eclipse.bpmn2.CompensateEventDefinition;
 import org.eclipse.bpmn2.EndEvent;
 import org.eclipse.bpmn2.ErrorEventDefinition;
+import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TerminateEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -94,9 +97,9 @@ public class EndEventConverter {
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
-                        //.when(EscalationEventDefinition.class, e -> factoryManager.newNode(nodeId, EndEscalationEvent.class))
-                        //.when(CompensateEventDefinition.class, e -> factoryManager.newNode(nodeId, EndCompensationEvent.class))
-                        //.when(CancelEventDefinition.class,     e -> factoryManager.newNode(nodeId, EndCancelEvent.class))
+                        .missing(EscalationEventDefinition.class)
+                        .missing(CompensateEventDefinition.class)
+                        .missing(CancelEventDefinition.class)
                         .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for end event");
