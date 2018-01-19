@@ -91,6 +91,10 @@ public class Match<In, Out> {
     LinkedList<MatchCase<?, Out>> cases = new LinkedList<>();
     Function<In, Out> orElse;
 
+    public static <In, Out> Match<In, Out> of(Class<In> inputType, Class<Out> outputType) {
+        return new Match<>(outputType);
+    }
+
     public static <In, Out> Match<In, Node<? extends View<? extends Out>, ?>> ofNode(Class<In> inputType, Class<Out> outputType) {
         return new Match<>(outputType);
     }

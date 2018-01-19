@@ -3,7 +3,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.ScriptLanguages;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;

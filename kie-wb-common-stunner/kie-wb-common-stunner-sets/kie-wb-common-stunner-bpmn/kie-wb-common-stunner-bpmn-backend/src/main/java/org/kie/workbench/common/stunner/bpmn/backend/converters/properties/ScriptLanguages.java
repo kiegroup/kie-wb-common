@@ -1,4 +1,4 @@
-package org.kie.workbench.common.stunner.bpmn.backend.converters;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 public class ScriptLanguages {
     public static String fromUri(String format) {

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.SequenceFlow;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;

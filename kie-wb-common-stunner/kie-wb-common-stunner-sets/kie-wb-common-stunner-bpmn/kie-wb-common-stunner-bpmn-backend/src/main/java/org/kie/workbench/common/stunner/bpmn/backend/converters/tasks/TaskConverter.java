@@ -1,6 +1,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.eclipse.bpmn2.Task;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -15,10 +16,10 @@ public class TaskConverter {
     private final UserTaskConverter userTaskConverter;
     private final ScriptTaskConverter scriptTaskConverter;
 
-    public TaskConverter(TypedFactoryManager factoryManager) {
+    public TaskConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.businessRuleTaskConverter = new BusinessRuleTaskConverter(factoryManager);
-        this.userTaskConverter = new UserTaskConverter(factoryManager);
+        this.userTaskConverter = new UserTaskConverter(factoryManager, definitionResolver);
         this.scriptTaskConverter = new ScriptTaskConverter(factoryManager);
     }
 

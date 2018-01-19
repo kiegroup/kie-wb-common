@@ -42,7 +42,7 @@ public class FlowElementConverter {
         this.endEventConverter = new EndEventConverter(factoryManager, definitionResolver);
         this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, definitionResolver);
         this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, definitionResolver);
-        this.taskConverter = new TaskConverter(factoryManager);
+        this.taskConverter = new TaskConverter(factoryManager, definitionResolver);
         this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager);
         this.gatewayConverter = new GatewayConverter(factoryManager);
         this.boundaryEventConverter = new BoundaryEventConverter(factoryManager);

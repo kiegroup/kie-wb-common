@@ -1,6 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
@@ -9,8 +9,8 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.findAnyAttribute;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.Properties.findMetaBoolean;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties.findAnyAttribute;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties.findMetaBoolean;
 
 public class BusinessRuleTaskConverter {
     private final TypedFactoryManager factoryManager;
@@ -30,7 +30,7 @@ public class BusinessRuleTaskConverter {
         executionSet.getIsAsync().setValue(findMetaBoolean(task, "customAsync"));
 
         executionSet.getRuleFlowGroup().setValue(findAnyAttribute(task, "ruleFlowGroup"));
-        Properties.setScriptProperties(task, executionSet);
+        Scripts.setProperties(task, executionSet);
         return node;
     }
 }
