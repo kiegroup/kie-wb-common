@@ -267,6 +267,10 @@ public class ExamplesServiceImpl implements ExamplesService {
                     GitRepository.SCHEME.toString());
                 put("replaceIfExists",
                     true);
+                put("username",
+                    userName);
+                put("password",
+                    password);
                 put(MIRROR,
                     false);
             }};
