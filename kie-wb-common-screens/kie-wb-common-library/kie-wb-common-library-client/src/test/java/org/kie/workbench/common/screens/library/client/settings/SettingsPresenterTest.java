@@ -112,13 +112,23 @@ public class SettingsPresenterTest {
     }
 
     @Test
+    public void testOnOpen() {
+        doReturn(promises.resolve()).when(settingsPresenter).setup(any());
+
+        settingsPresenter.onOpen();
+
+        verify(view).hide();
+        verify(view).show();
+    }
+
+    @Test
     public void testSetup() {
         final Section section1 = newMockedSection();
         final Section section2 = newMockedSection();
         final List<Section> sections = Arrays.asList(section1, section2);
 
         doReturn(sections).when(settingsSections).getList();
-        doNothing().when(settingsPresenter).setup(section1);
+        doReturn(promises.resolve()).when(settingsPresenter).setup(section1);
 
         settingsPresenter.setup();
 
@@ -135,7 +145,10 @@ public class SettingsPresenterTest {
         doNothing().when(settingsPresenter).setupMenuItems();
         doReturn(promises.resolve()).when(settingsPresenter).setupSections(any());
 
-        settingsPresenter.setup(section);
+        settingsPresenter.setup(section).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         assertEquals(section, settingsPresenter.currentSection);
         verify(view).init(eq(settingsPresenter));
@@ -155,7 +168,10 @@ public class SettingsPresenterTest {
         settingsPresenter.sections = new ArrayList<>(Arrays.asList(section1, section2));
         doReturn(promises.reject("Test")).when(settingsPresenter).setupSections(any());
 
-        settingsPresenter.setup(section1);
+        settingsPresenter.setup(section1).catch_(i -> {
+            fail("Promise should've been resolved!");
+            return promises.resolve();
+        });
 
         // All sections are setup regardless of exceptions/rejections
         verify(projectScreenService).load(any());

@@ -31,13 +31,9 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import elemental2.dom.CSSProperties;
-import elemental2.dom.CSSStyleDeclaration;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
-import jsinterop.base.JsPropertyMap;
-import jsinterop.base.JsPropertyMapOfAny;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.context.ProjectContext;
 import org.guvnor.common.services.project.service.DeploymentMode;
@@ -152,11 +148,10 @@ public class SettingsPresenter {
         currentSection = sections.get(0);
     }
 
-    public void setup(final Section activeSection) {
+    public Promise<Void> setup(final Section activeSection) {
         currentSection = activeSection;
 
         view.init(this);
-        view.hide();
         view.showBusyIndicator();
 
         if (pathToPom != null) {
@@ -169,7 +164,7 @@ public class SettingsPresenter {
         pathToPom = observablePaths.get().wrap(projectContext.getActiveProject().getPomXMLPath());
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        promises.promisify(projectScreenService, s -> {
+        return promises.promisify(projectScreenService, s -> {
             return s.load(pathToPom);
         }).then(model -> {
             this.model = model;
@@ -177,7 +172,6 @@ public class SettingsPresenter {
         }).then(i -> {
             setupMenuItems();
             view.hideBusyIndicator();
-            view.show();
             if (sections.contains(currentSection)) {
                 return goTo(currentSection);
             } else {
@@ -360,7 +354,11 @@ public class SettingsPresenter {
 
     @OnOpen
     public void onOpen() {
-        setup(sections.get(0));
+        view.hide();
+        setup(currentSection).then(i -> {
+            view.show();
+            return promises.resolve();
+        });
     }
 
     public void reset() {
