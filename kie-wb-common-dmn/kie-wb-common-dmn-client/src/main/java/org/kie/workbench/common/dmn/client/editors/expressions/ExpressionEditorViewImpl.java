@@ -65,7 +65,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
 
     private Document document;
 
-    private TranslationService ts;
+    private TranslationService translationService;
     private DMNGridPanel gridPanel;
     private DMNGridLayer gridLayer;
     private RestrictedMousePanMediator mousePanMediator;
@@ -82,7 +82,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
     public ExpressionEditorViewImpl(final Div exitButton,
                                     final Div expressionEditorControls,
                                     final Document document,
-                                    final TranslationService ts,
+                                    final TranslationService translationService,
                                     final @DMNEditor DMNGridPanel gridPanel,
                                     final @DMNEditor DMNGridLayer gridLayer,
                                     final @DMNEditor RestrictedMousePanMediator mousePanMediator,
@@ -91,7 +91,7 @@ public class ExpressionEditorViewImpl implements ExpressionEditorView {
         this.exitButton = exitButton;
         this.expressionEditorControls = expressionEditorControls;
         this.document = document;
-        this.ts = ts;
+        this.translationService = translationService;
         this.gridPanel = gridPanel;
         this.gridLayer = gridLayer;
         this.mousePanMediator = mousePanMediator;

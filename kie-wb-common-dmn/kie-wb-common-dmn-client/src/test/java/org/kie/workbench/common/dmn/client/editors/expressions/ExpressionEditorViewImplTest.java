@@ -59,7 +59,7 @@ public class ExpressionEditorViewImplTest {
     private Document document;
 
     @Mock
-    private TranslationService ts;
+    private TranslationService translationService;
 
     @Mock
     private DMNGridPanel gridPanel;
@@ -105,7 +105,7 @@ public class ExpressionEditorViewImplTest {
         this.view = new ExpressionEditorViewImpl(exitButton,
                                                  expressionEditorControls,
                                                  document,
-                                                 ts,
+                                                 translationService,
                                                  gridPanel,
                                                  gridLayer,
                                                  mousePanMediator,
