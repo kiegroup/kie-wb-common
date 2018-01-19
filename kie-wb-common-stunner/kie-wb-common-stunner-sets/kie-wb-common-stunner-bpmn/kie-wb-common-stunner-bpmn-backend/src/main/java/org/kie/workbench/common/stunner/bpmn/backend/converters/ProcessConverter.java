@@ -54,8 +54,9 @@ public class ProcessConverter {
         return graph;
     }
 
-    public Node<View<BPMNDiagram>, ?> convertDiagram(Process process) {
-        Node<View<BPMNDiagram>, Edge> diagramNode = factoryManager.newNode(UUID.uuid(), BPMNDiagramImpl.class);
+    public Node<View<BPMNDiagram>, ?> convertDiagram(String definitionId, Process process) {
+        // FIXME why must we inherit the container's id ??
+        Node<View<BPMNDiagram>, Edge> diagramNode = factoryManager.newNode(definitionId, BPMNDiagramImpl.class);
         View<BPMNDiagram> diagram = diagramNode.getContent();
         BPMNDiagram definition = diagram.getDefinition();
         putMetadata(process, definition);

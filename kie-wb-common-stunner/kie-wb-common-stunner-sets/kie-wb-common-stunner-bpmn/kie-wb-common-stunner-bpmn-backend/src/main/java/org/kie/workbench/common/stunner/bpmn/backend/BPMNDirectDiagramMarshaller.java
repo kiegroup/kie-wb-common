@@ -125,7 +125,7 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
 
         BPMNPlane plane = definitions.getDiagrams().get(0).getPlane();
 
-        Node<View<BPMNDiagram>, ?> diagramView = processConverter.convertDiagram(processDiagram);
+        Node<View<BPMNDiagram>, ?> diagramView = processConverter.convertDiagram(definitions.getId(), processDiagram);
         graph.addNode(diagramView.asNode());
         graph.nodes().forEach(node -> Layout.updateNode(plane, node));
 
