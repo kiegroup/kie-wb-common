@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.datasource.management.backend.service;
 
 import java.net.URI;
 import java.util.HashMap;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
@@ -26,7 +27,6 @@ import javax.inject.Named;
 import org.guvnor.common.services.project.model.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.backend.server.spaces.SpacesAPIImpl;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
@@ -50,7 +50,7 @@ public class DataSourceServicesHelper {
     private DefRegistry defRegistry;
 
     @Inject
-    protected SpacesAPIImpl spacesAPI;
+    protected SpacesAPI spacesAPI;
 
     /**
      * Root to the platform data sources and drivers repository.
