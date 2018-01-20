@@ -28,18 +28,22 @@ public class UpdateElementPositionCommand extends AbstractCanvasGraphCommand {
 
     protected final Node<View<?>, Edge> element;
     protected final Point2D location;
+    protected final boolean parentConstrained;
 
     public UpdateElementPositionCommand(final Node<View<?>, Edge> element,
-                                        final Point2D location) {
+                                        final Point2D location,
+                                        final boolean parentConstrained) {
         this.element = element;
         this.location = location;
+        this.parentConstrained = parentConstrained;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     protected Command<GraphCommandExecutionContext, RuleViolation> newGraphCommand(final AbstractCanvasHandler context) {
         return new org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPositionCommand(element,
-                                                                                                         location);
+                                                                                                         location,
+                                                                                                         parentConstrained);
     }
 
     @Override
@@ -53,5 +57,9 @@ public class UpdateElementPositionCommand extends AbstractCanvasGraphCommand {
 
     public Point2D getLocation() {
         return location;
+    }
+
+    public boolean getParentConstrained() {
+        return parentConstrained;
     }
 }

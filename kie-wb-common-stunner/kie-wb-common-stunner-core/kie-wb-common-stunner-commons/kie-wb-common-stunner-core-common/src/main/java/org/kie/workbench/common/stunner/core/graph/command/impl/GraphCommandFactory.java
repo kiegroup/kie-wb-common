@@ -117,7 +117,8 @@ public class GraphCommandFactory {
     public UpdateElementPositionCommand updatePosition(final Node<? extends View<?>, Edge> element,
                                                        final Point2D location) {
         return new UpdateElementPositionCommand(element,
-                                                location);
+                                                location,
+                                                false);
     }
 
     @SuppressWarnings("unchecked")

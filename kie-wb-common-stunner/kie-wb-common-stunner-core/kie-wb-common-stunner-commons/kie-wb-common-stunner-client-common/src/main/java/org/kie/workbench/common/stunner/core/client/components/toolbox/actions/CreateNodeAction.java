@@ -173,7 +173,8 @@ public class CreateNodeAction extends AbstractToolboxAction {
                                                            sourceNode,
                                                            targetNode);
         return canvasCommandFactory.updatePosition(targetNode,
-                                                   location);
+                                                   location,
+                                                   false);
     }
 
     private CanvasCommand<AbstractCanvasHandler> addEdge(final AbstractCanvasHandler canvasHandler,

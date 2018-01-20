@@ -161,51 +161,16 @@ public class LocationControlImpl
         List<Point2D> movePositions = new ArrayList<>();
 
         for (String uuid : selectedIDs) {
-            if (isValidPosition(uuid, horizontalDistance, verticalDistance)) {
-                final Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
-                if (node != null) {
-                    final Point2D nodePosition = GraphUtils.getPosition(node.getContent());
-                    final Point2D movePosition = new Point2D(nodePosition.getX() + horizontalDistance, nodePosition.getY() + verticalDistance);
-                    moveNodes.add(node);
-                    movePositions.add(movePosition);
-                }
-            } else {
-                return;
+            final Node<View<?>, Edge> node = canvasHandler.getGraphIndex().getNode(uuid);
+            if (node != null) {
+                final Point2D nodePosition = GraphUtils.getPosition(node.getContent());
+                final Point2D movePosition = new Point2D(nodePosition.getX() + horizontalDistance, nodePosition.getY() + verticalDistance);
+                moveNodes.add(node);
+                movePositions.add(movePosition);
             }
-
         }
 
-        move(moveNodes.toArray(new Element[] {}), movePositions.toArray(new Point2D[] {}));
-    }
-
-    private boolean isValidPosition(String uuid, double horizontalDistance, double verticalDistance) {
-
-        AbstractCanvas canvas = canvasHandler.getAbstractCanvas();
-        ShapeView shapeView = canvas.getShape(uuid).getShapeView();
-        Point2D position = shapeView.getShapeAbsoluteLocation();
-
-        double newPositionX = position.getX() + horizontalDistance;
-        double newPositionY = position.getY() + verticalDistance;
-
-        if (newPositionX < 0 || newPositionY < 0) {
-            return false;
-        }
-
-        org.kie.workbench.common.stunner.core.client.shape.view.BoundingBox bb = shapeView.getBoundingBox();
-        double width = bb.getWidth();
-        double height = bb.getHeight();
-
-        double canvasWidth = canvas.getWidth();
-        double canvasHeight = canvas.getHeight();
-
-        newPositionX += width;
-        newPositionY += height;
-
-        if (newPositionX > canvasWidth || newPositionY > canvasHeight) {
-            return false;
-        }
-
-        return true;
+        move(moveNodes.toArray(new Element[]{}), movePositions.toArray(new Point2D[]{}), true);
     }
 
     @Override
@@ -271,7 +236,8 @@ public class LocationControlImpl
     @Override
     @SuppressWarnings("unchecked")
     public CommandResult<CanvasViolation> move(final Element[] elements,
-                                               final Point2D[] locations) {
+                                               final Point2D[] locations,
+                                               boolean parentConstrained) {
         if (elements.length != locations.length) {
             throw new IllegalArgumentException("The length for the elements to move " +
                                                        "does not match the locations provided.");
@@ -279,7 +245,8 @@ public class LocationControlImpl
         Command<AbstractCanvasHandler, CanvasViolation> command;
         if (elements.length == 1) {
             command = createMoveCommand(elements[0],
-                                        locations[0]);
+                                        locations[0],
+                                        parentConstrained);
         } else {
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
                     new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
@@ -288,7 +255,8 @@ public class LocationControlImpl
             for (final Element element : elements) {
                 final CanvasCommand<AbstractCanvasHandler> c =
                         createMoveCommand(element,
-                                          locations[i]);
+                                          locations[i],
+                                          parentConstrained);
                 builder.addCommand(c);
                 i++;
             }
@@ -348,9 +316,11 @@ public class LocationControlImpl
 
     @SuppressWarnings("unchecked")
     private CanvasCommand<AbstractCanvasHandler> createMoveCommand(final Element element,
-                                                                   final Point2D location) {
+                                                                   final Point2D location,
+                                                                   final boolean parentConstrained) {
         return canvasCommandFactory.updatePosition((Node<View<?>, Edge>) element,
-                                                   location);
+                                                   location,
+                                                   parentConstrained);
     }
 
     private boolean supportsMouseEnter(final HasEventHandlers shapeView) {
@@ -394,7 +364,7 @@ public class LocationControlImpl
             }
             if (elements.length > 0) {
                 final CommandResult<CanvasViolation> result =
-                        move(elements, locations);
+                        move(elements, locations, false);
                 if (CommandUtils.isError(result)) {
                     LOGGER.log(Level.SEVERE,
                                "Update element's position command failed [result=" + result + "]");

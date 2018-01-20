@@ -222,6 +222,11 @@ public class GraphUtils {
         return new double[]{Math.abs(w), Math.abs(h)};
     }
 
+    @SuppressWarnings("unchecked")
+    public static Bounds getBounds(final Graph<DefinitionSet, ? extends Node> graph) {
+        return graph.getContent().getBounds();
+    }
+
     /**
      * Checks that the given Bounds do not exceed graph limits.
      *
@@ -233,6 +238,19 @@ public class GraphUtils {
         final Bounds graphBounds = graph.getContent().getBounds();
         if ((bounds.getLowerRight().getX() > graphBounds.getLowerRight().getX())
                 || (bounds.getLowerRight().getY() > graphBounds.getLowerRight().getY())) {
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean checkBoundsExceeded(final Bounds parentBounds,
+                                              final Bounds bounds) {
+        if ((bounds.getUpperLeft().getX() < 0)
+                || (bounds.getUpperLeft().getY() < 0)) {
+            return false;
+        }
+        if ((bounds.getLowerRight().getX() > parentBounds.getLowerRight().getX())
+                || (bounds.getLowerRight().getY() > parentBounds.getLowerRight().getY())) {
             return false;
         }
         return true;

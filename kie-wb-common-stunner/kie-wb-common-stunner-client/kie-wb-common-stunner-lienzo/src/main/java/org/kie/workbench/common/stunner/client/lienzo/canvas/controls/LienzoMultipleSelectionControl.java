@@ -114,8 +114,7 @@ public final class LienzoMultipleSelectionControl<H extends AbstractCanvasHandle
                                                      bbox.getY(),
                                                      bbox.getWidth(),
                                                      bbox.getHeight(),
-                                                     getWiresManager().getLayer().getLayer().getOverLayer(),
-                                                     SelectionManager.SELECTION_PADDING);
+                                                     getWiresManager().getLayer().getLayer().getOverLayer());
         }
     }
 

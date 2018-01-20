@@ -266,8 +266,7 @@ public class LienzoMultipleSelectionControlTest {
                                                              eq(MIN_HEIGHT),
                                                              eq(MAX_WIDTH),
                                                              eq(MAX_HEIGHT),
-                                                             eq(overLayer),
-                                                             eq(PADDING));
+                                                             eq(overLayer));
 
         //Same canvas no selectedItems
 
@@ -280,8 +279,7 @@ public class LienzoMultipleSelectionControlTest {
                                                              eq(MIN_HEIGHT),
                                                              eq(MAX_WIDTH),
                                                              eq(MAX_HEIGHT),
-                                                             eq(overLayer),
-                                                             eq(PADDING));
+                                                             eq(overLayer));
 
         //Same canvas with selected items
 
@@ -305,8 +303,7 @@ public class LienzoMultipleSelectionControlTest {
                                                               eq(MIN_HEIGHT),
                                                               eq(MAX_WIDTH),
                                                               eq(MAX_HEIGHT),
-                                                              eq(overLayer),
-                                                              eq(PADDING));
+                                                              eq(overLayer));
     }
 
     @Test

@@ -170,13 +170,13 @@ public class ObserverBuilderControlTest {
             }
         });
 
-        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class))).thenAnswer(new Answer<Command>() {
+        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class), false)).thenAnswer(new Answer<Command>() {
 
             @Override
             public Command answer(InvocationOnMock invocationOnMock) {
                 Node node = (Node) invocationOnMock.getArguments()[0];
                 Point2D location = (Point2D) invocationOnMock.getArguments()[1];
-                return new UpdateElementPositionCommand(node, location);
+                return new UpdateElementPositionCommand(node, location, false);
             }
         });
 

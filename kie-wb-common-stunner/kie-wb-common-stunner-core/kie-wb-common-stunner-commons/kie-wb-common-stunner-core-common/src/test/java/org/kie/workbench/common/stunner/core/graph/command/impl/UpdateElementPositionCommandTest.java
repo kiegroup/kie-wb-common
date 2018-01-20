@@ -65,7 +65,8 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
         when(candidate.getContent()).thenReturn(content);
         when(graphIndex.getNode(eq(UUID))).thenReturn(candidate);
         this.tested = new UpdateElementPositionCommand(candidate,
-                                                       LOCATION);
+                                                       LOCATION,
+                                                       false);
     }
 
     @Test
@@ -83,7 +84,8 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
     public void testAllowNodeNotFound() {
         this.tested = new UpdateElementPositionCommand(UUID,
                                                        LOCATION,
-                                                       PREVIOUS_LOCATION);
+                                                       PREVIOUS_LOCATION,
+                                                       false);
         when(graphIndex.getNode(eq(UUID))).thenReturn(null);
         tested.allow(graphCommandExecutionContext);
     }
@@ -116,7 +118,8 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
     public void testExecuteNodeNotFound() {
         this.tested = new UpdateElementPositionCommand(UUID,
                                                        LOCATION,
-                                                       PREVIOUS_LOCATION);
+                                                       PREVIOUS_LOCATION,
+                                                       false);
         when(graphIndex.getNode(eq(UUID))).thenReturn(null);
         tested.execute(graphCommandExecutionContext);
     }
@@ -125,7 +128,8 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
     @SuppressWarnings("unchecked")
     public void testAllowBadBounds() {
         this.tested = new UpdateElementPositionCommand(candidate,
-                                                       new Point2D(600d, 600d));
+                                                       new Point2D(600d, 600d),
+                                                       false);
         final CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
         verify(content,
                never()).setBounds(any(Bounds.class));
@@ -137,7 +141,8 @@ public class UpdateElementPositionCommandTest extends AbstractGraphCommandTest {
     @SuppressWarnings("unchecked")
     public void testExecuteBadBounds() {
         this.tested = new UpdateElementPositionCommand(candidate,
-                                                       new Point2D(600d, 600d));
+                                                       new Point2D(600d, 600d),
+                                                       false);
         final CommandResult<RuleViolation> result = tested.execute(graphCommandExecutionContext);
         verify(content,
                never()).setBounds(any(Bounds.class));

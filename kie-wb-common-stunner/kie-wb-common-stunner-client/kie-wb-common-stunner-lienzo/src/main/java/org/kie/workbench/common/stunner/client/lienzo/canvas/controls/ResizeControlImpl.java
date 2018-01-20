@@ -273,8 +273,8 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
             if (null != x && null != y) {
                 commandBuilder
                         .addCommand(canvasCommandFactory.updatePosition((Node<View<?>, Edge>) element,
-                                                                        new Point2D(x,
-                                                                                    y)));
+                                                                        new Point2D(x, y),
+                                                                        false));
             }
             commands.forEach(commandBuilder::addCommand);
         }
