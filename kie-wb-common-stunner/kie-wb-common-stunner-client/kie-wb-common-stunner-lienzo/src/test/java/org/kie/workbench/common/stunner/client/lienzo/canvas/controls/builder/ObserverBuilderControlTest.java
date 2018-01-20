@@ -80,6 +80,7 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -170,7 +171,7 @@ public class ObserverBuilderControlTest {
             }
         });
 
-        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class), false)).thenAnswer(new Answer<Command>() {
+        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class), eq(false))).thenAnswer(new Answer<Command>() {
 
             @Override
             public Command answer(InvocationOnMock invocationOnMock) {
