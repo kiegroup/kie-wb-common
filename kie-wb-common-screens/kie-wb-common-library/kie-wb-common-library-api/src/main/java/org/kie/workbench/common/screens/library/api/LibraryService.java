@@ -80,6 +80,10 @@ public interface LibraryService {
 
     Project importProject(final ExampleProject exampleProject);
 
+    Set<ExampleProject> getProjects(final String repositoryUrl,
+                                    final String userName,
+                                    final String password);
+
     List<OrganizationalUnit> getOrganizationalUnits();
 
     Map<OrganizationalUnit, Integer> getNumberOfProjectsByOrganizationalUnit(final List<OrganizationalUnit> organizationalUnits);

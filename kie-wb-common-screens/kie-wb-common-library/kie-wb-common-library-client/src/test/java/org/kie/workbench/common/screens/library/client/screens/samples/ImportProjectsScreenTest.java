@@ -114,6 +114,8 @@ public class ImportProjectsScreenTest {
         Map<String, String> params = new HashMap<>();
         params.put("title",
                    "Import Projects");
+        params.put("repositoryUrl",
+                   "repoUrl");
 
         importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
                                                                params));
@@ -150,7 +152,11 @@ public class ImportProjectsScreenTest {
 
     @Test
     public void onStartupWithoutProjectsTest() {
-        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN));
+        Map<String, String> params = new HashMap<>();
+        params.put("repositoryUrl",
+                   "repoUrl");
+        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
+                                                               params));
 
         verify(view).hideBusyIndicator();
         verify(notificationEvent).fire(any());
@@ -174,7 +180,11 @@ public class ImportProjectsScreenTest {
                                         null));
         doReturn(projects).when(libraryService).getProjects(anyString());
 
-        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN));
+        Map<String, String> params = new HashMap<>();
+        params.put("repositoryUrl",
+                   "repoUrl");
+        importProjectsScreen.onStartup(new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
+                                                               params));
         final List<TileWidget> filteredProjects = importProjectsScreen.filterProjects("a");
 
         assertEquals(2,
