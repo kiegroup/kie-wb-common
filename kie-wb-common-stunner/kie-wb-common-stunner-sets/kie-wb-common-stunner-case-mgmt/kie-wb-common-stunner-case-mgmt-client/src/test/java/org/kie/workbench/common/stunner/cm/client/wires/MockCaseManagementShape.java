@@ -48,8 +48,7 @@ public class MockCaseManagementShape extends AbstractCaseManagementShape<WiresCo
     public WiresContainerShapeView setSizeConstraints(final double minWidth,
                                                       final double minHeight,
                                                       final double maxWidth,
-                                                      final double maxHeight)
-    {
+                                                      final double maxHeight) {
         getPath().setSizeConstraints(new BoundingBox(minWidth,
                                                      minHeight,
                                                      maxWidth,

@@ -93,10 +93,9 @@ public abstract class AbstractCaseManagementShape<T extends WiresContainerShapeV
 
     @Override
     public T setSizeConstraints(final double minWidth,
-                                           final double minHeight,
-                                           final double maxWidth,
-                                           final double maxHeight)
-    {
+                                final double minHeight,
+                                final double maxWidth,
+                                final double maxHeight) {
         getPath().setSizeConstraints(new BoundingBox(minWidth,
                                                      minHeight,
                                                      maxWidth,

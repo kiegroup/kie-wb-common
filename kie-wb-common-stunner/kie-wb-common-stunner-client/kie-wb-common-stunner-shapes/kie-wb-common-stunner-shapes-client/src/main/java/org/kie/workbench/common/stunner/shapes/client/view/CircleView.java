@@ -42,7 +42,6 @@ public class CircleView extends AbstractHasRadiusView<CircleView> {
         return this;
     }
 
-
     private static MultiPath create(final MultiPath path,
                                     final double radius) {
         return path.M(radius,
