@@ -25,7 +25,6 @@ import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionsConverters;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -101,7 +100,7 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
         ProcessConverter processConverter = new ProcessConverter(typedFactoryManager, definitionResolver);
 
         Process processDiagram =
-                (Process) DefinitionsConverters.asStream(definitions)
+                (Process) definitions.getRootElements().stream()
                         .filter(el -> el instanceof Process)
                         .findFirst().get();
 

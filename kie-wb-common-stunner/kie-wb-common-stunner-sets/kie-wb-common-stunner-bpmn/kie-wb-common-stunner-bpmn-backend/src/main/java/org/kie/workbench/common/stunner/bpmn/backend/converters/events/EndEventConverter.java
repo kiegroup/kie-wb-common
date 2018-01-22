@@ -17,7 +17,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -25,6 +25,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.Executable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRefExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -33,14 +37,10 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class EndEventConverter {
 
     private final TypedFactoryManager factoryManager;
-    private final MessageEventDefinitionConverter messageEventDefinitionConverter;
-    private final ErrorEventDefinitionConverter errorEventDefinitionConverter;
     private final DefinitionResolver definitionResolver;
 
     public EndEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
-        this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
-        this.errorEventDefinitionConverter = new ErrorEventDefinitionConverter(factoryManager);
         this.definitionResolver = definitionResolver;
     }
 
@@ -66,21 +66,38 @@ public class EndEventConverter {
                                 factoryManager.newNode(nodeId, EndTerminateEvent.class))
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
-                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                                    endEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
-                            ScopedSignalEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+
+                            EndSignalEvent definition = node.getContent().getDefinition();
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            ScopedSignalEventExecutionSet executionSet = definition.getExecutionSet();
                             executionSet.getSignalScope().setValue(Properties.findMetaValue(endEvent.getExtensionValues(), "customScope"));
                             executionSet.getSignalRef().setValue(definitionResolver.resolveSignal(e.getSignalRef()).map(Signal::getName).orElse(""));
 
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
-                            Node<View<EndMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, EndMessageEvent.class);
-                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                                    endEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
+                            Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
+
+                            EndMessageEvent definition = node.getContent().getDefinition();
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            MessageEventExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.getMessageRef().setValue(e.getMessageRef().getName());
+
                             return node;
                         })
-                        .when(ErrorEventDefinition.class, e -> errorEventDefinitionConverter.convert(e, nodeId, EndErrorEvent.class))
+                        .when(ErrorEventDefinition.class, e -> {
+                            Node<View<EndErrorEvent>, Edge> node = factoryManager.newNode(nodeId, EndErrorEvent.class);
+
+                            EndErrorEvent definition = node.getContent().getDefinition();
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            ErrorExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.getErrorRef().setValue(e.getErrorRef().getErrorCode());
+
+                            return node;
+                        })
                         .missing(EscalationEventDefinition.class)
                         .missing(CompensateEventDefinition.class)
                         .missing(CancelEventDefinition.class)

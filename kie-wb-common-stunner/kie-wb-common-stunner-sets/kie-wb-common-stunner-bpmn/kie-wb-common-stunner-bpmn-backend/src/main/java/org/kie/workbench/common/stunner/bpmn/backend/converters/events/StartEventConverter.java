@@ -11,20 +11,30 @@ import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.AssignmentsInfoStringBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.InterruptingExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRefExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -33,18 +43,10 @@ public class StartEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final DefinitionResolver definitionResolver;
-    private final MessageEventDefinitionConverter messageEventDefinitionConverter;
-    private final ErrorEventDefinitionConverter errorEventDefinitionConverter;
-    private final SignalEventDefinitionConverter signalEventDefinitionConverter;
-    private final TimerEventDefinitionConverter timerEventDefinitionConverter;
 
     public StartEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
-        this.messageEventDefinitionConverter = new MessageEventDefinitionConverter(factoryManager);
-        this.errorEventDefinitionConverter = new ErrorEventDefinitionConverter(factoryManager);
-        this.signalEventDefinitionConverter = new SignalEventDefinitionConverter(factoryManager, definitionResolver);
-        this.timerEventDefinitionConverter = new TimerEventDefinitionConverter(factoryManager);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(StartEvent startEvent) {
@@ -62,23 +64,49 @@ public class StartEventConverter {
                 return factoryManager.newNode(nodeId, StartNoneEvent.class);
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseStartEvent.class)
-                        .when(SignalEventDefinition.class, e -> signalEventDefinitionConverter.convert(e, nodeId, StartSignalEvent.class))
+                        .when(SignalEventDefinition.class, e -> {
+
+                            Node<View<StartSignalEvent>, Edge> node = factoryManager.newNode(nodeId, StartSignalEvent.class);
+
+                            SignalExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+                            SignalRef signalRef = executionSet.getSignalRef();
+                            definitionResolver.resolveSignal(e.getSignalRef())
+                                    .ifPresent(signal -> signalRef.setValue(signal.getName()));
+
+                            return node;
+                        })
                         .when(MessageEventDefinition.class, e -> {
-                            Node<View<StartMessageEvent>, Edge> node = messageEventDefinitionConverter.convert(e, nodeId, StartMessageEvent.class);
-                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                                    startEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
+                            Node<View<StartMessageEvent>, Edge> node = factoryManager.newNode(nodeId, StartMessageEvent.class);
+
+                            StartMessageEvent definition = node.getContent().getDefinition();
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(startEvent));
+
+                            InterruptingMessageEventExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.getMessageRef().setValue(e.getMessageRef().getName());
+
                             return node;
                         })
                         .when(TimerEventDefinition.class, e -> {
-                            Node<View<StartTimerEvent>, Edge> node = timerEventDefinitionConverter.convert(e, nodeId, StartTimerEvent.class);
-                            InterruptingTimerEventExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
+                            Node<View<StartTimerEvent>, Edge> node = factoryManager.newNode(nodeId, StartTimerEvent.class);
+
+                            StartTimerEvent definition = node.getContent().getDefinition();
+
+                            InterruptingTimerEventExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.setTimerSettings(TimerEventDefinitionConverter.convertTimerEventDefinition(e));
                             executionSet.getIsInterrupting().setValue(startEvent.isIsInterrupting());
+
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
-                            Node<View<StartErrorEvent>, Edge> node = errorEventDefinitionConverter.convert(e, nodeId, StartErrorEvent.class);
-                            AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                                    startEvent, node.getContent().getDefinition().getDataIOSet().getAssignmentsinfo());
+                            Node<View<StartErrorEvent>, Edge> node = factoryManager.newNode(nodeId, StartErrorEvent.class);
+
+
+                            StartErrorEvent definition = node.getContent().getDefinition();
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(startEvent));
+
+                            InterruptingErrorEventExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.getErrorRef().setValue(e.getErrorRef().getErrorCode());
+
                             return node;
                         })
                         .missing(ConditionalEventDefinition.class)

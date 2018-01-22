@@ -1,7 +1,8 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
@@ -21,12 +22,12 @@ public class BusinessRuleTaskConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.BusinessRuleTask task) {
         Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(task.getId(), BusinessRuleTask.class);
-        BusinessRuleTask taskDef = node.getContent().getDefinition();
-        AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                task, taskDef.getDataIOSet().getAssignmentsinfo());
 
-        taskDef.getGeneral().getName().setValue(task.getName());
-        BusinessRuleTaskExecutionSet executionSet = taskDef.getExecutionSet();
+        BusinessRuleTask definition = node.getContent().getDefinition();
+        BPMNGeneralSets.setProperties(task, definition.getGeneral());
+        definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(task));
+
+        BusinessRuleTaskExecutionSet executionSet = definition.getExecutionSet();
         executionSet.getIsAsync().setValue(findMetaBoolean(task, "customAsync"));
 
         executionSet.getRuleFlowGroup().setValue(findAnyAttribute(task, "ruleFlowGroup"));

@@ -1,4 +1,4 @@
-package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
+package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,61 +22,7 @@ import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
-public class AssignmentsInfoStringBuilder {
-    public static void setAssignmentsInfo(Activity activity, AssignmentsInfo assignmentsInfo) {
-        InputOutputSpecification ioSpecification = activity.getIoSpecification();
-        if (ioSpecification == null) {
-            assignmentsInfo.setValue(
-                    AssignmentsInfoStringBuilder.makeString(
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            activity.getDataInputAssociations(),
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            activity.getDataOutputAssociations()
-                    )
-            );
-        } else {
-            assignmentsInfo.setValue(
-                    AssignmentsInfoStringBuilder.makeString(
-                            ioSpecification.getDataInputs(),
-                            ioSpecification.getInputSets(),
-                            activity.getDataInputAssociations(),
-                            ioSpecification.getDataOutputs(),
-                            ioSpecification.getOutputSets(),
-                            activity.getDataOutputAssociations()
-                    )
-            );
-
-        }
-    }
-
-
-    public static void setAssignmentsInfo(ThrowEvent event, AssignmentsInfo assignmentsInfo) {
-        assignmentsInfo.setValue(
-                AssignmentsInfoStringBuilder.makeString(
-                        event.getDataInputs(),
-                        Collections.singletonList(event.getInputSet()),
-                        event.getDataInputAssociation(),
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        Collections.emptyList()
-                )
-        );
-    }
-
-    public static void setAssignmentsInfo(CatchEvent event, AssignmentsInfo assignmentsInfo) {
-        assignmentsInfo.setValue(
-                AssignmentsInfoStringBuilder.makeString(
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        Collections.emptyList(),
-                        event.getDataOutputs(),
-                        Collections.singletonList(event.getOutputSet()),
-                        event.getDataOutputAssociation()
-                )
-        );
-    }
+public class AssignmentsInfos {
 
     public static String makeString(
             final List<DataInput> datainput,
@@ -108,27 +54,27 @@ public class AssignmentsInfoStringBuilder {
 
     private static String inputSetsToString(List<InputSet> inputSets) {
         return inputSets.stream()
-                .map(AssignmentsInfoStringBuilder::toString)
+                .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }
 
     private static String outputSetsToString(List<OutputSet> outputSets) {
         return outputSets.stream()
-                .map(AssignmentsInfoStringBuilder::toString)
+                .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }
 
     public static String dataInputsToString(List<DataInput> dataInputs) {
         return dataInputs.stream()
                 .filter(o -> !extractDtype(o).isEmpty())
-                .map(AssignmentsInfoStringBuilder::toString)
+                .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }
 
     public static String dataOutputsToString(List<DataOutput> dataInputs) {
         return dataInputs.stream()
                 .filter(o -> !extractDtype(o).isEmpty())
-                .map(AssignmentsInfoStringBuilder::toString)
+                .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }
 

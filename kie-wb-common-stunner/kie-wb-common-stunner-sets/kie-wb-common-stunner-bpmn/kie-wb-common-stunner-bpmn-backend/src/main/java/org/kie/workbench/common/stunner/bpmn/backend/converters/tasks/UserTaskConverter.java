@@ -1,5 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
+import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
@@ -27,9 +28,15 @@ public class UserTaskConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.UserTask task) {
         Node<View<UserTask>, Edge> node = factoryManager.newNode(task.getId(), UserTask.class);
 
-        UserTaskExecutionSet executionSet = node.getContent().getDefinition().getExecutionSet();
-        AssignmentsInfoStringBuilder.setAssignmentsInfo(
-                task, executionSet.getAssignmentsinfo());
+        UserTask definition = node.getContent().getDefinition();
+        resolver.resolveSimulationParameters(task.getId())
+                .ifPresent(params -> Simulations.setProperties(params, definition.getSimulationSet()));
+        // Simulations.getAssignmentsInfo(elementParameters, node.getContent().getDefinition().getSimulationSet());
+
+        UserTaskExecutionSet executionSet = definition.getExecutionSet();
+
+        executionSet.getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(task));
+
 
         executionSet.getTaskName().setValue(task.getName());
         executionSet.getIsAsync().setValue(findMetaBoolean(task, "customAsync"));
@@ -46,9 +53,6 @@ public class UserTaskConverter {
         executionSet.getGroupid().setValue(findInputValue(task, "GroupId"));
 
         Scripts.setProperties(task, executionSet);
-        resolver.resolveSimulationParameters(task.getId())
-                .ifPresent(params -> Simulations.setProperties(params, node.getContent().getDefinition().getSimulationSet()));
-        // Simulations.setProperties(elementParameters, node.getContent().getDefinition().getSimulationSet());
         return node;
     }
 }

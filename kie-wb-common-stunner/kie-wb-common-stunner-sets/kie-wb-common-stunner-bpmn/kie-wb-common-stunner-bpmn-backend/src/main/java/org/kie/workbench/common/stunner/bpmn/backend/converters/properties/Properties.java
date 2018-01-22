@@ -1,6 +1,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -8,16 +9,20 @@ import java.util.stream.Collectors;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.PotentialOwner;
 import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.Task;
+import org.eclipse.bpmn2.ThrowEvent;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
@@ -25,6 +30,60 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Scriptable
 
 public class Properties {
 
+    public static String getAssignmentsInfo(Activity activity) {
+        InputOutputSpecification ioSpecification = activity.getIoSpecification();
+        if (ioSpecification == null) {
+            return (
+                    AssignmentsInfos.makeString(
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            activity.getDataInputAssociations(),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            activity.getDataOutputAssociations()
+                    )
+            );
+        } else {
+            return (
+                    AssignmentsInfos.makeString(
+                            ioSpecification.getDataInputs(),
+                            ioSpecification.getInputSets(),
+                            activity.getDataInputAssociations(),
+                            ioSpecification.getDataOutputs(),
+                            ioSpecification.getOutputSets(),
+                            activity.getDataOutputAssociations()
+                    )
+            );
+
+        }
+    }
+
+
+    public static String getAssignmentsInfo(ThrowEvent event) {
+        return (
+                AssignmentsInfos.makeString(
+                        event.getDataInputs(),
+                        Collections.singletonList(event.getInputSet()),
+                        event.getDataInputAssociation(),
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        Collections.emptyList()
+                )
+        );
+    }
+
+    public static String getAssignmentsInfo(CatchEvent event) {
+        return (
+                AssignmentsInfos.makeString(
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        Collections.emptyList(),
+                        event.getDataOutputs(),
+                        Collections.singletonList(event.getOutputSet()),
+                        event.getDataOutputAssociation()
+                )
+        );
+    }
     public static boolean findAnyAttributeBoolean(BaseElement element, String attributeId) {
         return Boolean.parseBoolean(findAnyAttribute(element, attributeId));
     }
