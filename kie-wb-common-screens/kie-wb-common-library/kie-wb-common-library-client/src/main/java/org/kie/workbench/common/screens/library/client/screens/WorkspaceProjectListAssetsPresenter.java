@@ -270,7 +270,7 @@ public class WorkspaceProjectListAssetsPresenter {
         }
 
         final String projectRootPath = project.getRepository().getDefaultBranch().get().getPath().toURI();
-        final String relativeAssetPath = fullPath.substring(projectRootPath.length() + 1);
+        final String relativeAssetPath = fullPath.substring(projectRootPath.length());
         final String decodedRelativeAssetPath = URIUtil.decode(relativeAssetPath);
 
         return decodedRelativeAssetPath;

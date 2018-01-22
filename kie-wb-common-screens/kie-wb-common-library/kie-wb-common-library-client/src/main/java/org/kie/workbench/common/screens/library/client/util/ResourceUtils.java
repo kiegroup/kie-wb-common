@@ -58,7 +58,7 @@ public class ResourceUtils {
     }
 
     public static boolean isDefaultProjectHandler(final NewResourceHandler handler) {
-        return handler.getClass().getName().contains("org.kie.workbench.common.screens.projecteditor.client.handlers.NewProjectHandler");
+        return handler.getClass().getName().contains("org.kie.workbench.common.screens.projecteditor.client.handlers.NewWorkspaceProjectHandler");
     }
 
     public static boolean isPackageHandler(final NewResourceHandler handler) {

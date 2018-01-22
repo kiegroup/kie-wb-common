@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.screens.library.client.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.enterprise.event.Event;
 
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
@@ -39,12 +41,12 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.examples.client.wizard.ExamplesWizard;
 import org.kie.workbench.common.screens.explorer.model.URIStructureExplorerModel;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
 import org.kie.workbench.common.screens.library.client.events.WorkbenchProjectMetricsEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
+import org.kie.workbench.common.screens.library.client.screens.importrepository.ImportRepositoryPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.widgets.library.LibraryToolbarPresenter;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.workbench.client.docks.AuthoringWorkbenchDocks;
@@ -117,9 +119,6 @@ public class LibraryPlacesTest {
     private Event<NotificationEvent> notificationEvent;
 
     @Mock
-    private ManagedInstance<ExamplesWizard> examplesWizards;
-
-    @Mock
     private TranslationUtils translationUtils;
 
     @Mock
@@ -131,6 +130,12 @@ public class LibraryPlacesTest {
 
     @Mock
     private Event<PreferencesCentralInitializationEvent> preferencesCentralInitializationEvent;
+
+    @Mock
+    private ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters;
+
+    @Mock
+    private ImportRepositoryPopUpPresenter importRepositoryPopUpPresenter;
 
     @Mock
     private WorkspaceProjectService projectService;
@@ -171,11 +176,12 @@ public class LibraryPlacesTest {
                                               docks,
                                               projectContextChangeEvent,
                                               notificationEvent,
-                                              examplesWizards,
                                               translationUtils,
                                               vfsServiceCaller,
                                               projectScopedResolutionStrategySupplier,
-                                              preferencesCentralInitializationEvent));
+                                              preferencesCentralInitializationEvent,
+                                              importRepositoryPopUpPresenters));
+        libraryPlaces.setup();
 
         verify(libraryToolBarView).getElement();
 
@@ -208,6 +214,8 @@ public class LibraryPlacesTest {
         doReturn(pathPlaceRequest).when(libraryPlaces).createPathPlaceRequest(any());
 
         doReturn(true).when(placeManager).closeAllPlacesOrNothing();
+
+        doReturn(importRepositoryPopUpPresenter).when(importRepositoryPopUpPresenters).get();
     }
 
     @Test
@@ -575,6 +583,54 @@ public class LibraryPlacesTest {
     }
 
     @Test
+    public void goToTrySamplesTest() {
+        doReturn(true).when(libraryPlaces).closeAllPlacesOrNothing();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("trySamples",
+                   "true");
+        final PlaceRequest trySamplesScreen = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
+                                                                      params);
+        final PartDefinitionImpl part = new PartDefinitionImpl(trySamplesScreen);
+        part.setSelectable(false);
+
+        libraryPlaces.goToTrySamples();
+
+        verify(libraryPlaces).closeAllPlacesOrNothing();
+        verify(placeManager).goTo(eq(part),
+                                  any(PanelDefinition.class));
+        verify(libraryPlaces).setupLibraryBreadCrumbsForTrySamples();
+    }
+
+    @Test
+    public void goToImportRepositoryPopUpTest() {
+        libraryPlaces.goToImportRepositoryPopUp();
+        verify(importRepositoryPopUpPresenter).show();
+    }
+
+    @Test
+    public void goToImportProjectsTest() {
+        doReturn(true).when(libraryPlaces).closeAllPlacesOrNothing();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("title",
+                   null);
+        params.put("repositoryUrl",
+                   "repositoryUrl");
+        final PlaceRequest importProjectsScreen = new DefaultPlaceRequest(LibraryPlaces.IMPORT_PROJECTS_SCREEN,
+                                                                      params);
+        final PartDefinitionImpl part = new PartDefinitionImpl(importProjectsScreen);
+        part.setSelectable(false);
+
+        libraryPlaces.goToImportProjects("repositoryUrl");
+
+        verify(libraryPlaces).closeAllPlacesOrNothing();
+        verify(placeManager).goTo(eq(part),
+                                  any(PanelDefinition.class));
+        verify(libraryPlaces).setupLibraryBreadCrumbsForImportProjects("repositoryUrl");
+    }
+
+    @Test
     public void closeLibraryPlacesTest() {
         libraryPlaces.closeLibraryPlaces();
         verify(placeManager).closePlace(LibraryPlaces.LIBRARY_SCREEN);
@@ -612,17 +668,6 @@ public class LibraryPlacesTest {
         verify(projectContextChangeEvent, never()).fire(any(WorkspaceProjectContextChangeEvent.class));
 
         verify(placeManager, never()).closeAllPlacesOrNothing();
-    }
-
-    @Test
-    public void goToImportProjectWizardTest() {
-        final ExamplesWizard examplesWizard = mock(ExamplesWizard.class);
-        doReturn(examplesWizard).when(examplesWizards).get();
-
-        libraryPlaces.goToImportProjectWizard();
-
-        verify(examplesWizard).start();
-        verify(examplesWizard).setDefaultTargetOrganizationalUnit(anyString());
     }
 
     @Test

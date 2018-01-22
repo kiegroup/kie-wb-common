@@ -53,9 +53,6 @@ public class LibraryScreenTest {
     private ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters;
 
     @Mock
-    private ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters;
-
-    @Mock
     private OrganizationalUnitController organizationalUnitController;
 
     @Mock
@@ -98,8 +95,6 @@ public class LibraryScreenTest {
 
     @Before
     public void setup() {
-
-        doReturn(importRepositoryPopUpPresenter).when(importRepositoryPopUpPresenters).get();
         doReturn(editContributorsPopUpPresenter).when(editContributorsPopUpPresenters).get();
         doReturn(deleteOrganizationalUnitPopUpPresenter).when(deleteOrganizationalUnitPopUpPresenters).get();
         doReturn(orgUnitsMetricsView).when(orgUnitsMetricsScreen).getView();
@@ -114,7 +109,6 @@ public class LibraryScreenTest {
         libraryScreen = new LibraryScreen(view,
                                           deleteOrganizationalUnitPopUpPresenters,
                                           editContributorsPopUpPresenters,
-                                          importRepositoryPopUpPresenters,
                                           projectContext,
                                           organizationalUnitController,
                                           projectController,
@@ -161,7 +155,7 @@ public class LibraryScreenTest {
     public void importProjectWithPermissionTest() {
         libraryScreen.importProject();
 
-        verify(importRepositoryPopUpPresenter).show();
+        verify(libraryPlaces).goToImportRepositoryPopUp();
     }
 
     @Test
@@ -170,8 +164,8 @@ public class LibraryScreenTest {
 
         libraryScreen.importProject();
 
-        verify(importRepositoryPopUpPresenter,
-               never()).show();
+        verify(libraryPlaces,
+               never()).goToImportRepositoryPopUp();
     }
 
     @Test

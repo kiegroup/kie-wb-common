@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
-import org.kie.workbench.common.screens.library.client.screens.importrepository.ImportRepositoryPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.edit.EditContributorsPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ContributorsListPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.delete.DeleteOrganizationalUnitPopUpPresenter;
@@ -65,8 +63,6 @@ public class LibraryScreen {
 
     private ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters;
 
-    private ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters;
-
     private OrganizationalUnitController organizationalUnitController;
 
     private WorkspaceProjectContext projectContext;
@@ -88,7 +84,6 @@ public class LibraryScreen {
     public LibraryScreen(final View view,
                          final ManagedInstance<DeleteOrganizationalUnitPopUpPresenter> deleteOrganizationalUnitPopUpPresenters,
                          final ManagedInstance<EditContributorsPopUpPresenter> editContributorsPopUpPresenters,
-                         final ManagedInstance<ImportRepositoryPopUpPresenter> importRepositoryPopUpPresenters,
                          final WorkspaceProjectContext projectContext,
                          final OrganizationalUnitController organizationalUnitController,
                          final ProjectController projectController,
@@ -101,7 +96,6 @@ public class LibraryScreen {
         this.view = view;
         this.deleteOrganizationalUnitPopUpPresenters = deleteOrganizationalUnitPopUpPresenters;
         this.editContributorsPopUpPresenters = editContributorsPopUpPresenters;
-        this.importRepositoryPopUpPresenters = importRepositoryPopUpPresenters;
         this.projectContext = projectContext;
         this.organizationalUnitController = organizationalUnitController;
         this.projectController = projectController;
@@ -129,8 +123,7 @@ public class LibraryScreen {
 
     public void importProject() {
         if (userCanCreateProjects()) {
-            final ImportRepositoryPopUpPresenter importRepositoryPopUpPresenter = importRepositoryPopUpPresenters.get();
-            importRepositoryPopUpPresenter.show();
+            libraryPlaces.goToImportRepositoryPopUp();
         }
     }
 
