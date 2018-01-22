@@ -28,20 +28,6 @@
   <properties>
     <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
   </properties>
-  <dependencyManagement>
-      <dependencies>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>jaxrs-cdi</artifactId>
-            <version>${version.org.wildfly.swarm}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.swarm</groupId>
-            <artifactId>container</artifactId>
-            <version>${version.org.wildfly.swarm}</version>
-        </dependency>
-      </dependencies>
-  </dependencyManagement>
   <dependencies>
     <!-- Swarm Fractions -->
     <dependency>
@@ -56,19 +42,21 @@
           <groupId>javax.inject</groupId>
           <artifactId>javax.inject</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly.swarm</groupId>
-      <artifactId>container</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.wildfly.swarm</groupId>
-          <artifactId>bootstrap</artifactId>
-        </exclusion>
         <exclusion>
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.modules</groupId>
+          <artifactId>jboss-modules</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -80,11 +68,11 @@
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm-all</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm-tree</artifactId>
+        </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.wildfly.swarm</groupId>
-      <artifactId>jaxrs-cdi</artifactId>
     </dependency>
 
     <!-- GUVNOR ALA Dependencies -->
@@ -149,13 +137,6 @@
     <dependency>
       <groupId>org.kie.workbench</groupId>
       <artifactId>kie-wb-common-ala-docker-provider</artifactId>
-      <exclusions>
-        <!-- These dependency shaded and conflicts with other dependencies -->
-        <exclusion>
-          <groupId>com.spotify</groupId>
-          <artifactId>docker-client</artifactId>
-        </exclusion>     
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench</groupId>
