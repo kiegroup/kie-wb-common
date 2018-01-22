@@ -80,8 +80,6 @@ public abstract class BaseThrowingIntermediateEvent
         labels.add("cmnop");
     }
 
-    ;
-
     public BaseThrowingIntermediateEvent() {
         initLabels();
     }

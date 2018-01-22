@@ -43,8 +43,8 @@ public abstract class AbstractTranslationService implements StunnerTranslationSe
     }
 
     @Override
-    public String getPropertySetName(String proepSetId) {
-        return getKeyValue(proepSetId + I18N_SEPARATOR + CAPTION_SUFFIX);
+    public String getPropertySetName(String propSetId) {
+        return getKeyValue(propSetId + I18N_SEPARATOR + CAPTION_SUFFIX);
     }
 
     @Override
