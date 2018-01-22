@@ -12,7 +12,10 @@ import bpsim.Scenario;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.Signal;
+import org.eclipse.bpmn2.Task;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Simulations;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class DefinitionResolver {
 
@@ -38,7 +41,17 @@ public class DefinitionResolver {
         return Optional.ofNullable(signals.get(id));
     }
 
+    public String resolveSignalName(String id) {
+        return resolveSignal(id).map(Signal::getName).orElse("");
+    }
+
     public Optional<ElementParameters> resolveSimulationParameters(String id) {
         return Optional.ofNullable(elementParameters.get(id));
+    }
+
+    public SimulationSet extractSimulationSet(Task task) {
+        return this.resolveSimulationParameters(task.getId())
+                .map(Simulations::simulationSet)
+                .orElse(new SimulationSet());
     }
 }

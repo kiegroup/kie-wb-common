@@ -16,20 +16,23 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Simu
 
 public class Simulations {
 
-    public static void setProperties(ElementParameters eleType, SimulationSet simulationSet) {
-        timeParams(eleType, simulationSet);
+    public static SimulationSet simulationSet(ElementParameters eleType) {
+        SimulationSet simulationSet = timeParams(eleType);
         unitCost(eleType, simulationSet);
         controlParams(eleType, simulationSet);
         resourceParams(eleType, simulationSet);
+        return simulationSet;
     }
 
-    private static void timeParams(ElementParameters eleType, SimulationSet simulationSet) {
+    private static SimulationSet timeParams(ElementParameters eleType) {
+        SimulationSet simulationSet = new SimulationSet();
+
         TimeParameters timeParams = eleType.getTimeParameters();
-        if (timeParams == null) return;
+        if (timeParams == null) return simulationSet;
         Parameter processingTime = timeParams.getProcessingTime();
         ParameterValue paramValue = processingTime.getParameterValue().get(0);
 
-        Match.of(ParameterValue.class, SimulationSet.class)
+        return Match.of(ParameterValue.class, SimulationSet.class)
             .when(NormalDistributionType.class, ndt -> {
                 simulationSet.getMean().setValue(ndt.getMean());
                 simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
@@ -46,7 +49,7 @@ public class Simulations {
                 simulationSet.getMean().setValue(pdt.getMean());
                 simulationSet.getDistributionType().setValue("poisson");
                 return simulationSet;
-            }).apply(paramValue);
+            }).apply(paramValue).value();
 
         // FIXME waittime ??
     }

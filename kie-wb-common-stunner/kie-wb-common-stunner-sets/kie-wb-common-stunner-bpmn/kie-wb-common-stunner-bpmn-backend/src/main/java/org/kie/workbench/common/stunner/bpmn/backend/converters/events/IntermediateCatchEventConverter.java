@@ -24,8 +24,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCa
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.CancellingErrorEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRefExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalExecutionSet;
@@ -67,8 +70,11 @@ public class IntermediateCatchEventConverter {
 
                             IntermediateTimerEvent definition = node.getContent().getDefinition();
 
-                            CancellingTimerEventExecutionSet executionSet = definition.getExecutionSet();
-                            executionSet.setTimerSettings(TimerEventDefinitionConverter.convertTimerEventDefinition(e));
+                            definition.setExecutionSet(new CancellingTimerEventExecutionSet(
+                                    new CancelActivity(Properties.findAnyAttributeBoolean(catchEvent, "boundaryca")),
+                                    TimerEventDefinitionConverter.convertTimerEventDefinition(e)
+                            ));
+
                             return node;
                         })
                         .when(SignalEventDefinition.class, e -> {
@@ -77,10 +83,10 @@ public class IntermediateCatchEventConverter {
                             IntermediateSignalEventCatching definition = node.getContent().getDefinition();
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(catchEvent));
 
-                            CancellingSignalEventExecutionSet executionSet = definition.getExecutionSet();
-                            SignalRef signalRef = executionSet.getSignalRef();
-                            definitionResolver.resolveSignal(e.getSignalRef())
-                                    .ifPresent(signal -> signalRef.setValue(signal.getName()));
+                            definition.setExecutionSet(new CancellingSignalEventExecutionSet(
+                                    new CancelActivity(Properties.findAnyAttributeBoolean(catchEvent, "boundaryca")),
+                                    new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
+                            ));
 
                             return node;
                         })
@@ -91,7 +97,14 @@ public class IntermediateCatchEventConverter {
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(catchEvent));
 
                             CancellingMessageEventExecutionSet executionSet = definition.getExecutionSet();
+                            executionSet.getCancelActivity().setValue(Properties.findAnyAttributeBoolean(catchEvent, "boundaryca"));
                             executionSet.getMessageRef().setValue(e.getMessageRef().getName());
+
+                            definition.setExecutionSet(new CancellingMessageEventExecutionSet(
+                                    new CancelActivity(Properties.findAnyAttributeBoolean(catchEvent, "boundaryca")),
+                                    new MessageRef(e.getMessageRef().getName())
+                            ));
+
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
@@ -100,8 +113,10 @@ public class IntermediateCatchEventConverter {
                             IntermediateErrorEventCatching definition = node.getContent().getDefinition();
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(catchEvent));
 
-                            CancellingErrorEventExecutionSet executionSet = definition.getExecutionSet();
-                            executionSet.getErrorRef().setValue(e.getErrorRef().getErrorCode());
+                            definition.setExecutionSet(new CancellingErrorEventExecutionSet(
+                                    new CancelActivity(true),
+                                    new ErrorRef(e.getErrorRef().getErrorCode())
+                            ));
 
                             return node;
                         })

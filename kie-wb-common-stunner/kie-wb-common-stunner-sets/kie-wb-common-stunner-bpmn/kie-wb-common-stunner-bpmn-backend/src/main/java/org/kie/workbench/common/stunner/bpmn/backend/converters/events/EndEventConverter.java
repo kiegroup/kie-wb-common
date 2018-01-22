@@ -26,10 +26,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Executable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRefExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -70,9 +75,10 @@ public class EndEventConverter {
                             EndSignalEvent definition = node.getContent().getDefinition();
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
 
-                            ScopedSignalEventExecutionSet executionSet = definition.getExecutionSet();
-                            executionSet.getSignalScope().setValue(Properties.findMetaValue(endEvent.getExtensionValues(), "customScope"));
-                            executionSet.getSignalRef().setValue(definitionResolver.resolveSignal(e.getSignalRef()).map(Signal::getName).orElse(""));
+                            definition.setExecutionSet(new ScopedSignalEventExecutionSet(
+                                    new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef())),
+                                    new SignalScope(Properties.findMetaValue(endEvent.getExtensionValues(), "customScope"))
+                            ));
 
                             return node;
                         })
@@ -82,9 +88,9 @@ public class EndEventConverter {
                             EndMessageEvent definition = node.getContent().getDefinition();
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
 
-                            MessageEventExecutionSet executionSet = definition.getExecutionSet();
-                            executionSet.getMessageRef().setValue(e.getMessageRef().getName());
-
+                            definition.setExecutionSet(new MessageEventExecutionSet(
+                                    new MessageRef(e.getMessageRef().getName())
+                            ));
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
@@ -93,8 +99,9 @@ public class EndEventConverter {
                             EndErrorEvent definition = node.getContent().getDefinition();
                             definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
 
-                            ErrorExecutionSet executionSet = definition.getExecutionSet();
-                            executionSet.getErrorRef().setValue(e.getErrorRef().getErrorCode());
+                            definition.setExecutionSet(new ErrorEventExecutionSet(
+                                    new ErrorRef(e.getErrorRef().getErrorCode())
+                            ));
 
                             return node;
                         })
