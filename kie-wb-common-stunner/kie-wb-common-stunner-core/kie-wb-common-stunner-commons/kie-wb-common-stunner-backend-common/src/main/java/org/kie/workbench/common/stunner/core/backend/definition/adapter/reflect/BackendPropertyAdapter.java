@@ -119,11 +119,11 @@ public class BackendPropertyAdapter<T> extends AbstractReflectAdapter<T> impleme
         try {
             final Boolean value = getAnnotatedFieldValue(property,
                                                          Optional.class);
-            return null != value ? value : false;
+            return null != value ? value : true;
         } catch (Exception e) {
             LOG.error("Error obtaining annotated category for Property with id " + getId(property));
         }
-        return false;
+        return true;
     }
 
     @Override

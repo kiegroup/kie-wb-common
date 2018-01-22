@@ -19,7 +19,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -34,9 +33,6 @@ import org.kie.workbench.common.stunner.core.definition.property.type.ColorType;
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class BgColour implements DMNProperty {
 
-    @FieldLabel
-    public static final transient String caption = "Background Color";
-
     @Type
     public static final PropertyType type = new ColorType();
 
@@ -49,10 +45,6 @@ public class BgColour implements DMNProperty {
 
     public BgColour(final String value) {
         this.value = value;
-    }
-
-    public String getCaption() {
-        return caption;
     }
 
     public PropertyType getType() {

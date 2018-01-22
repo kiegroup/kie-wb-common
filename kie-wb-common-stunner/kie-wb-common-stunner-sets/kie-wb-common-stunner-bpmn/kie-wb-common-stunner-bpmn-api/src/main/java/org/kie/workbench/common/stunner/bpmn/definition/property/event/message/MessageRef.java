@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.event.message;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldReadOnly;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
@@ -33,13 +32,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class MessageRef implements BPMNProperty {
 
-    @FieldLabel
-    public static final transient String caption = "MessageRef";
-
-    @ReadOnly
-    @FieldReadOnly
-    private Boolean readOnly = false;
-
     @Value
     @FieldValue
     private String value;
@@ -50,10 +42,6 @@ public class MessageRef implements BPMNProperty {
 
     public MessageRef(final String value) {
         this.value = value;
-    }
-
-    public boolean isReadOnly() {
-        return readOnly;
     }
 
     public String getValue() {

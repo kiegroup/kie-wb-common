@@ -24,7 +24,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.selectors.listBox.type.ListBoxFieldType;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
@@ -45,9 +44,6 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "taskName"
 )
 public class UserTaskExecutionSet implements BPMNPropertySet {
-
-    @FieldLabel
-    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField

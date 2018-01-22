@@ -24,7 +24,6 @@ import org.kie.workbench.common.dmn.api.property.DMNPropertySet;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.slider.type.SliderFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -39,9 +38,6 @@ import org.kie.workbench.common.stunner.forms.model.ColorPickerFieldType;
         startElement = "bgColour"
 )
 public class BackgroundSet implements DMNPropertySet {
-
-    @FieldLabel
-    public static final transient String propertySetName = "Background Set";
 
     @Property
     @FormField(
@@ -83,10 +79,6 @@ public class BackgroundSet implements DMNPropertySet {
         this.bgColour = bgColour;
         this.borderColour = borderColour;
         this.borderSize = borderSize;
-    }
-
-    public String getPropertySetName() {
-        return propertySetName;
     }
 
     public BgColour getBgColour() {

@@ -23,7 +23,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
+import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
@@ -43,9 +43,6 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 )
 public class DiagramSet implements BPMNPropertySet,
                                    BPMNBaseInfo {
-
-    @FieldLabel
-    public static final transient String caption = "Process";
 
     @Property
     @FormField

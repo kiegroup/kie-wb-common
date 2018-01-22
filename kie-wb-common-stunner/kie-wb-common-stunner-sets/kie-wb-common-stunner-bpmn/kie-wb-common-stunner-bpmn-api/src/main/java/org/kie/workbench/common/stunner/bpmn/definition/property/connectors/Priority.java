@@ -20,7 +20,6 @@ import javax.validation.constraints.Pattern;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
@@ -32,9 +31,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class Priority implements BPMNProperty {
-
-    @FieldLabel
-    public static final transient String caption = "Priority";
 
     @Value
     @Pattern(regexp = "^$|^[1-9][0-9]*", message = "Must be a positive integer")

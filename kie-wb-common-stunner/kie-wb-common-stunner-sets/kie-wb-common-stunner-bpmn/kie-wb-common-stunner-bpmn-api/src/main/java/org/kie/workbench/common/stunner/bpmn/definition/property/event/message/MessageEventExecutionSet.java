@@ -23,7 +23,6 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.annotations.field.selector.SelectorDataProvider;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNPropertySet;
 import org.kie.workbench.common.stunner.bpmn.forms.model.ComboBoxFieldType;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -35,9 +34,6 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @PropertySet
 @FormDefinition(startElement = "messageRef")
 public class MessageEventExecutionSet implements BPMNPropertySet {
-
-    @FieldLabel
-    public static final transient String caption = "Implementation/Execution";
 
     @Property
     @FormField(type = ComboBoxFieldType.class)

@@ -22,7 +22,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -35,9 +34,6 @@ import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTyp
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class Height implements DMNProperty {
 
-    @FieldLabel
-    public static final transient String caption = "Height";
-
     @Value
     @Min(50)
     @Max(200)
@@ -49,10 +45,6 @@ public class Height implements DMNProperty {
 
     public Height(final Double value) {
         this.value = value;
-    }
-
-    public String getCaption() {
-        return caption;
     }
 
     public Double getValue() {

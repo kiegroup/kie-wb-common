@@ -104,7 +104,7 @@ class ClientBindablePropertyAdapter extends AbstractClientBindableAdapter<Object
     public boolean isOptional(final Object pojo) {
         final Boolean value = getProxiedValue(pojo,
                                               getPropertyOptionalFieldNames().get(pojo.getClass()));
-        return null != value ? value : false;
+        return null != value ? value : true;
     }
 
     @Override

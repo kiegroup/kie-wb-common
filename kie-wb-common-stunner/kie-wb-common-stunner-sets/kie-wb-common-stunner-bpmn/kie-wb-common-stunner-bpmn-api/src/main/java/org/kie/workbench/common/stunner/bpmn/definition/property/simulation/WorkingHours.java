@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.simulation;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldLabel;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldValue;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNProperty;
@@ -31,9 +30,6 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Valu
 @Property
 @FieldDefinition(i18nMode = I18nMode.OVERRIDE_I18N_KEY)
 public class WorkingHours implements BPMNProperty {
-
-    @FieldLabel
-    public static final transient String caption = "Working Hours";
 
     @Value
     @FieldValue

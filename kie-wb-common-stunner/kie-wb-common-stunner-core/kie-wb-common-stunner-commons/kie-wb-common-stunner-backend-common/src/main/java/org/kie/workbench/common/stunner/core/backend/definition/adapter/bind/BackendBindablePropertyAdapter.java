@@ -127,7 +127,7 @@ class BackendBindablePropertyAdapter<T, V> extends AbstractReflectAdapter<T>
         } catch (IllegalAccessException e) {
             LOG.error("Error obtaining optional flag for Property with id " + getId(property));
         }
-        return false;
+        return true;
     }
 
     @Override
