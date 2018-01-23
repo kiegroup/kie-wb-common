@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright ${year} Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,24 +115,30 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
     @SuppressWarnings("unchecked")
     private CommandResult<RuleViolation> checkBounds(final GraphCommandExecutionContext context) {
         final Element<? extends View<?>> element = getNodeNotNull(context);
+        final Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) getGraph(context);
+
         final BoundsImpl newBounds = getTargetBounds(element);
 
-        final Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) getGraph(context);
-        final Bounds parentBounds;
-
-        if (parentConstrained) {
-            parentBounds = getParentBounds(element, graph);
-        } else {
-            parentBounds = GraphUtils.getBounds(graph);
-        }
-
         final GraphCommandResultBuilder result = new GraphCommandResultBuilder();
-        if (GraphUtils.checkBoundsExceeded(parentBounds,
-                                           newBounds)) {
-            ((View) element.getContent()).setBounds(newBounds);
+        if (parentConstrained) {
+            if (!GraphUtils.isRootNode(element, graph)) {
+                final Bounds parentBounds = getParentBounds(element, graph);
+                if (GraphUtils.checkBoundsExceeded(parentBounds, newBounds)) {
+                    ((View) element.getContent()).setBounds(newBounds);
+                } else {
+                    result.addViolation(new BoundsExceededViolation(parentBounds)
+                                                .setUUID(element.getUUID()));
+                }
+            }
         } else {
-            result.addViolation(new BoundsExceededViolation(parentBounds)
-                                        .setUUID(element.getUUID()));
+
+            if (GraphUtils.checkBoundsExceeded(graph, newBounds)) {
+                ((View) element.getContent()).setBounds(newBounds);
+            } else {
+                final Bounds graphBounds = graph.getContent().getBounds();
+                result.addViolation(new BoundsExceededViolation(graphBounds)
+                                            .setUUID(element.getUUID()));
+            }
         }
 
         return result.build();
@@ -151,22 +157,18 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
 
     @SuppressWarnings("unchecked")
     private Bounds getParentBounds(Element element, final Graph<DefinitionSet, Node> graph) {
-        //TODO: Correctly identify if the parent node is the canvas itself.
-
         if (element instanceof Node) {
-            final Element<View<?>> parent = (Element<View<?>>) GraphUtils.getParent((Node<?, ? extends Edge>) element);
+            Node elementNode = (Node) element;
+            final Element<? extends View<?>> parent = (Element<? extends View<?>>) GraphUtils.getParent(elementNode);
 
-            Bounds bounds = parent.getContent().getBounds();
-            final Bounds.Bound ul = bounds.getUpperLeft();
-            final Bounds.Bound lr = bounds.getLowerRight();
-            final double w = Math.abs(lr.getX() - ul.getX());
-            final double h = Math.abs(lr.getY() - ul.getY());
-
-            if (w == 0 && h == 0) {
-                return GraphUtils.getBounds(graph);
+            if (parent != null) {
+                if (GraphUtils.isRootNode(parent, graph)) {
+                    return GraphUtils.getBounds(graph);
+                } else {
+                    final double[] size = GraphUtils.getNodeSize(parent.getContent());
+                    return new BoundsImpl(new BoundImpl(0d, 0d), new BoundImpl(size[0], size[1]));
+                }
             }
-
-            return new BoundsImpl(new BoundImpl(0d, 0d), new BoundImpl(w, h));
         }
         return null;
     }

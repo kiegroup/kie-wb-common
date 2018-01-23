@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright ${year} Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -207,16 +207,16 @@ public class GraphUtils {
     }
 
     public static double[] getGraphSize(final DefinitionSet element) {
-        final Bounds.Bound ul = element.getBounds().getUpperLeft();
-        final Bounds.Bound lr = element.getBounds().getLowerRight();
-        final double w = lr.getX() - ul.getX();
-        final double h = lr.getY() - ul.getY();
-        return new double[]{Math.abs(w), Math.abs(h)};
+        return getSize(element.getBounds());
     }
 
     public static double[] getNodeSize(final View element) {
-        final Bounds.Bound ul = element.getBounds().getUpperLeft();
-        final Bounds.Bound lr = element.getBounds().getLowerRight();
+        return getSize(element.getBounds());
+    }
+
+    private static double[] getSize(Bounds bounds) {
+        final Bounds.Bound ul = bounds.getUpperLeft();
+        final Bounds.Bound lr = bounds.getLowerRight();
         final double w = lr.getX() - ul.getX();
         final double h = lr.getY() - ul.getY();
         return new double[]{Math.abs(w), Math.abs(h)};
@@ -227,9 +227,19 @@ public class GraphUtils {
         return graph.getContent().getBounds();
     }
 
+    public static boolean isRootNode(Element<? extends View<?>> element, final Graph<DefinitionSet, Node> graph) {
+        if (element instanceof Node) {
+            Node node = (Node) element;
+
+            final Element<?> parent = GraphUtils.getParent(node);
+            return (parent == null);
+        }
+
+        return false;
+    }
+
     /**
      * Checks that the given Bounds do not exceed graph limits.
-     *
      * @return if bounds exceed graph limits it returns <code>false</code>. Otherwise returns <code>true</code>.
      */
     @SuppressWarnings("unchecked")
@@ -245,8 +255,8 @@ public class GraphUtils {
 
     public static boolean checkBoundsExceeded(final Bounds parentBounds,
                                               final Bounds bounds) {
-        if ((bounds.getUpperLeft().getX() < 0)
-                || (bounds.getUpperLeft().getY() < 0)) {
+        if ((bounds.getUpperLeft().getX() < parentBounds.getUpperLeft().getX())
+                || (bounds.getUpperLeft().getY() < parentBounds.getUpperLeft().getY())) {
             return false;
         }
         if ((bounds.getLowerRight().getX() > parentBounds.getLowerRight().getX())
@@ -258,9 +268,8 @@ public class GraphUtils {
 
     /**
      * Finds the first node in the graph structure for the given type.
-     *
      * @param graph The graph structure.
-     * @param type  The Definition type..
+     * @param type The Definition type..
      */
     @SuppressWarnings("unchecked")
     public static <C> Node<Definition<C>, ?> getFirstNode(final Graph<?, Node> graph,
