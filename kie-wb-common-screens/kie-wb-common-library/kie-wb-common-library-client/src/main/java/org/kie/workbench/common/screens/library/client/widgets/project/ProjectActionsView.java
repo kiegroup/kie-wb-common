@@ -58,6 +58,18 @@ public class ProjectActionsView implements ProjectActionsWidget.View,
     Button messages;
 
     @Inject
+    @DataField("reimport")
+    Button reimport;
+
+    @Inject
+    @DataField("copy")
+    Button copy;
+
+    @Inject
+    @DataField("delete")
+    Button delete;
+
+    @Inject
     public ProjectActionsView(TranslationService translationService) {
         this.translationService = translationService;
     }
@@ -95,6 +107,21 @@ public class ProjectActionsView implements ProjectActionsWidget.View,
     @EventHandler("messages")
     public void messages(final ClickEvent clickEvent) {
         presenter.goToMessages();
+    }
+
+    @EventHandler("copy")
+    public void copy(final ClickEvent clickEvent) {
+        presenter.copy();
+    }
+
+    @EventHandler("reimport")
+    public void reimport(final ClickEvent clickEvent) {
+        presenter.reimport();
+    }
+
+    @EventHandler("delete")
+    public void delete(final ClickEvent clickEvent) {
+        presenter.delete();
     }
 
     @Override

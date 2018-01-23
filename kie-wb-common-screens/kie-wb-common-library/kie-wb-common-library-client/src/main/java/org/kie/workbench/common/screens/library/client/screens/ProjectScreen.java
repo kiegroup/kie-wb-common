@@ -17,7 +17,7 @@
 package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.List;
-import javax.enterprise.event.Event;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -37,7 +37,6 @@ import org.kie.workbench.common.screens.library.api.AssetInfo;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
 import org.kie.workbench.common.screens.library.api.ProjectInfo;
-import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
@@ -167,10 +166,6 @@ public class ProjectScreen {
         }
     }
 
-    public void goToSettings() {
-        libraryPlaces.goToSettings();
-    }
-
     public String getProjectName() {
         return projectInfo.getProject().getProjectName();
     }
@@ -261,6 +256,10 @@ public class ProjectScreen {
                 }
             });
         }
+    }
+
+    public Path getPomXmlPath() {
+        return projectInfo.getProject().getPomXMLPath();
     }
 
     private boolean isFilterEmpty() {

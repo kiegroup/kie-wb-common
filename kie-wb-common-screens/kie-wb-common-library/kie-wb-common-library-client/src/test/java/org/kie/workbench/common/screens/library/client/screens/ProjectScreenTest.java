@@ -204,12 +204,6 @@ public class ProjectScreenTest
     }
 
     @Test
-    public void goToSettingsTest() {
-        projectScreen.goToSettings();
-        verify(libraryPlaces).goToSettings();
-    }
-
-    @Test
     public void getProjectNameTest() {
         assertEquals("projectName",
                      projectScreen.getProjectName());
