@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.Dependent;

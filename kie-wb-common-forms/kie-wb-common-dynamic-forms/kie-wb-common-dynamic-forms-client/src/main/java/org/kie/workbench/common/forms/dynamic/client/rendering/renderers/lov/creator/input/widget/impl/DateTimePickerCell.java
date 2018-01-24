@@ -18,22 +18,24 @@ package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.cr
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import com.google.gwt.cell.client.AbstractEditableCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Node;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.SafeHtmlRenderer;
 import com.google.gwt.text.shared.SimpleSafeHtmlRenderer;
-import com.google.gwt.user.client.ui.RootPanel;
-import org.gwtbootstrap3.extras.datetimepicker.client.ui.DateTimePicker;
-import org.gwtbootstrap3.extras.datetimepicker.client.ui.base.constants.DateTimePickerPosition;
 
 import static com.google.gwt.dom.client.BrowserEvents.CLICK;
 import static com.google.gwt.dom.client.BrowserEvents.KEYDOWN;
 
+@Dependent
 public class DateTimePickerCell extends AbstractEditableCell<Date, Date> {
 
     private final DateTimeFormat format = DateTimeFormat.getFormat(DateEditableColumnGenerator.DEFAULT_DATE_AND_TIME_FORMAT_MASK);
@@ -47,63 +49,47 @@ public class DateTimePickerCell extends AbstractEditableCell<Date, Date> {
     private ValueUpdater<Date> valueUpdater;
 
     private boolean isEdit = false;
-    private DateTimePicker dateTimePicker;
+    private DateTimePickerPresenter dateTimePicker;
 
-    public DateTimePickerCell() {
+    @Inject
+    public DateTimePickerCell(DateTimePickerPresenter dateTimePicker) {
         super(CLICK,
               KEYDOWN);
 
-        dateTimePicker = new DateTimePicker();
-
-        dateTimePicker.setPlaceholder(DateEditableColumnGenerator.DEFAULT_DATE_AND_TIME_FORMAT_MASK);
-        dateTimePicker.setGWTFormat(DateEditableColumnGenerator.DEFAULT_DATE_AND_TIME_FORMAT_MASK);
-        dateTimePicker.setHighlightToday(true);
-        dateTimePicker.setShowTodayButton(true);
-        dateTimePicker.setPosition(DateTimePickerPosition.BOTTOM_LEFT);
-        dateTimePicker.setWidth("1px");
-
-        dateTimePicker.addValueChangeHandler(event -> {
-            if(isEdit) {
-                Element cellParent = lastParent;
-                Date oldValue = lastValue;
-                Object key = lastKey;
-                int index = lastIndex;
-                int column = lastColumn;
-
-                // Update the cell and value updater.
-                Date date = event.getValue();
-                setViewData(key,
-                            date);
-                setValue(new Context(index,
-                                     column,
-                                     key),
-                         cellParent,
-                         oldValue);
-                if (valueUpdater != null) {
-                    valueUpdater.update(date);
-                }
-
-                dateTimePicker.hide();
-            }
-        });
-
-        dateTimePicker.addHideHandler(hideEvent -> {
-          hideEvent.stopPropagation();
-          if(isEdit) {
-              isEdit = false;
-              RootPanel.get().remove(dateTimePicker);
-          }
-        });
+        this.dateTimePicker = dateTimePicker;
     }
 
-    protected void render() {
-        dateTimePicker.setVisible(true);
+    @PostConstruct
+    public void init() {
+        dateTimePicker.init(this::onValueChange,
+                            this::onHide);
+    }
 
-        int left = lastParent.getAbsoluteLeft();
-        int top = lastParent.getAbsoluteTop();
-        dateTimePicker.getElement().getStyle().setPosition(Style.Position.ABSOLUTE);
-        dateTimePicker.getElement().getStyle().setLeft(left, Style.Unit.PX);
-        dateTimePicker.getElement().getStyle().setTop(top, Style.Unit.PX);
+    private void onValueChange() {
+        if (isEdit) {
+            Element cellParent = lastParent;
+            Date oldValue = lastValue;
+            Object key = lastKey;
+            int index = lastIndex;
+            int column = lastColumn;
+
+            // Update the cell and value updater.
+            Date date = dateTimePicker.getDate();
+            setViewData(key,
+                        date);
+            setValue(new Context(index,
+                                 column,
+                                 key),
+                     cellParent,
+                     oldValue);
+            if (valueUpdater != null) {
+                valueUpdater.update(date);
+            }
+        }
+    }
+
+    private void onHide() {
+        isEdit = false;
     }
 
     @Override
@@ -114,26 +100,33 @@ public class DateTimePickerCell extends AbstractEditableCell<Date, Date> {
     }
 
     @Override
-    public void onBrowserEvent(Context context, Element parent, Date value,
-                               NativeEvent event, ValueUpdater<Date> valueUpdater) {
-        super.onBrowserEvent(context, parent, value, event, valueUpdater);
-        if (CLICK.equals(event.getType())) {
-            RootPanel.get().add(dateTimePicker);
+    public void onBrowserEvent(Context context,
+                               Element parent,
+                               Date value,
+                               NativeEvent event,
+                               ValueUpdater<Date> valueUpdater) {
+        super.onBrowserEvent(context,
+                             parent,
+                             value,
+                             event,
+                             valueUpdater);
+        if (CLICK.equals(event.getType()) && !isEdit) {
 
-            this.isEdit = true;
-            this.lastKey = context.getKey();
-            this.lastParent = parent;
-            this.lastValue = value;
-            this.lastIndex = context.getIndex();
-            this.lastColumn = context.getColumn();
+            isEdit = true;
+            lastKey = context.getKey();
+            lastParent = parent;
+            lastValue = value;
+            lastIndex = context.getIndex();
+            lastColumn = context.getColumn();
             this.valueUpdater = valueUpdater;
 
             Date viewData = getViewData(lastKey);
             Date date = (viewData == null) ? lastValue : viewData;
 
-            dateTimePicker.setValue(date);
+            dateTimePicker.setDate(date);
 
-            render();
+            lastParent.appendChild((Node) dateTimePicker.getElement());
+
             dateTimePicker.show();
         }
     }

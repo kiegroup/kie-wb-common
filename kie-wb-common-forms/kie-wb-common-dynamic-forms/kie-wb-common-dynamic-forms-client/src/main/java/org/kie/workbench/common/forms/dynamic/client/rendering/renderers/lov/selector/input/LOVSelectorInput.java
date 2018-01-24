@@ -62,7 +62,6 @@ public class LOVSelectorInput<TYPE> implements IsWidget,
 
     @Override
     public void setValue(List<TYPE> values) {
-
         setValue(values,
                  false);
     }

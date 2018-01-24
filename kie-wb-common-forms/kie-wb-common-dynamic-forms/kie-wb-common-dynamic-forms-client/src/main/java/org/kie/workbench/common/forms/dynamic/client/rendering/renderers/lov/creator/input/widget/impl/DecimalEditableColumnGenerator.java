@@ -37,7 +37,7 @@ public class DecimalEditableColumnGenerator extends AbstractEditableColumnGenera
 
     @Inject
     public DecimalEditableColumnGenerator(TranslationService translationService) {
-        super(translationService = translationService);
+        super(translationService);
     }
 
     @Override

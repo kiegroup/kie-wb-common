@@ -16,13 +16,21 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget;
 
-import org.uberfire.ext.widgets.table.client.UberfirePagedTable;
+import java.util.List;
 
-public interface EditableColumnGenerator<TYPE> {
+public class TestLOVCreationComponent extends LOVCreationComponent {
 
-    String[] getTypes();
+    public TestLOVCreationComponent(LOVCreationComponentView view,
+                                    EditableColumnGeneratorManager columnGeneratorManager) {
+        super(view,
+              columnGeneratorManager);
+    }
 
-    void registerColumn(UberfirePagedTable<TableEntry<TYPE>> table,
-                        CellEditionCallback<TYPE> callback,
-                        boolean readOnly);
+    public List<TableEntry> getTableValues() {
+        return tableValues;
+    }
+
+    public List<TableEntry> getSelectedValues() {
+        return selectedValues;
+    }
 }

@@ -18,12 +18,14 @@ package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.cr
 
 import java.util.Date;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.Column;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
@@ -35,9 +37,12 @@ public class DateEditableColumnGenerator extends AbstractEditableColumnGenerator
 
     public static String DEFAULT_DATE_AND_TIME_FORMAT_MASK = "dd/MM/yyyy HH:mm";
 
+    private ManagedInstance<DateTimePickerCell> dateTimePickerCells;
+
     @Inject
-    public DateEditableColumnGenerator(TranslationService translationService) {
+    public DateEditableColumnGenerator(TranslationService translationService, ManagedInstance<DateTimePickerCell> dateTimePickerCells) {
         super(translationService);
+        this.dateTimePickerCells = dateTimePickerCells;
     }
 
     @Override
@@ -49,8 +54,7 @@ public class DateEditableColumnGenerator extends AbstractEditableColumnGenerator
     protected Column<TableEntry<Date>, Date> getEditableColumn(UberfirePagedTable<TableEntry<Date>> table,
                                                                CellEditionCallback<Date> callback) {
 
-
-        Column<TableEntry<Date>, Date> column = new Column<TableEntry<Date>, Date>(new DateTimePickerCell()) {
+        Column<TableEntry<Date>, Date> column = new Column<TableEntry<Date>, Date>(dateTimePickerCells.get()) {
             @Override
             public Date getValue(TableEntry<Date> model) {
                 if (model.getValue() == null) {
@@ -91,5 +95,10 @@ public class DateEditableColumnGenerator extends AbstractEditableColumnGenerator
         };
 
         return column;
+    }
+
+    @PreDestroy
+    public void destroy() {
+        dateTimePickerCells.destroyAll();
     }
 }

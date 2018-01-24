@@ -33,14 +33,14 @@ import org.uberfire.ext.widgets.table.client.UberfirePagedTable;
 @Dependent
 public class CharacterEditableColumnGenerator extends AbstractEditableColumnGenerator<String> {
 
-    @Override
-    public String[] getTypes() {
-        return new String[]{Character.class.getName()};
-    }
-
     @Inject
     public CharacterEditableColumnGenerator(TranslationService translationService) {
         super(translationService);
+    }
+
+    @Override
+    public String[] getTypes() {
+        return new String[]{Character.class.getName()};
     }
 
     @Override

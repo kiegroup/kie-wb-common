@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget;
+package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.impl;
 
-import org.uberfire.ext.widgets.table.client.UberfirePagedTable;
+import java.util.Date;
 
-public interface EditableColumnGenerator<TYPE> {
+import org.uberfire.client.mvp.UberElement;
 
-    String[] getTypes();
+public interface DateTimePickerPresenterView extends UberElement<DateTimePickerPresenterView.Presenter>{
 
-    void registerColumn(UberfirePagedTable<TableEntry<TYPE>> table,
-                        CellEditionCallback<TYPE> callback,
-                        boolean readOnly);
+    void show();
+
+    void hide();
+
+    interface Presenter {
+
+        void notifyDateChange(Date date);
+
+        Date getDate();
+
+        void notifyHide();
+
+    }
 }

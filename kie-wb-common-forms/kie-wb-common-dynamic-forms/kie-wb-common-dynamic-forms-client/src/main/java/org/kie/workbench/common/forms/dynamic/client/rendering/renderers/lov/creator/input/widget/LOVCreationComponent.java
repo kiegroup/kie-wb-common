@@ -52,9 +52,9 @@ public class LOVCreationComponent<TYPE> implements LOVCreationComponentView.Pres
 
     private AsyncDataProvider<TableEntry<TYPE>> dataProvider;
 
-    private List<TableEntry<TYPE>> selectedValues = new ArrayList<>();
+    protected List<TableEntry<TYPE>> selectedValues = new ArrayList<>();
 
-    private List<TableEntry<TYPE>> tableValues = new ArrayList<>();
+    protected List<TableEntry<TYPE>> tableValues = new ArrayList<>();
 
     private int pageSize = 10;
 
@@ -247,6 +247,7 @@ public class LOVCreationComponent<TYPE> implements LOVCreationComponentView.Pres
     }
 
     public void setValues(List<TYPE> values) {
+        selectedValues.clear();
         tableValues.clear();
         tableValues = values.stream()
                 .map(value -> new TableEntry<>(value))

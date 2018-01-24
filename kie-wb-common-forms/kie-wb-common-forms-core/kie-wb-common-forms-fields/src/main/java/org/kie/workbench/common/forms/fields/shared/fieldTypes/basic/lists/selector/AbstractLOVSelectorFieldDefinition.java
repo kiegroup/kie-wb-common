@@ -16,12 +16,10 @@
 
 package org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.selector;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.input.LOVInputFieldType;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FieldType;
 import org.kie.workbench.common.forms.model.TypeInfo;
