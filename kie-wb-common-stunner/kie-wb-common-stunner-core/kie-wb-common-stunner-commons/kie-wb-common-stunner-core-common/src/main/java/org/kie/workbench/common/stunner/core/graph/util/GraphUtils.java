@@ -1,5 +1,5 @@
 /*
- * Copyright ${year} Red Hat, Inc. and/or its affiliates.
+ * Copyright 2017 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,22 +182,6 @@ public class GraphUtils {
         return Optional.empty();
     }
 
-    public static class HasParentPredicate implements BiPredicate<Node<?, ? extends Edge>, Element<?>> {
-
-        @Override
-        public boolean test(final Node<?, ? extends Edge> candidate,
-                            final Element<?> parent) {
-            if (null != candidate) {
-                Element<?> p = getParent(candidate);
-                while (p instanceof Node && !p.equals(parent)) {
-                    p = getParent((Node<?, ? extends Edge>) p);
-                }
-                return null != p;
-            }
-            return false;
-        }
-    }
-
     public static Point2D getPosition(final View element) {
         final Bounds.Bound ul = element.getBounds().getUpperLeft();
         final double x = ul.getX();
@@ -328,5 +312,21 @@ public class GraphUtils {
     private static boolean instanceOf(final Object item,
                                       final Class<?> clazz) {
         return null != item && item.getClass().equals(clazz);
+    }
+
+    public static class HasParentPredicate implements BiPredicate<Node<?, ? extends Edge>, Element<?>> {
+
+        @Override
+        public boolean test(final Node<?, ? extends Edge> candidate,
+                            final Element<?> parent) {
+            if (null != candidate) {
+                Element<?> p = getParent(candidate);
+                while (p instanceof Node && !p.equals(parent)) {
+                    p = getParent((Node<?, ? extends Edge>) p);
+                }
+                return null != p;
+            }
+            return false;
+        }
     }
 }
