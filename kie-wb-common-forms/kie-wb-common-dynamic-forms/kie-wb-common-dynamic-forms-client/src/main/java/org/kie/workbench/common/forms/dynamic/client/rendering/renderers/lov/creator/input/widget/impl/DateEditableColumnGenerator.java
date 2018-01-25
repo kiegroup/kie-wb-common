@@ -27,7 +27,7 @@ import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.cellview.client.Column;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.uberfire.ext.widgets.table.client.UberfirePagedTable;
@@ -52,7 +52,7 @@ public class DateEditableColumnGenerator extends AbstractEditableColumnGenerator
 
     @Override
     protected Column<TableEntry<Date>, Date> getEditableColumn(UberfirePagedTable<TableEntry<Date>> table,
-                                                               CellEditionCallback<Date> callback) {
+                                                               CellEditionHandler<Date> cellEditionHandler) {
 
         Column<TableEntry<Date>, Date> column = new Column<TableEntry<Date>, Date>(dateTimePickerCells.get()) {
             @Override
@@ -73,7 +73,7 @@ public class DateEditableColumnGenerator extends AbstractEditableColumnGenerator
             }
         };
 
-        updater.setCallback(callback);
+        updater.setCellEditionHandler(cellEditionHandler);
 
         column.setFieldUpdater(updater);
 

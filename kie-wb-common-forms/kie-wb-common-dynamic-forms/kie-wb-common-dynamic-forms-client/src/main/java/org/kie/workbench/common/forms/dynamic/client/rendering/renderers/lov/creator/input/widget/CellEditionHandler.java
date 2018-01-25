@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget;
 
-public interface CellEditionCallback<TYPE> {
+public interface CellEditionHandler<TYPE> {
 
-    void run(int index, TYPE value);
+    void clearValidationErrors();
+
+    void showValidationError(String errorMessage);
+
+    void valueChanged(int index, TYPE value);
 }

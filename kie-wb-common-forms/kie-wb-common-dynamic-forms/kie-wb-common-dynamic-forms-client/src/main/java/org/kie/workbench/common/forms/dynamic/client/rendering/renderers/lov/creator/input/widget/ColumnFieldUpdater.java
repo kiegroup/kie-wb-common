@@ -25,15 +25,15 @@ public abstract class ColumnFieldUpdater<TYPE, FLAT_TYPE> implements FieldUpdate
 
     private UberfirePagedTable<TableEntry<TYPE>> table;
     private Column column;
-    private CellEditionCallback callback;
+    private CellEditionHandler cellEditionHandler;
 
     public ColumnFieldUpdater(UberfirePagedTable<TableEntry<TYPE>> table, Column column) {
         this.table = table;
         this.column = column;
     }
 
-    public void setCallback(CellEditionCallback<TYPE> callback) {
-        this.callback = callback;
+    public void setCellEditionHandler(CellEditionHandler<TYPE> cellEditionHandler) {
+        this.cellEditionHandler = cellEditionHandler;
     }
 
     protected abstract boolean validate(FLAT_TYPE value,
@@ -43,9 +43,10 @@ public abstract class ColumnFieldUpdater<TYPE, FLAT_TYPE> implements FieldUpdate
     public void update(int index,
                        TableEntry<TYPE> model,
                        FLAT_TYPE value) {
+        cellEditionHandler.clearValidationErrors();
         if(validate(value, model)) {
-            callback.run(index,
-                         convert(value));
+            cellEditionHandler.valueChanged(index,
+                                            convert(value));
         } else {
             rollbackChange(model);
         }

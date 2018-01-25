@@ -174,9 +174,14 @@ public class LOVCreationComponent<TYPE> implements LOVCreationComponentView.Pres
 
         indexes.forEach(index -> {
             if (index > 0) {
-                Collections.swap(tableValues,
-                                 index,
-                                 index - 1);
+
+                TableEntry<TYPE> previous = tableValues.get(index -1);
+
+                if(!isSelected(previous)) {
+                    Collections.swap(tableValues,
+                                     index,
+                                     index - 1);
+                }
             }
         });
 
@@ -194,9 +199,14 @@ public class LOVCreationComponent<TYPE> implements LOVCreationComponentView.Pres
 
         indexes.forEach(index -> {
             if (index < tableValues.size() - 1) {
-                Collections.swap(tableValues,
-                                 index,
-                                 index + 1);
+
+                TableEntry<TYPE> nextElement = tableValues.get(index + 1);
+
+                if(!isSelected(nextElement)) {
+                    Collections.swap(tableValues,
+                                     index,
+                                     index + 1);
+                }
             }
         });
 

@@ -23,6 +23,6 @@ public interface EditableColumnGenerator<TYPE> {
     String[] getTypes();
 
     void registerColumn(UberfirePagedTable<TableEntry<TYPE>> table,
-                        CellEditionCallback<TYPE> callback,
+                        CellEditionHandler<TYPE> cellEditionHandler,
                         boolean readOnly);
 }

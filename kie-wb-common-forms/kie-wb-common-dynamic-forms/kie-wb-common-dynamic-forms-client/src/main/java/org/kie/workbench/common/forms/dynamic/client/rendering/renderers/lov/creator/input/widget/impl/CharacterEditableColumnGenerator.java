@@ -22,9 +22,8 @@ import javax.inject.Inject;
 import com.google.gwt.cell.client.EditTextCell;
 import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.Window;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
@@ -45,7 +44,7 @@ public class CharacterEditableColumnGenerator extends AbstractEditableColumnGene
 
     @Override
     protected Column<TableEntry<String>, String> getEditableColumn(UberfirePagedTable<TableEntry<String>> table,
-                                                                   CellEditionCallback<String> callback) {
+                                                                   CellEditionHandler<String> cellEditionHandler) {
         Column<TableEntry<String>, String> column = new Column<TableEntry<String>, String>(new EditTextCell()) {
             @Override
             public String getValue(TableEntry<String> model) {
@@ -64,7 +63,7 @@ public class CharacterEditableColumnGenerator extends AbstractEditableColumnGene
                                        TableEntry<String> model) {
                 if (value != null) {
                     if (value.length() != 1) {
-                        Window.alert(translationService.getTranslation(FormRenderingConstants.CharacterEditableColumnGeneratorValidationError));
+                        cellEditionHandler.showValidationError(translationService.getTranslation(FormRenderingConstants.CharacterEditableColumnGeneratorValidationError));
                         return false;
                     }
                 }
@@ -73,7 +72,7 @@ public class CharacterEditableColumnGenerator extends AbstractEditableColumnGene
             }
         };
 
-        updater.setCallback(callback);
+        updater.setCellEditionHandler(cellEditionHandler);
 
         column.setFieldUpdater(updater);
 

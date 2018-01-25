@@ -70,6 +70,18 @@ public class LOVCreationComponentViewImpl<TYPE> implements LOVCreationComponentV
     @DataField
     private Div table;
 
+    @Inject
+    @DataField
+    private Div errorContainer;
+
+    @Inject
+    @DataField
+    private Div errorMessage;
+
+    @Inject
+    @DataField
+    private Button hideErrorButton;
+
     @PostConstruct
     public void init() {
         addButton.setTitle(translationService.getTranslation(FormRenderingConstants.LOVCreationComponentViewImplAddButton));
@@ -93,11 +105,14 @@ public class LOVCreationComponentViewImpl<TYPE> implements LOVCreationComponentV
 
     @Override
     public void render() {
+        hideErrorMessage();
 
         DOMUtil.removeAllChildren(table);
 
         tableWidget = new UberfirePagedTable<>(presenter.getPageSize());
         tableWidget.setDataProvider(presenter.getProvider());
+
+        tableWidget.setColumnPickerButtonVisible(false);
 
         if(!presenter.isReadOnly()) {
             Column<TableEntry<TYPE>, Boolean> select = new Column<TableEntry<TYPE>, Boolean>(new CheckboxCell()) {
@@ -122,7 +137,7 @@ public class LOVCreationComponentViewImpl<TYPE> implements LOVCreationComponentV
         EditableColumnGenerator<TYPE> columnGenerator = presenter.getColumnGenerator();
 
         columnGenerator.registerColumn(tableWidget,
-                                       (index, value) -> presenter.notifyChange(index, value),
+                                       new CellEdtionHandlerImpl(),
                                        presenter.isReadOnly());
 
         tableWidget.setEmptyTableCaption(translationService.getTranslation(FormRenderingConstants.LOVCreationComponentViewImplNoItems));
@@ -170,24 +185,67 @@ public class LOVCreationComponentViewImpl<TYPE> implements LOVCreationComponentV
     @SinkNative(Event.ONCLICK)
     @EventHandler("addButton")
     public void onAdd(Event event) {
+        hideErrorMessage();
         presenter.newElement();
+        event.stopPropagation();
     }
 
     @SinkNative(Event.ONCLICK)
     @EventHandler("removeButton")
     public void onRemove(Event event) {
+        hideErrorMessage();
         presenter.removeSelectedValues();
+        event.stopPropagation();
     }
 
     @SinkNative(Event.ONCLICK)
     @EventHandler("promoteButton")
     public void onPromote(Event event) {
+        hideErrorMessage();
         presenter.promoteSelectedValues();
+        event.stopPropagation();
     }
 
     @SinkNative(Event.ONCLICK)
     @EventHandler("degradeButton")
     public void onDegrade(Event event) {
+        hideErrorMessage();
         presenter.degradeSelectedValues();
+        event.stopPropagation();
+    }
+
+    @SinkNative(Event.ONCLICK)
+    @EventHandler("hideErrorButton")
+    public void onHideErrorButton(Event event) {
+        hideErrorMessage();
+        event.stopPropagation();
+    }
+
+    public void hideErrorMessage() {
+        this.errorContainer.getStyle().setProperty("display", "none");
+    }
+
+    public void showErrorMessage(String msg) {
+        this.errorContainer.getStyle().removeProperty("display");
+        this.errorMessage.setTextContent(msg);
+    }
+
+    class CellEdtionHandlerImpl implements CellEditionHandler<TYPE> {
+
+        @Override
+        public void clearValidationErrors() {
+            hideErrorMessage();
+        }
+
+        @Override
+        public void showValidationError(String errorMessage) {
+            showErrorMessage(errorMessage);
+        }
+
+        @Override
+        public void valueChanged(int index,
+                                 TYPE value) {
+            presenter.notifyChange(index, value);
+        }
     }
 }

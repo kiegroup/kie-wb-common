@@ -104,7 +104,11 @@ public class LOVSelectorFieldRenderer<TYPE> extends FieldRenderer<AbstractLOVSel
             return "";
         }
 
-        return value.toString();
+        String stringValue = value.toString();
+
+        stringValue = stringValue.substring(0, 1).toUpperCase() + stringValue.substring(1);
+
+        return stringValue;
     }
 
     @Override

@@ -16,15 +16,19 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.cell.client.CheckboxCell;
+import com.google.gwt.cell.client.SelectionCell;
 import com.google.gwt.user.cellview.client.Column;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
+import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
 import org.uberfire.ext.widgets.table.client.CheckboxCellImpl;
 import org.uberfire.ext.widgets.table.client.UberfirePagedTable;
 
@@ -42,30 +46,51 @@ public class BooleanEditableColumnGenerator extends AbstractEditableColumnGenera
     }
 
     @Override
-    protected Column<TableEntry<Boolean>, Boolean> getEditableColumn(UberfirePagedTable<TableEntry<Boolean>> table,
-                                                                     CellEditionCallback<Boolean> callback) {
+    protected Column<TableEntry<Boolean>, String> getEditableColumn(UberfirePagedTable<TableEntry<Boolean>> table,
+                                                                     CellEditionHandler<Boolean> cellEditionHandler) {
 
-        Column<TableEntry<Boolean>, Boolean> column = new Column<TableEntry<Boolean>, Boolean>(new CheckboxCell()) {
+        final String yesLiteral = translationService.getTranslation(FormRenderingConstants.BooleanEditableColumnGeneratorYes);
+        final String noLiteral = translationService.getTranslation(FormRenderingConstants.BooleanEditableColumnGeneratorNo);
+
+        final List<String> values = new ArrayList<>();
+        values.add(yesLiteral);
+        values.add(noLiteral);
+
+        Column<TableEntry<Boolean>, String> column = new Column<TableEntry<Boolean>, String>(new SelectionCell(values)) {
             @Override
-            public Boolean getValue(TableEntry<Boolean> model) {
+            public String getValue(TableEntry<Boolean> model) {
                 if (model.getValue() == null) {
                     model.setValue(Boolean.FALSE);
                 }
-                return Boolean.TRUE.equals(model.getValue());
+
+                if(model.getValue()) {
+                    return yesLiteral;
+                }
+
+                return noLiteral;
             }
         };
 
-        ColumnFieldUpdater<Boolean, Boolean> updater = new ColumnFieldUpdater<Boolean, Boolean>(table,
-                                                                                                column) {
+        ColumnFieldUpdater<Boolean, String> updater = new ColumnFieldUpdater<Boolean, String>(table, column) {
 
             @Override
-            protected boolean validate(Boolean value,
+            protected boolean validate(String value,
                                        TableEntry<Boolean> model) {
                 return true;
             }
+
+            @Override
+            protected Boolean convert(String flatValue) {
+
+                if(flatValue.equals(yesLiteral)) {
+                    return Boolean.TRUE;
+                }
+
+                return Boolean.FALSE;
+            }
         };
 
-        updater.setCallback(callback);
+        updater.setCellEditionHandler(cellEditionHandler);
 
         column.setFieldUpdater(updater);
 

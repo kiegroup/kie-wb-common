@@ -70,4 +70,10 @@ public interface FormRenderingConstants {
 
     @TranslationKey(defaultValue = "")
     String DecimalEditableColumnGeneratorInvalidNumber = "DecimalEditableColumnGenerator.invalidNumber";
+
+    @TranslationKey(defaultValue = "")
+    String BooleanEditableColumnGeneratorYes = "BooleanEditableColumnGenerator.yes";
+
+    @TranslationKey(defaultValue = "")
+    String BooleanEditableColumnGeneratorNo= "BooleanEditableColumnGenerator.no";
 }

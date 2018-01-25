@@ -26,7 +26,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
@@ -47,7 +47,7 @@ public class DecimalEditableColumnGenerator extends AbstractEditableColumnGenera
 
     @Override
     protected Column<TableEntry<Double>, String> getEditableColumn(UberfirePagedTable<TableEntry<Double>> table,
-                                                                   CellEditionCallback<Double> callback) {
+                                                                   CellEditionHandler<Double> cellEditionHandler) {
         Column<TableEntry<Double>, String> column = new Column<TableEntry<Double>, String>(new EditTextCell()) {
             @Override
             public String getValue(TableEntry<Double> model) {
@@ -69,7 +69,7 @@ public class DecimalEditableColumnGenerator extends AbstractEditableColumnGenera
                         convert(value);
                         return true;
                     } catch (Exception ex) {
-                        Window.alert(translationService.getTranslation(FormRenderingConstants.DecimalEditableColumnGeneratorInvalidNumber));
+                        cellEditionHandler.showValidationError(translationService.getTranslation(FormRenderingConstants.DecimalEditableColumnGeneratorInvalidNumber));
                         return false;
                     }
                 }
@@ -85,7 +85,7 @@ public class DecimalEditableColumnGenerator extends AbstractEditableColumnGenera
             }
         };
 
-        updater.setCallback(callback);
+        updater.setCellEditionHandler(cellEditionHandler);
 
         column.setFieldUpdater(updater);
 

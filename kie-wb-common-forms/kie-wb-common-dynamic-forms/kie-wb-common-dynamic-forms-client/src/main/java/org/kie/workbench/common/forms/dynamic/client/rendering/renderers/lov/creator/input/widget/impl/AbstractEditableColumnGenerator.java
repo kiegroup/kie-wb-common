@@ -18,7 +18,7 @@ package org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.cr
 
 import com.google.gwt.user.cellview.client.Column;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.EditableColumnGenerator;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
@@ -34,7 +34,7 @@ public abstract class AbstractEditableColumnGenerator<TYPE> implements EditableC
 
     @Override
     public void registerColumn(UberfirePagedTable<TableEntry<TYPE>> table,
-                               CellEditionCallback<TYPE> callback,
+                               CellEditionHandler<TYPE> cellEditionHandler,
                                boolean readOnly) {
 
         Column column;
@@ -43,7 +43,7 @@ public abstract class AbstractEditableColumnGenerator<TYPE> implements EditableC
             column = getReadOnlyColumn();
         } else {
             column = getEditableColumn(table,
-                                       callback);
+                                       cellEditionHandler);
         }
 
         table.addColumn(column,
@@ -51,7 +51,7 @@ public abstract class AbstractEditableColumnGenerator<TYPE> implements EditableC
     }
 
     protected abstract Column<TableEntry<TYPE>, ?> getEditableColumn(UberfirePagedTable<TableEntry<TYPE>> table,
-                                                                     CellEditionCallback<TYPE> callback);
+                                                                     CellEditionHandler<TYPE> cellEditionHandler);
 
     protected abstract Column<TableEntry<TYPE>, ?> getReadOnlyColumn();
 }

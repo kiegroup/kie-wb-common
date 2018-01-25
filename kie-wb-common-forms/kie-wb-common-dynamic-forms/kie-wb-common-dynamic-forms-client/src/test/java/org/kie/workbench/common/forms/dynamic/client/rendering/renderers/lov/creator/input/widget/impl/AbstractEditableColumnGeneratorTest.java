@@ -21,7 +21,7 @@ import org.assertj.core.api.Assertions;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
 import org.mockito.ArgumentCaptor;
@@ -41,7 +41,7 @@ public abstract class AbstractEditableColumnGeneratorTest<TYPE, GENERATOR extend
     protected UberfirePagedTable<TableEntry<TYPE>> pagedTable;
 
     @Mock
-    protected CellEditionCallback<TYPE> callback;
+    protected CellEditionHandler<TYPE> callback;
 
     @Mock
     protected TranslationService translationService;

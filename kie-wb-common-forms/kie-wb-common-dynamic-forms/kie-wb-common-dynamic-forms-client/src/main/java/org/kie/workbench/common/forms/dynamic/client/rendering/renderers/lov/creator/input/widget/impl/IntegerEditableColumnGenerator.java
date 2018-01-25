@@ -26,7 +26,7 @@ import com.google.gwt.cell.client.TextCell;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.Window;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionCallback;
+import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.CellEditionHandler;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.ColumnFieldUpdater;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.lov.creator.input.widget.TableEntry;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
@@ -47,7 +47,7 @@ public class IntegerEditableColumnGenerator extends AbstractEditableColumnGenera
 
     @Override
     protected Column<TableEntry<Long>, String> getEditableColumn(UberfirePagedTable<TableEntry<Long>> table,
-                                                                 CellEditionCallback<Long> callback) {
+                                                                 CellEditionHandler<Long> cellEditionHandler) {
         Column<TableEntry<Long>, String> column = new Column<TableEntry<Long>, String>(new EditTextCell()) {
             @Override
             public String getValue(TableEntry<Long> model) {
@@ -68,7 +68,7 @@ public class IntegerEditableColumnGenerator extends AbstractEditableColumnGenera
                     try {
                         convert(value);
                     } catch (Exception ex) {
-                        Window.alert(translationService.getTranslation(FormRenderingConstants.IntegerEditableColumnGeneratorInvalidNumber));
+                        cellEditionHandler.showValidationError(translationService.getTranslation(FormRenderingConstants.IntegerEditableColumnGeneratorInvalidNumber));
                         validValue = false;
                     }
                 }
@@ -84,7 +84,7 @@ public class IntegerEditableColumnGenerator extends AbstractEditableColumnGenera
             }
         };
 
-        updater.setCallback(callback);
+        updater.setCellEditionHandler(cellEditionHandler);
 
         column.setFieldUpdater(updater);
 
