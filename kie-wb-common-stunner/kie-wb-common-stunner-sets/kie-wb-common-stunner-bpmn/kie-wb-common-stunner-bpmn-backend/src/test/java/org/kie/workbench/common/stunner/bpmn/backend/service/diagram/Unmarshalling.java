@@ -19,8 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 import java.io.InputStream;
 
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
+import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -36,12 +36,12 @@ public class Unmarshalling {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
-    public static Diagram<Graph, Metadata> unmarshall(BPMNDirectDiagramMarshaller tested, String fileName) throws Exception {
+    public static Diagram<Graph, Metadata> unmarshall(DiagramMarshaller tested, String fileName) throws Exception {
         InputStream is = loadStream(fileName);
         return unmarshall(tested, is);
     }
 
-    public static Diagram<Graph, Metadata> unmarshall(BPMNDirectDiagramMarshaller tested, InputStream is) throws Exception {
+    public static Diagram<Graph, Metadata> unmarshall(DiagramMarshaller tested, InputStream is) throws Exception {
         Metadata metadata =
                 new MetadataImpl.MetadataImplBuilder(
                         BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class)).build();
