@@ -1,8 +1,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -14,81 +12,23 @@ public class Match<In, Out> {
 
     private final Class<?> outputType;
 
-    private static class MatchCase<T, R> {
+    private static class Case<T, R> {
 
         public final Class<T> when;
-        public final Function<T, R> then;
+        public final Function<T, Result<R>> then;
 
-        public MatchCase(Class<T> when, Function<T, R> then) {
+        public Case(Class<T> when, Function<T, Result<R>> then) {
             this.when = when;
             this.then = then;
         }
 
         public Result<R> match(Object value) {
             return when.isAssignableFrom(value.getClass()) ?
-                    Result.of(then.apply((T) value)) : Result.empty(value.getClass().getName());
+                    then.apply((T) value) : Result.failure(value.getClass().getName());
         }
     }
 
-    public interface Result<T> {
-
-        T value();
-
-        boolean isEmpty();
-
-        default boolean nonEmpty() {
-            return !isEmpty();
-        }
-
-        static <R> Result<R> of(R value) {
-            return new NonEmptyResult<>(value);
-        }
-
-        static <R> Result<R> empty(String type) {
-            return new EmptyResult<R>(type);
-        }
-    }
-
-    private static class NonEmptyResult<T> implements Result<T> {
-
-        private final T value;
-
-        public NonEmptyResult(T value) {
-            Objects.requireNonNull(value);
-            this.value = value;
-        }
-
-        @Override
-        public T value() {
-            return value;
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return false;
-        }
-    }
-
-    private static class EmptyResult<T> implements Result<T> {
-
-        private final String reason;
-
-        public EmptyResult(String reason) {
-            this.reason = reason;
-        }
-
-        @Override
-        public T value() {
-            throw new NoSuchElementException("Could not match value of type " + reason);
-        }
-
-        @Override
-        public boolean isEmpty() {
-            return true;
-        }
-    }
-
-    LinkedList<MatchCase<?, Out>> cases = new LinkedList<>();
+    LinkedList<Match.Case<?, Out>> cases = new LinkedList<>();
     Function<In, Out> orElse;
 
     public static <In, Out> Match<In, Out> of(Class<In> inputType, Class<Out> outputType) {
@@ -108,7 +48,12 @@ public class Match<In, Out> {
     }
 
     public <Sub> Match<In, Out> when(Class<Sub> type, Function<Sub, Out> then) {
-        cases.add(new MatchCase<>(type, then));
+        Function<Sub, Result<Out>> thenWrapped = sub -> Result.of(then.apply(sub));
+        return when_(type, thenWrapped);
+    }
+
+    public <Sub> Match<In, Out> when_(Class<Sub> type, Function<Sub, Result<Out>> then) {
+        cases.add(new Match.Case<>(type, then));
         return this;
     }
 
@@ -117,8 +62,13 @@ public class Match<In, Out> {
      * Use when the implementation is still missing, but expected to exist
      */
     public <Sub> Match<In, Out> missing(Class<Sub> type) {
-        return when(type, reportMissing(type));
+        return when_(type, reportMissing(type));
     }
+
+    public <Sub> Match<In, Out> ignore(Class<Sub> type) {
+        return when_(type, ignored(type));
+    }
+
 
     public Match<In, Out> orElse(Function<In, Out> then) {
         this.orElse = then;
@@ -128,27 +78,38 @@ public class Match<In, Out> {
     public Result<Out> apply(In value) {
         return cases.stream()
                 .map(c -> c.match(value))
-                .filter(Result::nonEmpty)
+                .filter(Result::nonFailure)
                 .findFirst()
                 .orElse(applyFallback(value));
     }
 
     private Result<Out> applyFallback(In value) {
         if (orElse == null) {
-            return Result.empty(value == null ? "Null" : value.getClass().getName());
+            return Result.failure(value == null ? "Null" : value.getClass().getName());
         } else {
             return Result.of(orElse.apply(value));
         }
     }
 
 
-    static <T, U> Function<T, U> reportMissing(Class<?> expectedClass) {
-        return t -> {
-            throw new UnsupportedOperationException(
+    static <T, U> Function<T, Result<U>> reportMissing(Class<?> expectedClass) {
+        return t ->
+            Result.failure(
                     "Not yet implemented: " +
                             Optional.ofNullable(t)
                                     .map(o -> o.getClass().getCanonicalName())
                                     .orElse("null -- expected " + expectedClass.getCanonicalName()));
-        };
+
+    }
+
+
+    static <T, U> Function<T, Result<U>> ignored(Class<?> expectedClass) {
+        return t ->
+                Result.ignored(
+                        "Ignored: " +
+                                Optional.ofNullable(t)
+                                        .map(o -> o.getClass().getCanonicalName())
+                                        .orElse("null -- expected " + expectedClass.getCanonicalName()));
+
     }
 }

@@ -9,15 +9,12 @@ import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.EscalationEventDefinition;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
-import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TerminateEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -25,16 +22,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.Executable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRefExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -49,35 +45,49 @@ public class EndEventConverter {
         this.definitionResolver = definitionResolver;
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(EndEvent endEvent) {
-        List<EventDefinition> eventDefinitions = endEvent.getEventDefinitions();
-        // properties.put(ISINTERRUPTING,
-        //         startEvent.isIsInterrupting());
+    public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(EndEvent event) {
+        List<EventDefinition> eventDefinitions = event.getEventDefinitions();
+        String nodeId = event.getId();
 
-        Node<? extends View<? extends BaseEndEvent>, ?> convertedEndEvent = convertEndEvent(endEvent, eventDefinitions);
-        BPMNGeneralSets.setProperties(endEvent, convertedEndEvent.getContent().getDefinition().getGeneral());
-
-        return convertedEndEvent;
-    }
-
-    public Node<? extends View<? extends BaseEndEvent>, ?> convertEndEvent(EndEvent endEvent, List<EventDefinition> eventDefinitions) {
-        String nodeId = endEvent.getId();
         switch (eventDefinitions.size()) {
-            case 0:
-                return factoryManager.newNode(nodeId, EndNoneEvent.class);
+            case 0: {
+                Node<View<EndNoneEvent>, Edge> node = factoryManager.newNode(nodeId, EndNoneEvent.class);
+                EndNoneEvent definition = node.getContent().getDefinition();
+                definition.setGeneral(new BPMNGeneralSet(
+                        new Name(event.getName()),
+                        Properties.documentation(event.getDocumentation())
+                ));
+                return node;
+            }
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseEndEvent.class)
-                        .when(TerminateEventDefinition.class, e ->
-                                factoryManager.newNode(nodeId, EndTerminateEvent.class))
+                        .when(TerminateEventDefinition.class, e -> {
+                            Node<View<EndTerminateEvent>, Edge> node = factoryManager.newNode(nodeId, EndTerminateEvent.class);
+
+                            EndTerminateEvent definition = node.getContent().getDefinition();
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            return node;
+                        })
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
 
                             EndSignalEvent definition = node.getContent().getDefinition();
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
 
                             definition.setExecutionSet(new ScopedSignalEventExecutionSet(
                                     new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef())),
-                                    new SignalScope(Properties.findMetaValue(endEvent.getExtensionValues(), "customScope"))
+                                    new SignalScope(Properties.findMetaValue(event.getExtensionValues(), "customScope"))
                             ));
 
                             return node;
@@ -86,7 +96,13 @@ public class EndEventConverter {
                             Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
 
                             EndMessageEvent definition = node.getContent().getDefinition();
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
 
                             definition.setExecutionSet(new MessageEventExecutionSet(
                                     new MessageRef(e.getMessageRef().getName())
@@ -97,7 +113,13 @@ public class EndEventConverter {
                             Node<View<EndErrorEvent>, Edge> node = factoryManager.newNode(nodeId, EndErrorEvent.class);
 
                             EndErrorEvent definition = node.getContent().getDefinition();
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(endEvent));
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
 
                             definition.setExecutionSet(new ErrorEventExecutionSet(
                                     new ErrorRef(e.getErrorRef().getErrorCode())
@@ -108,7 +130,7 @@ public class EndEventConverter {
                         .missing(EscalationEventDefinition.class)
                         .missing(CompensateEventDefinition.class)
                         .missing(CancelEventDefinition.class)
-                        .apply(eventDefinitions.get(0)).value();
+                        .apply(eventDefinitions.get(0)).asSuccess().value();
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for end event");
         }

@@ -63,7 +63,7 @@ public class NoneTask extends BaseTask {
 
         @Override
         public NoneTask build() {
-            return new NoneTask(new BPMNGeneralSet(new Name("Task"),
+            return new NoneTask(new TaskGeneralSet(new Name("Task"),
                                                    new Documentation("")),
                                 new EmptyTaskExecutionSet(),
                                 new BackgroundSet(),
@@ -78,7 +78,7 @@ public class NoneTask extends BaseTask {
         super(TaskTypes.NONE);
     }
 
-    public NoneTask(final @MapsTo("general") BPMNGeneralSet general,
+    public NoneTask(final @MapsTo("general") TaskGeneralSet general,
                     final @MapsTo("executionSet") EmptyTaskExecutionSet executionSet,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,

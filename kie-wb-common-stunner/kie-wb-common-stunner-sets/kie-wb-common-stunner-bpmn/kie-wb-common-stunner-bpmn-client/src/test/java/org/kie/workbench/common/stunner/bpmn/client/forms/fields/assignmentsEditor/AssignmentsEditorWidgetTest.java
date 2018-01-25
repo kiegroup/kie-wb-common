@@ -105,7 +105,7 @@ public class AssignmentsEditorWidgetTest extends AssignmentBaseTest {
     SequenceFlow sequenceFlow;
 
     @Mock
-    BPMNGeneralSet taskGeneralSet;
+    TaskGeneralSet taskGeneralSet;
 
     @Mock
     Name taskName;

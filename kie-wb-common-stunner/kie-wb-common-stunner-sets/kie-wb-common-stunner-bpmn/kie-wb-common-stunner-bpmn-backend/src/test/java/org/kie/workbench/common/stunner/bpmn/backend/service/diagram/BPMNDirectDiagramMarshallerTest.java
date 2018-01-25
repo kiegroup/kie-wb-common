@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
@@ -65,10 +66,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimeDefinitionAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimeDefinitionSetAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimePropertyAdapter;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimePropertySetAdapter;
+import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
+import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionSetAdapter;
+import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertyAdapter;
+import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertySetAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -191,10 +192,10 @@ public class BPMNDirectDiagramMarshallerTest {
                                                               applicationFactoryManager);
         TestScopeModelFactory testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
-        final RuntimeDefinitionAdapter definitionAdapter = new RuntimeDefinitionAdapter(definitionUtils);
-        final RuntimeDefinitionSetAdapter definitionSetAdapter = new RuntimeDefinitionSetAdapter(definitionAdapter);
-        final RuntimePropertySetAdapter propertySetAdapter = new RuntimePropertySetAdapter();
-        final RuntimePropertyAdapter propertyAdapter = new RuntimePropertyAdapter();
+        final BackendDefinitionAdapter definitionAdapter = new BackendDefinitionAdapter(definitionUtils);
+        final BackendDefinitionSetAdapter definitionSetAdapter = new BackendDefinitionSetAdapter(definitionAdapter);
+        final BackendPropertySetAdapter propertySetAdapter = new BackendPropertySetAdapter();
+        final BackendPropertyAdapter propertyAdapter = new BackendPropertyAdapter();
         mockAdapterManager(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         mockAdapterRegistry(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         applicationFactoryManager = new MockApplicationFactoryManager(
@@ -213,14 +214,14 @@ public class BPMNDirectDiagramMarshallerTest {
         tested = new BPMNDirectDiagramMarshaller(definitionManager, rulesManager, applicationFactoryManager, commandFactory, commandManager);
     }
 
-    private void mockAdapterRegistry(RuntimeDefinitionAdapter definitionAdapter, RuntimeDefinitionSetAdapter definitionSetAdapter, RuntimePropertySetAdapter propertySetAdapter, RuntimePropertyAdapter propertyAdapter) {
+    private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
         when(adapterRegistry.getDefinitionSetAdapter(any(Class.class))).thenReturn(definitionSetAdapter);
         when(adapterRegistry.getDefinitionAdapter(any(Class.class))).thenReturn(definitionAdapter);
         when(adapterRegistry.getPropertySetAdapter(any(Class.class))).thenReturn(propertySetAdapter);
         when(adapterRegistry.getPropertyAdapter(any(Class.class))).thenReturn(propertyAdapter);
     }
 
-    private void mockAdapterManager(RuntimeDefinitionAdapter definitionAdapter, RuntimeDefinitionSetAdapter definitionSetAdapter, RuntimePropertySetAdapter propertySetAdapter, RuntimePropertyAdapter propertyAdapter) {
+    private void mockAdapterManager(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
         when(adapterManager.forDefinitionSet()).thenReturn(definitionSetAdapter);
         when(adapterManager.forDefinition()).thenReturn(definitionAdapter);
         when(adapterManager.forPropertySet()).thenReturn(propertySetAdapter);
@@ -1463,6 +1464,39 @@ public class BPMNDirectDiagramMarshallerTest {
             }
         }
         return null;
+    }
+
+
+    @Test
+    public void testUnmarshallEmbeddedSubprocess() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EMBEDDED_SUBPROCESS);
+        EmbeddedSubprocess subprocess = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof EmbeddedSubprocess) {
+                    subprocess = (EmbeddedSubprocess) oDefinition;
+                    break;
+                }
+            }
+        }
+        assertNotNull(subprocess);
+    }
+
+    @Test
+    public void testUnmarshallSeveralDiagrams() throws Exception {
+        Diagram<Graph, Metadata> diagram1 = unmarshall(BPMN_EVALUATION);
+        assertDiagram(diagram1,
+                      8);
+        assertEquals("Evaluation",
+                     diagram1.getMetadata().getTitle());
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_LANES);
+        assertDiagram(diagram,
+                      7);
+        assertEquals("Lanes test",
+                     diagram.getMetadata().getTitle());
     }
 
     @SuppressWarnings("unchecked")

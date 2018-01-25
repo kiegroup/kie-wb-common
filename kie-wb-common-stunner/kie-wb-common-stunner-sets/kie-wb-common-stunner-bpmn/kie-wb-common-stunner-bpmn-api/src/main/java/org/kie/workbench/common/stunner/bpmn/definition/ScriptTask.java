@@ -67,7 +67,7 @@ public class ScriptTask extends BaseTask {
 
         @Override
         public ScriptTask build() {
-            return new ScriptTask(new BPMNGeneralSet(new Name("Task"),
+            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
                                                      new Documentation("")),
                                   new ScriptTaskExecutionSet(),
                                   new BackgroundSet(),
@@ -82,7 +82,7 @@ public class ScriptTask extends BaseTask {
         super(TaskTypes.SCRIPT);
     }
 
-    public ScriptTask(final @MapsTo("general") BPMNGeneralSet general,
+    public ScriptTask(final @MapsTo("general") TaskGeneralSet general,
                       final @MapsTo("executionSet") ScriptTaskExecutionSet executionSet,
                       final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                       final @MapsTo("fontSet") FontSet fontSet,

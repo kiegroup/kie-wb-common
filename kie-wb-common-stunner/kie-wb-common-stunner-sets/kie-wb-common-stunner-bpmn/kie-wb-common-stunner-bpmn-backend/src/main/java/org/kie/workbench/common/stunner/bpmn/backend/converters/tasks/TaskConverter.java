@@ -34,7 +34,7 @@ public class TaskConverter {
                                 factoryManager.newNode(t.getId(), NoneTask.class)
                 )
                 .apply(task)
-                .value();
+                .asSuccess().value();
     }
 
 

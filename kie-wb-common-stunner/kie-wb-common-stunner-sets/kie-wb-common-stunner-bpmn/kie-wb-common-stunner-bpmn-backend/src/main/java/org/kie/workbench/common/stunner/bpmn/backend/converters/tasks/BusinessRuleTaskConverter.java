@@ -1,10 +1,12 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.BPMNGeneralSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -19,7 +21,6 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scr
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.scriptLanguage;
 
 public class BusinessRuleTaskConverter {
-
     private final TypedFactoryManager factoryManager;
 
     public BusinessRuleTaskConverter(TypedFactoryManager factoryManager) {
@@ -30,7 +31,12 @@ public class BusinessRuleTaskConverter {
         Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(task.getId(), BusinessRuleTask.class);
 
         BusinessRuleTask definition = node.getContent().getDefinition();
-        BPMNGeneralSets.setProperties(task, definition.getGeneral());
+
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(task.getName()),
+                Properties.documentation(task.getDocumentation())
+        ));
+
         definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(task));
 
         definition.setExecutionSet(new BusinessRuleTaskExecutionSet(
@@ -40,8 +46,9 @@ public class BusinessRuleTaskConverter {
                 scriptLanguage(task),
                 new IsAsync(findMetaBoolean(task, "customAsync")),
                 new AdHocAutostart(findMetaBoolean(task, "customAutoStart"))
-        ));
-
+       ));
         return node;
     }
+
+
 }

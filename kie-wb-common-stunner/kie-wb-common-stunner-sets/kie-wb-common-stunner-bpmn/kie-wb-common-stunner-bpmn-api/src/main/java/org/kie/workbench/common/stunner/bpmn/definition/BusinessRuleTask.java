@@ -77,7 +77,7 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel,
 
         @Override
         public BusinessRuleTask build() {
-            return new BusinessRuleTask(new BPMNGeneralSet(new Name("Task"),
+            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
                                                            new Documentation("")),
                                         new BusinessRuleTaskExecutionSet(),
                                         new DataIOSet(),
@@ -94,7 +94,7 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel,
         super(TaskTypes.BUSINESS_RULE);
     }
 
-    public BusinessRuleTask(final @MapsTo("general") BPMNGeneralSet general,
+    public BusinessRuleTask(final @MapsTo("general") TaskGeneralSet general,
                             final @MapsTo("executionSet") BusinessRuleTaskExecutionSet executionSet,
                             final @MapsTo("dataIOSet") DataIOSet dataIOSet,
                             final @MapsTo("backgroundSet") BackgroundSet backgroundSet,

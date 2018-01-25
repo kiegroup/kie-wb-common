@@ -2,6 +2,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import java.util.List;
 
+import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.Task;
 import org.jboss.drools.DroolsPackage;
@@ -44,44 +45,51 @@ public class Scripts {
         return new RuleFlowGroup(findAnyAttribute(task, "ruleFlowGroup"));
     }
     public static OnEntryAction onEntry(Task task) {
+        return new OnEntryAction(onEntry(task.getExtensionValues()));
+    }
+    public static String onEntry(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
-                (List<OnEntryScriptType>) task.getExtensionValues().get(0).getValue()
+                (List<OnEntryScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
 
         if (!onEntryExtensions.isEmpty()) {
-            return new OnEntryAction(onEntryExtensions.get(0).getScript());
+            return (onEntryExtensions.get(0).getScript());
         }
 
-        return new OnEntryAction();
+        return "";
     }
-
 
     public static ScriptLanguage scriptLanguage(Task task) {
+        return new ScriptLanguage(scriptLanguage(task.getExtensionValues()));
+    }
+    public static String scriptLanguage(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
-                (List<OnEntryScriptType>) task.getExtensionValues().get(0).getValue()
+                (List<OnEntryScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
 
         if (!onEntryExtensions.isEmpty()) {
-            return new ScriptLanguage(ScriptLanguages.fromUri(onEntryExtensions.get(0).getScriptFormat()));
+            return (ScriptLanguages.fromUri(onEntryExtensions.get(0).getScriptFormat()));
         }
-        return new ScriptLanguage();
+        return "";
     }
-
 
 
     public static OnExitAction onExit(Task task) {
+        return new OnExitAction(onExit(task.getExtensionValues()));
+    }
+    public static String onExit(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnExitScriptType> onExitExtensions =
-                (List<OnExitScriptType>) task.getExtensionValues().get(0).getValue()
+                (List<OnExitScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT, true);
 
         if (!onExitExtensions.isEmpty()) {
-            return new OnExitAction(onExitExtensions.get(0).getScript());
+            return (onExitExtensions.get(0).getScript());
         }
 
-        return new OnExitAction();
+        return "";
     }
 
 

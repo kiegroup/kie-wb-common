@@ -8,6 +8,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 public class BPMNGeneralSets {
+
+    @Deprecated
     public static void setProperties(FlowElement flowElement, BPMNGeneralSet generalInfo) {
         generalInfo.setName(new Name(flowElement.getName()));
         List<Documentation> documentation = flowElement.getDocumentation();

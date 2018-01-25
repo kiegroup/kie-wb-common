@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -19,16 +20,34 @@ import org.eclipse.bpmn2.PotentialOwner;
 import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.ThrowEvent;
-import org.jboss.drools.DroolsPackage;
-import org.jboss.drools.OnEntryScriptType;
-import org.jboss.drools.OnExitScriptType;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptableExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 public class Properties {
+
+    public static Point2D docker(BoundaryEvent e) {
+        String dockerInfoStr = findAnyAttribute(e, "dockerinfo");
+
+        dockerInfoStr = dockerInfoStr.substring(0, dockerInfoStr.length() - 1);
+        String[] dockerInfoParts = dockerInfoStr.split("\\|");
+        String infoPartsToUse = dockerInfoParts[0];
+        String[] infoPartsToUseParts = infoPartsToUse.split("\\^");
+
+        double x = Double.valueOf(infoPartsToUseParts[0]);
+        double y = Double.valueOf(infoPartsToUseParts[1]);
+
+        return Point2D.create(x, y);
+    }
+
+    public static Documentation documentation(List<org.eclipse.bpmn2.Documentation> documentationList) {
+        return new Documentation(
+                documentationList.stream()
+                        .findFirst()
+                        .map(org.eclipse.bpmn2.Documentation::getText)
+                        .orElse(""));
+    }
 
     public static String getAssignmentsInfo(Activity activity) {
         InputOutputSpecification ioSpecification = activity.getIoSpecification();
@@ -45,19 +64,17 @@ public class Properties {
             );
         } else {
             return (
-                    AssignmentsInfos.makeString(
+                    AssignmentsInfos.makeWrongString(
                             ioSpecification.getDataInputs(),
-                            ioSpecification.getInputSets(),
+                            //ioSpecification.getInputSets(),
                             activity.getDataInputAssociations(),
                             ioSpecification.getDataOutputs(),
-                            ioSpecification.getOutputSets(),
+                            //ioSpecification.getOutputSets(),
                             activity.getDataOutputAssociations()
                     )
             );
-
         }
     }
-
 
     public static String getAssignmentsInfo(ThrowEvent event) {
         return (
@@ -84,6 +101,7 @@ public class Properties {
                 )
         );
     }
+
     public static boolean findAnyAttributeBoolean(BaseElement element, String attributeId) {
         return Boolean.parseBoolean(findAnyAttribute(element, attributeId));
     }

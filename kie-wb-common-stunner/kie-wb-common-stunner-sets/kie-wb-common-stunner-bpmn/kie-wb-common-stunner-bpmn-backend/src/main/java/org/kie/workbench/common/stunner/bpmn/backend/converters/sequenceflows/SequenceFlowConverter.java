@@ -1,14 +1,22 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.dd.dc.Point;
+import org.eclipse.dd.dc.Bounds;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.slf4j.Logger;
@@ -42,8 +50,17 @@ public class SequenceFlowConverter {
             }
         }
 
-        Index<?, ?> graphIndex = context.executionContext().getGraphIndex();
-        context.addEdge(edge, graphIndex.getNode(seq.getSourceRef().getId()), graphIndex.getNode(seq.getTargetRef().getId()));
+        String sourceId = seq.getSourceRef().getId();
+        String targetId = seq.getTargetRef().getId();
+        boolean isAutoConnectionSource = Properties.findMetaBoolean(seq, "isAutoConnection.source");
+        boolean isAutoConnectionTarget = Properties.findMetaBoolean(seq, "isAutoConnection.target");
+        context.addEdge(
+                edge,
+                sourceId,
+                isAutoConnectionSource,
+                targetId,
+                isAutoConnectionTarget);
+
         return edge;
     }
 }

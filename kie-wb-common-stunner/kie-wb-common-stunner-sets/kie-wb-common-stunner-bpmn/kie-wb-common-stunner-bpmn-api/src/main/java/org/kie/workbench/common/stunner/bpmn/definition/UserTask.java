@@ -69,7 +69,7 @@ public class UserTask extends BaseTask implements DataIOModel {
 
         @Override
         public UserTask build() {
-            return new UserTask(new BPMNGeneralSet(new Name("Task"),
+            return new UserTask(new TaskGeneralSet(new Name("Task"),
                                                    new Documentation("")),
                                 new UserTaskExecutionSet(),
                                 new BackgroundSet(),
@@ -84,7 +84,7 @@ public class UserTask extends BaseTask implements DataIOModel {
         super(TaskTypes.USER);
     }
 
-    public UserTask(final @MapsTo("general") BPMNGeneralSet general,
+    public UserTask(final @MapsTo("general") TaskGeneralSet general,
                     final @MapsTo("executionSet") UserTaskExecutionSet executionSet,
                     final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
                     final @MapsTo("fontSet") FontSet fontSet,

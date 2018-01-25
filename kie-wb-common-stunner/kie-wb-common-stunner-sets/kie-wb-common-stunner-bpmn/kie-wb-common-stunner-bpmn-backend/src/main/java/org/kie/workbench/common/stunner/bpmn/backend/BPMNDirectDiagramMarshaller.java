@@ -23,16 +23,17 @@ import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.ProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
-import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -40,17 +41,13 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExecutionContext;
-import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndex;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
-import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
-import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +61,7 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
 
     private final DefinitionManager definitionManager;
     private final RuleManager ruleManager;
-    private final FactoryManager factoryManager;
+    private final TypedFactoryManager typedFactoryManager;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
 
@@ -76,7 +73,7 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
             final GraphCommandManager commandManager) {
         this.definitionManager = definitionManager;
         this.ruleManager = ruleManager;
-        this.factoryManager = factoryManager;
+        this.typedFactoryManager = new TypedFactoryManager(factoryManager);
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
     }
@@ -92,54 +89,82 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                                                  final InputStream inputStream) throws IOException {
         LOG.debug("Starting diagram unmarshalling...");
 
-        final Definitions definitions = BPMN2Definitions.parse(inputStream);
+        Definitions definitions = BPMN2Definitions.parse(inputStream);
+        DiagramConverter diagramConverter =
+                new DiagramConverter(typedFactoryManager);
+        FlowElementConverter flowElementConverter =
+                new FlowElementConverter(typedFactoryManager,
+                                         new DefinitionResolver(definitions));
 
-        DefinitionResolver definitionResolver = new DefinitionResolver(definitions);
+        Process process = findProcess(definitions);
 
-        TypedFactoryManager typedFactoryManager = new TypedFactoryManager(this.factoryManager);
-        ProcessConverter processConverter = new ProcessConverter(typedFactoryManager, definitionResolver);
+        metadata.setCanvasRootUUID(definitions.getId());
+        metadata.setTitle(process.getName());
 
-        Process processDiagram =
-                (Process) definitions.getRootElements().stream()
-                        .filter(el -> el instanceof Process)
-                        .findFirst().get();
+        Graph<DefinitionSet, Node> graph = graphOf(process.getId());
 
-        Graph<DefinitionSet, Node> graph =
-                typedFactoryManager.newGraph(processDiagram.getId(), BPMNDefinitionSet.class);
+        BPMNPlane plane = findPlane(definitions);
+        Layout layout = new Layout(plane);
+        GraphBuildingContext context = graphContextOf(graph);
+        context.clearGraph();
 
-        MapIndexBuilder builder = new MapIndexBuilder();
-        MapIndex index = builder.build(graph);
+        Node<View<BPMNDiagramImpl>, ?> firstDiagramNode =
+                diagramConverter.convert(definitions.getId(), process);
 
-        final GraphCommandExecutionContext executionContext =
-                new EmptyRulesCommandExecutionContext(definitionManager,
-                                                      factoryManager,
-                                                      ruleManager,
-                                                      index);
+        context.addNode(firstDiagramNode);
 
-        CommandResult<RuleViolation> result = commandManager.execute(executionContext, commandFactory.clearGraph());
-        GraphBuildingContext context = new GraphBuildingContext(executionContext, commandFactory, commandManager);
+        process.getFlowElements()
+                .stream()
+                .map(flowElementConverter::convertNode)
+                .filter(Result::notIgnored)
+                .map(Result::value)
+                .forEach(n -> {
+                    layout.updateNode(n);
+                    context.addNode(n);
+                });
 
-        processConverter.processNodes(processDiagram, context);
-        processConverter.processEdges(processDiagram, context);
+        process.getFlowElements()
+                .stream()
+                .map(e -> flowElementConverter.convertEdge(e, context))
+                .filter(Result::isSuccess)
+                .map(Result::value)
+                .forEach(layout::updateEdge);
 
-        BPMNPlane plane = definitions.getDiagrams().get(0).getPlane();
-
-        Node<View<BPMNDiagram>, ?> diagramView = processConverter.convertDiagram(definitions.getId(), processDiagram);
-        graph.addNode(diagramView.asNode());
-        graph.nodes().forEach(node -> Layout.updateNode(plane, node));
-
-
-        // Update diagram's settings.
-        Node<Definition<BPMNDiagramImpl>, ?> firstDiagramNode = GraphUtils.getFirstNode(graph, BPMNDiagramImpl.class);
-
-        String uuid = firstDiagramNode.getUUID();
-        metadata.setCanvasRootUUID(uuid);
-
-        String title = firstDiagramNode.getContent().getDefinition().getDiagramSet().getName().getValue();
-        metadata.setTitle(title);
+        process.getFlowElements()
+                .forEach(e -> flowElementConverter.convertDockedNodes(e, context));
 
         LOG.debug("Diagram unmarshalling finished successfully.");
         return graph;
+    }
+
+    private Graph<DefinitionSet, Node> graphOf(String id) {
+        return typedFactoryManager.newGraph(id, BPMNDefinitionSet.class);
+    }
+
+    public BPMNPlane findPlane(Definitions definitions) {
+        return definitions.getDiagrams().get(0).getPlane();
+    }
+
+    public Process findProcess(Definitions definitions) {
+        return (Process) definitions.getRootElements().stream()
+                .filter(el -> el instanceof Process)
+                .findFirst().get();
+    }
+
+    private GraphBuildingContext graphContextOf(Graph<DefinitionSet, Node> graph) {
+        return new GraphBuildingContext(createExecutionContext(graph), commandFactory, commandManager);
+    }
+
+    private MapIndex createMapIndex(Graph<DefinitionSet, Node> graph) {
+        MapIndexBuilder builder = new MapIndexBuilder();
+        return builder.build(graph);
+    }
+
+    private EmptyRulesCommandExecutionContext createExecutionContext(Graph<DefinitionSet, Node> graph) {
+        return new EmptyRulesCommandExecutionContext(definitionManager,
+                                                     typedFactoryManager.untyped(),
+                                                     ruleManager,
+                                                     createMapIndex(graph));
     }
 
     @Override

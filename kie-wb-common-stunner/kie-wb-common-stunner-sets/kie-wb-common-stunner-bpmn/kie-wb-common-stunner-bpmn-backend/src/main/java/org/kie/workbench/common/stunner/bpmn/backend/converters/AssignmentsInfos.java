@@ -24,6 +24,33 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 
 public class AssignmentsInfos {
 
+    // this is actually for compatibility with the previous generator
+    public static String makeWrongString(
+            final List<DataInput> datainput,
+            //final List<InputSet> inputSets,
+            final List<DataInputAssociation> inputAssociations,
+            final List<DataOutput> dataoutput,
+            //final List<OutputSet> dataoutputset,
+            final List<DataOutputAssociation> outputAssociations) {
+
+        String dataInputString = dataInputsToString(datainput);
+        List<String> dataInputAssociationsToString = inAssociationsToString(inputAssociations);
+
+        String dataOutputString = dataOutputsToString(dataoutput);
+        List<String> dataOutputAssociationsToString = outAssociationsToString(outputAssociations);
+
+        String associationString =
+                Stream.concat(dataInputAssociationsToString.stream(), dataOutputAssociationsToString.stream())
+                        .collect(Collectors.joining(","));
+
+        return Stream.of("",
+                         dataInputString,
+                         "",
+                         dataOutputString,
+                         associationString)
+                .collect(Collectors.joining("|"));
+    }
+
     public static String makeString(
             final List<DataInput> datainput,
             final List<InputSet> inputSets,
@@ -42,7 +69,7 @@ public class AssignmentsInfos {
 
         String associationString =
                 Stream.concat(dataInputAssociationsToString.stream(), dataOutputAssociationsToString.stream())
-                .collect(Collectors.joining(","));
+                        .collect(Collectors.joining(","));
 
         return Stream.of(dataInputString,
                          inputSetsToString,
@@ -125,7 +152,6 @@ public class AssignmentsInfos {
                     result.add(
                             String.format("[dout]%s->%s", doaName, doa.getTargetRef().getId()));
                 }
-
             }
         }
         return result;
@@ -136,7 +162,9 @@ public class AssignmentsInfos {
 
         for (DataInputAssociation dia : inputAssociations) {
             List<ItemAwareElement> sourceRef = dia.getSourceRef();
-            if (sourceRef.isEmpty()) continue;
+            if (sourceRef.isEmpty()) {
+                continue;
+            }
             String doaName = sourceRef.get(0).getId();
             if (doaName != null && doaName.length() > 0) {
                 result.add(

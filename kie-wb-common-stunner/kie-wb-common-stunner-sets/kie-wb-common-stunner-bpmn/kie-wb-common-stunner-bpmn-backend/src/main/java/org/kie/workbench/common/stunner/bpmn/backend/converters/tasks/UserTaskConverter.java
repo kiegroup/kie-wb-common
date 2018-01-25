@@ -9,6 +9,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors
 import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
@@ -43,6 +47,11 @@ public class UserTaskConverter {
         Node<View<UserTask>, Edge> node = factoryManager.newNode(task.getId(), UserTask.class);
 
         UserTask definition = node.getContent().getDefinition();
+
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(task.getName()),
+                Properties.documentation(task.getDocumentation())
+        ));
 
         definition.setSimulationSet(
                 resolver.extractSimulationSet(task)

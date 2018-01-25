@@ -39,6 +39,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Si
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -56,16 +59,22 @@ public class StartEventConverter {
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(StartEvent startEvent) {
         List<EventDefinition> eventDefinitions = startEvent.getEventDefinitions();
         Node<? extends View<? extends BaseStartEvent>, ?> convertedStartEvent = convertStartEvent(startEvent, eventDefinitions);
-        BPMNGeneralSets.setProperties(startEvent, convertedStartEvent.getContent().getDefinition().getGeneral());
 
         return convertedStartEvent;
     }
 
-    private Node<? extends View<? extends BaseStartEvent>, ?> convertStartEvent(StartEvent startEvent, List<EventDefinition> eventDefinitions) {
-        String nodeId = startEvent.getId();
+    private Node<? extends View<? extends BaseStartEvent>, ?> convertStartEvent(StartEvent event, List<EventDefinition> eventDefinitions) {
+        String nodeId = event.getId();
         switch (eventDefinitions.size()) {
-            case 0:
-                return factoryManager.newNode(nodeId, StartNoneEvent.class);
+            case 0: {
+                Node<View<StartNoneEvent>, Edge> node = factoryManager.newNode(nodeId, StartNoneEvent.class);
+                StartNoneEvent definition = node.getContent().getDefinition();
+                definition.setGeneral(new BPMNGeneralSet(
+                        new Name(event.getName()),
+                        Properties.documentation(event.getDocumentation())
+                ));
+                return node;
+            }
             case 1:
                 return Match.ofNode(EventDefinition.class, BaseStartEvent.class)
                         .when(SignalEventDefinition.class, e -> {
@@ -73,8 +82,13 @@ public class StartEventConverter {
 
                             StartSignalEvent definition = node.getContent().getDefinition();
 
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
                             definition.setExecutionSet(new InterruptingSignalEventExecutionSet(
-                                    new IsInterrupting(startEvent.isIsInterrupting()),
+                                    new IsInterrupting(event.isIsInterrupting()),
                                     new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
                             ));
 
@@ -84,10 +98,16 @@ public class StartEventConverter {
                             Node<View<StartMessageEvent>, Edge> node = factoryManager.newNode(nodeId, StartMessageEvent.class);
 
                             StartMessageEvent definition = node.getContent().getDefinition();
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(startEvent));
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
 
                             definition.setExecutionSet(new InterruptingMessageEventExecutionSet(
-                                    new IsInterrupting(startEvent.isIsInterrupting()),
+                                    new IsInterrupting(event.isIsInterrupting()),
                                     new MessageRef(e.getMessageRef().getName())
                             ));
 
@@ -98,9 +118,14 @@ public class StartEventConverter {
 
                             StartTimerEvent definition = node.getContent().getDefinition();
 
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
                             definition.setExecutionSet(new InterruptingTimerEventExecutionSet(
-                                new IsInterrupting(startEvent.isIsInterrupting()),
-                                TimerEventDefinitionConverter.convertTimerEventDefinition(e)
+                                    new IsInterrupting(event.isIsInterrupting()),
+                                    TimerEventDefinitionConverter.convertTimerEventDefinition(e)
                             ));
 
                             return node;
@@ -109,10 +134,16 @@ public class StartEventConverter {
                             Node<View<StartErrorEvent>, Edge> node = factoryManager.newNode(nodeId, StartErrorEvent.class);
 
                             StartErrorEvent definition = node.getContent().getDefinition();
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(startEvent));
+
+                            definition.setGeneral(new BPMNGeneralSet(
+                                    new Name(event.getName()),
+                                    Properties.documentation(event.getDocumentation())
+                            ));
+
+                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
 
                             definition.setExecutionSet(new InterruptingErrorEventExecutionSet(
-                                    new IsInterrupting(startEvent.isIsInterrupting()),
+                                    new IsInterrupting(event.isIsInterrupting()),
                                     new ErrorRef(e.getErrorRef().getErrorCode())
                             ));
 
@@ -121,7 +152,7 @@ public class StartEventConverter {
                         .missing(ConditionalEventDefinition.class)
                         .missing(EscalationEventDefinition.class)
                         .missing(CompensateEventDefinition.class)
-                        .apply(eventDefinitions.get(0)).value();
+                        .apply(eventDefinitions.get(0)).asSuccess().value();
             default:
                 throw new UnsupportedOperationException("Multiple event definitions not supported for start event");
         }

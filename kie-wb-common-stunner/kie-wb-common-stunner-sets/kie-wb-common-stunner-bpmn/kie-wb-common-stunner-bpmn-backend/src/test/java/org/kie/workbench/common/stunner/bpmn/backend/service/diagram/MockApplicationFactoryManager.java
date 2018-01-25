@@ -3,7 +3,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.core.backend.definition.adapter.annotation.RuntimeDefinitionAdapter;
+import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
@@ -53,7 +53,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
         if (null != model) {
-            Class<? extends ElementFactory> element = RuntimeDefinitionAdapter.getGraphFactory(model.getClass());
+            Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
             if (element.isAssignableFrom(NodeFactory.class)) {
                 Node node = viewNodeFactory.build(uuid,
                         model);
@@ -78,7 +78,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
         if (null != model) {
-            Class<? extends ElementFactory> element = RuntimeDefinitionAdapter.getGraphFactory(model.getClass());
+            Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
             if (element.isAssignableFrom(NodeFactory.class)) {
                 Node node = viewNodeFactory.build(uuid,
                         model);

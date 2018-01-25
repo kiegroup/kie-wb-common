@@ -49,7 +49,7 @@ public class Simulations {
                 simulationSet.getMean().setValue(pdt.getMean());
                 simulationSet.getDistributionType().setValue("poisson");
                 return simulationSet;
-            }).apply(paramValue).value();
+            }).apply(paramValue).asSuccess().value();
 
         // FIXME waittime ??
     }
@@ -83,7 +83,7 @@ public class Simulations {
 
     private static double extractDouble(EList<ParameterValue> parameterValues) {
         if (parameterValues.isEmpty()) {
-            throw new IllegalArgumentException("empty params");
+            throw new IllegalArgumentException("failure params");
         }
         ParameterValue value = parameterValues.get(0);
         return ((FloatingParameterType) value).getValue();
