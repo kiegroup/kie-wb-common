@@ -41,14 +41,6 @@ public class ScriptTaskExecutionSet implements BPMNPropertySet {
 
     @Property
     @FormField(
-            type = TextAreaFieldType.class,
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private Script script;
-
-    @Property
-    @FormField(
             type = ListBoxFieldType.class,
             afterElement = "script"
     )
@@ -57,7 +49,13 @@ public class ScriptTaskExecutionSet implements BPMNPropertySet {
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
     @Valid
     protected ScriptLanguage scriptLanguage;
-
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private Script script;
     @Property
     @FormField(
             afterElement = "scriptLanguage"

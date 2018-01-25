@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import java.util.List;
@@ -44,9 +60,11 @@ public class Scripts {
     public static RuleFlowGroup ruleFlowGroup(org.eclipse.bpmn2.BusinessRuleTask task) {
         return new RuleFlowGroup(findAnyAttribute(task, "ruleFlowGroup"));
     }
+
     public static OnEntryAction onEntry(Task task) {
         return new OnEntryAction(onEntry(task.getExtensionValues()));
     }
+
     public static String onEntry(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
@@ -63,6 +81,7 @@ public class Scripts {
     public static ScriptLanguage scriptLanguage(Task task) {
         return new ScriptLanguage(scriptLanguage(task.getExtensionValues()));
     }
+
     public static String scriptLanguage(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
@@ -75,10 +94,10 @@ public class Scripts {
         return "";
     }
 
-
     public static OnExitAction onExit(Task task) {
         return new OnExitAction(onExit(task.getExtensionValues()));
     }
+
     public static String onExit(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnExitScriptType> onExitExtensions =
@@ -91,7 +110,6 @@ public class Scripts {
 
         return "";
     }
-
 
     public static void setProperties(ScriptTask task, ScriptTaskExecutionSet executionSet) {
         executionSet.getScript().setValue(task.getScript());

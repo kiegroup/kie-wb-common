@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -54,20 +53,6 @@ public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEve
     @FormField(afterElement = "general")
     @Valid
     protected ScopedSignalEventExecutionSet executionSet;
-
-    @NonPortable
-    public static class IntermediateSignalEventThrowingBuilder implements Builder<IntermediateSignalEventThrowing> {
-
-        @Override
-        public IntermediateSignalEventThrowing build() {
-            return new IntermediateSignalEventThrowing(new BPMNGeneralSet(""),
-                                                       new DataIOSet(),
-                                                       new BackgroundSet(),
-                                                       new FontSet(),
-                                                       new CircleDimensionSet(new Radius()),
-                                                       new ScopedSignalEventExecutionSet());
-        }
-    }
 
     public IntermediateSignalEventThrowing() {
     }
@@ -108,5 +93,19 @@ public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEve
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class IntermediateSignalEventThrowingBuilder implements Builder<IntermediateSignalEventThrowing> {
+
+        @Override
+        public IntermediateSignalEventThrowing build() {
+            return new IntermediateSignalEventThrowing(new BPMNGeneralSet(""),
+                                                       new DataIOSet(),
+                                                       new BackgroundSet(),
+                                                       new FontSet(),
+                                                       new CircleDimensionSet(new Radius()),
+                                                       new ScopedSignalEventExecutionSet());
+        }
     }
 }

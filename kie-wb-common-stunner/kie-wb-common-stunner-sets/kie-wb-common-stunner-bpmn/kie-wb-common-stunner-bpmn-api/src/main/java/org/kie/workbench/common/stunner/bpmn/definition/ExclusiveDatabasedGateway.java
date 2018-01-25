@@ -48,28 +48,14 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 )
 public class ExclusiveDatabasedGateway extends BaseGateway {
 
+    private static long nextID = 0;
     @PropertySet
     @FormField(
             afterElement = "general"
     )
     @Valid
     private ExclusiveGatewayExecutionSet executionSet;
-
-    private static long nextID = 0;
     private long Id = 0;
-
-    @NonPortable
-    public static class ExclusiveDatabasedGatewayBuilder implements Builder<ExclusiveDatabasedGateway> {
-
-        @Override
-        public ExclusiveDatabasedGateway build() {
-            return new ExclusiveDatabasedGateway(new BPMNGeneralSet(""),
-                                                 new ExclusiveGatewayExecutionSet(),
-                                                 new BackgroundSet(),
-                                                 new FontSet(),
-                                                 new CircleDimensionSet(new Radius()));
-        }
-    }
 
     public ExclusiveDatabasedGateway() {
         this.Id = nextID++;
@@ -118,5 +104,18 @@ public class ExclusiveDatabasedGateway extends BaseGateway {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class ExclusiveDatabasedGatewayBuilder implements Builder<ExclusiveDatabasedGateway> {
+
+        @Override
+        public ExclusiveDatabasedGateway build() {
+            return new ExclusiveDatabasedGateway(new BPMNGeneralSet(""),
+                                                 new ExclusiveGatewayExecutionSet(),
+                                                 new BackgroundSet(),
+                                                 new FontSet(),
+                                                 new CircleDimensionSet(new Radius()));
+        }
     }
 }

@@ -75,20 +75,6 @@ public class SequenceFlow extends BaseConnector {
     @Valid
     protected SequenceFlowExecutionSet executionSet;
 
-    @NonPortable
-    public static class SequenceFlowBuilder extends BaseConnectorBuilder<SequenceFlow> {
-
-        @Override
-        public SequenceFlow build() {
-            return new SequenceFlow(new BPMNGeneralSet("Sequence"),
-                                    new SequenceFlowExecutionSet(),
-                                    new BackgroundSet(COLOR,
-                                                      BORDER_COLOR,
-                                                      BORDER_SIZE),
-                                    new FontSet());
-        }
-    }
-
     public SequenceFlow() {
     }
 
@@ -124,5 +110,19 @@ public class SequenceFlow extends BaseConnector {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class SequenceFlowBuilder extends BaseConnectorBuilder<SequenceFlow> {
+
+        @Override
+        public SequenceFlow build() {
+            return new SequenceFlow(new BPMNGeneralSet("Sequence"),
+                                    new SequenceFlowExecutionSet(),
+                                    new BackgroundSet(COLOR,
+                                                      BORDER_COLOR,
+                                                      BORDER_SIZE),
+                                    new FontSet());
+        }
     }
 }

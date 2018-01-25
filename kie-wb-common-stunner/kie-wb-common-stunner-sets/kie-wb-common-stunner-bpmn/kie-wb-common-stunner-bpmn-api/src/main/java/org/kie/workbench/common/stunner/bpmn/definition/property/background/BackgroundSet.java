@@ -94,20 +94,20 @@ public class BackgroundSet implements BPMNPropertySet {
         return bgColor;
     }
 
-    public BorderColor getBorderColor() {
-        return borderColor;
-    }
-
-    public BorderSize getBorderSize() {
-        return borderSize;
-    }
-
     public void setBgColor(final BgColor bgColor) {
         this.bgColor = bgColor;
     }
 
+    public BorderColor getBorderColor() {
+        return borderColor;
+    }
+
     public void setBorderColor(final BorderColor borderColor) {
         this.borderColor = borderColor;
+    }
+
+    public BorderSize getBorderSize() {
+        return borderSize;
     }
 
     public void setBorderSize(final BorderSize borderSize) {

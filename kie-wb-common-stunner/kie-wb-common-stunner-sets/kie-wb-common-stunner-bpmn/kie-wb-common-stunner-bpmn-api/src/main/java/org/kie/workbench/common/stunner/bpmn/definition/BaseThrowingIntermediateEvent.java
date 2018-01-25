@@ -68,21 +68,6 @@ public abstract class BaseThrowingIntermediateEvent
     @PropertySet
     protected CircleDimensionSet dimensionsSet;
 
-    protected void initLabels() {
-        labels.add("all");
-        labels.add("sequence_start");
-        labels.add("sequence_end");
-        labels.add("to_task_event");
-        labels.add("from_task_event");
-        labels.add("fromtoall");
-        labels.add("FromEventbasedGateway");
-        labels.add("IntermediateEventOnSubprocessBoundary");
-        labels.add("IntermediateEventOnActivityBoundary");
-        labels.add("EventOnChoreographyActivityBoundary");
-        labels.add("IntermediateEventsMorph");
-        labels.add("cmnop");
-    }
-
     public BaseThrowingIntermediateEvent() {
         initLabels();
     }
@@ -98,6 +83,21 @@ public abstract class BaseThrowingIntermediateEvent
         this.backgroundSet = backgroundSet;
         this.fontSet = fontSet;
         this.dimensionsSet = dimensionsSet;
+    }
+
+    protected void initLabels() {
+        labels.add("all");
+        labels.add("sequence_start");
+        labels.add("sequence_end");
+        labels.add("to_task_event");
+        labels.add("from_task_event");
+        labels.add("fromtoall");
+        labels.add("FromEventbasedGateway");
+        labels.add("IntermediateEventOnSubprocessBoundary");
+        labels.add("IntermediateEventOnActivityBoundary");
+        labels.add("EventOnChoreographyActivityBoundary");
+        labels.add("IntermediateEventsMorph");
+        labels.add("cmnop");
     }
 
     @Override

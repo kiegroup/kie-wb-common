@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Laneconverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -96,8 +96,8 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                 new FlowElementConverter(typedFactoryManager,
                                          new DefinitionResolver(definitions));
 
-        Laneconverter laneconverter =
-                new Laneconverter(typedFactoryManager,
+        LaneConverter laneconverter =
+                new LaneConverter(typedFactoryManager,
                                   new DefinitionResolver(definitions));
 
         Process process = findProcess(definitions);

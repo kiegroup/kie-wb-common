@@ -62,21 +62,6 @@ public class StartErrorEvent extends BaseStartEvent implements Executable<Interr
     @Valid
     protected DataIOSet dataIOSet;
 
-    @NonPortable
-    public static class StartErrorEventBuilder implements Builder<StartErrorEvent> {
-
-        @Override
-        public StartErrorEvent build() {
-            return new StartErrorEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new DataIOSet(),
-                                       new InterruptingErrorEventExecutionSet());
-        }
-    }
-
     public StartErrorEvent() {
     }
 
@@ -138,5 +123,20 @@ public class StartErrorEvent extends BaseStartEvent implements Executable<Interr
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class StartErrorEventBuilder implements Builder<StartErrorEvent> {
+
+        @Override
+        public StartErrorEvent build() {
+            return new StartErrorEvent(new BPMNGeneralSet(""),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new CircleDimensionSet(new Radius()),
+                                       new SimulationAttributeSet(),
+                                       new DataIOSet(),
+                                       new InterruptingErrorEventExecutionSet());
+        }
     }
 }

@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataI
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -61,20 +60,6 @@ public class IntermediateSignalEventCatching extends BaseCatchingIntermediateEve
     @FormField(afterElement = "executionSet")
     @Valid
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class IntermediateSignalEventCatchingBuilder implements Builder<IntermediateSignalEventCatching> {
-
-        @Override
-        public IntermediateSignalEventCatching build() {
-            return new IntermediateSignalEventCatching(new BPMNGeneralSet(""),
-                                                       new BackgroundSet(),
-                                                       new FontSet(),
-                                                       new CircleDimensionSet(new Radius()),
-                                                       new DataIOSet(),
-                                                       new CancellingSignalEventExecutionSet());
-        }
-    }
 
     public IntermediateSignalEventCatching() {
     }
@@ -135,5 +120,19 @@ public class IntermediateSignalEventCatching extends BaseCatchingIntermediateEve
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class IntermediateSignalEventCatchingBuilder implements Builder<IntermediateSignalEventCatching> {
+
+        @Override
+        public IntermediateSignalEventCatching build() {
+            return new IntermediateSignalEventCatching(new BPMNGeneralSet(""),
+                                                       new BackgroundSet(),
+                                                       new FontSet(),
+                                                       new CircleDimensionSet(new Radius()),
+                                                       new DataIOSet(),
+                                                       new CancellingSignalEventExecutionSet());
+        }
     }
 }

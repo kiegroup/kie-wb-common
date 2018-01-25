@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSe
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.CancellingErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -60,20 +59,6 @@ public class EndErrorEvent extends BaseEndEvent implements Executable<ErrorEvent
     @PropertySet
     @FormField(afterElement = "executionSet")
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class EndNoneEventBuilder implements Builder<EndErrorEvent> {
-
-        @Override
-        public EndErrorEvent build() {
-            return new EndErrorEvent(new BPMNGeneralSet(""),
-                                     new BackgroundSet(),
-                                     new FontSet(),
-                                     new CircleDimensionSet(new Radius()),
-                                     new ErrorEventExecutionSet(),
-                                     new DataIOSet());
-        }
-    }
 
     public EndErrorEvent() {
     }
@@ -143,5 +128,19 @@ public class EndErrorEvent extends BaseEndEvent implements Executable<ErrorEvent
         return HashUtil.combineHashCodes(super.hashCode(),
                                          executionSet.hashCode(),
                                          dataIOSet.hashCode());
+    }
+
+    @NonPortable
+    public static class EndNoneEventBuilder implements Builder<EndErrorEvent> {
+
+        @Override
+        public EndErrorEvent build() {
+            return new EndErrorEvent(new BPMNGeneralSet(""),
+                                     new BackgroundSet(),
+                                     new FontSet(),
+                                     new CircleDimensionSet(new Radius()),
+                                     new ErrorEventExecutionSet(),
+                                     new DataIOSet());
+        }
     }
 }

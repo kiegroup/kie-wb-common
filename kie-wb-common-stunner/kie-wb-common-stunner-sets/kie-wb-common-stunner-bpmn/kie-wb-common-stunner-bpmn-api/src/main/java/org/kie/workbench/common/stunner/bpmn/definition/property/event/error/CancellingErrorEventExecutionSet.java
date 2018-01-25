@@ -36,7 +36,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @PropertySet
 @FormDefinition(startElement = "errorRef",
         policy = FieldPolicy.ONLY_MARKED)
-public class CancellingErrorEventExecutionSet implements BPMNPropertySet, ErrorExecutionSet {
+public class CancellingErrorEventExecutionSet implements BPMNPropertySet,
+                                                         ErrorExecutionSet {
 
     @Property
     private CancelActivity cancelActivity;

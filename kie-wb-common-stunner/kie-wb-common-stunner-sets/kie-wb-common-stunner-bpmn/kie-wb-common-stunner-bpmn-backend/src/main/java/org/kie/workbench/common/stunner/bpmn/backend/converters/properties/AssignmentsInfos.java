@@ -1,26 +1,37 @@
+/*
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
-import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.OutputSet;
 import org.eclipse.bpmn2.SubProcess;
-import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 public class AssignmentsInfos {
 
@@ -113,35 +124,6 @@ public class AssignmentsInfos {
         return "";
     }
 
-    @Deprecated
-    private void marshallItemAwareElements(Activity activity,
-                                           List<? extends ItemAwareElement> elements,
-                                           StringBuilder buffer,
-                                           List<String> disallowedNames) {
-        for (ItemAwareElement element : elements) {
-            String name = null;
-            if (element instanceof DataInput) {
-                name = ((DataInput) element).getName();
-            }
-            if (element instanceof DataOutput) {
-                name = ((DataOutput) element).getName();
-            }
-            if (name != null && !name.isEmpty() && !disallowedNames.contains(name)) {
-                buffer.append(name);
-                if (element.getItemSubjectRef() != null && element.getItemSubjectRef().getStructureRef() != null && !element.getItemSubjectRef().getStructureRef().isEmpty()) {
-                    buffer.append(":").append(element.getItemSubjectRef().getStructureRef());
-                } else if (activity.eContainer() instanceof SubProcess) {
-                    // BZ1247105: for Outputs on Tasks inside sub-processes
-                    String dtype = extractDtype(element);
-                    if (dtype != null && !dtype.isEmpty()) {
-                        buffer.append(":").append(dtype);
-                    }
-                }
-                buffer.append(",");
-            }
-        }
-    }
-
     public static List<String> outAssociationsToString(List<DataOutputAssociation> outputAssociations) {
         List<String> result = new ArrayList<>();
         for (DataOutputAssociation doa : outputAssociations) {
@@ -198,5 +180,34 @@ public class AssignmentsInfos {
             }
         }
         return "";
+    }
+
+    @Deprecated
+    private void marshallItemAwareElements(Activity activity,
+                                           List<? extends ItemAwareElement> elements,
+                                           StringBuilder buffer,
+                                           List<String> disallowedNames) {
+        for (ItemAwareElement element : elements) {
+            String name = null;
+            if (element instanceof DataInput) {
+                name = ((DataInput) element).getName();
+            }
+            if (element instanceof DataOutput) {
+                name = ((DataOutput) element).getName();
+            }
+            if (name != null && !name.isEmpty() && !disallowedNames.contains(name)) {
+                buffer.append(name);
+                if (element.getItemSubjectRef() != null && element.getItemSubjectRef().getStructureRef() != null && !element.getItemSubjectRef().getStructureRef().isEmpty()) {
+                    buffer.append(":").append(element.getItemSubjectRef().getStructureRef());
+                } else if (activity.eContainer() instanceof SubProcess) {
+                    // BZ1247105: for Outputs on Tasks inside sub-processes
+                    String dtype = extractDtype(element);
+                    if (dtype != null && !dtype.isEmpty()) {
+                        buffer.append(":").append(dtype);
+                    }
+                }
+                buffer.append(",");
+            }
+        }
     }
 }

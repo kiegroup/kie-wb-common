@@ -62,26 +62,20 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 )
 public class EmbeddedSubprocess extends BaseSubprocess implements DataIOModel {
 
-    @NonPortable
-    public static class EmbeddedSubprocessBuilder implements Builder<EmbeddedSubprocess> {
-
-        // TODO: It should use #FAFAFA as bg_color, rather than other subprocesses...
-        @Override
-        public EmbeddedSubprocess build() {
-            return new EmbeddedSubprocess(
-                    new BPMNGeneralSet("Sub-process"),
-                    new BackgroundSet(),
-                    new FontSet(),
-                    new RectangleDimensionsSet(),
-                    new SimulationSet(),
-                    new OnEntryAction(""),
-                    new OnExitAction(""),
-                    new ScriptLanguage(),
-                    new IsAsync(),
-                    new ProcessData());
-        }
-    }
-
+    @Property
+    @FormField(
+            type = ConditionalComboBoxFieldType.class,
+            afterElement = "onExitAction",
+            settings = {
+                    @FieldParam(name = "relatedField", value = "onEntryAction;onExitAction"),
+                    @FieldParam(name = "allowCustomValue", value = "false")
+            }
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.REMOTE,
+            className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
+    @Valid
+    protected ScriptLanguage scriptLanguage;
     @Property
     @FormField(
             type = TextAreaFieldType.class,
@@ -99,29 +93,12 @@ public class EmbeddedSubprocess extends BaseSubprocess implements DataIOModel {
     )
     @Valid
     private OnExitAction onExitAction;
-
-    @Property
-    @FormField(
-            type = ConditionalComboBoxFieldType.class,
-            afterElement = "onExitAction",
-            settings = {
-                    @FieldParam(name = "relatedField", value = "onEntryAction;onExitAction"),
-                    @FieldParam(name = "allowCustomValue", value = "false")
-            }
-    )
-    @SelectorDataProvider(
-            type = SelectorDataProvider.ProviderType.REMOTE,
-            className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
-    @Valid
-    protected ScriptLanguage scriptLanguage;
-
     @Property
     @FormField(
             afterElement = "scriptLanguage"
     )
     @Valid
     private IsAsync isAsync;
-
     @PropertySet
     @FormField(
             afterElement = "isAsync"
@@ -237,5 +214,25 @@ public class EmbeddedSubprocess extends BaseSubprocess implements DataIOModel {
                     processData.equals(other.processData);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class EmbeddedSubprocessBuilder implements Builder<EmbeddedSubprocess> {
+
+        // TODO: It should use #FAFAFA as bg_color, rather than other subprocesses...
+        @Override
+        public EmbeddedSubprocess build() {
+            return new EmbeddedSubprocess(
+                    new BPMNGeneralSet("Sub-process"),
+                    new BackgroundSet(),
+                    new FontSet(),
+                    new RectangleDimensionsSet(),
+                    new SimulationSet(),
+                    new OnEntryAction(""),
+                    new OnExitAction(""),
+                    new ScriptLanguage(),
+                    new IsAsync(),
+                    new ProcessData());
+        }
     }
 }

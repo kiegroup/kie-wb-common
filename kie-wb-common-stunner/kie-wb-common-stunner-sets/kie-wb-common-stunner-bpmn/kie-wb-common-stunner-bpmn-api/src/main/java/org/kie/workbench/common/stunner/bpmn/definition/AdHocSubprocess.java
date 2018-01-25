@@ -64,22 +64,6 @@ public class AdHocSubprocess extends BaseSubprocess implements DataIOModel {
     @Valid
     protected DataIOSet dataIOSet;
 
-    @NonPortable
-    public static class AdHocSubprocessBuilder implements Builder<AdHocSubprocess> {
-
-        @Override
-        public AdHocSubprocess build() {
-            return new AdHocSubprocess(
-                    new BPMNGeneralSet("Subprocess"),
-                    new ReusableSubprocessTaskExecutionSet(),
-                    new DataIOSet(),
-                    new BackgroundSet(),
-                    new FontSet(),
-                    new RectangleDimensionsSet(),
-                    new SimulationSet());
-        }
-    }
-
     public AdHocSubprocess() {
         super();
     }
@@ -124,12 +108,12 @@ public class AdHocSubprocess extends BaseSubprocess implements DataIOModel {
         return executionSet;
     }
 
-    public DataIOSet getDataIOSet() {
-        return dataIOSet;
-    }
-
     public void setExecutionSet(final ReusableSubprocessTaskExecutionSet executionSet) {
         this.executionSet = executionSet;
+    }
+
+    public DataIOSet getDataIOSet() {
+        return dataIOSet;
     }
 
     public void setDataIOSet(final DataIOSet dataIOSet) {
@@ -152,5 +136,21 @@ public class AdHocSubprocess extends BaseSubprocess implements DataIOModel {
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class AdHocSubprocessBuilder implements Builder<AdHocSubprocess> {
+
+        @Override
+        public AdHocSubprocess build() {
+            return new AdHocSubprocess(
+                    new BPMNGeneralSet("Subprocess"),
+                    new ReusableSubprocessTaskExecutionSet(),
+                    new DataIOSet(),
+                    new BackgroundSet(),
+                    new FontSet(),
+                    new RectangleDimensionsSet(),
+                    new SimulationSet());
+        }
     }
 }

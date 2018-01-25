@@ -48,25 +48,6 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet,
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.RuleFlowGroupFormProvider")
     @Valid
     protected RuleFlowGroup ruleFlowGroup;
-
-    @Property
-    @FormField(
-            type = TextAreaFieldType.class,
-            afterElement = "ruleFlowGroup",
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private OnEntryAction onEntryAction;
-
-    @Property
-    @FormField(
-            type = TextAreaFieldType.class,
-            afterElement = "onEntryAction",
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private OnExitAction onExitAction;
-
     @Property
     @FormField(
             type = ListBoxFieldType.class,
@@ -77,7 +58,22 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet,
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
     @Valid
     protected ScriptLanguage scriptLanguage;
-
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "ruleFlowGroup",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private OnEntryAction onEntryAction;
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "onEntryAction",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private OnExitAction onExitAction;
     @Property
     @FormField(
             afterElement = "scriptLanguage"

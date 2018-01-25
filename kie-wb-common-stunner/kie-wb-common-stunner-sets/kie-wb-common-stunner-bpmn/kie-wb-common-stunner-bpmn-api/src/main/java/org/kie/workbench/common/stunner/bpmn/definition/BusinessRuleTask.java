@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSe
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
@@ -71,24 +70,6 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel,
     )
     @Valid
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class BusinessRuleTaskBuilder implements Builder<BusinessRuleTask> {
-
-        @Override
-        public BusinessRuleTask build() {
-            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
-                                                           new Documentation("")),
-                                        new BusinessRuleTaskExecutionSet(),
-                                        new DataIOSet(),
-                                        new BackgroundSet(),
-                                        new FontSet(),
-                                        new RectangleDimensionsSet(),
-                                        new SimulationSet(),
-                                        new TaskType(TaskTypes.BUSINESS_RULE)
-            );
-        }
-    }
 
     public BusinessRuleTask() {
         super(TaskTypes.BUSINESS_RULE);
@@ -136,12 +117,12 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel,
         return executionSet;
     }
 
-    public DataIOSet getDataIOSet() {
-        return dataIOSet;
-    }
-
     public void setExecutionSet(final BusinessRuleTaskExecutionSet executionSet) {
         this.executionSet = executionSet;
+    }
+
+    public DataIOSet getDataIOSet() {
+        return dataIOSet;
     }
 
     public void setDataIOSet(final DataIOSet dataIOSet) {
@@ -164,5 +145,23 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel,
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class BusinessRuleTaskBuilder implements Builder<BusinessRuleTask> {
+
+        @Override
+        public BusinessRuleTask build() {
+            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
+                                                           new Documentation("")),
+                                        new BusinessRuleTaskExecutionSet(),
+                                        new DataIOSet(),
+                                        new BackgroundSet(),
+                                        new FontSet(),
+                                        new RectangleDimensionsSet(),
+                                        new SimulationSet(),
+                                        new TaskType(TaskTypes.BUSINESS_RULE)
+            );
+        }
     }
 }

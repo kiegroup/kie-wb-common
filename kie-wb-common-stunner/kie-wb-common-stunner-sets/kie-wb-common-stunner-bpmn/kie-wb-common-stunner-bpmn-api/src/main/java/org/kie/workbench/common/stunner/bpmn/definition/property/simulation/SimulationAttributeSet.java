@@ -88,44 +88,44 @@ public class SimulationAttributeSet implements BPMNPropertySet {
         return min;
     }
 
-    public Max getMax() {
-        return max;
-    }
-
-    public Mean getMean() {
-        return mean;
-    }
-
-    public TimeUnit getTimeUnit() {
-        return timeUnit;
-    }
-
-    public StandardDeviation getStandardDeviation() {
-        return standardDeviation;
-    }
-
-    public DistributionType getDistributionType() {
-        return distributionType;
-    }
-
     public void setMin(final Min min) {
         this.min = min;
+    }
+
+    public Max getMax() {
+        return max;
     }
 
     public void setMax(final Max max) {
         this.max = max;
     }
 
+    public Mean getMean() {
+        return mean;
+    }
+
     public void setMean(final Mean mean) {
         this.mean = mean;
+    }
+
+    public TimeUnit getTimeUnit() {
+        return timeUnit;
     }
 
     public void setTimeUnit(final TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
 
+    public StandardDeviation getStandardDeviation() {
+        return standardDeviation;
+    }
+
     public void setStandardDeviation(final StandardDeviation standardDeviation) {
         this.standardDeviation = standardDeviation;
+    }
+
+    public DistributionType getDistributionType() {
+        return distributionType;
     }
 
     public void setDistributionType(final DistributionType distributionType) {

@@ -62,21 +62,6 @@ public class StartSignalEvent extends BaseStartEvent implements Executable<Inter
     @Valid
     protected DataIOSet dataIOSet;
 
-    @NonPortable
-    public static class StartSignalEventBuilder implements Builder<StartSignalEvent> {
-
-        @Override
-        public StartSignalEvent build() {
-            return new StartSignalEvent(new BPMNGeneralSet(""),
-                                        new BackgroundSet(),
-                                        new FontSet(),
-                                        new CircleDimensionSet(new Radius()),
-                                        new SimulationAttributeSet(),
-                                        new DataIOSet(),
-                                        new InterruptingSignalEventExecutionSet());
-        }
-    }
-
     public StartSignalEvent() {
     }
 
@@ -138,5 +123,20 @@ public class StartSignalEvent extends BaseStartEvent implements Executable<Inter
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class StartSignalEventBuilder implements Builder<StartSignalEvent> {
+
+        @Override
+        public StartSignalEvent build() {
+            return new StartSignalEvent(new BPMNGeneralSet(""),
+                                        new BackgroundSet(),
+                                        new FontSet(),
+                                        new CircleDimensionSet(new Radius()),
+                                        new SimulationAttributeSet(),
+                                        new DataIOSet(),
+                                        new InterruptingSignalEventExecutionSet());
+        }
     }
 }

@@ -50,7 +50,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class EndMessageEvent extends BaseEndEvent implements Executable<MessageEventExecutionSet> ,
+public class EndMessageEvent extends BaseEndEvent implements Executable<MessageEventExecutionSet>,
                                                              HasDataIOSet {
 
     @PropertySet

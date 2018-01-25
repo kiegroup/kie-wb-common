@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
@@ -61,22 +60,6 @@ public class ScriptTask extends BaseTask {
     )
     @Valid
     protected ScriptTaskExecutionSet executionSet;
-
-    @NonPortable
-    public static class ScriptTaskBuilder implements Builder<ScriptTask> {
-
-        @Override
-        public ScriptTask build() {
-            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
-                                                     new Documentation("")),
-                                  new ScriptTaskExecutionSet(),
-                                  new BackgroundSet(),
-                                  new FontSet(),
-                                  new RectangleDimensionsSet(),
-                                  new SimulationSet(),
-                                  new TaskType(TaskTypes.SCRIPT));
-        }
-    }
 
     public ScriptTask() {
         super(TaskTypes.SCRIPT);
@@ -120,5 +103,21 @@ public class ScriptTask extends BaseTask {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class ScriptTaskBuilder implements Builder<ScriptTask> {
+
+        @Override
+        public ScriptTask build() {
+            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
+                                                     new Documentation("")),
+                                  new ScriptTaskExecutionSet(),
+                                  new BackgroundSet(),
+                                  new FontSet(),
+                                  new RectangleDimensionsSet(),
+                                  new SimulationSet(),
+                                  new TaskType(TaskTypes.SCRIPT));
+        }
     }
 }

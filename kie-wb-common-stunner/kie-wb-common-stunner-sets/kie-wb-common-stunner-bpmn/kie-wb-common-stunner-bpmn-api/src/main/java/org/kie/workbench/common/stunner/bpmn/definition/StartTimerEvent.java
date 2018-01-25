@@ -29,7 +29,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
@@ -54,20 +53,6 @@ public class StartTimerEvent extends BaseStartEvent implements Executable<Interr
     @FormField(afterElement = "general")
     @Valid
     protected InterruptingTimerEventExecutionSet executionSet;
-
-    @NonPortable
-    public static class StartTimerEventBuilder implements Builder<StartTimerEvent> {
-
-        @Override
-        public StartTimerEvent build() {
-            return new StartTimerEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new InterruptingTimerEventExecutionSet());
-        }
-    }
 
     public StartTimerEvent() {
     }
@@ -108,5 +93,19 @@ public class StartTimerEvent extends BaseStartEvent implements Executable<Interr
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class StartTimerEventBuilder implements Builder<StartTimerEvent> {
+
+        @Override
+        public StartTimerEvent build() {
+            return new StartTimerEvent(new BPMNGeneralSet(""),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new CircleDimensionSet(new Radius()),
+                                       new SimulationAttributeSet(),
+                                       new InterruptingTimerEventExecutionSet());
+        }
     }
 }

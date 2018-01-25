@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
@@ -21,11 +37,11 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.BPMNDirectDiagramMarshallerTest.BPMN_DEF_SET_ID;
 
 public class MockApplicationFactoryManager extends ApplicationFactoryManager {
+
     final GraphFactory bpmnGraphFactory;
     final TestScopeModelFactory testScopeModelFactory;
     final EdgeFactory<Object> connectionEdgeFactory;
     final NodeFactory<Object> viewNodeFactory;
-
 
     public MockApplicationFactoryManager(
             GraphFactory bpmnGraphFactory,
@@ -48,7 +64,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
     public Element<?> newElement(String uuid, String id) {
         if (BPMNDefinitionSet.class.getName().equals(id)) {
             Graph graph = (Graph) bpmnGraphFactory.build(uuid,
-                    BPMN_DEF_SET_ID);
+                                                         BPMN_DEF_SET_ID);
             return graph;
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
@@ -56,16 +72,15 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
             Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
             if (element.isAssignableFrom(NodeFactory.class)) {
                 Node node = viewNodeFactory.build(uuid,
-                        model);
+                                                  model);
                 return node;
             } else if (element.isAssignableFrom(EdgeFactory.class)) {
                 Edge edge = connectionEdgeFactory.build(uuid,
-                        model);
+                                                        model);
                 return edge;
             }
         }
         return null;
-
     }
 
     @Override
@@ -73,7 +88,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
         String id = BindableAdapterUtils.getGenericClassName(type);
         if (BPMNDefinitionSet.class.equals(type)) {
             Graph graph = (Graph) bpmnGraphFactory.build(uuid,
-                    BPMN_DEF_SET_ID);
+                                                         BPMN_DEF_SET_ID);
             return graph;
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
@@ -81,11 +96,11 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
             Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
             if (element.isAssignableFrom(NodeFactory.class)) {
                 Node node = viewNodeFactory.build(uuid,
-                        model);
+                                                  model);
                 return node;
             } else if (element.isAssignableFrom(EdgeFactory.class)) {
                 Edge edge = connectionEdgeFactory.build(uuid,
-                        model);
+                                                        model);
                 return edge;
             }
         }
@@ -95,9 +110,9 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
     @Override
     public <M extends Metadata, D extends Diagram> D newDiagram(String uuid, String defSetId, M metadata) {
         final Graph graph = (Graph) this.newElement(uuid,
-                defSetId);
+                                                    defSetId);
         final DiagramImpl result = new DiagramImpl(uuid,
-                new MetadataImpl.MetadataImplBuilder(defSetId).build());
+                                                   new MetadataImpl.MetadataImplBuilder(defSetId).build());
         result.setGraph(graph);
         return (D) result;
     }

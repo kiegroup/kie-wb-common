@@ -1,3 +1,19 @@
+/*
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import bpsim.CostParameters;
@@ -28,35 +44,39 @@ public class Simulations {
         SimulationSet simulationSet = new SimulationSet();
 
         TimeParameters timeParams = eleType.getTimeParameters();
-        if (timeParams == null) return simulationSet;
+        if (timeParams == null) {
+            return simulationSet;
+        }
         Parameter processingTime = timeParams.getProcessingTime();
         ParameterValue paramValue = processingTime.getParameterValue().get(0);
 
         return Match.of(ParameterValue.class, SimulationSet.class)
-            .when(NormalDistributionType.class, ndt -> {
-                simulationSet.getMean().setValue(ndt.getMean());
-                simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
-                simulationSet.getDistributionType().setValue("normal");
-                return simulationSet;
-            })
-            .when(UniformDistributionType.class, udt -> {
-                simulationSet.getMin().setValue(udt.getMin());
-                simulationSet.getMax().setValue(udt.getMax());
-                simulationSet.getDistributionType().setValue("uniform");
-                return simulationSet;
-            })
-            .when(PoissonDistributionType.class, pdt -> {
-                simulationSet.getMean().setValue(pdt.getMean());
-                simulationSet.getDistributionType().setValue("poisson");
-                return simulationSet;
-            }).apply(paramValue).asSuccess().value();
+                .when(NormalDistributionType.class, ndt -> {
+                    simulationSet.getMean().setValue(ndt.getMean());
+                    simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
+                    simulationSet.getDistributionType().setValue("normal");
+                    return simulationSet;
+                })
+                .when(UniformDistributionType.class, udt -> {
+                    simulationSet.getMin().setValue(udt.getMin());
+                    simulationSet.getMax().setValue(udt.getMax());
+                    simulationSet.getDistributionType().setValue("uniform");
+                    return simulationSet;
+                })
+                .when(PoissonDistributionType.class, pdt -> {
+                    simulationSet.getMean().setValue(pdt.getMean());
+                    simulationSet.getDistributionType().setValue("poisson");
+                    return simulationSet;
+                }).apply(paramValue).asSuccess().value();
 
         // FIXME waittime ??
     }
 
     private static void unitCost(ElementParameters eleType, SimulationSet simulationSet) {
         CostParameters costParams = eleType.getCostParameters();
-        if (costParams == null) return;
+        if (costParams == null) {
+            return;
+        }
         Double unitCost = extractDouble(costParams.getUnitCost());
         simulationSet.getUnitCost().setValue(unitCost);
     }
@@ -77,7 +97,9 @@ public class Simulations {
     }
 
     private static Double extractDouble(Parameter parameter) {
-        if (parameter == null) return null;
+        if (parameter == null) {
+            return null;
+        }
         return extractDouble(parameter.getParameterValue());
     }
 

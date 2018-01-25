@@ -24,13 +24,11 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
@@ -63,22 +61,6 @@ public class UserTask extends BaseTask implements DataIOModel {
     )
     @Valid
     protected UserTaskExecutionSet executionSet;
-
-    @NonPortable
-    public static class UserTaskBuilder implements Builder<UserTask> {
-
-        @Override
-        public UserTask build() {
-            return new UserTask(new TaskGeneralSet(new Name("Task"),
-                                                   new Documentation("")),
-                                new UserTaskExecutionSet(),
-                                new BackgroundSet(),
-                                new FontSet(),
-                                new RectangleDimensionsSet(),
-                                new SimulationSet(),
-                                new TaskType(TaskTypes.USER));
-        }
-    }
 
     public UserTask() {
         super(TaskTypes.USER);
@@ -142,5 +124,21 @@ public class UserTask extends BaseTask implements DataIOModel {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class UserTaskBuilder implements Builder<UserTask> {
+
+        @Override
+        public UserTask build() {
+            return new UserTask(new TaskGeneralSet(new Name("Task"),
+                                                   new Documentation("")),
+                                new UserTaskExecutionSet(),
+                                new BackgroundSet(),
+                                new FontSet(),
+                                new RectangleDimensionsSet(),
+                                new SimulationSet(),
+                                new TaskType(TaskTypes.USER));
+        }
     }
 }
