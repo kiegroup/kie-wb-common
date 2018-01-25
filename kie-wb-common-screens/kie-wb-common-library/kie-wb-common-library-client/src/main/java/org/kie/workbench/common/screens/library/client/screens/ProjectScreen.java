@@ -94,10 +94,8 @@ public class ProjectScreen {
     }
 
     private void setup() {
-        PortablePreconditions.checkNotNull("ProjectScreen projectContext.getActiveWorkspaceProject()",
-                                           projectContext.getActiveWorkspaceProject());
-
-        project = projectContext.getActiveWorkspaceProject();
+        project = projectContext.getActiveWorkspaceProject()
+                                .orElseThrow(() -> new IllegalStateException("Cannot setup project screen without an active project."));
         libraryPlaces.setUpBranches();
 
         projectDetailEvent.fire(new ProjectDetailEvent(project));

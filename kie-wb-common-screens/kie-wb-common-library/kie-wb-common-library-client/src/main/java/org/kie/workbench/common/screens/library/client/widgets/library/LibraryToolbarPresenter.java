@@ -79,12 +79,12 @@ public class LibraryToolbarPresenter {
     public void setUpBranches() {
         view.clearBranches();
 
-        if (projectContext.getActiveWorkspaceProject() != null) {
-            for (final Branch branch : projectContext.getActiveWorkspaceProject().getRepository().getBranches()) {
+        projectContext.getActiveWorkspaceProject().ifPresent(proj -> {
+            for (final Branch branch : proj.getRepository().getBranches()) {
                 view.addBranch(branch.getName());
             }
-            view.setSelectedBranch(projectContext.getActiveWorkspaceProject().getBranch().getName());
-        }
+            view.setSelectedBranch(proj.getBranch().getName());
+        });
 
         setBranchSelectorVisibility();
     }
@@ -92,7 +92,7 @@ public class LibraryToolbarPresenter {
     void onUpdateSelectedBranch() {
         if (placeManager.closeAllPlacesOrNothing()) {
 
-            Repository repository = projectContext.getActiveWorkspaceProject().getRepository();
+            Repository repository = projectContext.getActiveWorkspaceProject().get().getRepository();
             projectService.call(new RemoteCallback<WorkspaceProject>() {
                 @Override
                 public void callback(WorkspaceProject project) {
@@ -112,7 +112,7 @@ public class LibraryToolbarPresenter {
     }
 
     private boolean isBranchVisible() {
-        return projectContext.getActiveWorkspaceProject() != null && projectContext.getActiveWorkspaceProject().getRepository().getBranches().size() > 1;
+        return projectContext.getActiveWorkspaceProject().isPresent() && projectContext.getActiveWorkspaceProject().get().getRepository().getBranches().size() > 1;
     }
 
     public UberElement<LibraryToolbarPresenter> getView() {

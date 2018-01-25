@@ -127,11 +127,16 @@ public class ExplorerMenu {
     }
 
     public void onArchiveActiveProject() {
-        view.archive(context.getActiveModule().getRootPath());
+        view.archive(context.getActiveModule()
+                            .map(module -> module.getRootPath())
+                            .orElseThrow(() -> new IllegalStateException("Cannot get root path without active module.")));
     }
 
     public void onArchiveActiveRepository() {
-        final Optional<Branch> defaultBranch = context.getActiveWorkspaceProject().getRepository().getDefaultBranch();
+        final Optional<Branch> defaultBranch = context.getActiveWorkspaceProject()
+                                                      .map(proj -> proj.getRepository())
+                                                      .orElseThrow(() -> new IllegalStateException("Cannot check for default branch without an active project."))
+                                                      .getDefaultBranch();
         if (defaultBranch.isPresent()) {
             view.archive(defaultBranch.get().getPath());
         }

@@ -16,10 +16,16 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -29,7 +35,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.jboss.errai.bus.client.api.messaging.Message;
@@ -64,10 +69,6 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
-
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 
 /**
  * A base for Multi-Document-Interface editors. This base implementation adds default Menus for Save", "Copy",
@@ -124,7 +125,6 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
 
     private MayCloseHandler mayCloseHandler = DEFAULT_MAY_CLOSE_HANDLER;
 
-    @SuppressWarnings("unused")
     KieMultipleDocumentEditor() {
         //Zero-parameter constructor for CDI proxy
     }
@@ -495,8 +495,10 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     protected boolean canUpdateProject() {
-        final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject();
-        return activeProject == null || projectController.canUpdateProject(activeProject);
+        return workbenchContext
+                               .getActiveWorkspaceProject()
+                               .map(activeProject -> projectController.canUpdateProject(activeProject))
+                               .orElse(true);
     }
 
     /**
@@ -650,18 +652,10 @@ public abstract class KieMultipleDocumentEditor<D extends KieDocument> implement
     }
 
     void onRepositoryRemoved(final @Observes RepositoryRemovedEvent event) {
-        if (event.getRepository() == null) {
-            return;
-        }
-        if (workbenchContext == null) {
-            return;
-        }
-        if (workbenchContext.getActiveWorkspaceProject() == null) {
-            return;
-        }
-        if (workbenchContext.getActiveWorkspaceProject().getRepository().equals(event.getRepository())) {
-            enableMenus(false);
-        }
+        Optional.ofNullable(workbenchContext)
+                .flatMap(context -> context.getActiveWorkspaceProject())
+                .filter(proj -> event.getRepository() != null && proj.getRepository().equals(event.getRepository()))
+                .ifPresent(repo -> enableMenus(false));
     }
 
     /**

@@ -17,6 +17,7 @@ package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -106,6 +107,13 @@ public class LibraryScreenTest {
         doReturn(mock(PopulatedLibraryScreen.View.class)).when(populatedLibraryScreen).getView();
         doReturn(mock(EmptyLibraryScreen.View.class)).when(emptyLibraryScreen).getView();
 
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        doReturn(Optional.of(organizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(projectContext.getActiveModule()).thenReturn(Optional.empty());
+        when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(projectContext.getActivePackage()).thenReturn(Optional.empty());
+
         libraryScreen = new LibraryScreen(view,
                                           deleteOrganizationalUnitPopUpPresenters,
                                           editContributorsPopUpPresenters,
@@ -124,7 +132,7 @@ public class LibraryScreenTest {
     public void setupTest() {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         doReturn("name").when(organizationalUnit).getName();
-        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
+        doReturn(Optional.of(organizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
         doReturn(12).when(contributorsListPresenter).getContributorsCount();
 
         libraryScreen.init();

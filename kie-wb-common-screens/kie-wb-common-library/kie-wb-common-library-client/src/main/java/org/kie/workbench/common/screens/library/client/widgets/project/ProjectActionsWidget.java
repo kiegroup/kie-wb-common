@@ -88,7 +88,8 @@ public class ProjectActionsWidget {
     }
 
     public boolean userCanBuildModule() {
-        return projectController.canBuildProjects() && projectController.canBuildProject(projectContext.getActiveWorkspaceProject());
+        return projectController.canBuildProjects() && projectController.canBuildProject(projectContext.getActiveWorkspaceProject()
+                                                                                                       .orElseThrow(() -> new IllegalStateException("Cannot query if project is buildable without an active project.")));
     }
 
     public View getView() {

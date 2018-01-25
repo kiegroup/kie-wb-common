@@ -245,6 +245,6 @@ public class CopyPopupWithPackageView implements CopyPopUpPresenter.View,
     }
 
     boolean thereIsAnActiveProject() {
-        return context.getActiveModule() != null;
+        return context.getActiveModule().isPresent();
     }
 }

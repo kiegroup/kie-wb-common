@@ -16,7 +16,20 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.handlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.google.gwt.core.client.Callback;
+import java.util.Optional;
+
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
@@ -44,9 +57,6 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.type.AnyResourceTypeDefinition;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NewWorkspaceProjectHandlerTest {
@@ -81,6 +91,12 @@ public class NewWorkspaceProjectHandlerTest {
                                                  new CallerMock<>(organizationalUnitService),
                                                  projectController,
                                                  resourceType);
+
+        when(context.getActiveOrganizationalUnit()).thenReturn(Optional.empty());
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(context.getActiveModule()).thenReturn(Optional.empty());
+        when(context.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(context.getActivePackage()).thenReturn(Optional.empty());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -98,7 +114,7 @@ public class NewWorkspaceProjectHandlerTest {
 
     @Test
     public void testAcceptContextNoActiveOrganizationalUnit() {
-        when(context.getActiveWorkspaceProject()).thenReturn(null);
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.empty());
 
         final Callback<Boolean, Void> callback = mock(Callback.class);
         handler.acceptContext(callback);
@@ -109,7 +125,7 @@ public class NewWorkspaceProjectHandlerTest {
 
     @Test
     public void testAcceptContextWithActiveActiveOrganizationalUnit() {
-        when(context.getActiveOrganizationalUnit()).thenReturn(mock(OrganizationalUnit.class));
+        when(context.getActiveOrganizationalUnit()).thenReturn(Optional.of(mock(OrganizationalUnit.class)));
 
         final Callback<Boolean, Void> callback = mock(Callback.class);
         handler.acceptContext(callback);
@@ -125,10 +141,10 @@ public class NewWorkspaceProjectHandlerTest {
         when(libraryOrganizationalUnitPreferences.getName()).thenReturn("myOU");
         when(libraryPreferences.getOrganizationalUnitPreferences()).thenReturn(libraryOrganizationalUnitPreferences);
 
-        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
-                                                                                  repository,
-                                                                                  mock(Branch.class),
-                                                                                  mock(Module.class)));
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                              repository,
+                                                                                              mock(Branch.class),
+                                                                                              mock(Module.class))));
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("defaultGroupId");
         when(organizationalUnitService.getOrganizationalUnit("myOU")).thenReturn(organizationalUnit);
@@ -136,7 +152,7 @@ public class NewWorkspaceProjectHandlerTest {
         doAnswer(new Answer() {
             @Override
             public Void answer(InvocationOnMock invocationOnMock) throws Throwable {
-                when(context.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+                when(context.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
                 return null;
             }
         }).when(projectContextChangeEvent).fire(any(WorkspaceProjectContextChangeEvent.class));

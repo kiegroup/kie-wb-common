@@ -16,7 +16,31 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.build;
 
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import com.google.common.collect.Sets;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -39,7 +63,13 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.server.controller.api.model.spec.*;
+import org.kie.server.controller.api.model.spec.Capability;
+import org.kie.server.controller.api.model.spec.ContainerConfig;
+import org.kie.server.controller.api.model.spec.ContainerSpec;
+import org.kie.server.controller.api.model.spec.ProcessConfig;
+import org.kie.server.controller.api.model.spec.RuleConfig;
+import org.kie.server.controller.api.model.spec.ServerTemplate;
+import org.kie.server.controller.api.model.spec.ServerTemplateList;
 import org.kie.workbench.common.screens.projecteditor.client.editor.DeploymentScreenPopupViewImpl;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.server.management.model.RuntimeStrategy;
@@ -53,13 +83,6 @@ import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.anyString;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class BuildExecutorTest {
@@ -134,7 +157,7 @@ public class BuildExecutorTest {
     @Test
     public void testBuildCommandFail() {
         BuildMessage message = mock(BuildMessage.class);
-        List<BuildMessage> messages = new ArrayList<BuildMessage>();
+        List<BuildMessage> messages = new ArrayList<>();
         messages.add(message);
 
         BuildResults results = mock(BuildResults.class);
@@ -496,11 +519,11 @@ public class BuildExecutorTest {
                                     final Repository repository,
                                     final KieModule module,
                                     final Path pomPath) {
-        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
-                                                                                  repository,
-                                                                                  new Branch("master",
-                                                                                             mock(Path.class)),
-                                                                                  module));
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                              repository,
+                                                                                              new Branch("master",
+                                                                                                         mock(Path.class)),
+                                                                                              module)));
         when(repository.getAlias()).thenReturn("repository");
 
         when(module.getModuleName()).thenReturn("module");
@@ -508,7 +531,7 @@ public class BuildExecutorTest {
         when(module.getPom()).thenReturn(pom);
         when(module.getRootPath()).thenReturn(mock(Path.class));
         when(pomPath.getFileName()).thenReturn("pom.xml");
-        when(context.getActiveModule()).thenReturn(module);
+        when(context.getActiveModule()).thenReturn(Optional.of(module));
     }
 
     private void mockBuildService(final BuildService buildService) {

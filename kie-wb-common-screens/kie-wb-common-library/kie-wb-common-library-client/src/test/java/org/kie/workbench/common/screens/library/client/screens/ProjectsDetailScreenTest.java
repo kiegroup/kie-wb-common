@@ -31,6 +31,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectsDetailScreenTest {
 
@@ -67,7 +69,7 @@ public class ProjectsDetailScreenTest {
 
         when(projectMetricsFactory.lookupCommitsOverTimeDisplayer_small(any())).thenReturn(contributionsDisplayer);
 
-        when(projectContext.getActiveWorkspaceProject()).thenReturn(project);
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.of(project));
 
         projectDetailEvent = new ProjectDetailEvent(project);
         projectsDetail = new ProjectsDetailScreen(view,

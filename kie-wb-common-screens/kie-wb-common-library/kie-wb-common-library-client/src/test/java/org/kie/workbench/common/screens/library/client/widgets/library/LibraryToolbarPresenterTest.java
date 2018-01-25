@@ -90,11 +90,14 @@ public class LibraryToolbarPresenterTest {
 
         callback = mock(Command.class);
 
-        doReturn(selectedOrganizationalUnit).when(projectContext).getActiveOrganizationalUnit();
-        doReturn(new WorkspaceProject(selectedOrganizationalUnit,
+        doReturn(Optional.of(selectedOrganizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
+        doReturn(Optional.of(new WorkspaceProject(selectedOrganizationalUnit,
                                       selectedRepository,
                                       masterBranch,
-                                      mock(Module.class))).when(projectContext).getActiveWorkspaceProject();
+                                      mock(Module.class)))).when(projectContext).getActiveWorkspaceProject();
+        when(projectContext.getActiveModule()).thenReturn(Optional.empty());
+        when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(projectContext.getActivePackage()).thenReturn(Optional.empty());
     }
 
     @Test
@@ -155,10 +158,10 @@ public class LibraryToolbarPresenterTest {
         final ArrayList<Branch> branches = new ArrayList<>();
         branches.add(new Branch());
         doReturn(branches).when(repository).getBranches();
-        doReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+        doReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
                                       repository,
                                       mock(Branch.class),
-                                      mock(KieModule.class))).when(projectContext).getActiveWorkspaceProject();
+                                      mock(KieModule.class)))).when(projectContext).getActiveWorkspaceProject();
 
         presenter.setUpBranches();
 
@@ -174,10 +177,10 @@ public class LibraryToolbarPresenterTest {
         branches.add(new Branch());
         branches.add(new Branch());
         doReturn(branches).when(repository).getBranches();
-        doReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+        doReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
                                       repository,
                                       mock(Branch.class),
-                                      mock(KieModule.class))).when(projectContext).getActiveWorkspaceProject();
+                                      mock(KieModule.class)))).when(projectContext).getActiveWorkspaceProject();
 
         presenter.setUpBranches();
 
@@ -197,10 +200,10 @@ public class LibraryToolbarPresenterTest {
         // Normally this is in the branch list, but I want to verify it gets set from the branch in the project
         final Branch selectedBranch = new Branch("selectedBranch", mock(Path.class));
 
-        doReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
+        doReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
                                       repository,
                                       selectedBranch,
-                                      mock(KieModule.class))).when(projectContext).getActiveWorkspaceProject();
+                                      mock(KieModule.class)))).when(projectContext).getActiveWorkspaceProject();
 
         presenter.setUpBranches();
 

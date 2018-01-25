@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.screens.projecteditor.client.editor;
 
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
+import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -80,8 +84,8 @@ import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.client.mvp.LockManager;
-import org.uberfire.client.mvp.LockTarget.TitleProvider;
 import org.uberfire.client.mvp.LockTarget;
+import org.uberfire.client.mvp.LockTarget.TitleProvider;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
 import org.uberfire.commons.data.Pair;
@@ -107,10 +111,6 @@ import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.Menus;
 import org.uberfire.workbench.model.menu.impl.BaseMenuCustom;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
-
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentDelete;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentRename;
-import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 
 @WorkbenchScreen(identifier = "projectScreen")
 public class ProjectScreenPresenter
@@ -139,7 +139,7 @@ public class ProjectScreenPresenter
     private Collection<Widget> buildExtensions;
     private WorkspaceProjectContext projectContext;
     private Instance<LockManager> lockManagerInstanceProvider;
-    private Map<Widget, LockManager> lockManagers = new HashMap<Widget, LockManager>();
+    private Map<Widget, LockManager> lockManagers = new HashMap<>();
     private Runnable reloadRunnable;
     private TitleProvider titleProvider;
     private String title;
@@ -262,7 +262,7 @@ public class ProjectScreenPresenter
         Collection<BuildOptionExtension> allExtensions = pair.getK1();
         Collection<BuildOptionExtension> dependentScopedExtensions = pair.getK2();
 
-        buildExtensions = new ArrayList<Widget>(allExtensions.size());
+        buildExtensions = new ArrayList<>(allExtensions.size());
 
         for (BuildOptionExtension ext : allExtensions) {
             for (Widget option : ext.getBuildOptions(module)) {
@@ -300,8 +300,8 @@ public class ProjectScreenPresenter
     protected Pair<Collection<BuildOptionExtension>, Collection<BuildOptionExtension>> getBuildExtensions() {
         AsyncBeanManager beanManager = IOC.getAsyncBeanManager();
         Collection<AsyncBeanDef<BuildOptionExtension>> beans = beanManager.lookupBeans(BuildOptionExtension.class);
-        final Collection<BuildOptionExtension> dependentScoped = new ArrayList<BuildOptionExtension>(beans.size());
-        final Collection<BuildOptionExtension> instances = new ArrayList<BuildOptionExtension>(beans.size());
+        final Collection<BuildOptionExtension> dependentScoped = new ArrayList<>(beans.size());
+        final Collection<BuildOptionExtension> instances = new ArrayList<>(beans.size());
 
         for (final AsyncBeanDef<BuildOptionExtension> bean : beans) {
             /*
@@ -320,7 +320,7 @@ public class ProjectScreenPresenter
             });
         }
 
-        return new Pair<Collection<BuildOptionExtension>, Collection<BuildOptionExtension>>(instances,
+        return new Pair<>(instances,
                                                                                             dependentScoped);
     }
 
@@ -339,7 +339,7 @@ public class ProjectScreenPresenter
     }
 
     private void update() {
-        if (projectContext.getActiveWorkspaceProject() == null) {
+        if (!projectContext.getActiveWorkspaceProject().isPresent()) {
             enableMenus(false);
             view.showNoProjectSelected();
             view.hideBusyIndicator();
@@ -368,9 +368,12 @@ public class ProjectScreenPresenter
     }
 
     private void showCurrentModuleInfoIfAny() {
-
+        String rootPathURI = projectContext
+                                           .getActiveWorkspaceProject()
+                                           .map(proj -> proj.getRootPath().toURI())
+                                           .orElseThrow(() -> new IllegalStateException("Cannot get root path URI without active project."));
         this.kieDeploymentDescriptoPath = PathFactory.newPath(KIE_DEPLOYMENT_DESCRIPTOR_XML,
-                                                              projectContext.getActiveWorkspaceProject().getRootPath().toURI() + "/src/main/resources/META-INF/" + KIE_DEPLOYMENT_DESCRIPTOR_XML);
+                                                              rootPathURI + "/src/main/resources/META-INF/" + KIE_DEPLOYMENT_DESCRIPTOR_XML);
         setupPathToPomXML();
         init();
     }
@@ -435,7 +438,7 @@ public class ProjectScreenPresenter
             view.showGAVPanel();
         }
 
-        configureBuildExtensions(projectContext.getActiveModule(),
+        configureBuildExtensions(projectContext.getActiveModule().orElse(null),
                                  buildOptions);
     }
 
@@ -473,7 +476,8 @@ public class ProjectScreenPresenter
             pathToPomXML.dispose();
         }
 
-        pathToPomXML = IOC.getBeanManager().lookupBean(ObservablePath.class).getInstance().wrap(projectContext.getActiveWorkspaceProject().getMainModule().getPomXMLPath());
+        Path pomPath = getMainModulePomPath();
+        pathToPomXML = IOC.getBeanManager().lookupBean(ObservablePath.class).getInstance().wrap(pomPath);
 
         pathToPomXML.onConcurrentUpdate(new ParameterizedCommand<ObservablePath.OnConcurrentUpdateEvent>() {
             @Override
@@ -524,6 +528,12 @@ public class ProjectScreenPresenter
                 ).show();
             }
         });
+    }
+
+    private Path getMainModulePomPath() {
+        return projectContext.getActiveWorkspaceProject()
+                                     .map(proj -> proj.getMainModule().getPomXMLPath())
+                                     .orElseThrow(() -> new IllegalStateException("Cannot get main module POM path without active project."));
     }
 
     void enableMenus(final boolean enabled) {
@@ -607,12 +617,7 @@ public class ProjectScreenPresenter
     }
 
     private Repository getRepository() {
-
-        if (projectContext.getActiveWorkspaceProject() == null) {
-            return null;
-        } else {
-            return projectContext.getActiveWorkspaceProject().getRepository();
-        }
+        return projectContext.getActiveWorkspaceProject().map(proj -> proj.getRepository()).orElse(null);
     }
 
     protected Command getReImportCommand() {
@@ -629,56 +634,66 @@ public class ProjectScreenPresenter
                                 notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ReimportSuccessful()));
                             }
                         },
-                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).reImport(projectContext.getActiveWorkspaceProject().getMainModule().getPomXMLPath());
+                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).reImport(getMainModulePomPath());
             }
         };
     }
 
     private Command getDeleteCommand() {
         return new Command() {
+
             @Override
             public void execute() {
 
                 busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Deleting());
 
                 projectScreenService.call(
-                        new RemoteCallback<Void>() {
-                            @Override
-                            public void callback(final Void o) {
-                                busyIndicatorView.hideBusyIndicator();
-                                notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully()));
-                                placeManager.forceClosePlace(placeRequest);
-                            }
-                        },
-                        new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).delete(projectContext.getActiveWorkspaceProject());
+                                          new RemoteCallback<Void>() {
+
+                                              @Override
+                                              public void callback(final Void o) {
+                                                  busyIndicatorView.hideBusyIndicator();
+                                                  notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemDeletedSuccessfully()));
+                                                  placeManager.forceClosePlace(placeRequest);
+                                              }
+                                          },
+                                          new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView))
+                                    .delete(projectContext.getActiveWorkspaceProject()
+                                                          .orElseThrow(() -> new IllegalStateException("Cannot call delete without an active project.")));
             }
         };
     }
 
     private Command getCopyCommand() {
         return new Command() {
+
             @Override
             public void execute() {
 
-                copyPopUpPresenter.show(projectContext.getActiveWorkspaceProject().getRootPath(),
+                copyPopUpPresenter.show(projectContext.getActiveWorkspaceProject()
+                                                      .map(proj -> proj.getRootPath())
+                                                      .orElseThrow(() -> new IllegalStateException("Cannot copy without an active project.")),
                                         projectNameValidator,
                                         new CommandWithFileNameAndCommitMessage() {
+
                                             @Override
                                             public void execute(final FileNameAndCommitMessage details) {
 
                                                 busyIndicatorView.showBusyIndicator(CommonConstants.INSTANCE.Copying());
                                                 projectScreenService.call(
-                                                        new RemoteCallback<Void>() {
+                                                                          new RemoteCallback<Void>() {
 
-                                                            @Override
-                                                            public void callback(final Void o) {
-                                                                copyPopUpPresenter.getView().hide();
-                                                                busyIndicatorView.hideBusyIndicator();
-                                                                notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemCopiedSuccessfully()));
-                                                            }
-                                                        },
-                                                        getCopyErrorCallback(copyPopUpPresenter.getView())).copy(projectContext.getActiveWorkspaceProject(),
-                                                                                                                 details.getNewFileName());
+                                                                              @Override
+                                                                              public void callback(final Void o) {
+                                                                                  copyPopUpPresenter.getView().hide();
+                                                                                  busyIndicatorView.hideBusyIndicator();
+                                                                                  notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemCopiedSuccessfully()));
+                                                                              }
+                                                                          },
+                                                                          getCopyErrorCallback(copyPopUpPresenter.getView()))
+                                                                    .copy(projectContext.getActiveWorkspaceProject()
+                                                                                        .orElseThrow(() -> new IllegalStateException("Cannot copy without an active project.")),
+                                                                          details.getNewFileName());
                                             }
                                         });
             }
@@ -951,12 +966,15 @@ public class ProjectScreenPresenter
     @Override
     public void onPersistenceDescriptorSelected() {
 
-        Map<String, Object> attrs = new HashMap<String, Object>();
+        Map<String, Object> attrs = new HashMap<>();
         attrs.put(PathFactory.VERSION_PROPERTY,
                   new Boolean(true));
 
         PathPlaceRequest placeRequest = new PathPlaceRequest(PathFactory.newPath("persistence.xml",
-                                                                                 projectContext.getActiveWorkspaceProject().getRootPath().toURI() + PersistenceDescriptorService.PERSISTENCE_DESCRIPTOR_PATH,
+                                                                                 projectContext.getActiveWorkspaceProject()
+                                                                                               .map(proj -> proj.getRootPath().toURI())
+                                                                                               .orElseThrow(() -> new IllegalStateException("Cannot get root path URI without active project.")) +
+                                                                                                    PersistenceDescriptorService.PERSISTENCE_DESCRIPTOR_PATH,
                                                                                  attrs));
         placeRequest.addParameter("createIfNotExists",
                                   "true");

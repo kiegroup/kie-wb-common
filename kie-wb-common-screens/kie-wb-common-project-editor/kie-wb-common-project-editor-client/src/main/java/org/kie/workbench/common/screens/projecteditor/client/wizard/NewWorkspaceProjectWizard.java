@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -61,7 +62,7 @@ public class NewWorkspaceProjectWizard
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
     private WorkspaceProjectContext context;
     private KiePOMDefaultOptions pomDefaultOptions;
-    private ArrayList<WizardPage> pages = new ArrayList<WizardPage>();
+    private ArrayList<WizardPage> pages = new ArrayList<>();
     private Callback<WorkspaceProject> moduleCallback;
     //Used by ErrorCallback for "OK" operation, when New Module is to be created.
     private Map<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable> errors = new HashMap<Class<? extends Throwable>, CommandWithThrowableDrivenErrorCallback.CommandWithThrowable>() {{
@@ -145,8 +146,10 @@ public class NewWorkspaceProjectWizard
     @Override
     public void initialise() {
         pomWizardPage.setPom(new POMBuilder()
-                                     .setGroupId(context.getActiveOrganizationalUnit().getDefaultGroupId())
-                                     .build());
+                                             .setGroupId(context.getActiveOrganizationalUnit()
+                                                                .map(ou -> ou.getDefaultGroupId())
+                                                                .orElseThrow(() -> new IllegalStateException("Cannot get default group id when no organizational unit is active.")))
+                                             .build());
     }
 
     @Override
@@ -168,7 +171,8 @@ public class NewWorkspaceProjectWizard
 
         projectService.call(getSuccessCallback(),
                             new CommandWithThrowableDrivenErrorCallback(busyIndicatorView,
-                                                                        errors)).newProject(context.getActiveOrganizationalUnit(),
+                                                                        errors)).newProject(context.getActiveOrganizationalUnit()
+                                                                                                   .orElseThrow(() -> new IllegalStateException("Cannot call project service to create new project when no organizational unit is active.")),
                                                                                             pomWizardPage.getPom(),
                                                                                             mode);
     }

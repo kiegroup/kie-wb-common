@@ -17,6 +17,7 @@ package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -110,7 +111,12 @@ public class PopulatedLibraryScreenTest {
         projects.add(project2);
         projects.add(project3);
 
-        doReturn(organizationalUnit).when(projectContext).getActiveOrganizationalUnit();
+
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(projectContext.getActiveModule()).thenReturn(Optional.empty());
+        when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(projectContext.getActivePackage()).thenReturn(Optional.empty());
 
         final LibraryInfo libraryInfo = new LibraryInfo(projects);
         doReturn(libraryInfo).when(libraryService).getLibraryInfo(organizationalUnit);

@@ -80,7 +80,8 @@ public class ContributorsListPresenter {
     @PostConstruct
     public void setup() {
         view.init(this);
-        updateContributors(projectContext.getActiveOrganizationalUnit());
+        updateContributors(projectContext.getActiveOrganizationalUnit()
+                                         .orElseThrow(() -> new IllegalStateException("Cannot setup contributors list without an active organizational unit.")));
     }
 
     public void updateContributors(final OrganizationalUnit organizationalUnit) {
@@ -98,7 +99,8 @@ public class ContributorsListPresenter {
     }
 
     private void updateView(final List<String> contributors) {
-        final OrganizationalUnit organizationalUnit = projectContext.getActiveOrganizationalUnit();
+        final OrganizationalUnit organizationalUnit = projectContext.getActiveOrganizationalUnit()
+                                                                    .orElseThrow(() -> new IllegalStateException("Cannot update contributors list without an active organizational unit."));
 
         view.clearContributors();
 
@@ -115,7 +117,8 @@ public class ContributorsListPresenter {
     public void edit() {
         if (userCanUpdateOrganizationalUnit()) {
             final EditContributorsPopUpPresenter editContributorsPopUpPresenter = editContributorsPopUpPresenters.get();
-            editContributorsPopUpPresenter.show(projectContext.getActiveOrganizationalUnit());
+            // There has to be an active OU if the condition passes, so just call get.
+            editContributorsPopUpPresenter.show(projectContext.getActiveOrganizationalUnit().get());
         }
     }
 
@@ -125,11 +128,15 @@ public class ContributorsListPresenter {
     }
 
     public boolean userCanUpdateOrganizationalUnit() {
-        return organizationalUnitController.canUpdateOrgUnit(projectContext.getActiveOrganizationalUnit());
+        return organizationalUnitController.canUpdateOrgUnit(projectContext.getActiveOrganizationalUnit()
+                                                                           .orElseThrow(() -> new IllegalStateException("Cannot update organizational unit when none is active.")));
     }
 
     public int getContributorsCount() {
-        return projectContext.getActiveOrganizationalUnit().getContributors().size();
+        return projectContext.getActiveOrganizationalUnit()
+                             .orElseThrow(() -> new IllegalStateException("Cannot get contributors count when no organizational unit is active."))
+                             .getContributors()
+                             .size();
     }
 
     public View getView() {

@@ -18,6 +18,7 @@ package org.kie.workbench.common.forms.editor.client.editor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -459,7 +460,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         loadContent();
@@ -477,7 +478,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         loadContent();

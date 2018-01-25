@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.widgets.metadata.client;
 
+import java.util.Optional;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -23,7 +25,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
-import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.guvnor.structure.repositories.RepositoryRemovedEvent;
@@ -48,7 +49,6 @@ import org.uberfire.ext.editor.commons.client.validation.ValidatorWithReasonCall
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
-import org.uberfire.workbench.model.menu.Menus;
 
 public abstract class KieEditor
         extends BaseEditor
@@ -299,8 +299,10 @@ public abstract class KieEditor
     }
 
     protected boolean canUpdateProject() {
-        final WorkspaceProject activeProject = workbenchContext.getActiveWorkspaceProject();
-        return activeProject == null || projectController.canUpdateProject(activeProject);
+        return workbenchContext
+                               .getActiveWorkspaceProject()
+                               .map(activeProject -> projectController.canUpdateProject(activeProject))
+                               .orElse(true);
     }
 
     @Override
@@ -343,20 +345,14 @@ public abstract class KieEditor
     }
 
     public void onRepositoryRemoved(final @Observes RepositoryRemovedEvent event) {
-        if (event.getRepository() == null) {
-            return;
-        }
-        if (workbenchContext == null) {
-            return;
-        }
-        if (workbenchContext.getActiveWorkspaceProject() == null) {
-            return;
-        }
-        if (workbenchContext.getActiveWorkspaceProject().getRepository().equals(event.getRepository())) {
-            for (MenuItem mi : menus.getItemsMap().values()) {
-                mi.setEnabled(false);
-            }
-        }
+        Optional.ofNullable(workbenchContext)
+                .flatMap(context -> context.getActiveWorkspaceProject())
+                .filter(proj -> event.getRepository() != null && proj.getRepository().equals(event.getRepository()))
+                .ifPresent(proj -> {
+                    for (MenuItem mi : menus.getItemsMap().values()) {
+                        mi.setEnabled(false);
+                    }
+                });
     }
 
     @Override

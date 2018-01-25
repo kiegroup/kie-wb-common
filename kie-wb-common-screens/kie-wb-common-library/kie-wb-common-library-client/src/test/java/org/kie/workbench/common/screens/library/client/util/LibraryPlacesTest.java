@@ -16,8 +16,25 @@
 
 package org.kie.workbench.common.screens.library.client.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
@@ -74,9 +91,6 @@ import org.uberfire.preferences.shared.impl.PreferenceScopeResolutionStrategyInf
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.PanelDefinition;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LibraryPlacesTest {
@@ -193,13 +207,15 @@ public class LibraryPlacesTest {
                                   mock(Path.class));
         activeModule = mock(Module.class);
 
-        doReturn(activeOrganizationalUnit).when(projectContext).getActiveOrganizationalUnit();
+        doReturn(Optional.of(activeOrganizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
         activeProject = new WorkspaceProject(activeOrganizationalUnit,
                                              activeRepository,
                                              activeBranch,
                                              activeModule);
-        doReturn(activeProject).when(projectContext).getActiveWorkspaceProject();
-        doReturn(activeModule).when(projectContext).getActiveModule();
+        doReturn(Optional.of(activeProject)).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(activeModule)).when(projectContext).getActiveModule();
+        doReturn(Optional.empty()).when(projectContext).getActiveRepositoryRoot();
+        doReturn(Optional.empty()).when(projectContext).getActivePackage();
 
         final URIStructureExplorerModel model = mock(URIStructureExplorerModel.class);
         doReturn(mock(Repository.class)).when(model).getRepository();
@@ -234,7 +250,7 @@ public class LibraryPlacesTest {
     @Test
     public void onChangeNoActiveProject() {
 
-        doReturn(null).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.empty()).when(projectContext).getActiveWorkspaceProject();
 
         libraryPlaces.onChange();
 
@@ -244,7 +260,7 @@ public class LibraryPlacesTest {
     @Test
     public void onNoChangeWhenThereIsActivePackage() {
 
-        doReturn(new Package()).when(projectContext).getActivePackage();
+        doReturn(Optional.of(new Package())).when(projectContext).getActivePackage();
 
         libraryPlaces.onChange();
 
@@ -478,9 +494,10 @@ public class LibraryPlacesTest {
 
     @Test
     public void goToLibraryWithDefaultOrganizationalUnitTest() {
-        doReturn(null).when(projectContext).getActiveOrganizationalUnit();
-        doReturn(null).when(projectContext).getActiveWorkspaceProject();
-        doReturn(null).when(projectContext).getActiveModule();
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.empty())
+                                                          .thenReturn(Optional.of(mock(OrganizationalUnit.class)));
+        doReturn(Optional.empty()).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.empty()).when(projectContext).getActiveModule();
 
         final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
@@ -498,9 +515,9 @@ public class LibraryPlacesTest {
 
     @Test
     public void goToLibraryFromOrganizationalUnitsScreenTest() {
-        doReturn(activeOrganizationalUnit).when(projectContext).getActiveOrganizationalUnit();
-        doReturn(null).when(projectContext).getActiveWorkspaceProject();
-        doReturn(null).when(projectContext).getActiveModule();
+        doReturn(Optional.of(activeOrganizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
+        doReturn(Optional.empty()).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.empty()).when(projectContext).getActiveModule();
 
         final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
@@ -518,13 +535,13 @@ public class LibraryPlacesTest {
 
     @Test
     public void goToLibraryWhenGoingBackFromProjectTest() {
-        doReturn(activeOrganizationalUnit).when(projectContext).getActiveOrganizationalUnit();
+        doReturn(Optional.of(activeOrganizationalUnit)).when(projectContext).getActiveOrganizationalUnit();
         activeProject = new WorkspaceProject(activeOrganizationalUnit,
                                              activeRepository,
                                              activeBranch,
                                              activeModule);
-        doReturn(activeProject).when(projectContext).getActiveWorkspaceProject();
-        doReturn(activeModule).when(projectContext).getActiveModule();
+        doReturn(Optional.of(activeProject)).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(activeModule)).when(projectContext).getActiveModule();
 
         final PlaceRequest placeRequest = new DefaultPlaceRequest(LibraryPlaces.LIBRARY_SCREEN);
         final PartDefinitionImpl part = new PartDefinitionImpl(placeRequest);
@@ -757,7 +774,7 @@ public class LibraryPlacesTest {
 
         doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.LIBRARY_PERSPECTIVE);
 
-        doReturn(activeModule).when(projectContext).getActiveModule();
+        doReturn(Optional.of(activeModule)).when(projectContext).getActiveModule();
         doReturn(otherModule).when(renameModuleEvent).getOldModule();
         doReturn(renamedModule).when(renameModuleEvent).getNewModule();
 

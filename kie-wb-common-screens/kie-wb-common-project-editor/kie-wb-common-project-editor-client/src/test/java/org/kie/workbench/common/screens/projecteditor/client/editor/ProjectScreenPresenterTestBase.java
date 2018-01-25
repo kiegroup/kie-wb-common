@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.projecteditor.client.editor;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import com.google.gwtmockito.GwtMock;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -146,11 +147,17 @@ public abstract class ProjectScreenPresenterTestBase {
                                       final Repository repository,
                                       final KieModule module,
                                       final Path pomPath) {
-        when(context.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
-                                                                                  repository,
-                                                                                  new Branch("master",
-                                                                                             mock(Path.class)),
-                                                                                  module));
+        OrganizationalUnit ou = mock(OrganizationalUnit.class);
+        Path rootPath = mock(Path.class);
+        when(rootPath.toURI()).thenReturn("git://fake-space/fake-project/");
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(new WorkspaceProject(ou,
+                                                                                              repository,
+                                                                                              new Branch("master",
+                                                                                                         rootPath),
+                                                                                              module)));
+        when(context.getActiveOrganizationalUnit()).thenReturn(Optional.of(ou));
+        when(context.getActivePackage()).thenReturn(Optional.empty());
+
         when(repository.getAlias()).thenReturn("repository");
 
         when(module.getModuleName()).thenReturn("module");
@@ -158,7 +165,7 @@ public abstract class ProjectScreenPresenterTestBase {
         when(module.getPom()).thenReturn(pom);
         when(module.getRootPath()).thenReturn(mock(Path.class));
         when(pomPath.getFileName()).thenReturn("pom.xml");
-        when(context.getActiveModule()).thenReturn(module);
+        when(context.getActiveModule()).thenReturn(Optional.of(module));
     }
 
     protected void constructProjectScreenPresenter(final KieModule module) {
@@ -193,7 +200,7 @@ public abstract class ProjectScreenPresenterTestBase {
             @Override
             protected Pair<Collection<BuildOptionExtension>, Collection<BuildOptionExtension>> getBuildExtensions() {
                 //Do nothing. This method makes direct use of IOC and fails to be mocked
-                return new Pair<Collection<BuildOptionExtension>, Collection<BuildOptionExtension>>(Collections.EMPTY_LIST,
+                return new Pair<>(Collections.EMPTY_LIST,
                                                                                                     Collections.EMPTY_LIST);
             }
 

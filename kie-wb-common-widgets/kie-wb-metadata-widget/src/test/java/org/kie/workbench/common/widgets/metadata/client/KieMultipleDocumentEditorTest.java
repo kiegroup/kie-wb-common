@@ -19,6 +19,7 @@ package org.kie.workbench.common.widgets.metadata.client;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
@@ -64,7 +65,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSetupMenuBar() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         editor.setupMenuBar();
@@ -88,7 +89,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSetupMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         editor.setupMenuBar();
@@ -668,7 +669,7 @@ public class KieMultipleDocumentEditorTest
 
     @Test
     public void testSave() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         final TestDocument document = createTestDocument();
@@ -752,10 +753,10 @@ public class KieMultipleDocumentEditorTest
     @Test
     public void testOnRepositoryRemoved() {
         final Repository repository = mock(Repository.class);
-        when(workbenchContext.getActiveWorkspaceProject()).thenReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
-                                                                                           repository,
-                                                                                           mock(Branch.class),
-                                                                                           mock(Module.class)));
+        when(workbenchContext.getActiveWorkspaceProject()).thenReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                                                                       repository,
+                                                                                                       mock(Branch.class),
+                                                                                                       mock(Module.class))));
 
         editor.setupMenuBar();
 

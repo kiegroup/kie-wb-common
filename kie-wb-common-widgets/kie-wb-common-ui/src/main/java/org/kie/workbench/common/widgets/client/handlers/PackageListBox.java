@@ -58,7 +58,7 @@ public class PackageListBox extends Composite {
         initWidget(panel);
         getElement().getStyle().setMarginBottom(15,
                                                 Style.Unit.PX);
-        packages = new HashMap<String, Package>();
+        packages = new HashMap<>();
     }
 
     public void setUp(final boolean includeDefaultPackage) {
@@ -72,7 +72,7 @@ public class PackageListBox extends Composite {
         packages.clear();
 
         // Disable and set default content if Module is not selected
-        final Module activeModule = projectContext.getActiveModule();
+        final Module activeModule = projectContext.getActiveModule().orElse(null);
         if (activeModule == null) {
             return;
         }
@@ -81,7 +81,7 @@ public class PackageListBox extends Composite {
         moduleService.call((Set<Package> pkgs) -> {
             moduleService.call((Package activePackage) -> {
                 //Sort by caption
-                final List<Package> sortedPackages = new ArrayList<Package>();
+                final List<Package> sortedPackages = new ArrayList<>();
                 sortedPackages.addAll(pkgs);
                 Collections.sort(sortedPackages,
                                  (p1, p2) -> p1.getCaption().compareTo(p2.getCaption()));

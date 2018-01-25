@@ -112,11 +112,7 @@ public abstract class DefaultNewResourceHandler implements NewResourceHandler {
 
     @Override
     public void acceptContext(final Callback<Boolean, Void> callback) {
-        if (context == null) {
-            callback.onSuccess(false);
-        } else {
-            callback.onSuccess(context.getActiveModule() != null);
-        }
+        callback.onSuccess(context != null && context.getActiveModule().isPresent());
     }
 
     @Override

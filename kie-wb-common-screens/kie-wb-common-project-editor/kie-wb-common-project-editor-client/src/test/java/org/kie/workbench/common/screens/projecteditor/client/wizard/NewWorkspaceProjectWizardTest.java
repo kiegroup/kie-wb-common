@@ -14,8 +14,22 @@
 */
 package org.kie.workbench.common.screens.projecteditor.client.wizard;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Set;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwtmockito.GwtMock;
@@ -50,9 +64,6 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
 @RunWith(GwtMockitoTestRunner.class)
 public class NewWorkspaceProjectWizardTest {
 
@@ -82,7 +93,7 @@ public class NewWorkspaceProjectWizardTest {
 
     @Before
     public void setUp() throws Exception {
-        preferences = new HashMap<String, String>();
+        preferences = new HashMap<>();
         ApplicationPreferences.setUp(preferences);
         pomDefaultOptions = new KiePOMDefaultOptions();
         PlaceManager placeManager = mock(PlaceManager.class);
@@ -96,6 +107,12 @@ public class NewWorkspaceProjectWizardTest {
                                                        view,
                                                        pomDefaultOptions
         );
+
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.empty());
+        when(moduleContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(moduleContext.getActiveModule()).thenReturn(Optional.empty());
+        when(moduleContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(moduleContext.getActivePackage()).thenReturn(Optional.empty());
 
         wizard.setupPages();
     }
@@ -145,7 +162,7 @@ public class NewWorkspaceProjectWizardTest {
                         "1.3.0");
         OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("mygroup");
-        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         POM pom = new POM();
         pom.setName("another module");
@@ -179,7 +196,7 @@ public class NewWorkspaceProjectWizardTest {
     public void testInitialize() throws Exception {
         OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
         when(organizationalUnit.getDefaultGroupId()).thenReturn("mygroup");
-        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         wizard.initialise();
 
@@ -194,7 +211,8 @@ public class NewWorkspaceProjectWizardTest {
     public void testCompleteNonClashingGAV() throws Exception {
         final Path repositoryRoot = mock(Path.class);
         final POM pom = mock(POM.class);
-        when(moduleContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(mock(OrganizationalUnit.class)));
+        when(moduleContext.getActiveRepositoryRoot()).thenReturn(Optional.of(repositoryRoot));
         when(pomWizardPage.getPom()).thenReturn(pom);
 
         wizard.complete();
@@ -217,7 +235,8 @@ public class NewWorkspaceProjectWizardTest {
         when(projectService.newProject(any(OrganizationalUnit.class),
                                        eq(pom),
                                        eq(DeploymentMode.VALIDATED))).thenThrow(GAVAlreadyExistsException.class);
-        when(moduleContext.getActiveRepositoryRoot()).thenReturn(repositoryRoot);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(mock(OrganizationalUnit.class)));
+        when(moduleContext.getActiveRepositoryRoot()).thenReturn(Optional.of(repositoryRoot));
         when(pomWizardPage.getPom()).thenReturn(pom);
         when(pom.getGav()).thenReturn(gav);
 
@@ -261,6 +280,7 @@ public class NewWorkspaceProjectWizardTest {
     @Test
     public void testCompleteCallsCallbackOnce() {
         final Callback<WorkspaceProject> projectCallback = mock(Callback.class);
+        when(moduleContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(mock(OrganizationalUnit.class)));
 
         wizard.start(projectCallback,
                      false);

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.gwtmockito.GwtMock;
@@ -260,6 +261,12 @@ public abstract class DataModelerScreenPresenterTestBase {
                 deletePopUpPresenter = DataModelerScreenPresenterTestBase.this.deletePopUpPresenter;
                 showAssetUsagesDisplayer = DataModelerScreenPresenterTestBase.this.showAssetUsages;
                 uiStarted = true;
+
+                when(workbenchContext.getActiveOrganizationalUnit()).thenReturn(Optional.empty());
+                when(workbenchContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+                when(workbenchContext.getActiveModule()).thenReturn(Optional.empty());
+                when(workbenchContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+                when(workbenchContext.getActivePackage()).thenReturn(Optional.empty());
             }
 
             @Override

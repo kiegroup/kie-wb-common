@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.validation.UnexpectedTypeException;
@@ -43,7 +44,15 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.server.api.model.KieContainerStatus;
 import org.kie.server.api.model.KieScannerStatus;
 import org.kie.server.api.model.ReleaseId;
-import org.kie.server.controller.api.model.spec.*;
+import org.kie.server.controller.api.model.spec.Capability;
+import org.kie.server.controller.api.model.spec.ContainerConfig;
+import org.kie.server.controller.api.model.spec.ContainerSpec;
+import org.kie.server.controller.api.model.spec.ContainerSpecKey;
+import org.kie.server.controller.api.model.spec.ProcessConfig;
+import org.kie.server.controller.api.model.spec.RuleConfig;
+import org.kie.server.controller.api.model.spec.ServerTemplate;
+import org.kie.server.controller.api.model.spec.ServerTemplateKey;
+import org.kie.server.controller.api.model.spec.ServerTemplateList;
 import org.kie.workbench.common.screens.projecteditor.client.editor.DeploymentScreenPopupViewImpl;
 import org.kie.workbench.common.screens.projecteditor.client.resources.ProjectEditorResources;
 import org.kie.workbench.common.screens.server.management.model.MergeMode;
@@ -447,7 +456,8 @@ public class BuildExecutor {
     }
 
     private Module activeModule() {
-        return projectContext.getActiveWorkspaceProject().getMainModule();
+        return projectContext.getActiveModule()
+                             .orElseThrow(() -> new IllegalStateException("Cannot perform build without active module."));
     }
 
     private GAV projectGAV() {

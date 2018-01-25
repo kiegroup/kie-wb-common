@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.datamodeller.client;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
@@ -595,7 +596,7 @@ public class DataModelerScreenPresenterTest
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
@@ -608,7 +609,7 @@ public class DataModelerScreenPresenterTest
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();

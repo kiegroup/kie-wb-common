@@ -16,6 +16,8 @@
 package org.kie.workbench.common.screens.library.client.screens.project;
 
 import java.util.ArrayList;
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -97,7 +99,11 @@ public class AddProjectPopUpPresenterTest {
         selectedOrganizationalUnit = mock(OrganizationalUnit.class);
         doReturn("selectedOrganizationalUnit").when(selectedOrganizationalUnit).getIdentifier();
 
-        doReturn(selectedOrganizationalUnit).when(projectContext).getActiveOrganizationalUnit();
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(selectedOrganizationalUnit));
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(projectContext.getActiveModule()).thenReturn(Optional.empty());
+        when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(projectContext.getActivePackage()).thenReturn(Optional.empty());
 
         presenter = spy(new AddProjectPopUpPresenter(libraryServiceCaller,
                                                      busyIndicatorView,
@@ -144,7 +150,7 @@ public class AddProjectPopUpPresenterTest {
     @Test
     public void newProjectIsCreated() throws Exception {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
-        when(projectContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         doReturn("test").when(view).getName();
         doReturn("description").when(view).getDescription();
@@ -160,7 +166,7 @@ public class AddProjectPopUpPresenterTest {
     @Test
     public void newWorkbenchProjectWithAdvancedSettingsIsCreated() throws Exception {
         final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
-        when(projectContext.getActiveOrganizationalUnit()).thenReturn(organizationalUnit);
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
 
         doReturn("test").when(view).getName();
         doReturn("description").when(view).getDescription();

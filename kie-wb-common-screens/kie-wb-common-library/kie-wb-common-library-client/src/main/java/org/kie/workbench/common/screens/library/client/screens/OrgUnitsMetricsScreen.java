@@ -93,7 +93,8 @@ public class OrgUnitsMetricsScreen {
     public void init() {
         this.view.init(this);
 
-        this.organizationalUnit = projectContext.getActiveOrganizationalUnit();
+        this.organizationalUnit = projectContext.getActiveOrganizationalUnit()
+                                                .orElseThrow(() -> new IllegalStateException("Cannot initialize OrgUnitsMetricsScreen without an active organizational unit."));
 
         this.commitsOverTimeDisplayer = metricsFactory.lookupCommitsOverTimeDisplayer(organizationalUnit);
         this.commitsPerAuthorDisplayer = metricsFactory.lookupCommitsPerAuthorDisplayer(organizationalUnit);

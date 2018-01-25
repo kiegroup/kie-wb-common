@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens.project;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -154,7 +155,8 @@ public class AddProjectPopUpPresenter {
             public void callback(LibraryInfo libraryInfo) {
                 AddProjectPopUpPresenter.this.libraryInfo = libraryInfo;
             }
-        }).getLibraryInfo(projectContext.getActiveOrganizationalUnit());
+        }).getLibraryInfo(projectContext.getActiveOrganizationalUnit()
+                                        .orElseThrow(() -> new IllegalStateException("Cannot get library info without an active organizational unit.")));
     }
 
     public void show() {
@@ -196,13 +198,15 @@ public class AddProjectPopUpPresenter {
                                pom.setName(name);
                                pom.setDescription(description);
                                libraryService.call(successCallback,
-                                                   errorCallback).createProject(projectContext.getActiveOrganizationalUnit(),
+                                                   errorCallback).createProject(projectContext.getActiveOrganizationalUnit()
+                                                                                              .orElseThrow(() -> new IllegalStateException("Cannot create new project without an active organizational unit.")),
                                                                                 pom,
                                                                                 mode);
                            } else {
                                libraryService.call(successCallback,
                                                    errorCallback).createProject(name,
-                                                                                projectContext.getActiveOrganizationalUnit(),
+                                                                                projectContext.getActiveOrganizationalUnit()
+                                                                                              .orElseThrow(() -> new IllegalStateException("Cannot create new project without an active organizational unit.")),
                                                                                 description,
                                                                                 mode);
                            }

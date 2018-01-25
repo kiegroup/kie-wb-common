@@ -16,6 +16,18 @@
 
 package org.kie.workbench.common.widgets.client.handlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import javax.enterprise.event.Event;
 
 import com.google.gwt.core.client.Callback;
@@ -40,9 +52,6 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.type.ResourceTypeDefinition;
-
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DefaultNewResourceHandlerTest {
@@ -151,19 +160,9 @@ public class DefaultNewResourceHandlerTest {
     }
 
     @Test
-    public void testAcceptContextWithNoContext() {
-        final Callback<Boolean, Void> callback = mock(Callback.class);
-
-        handler.acceptContext(callback);
-
-        verify(callback,
-               times(1)).onSuccess(false);
-    }
-
-    @Test
     public void testAcceptContextWithContextWithNoProject() {
         final Callback<Boolean, Void> callback = mock(Callback.class);
-        when(context.getActiveModule()).thenReturn(null);
+        when(context.getActiveModule()).thenReturn(Optional.empty());
 
         handler.acceptContext(callback);
         verify(callback,
@@ -173,7 +172,7 @@ public class DefaultNewResourceHandlerTest {
     @Test
     public void testAcceptContextWithContextWithProject() {
         final Callback<Boolean, Void> callback = mock(Callback.class);
-        when(context.getActiveModule()).thenReturn(mock(Module.class));
+        when(context.getActiveModule()).thenReturn(Optional.of(mock(Module.class)));
 
         handler.acceptContext(callback);
         verify(callback,

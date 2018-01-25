@@ -107,7 +107,8 @@ public class PopulatedLibraryScreen {
         }
 
         libraryService.call((RemoteCallback<LibraryInfo>) this::updateLibrary)
-                .getLibraryInfo(projectContext.getActiveOrganizationalUnit());
+                .getLibraryInfo(projectContext.getActiveOrganizationalUnit()
+                                              .orElseThrow(() -> new IllegalStateException("Cannot get library info without an active organizational unit.")));
     }
 
     private void updateLibrary(final LibraryInfo libraryInfo) {

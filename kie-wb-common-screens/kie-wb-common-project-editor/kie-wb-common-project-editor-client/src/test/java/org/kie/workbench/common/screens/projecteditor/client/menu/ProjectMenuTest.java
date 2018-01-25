@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.projecteditor.client.menu;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -46,6 +47,12 @@ public class ProjectMenuTest {
     public void setup() {
         menu = new ProjectMenu(placeManager,
                                projectContext);
+        
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.empty());
+        when(projectContext.getActiveWorkspaceProject()).thenReturn(Optional.empty());
+        when(projectContext.getActiveModule()).thenReturn(Optional.empty());
+        when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
+        when(projectContext.getActivePackage()).thenReturn(Optional.empty());
     }
 
     @Test
@@ -58,7 +65,7 @@ public class ProjectMenuTest {
 
     @Test
     public void getMenuItemsSynchronizesEnabledState() {
-        when(projectContext.getActiveModule()).thenReturn(mock(KieModule.class));
+        when(projectContext.getActiveModule()).thenReturn(Optional.of(mock(KieModule.class)));
 
         final List<MenuItem> menus = menu.getMenuItems();
 

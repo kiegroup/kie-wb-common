@@ -125,7 +125,7 @@ public class NewWorkspaceProjectHandler
 
     @Override
     public void acceptContext(final Callback<Boolean, Void> response) {
-        response.onSuccess(context.getActiveOrganizationalUnit() != null);
+        response.onSuccess(context.getActiveOrganizationalUnit().isPresent());
     }
 
     @Override
@@ -134,7 +134,7 @@ public class NewWorkspaceProjectHandler
             @Override
             public void execute() {
 
-                if (context.getActiveOrganizationalUnit() == null) {
+                if (!context.getActiveOrganizationalUnit().isPresent()) {
                     ouService.call(new RemoteCallback<OrganizationalUnit>() {
                         @Override
                         public void callback(OrganizationalUnit organizationalUnit) {
@@ -153,7 +153,10 @@ public class NewWorkspaceProjectHandler
 
     private void init() {
         wizard.initialise(new POMBuilder().setModuleName("")
-                                  .setGroupId(context.getActiveOrganizationalUnit().getDefaultGroupId()).build());
+                                          .setGroupId(context.getActiveOrganizationalUnit()
+                                                             .map(ou -> ou.getDefaultGroupId())
+                                                             .orElseThrow(() -> new IllegalStateException("Cannot get default group id when no organizational unit is active.")))
+                                          .build());
         wizard.start(creationSuccessCallback,
                      openEditorOnCreation);
     }

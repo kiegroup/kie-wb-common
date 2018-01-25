@@ -236,7 +236,9 @@ public class ImportWorkspaceProjectsScreen {
                                                                               NotificationEvent.NotificationType.SUCCESS));
                                  projectContextChangeEvent.fire(contextChangeEvent);
                              },
-                             new HasBusyIndicatorDefaultErrorCallback(view)).setupExamples(new ExampleOrganizationalUnit(projectContext.getActiveOrganizationalUnit().getName()),
+                             new HasBusyIndicatorDefaultErrorCallback(view)).setupExamples(new ExampleOrganizationalUnit(projectContext.getActiveOrganizationalUnit()
+                                                                                                                                       .orElseThrow(() -> new IllegalStateException("Cannot setup examples without an active organizational unit."))
+                                                                                                                                       .getName()),
                                                                                            projects);
     }
 

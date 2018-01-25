@@ -20,6 +20,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import java.util.Optional;
+
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -82,7 +84,7 @@ public class ProjectScreenTest {
                                                               mock(Repository.class),
                                                               mock(Branch.class),
                                                               null);
-        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(project)).when(projectContext).getActiveWorkspaceProject();
 
         IsElement view = mock(IsElement.class);
         HTMLElement element = mock(HTMLElement.class);
@@ -101,7 +103,7 @@ public class ProjectScreenTest {
                                                               mock(Repository.class),
                                                               mock(Branch.class),
                                                               mock(KieModule.class));
-        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(project)).when(projectContext).getActiveWorkspaceProject();
 
         doReturn(false).when(libraryService).hasAssets(project);
 
@@ -126,7 +128,7 @@ public class ProjectScreenTest {
                                                               mock(Branch.class),
                                                               mock(KieModule.class));
 
-        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(project)).when(projectContext).getActiveWorkspaceProject();
 
         doReturn(true).when(libraryService).hasAssets(project);
 

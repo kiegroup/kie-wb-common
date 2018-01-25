@@ -164,7 +164,7 @@ public class ExplorerMenuTest {
         final Module module = new Module(rootModulePath,
                                          mock(Path.class),
                                          pom);
-        when(context.getActiveModule()).thenReturn(module);
+        when(context.getActiveModule()).thenReturn(Optional.of(module));
 
         menu.onArchiveActiveProject();
 
@@ -178,7 +178,7 @@ public class ExplorerMenuTest {
         when(repository.getDefaultBranch()).thenReturn(Optional.of(new Branch("master", rootRepoPath)));
         final WorkspaceProject project = mock(WorkspaceProject.class);
         when(project.getRepository()).thenReturn(repository);
-        when(context.getActiveWorkspaceProject()).thenReturn(project);
+        when(context.getActiveWorkspaceProject()).thenReturn(Optional.of(project));
 
         menu.onArchiveActiveRepository();
 

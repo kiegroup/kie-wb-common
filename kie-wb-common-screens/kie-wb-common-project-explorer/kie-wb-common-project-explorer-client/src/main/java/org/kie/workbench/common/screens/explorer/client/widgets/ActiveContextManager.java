@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.Module;
+import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.Repository;
@@ -117,10 +118,17 @@ public class ActiveContextManager {
     }
 
     public void initActiveContext(final WorkspaceProjectContext context) {
-        initActiveContext(context.getActiveWorkspaceProject().getRepository(),
-                          context.getActiveWorkspaceProject().getBranch(),
-                          context.getActiveModule(),
-                          context.getActivePackage());
+        WorkspaceProject activeProject = context
+                                                .getActiveWorkspaceProject()
+                                                .orElseThrow(() -> new IllegalStateException("Cannot initialize active context without an active project."));
+        initActiveContext(activeProject.getRepository(),
+                          activeProject.getBranch(),
+                          /*
+                           * XXX I think these are allowed to be null but this should be
+                           * documented somewhere, like on the ProjectExplorerContentQuery
+                           */
+                          context.getActiveModule().orElse(null),
+                          context.getActivePackage().orElse(null));
     }
 
     public void onBranchCreated(@Observes final NewBranchEvent event) {

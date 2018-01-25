@@ -15,6 +15,15 @@
  */
 package org.kie.workbench.common.screens.library.client.screens;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+
+import java.util.Optional;
+
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
@@ -37,13 +46,6 @@ import org.uberfire.client.workbench.events.PlaceGainFocusEvent;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.PlaceRequest;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProjectScreenRefreshTest {
@@ -82,7 +84,7 @@ public class ProjectScreenRefreshTest {
                                                               mock(Repository.class),
                                                               new Branch("master", mock(Path.class)),
                                                               null);
-        doReturn(project).when(projectContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(project)).when(projectContext).getActiveWorkspaceProject();
     }
 
     @Test
@@ -106,11 +108,10 @@ public class ProjectScreenRefreshTest {
 
         screen.onStartup();
 
-        doReturn(new WorkspaceProject(mock(OrganizationalUnit.class),
-                                      mock(Repository.class),
-                                      new Branch("other", mock(Path.class)),
-                                      null)).when(projectContext).getActiveWorkspaceProject();
-
+        doReturn(Optional.of(new WorkspaceProject(mock(OrganizationalUnit.class),
+                                                  mock(Repository.class),
+                                                  new Branch("other", mock(Path.class)),
+                                                  null))).when(projectContext).getActiveWorkspaceProject();
 
         reset(this.view);
 

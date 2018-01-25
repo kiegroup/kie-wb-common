@@ -17,6 +17,8 @@
 package org.kie.workbench.common.widgets.metadata.client;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import java.util.Optional;
+
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.model.WorkspaceProject;
@@ -96,7 +98,7 @@ public class KieEditorTest {
 
     @Test
     public void testMakeMenuBar() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
@@ -112,7 +114,7 @@ public class KieEditorTest {
 
     @Test
     public void testMakeMenuBarWithoutUpdateProjectPermission() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
 
         presenter.makeMenuBar();
@@ -132,7 +134,7 @@ public class KieEditorTest {
 
     @Test
     public void validSaveActionTest() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(true).when(projectController).canUpdateProject(any());
 
         presenter.saveAction();
@@ -142,7 +144,7 @@ public class KieEditorTest {
 
     @Test
     public void notAllowedSaveActionTest() {
-        doReturn(mock(WorkspaceProject.class)).when(workbenchContext).getActiveWorkspaceProject();
+        doReturn(Optional.of(mock(WorkspaceProject.class))).when(workbenchContext).getActiveWorkspaceProject();
         doReturn(false).when(projectController).canUpdateProject(any());
         doReturn("not-allowed").when(kieView).getNotAllowedSavingMessage();
 
