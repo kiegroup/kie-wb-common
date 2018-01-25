@@ -27,10 +27,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Laneconverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -96,6 +96,10 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                 new FlowElementConverter(typedFactoryManager,
                                          new DefinitionResolver(definitions));
 
+        Laneconverter laneconverter =
+                new Laneconverter(typedFactoryManager,
+                                  new DefinitionResolver(definitions));
+
         Process process = findProcess(definitions);
 
         metadata.setCanvasRootUUID(definitions.getId());
@@ -118,6 +122,15 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                 .map(flowElementConverter::convertNode)
                 .filter(Result::notIgnored)
                 .map(Result::value)
+                .forEach(n -> {
+                    layout.updateNode(n);
+                    context.addNode(n);
+                });
+
+        process.getLaneSets()
+                .stream()
+                .flatMap(laneSet -> laneSet.getLanes().stream())
+                .map(laneconverter::convert)
                 .forEach(n -> {
                     layout.updateNode(n);
                     context.addNode(n);
