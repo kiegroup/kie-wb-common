@@ -59,6 +59,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -219,17 +220,9 @@ public class ExpressionEditorViewImplTest {
     public void testSetEditorDoesUpdateReturnToDRGTextWhenHasNameIsNotEmpty() {
         final String NAME = "NAME";
         final Name name = new Name(NAME);
-        final Optional<HasName> hasName = Optional.of(new HasName() {
-            @Override
-            public Name getName() {
-                return name;
-            }
-
-            @Override
-            public void setName(final Name name) {
-                //Not required for this test
-            }
-        });
+        final HasName hasNameMock = mock(HasName.class);
+        doReturn(name).when(hasNameMock).getName();
+        final Optional<HasName> hasName = Optional.of(hasNameMock);
         final Optional<Expression> expression = Optional.empty();
 
         view.setEditor(editorDefinition,
