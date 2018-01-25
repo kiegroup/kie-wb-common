@@ -1121,6 +1121,35 @@ public class BPMNDirectDiagramMarshallerTest {
     }
 
     @Test
+    public void testMarshallIntermediateTimerEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_TIMER_EVENT);
+        IntermediateTimerEvent timerEvent = null;
+        Iterator<Element> it = nodesIterator(diagram);
+        while (it.hasNext()) {
+            Element element = it.next();
+            if (element.getContent() instanceof View) {
+                Object oDefinition = ((View) element.getContent()).getDefinition();
+                if (oDefinition instanceof IntermediateTimerEvent) {
+                    timerEvent = (IntermediateTimerEvent) oDefinition;
+                    break;
+                }
+            }
+        }
+        assertNotNull(timerEvent);
+        assertNotNull(timerEvent.getGeneral());
+        assertNotNull(timerEvent.getExecutionSet());
+
+        assertEquals("myTimeDateValue",
+                     timerEvent.getExecutionSet().getTimerSettings().getValue().getTimeDate());
+        assertEquals("MyTimeDurationValue",
+                     timerEvent.getExecutionSet().getTimerSettings().getValue().getTimeDuration());
+        assertEquals("myTimeCycleValue",
+                     timerEvent.getExecutionSet().getTimerSettings().getValue().getTimeCycle());
+        assertEquals("cron",
+                     timerEvent.getExecutionSet().getTimerSettings().getValue().getTimeCycleLanguage());
+    }
+
+    @Test
     public void testUnmarshallReusableSubprocess() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_REUSABLE_SUBPROCESS);
         ReusableSubprocess reusableSubprocess = null;
