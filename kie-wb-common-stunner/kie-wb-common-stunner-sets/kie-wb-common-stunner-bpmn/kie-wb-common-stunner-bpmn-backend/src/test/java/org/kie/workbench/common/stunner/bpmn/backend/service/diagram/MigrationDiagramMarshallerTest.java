@@ -71,6 +71,7 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
@@ -399,6 +400,7 @@ public class MigrationDiagramMarshallerTest {
 
             // Let's check nodes only.
             assertNodeEquals(oldDiagram, newDiagram);
+            assertEdgeEquals(oldDiagram, newDiagram);
         }
     }
 
@@ -412,20 +414,40 @@ public class MigrationDiagramMarshallerTest {
 
         // Let's check nodes only.
         assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
     }
 
 
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
-        Set<Node> oldNodes = asSet(oldDiagram.getGraph().nodes());
-        Set<Node> newNodes = asSet(newDiagram.getGraph().nodes());
+        Set<Node> oldNodes = asNodeSet(oldDiagram.getGraph().nodes());
+        Set<Node> newNodes = asNodeSet(newDiagram.getGraph().nodes());
 
         assertEquals("Number of nodes should match", oldNodes.size(),newNodes.size());
         assertEquals("The generated set of nodes should match", oldNodes, newNodes);
     }
 
-    private Set<Node> asSet(Iterable nodes) {
+    private Set<Node> asNodeSet(Iterable nodes) {
         Set<Node> oldNodes = new HashSet<>();
         nodes.forEach(n -> oldNodes.add((Node) n));
         return oldNodes;
+    }
+
+
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+        Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
+        Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
+
+        assertEquals("Number of edges should match", oldEdges.size(), newEdges.size());
+        assertEquals("The generated set of edges should match", oldEdges, newEdges);
+    }
+
+
+    private Set<Edge> asEdgeSet(Iterable nodes) {
+        Set<Edge> oldEdges = new HashSet<>();
+        nodes.forEach(n -> {
+            oldEdges.addAll(((Node<?, Edge>) n).getOutEdges());
+            oldEdges.addAll(((Node<?, Edge>) n).getInEdges());
+        });
+        return oldEdges;
     }
 }
