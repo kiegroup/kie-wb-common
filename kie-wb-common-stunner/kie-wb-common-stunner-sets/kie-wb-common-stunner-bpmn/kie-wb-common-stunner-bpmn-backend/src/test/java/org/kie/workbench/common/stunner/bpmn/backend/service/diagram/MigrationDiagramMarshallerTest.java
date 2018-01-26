@@ -18,6 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -70,6 +72,7 @@ import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
@@ -344,13 +347,13 @@ public class MigrationDiagramMarshallerTest {
     }
 
     @Test
-    public void testUnmarshallOldStaff() throws Exception {
-        String[] oldStaff = {BPMN_BASIC, BPMN_EVALUATION, BPMN_LANES, BPMN_BOUNDARY_EVENTS, BPMN_NOT_BOUNDARY_EVENTS, BPMN_PROCESSVARIABLES, BPMN_USERTASKASSIGNMENTS, BPMN_BUSINESSRULETASKASSIGNMENTS, BPMN_STARTNONEEVENT, BPMN_STARTTIMEREVENT, BPMN_STARTSIGNALEVENT, BPMN_STARTMESSAGEEVENT, BPMN_STARTERROREVENT, BPMN_INTERMEDIATE_SIGNAL_EVENTCATCHING, BPMN_INTERMEDIATE_ERROR_EVENTCATCHING, BPMN_INTERMEDIATE_SIGNAL_EVENTTHROWING, BPMN_INTERMEDIATE_MESSAGE_EVENTCATCHING, BPMN_INTERMEDIATE_MESSAGE_EVENTTHROWING, BPMN_INTERMEDIATE_TIMER_EVENT, BPMN_ENDSIGNALEVENT, BPMN_ENDMESSAGEEVENT, BPMN_ENDNONEEVENT, BPMN_ENDTERMINATEEVENT, BPMN_PROCESSPROPERTIES, BPMN_BUSINESSRULETASKRULEFLOWGROUP, BPMN_REUSABLE_SUBPROCESS, BPMN_SCRIPTTASK, BPMN_USERTASKASSIGNEES, BPMN_USERTASKPROPERTIES, BPMN_SEQUENCEFLOW, BPMN_XORGATEWAY, BPMN_TIMER_EVENT, BPMN_SIMULATIONPROPERTIES, BPMN_MAGNETDOCKERS, BPMN_MAGNETSINLANE, BPMN_ENDERROR_EVENT};
+    public void testUnmarshallOldStuff() throws Exception {
+        String[] oldStuff = {BPMN_BASIC, BPMN_EVALUATION, BPMN_LANES, BPMN_BOUNDARY_EVENTS, BPMN_NOT_BOUNDARY_EVENTS, BPMN_PROCESSVARIABLES, BPMN_USERTASKASSIGNMENTS, BPMN_BUSINESSRULETASKASSIGNMENTS, BPMN_STARTNONEEVENT, BPMN_STARTTIMEREVENT, BPMN_STARTSIGNALEVENT, BPMN_STARTMESSAGEEVENT, BPMN_STARTERROREVENT, BPMN_INTERMEDIATE_SIGNAL_EVENTCATCHING, BPMN_INTERMEDIATE_ERROR_EVENTCATCHING, BPMN_INTERMEDIATE_SIGNAL_EVENTTHROWING, BPMN_INTERMEDIATE_MESSAGE_EVENTCATCHING, BPMN_INTERMEDIATE_MESSAGE_EVENTTHROWING, BPMN_INTERMEDIATE_TIMER_EVENT, BPMN_ENDSIGNALEVENT, BPMN_ENDMESSAGEEVENT, BPMN_ENDNONEEVENT, BPMN_ENDTERMINATEEVENT, BPMN_PROCESSPROPERTIES, BPMN_BUSINESSRULETASKRULEFLOWGROUP, BPMN_REUSABLE_SUBPROCESS, BPMN_SCRIPTTASK, BPMN_USERTASKASSIGNEES, BPMN_USERTASKPROPERTIES, BPMN_SEQUENCEFLOW, BPMN_XORGATEWAY, BPMN_TIMER_EVENT, BPMN_SIMULATIONPROPERTIES, BPMN_MAGNETDOCKERS, BPMN_MAGNETSINLANE, BPMN_ENDERROR_EVENT};
 
         Diagram<Graph, Metadata> oldDiagram;
         Diagram<Graph, Metadata> newDiagram;
 
-        for (String fileName : oldStaff) {
+        for (String fileName : oldStuff) {
             oldDiagram = Unmarshalling.unmarshall(oldMarshaller, fileName);
             newDiagram = Unmarshalling.unmarshall(newMarshaller, fileName);
 
@@ -358,8 +361,19 @@ public class MigrationDiagramMarshallerTest {
             // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
             // Let's check nodes only.
-            assertEquals(oldDiagram.getGraph().nodes(), newDiagram.getGraph().nodes());
+            List<Node> oldNodes = asList(oldDiagram.getGraph().nodes());
+            List<Node> newNodes = asList(newDiagram.getGraph().nodes());
+
+            assertEquals(oldNodes, newNodes);
+
         }
+    }
+
+    public List<Node> asList(Iterable nodes) {
+        ArrayList<Node> oldNodes = new ArrayList<>();
+        nodes.forEach(n -> oldNodes.add((Node)n));
+        oldNodes.sort(Comparator.comparing(Node::getUUID));
+        return oldNodes;
     }
 
     @Test
@@ -371,6 +385,9 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertEquals(oldDiagram.getGraph().nodes(), newDiagram.getGraph().nodes());
+        List<Node> oldNodes = asList(oldDiagram.getGraph().nodes());
+        List<Node> newNodes = asList(newDiagram.getGraph().nodes());
+
+        assertEquals(oldNodes, newNodes);
     }
 }
