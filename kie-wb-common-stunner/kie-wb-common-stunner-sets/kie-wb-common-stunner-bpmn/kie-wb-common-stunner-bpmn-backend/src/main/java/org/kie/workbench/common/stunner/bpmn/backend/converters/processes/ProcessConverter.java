@@ -14,11 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Process;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -32,20 +39,65 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class DiagramConverter {
+public class ProcessConverter {
 
-    private static final Logger _logger = LoggerFactory.getLogger(DiagramConverter.class);
-
+    private final GraphBuildingContext context;
+    private final FlowElementConverter flowElementConverter;
+    private final LaneConverter laneConverter;
+    private final Layout layout;
     private final TypedFactoryManager factoryManager;
 
-    public DiagramConverter(TypedFactoryManager factoryManager) {
-        this.factoryManager = factoryManager;
+    public ProcessConverter(
+            TypedFactoryManager typedFactoryManager,
+            DefinitionResolver definitionResolver,
+            Layout layout,
+            GraphBuildingContext context) {
+
+        this.factoryManager = typedFactoryManager;
+        this.context = context;
+        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, definitionResolver, context, layout);
+        this.laneConverter = new LaneConverter(typedFactoryManager, definitionResolver);
+        this.layout = layout;
     }
 
-    public Node<View<BPMNDiagramImpl>, ?> convert(String definitionId, Process process) {
+    public void convert(String definitionsId, Process process) {
+        Node<View<BPMNDiagramImpl>, ?> firstDiagramNode =
+                convertProcessNode(definitionsId, process);
+
+        context.addNode(firstDiagramNode);
+
+        process.getFlowElements()
+                .stream()
+                .map(flowElementConverter::convertNode)
+                .filter(Result::notIgnored)
+                .map(Result::value)
+                .forEach(n -> {
+                    layout.updateNode(n);
+                    context.addNode(n);
+                });
+
+        process.getLaneSets()
+                .stream()
+                .flatMap(laneSet -> laneSet.getLanes().stream())
+                .map(laneConverter::convert)
+                .forEach(n -> {
+                    layout.updateNode(n);
+                    context.addNode(n);
+                });
+
+        process.getFlowElements()
+                .stream()
+                .map(flowElementConverter::convertEdge)
+                .filter(Result::isSuccess)
+                .map(Result::value)
+                .forEach(layout::updateEdge);
+
+        process.getFlowElements()
+                .forEach(flowElementConverter::convertDockedNodes);
+    }
+
+    private Node<View<BPMNDiagramImpl>, ?> convertProcessNode(String definitionId, Process process) {
         // FIXME why must we inherit the container's id ??
         Node<View<BPMNDiagramImpl>, Edge> diagramNode = factoryManager.newNode(definitionId, BPMNDiagramImpl.class);
         BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();

@@ -34,13 +34,14 @@ public class SequenceFlowConverter {
 
     private static final Logger _logger = LoggerFactory.getLogger(SequenceFlowConverter.class);
     private TypedFactoryManager factoryManager;
+    private final GraphBuildingContext context;
 
-    public SequenceFlowConverter(TypedFactoryManager factoryManager) {
-
+    public SequenceFlowConverter(TypedFactoryManager factoryManager, GraphBuildingContext context) {
         this.factoryManager = factoryManager;
+        this.context = context;
     }
 
-    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq, GraphBuildingContext context) {
+    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq) {
         Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
         SequenceFlow definition = edge.getContent().getDefinition();
         definition.getGeneral().getName().setValue(seq.getName());

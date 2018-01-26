@@ -27,12 +27,14 @@ import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.Task;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.activities.CallActivityConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.BoundaryEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.EndEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.IntermediateCatchEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.IntermediateThrowEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.StartEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.gateways.GatewayConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.TaskConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -47,6 +49,7 @@ public class FlowElementConverter {
     private static final Logger LOG = LoggerFactory.getLogger(FlowElementConverter.class);
 
     private final TypedFactoryManager factoryManager;
+    private final GraphBuildingContext context;
     private final StartEventConverter startEventConverter;
     private final TaskConverter taskConverter;
     private final SequenceFlowConverter sequenceFlowConverter;
@@ -59,18 +62,19 @@ public class FlowElementConverter {
     private final CallActivityConverter callActivityConverter;
     private final SubProcessConverter subProcessConverter;
 
-    public FlowElementConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public FlowElementConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver, GraphBuildingContext context, Layout layout) {
         this.factoryManager = factoryManager;
+        this.context = context;
         this.startEventConverter = new StartEventConverter(factoryManager, definitionResolver);
         this.endEventConverter = new EndEventConverter(factoryManager, definitionResolver);
         this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, definitionResolver);
         this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, definitionResolver);
         this.taskConverter = new TaskConverter(factoryManager, definitionResolver);
-        this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager);
+        this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager, context);
         this.gatewayConverter = new GatewayConverter(factoryManager);
-        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, definitionResolver);
+        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, definitionResolver, context);
         this.callActivityConverter = new CallActivityConverter(factoryManager);
-        this.subProcessConverter = new SubProcessConverter(factoryManager);
+        this.subProcessConverter = new SubProcessConverter(factoryManager, definitionResolver, this, context, layout);
         this.definitionResolver = definitionResolver;
     }
 
@@ -89,16 +93,16 @@ public class FlowElementConverter {
                 .apply(flowElement);
     }
 
-    public Result<Edge<? extends View<? extends BPMNViewDefinition>, ?>> convertEdge(FlowElement flowElement, GraphBuildingContext context) {
+    public Result<Edge<? extends View<? extends BPMNViewDefinition>, ?>> convertEdge(FlowElement flowElement) {
         return Match.ofEdge(FlowElement.class, BPMNViewDefinition.class)
-                .when(SequenceFlow.class, e -> sequenceFlowConverter.convert(e, context))
+                .when(SequenceFlow.class, sequenceFlowConverter::convert)
                 .apply(flowElement);
     }
 
-    public void convertDockedNodes(FlowElement flowElement, GraphBuildingContext context) {
+    public void convertDockedNodes(FlowElement flowElement) {
         VoidMatch.ofEdge(FlowElement.class)
-                .when(SequenceFlow.class, e -> sequenceFlowConverter.convert(e, context))
-                .when(BoundaryEvent.class, e -> boundaryEventConverter.convertEdge(e, context))
+                .when(SequenceFlow.class, sequenceFlowConverter::convert)
+                .when(BoundaryEvent.class, boundaryEventConverter::convertEdge)
                 .apply(flowElement);
     }
 }

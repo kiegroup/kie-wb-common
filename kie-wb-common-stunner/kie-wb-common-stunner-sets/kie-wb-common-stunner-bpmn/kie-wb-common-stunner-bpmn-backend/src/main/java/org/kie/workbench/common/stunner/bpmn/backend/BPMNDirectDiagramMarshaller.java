@@ -36,16 +36,12 @@ import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
@@ -58,7 +54,6 @@ import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExec
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndex;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
@@ -107,58 +102,19 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
         DefinitionResolver definitionResolver =
                 new DefinitionResolver(definitions);
 
-        DiagramConverter diagramConverter =
-                new DiagramConverter(typedFactoryManager);
-        FlowElementConverter flowElementConverter =
-                new FlowElementConverter(typedFactoryManager, definitionResolver);
-        LaneConverter laneconverter =
-                new LaneConverter(typedFactoryManager, definitionResolver);
-
         Process process = findProcess(definitions);
 
-        metadata.setCanvasRootUUID(definitions.getId());
+        String definitionsId = definitions.getId();
+        metadata.setCanvasRootUUID(definitionsId);
         metadata.setTitle(process.getName());
 
         Graph<DefinitionSet, Node> graph = graphOf(process.getId());
+        GraphBuildingContext context = graphContextOf(graph);
 
         BPMNPlane plane = findPlane(definitions);
         Layout layout = new Layout(plane);
-        GraphBuildingContext context = graphContextOf(graph);
-        context.clearGraph();
 
-        Node<View<BPMNDiagramImpl>, ?> firstDiagramNode =
-                diagramConverter.convert(definitions.getId(), process);
-
-        context.addNode(firstDiagramNode);
-
-        process.getFlowElements()
-                .stream()
-                .map(flowElementConverter::convertNode)
-                .filter(Result::notIgnored)
-                .map(Result::value)
-                .forEach(n -> {
-                    layout.updateNode(n);
-                    context.addNode(n);
-                });
-
-        process.getLaneSets()
-                .stream()
-                .flatMap(laneSet -> laneSet.getLanes().stream())
-                .map(laneconverter::convert)
-                .forEach(n -> {
-                    layout.updateNode(n);
-                    context.addNode(n);
-                });
-
-        process.getFlowElements()
-                .stream()
-                .map(e -> flowElementConverter.convertEdge(e, context))
-                .filter(Result::isSuccess)
-                .map(Result::value)
-                .forEach(layout::updateEdge);
-
-        process.getFlowElements()
-                .forEach(e -> flowElementConverter.convertDockedNodes(e, context));
+        new ProcessConverter(typedFactoryManager, definitionResolver, layout, context).convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");
         return graph;

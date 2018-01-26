@@ -40,14 +40,16 @@ public class BoundaryEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final DefinitionResolver definitionResolver;
+    private final GraphBuildingContext context;
     private final IntermediateSignalEventCatchingConverter intermediateSignalEventCatchingConverter;
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
 
-    public BoundaryEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public BoundaryEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver, GraphBuildingContext context) {
 
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
+        this.context = context;
 
         this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, definitionResolver);
         this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager);
@@ -75,7 +77,7 @@ public class BoundaryEventConverter {
         }
     }
 
-    public void convertEdge(BoundaryEvent e, GraphBuildingContext context) {
+    public void convertEdge(BoundaryEvent e) {
         context.addDockedNode(e.getId(), e.getAttachedToRef().getId());
     }
 }
