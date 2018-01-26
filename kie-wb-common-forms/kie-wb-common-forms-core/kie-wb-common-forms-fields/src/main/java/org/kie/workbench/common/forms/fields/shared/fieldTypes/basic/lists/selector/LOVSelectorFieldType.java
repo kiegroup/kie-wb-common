@@ -20,7 +20,7 @@ import org.kie.workbench.common.forms.model.FieldType;
 
 public class LOVSelectorFieldType implements FieldType {
 
-    public static String NAME = "LOVSelection";
+    public static String NAME = "MultipleSelector";
 
     @Override
     public String getTypeName() {

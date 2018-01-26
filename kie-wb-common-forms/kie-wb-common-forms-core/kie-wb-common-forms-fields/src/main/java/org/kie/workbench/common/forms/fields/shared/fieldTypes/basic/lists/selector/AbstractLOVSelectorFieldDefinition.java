@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.fields.shared.AbstractFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.integerBox.definition.IntegerBoxFieldDefinition;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FieldType;
 import org.kie.workbench.common.forms.model.TypeInfo;
@@ -114,5 +115,47 @@ public abstract class AbstractLOVSelectorFieldDefinition<TYPE> extends AbstractF
             setAllowClearSelection(otherLOV.allowClearSelection);
             setListOfValues(otherLOV.getListOfValues());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        AbstractLOVSelectorFieldDefinition<?> that = (AbstractLOVSelectorFieldDefinition<?>) o;
+
+        if (maxDropdownElements != null ? !maxDropdownElements.equals(that.maxDropdownElements) : that.maxDropdownElements != null) {
+            return false;
+        }
+        if (maxElementsOnTitle != null ? !maxElementsOnTitle.equals(that.maxElementsOnTitle) : that.maxElementsOnTitle != null) {
+            return false;
+        }
+        if (allowFilter != null ? !allowFilter.equals(that.allowFilter) : that.allowFilter != null) {
+            return false;
+        }
+        return allowClearSelection != null ? allowClearSelection.equals(that.allowClearSelection) : that.allowClearSelection == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (maxDropdownElements != null ? maxDropdownElements.hashCode() : 0);
+        result = ~~result;
+        result = 31 * result + (maxElementsOnTitle != null ? maxElementsOnTitle.hashCode() : 0);
+        result = ~~result;
+        result = 31 * result + (allowFilter != null ? allowFilter.hashCode() : 0);
+        result = ~~result;
+        result = 31 * result + (allowClearSelection != null ? allowClearSelection.hashCode() : 0);
+        result = ~~result;
+        result = 31 * result + (getListOfValues() != null ? getListOfValues().hashCode() : 0);
+        result = ~~result;
+        return result;
     }
 }

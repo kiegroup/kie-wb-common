@@ -65,4 +65,29 @@ public abstract class AbstractLOVInputFieldDefinition extends AbstractFieldDefin
     public FieldType getFieldType() {
         return FIELD_TYPE;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+
+        AbstractLOVInputFieldDefinition that = (AbstractLOVInputFieldDefinition) o;
+
+        return pageSize != null ? pageSize.equals(that.pageSize) : that.pageSize == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (pageSize != null ? pageSize.hashCode() : 0);
+        result = ~~result;
+        return result;
+    }
 }

@@ -72,7 +72,7 @@ public abstract class BasicTypeFieldProvider<FIELD extends FieldDefinition> impl
         Assert.notNull("Field cannot be null",
                        field);
 
-        if (getFieldType().equals(field.getFieldType())) {
+        if (getFieldType().equals(field.getFieldType().getClass())) {
             return true;
         }
 

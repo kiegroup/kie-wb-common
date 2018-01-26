@@ -18,6 +18,10 @@ package org.kie.workbench.common.forms.fields;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Date;
 
@@ -48,7 +52,7 @@ public class FieldManagerTest {
 
     private static final String METADATA_LABEL = "Name label";
     private static final String METADATA_PLACEHOLDER = "Name placeholder";
-    private static final Boolean METADATA_READONLY= Boolean.TRUE;
+    private static final Boolean METADATA_READONLY = Boolean.TRUE;
     private static final Boolean METADATA_REQUIRED = Boolean.TRUE;
 
     private static final String PROPERTY_NAME = "name";
@@ -83,9 +87,27 @@ public class FieldManagerTest {
     };
 
     protected final Class[] basicMultipleTypesSupported = new Class[]{
-            String.class,
+            BigInteger.class,
+            Byte.class,
             Integer.class,
-            int.class,
+            Long.class,
+            Short.class,
+
+            // Decimal types
+            BigDecimal.class,
+            Double.class,
+            Float.class,
+
+            // Date types
+            Date.class,
+            LocalDate.class,
+            LocalDateTime.class,
+            LocalTime.class,
+            OffsetDateTime.class,
+
+            Character.class,
+            String.class,
+            Boolean.class,
     };
 
     @Before
@@ -95,7 +117,8 @@ public class FieldManagerTest {
                 .isNotNull()
                 .isNotEmpty();
 
-        property = new ModelPropertyImpl("name", new TypeInfoImpl(String.class.getName()));
+        property = new ModelPropertyImpl("name",
+                                         new TypeInfoImpl(String.class.getName()));
     }
 
     @Test
@@ -136,8 +159,6 @@ public class FieldManagerTest {
         checkFieldExists(new TypeInfoImpl(TypeKind.OBJECT,
                                           Object.class.getName(),
                                           true));
-
-
     }
 
     protected void checkFieldExists(TypeInfo typeInfo) {
@@ -215,12 +236,18 @@ public class FieldManagerTest {
         Assertions.assertThat(fieldDefinition)
                 .isNotNull()
                 .isInstanceOf(TextBoxFieldDefinition.class)
-                .hasFieldOrPropertyWithValue("name", PROPERTY_NAME)
-                .hasFieldOrPropertyWithValue("label", PROPERTY_LABEL)
-                .hasFieldOrPropertyWithValue("placeHolder", PROPERTY_LABEL)
-                .hasFieldOrPropertyWithValue("required", Boolean.FALSE)
-                .hasFieldOrPropertyWithValue("readOnly", Boolean.FALSE)
-                .hasFieldOrPropertyWithValue("binding", PROPERTY_NAME);
+                .hasFieldOrPropertyWithValue("name",
+                                             PROPERTY_NAME)
+                .hasFieldOrPropertyWithValue("label",
+                                             PROPERTY_LABEL)
+                .hasFieldOrPropertyWithValue("placeHolder",
+                                             PROPERTY_LABEL)
+                .hasFieldOrPropertyWithValue("required",
+                                             Boolean.FALSE)
+                .hasFieldOrPropertyWithValue("readOnly",
+                                             Boolean.FALSE)
+                .hasFieldOrPropertyWithValue("binding",
+                                             PROPERTY_NAME);
     }
 
     @Test
@@ -236,11 +263,17 @@ public class FieldManagerTest {
         Assertions.assertThat(fieldDefinition)
                 .isNotNull()
                 .isInstanceOf(TextAreaFieldDefinition.class)
-                .hasFieldOrPropertyWithValue("name", PROPERTY_NAME)
-                .hasFieldOrPropertyWithValue("label", METADATA_LABEL)
-                .hasFieldOrPropertyWithValue("placeHolder", METADATA_PLACEHOLDER)
-                .hasFieldOrPropertyWithValue("required", METADATA_REQUIRED)
-                .hasFieldOrPropertyWithValue("readOnly", METADATA_READONLY)
-                .hasFieldOrPropertyWithValue("binding", PROPERTY_NAME);
+                .hasFieldOrPropertyWithValue("name",
+                                             PROPERTY_NAME)
+                .hasFieldOrPropertyWithValue("label",
+                                             METADATA_LABEL)
+                .hasFieldOrPropertyWithValue("placeHolder",
+                                             METADATA_PLACEHOLDER)
+                .hasFieldOrPropertyWithValue("required",
+                                             METADATA_REQUIRED)
+                .hasFieldOrPropertyWithValue("readOnly",
+                                             METADATA_READONLY)
+                .hasFieldOrPropertyWithValue("binding",
+                                             PROPERTY_NAME);
     }
 }
