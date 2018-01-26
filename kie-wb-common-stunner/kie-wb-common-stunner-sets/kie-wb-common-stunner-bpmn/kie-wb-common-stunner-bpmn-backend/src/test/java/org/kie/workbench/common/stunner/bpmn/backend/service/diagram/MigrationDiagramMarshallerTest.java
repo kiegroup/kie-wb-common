@@ -18,9 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -397,18 +398,8 @@ public class MigrationDiagramMarshallerTest {
             // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
             // Let's check nodes only.
-            List<Node> oldNodes = asList(oldDiagram.getGraph().nodes());
-            List<Node> newNodes = asList(newDiagram.getGraph().nodes());
-
-            assertEquals(oldNodes, newNodes);
+            assertNodeEquals(oldDiagram, newDiagram);
         }
-    }
-
-    public List<Node> asList(Iterable nodes) {
-        ArrayList<Node> oldNodes = new ArrayList<>();
-        nodes.forEach(n -> oldNodes.add((Node) n));
-        oldNodes.sort(Comparator.comparing(Node::getUUID));
-        return oldNodes;
     }
 
     @Test
@@ -420,9 +411,21 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        List<Node> oldNodes = asList(oldDiagram.getGraph().nodes());
-        List<Node> newNodes = asList(newDiagram.getGraph().nodes());
+        assertNodeEquals(oldDiagram, newDiagram);
+    }
 
-        assertEquals(oldNodes, newNodes);
+
+    private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+        Set<Node> oldNodes = asSet(oldDiagram.getGraph().nodes());
+        Set<Node> newNodes = asSet(newDiagram.getGraph().nodes());
+
+        assertEquals("Number of nodes should match", oldNodes.size(),newNodes.size());
+        assertEquals("The generated set of nodes should match", oldNodes, newNodes);
+    }
+
+    private Set<Node> asSet(Iterable nodes) {
+        Set<Node> oldNodes = new HashSet<>();
+        nodes.forEach(n -> oldNodes.add((Node) n));
+        return oldNodes;
     }
 }
