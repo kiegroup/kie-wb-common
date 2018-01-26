@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -348,7 +347,44 @@ public class MigrationDiagramMarshallerTest {
 
     @Test
     public void testUnmarshallOldStuff() throws Exception {
-        String[] oldStuff = {BPMN_BASIC, BPMN_EVALUATION, BPMN_LANES, BPMN_BOUNDARY_EVENTS, BPMN_NOT_BOUNDARY_EVENTS, BPMN_PROCESSVARIABLES, BPMN_USERTASKASSIGNMENTS, BPMN_BUSINESSRULETASKASSIGNMENTS, BPMN_STARTNONEEVENT, BPMN_STARTTIMEREVENT, BPMN_STARTSIGNALEVENT, BPMN_STARTMESSAGEEVENT, BPMN_STARTERROREVENT, BPMN_INTERMEDIATE_SIGNAL_EVENTCATCHING, BPMN_INTERMEDIATE_ERROR_EVENTCATCHING, BPMN_INTERMEDIATE_SIGNAL_EVENTTHROWING, BPMN_INTERMEDIATE_MESSAGE_EVENTCATCHING, BPMN_INTERMEDIATE_MESSAGE_EVENTTHROWING, BPMN_INTERMEDIATE_TIMER_EVENT, BPMN_ENDSIGNALEVENT, BPMN_ENDMESSAGEEVENT, BPMN_ENDNONEEVENT, BPMN_ENDTERMINATEEVENT, BPMN_PROCESSPROPERTIES, BPMN_BUSINESSRULETASKRULEFLOWGROUP, BPMN_REUSABLE_SUBPROCESS, BPMN_SCRIPTTASK, BPMN_USERTASKASSIGNEES, BPMN_USERTASKPROPERTIES, BPMN_SEQUENCEFLOW, BPMN_XORGATEWAY, BPMN_TIMER_EVENT, BPMN_SIMULATIONPROPERTIES, BPMN_MAGNETDOCKERS, BPMN_MAGNETSINLANE, BPMN_ENDERROR_EVENT};
+        String[] oldStuff = {
+                BPMN_BASIC,
+                BPMN_EVALUATION,
+                BPMN_LANES,
+                BPMN_BOUNDARY_EVENTS,
+                BPMN_NOT_BOUNDARY_EVENTS,
+                BPMN_PROCESSVARIABLES,
+                BPMN_USERTASKASSIGNMENTS,
+                BPMN_BUSINESSRULETASKASSIGNMENTS,
+                BPMN_STARTNONEEVENT,
+                BPMN_STARTTIMEREVENT, 
+                BPMN_STARTSIGNALEVENT, 
+                BPMN_STARTMESSAGEEVENT,
+                BPMN_STARTERROREVENT,
+                BPMN_INTERMEDIATE_SIGNAL_EVENTCATCHING,
+                BPMN_INTERMEDIATE_ERROR_EVENTCATCHING,
+                BPMN_INTERMEDIATE_SIGNAL_EVENTTHROWING,
+                BPMN_INTERMEDIATE_MESSAGE_EVENTCATCHING,
+                BPMN_INTERMEDIATE_MESSAGE_EVENTTHROWING,
+                BPMN_INTERMEDIATE_TIMER_EVENT,
+                BPMN_ENDSIGNALEVENT,
+                BPMN_ENDMESSAGEEVENT,
+                BPMN_ENDNONEEVENT,
+                BPMN_ENDTERMINATEEVENT,
+                BPMN_PROCESSPROPERTIES,
+                BPMN_BUSINESSRULETASKRULEFLOWGROUP,
+                BPMN_REUSABLE_SUBPROCESS,
+                BPMN_SCRIPTTASK,
+                BPMN_USERTASKASSIGNEES,
+                BPMN_USERTASKPROPERTIES,
+                BPMN_SEQUENCEFLOW,
+                BPMN_XORGATEWAY,
+                BPMN_TIMER_EVENT,
+                BPMN_SIMULATIONPROPERTIES,
+                BPMN_MAGNETDOCKERS,
+                BPMN_MAGNETSINLANE,
+                BPMN_ENDERROR_EVENT
+        };
 
         Diagram<Graph, Metadata> oldDiagram;
         Diagram<Graph, Metadata> newDiagram;
@@ -365,13 +401,12 @@ public class MigrationDiagramMarshallerTest {
             List<Node> newNodes = asList(newDiagram.getGraph().nodes());
 
             assertEquals(oldNodes, newNodes);
-
         }
     }
 
     public List<Node> asList(Iterable nodes) {
         ArrayList<Node> oldNodes = new ArrayList<>();
-        nodes.forEach(n -> oldNodes.add((Node)n));
+        nodes.forEach(n -> oldNodes.add((Node) n));
         oldNodes.sort(Comparator.comparing(Node::getUUID));
         return oldNodes;
     }
