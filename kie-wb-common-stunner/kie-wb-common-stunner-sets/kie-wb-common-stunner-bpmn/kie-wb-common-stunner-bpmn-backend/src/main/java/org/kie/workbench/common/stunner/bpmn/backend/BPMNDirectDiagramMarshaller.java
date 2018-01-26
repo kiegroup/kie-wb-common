@@ -18,10 +18,22 @@ package org.kie.workbench.common.stunner.bpmn.backend;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
+import bpsim.impl.BpsimPackageImpl;
+import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
+import org.eclipse.bpmn2.DocumentRoot;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.jboss.drools.DroolsPackage;
+import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
@@ -31,6 +43,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -89,16 +103,16 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
                                                  final InputStream inputStream) throws IOException {
         LOG.debug("Starting diagram unmarshalling...");
 
-        Definitions definitions = BPMN2Definitions.parse(inputStream);
+        Definitions definitions = parseDefinitions(inputStream);
+        DefinitionResolver definitionResolver =
+                new DefinitionResolver(definitions);
+
         DiagramConverter diagramConverter =
                 new DiagramConverter(typedFactoryManager);
         FlowElementConverter flowElementConverter =
-                new FlowElementConverter(typedFactoryManager,
-                                         new DefinitionResolver(definitions));
-
+                new FlowElementConverter(typedFactoryManager, definitionResolver);
         LaneConverter laneconverter =
-                new LaneConverter(typedFactoryManager,
-                                  new DefinitionResolver(definitions));
+                new LaneConverter(typedFactoryManager, definitionResolver);
 
         Process process = findProcess(definitions);
 
@@ -183,5 +197,40 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
     @Override
     public DiagramMetadataMarshaller<Metadata> getMetadataMarshaller() {
         return null;
+    }
+
+    public static Definitions parseDefinitions(final InputStream inputStream) throws IOException {
+        DroolsPackageImpl.init();
+        BpsimPackageImpl.init();
+
+        final ResourceSet resourceSet = new ResourceSetImpl();
+        Resource.Factory.Registry resourceFactoryRegistry = resourceSet.getResourceFactoryRegistry();
+        resourceFactoryRegistry.getExtensionToFactoryMap().put(
+                Resource.Factory.Registry.DEFAULT_EXTENSION, new JBPMBpmn2ResourceFactoryImpl());
+
+        EPackage.Registry packageRegistry = resourceSet.getPackageRegistry();
+        packageRegistry.put("http://www.omg.org/spec/BPMN/20100524/MODEL", Bpmn2Package.eINSTANCE);
+        packageRegistry.put("http://www.jboss.org/drools", DroolsPackage.eINSTANCE);
+
+        final JBPMBpmn2ResourceImpl resource =
+                (JBPMBpmn2ResourceImpl) resourceSet
+                        .createResource(URI.createURI("inputStream://dummyUriWithValidSuffix.xml"));
+
+        resource.getDefaultLoadOptions()
+                .put(JBPMBpmn2ResourceImpl.OPTION_ENCODING, "UTF-8");
+        resource.setEncoding("UTF-8");
+
+        final Map<String, Object> options = new HashMap<String, Object>();
+        options.put(JBPMBpmn2ResourceImpl.OPTION_ENCODING, "UTF-8");
+        options.put(JBPMBpmn2ResourceImpl.OPTION_DEFER_IDREF_RESOLUTION, true);
+        options.put(JBPMBpmn2ResourceImpl.OPTION_DISABLE_NOTIFY, true);
+        options.put(JBPMBpmn2ResourceImpl.OPTION_PROCESS_DANGLING_HREF,
+                    JBPMBpmn2ResourceImpl.OPTION_PROCESS_DANGLING_HREF_RECORD);
+
+        resource.load(inputStream, options);
+
+        final DocumentRoot root = (DocumentRoot) resource.getContents().get(0);
+
+        return root.getDefinitions();
     }
 }
