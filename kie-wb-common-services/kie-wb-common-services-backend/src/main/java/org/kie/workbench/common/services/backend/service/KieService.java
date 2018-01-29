@@ -109,7 +109,11 @@ public abstract class KieService<T> {
         if (module == null) {
             logger.info("File: " + path.getFileName() + ", full path [" + path.toString() + "] was not within a Module. Module Name cannot be set.");
         } else {
-            overview.setProjectName(projectService.resolveProject(module.getRootPath()).getName());
+            try {
+                overview.setProjectName(projectService.resolveProject(module.getRootPath()).getName());
+            } catch (Throwable t) {
+                logger.debug("File: " + path.getFileName() + ", full path [" + path.toString() + "] was not within a Project. Project name cannot be set.", t);
+            }
         }
 
         return overview;
