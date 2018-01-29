@@ -58,4 +58,14 @@ public class GraphNodeStoreImpl implements GraphNodeStore<Node> {
     public Iterator<Node> iterator() {
         return nodes.values().iterator();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof GraphNodeStoreImpl && nodes.equals(((GraphNodeStoreImpl) obj).nodes);
+    }
+
+    @Override
+    public int hashCode() {
+        return nodes.hashCode();
+    }
 }
