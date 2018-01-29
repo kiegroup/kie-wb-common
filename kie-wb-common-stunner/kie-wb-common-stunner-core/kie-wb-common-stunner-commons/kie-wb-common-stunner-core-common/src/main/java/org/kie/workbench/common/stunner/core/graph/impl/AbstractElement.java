@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 public abstract class AbstractElement<C>
         implements Element<C> {
@@ -63,12 +64,15 @@ public abstract class AbstractElement<C>
             return false;
         }
         AbstractElement that = (AbstractElement) o;
-        return uuid.equals(that.uuid);
+        return uuid.equals(that.uuid) &&
+                labels.equals(that.labels) &&
+                content.equals(that.content);
     }
 
     @Override
     public int hashCode() {
-        return uuid == null ? 0 : ~~uuid.hashCode();
+        return HashUtil.combineHashCodes(
+                uuid.hashCode(), labels.hashCode(), content.hashCode());
     }
 
     @Override

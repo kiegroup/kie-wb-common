@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.core.graph.content.view;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 public final class ViewImpl<W> implements View<W> {
@@ -50,5 +51,21 @@ public final class ViewImpl<W> implements View<W> {
     @Override
     public void setBounds(final Bounds bounds) {
         this.bounds = bounds;
+    }
+
+    @Override
+    public int hashCode() {
+        return HashUtil.combineHashCodes(definition.hashCode(),
+                                         bounds.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof View) {
+            View other = (View) o;
+            return definition.equals(other.getDefinition()) &&
+                    bounds.equals(other.getBounds());
+        }
+        return false;
     }
 }

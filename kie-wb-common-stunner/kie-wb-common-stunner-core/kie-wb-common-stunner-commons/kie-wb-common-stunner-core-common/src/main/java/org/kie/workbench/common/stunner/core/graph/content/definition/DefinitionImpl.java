@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.core.graph.content.definition;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.workbench.common.stunner.core.util.HashUtil;
 
 @Portable
 public class DefinitionImpl<T> implements Definition<T> {
@@ -36,5 +37,18 @@ public class DefinitionImpl<T> implements Definition<T> {
     @Override
     public void setDefinition(final T definition) {
         this.definition = definition;
+    }
+
+    @Override
+    public int hashCode() {
+        return definition.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Definition) {
+            return ((Definition)obj).getDefinition().equals(definition);
+        }
+        return false;
     }
 }
