@@ -18,7 +18,6 @@ package org.kie.workbench.common.forms.integration.tests.valueprocessing;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import javax.enterprise.inject.Instance;
 
@@ -58,20 +58,23 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.kie.workbench.common.forms.integration.tests.valueprocessing.TestUtils.createDate;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FormValuesProcessorTest {
 
-    private static TextAreaFormFieldValueProcessor textAreaFormFieldValueProcessor;
-    private static MultipleSubFormFieldValueProcessor multipleSubFormFieldValueProcessor;
-    private static SubFormFieldValueProcessor subFormFieldValueProcessor;
-    private static LocalDateFieldValueProcessor localDateFieldValueProcessor;
+    private static TextAreaFormFieldValueProcessor textAreaFormFieldValueProcessor = new TextAreaFormFieldValueProcessor();
+    private static MultipleSubFormFieldValueProcessor multipleSubFormFieldValueProcessor = new MultipleSubFormFieldValueProcessor();
+    private static SubFormFieldValueProcessor subFormFieldValueProcessor = new SubFormFieldValueProcessor();
+    private static LocalDateFieldValueProcessor localDateFieldValueProcessor = new LocalDateFieldValueProcessor();
 
     @Mock
     private Instance<FieldValueProcessor<? extends FieldDefinition, ?, ?>> instanceMock;
 
-    private static FormDefinitionSerializer formSerializer;
+    private static FormDefinitionSerializer formSerializer = new FormDefinitionSerializerImpl(new FieldSerializer(),
+                                                                                              new FormModelSerializer(),
+                                                                                              new TestMetaDataEntryManager());
 
     @Mock
     private static BackendFormRenderingContext context;
@@ -87,24 +90,14 @@ public class FormValuesProcessorTest {
     private FormValuesProcessor formValuesProcessor;
 
     @BeforeClass
-    public static void setup() {
-        textAreaFormFieldValueProcessor = new TextAreaFormFieldValueProcessor();
-        multipleSubFormFieldValueProcessor = new MultipleSubFormFieldValueProcessor();
-        subFormFieldValueProcessor = new SubFormFieldValueProcessor();
-        localDateFieldValueProcessor = new LocalDateFieldValueProcessor();
-        localDateFieldValueProcessor.init();
-
-        formSerializer = new FormDefinitionSerializerImpl(new FieldSerializer(),
-                                                          new FormModelSerializer(),
-                                                          new TestMetaDataEntryManager());
-
+    public static void setup() throws IOException {
         textAreaTaskForm = getFormDefinition("TextareaTask-taskform.frm");
         localDateTaskForm = getFormDefinition("LocalDateFieldTask-taskform.frm");
         subformTaskForm = getFormDefinition("SubformTask-taskform.frm");
     }
 
     @Test
-    public void testTextAreaTaskFormValuesProcessing() {
+    public void testTextAreaTaskFormValuesProcessing() throws ParseException {
         setupFormValuesProcessor(Collections.singletonList(textAreaFormFieldValueProcessor));
 
         final String FIELD_BINDING = "_textarea";
@@ -145,6 +138,7 @@ public class FormValuesProcessorTest {
             put(OFFSET_DATE_TIME_BINDING, offsetDateTime1);
         }};
 
+        localDateFieldValueProcessor.init();
         final Map<String, Object> readFlatValues = formValuesProcessor.readFormValues(localDateTaskForm, originalRawValues, context);
 
         final Map<String, Object> writtenRawValues = testWritingFormValues(localDateTaskForm, originalRawValues, readFlatValues, originalRawValues);
@@ -152,23 +146,12 @@ public class FormValuesProcessorTest {
     }
 
     @Test
-    public void testSubformTaskFormValuesAreProcessedCorrectly() {
+    public void testSubformTaskFormValuesAreProcessedCorrectly() throws ParseException, IOException {
         setupFormValuesProcessor(Arrays.asList(subFormFieldValueProcessor, multipleSubFormFieldValueProcessor, textAreaFormFieldValueProcessor));
         setupSubformTest();
 
         final String
-                FORM_ENGINE_EDITED_OBJECT = "__FormEngine-EditedObject",
-                FORM_ENGINE_OBJECT_INDEX = "__FormEngine-ObjectIndex",
                 SUBFORM_BINDING = "_subform",
-                CHECKBOX_BINDING = "checkbox",
-                TEXBOX_BINDING = "textbox",
-                TEXTAREA_BINDING = "textarea",
-                INTEGERBOX_BINDING = "integerbox",
-                DECIMALBOX_BINDING = "decimalbox",
-                DATEPICKER_BINDING = "datepicker",
-                SLIDER_BINDING = "slider",
-                LISTBOX_BINDING = "listbox",
-                RADIOGROUP_BINDING = "radiogroup",
                 MULTIPLESUBFORM_BINDING = "multiplesubform";
 
         final List<NestedDO> originalMultipleSubformRawValues = Arrays.asList(
@@ -182,57 +165,13 @@ public class FormValuesProcessorTest {
         final Map<String, Object> originalRawValues = Collections.singletonMap(SUBFORM_BINDING, originalSubformRawValues);
 
         final List<Map<String, Object>> originalMultipleSubformFlatValues = Arrays.asList(
-                new HashMap<String, Object>() {{
-                    put(FORM_ENGINE_EDITED_OBJECT, false);
-                    put(FORM_ENGINE_OBJECT_INDEX, 0);
-                    put(CHECKBOX_BINDING, true);
-                    put(TEXBOX_BINDING, "Joseph");
-                    put(TEXTAREA_BINDING, "Hello\n my\n name\n is Joseph\n");
-                    put(INTEGERBOX_BINDING, 15);
-                    put(DECIMALBOX_BINDING, 1.564);
-                    put(DATEPICKER_BINDING, createDate("06/06/1989"));
-                    put(SLIDER_BINDING, 10.0);
-                    put(LISTBOX_BINDING, "2");
-                    put(RADIOGROUP_BINDING, "one");
-                }},
-                new HashMap<String, Object>() {{
-                    put(FORM_ENGINE_EDITED_OBJECT, false);
-                    put(FORM_ENGINE_OBJECT_INDEX, 1);
-                    put(CHECKBOX_BINDING, false);
-                    put(TEXBOX_BINDING, "John");
-                    put(TEXTAREA_BINDING, "Hello\n my\n name\n is John\n");
-                    put(INTEGERBOX_BINDING, 100);
-                    put(DECIMALBOX_BINDING, 40.5684);
-                    put(DATEPICKER_BINDING, createDate("17/11/1989"));
-                    put(SLIDER_BINDING, 26.0);
-                    put(LISTBOX_BINDING, "2");
-                    put(RADIOGROUP_BINDING, "two");
-                }},
-                new HashMap<String, Object>() {{
-                    put(FORM_ENGINE_EDITED_OBJECT, false);
-                    put(FORM_ENGINE_OBJECT_INDEX, 2);
-                    put(CHECKBOX_BINDING, true);
-                    put(TEXBOX_BINDING, "Martin");
-                    put(TEXTAREA_BINDING, "Hello\n my\n name\n is Martin\n");
-                    put(INTEGERBOX_BINDING, 520);
-                    put(DECIMALBOX_BINDING, 20.1569);
-                    put(DATEPICKER_BINDING, createDate("11/09/2011"));
-                    put(SLIDER_BINDING, 49.0);
-                    put(LISTBOX_BINDING, "3");
-                    put(RADIOGROUP_BINDING, "three");
-                }}
+                initMultipleSubform(new HashMap<>(), FormFields::getFirstLineValue),
+                initMultipleSubform(new HashMap<>(), FormFields::getSecondLineValue),
+                initMultipleSubform(new HashMap<>(), FormFields::getThirdLineValue)
         );
 
         final Map<String, Object> originalSubformFlatValues = new HashMap<String, Object>() {{
-            put(CHECKBOX_BINDING, true);
-            put(TEXBOX_BINDING, "Joe");
-            put(TEXTAREA_BINDING, "This\n is\n not\n a joke!\n");
-            put(INTEGERBOX_BINDING, 2);
-            put(DECIMALBOX_BINDING, 3.14);
-            put(DATEPICKER_BINDING, createDate("06/06/1989"));
-            put(SLIDER_BINDING, 5.0);
-            put(LISTBOX_BINDING, "2");
-            put(RADIOGROUP_BINDING, "two");
+            initSubform(this, FormFields::getSubformValue);
             put(MULTIPLESUBFORM_BINDING, originalMultipleSubformFlatValues);
         }};
 
@@ -242,15 +181,16 @@ public class FormValuesProcessorTest {
         testReadingFormValues(subformTaskForm, writtenRawValues, originalFlatValues);
     }
 
-    private void setupSubformTest() {
-        FormDefinition subform = getFormDefinition("Subform.frm");
-        FormDefinition creationForm = getFormDefinition("CreationForm.frm");
-        FormDefinition editionForm = getFormDefinition("EditionForm.frm");
+    private void setupSubformTest() throws IOException {
+        final String
+                SUBFORM_ID = "f31d37ce-8155-4478-a464-456c013236c6",
+                CREATIONFORM_ID = "6544f16e-c765-451e-882d-8202f6ea824c",
+                EDITIONFORM_ID = "dd1451bf-4f38-495b-8f16-b74711246797";
 
         Map<String, FormDefinition> availableForms = new HashMap<String, FormDefinition>() {{
-            put("f31d37ce-8155-4478-a464-456c013236c6", subform);
-            put("6544f16e-c765-451e-882d-8202f6ea824c", creationForm);
-            put("dd1451bf-4f38-495b-8f16-b74711246797", editionForm);
+            put(SUBFORM_ID, getFormDefinition("Subform.frm"));
+            put(CREATIONFORM_ID, getFormDefinition("CreationForm.frm"));
+            put(EDITIONFORM_ID, getFormDefinition("EditionForm.frm"));
         }};
 
         when(context.getRenderingContext()).thenReturn(mapModelRenderingContext);
@@ -259,44 +199,41 @@ public class FormValuesProcessorTest {
     }
 
     private Map<String, Object> testReadingFormValues(FormDefinition taskForm, Map<String, Object> originalRawValues, Map<String, Object> expectedFlatValues) {
-        Map<String, Object> originalFlatValues = formValuesProcessor.readFormValues(taskForm, originalRawValues, context);
+        final Map<String, Object> originalFlatValues = formValuesProcessor.readFormValues(taskForm, originalRawValues, context);
         assertThat(originalFlatValues).isEqualTo(expectedFlatValues);
         return originalFlatValues;
     }
 
     private Map<String, Object> testWritingFormValues(FormDefinition taskForm, Map<String, Object> originalRawValues, Map<String, Object> updatedFlatValues, Map<String, Object> expectedUpdatedRawValues) {
-        Map<String, Object> updatedRawValues = formValuesProcessor.writeFormValues(taskForm, updatedFlatValues, originalRawValues, context);
+        final Map<String, Object> updatedRawValues = formValuesProcessor.writeFormValues(taskForm, updatedFlatValues, originalRawValues, context);
         assertThat(updatedRawValues).isEqualTo(expectedUpdatedRawValues);
         return updatedRawValues;
     }
 
-    private static FormDefinition getFormDefinition(String formName) {
+    private static FormDefinition getFormDefinition(String formName) throws IOException {
         return formSerializer.deserialize(loadTaskForm(formName));
     }
 
-    private static String loadTaskForm(String taskForm) {
-        String taskFormJson = "";
-        try {
-            taskFormJson = Resources.toString(FormValuesProcessorTest.class.getResource(taskForm), Charsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return taskFormJson;
-    }
-
-    private Date createDate(String date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-        Date d1 = new Date();
-        try {
-            d1 = sdf.parse(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return d1;
+    private static String loadTaskForm(String taskForm) throws IOException {
+        return Resources.toString(FormValuesProcessorTest.class.getResource(taskForm), Charsets.UTF_8);
     }
 
     private void setupFormValuesProcessor(List<FieldValueProcessor<? extends FieldDefinition, ?, ?>> processors) {
         when(instanceMock.iterator()).thenReturn(processors.iterator());
         formValuesProcessor = new FormValuesProcessorImpl(instanceMock);
+    }
+
+    private Map<String, Object> initMultipleSubform(Map<String, Object> map, Function<FormFields, Object> formValueProducer) {
+        for (FormEngineFields value : FormEngineFields.values()) {
+            map.put(value.getBinding(), formValueProducer.apply(value));
+        }
+        return initSubform(map, formValueProducer);
+    }
+
+    private Map<String, Object> initSubform(Map<String, Object> map, Function<FormFields, Object> valueProducer) {
+        for (SubformFields value : SubformFields.values()) {
+            map.put(value.getBinding(), valueProducer.apply(value));
+        }
+        return map;
     }
 }
