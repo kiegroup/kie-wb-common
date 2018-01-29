@@ -74,7 +74,7 @@ public class ProcessConverter {
                 .map(Result::value)
                 .forEach(n -> {
                     layout.updateNode(n);
-                    context.addNode(n);
+                    context.addChildNode(firstDiagramNode, n);
                 });
 
         process.getLaneSets()
@@ -83,7 +83,7 @@ public class ProcessConverter {
                 .map(laneConverter::convert)
                 .forEach(n -> {
                     layout.updateNode(n);
-                    context.addNode(n);
+                    context.addChildNode(firstDiagramNode, n);
                 });
 
         process.getFlowElements()

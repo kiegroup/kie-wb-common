@@ -78,6 +78,6 @@ public class BoundaryEventConverter {
     }
 
     public void convertEdge(BoundaryEvent e) {
-        context.addDockedNode(e.getId(), e.getAttachedToRef().getId());
+        context.addDockedNode(e.getAttachedToRef().getId(), e.getId());
     }
 }

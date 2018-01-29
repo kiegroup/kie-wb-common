@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +78,9 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Parent;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
@@ -359,8 +363,8 @@ public class MigrationDiagramMarshallerTest {
                 BPMN_USERTASKASSIGNMENTS,
                 BPMN_BUSINESSRULETASKASSIGNMENTS,
                 BPMN_STARTNONEEVENT,
-                BPMN_STARTTIMEREVENT, 
-                BPMN_STARTSIGNALEVENT, 
+                BPMN_STARTTIMEREVENT,
+                BPMN_STARTSIGNALEVENT,
                 BPMN_STARTMESSAGEEVENT,
                 BPMN_STARTERROREVENT,
                 BPMN_INTERMEDIATE_SIGNAL_EVENTCATCHING,
@@ -417,12 +421,11 @@ public class MigrationDiagramMarshallerTest {
         assertEdgeEquals(oldDiagram, newDiagram);
     }
 
-
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
         Set<Node> oldNodes = asNodeSet(oldDiagram.getGraph().nodes());
         Set<Node> newNodes = asNodeSet(newDiagram.getGraph().nodes());
 
-        assertEquals("Number of nodes should match", oldNodes.size(),newNodes.size());
+        assertEquals("Number of nodes should match", oldNodes.size(), newNodes.size());
         assertEquals("The generated set of nodes should match", oldNodes, newNodes);
     }
 
@@ -432,15 +435,17 @@ public class MigrationDiagramMarshallerTest {
         return oldNodes;
     }
 
-
     private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
         assertEquals("Number of edges should match", oldEdges.size(), newEdges.size());
-        assertEquals("The generated set of edges should match", oldEdges, newEdges);
+        assertEquals("The generated set of edges should match",
+                     oldEdges.stream()
+                             .filter(e -> !isRelationshipConnector(e)).collect(Collectors.toSet()),
+                     newEdges.stream()
+                             .filter(e -> !isRelationshipConnector(e)).collect(Collectors.toSet()));
     }
-
 
     private Set<Edge> asEdgeSet(Iterable nodes) {
         Set<Edge> oldEdges = new HashSet<>();
@@ -449,5 +454,15 @@ public class MigrationDiagramMarshallerTest {
             oldEdges.addAll(((Node<?, Edge>) n).getInEdges());
         });
         return oldEdges;
+    }
+
+    private static boolean nonRelationshipConnector(Edge e) {
+        return !isRelationshipConnector(e);
+    }
+
+    private static boolean isRelationshipConnector(Edge e) {
+        return e.getContent() instanceof Parent
+                || e.getContent() instanceof Child
+                || e.getContent() instanceof Dock;
     }
 }

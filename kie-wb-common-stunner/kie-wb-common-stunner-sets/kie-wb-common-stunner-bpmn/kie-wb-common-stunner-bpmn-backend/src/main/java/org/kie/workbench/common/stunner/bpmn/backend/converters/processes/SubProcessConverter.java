@@ -49,7 +49,12 @@ public class SubProcessConverter {
     private final GraphBuildingContext context;
     private final Layout layout;
 
-    public SubProcessConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver, FlowElementConverter flowElementConverter, GraphBuildingContext context, Layout layout) {
+    public SubProcessConverter(
+            TypedFactoryManager factoryManager,
+            DefinitionResolver definitionResolver,
+            FlowElementConverter flowElementConverter,
+            GraphBuildingContext context, Layout layout) {
+
         this.factoryManager = factoryManager;
         this.context = context;
 
@@ -59,7 +64,7 @@ public class SubProcessConverter {
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
-        Node<? extends View<? extends BPMNViewDefinition>, ?> node = convertSubProcessNode(subProcess);
+        Node<? extends View<? extends BPMNViewDefinition>, ?> subProcessNode = convertSubProcessNode(subProcess);
 
         subProcess.getFlowElements()
                 .stream()
@@ -68,7 +73,7 @@ public class SubProcessConverter {
                 .map(Result::value)
                 .forEach(n -> {
                     layout.updateNode(n);
-                    context.addNode(n);
+                    context.addChildNode(subProcessNode, n);
                 });
 
         subProcess.getLaneSets()
@@ -77,7 +82,7 @@ public class SubProcessConverter {
                 .map(laneConverter::convert)
                 .forEach(n -> {
                     layout.updateNode(n);
-                    context.addNode(n);
+                    context.addChildNode(subProcessNode, n);
                 });
 
         subProcess.getFlowElements()
@@ -90,7 +95,7 @@ public class SubProcessConverter {
         subProcess.getFlowElements()
                 .forEach(flowElementConverter::convertDockedNodes);
 
-        return node;
+        return subProcessNode;
     }
 
     private Node<? extends View<? extends BPMNViewDefinition>, ?> convertSubProcessNode(SubProcess subProcess) {

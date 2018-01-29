@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
+import org.kie.workbench.common.stunner.core.graph.command.impl.AddChildNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AddDockedNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AddNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
@@ -51,7 +52,7 @@ public class GraphBuildingContext {
         this.commandManager = commandManager;
     }
 
-    public void addDockedNode(String candidateId, String parentId) {
+    public void addDockedNode(String parentId, String candidateId) {
         Node parent = executionContext.getGraphIndex().getNode(parentId);
         Node candidate = executionContext.getGraphIndex().getNode(candidateId);
 
@@ -59,9 +60,9 @@ public class GraphBuildingContext {
         execute(addNodeCommand);
     }
 
-    public void addDockedNode(Node node, Node parent) {
-        AddDockedNodeCommand addNodeCommand = commandFactory.addDockedNode(parent, node);
-        execute(addNodeCommand);
+    public void addChildNode(Node parent, Node child) {
+        AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
+        execute(addChildNodeCommand);
     }
 
     public void addNode(Node node) {
