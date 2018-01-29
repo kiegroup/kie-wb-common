@@ -329,7 +329,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                                       final Path path,
                                       final WorkspaceProject project) {
 
-        if (!projectContext.getActiveWorkspaceProject().equals(project)) {
+        if (!projectContext.getActiveWorkspaceProject().map(active -> active.equals(project)).orElse(false)) {
             projectContextChangeEvent.fire(new WorkspaceProjectContextChangeEvent(project));
         }
 
