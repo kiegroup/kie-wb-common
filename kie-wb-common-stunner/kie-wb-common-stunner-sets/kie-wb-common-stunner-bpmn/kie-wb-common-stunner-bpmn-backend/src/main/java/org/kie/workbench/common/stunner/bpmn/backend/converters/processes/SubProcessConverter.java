@@ -28,12 +28,15 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessDatas;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -112,17 +115,11 @@ public class SubProcessConverter {
         definition.getOnEntryAction().setValue(onEntry(extensionValues));
         definition.getOnExitAction().setValue(onExit(extensionValues));
 
-        String joinedVariables = subProcess.getProperties()
-                .stream()
-                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
-                .collect(Collectors.joining(","));
-        definition.getProcessData().getProcessVariables().setValue(joinedVariables);
+        definition.setProcessData(new ProcessData(
+                ProcessDatas.processVariables(subProcess)));
 
         definition.getScriptLanguage().setValue(Scripts.scriptLanguage(extensionValues));
-        definition.setGeneral(new BPMNGeneralSet(
-                new Name(subProcess.getName()),
-                Properties.documentation(subProcess.getDocumentation())
-        ));
+
         definition.getIsAsync().setValue(Properties.findMetaBoolean(subProcess, "customAsync"));
 
         return node;

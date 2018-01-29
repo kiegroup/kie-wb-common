@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
-import java.util.stream.Collectors;
-
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
@@ -26,6 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessDatas;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -36,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -113,11 +113,9 @@ public class ProcessConverter {
                 new Executable()
         ));
 
-        String joinedVariables = process.getProperties()
-                .stream()
-                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
-                .collect(Collectors.joining(","));
-        definition.getProcessData().getProcessVariables().setValue(joinedVariables);
+        definition.setProcessData(new ProcessData(
+                ProcessDatas.processVariables(process)
+        ));
 
         return diagramNode;
     }
