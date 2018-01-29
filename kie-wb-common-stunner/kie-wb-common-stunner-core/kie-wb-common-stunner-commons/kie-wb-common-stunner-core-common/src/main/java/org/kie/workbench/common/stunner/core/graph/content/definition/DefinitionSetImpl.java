@@ -66,7 +66,7 @@ public class DefinitionSetImpl implements DefinitionSet {
     @Override
     public boolean equals(Object o) {
         if (o instanceof DefinitionSet) {
-            ViewConnector other = (ViewConnector) o;
+            DefinitionSet other = (DefinitionSet) o;
             return (id == null ? other.getDefinition() == null : id.equals(other.getDefinition())) &&
                     (bounds == null ? other.getBounds() == null : bounds.equals(other.getBounds()));
         }
