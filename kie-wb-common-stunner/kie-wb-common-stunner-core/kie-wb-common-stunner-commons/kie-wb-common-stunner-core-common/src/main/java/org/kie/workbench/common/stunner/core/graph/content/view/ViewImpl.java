@@ -63,8 +63,8 @@ public final class ViewImpl<W> implements View<W> {
     public boolean equals(Object o) {
         if (o instanceof View) {
             View other = (View) o;
-            return definition.equals(other.getDefinition()) &&
-                    bounds.equals(other.getBounds());
+            return (definition == null ? other.getDefinition() == null : definition.equals(other.getDefinition())) &&
+                    (bounds == null ? other.getBounds() == null : bounds.equals(other.getBounds()));
         }
         return false;
     }

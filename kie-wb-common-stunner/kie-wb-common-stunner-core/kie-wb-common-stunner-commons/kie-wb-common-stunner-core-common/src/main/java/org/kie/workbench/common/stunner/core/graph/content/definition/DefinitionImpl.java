@@ -41,13 +41,14 @@ public class DefinitionImpl<T> implements Definition<T> {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(definition.hashCode());
+        return HashUtil.combineHashCodes(definition == null ? 0 : definition.hashCode());
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Definition) {
-            return ((Definition) obj).getDefinition().equals(definition);
+            Object d = ((Definition) obj).getDefinition();
+            return this.definition == null ? d == null : this.definition.equals(d);
         }
         return false;
     }

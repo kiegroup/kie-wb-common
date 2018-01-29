@@ -64,15 +64,17 @@ public abstract class AbstractElement<C>
             return false;
         }
         AbstractElement that = (AbstractElement) o;
-        return uuid.equals(that.uuid) &&
-                labels.equals(that.labels) &&
-                content.equals(that.content);
+        return uuid.equals(that.getUUID()) &&
+                labels.equals(that.getLabels()) &&
+                content == null ? that.getContent() == null : content.equals(that.getContent());
     }
 
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(
-                uuid.hashCode(), labels.hashCode(), content.hashCode());
+                uuid.hashCode(),
+                labels.hashCode(),
+                content == null ? 0 : content.hashCode());
     }
 
     @Override

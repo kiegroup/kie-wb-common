@@ -59,16 +59,16 @@ public class DefinitionSetImpl implements DefinitionSet {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(id.hashCode(),
-                                         bounds.hashCode());
+        return HashUtil.combineHashCodes(id == null ? 0 : id.hashCode(),
+                                         bounds == null ? 0 : bounds.hashCode());
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof DefinitionSet) {
             ViewConnector other = (ViewConnector) o;
-            return id.equals(other.getDefinition()) &&
-                    bounds.equals(other.getBounds());
+            return (id == null ? other.getDefinition() == null : id.equals(other.getDefinition())) &&
+                    (bounds == null ? other.getBounds() == null : bounds.equals(other.getBounds()));
         }
         return false;
     }
