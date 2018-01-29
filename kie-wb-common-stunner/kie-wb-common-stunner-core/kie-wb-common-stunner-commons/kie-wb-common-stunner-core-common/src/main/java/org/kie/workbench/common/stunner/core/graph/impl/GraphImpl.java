@@ -75,15 +75,15 @@ public class GraphImpl<C> extends AbstractElement<C> implements Graph<C, Node> {
     @Override
     public int hashCode() {
         return HashUtil.combineHashCodes(
-                super.hashCode(), this.nodeStore.hashCode());
+                super.hashCode(), this.nodes().hashCode());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof GraphImpl) {
-            GraphImpl g = (GraphImpl) o;
+        if (o instanceof Graph) {
+            Graph g = (Graph) o;
             return super.equals(o) &&
-                    this.nodeStore.equals(g.nodeStore);
+                    this.nodes().equals(g.nodes());
         } else {
             return false;
         }
