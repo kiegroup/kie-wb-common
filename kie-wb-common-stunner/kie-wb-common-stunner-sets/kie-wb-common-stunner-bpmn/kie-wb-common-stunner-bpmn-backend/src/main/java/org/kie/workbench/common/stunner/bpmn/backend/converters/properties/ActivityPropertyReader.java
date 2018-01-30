@@ -19,6 +19,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.Assignment;
+import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.FormalExpression;
 
 public class ActivityPropertyReader extends AbstractPropertyReader {
 
@@ -53,6 +57,19 @@ public class ActivityPropertyReader extends AbstractPropertyReader {
     }
 
     public String input(String name) {
-        return Properties.findInputValue(activity.getDataInputAssociations(), name);
+        for (DataInputAssociation din : activity.getDataInputAssociations()) {
+            DataInput targetRef = (DataInput) (din.getTargetRef());
+            if (targetRef.getName().equalsIgnoreCase(name)) {
+                Assignment assignment = din.getAssignment().get(0);
+                return evaluate(assignment).toString();
+            }
+        }
+        return "";
     }
+
+    private static Object evaluate(Assignment assignment) {
+        return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
+    }
+
+
 }

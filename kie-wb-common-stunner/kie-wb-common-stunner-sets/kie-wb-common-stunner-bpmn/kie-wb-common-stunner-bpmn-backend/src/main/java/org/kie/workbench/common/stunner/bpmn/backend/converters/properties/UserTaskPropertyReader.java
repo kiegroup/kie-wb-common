@@ -16,10 +16,16 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.PotentialOwner;
+import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.UserTask;
 
 public class UserTaskPropertyReader extends AbstractPropertyReader {
@@ -36,7 +42,16 @@ public class UserTaskPropertyReader extends AbstractPropertyReader {
     }
 
     public String getActors() {
-        return Properties.actors(task);
+        // get the user task actors
+        List<ResourceRole> roles = task.getResources();
+        List<String> users = new ArrayList<>();
+        for (ResourceRole role : roles) {
+            if (role instanceof PotentialOwner) {
+                FormalExpression fe = (FormalExpression) role.getResourceAssignmentExpression().getExpression();
+                users.add(fe.getBody());
+            }
+        }
+        return users.stream().collect(Collectors.joining(","));
     }
 
     public String getGroupid() {

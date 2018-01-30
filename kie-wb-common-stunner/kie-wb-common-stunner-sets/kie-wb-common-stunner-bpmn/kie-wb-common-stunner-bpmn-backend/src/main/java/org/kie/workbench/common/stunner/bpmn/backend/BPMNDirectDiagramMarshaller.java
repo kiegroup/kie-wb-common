@@ -21,6 +21,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
 import bpsim.impl.BpsimPackageImpl;
 import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
@@ -34,6 +37,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsPackageImpl;
+import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
@@ -64,15 +68,18 @@ import org.slf4j.LoggerFactory;
  * Direct as in "skipping json encoding"
  *
  */
-public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> {
+@Dependent
+public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(BPMNDirectDiagramMarshaller.class);
 
+    private final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller;
     private final DefinitionManager definitionManager;
     private final RuleManager ruleManager;
     private final TypedFactoryManager typedFactoryManager;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
+    private final BPMNDiagramMarshaller legacyMarshaller;
 
     public BPMNDirectDiagramMarshaller(
             final DefinitionManager definitionManager,
@@ -85,12 +92,35 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
         this.typedFactoryManager = new TypedFactoryManager(factoryManager);
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
+
+        // these are not used in tests
+        this.legacyMarshaller = null;
+        this.diagramMetadataMarshaller = null;
     }
+
+    @Inject
+    public BPMNDirectDiagramMarshaller(
+            final XMLEncoderDiagramMetadataMarshaller diagramMetadataMarshaller,
+            final DefinitionManager definitionManager,
+            final RuleManager ruleManager,
+            final FactoryManager factoryManager,
+            final GraphCommandFactory commandFactory,
+            final GraphCommandManager commandManager,
+            final BPMNDiagramMarshaller legacyMarshaller) {
+        this.diagramMetadataMarshaller = diagramMetadataMarshaller;
+        this.definitionManager = definitionManager;
+        this.ruleManager = ruleManager;
+        this.typedFactoryManager = new TypedFactoryManager(factoryManager);
+        this.commandFactory = commandFactory;
+        this.commandManager = commandManager;
+        this.legacyMarshaller = legacyMarshaller;
+    }
+
 
     @Override
     @SuppressWarnings("unchecked")
     public String marshall(final Diagram diagram) throws IOException {
-        throw new UnsupportedOperationException();
+        return legacyMarshaller.marshall(diagram);
     }
 
     @Override
@@ -152,7 +182,7 @@ public class BPMNDirectDiagramMarshaller<D> implements DiagramMarshaller<Graph, 
 
     @Override
     public DiagramMetadataMarshaller<Metadata> getMetadataMarshaller() {
-        return null;
+        return diagramMetadataMarshaller;
     }
 
     public static Definitions parseDefinitions(final InputStream inputStream) throws IOException {

@@ -153,6 +153,8 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_MAGNETSINLANE = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetsInLane.bpmn";
     private static final String BPMN_ENDERROR_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endErrorEvent.bpmn";
 
+
+
     @Mock
     DefinitionManager definitionManager;
 

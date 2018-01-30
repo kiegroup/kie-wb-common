@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 
 public class AbstractPropertyReader {
 
@@ -42,6 +43,6 @@ public class AbstractPropertyReader {
     }
 
     protected String metaData(String name) {
-        return Properties.findMetaValue(element, name);
+        return Utils.getMetaDataValue(element.getExtensionValues(), name);
     }
 }
