@@ -111,8 +111,6 @@ public class LocationControlImpl
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
-
-
         if (KeysMatcher.doKeysMatch(keys,
                                     KeyboardEvent.Key.ESC)) {
             getWiresManager().resetContext();
@@ -148,8 +146,7 @@ public class LocationControlImpl
 
         if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_UP)) {
             verticalDistance = -movementDistance;
-        }
-        else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_DOWN)) {
+        } else if (KeysMatcher.isKeyMatch(keys, KeyboardEvent.Key.ARROW_DOWN)) {
             verticalDistance = movementDistance;
         }
 
@@ -170,7 +167,7 @@ public class LocationControlImpl
             }
         }
 
-        move(moveNodes.toArray(new Element[]{}), movePositions.toArray(new Point2D[]{}), true);
+        move(moveNodes.toArray(new Element[]{}), movePositions.toArray(new Point2D[]{}));
     }
 
     @Override
@@ -236,8 +233,7 @@ public class LocationControlImpl
     @Override
     @SuppressWarnings("unchecked")
     public CommandResult<CanvasViolation> move(final Element[] elements,
-                                               final Point2D[] locations,
-                                               boolean parentConstrained) {
+                                               final Point2D[] locations) {
         if (elements.length != locations.length) {
             throw new IllegalArgumentException("The length for the elements to move " +
                                                        "does not match the locations provided.");
@@ -245,8 +241,7 @@ public class LocationControlImpl
         Command<AbstractCanvasHandler, CanvasViolation> command;
         if (elements.length == 1) {
             command = createMoveCommand(elements[0],
-                                        locations[0],
-                                        parentConstrained);
+                                        locations[0]);
         } else {
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
                     new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
@@ -255,20 +250,21 @@ public class LocationControlImpl
             for (final Element element : elements) {
                 final CanvasCommand<AbstractCanvasHandler> c =
                         createMoveCommand(element,
-                                          locations[i],
-                                          parentConstrained);
+                                          locations[i]);
                 builder.addCommand(c);
                 i++;
             }
             command = builder.build();
         }
 
-        final CommandResult<CanvasViolation> result = getCommandManager().execute(canvasHandler,
-                                                                                  command);
+        CommandResult<CanvasViolation> result = getCommandManager().allow(canvasHandler, command);
+        if (!CommandUtils.isError(result)) {
+            result = getCommandManager().execute(canvasHandler, command);
 
-        if (!CommandUtils.isError(result) && shapeLocationsChangedEvent != null) {
-            List<String> uuids = Arrays.stream(elements).map(Element::getUUID).collect(Collectors.toList());
-            shapeLocationsChangedEvent.fire(new ShapeLocationsChangedEvent(uuids, canvasHandler));
+            if (!CommandUtils.isError(result)) {
+                List<String> uuids = Arrays.stream(elements).map(Element::getUUID).collect(Collectors.toList());
+                shapeLocationsChangedEvent.fire(new ShapeLocationsChangedEvent(uuids, canvasHandler));
+            }
         }
 
         return result;
@@ -316,11 +312,9 @@ public class LocationControlImpl
 
     @SuppressWarnings("unchecked")
     private CanvasCommand<AbstractCanvasHandler> createMoveCommand(final Element element,
-                                                                   final Point2D location,
-                                                                   final boolean parentConstrained) {
+                                                                   final Point2D location) {
         return canvasCommandFactory.updatePosition((Node<View<?>, Edge>) element,
-                                                   location,
-                                                   parentConstrained);
+                                                   location);
     }
 
     private boolean supportsMouseEnter(final HasEventHandlers shapeView) {
@@ -364,7 +358,7 @@ public class LocationControlImpl
             }
             if (elements.length > 0) {
                 final CommandResult<CanvasViolation> result =
-                        move(elements, locations, false);
+                        move(elements, locations);
                 if (CommandUtils.isError(result)) {
                     LOGGER.log(Level.SEVERE,
                                "Update element's position command failed [result=" + result + "]");
@@ -384,17 +378,16 @@ public class LocationControlImpl
         checkNotNull("event",
                      event);
 
-        if (checkEventContext(event)){
+        if (checkEventContext(event)) {
             selectedIDs.clear();
             selectedIDs.addAll(event.getIdentifiers());
         }
-
     }
 
     void onCanvasClearSelectionEvent(final @Observes CanvasClearSelectionEvent event) {
         checkNotNull("event",
                      event);
-        if (checkEventContext(event)){
+        if (checkEventContext(event)) {
             selectedIDs.clear();
         }
     }

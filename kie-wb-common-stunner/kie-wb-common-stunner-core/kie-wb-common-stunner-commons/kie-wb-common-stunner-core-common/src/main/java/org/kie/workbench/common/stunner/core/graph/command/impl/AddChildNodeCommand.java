@@ -82,8 +82,7 @@ public class AddChildNodeCommand extends AbstractGraphCompositeCommand {
                                                 candidate));
         if (null != location) {
             this.addCommand(new UpdateElementPositionCommand(candidate,
-                                                             location,
-                                                             false));
+                                                             location));
         }
         return this;
     }

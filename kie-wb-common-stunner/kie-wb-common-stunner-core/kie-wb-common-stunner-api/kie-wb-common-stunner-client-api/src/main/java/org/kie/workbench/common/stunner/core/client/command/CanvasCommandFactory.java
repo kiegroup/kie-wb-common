@@ -88,8 +88,7 @@ public interface CanvasCommandFactory<H extends CanvasHandler> {
                                    final Connection connection);
 
     CanvasCommand<H> updatePosition(final Node<View<?>, Edge> element,
-                                    final Point2D location,
-                                    final boolean parentConstrained);
+                                    final Point2D location);
 
     CanvasCommand<H> updatePropertyValue(final Element element,
                                          final String propertyId,

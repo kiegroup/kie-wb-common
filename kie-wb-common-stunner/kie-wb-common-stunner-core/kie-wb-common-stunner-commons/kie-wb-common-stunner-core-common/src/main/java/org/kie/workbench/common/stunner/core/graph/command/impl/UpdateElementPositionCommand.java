@@ -49,32 +49,25 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
     private final String uuid;
     private final Point2D location;
     private final Point2D previousLocation;
-    private final boolean parentConstrained;
     private transient Node<? extends View<?>, Edge> node;
 
     public UpdateElementPositionCommand(final @MapsTo("uuid") String uuid,
                                         final @MapsTo("location") Point2D location,
-                                        final @MapsTo("previousLocation") Point2D previousLocation,
-                                        final @MapsTo("parentConstrained") boolean parentConstrained) {
+                                        final @MapsTo("previousLocation") Point2D previousLocation) {
         this.uuid = PortablePreconditions.checkNotNull("uuid",
                                                        uuid);
         this.location = PortablePreconditions.checkNotNull("location",
                                                            location);
         this.previousLocation = PortablePreconditions.checkNotNull("previousLocation",
                                                                    previousLocation);
-
-        this.parentConstrained = parentConstrained;
-
         this.node = null;
     }
 
     public UpdateElementPositionCommand(final Node<? extends View<?>, Edge> node,
-                                        final Point2D location,
-                                        final boolean parentConstrained) {
+                                        final Point2D location) {
         this(node.getUUID(),
              location,
-             GraphUtils.getPosition(node.getContent()),
-             parentConstrained);
+             GraphUtils.getPosition(node.getContent()));
         this.node = PortablePreconditions.checkNotNull("node",
                                                        node);
     }
@@ -120,25 +113,14 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
         final BoundsImpl newBounds = getTargetBounds(element);
 
         final GraphCommandResultBuilder result = new GraphCommandResultBuilder();
-        if (parentConstrained) {
-            if (!GraphUtils.isRootNode(element, graph)) {
-                final Bounds parentBounds = getParentBounds(element, graph);
-                if (GraphUtils.checkBoundsExceeded(parentBounds, newBounds)) {
-                    ((View) element.getContent()).setBounds(newBounds);
-                } else {
-                    result.addViolation(new BoundsExceededViolation(parentBounds)
-                                                .setUUID(element.getUUID()));
-                }
-            }
-        } else {
 
-            if (GraphUtils.checkBoundsExceeded(graph, newBounds)) {
-                ((View) element.getContent()).setBounds(newBounds);
-            } else {
-                final Bounds graphBounds = graph.getContent().getBounds();
-                result.addViolation(new BoundsExceededViolation(graphBounds)
-                                            .setUUID(element.getUUID()));
-            }
+        final Bounds parentBounds = getParentBounds(element, graph);
+
+        if (GraphUtils.checkBoundsExceeded(parentBounds, newBounds)) {
+            ((View) element.getContent()).setBounds(newBounds);
+        } else {
+            result.addViolation(new BoundsExceededViolation(parentBounds)
+                                        .setUUID(element.getUUID()));
         }
 
         return result.build();
@@ -157,27 +139,20 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
 
     @SuppressWarnings("unchecked")
     private Bounds getParentBounds(Element element, final Graph<DefinitionSet, Node> graph) {
-        if (element instanceof Node) {
-            Node elementNode = (Node) element;
-            final Element<? extends View<?>> parent = (Element<? extends View<?>>) GraphUtils.getParent(elementNode);
+        final Element<? extends View<?>> parent = (Element<? extends View<?>>) GraphUtils.getParent((Node) element);
 
-            if (parent != null) {
-                if (GraphUtils.isRootNode(parent, graph)) {
-                    return GraphUtils.getBounds(graph);
-                } else {
-                    final double[] size = GraphUtils.getNodeSize(parent.getContent());
-                    return new BoundsImpl(new BoundImpl(0d, 0d), new BoundImpl(size[0], size[1]));
-                }
-            }
+        if (parent != null && !GraphUtils.isRootNode(parent, graph)) {
+            final double[] size = GraphUtils.getNodeSize(parent.getContent());
+            return new BoundsImpl(new BoundImpl(0d, 0d), new BoundImpl(size[0], size[1]));
+        } else {
+            return GraphUtils.getBounds(graph);
         }
-        return null;
     }
 
     @Override
     public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext context) {
         final UpdateElementPositionCommand undoCommand = new UpdateElementPositionCommand(getNodeNotNull(context),
-                                                                                          previousLocation,
-                                                                                          parentConstrained);
+                                                                                          previousLocation);
         return undoCommand.execute(context);
     }
 

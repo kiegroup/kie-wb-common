@@ -90,11 +90,9 @@ public class CaseManagementCanvasCommandFactory extends DefaultCanvasCommandFact
     //Case Management does not update the location of any Nodes, preserving the layout information that may have
     //been set using the full BPMN2 editor. This command equates to a NOP for Case Management.
     public CanvasCommand<AbstractCanvasHandler> updatePosition(final Node<View<?>, Edge> element,
-                                                               final Point2D location,
-                                                               final boolean parentConstrained) {
+                                                               final Point2D location) {
         return new CaseManagementUpdatePositionCommand(element,
-                                                       location,
-                                                       parentConstrained);
+                                                       location);
     }
 
     @Override

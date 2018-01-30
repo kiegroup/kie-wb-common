@@ -80,7 +80,6 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -171,13 +170,13 @@ public class ObserverBuilderControlTest {
             }
         });
 
-        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class), eq(false))).thenAnswer(new Answer<Command>() {
+        when(canvasCommandFactory.updatePosition(any(Node.class), any(Point2D.class))).thenAnswer(new Answer<Command>() {
 
             @Override
             public Command answer(InvocationOnMock invocationOnMock) {
                 Node node = (Node) invocationOnMock.getArguments()[0];
                 Point2D location = (Point2D) invocationOnMock.getArguments()[1];
-                return new UpdateElementPositionCommand(node, location, false);
+                return new UpdateElementPositionCommand(node, location);
             }
         });
 
@@ -239,10 +238,10 @@ public class ObserverBuilderControlTest {
 
             @Override
             public void onSuccess(String uuid) {
-                assertEquals(15.0, view.getBounds().getLowerRight().getX(), 0.00001);
-                assertEquals(5.0, view.getBounds().getUpperLeft().getX(), 0.00001);
-                assertEquals(25.0, view.getBounds().getLowerRight().getY(), 0.00001);
-                assertEquals(5.0, view.getBounds().getUpperLeft().getY(), 0.00001);
+                assertEquals(10.0, view.getBounds().getLowerRight().getX(), 0.00001);
+                assertEquals(0.0, view.getBounds().getUpperLeft().getX(), 0.00001);
+                assertEquals(20.0, view.getBounds().getLowerRight().getY(), 0.00001);
+                assertEquals(0.0, view.getBounds().getUpperLeft().getY(), 0.00001);
             }
 
             @Override

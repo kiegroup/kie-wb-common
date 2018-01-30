@@ -186,11 +186,9 @@ public class DefaultCanvasCommandFactory implements CanvasCommandFactory<Abstrac
 
     @Override
     public CanvasCommand<AbstractCanvasHandler> updatePosition(final Node<View<?>, Edge> element,
-                                                               final Point2D location,
-                                                               boolean parentConstrained) {
+                                                               final Point2D location) {
         return new UpdateElementPositionCommand(element,
-                                                location,
-                                                parentConstrained);
+                                                location);
     }
 
     @Override

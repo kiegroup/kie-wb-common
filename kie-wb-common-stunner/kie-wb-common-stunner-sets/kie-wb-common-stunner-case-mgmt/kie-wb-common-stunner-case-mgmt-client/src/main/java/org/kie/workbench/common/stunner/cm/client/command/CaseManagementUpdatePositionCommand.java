@@ -31,11 +31,9 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 public class CaseManagementUpdatePositionCommand extends org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPositionCommand {
 
     public CaseManagementUpdatePositionCommand(final Node<View<?>, Edge> element,
-                                               final Point2D location,
-                                               final boolean parentConstrained) {
+                                               final Point2D location) {
         super(element,
-              location,
-              parentConstrained);
+              location);
     }
 
     @Override

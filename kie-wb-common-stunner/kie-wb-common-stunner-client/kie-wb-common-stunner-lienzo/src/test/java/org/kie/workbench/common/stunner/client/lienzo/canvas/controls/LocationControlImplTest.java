@@ -229,7 +229,7 @@ public class LocationControlImplTest {
         tested.enable(canvasHandler);
         tested.register(element);
         Point2D location = new Point2D(45d, 65.5d);
-        tested.move(new Element[]{element}, new Point2D[]{location}, false);
+        tested.move(new Element[]{element}, new Point2D[]{location});
         ArgumentCaptor<CanvasCommand> commandArgumentCaptor = ArgumentCaptor.forClass(CanvasCommand.class);
         verify(commandManager, times(1)).execute(eq(canvasHandler),
                                                  commandArgumentCaptor.capture());

@@ -31,7 +31,6 @@ public interface LocationControl<C extends CanvasHandler, E extends Element>
                 CanvasControl.SessionAware<ClientFullSession> {
 
     CommandResult<CanvasViolation> move(final E[] element,
-                                        final Point2D[] location,
-                                        final boolean parentConstrained);
+                                        final Point2D[] location);
 
 }
