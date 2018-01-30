@@ -21,6 +21,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.ModalSize;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ioc.client.container.IOC;
 import org.uberfire.client.mvp.LockRequiredEvent;
 import org.uberfire.ext.widgets.common.client.common.popups.BaseModal;
@@ -34,10 +35,13 @@ public class DependencySelectorPopupViewImpl extends BaseModal implements Depend
     @Inject
     private Event<LockRequiredEvent> lockRequired;
 
+    @Inject
+    private ManagedInstance<DependencyListWidget> dependencyPagedJarTables;
+
     @PostConstruct
     public void init() {
 
-        dependencyPagedJarTable = IOC.getBeanManager().lookupBean(DependencyListWidget.class).getInstance();
+        dependencyPagedJarTable = dependencyPagedJarTables.get();
 
         dependencyPagedJarTable.addOnSelect(parameter -> {
             presenter.onPathSelection(parameter);

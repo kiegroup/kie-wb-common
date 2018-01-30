@@ -39,13 +39,6 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     }
 
     public void setup(final Element listElement,
-                      final List<T> list) {
-
-        setup(listElement, list, (o, p) -> {
-        });
-    }
-
-    public void setup(final Element listElement,
                       final List<T> objects,
                       final BiConsumer<T, P> itemPresenterConfigurator) {
 
@@ -76,16 +69,16 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         objects.add(o);
     }
 
-    private void addToListElement(final T o) {
+    protected void addToListElement(final T o) {
         addPresenter(newPresenterFor(o));
     }
 
-    private void addPresenter(final P presenter) {
+    protected void addPresenter(final P presenter) {
         presenters.add(presenter);
         listElement.appendChild(presenter.getView().getElement());
     }
 
-    private P newPresenterFor(final T o) {
+    protected P newPresenterFor(final T o) {
         final P listItemPresenter = this.itemPresenters.get();
         listItemPresenter.setListPresenter(this);
         itemPresenterConfigurator.accept(o, listItemPresenter);
