@@ -18,13 +18,15 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.gateways;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.GatewayPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.ExclusiveGatewayExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -45,14 +47,15 @@ public class GatewayConverter {
                     Node<View<ExclusiveDatabasedGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ExclusiveDatabasedGateway.class);
 
                     ExclusiveDatabasedGateway definition = node.getContent().getDefinition();
+                    GatewayPropertyReader p = new GatewayPropertyReader(gateway);
 
                     definition.setGeneral(new BPMNGeneralSet(
                             new Name(gateway.getName()),
-                            Properties.documentation(gateway.getDocumentation())
+                            new Documentation(p.getDocumentation())
                     ));
 
                     definition.setExecutionSet(new ExclusiveGatewayExecutionSet(
-                            new DefaultRoute(Properties.findAnyAttribute(gateway, "dg"))
+                            new DefaultRoute(p.getDefaultRoute())
                     ));
 
                     return node;

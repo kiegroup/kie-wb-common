@@ -19,11 +19,13 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -42,15 +44,16 @@ public class IntermediateTimerEventConverter {
         Node<View<IntermediateTimerEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateTimerEvent.class);
 
         IntermediateTimerEvent definition = node.getContent().getDefinition();
+        EventPropertyReader p = EventPropertyReader.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
-                Properties.documentation(event.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
         definition.setExecutionSet(new CancellingTimerEventExecutionSet(
-                new CancelActivity(Properties.findAnyAttributeBoolean(event, "boundaryca")),
-                TimerEventDefinitionConverter.convertTimerEventDefinition(e)
+                new CancelActivity(p.isCancelActivity()),
+                new TimerSettings(p.getTimerSettings(e))
         ));
 
         return node;

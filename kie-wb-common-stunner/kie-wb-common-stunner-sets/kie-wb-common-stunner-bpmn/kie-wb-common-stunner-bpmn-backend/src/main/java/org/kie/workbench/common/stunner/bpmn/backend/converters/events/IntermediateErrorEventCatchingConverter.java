@@ -19,12 +19,15 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.CancellingErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -43,16 +46,19 @@ public class IntermediateErrorEventCatchingConverter {
         Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
 
         IntermediateErrorEventCatching definition = node.getContent().getDefinition();
+        EventPropertyReader p = EventPropertyReader.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
-                Properties.documentation(event.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
+        definition.setDataIOSet(
+                new DataIOSet(
+                        new AssignmentsInfo(p.getAssignmentsInfo())));
 
         definition.setExecutionSet(new CancellingErrorEventExecutionSet(
-                new CancelActivity(true),
+                new CancelActivity(p.isCancelActivity()),
                 new ErrorRef(e.getErrorRef().getErrorCode())
         ));
 

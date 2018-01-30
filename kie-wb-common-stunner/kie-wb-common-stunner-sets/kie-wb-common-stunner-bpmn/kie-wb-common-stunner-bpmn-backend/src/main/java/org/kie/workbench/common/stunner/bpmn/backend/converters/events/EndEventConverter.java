@@ -30,7 +30,7 @@ import org.eclipse.bpmn2.TerminateEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -38,6 +38,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
@@ -46,6 +48,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.Sc
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -69,10 +72,13 @@ public class EndEventConverter {
             case 0: {
                 Node<View<EndNoneEvent>, Edge> node = factoryManager.newNode(nodeId, EndNoneEvent.class);
                 EndNoneEvent definition = node.getContent().getDefinition();
+                EventPropertyReader p = EventPropertyReader.of(event);
+
                 definition.setGeneral(new BPMNGeneralSet(
                         new Name(event.getName()),
-                        Properties.documentation(event.getDocumentation())
+                        new Documentation(p.getDocumentation())
                 ));
+
                 return node;
             }
             case 1:
@@ -81,11 +87,13 @@ public class EndEventConverter {
                             Node<View<EndTerminateEvent>, Edge> node = factoryManager.newNode(nodeId, EndTerminateEvent.class);
 
                             EndTerminateEvent definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
+
 
                             return node;
                         })
@@ -93,17 +101,20 @@ public class EndEventConverter {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
 
                             EndSignalEvent definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
 
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
+                            definition.setDataIOSet(new DataIOSet(
+                                    new AssignmentsInfo(p.getAssignmentsInfo())
+                            ));
 
                             definition.setExecutionSet(new ScopedSignalEventExecutionSet(
                                     new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef())),
-                                    new SignalScope(Properties.findMetaValue(event.getExtensionValues(), "customScope"))
+                                    new SignalScope(p.getSignalScope())
                             ));
 
                             return node;
@@ -112,13 +123,16 @@ public class EndEventConverter {
                             Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
 
                             EndMessageEvent definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
 
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
+                            definition.setDataIOSet(new DataIOSet(
+                                    new AssignmentsInfo(p.getAssignmentsInfo())
+                            ));
 
                             definition.setExecutionSet(new MessageEventExecutionSet(
                                     new MessageRef(e.getMessageRef().getName())
@@ -129,13 +143,16 @@ public class EndEventConverter {
                             Node<View<EndErrorEvent>, Edge> node = factoryManager.newNode(nodeId, EndErrorEvent.class);
 
                             EndErrorEvent definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
 
-                            definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
+                            definition.setDataIOSet(new DataIOSet(
+                                    new AssignmentsInfo(p.getAssignmentsInfo())
+                            ));
 
                             definition.setExecutionSet(new ErrorEventExecutionSet(
                                     new ErrorRef(e.getErrorRef().getErrorCode())

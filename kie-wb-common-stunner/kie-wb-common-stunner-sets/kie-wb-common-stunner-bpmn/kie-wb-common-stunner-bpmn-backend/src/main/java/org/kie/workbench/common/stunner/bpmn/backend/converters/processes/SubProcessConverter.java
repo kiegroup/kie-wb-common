@@ -16,10 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
@@ -28,21 +24,17 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessDatas;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.onEntry;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.onExit;
 
 public class SubProcessConverter {
 
@@ -105,22 +97,20 @@ public class SubProcessConverter {
         Node<View<EmbeddedSubprocess>, Edge> node = factoryManager.newNode(subProcess.getId(), EmbeddedSubprocess.class);
 
         EmbeddedSubprocess definition = node.getContent().getDefinition();
+        SubProcessPropertyReader p = new SubProcessPropertyReader(subProcess);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(subProcess.getName()),
-                Properties.documentation(subProcess.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        List<ExtensionAttributeValue> extensionValues = subProcess.getExtensionValues();
-        definition.getOnEntryAction().setValue(onEntry(extensionValues));
-        definition.getOnExitAction().setValue(onExit(extensionValues));
+        definition.getOnEntryAction().setValue(p.getOnEntryAction());
+        definition.getOnExitAction().setValue(p.getOnExitAction());
+        definition.getScriptLanguage().setValue(p.getScriptLanguage());
+        definition.getIsAsync().setValue(p.isAsync());
 
         definition.setProcessData(new ProcessData(
-                ProcessDatas.processVariables(subProcess)));
-
-        definition.getScriptLanguage().setValue(Scripts.scriptLanguage(extensionValues));
-
-        definition.getIsAsync().setValue(Properties.findMetaBoolean(subProcess, "customAsync"));
+                new ProcessVariables(p.getProcessVariables())));
 
         return node;
     }

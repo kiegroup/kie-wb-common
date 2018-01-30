@@ -18,41 +18,33 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.stream.Collectors;
 
-import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.Process;
 
-public class ActivityPropertyReader extends AbstractPropertyReader {
+public class ProcessPropertyReader extends AbstractPropertyReader {
 
-    private final Activity activity;
+    private final Process process;
 
-    public ActivityPropertyReader(Activity activity) {
-        super(activity);
-        this.activity = activity;
+    public ProcessPropertyReader(Process element) {
+        super(element);
+        this.process = element;
     }
-
-    public boolean isIndependent() {
-        return Boolean.parseBoolean(attribute("independent"));
+    public String getPackageName() {
+        return attribute("packageName");
     }
-
-    public boolean isWaitForCompletion() {
-        return Boolean.parseBoolean(attribute("waitForCompletion"));
+    public String getVersion() {
+        return attribute("version");
     }
-
+    public boolean isAdHoc() {
+        return Boolean.parseBoolean(attribute("adHoc"));
+    }
     public boolean isAsync() {
         return Boolean.parseBoolean(metaData("customAsync"));
     }
 
-    public String getAssignmentsInfo() {
-        return Properties.getAssignmentsInfo(activity);
-    }
-
     public String getProcessVariables() {
-        return activity.getProperties()
+        return process.getProperties()
                 .stream()
                 .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
                 .collect(Collectors.joining(","));
-    }
-
-    public String input(String name) {
-        return Properties.findInputValue(activity.getDataInputAssociations(), name);
     }
 }

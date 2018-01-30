@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -24,8 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessDatas;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
@@ -34,8 +33,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -102,19 +103,21 @@ public class ProcessConverter {
         Node<View<BPMNDiagramImpl>, Edge> diagramNode = factoryManager.newNode(definitionId, BPMNDiagramImpl.class);
         BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();
 
+        ProcessPropertyReader e = new ProcessPropertyReader(process);
+
         definition.setDiagramSet(new DiagramSet(
                 new Name(process.getName()),
-                Properties.documentation(process.getDocumentation()),
+                new Documentation(e.getDocumentation()),
                 new Id(process.getId()),
-                new Package(Properties.findAnyAttribute(process, "packageName")),
-                new Version(Properties.findAnyAttribute(process, "version")),
-                new AdHoc(Properties.findAnyAttributeBoolean(process, "adHoc")),
-                new ProcessInstanceDescription(Properties.findMetaValue(process, "customDescription")),
+                new Package(e.getPackageName()),
+                new Version(e.getVersion()),
+                new AdHoc(e.isAdHoc()),
+                new ProcessInstanceDescription(e.getDescription()),
                 new Executable()
         ));
 
         definition.setProcessData(new ProcessData(
-                ProcessDatas.processVariables(process)
+                new ProcessVariables(e.getProcessVariables())
         ));
 
         return diagramNode;

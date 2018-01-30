@@ -23,7 +23,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.Tim
 
 public class TimerEventDefinitionConverter {
 
-    public static TimerSettings convertTimerEventDefinition(TimerEventDefinition e) {
+    public static TimerSettingsValue convertTimerEventDefinition(TimerEventDefinition e) {
         TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
         FormalExpression timeCycle = (FormalExpression) e.getTimeCycle();
         if (timeCycle != null) {
@@ -40,6 +40,6 @@ public class TimerEventDefinitionConverter {
         if (timeDateDuration != null) {
             timerSettingsValue.setTimeDuration(timeDateDuration.getMixed().getValue(0).toString());
         }
-        return new TimerSettings(timerSettingsValue);
+        return (timerSettingsValue);
     }
 }

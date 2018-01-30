@@ -16,27 +16,23 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 
-import org.eclipse.bpmn2.FormalExpression;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SequenceFlowPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpression;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpressionLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SequenceFlowConverter {
 
-    private static final Logger _logger = LoggerFactory.getLogger(SequenceFlowConverter.class);
     private TypedFactoryManager factoryManager;
     private final GraphBuildingContext context;
 
@@ -49,42 +45,28 @@ public class SequenceFlowConverter {
         Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
 
         SequenceFlow definition = edge.getContent().getDefinition();
+        SequenceFlowPropertyReader p = new SequenceFlowPropertyReader(seq);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(seq.getName()),
-                Properties.documentation(seq.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        FormalExpression conditionExpression = (FormalExpression) seq.getConditionExpression();
-
-        if (conditionExpression == null) {
-            definition.setExecutionSet(new SequenceFlowExecutionSet(
-                    new Priority(Properties.findAnyAttribute(seq, "priority")),
-                    new ConditionExpression(),
-                    new ConditionExpressionLanguage()
-            ));
-        } else {
-            String language = conditionExpression.getLanguage();
-
-            definition.setExecutionSet(new SequenceFlowExecutionSet(
-                    new Priority(Properties.findAnyAttribute(seq, "priority")),
-                    new ConditionExpression(conditionExpression.getBody()),
-                    new ConditionExpressionLanguage(ScriptLanguages.fromUri(language))
-            ));
-        }
+        definition.setExecutionSet(new SequenceFlowExecutionSet(
+                new Priority(p.getPriority()),
+                new ConditionExpression(p.getConditionExpression()),
+                new ConditionExpressionLanguage(p.getConditionExpressionLanguage())
+        ));
 
         String sourceId = seq.getSourceRef().getId();
         String targetId = seq.getTargetRef().getId();
 
-        boolean isAutoConnectionSource = Properties.findMetaBoolean(seq, "isAutoConnection.source");
-        boolean isAutoConnectionTarget = Properties.findMetaBoolean(seq, "isAutoConnection.target");
-
         context.addEdge(
                 edge,
                 sourceId,
-                isAutoConnectionSource,
+                p.isAutoConnectionSource(),
                 targetId,
-                isAutoConnectionTarget);
+                p.isAutoConnectionTarget());
 
         return edge;
     }

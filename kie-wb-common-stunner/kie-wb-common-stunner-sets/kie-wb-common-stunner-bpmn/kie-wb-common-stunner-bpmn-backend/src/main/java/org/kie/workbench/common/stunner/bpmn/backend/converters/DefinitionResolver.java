@@ -25,11 +25,14 @@ import bpsim.BPSimDataType;
 import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
+import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.emf.ecore.util.FeatureMap;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Simulations;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 

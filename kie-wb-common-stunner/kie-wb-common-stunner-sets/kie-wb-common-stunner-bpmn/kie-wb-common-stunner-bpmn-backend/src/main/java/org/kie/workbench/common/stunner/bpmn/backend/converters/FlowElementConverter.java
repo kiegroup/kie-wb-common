@@ -87,8 +87,8 @@ public class FlowElementConverter {
                 .when(IntermediateThrowEvent.class, intermediateThrowEventConverter::convert)
                 .when(Task.class, taskConverter::convert)
                 .when(Gateway.class, gatewayConverter::convert)
-                .when(CallActivity.class, callActivityConverter::convert)
                 .when(SubProcess.class, subProcessConverter::convert)
+                .when(CallActivity.class, callActivityConverter::convert)
                 .ignore(SequenceFlow.class)
                 .apply(flowElement);
     }

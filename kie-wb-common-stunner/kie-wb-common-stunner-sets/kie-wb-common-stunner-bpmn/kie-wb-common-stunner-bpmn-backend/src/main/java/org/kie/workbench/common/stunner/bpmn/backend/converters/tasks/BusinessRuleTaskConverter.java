@@ -17,23 +17,24 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BusinessRuleTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties.findMetaBoolean;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.onEntry;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.onExit;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.ruleFlowGroup;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Scripts.scriptLanguage;
 
 public class BusinessRuleTaskConverter {
 
@@ -47,21 +48,24 @@ public class BusinessRuleTaskConverter {
         Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(task.getId(), BusinessRuleTask.class);
 
         BusinessRuleTask definition = node.getContent().getDefinition();
+        BusinessRuleTaskPropertyReader p = new BusinessRuleTaskPropertyReader(task);
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(task.getName()),
-                Properties.documentation(task.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(task));
+        definition.setDataIOSet(new DataIOSet(
+                new AssignmentsInfo(p.getAssignmentsInfo())
+        ));
 
         definition.setExecutionSet(new BusinessRuleTaskExecutionSet(
-                ruleFlowGroup(task),
-                onEntry(task),
-                onExit(task),
-                scriptLanguage(task),
-                new IsAsync(findMetaBoolean(task, "customAsync")),
-                new AdHocAutostart(findMetaBoolean(task, "customAutoStart"))
+                new RuleFlowGroup(p.getRuleFlowGroup()),
+                new OnEntryAction(p.getOnEntryAction()),
+                new OnExitAction(p.getOnExitAction()),
+                new ScriptLanguage(p.getScriptLanguage()),
+                new IsAsync(p.isAsync()),
+                new AdHocAutostart(p.isAdHocAutoStart())
         ));
         return node;
     }

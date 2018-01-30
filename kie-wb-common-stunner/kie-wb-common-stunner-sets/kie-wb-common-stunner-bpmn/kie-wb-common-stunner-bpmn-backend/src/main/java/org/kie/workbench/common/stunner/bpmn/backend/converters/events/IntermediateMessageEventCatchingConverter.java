@@ -19,12 +19,16 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.events;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -43,20 +47,19 @@ public class IntermediateMessageEventCatchingConverter {
         Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
 
         IntermediateMessageEventCatching definition = node.getContent().getDefinition();
+        EventPropertyReader p = EventPropertyReader.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
-                Properties.documentation(event.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
-
-        CancellingMessageEventExecutionSet executionSet = definition.getExecutionSet();
-        executionSet.getCancelActivity().setValue(Properties.findAnyAttributeBoolean(event, "boundaryca"));
-        executionSet.getMessageRef().setValue(e.getMessageRef().getName());
+        definition.setDataIOSet(new DataIOSet(
+                new AssignmentsInfo(p.getAssignmentsInfo())
+        ));
 
         definition.setExecutionSet(new CancellingMessageEventExecutionSet(
-                new CancelActivity(Properties.findAnyAttributeBoolean(event, "boundaryca")),
+                new CancelActivity(p.isCancelActivity()),
                 new MessageRef(e.getMessageRef().getName())
         ));
 

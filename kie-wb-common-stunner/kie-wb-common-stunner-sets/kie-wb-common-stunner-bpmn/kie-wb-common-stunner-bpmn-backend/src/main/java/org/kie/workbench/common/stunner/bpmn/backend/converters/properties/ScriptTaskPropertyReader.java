@@ -16,25 +16,21 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.ScriptTask;
 
-public class ElementPropertyReader<T extends BaseElement> {
+public class ScriptTaskPropertyReader extends AbstractPropertyReader {
+        private final ScriptTask task;
 
-    protected final T element;
+        public ScriptTaskPropertyReader(ScriptTask task) {
+            super(task);
+            this.task = task;
+        }
 
-    public ElementPropertyReader(T element) {
-        this.element = element;
+        public String getScriptLanguage() {
+            return Scripts.scriptLanguageFromUri(task.getScriptFormat());
+        }
+
+        public boolean isAsync() {
+            return Boolean.parseBoolean(metaData("customAsync"));
+        }
     }
-
-    public String getSignalScope() {
-        return Properties.findMetaValue(element.getExtensionValues(), "customScope");
-    }
-
-    protected boolean findMetaBoolean(String name) {
-        return Properties.findMetaBoolean(element.getExtensionValues(), name);
-    }
-
-    protected String findMetaValue(String name) {
-        return Properties.findMetaValue(element.getExtensionValues(), name);
-    }
-}

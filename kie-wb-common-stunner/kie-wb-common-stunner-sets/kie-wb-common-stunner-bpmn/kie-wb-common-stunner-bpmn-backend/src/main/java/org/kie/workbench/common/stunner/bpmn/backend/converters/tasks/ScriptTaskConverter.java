@@ -17,10 +17,10 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptLanguages;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
@@ -30,8 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTask
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties.findMetaBoolean;
 
 public class ScriptTaskConverter {
 
@@ -45,15 +43,17 @@ public class ScriptTaskConverter {
         Node<View<ScriptTask>, Edge> node = factoryManager.newNode(task.getId(), ScriptTask.class);
 
         ScriptTask definition = node.getContent().getDefinition();
+        ScriptTaskPropertyReader p = new ScriptTaskPropertyReader(task);
+
         definition.setGeneral(new TaskGeneralSet(
                 new Name(task.getName()),
-                Properties.documentation(task.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
         definition.setExecutionSet(new ScriptTaskExecutionSet(
                 new Script(task.getScript()),
-                new ScriptLanguage(ScriptLanguages.fromUri(task.getScriptFormat())),
-                new IsAsync(findMetaBoolean(task, "customAsync"))
+                new ScriptLanguage(p.getScriptLanguage()),
+                new IsAsync(p.isAsync())
         ));
 
         return node;

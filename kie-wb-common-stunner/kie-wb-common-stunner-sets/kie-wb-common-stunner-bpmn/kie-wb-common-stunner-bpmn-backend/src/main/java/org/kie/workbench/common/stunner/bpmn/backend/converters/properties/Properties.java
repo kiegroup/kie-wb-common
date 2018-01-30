@@ -36,9 +36,7 @@ import org.eclipse.bpmn2.PotentialOwner;
 import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.ThrowEvent;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.AssignmentsInfos;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 public class Properties {
@@ -57,15 +55,7 @@ public class Properties {
         return Point2D.create(x, y);
     }
 
-    public static Documentation documentation(List<org.eclipse.bpmn2.Documentation> documentationList) {
-        return new Documentation(
-                documentationList.stream()
-                        .findFirst()
-                        .map(org.eclipse.bpmn2.Documentation::getText)
-                        .orElse(""));
-    }
-
-    public static String getAssignmentsInfo(Activity activity) {
+    static String getAssignmentsInfo(Activity activity) {
         InputOutputSpecification ioSpecification = activity.getIoSpecification();
         if (ioSpecification == null) {
             return (
@@ -92,7 +82,7 @@ public class Properties {
         }
     }
 
-    public static String getAssignmentsInfo(ThrowEvent event) {
+    static String getAssignmentsInfo(ThrowEvent event) {
         return (
                 AssignmentsInfos.makeString(
                         event.getDataInputs(),
@@ -105,7 +95,7 @@ public class Properties {
         );
     }
 
-    public static String getAssignmentsInfo(CatchEvent event) {
+    static String getAssignmentsInfo(CatchEvent event) {
         return (
                 AssignmentsInfos.makeString(
                         Collections.emptyList(),
@@ -118,18 +108,14 @@ public class Properties {
         );
     }
 
-    public static boolean findAnyAttributeBoolean(BaseElement element, String attributeId) {
-        return Boolean.parseBoolean(findAnyAttribute(element, attributeId));
-    }
-
-    public static String findAnyAttribute(BaseElement element, String attributeId) {
+    static String findAnyAttribute(BaseElement element, String attributeId) {
         return element.getAnyAttribute().stream()
                 .filter(e -> e.getEStructuralFeature().getName().equals(attributeId))
                 .map(e -> e.getValue().toString())
                 .findFirst().orElse("");
     }
 
-    public static String actors(Task task) {
+    static String actors(Task task) {
         // get the user task actors
         List<ResourceRole> roles = task.getResources();
         List<String> users = new ArrayList<>();
@@ -142,35 +128,27 @@ public class Properties {
         return users.stream().collect(Collectors.joining(","));
     }
 
-    public static boolean findMetaBoolean(BaseElement element, String name) {
-        return findMetaBoolean(element.getExtensionValues(), name);
-    }
-
-    public static boolean findMetaBoolean(List<ExtensionAttributeValue> extensions, String name) {
-        return Boolean.parseBoolean(findMetaValue(extensions, name));
-    }
-
-    public static String findMetaValue(BaseElement element, String name) {
+    static String findMetaValue(BaseElement element, String name) {
         return Utils.getMetaDataValue(element.getExtensionValues(), name);
     }
 
-    public static String findMetaValue(List<ExtensionAttributeValue> extensions, String name) {
+    static String findMetaValue(List<ExtensionAttributeValue> extensions, String name) {
         return Utils.getMetaDataValue(extensions, name);
     }
 
-    public static boolean findInputBooleans(Activity activity, String name) {
+    static boolean findInputBooleans(Activity activity, String name) {
         return findInputBooleans(activity.getDataInputAssociations(), name);
     }
 
-    public static boolean findInputBooleans(List<DataInputAssociation> associations, String name) {
+    static boolean findInputBooleans(List<DataInputAssociation> associations, String name) {
         return Boolean.parseBoolean(findInputValue(associations, name));
     }
 
-    public static String findInputValue(Activity activity, String name) {
+    static String findInputValue(Activity activity, String name) {
         return findInputValue(activity.getDataInputAssociations(), name);
     }
 
-    public static String findInputValue(List<DataInputAssociation> associations, String name) {
+    static String findInputValue(List<DataInputAssociation> associations, String name) {
         for (DataInputAssociation din : associations) {
             DataInput targetRef = (DataInput) (din.getTargetRef());
             if (targetRef.getName().equalsIgnoreCase(name)) {

@@ -18,11 +18,13 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.activities;
 
 import org.eclipse.bpmn2.CallActivity;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElement;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Independent;
@@ -46,21 +48,23 @@ public class CallActivityConverter {
 
         ReusableSubprocess definition = node.getContent().getDefinition();
 
+        ActivityPropertyReader p = new ActivityPropertyReader(activity);
+
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(activity.getName()),
-                Properties.documentation(activity.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
         definition.setExecutionSet(new ReusableSubprocessTaskExecutionSet(
                 new CalledElement(activity.getCalledElement()),
-                new Independent(Properties.findAnyAttributeBoolean(activity, "independent")),
-                new WaitForCompletion(Properties.findAnyAttributeBoolean(activity, "waitForCompletion")),
-                new IsAsync(Properties.findMetaBoolean(activity, "customAsync"))
+                new Independent(p.isIndependent()),
+                new WaitForCompletion(p.isWaitForCompletion()),
+                new IsAsync(p.isAsync())
         ));
 
-        definition.getDataIOSet()
-                .setAssignmentsinfo(new AssignmentsInfo(
-                        Properties.getAssignmentsInfo(activity)));
+        definition.setDataIOSet(new DataIOSet(
+                new AssignmentsInfo(p.getAssignmentsInfo()))
+        );
 
         return node;
     }

@@ -20,12 +20,15 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.CancellingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -46,16 +49,19 @@ public class IntermediateSignalEventCatchingConverter {
         Node<View<IntermediateSignalEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class);
 
         IntermediateSignalEventCatching definition = node.getContent().getDefinition();
+        EventPropertyReader p = EventPropertyReader.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
-                Properties.documentation(event.getDocumentation())
+                new Documentation(p.getDocumentation())
         ));
 
-        definition.getDataIOSet().getAssignmentsinfo().setValue(Properties.getAssignmentsInfo(event));
+        definition.setDataIOSet(new DataIOSet(
+                new AssignmentsInfo(p.getAssignmentsInfo())
+        ));
 
         definition.setExecutionSet(new CancellingSignalEventExecutionSet(
-                new CancelActivity(Properties.findAnyAttributeBoolean(event, "boundaryca")),
+                new CancelActivity(p.isCancelActivity()),
                 new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
         ));
         return node;

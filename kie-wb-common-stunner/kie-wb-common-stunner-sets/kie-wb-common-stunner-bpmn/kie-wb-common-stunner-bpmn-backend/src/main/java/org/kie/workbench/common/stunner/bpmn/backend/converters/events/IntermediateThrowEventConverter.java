@@ -29,18 +29,20 @@ import org.eclipse.bpmn2.SignalEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.ScopedSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -69,19 +71,20 @@ public class IntermediateThrowEventConverter {
                                     factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class);
 
                             IntermediateSignalEventThrowing definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
 
-                            definition.getDataIOSet()
-                                    .setAssignmentsinfo(
-                                            new AssignmentsInfo(Properties.getAssignmentsInfo(event)));
+                            definition.setDataIOSet(new DataIOSet(
+                               new AssignmentsInfo(p.getAssignmentsInfo())
+                            ));
 
                             definition.setExecutionSet(new ScopedSignalEventExecutionSet(
                                     new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef())),
-                                    new SignalScope(Properties.findMetaValue(event, "customScope"))
+                                    new SignalScope(p.getSignalScope())
                             ));
 
                             return node;
@@ -91,15 +94,16 @@ public class IntermediateThrowEventConverter {
                                     factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class);
 
                             IntermediateMessageEventThrowing definition = node.getContent().getDefinition();
+                            EventPropertyReader p = EventPropertyReader.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
-                                    Properties.documentation(event.getDocumentation())
+                                    new Documentation(p.getDocumentation())
                             ));
 
-                            definition.getDataIOSet()
-                                    .setAssignmentsinfo(
-                                            new AssignmentsInfo(Properties.getAssignmentsInfo(event)));
+                            definition.setDataIOSet(new DataIOSet(
+                                    new AssignmentsInfo(p.getAssignmentsInfo())
+                            ));
 
                             definition.setExecutionSet(new MessageEventExecutionSet(
                                     new MessageRef(e.getMessageRef().getName())
