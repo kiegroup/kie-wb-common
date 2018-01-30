@@ -55,8 +55,8 @@ public final class ViewImpl<W> implements View<W> {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(definition.hashCode(),
-                                         bounds.hashCode());
+        return HashUtil.combineHashCodes(definition == null ? 0 : definition.hashCode(),
+                                         bounds == null ? 0 : bounds.hashCode());
     }
 
     @Override

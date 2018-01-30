@@ -37,6 +37,10 @@ public class DefinitionHashCodeAndEqualityTest {
         assertEquals(a,
                      b);
 
+        b.setDefinition(null);
+        assertNotEquals(a,
+                        b);
+
         b.setDefinition("b");
         assertNotEquals(a,
                         b);
@@ -55,6 +59,10 @@ public class DefinitionHashCodeAndEqualityTest {
         b.setDefinition("b");
         assertNotEquals(a.hashCode(),
                         b.hashCode());
+
+        b.setDefinition(null);
+        assertNotEquals(a,
+                        b);
 
         b.setDefinition("a");
         assertEquals(a.hashCode(), b.hashCode());

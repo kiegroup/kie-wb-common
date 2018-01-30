@@ -52,6 +52,11 @@ public class ViewHashCodeAndEqualityTest {
                                                  5.0)));
         assertNotEquals(a,
                         b);
+
+        b.setBounds(null);
+        assertNotEquals(a,
+                        b);
+
         b.setBounds(new BoundsImpl(new BoundImpl(0.0,
                                                  0.0),
                                    new BoundImpl(1.0,
@@ -86,6 +91,11 @@ public class ViewHashCodeAndEqualityTest {
                                                  5.0)));
         assertNotEquals(a.hashCode(),
                         b.hashCode());
+
+        b.setBounds(null);
+        assertNotEquals(a.hashCode(),
+                        b.hashCode());
+
         b.setBounds(new BoundsImpl(new BoundImpl(0.0,
                                                  0.0),
                                    new BoundImpl(1.0,

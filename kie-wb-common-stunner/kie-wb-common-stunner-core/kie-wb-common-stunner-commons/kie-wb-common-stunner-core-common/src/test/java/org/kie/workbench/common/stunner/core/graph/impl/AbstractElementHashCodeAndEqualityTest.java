@@ -56,10 +56,15 @@ public class AbstractElementHashCodeAndEqualityTest {
                      b);
 
         a.setContent("x");
+        b.setContent("z");
         assertNotEquals(a,
                         b);
 
-        b.setContent("x");
+        a.setContent(null);
+        assertNotEquals(a,
+                        b);
+
+        a.setContent("z");
         assertEquals(a, b);
     }
 
@@ -70,11 +75,17 @@ public class AbstractElementHashCodeAndEqualityTest {
         assertEquals(a.hashCode(),
                      b.hashCode());
 
+
         a.setContent("x");
+        b.setContent("z");
         assertNotEquals(a.hashCode(),
                         b.hashCode());
 
-        b.setContent("x");
+        a.setContent(null);
+        assertNotEquals(a.hashCode(),
+                        b.hashCode());
+
+        a.setContent("z");
         assertEquals(a.hashCode(), b.hashCode());
 
     }
