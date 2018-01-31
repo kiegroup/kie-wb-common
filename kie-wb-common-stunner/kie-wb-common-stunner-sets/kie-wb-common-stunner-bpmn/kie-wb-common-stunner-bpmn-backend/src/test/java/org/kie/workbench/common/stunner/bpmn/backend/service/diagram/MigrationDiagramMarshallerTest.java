@@ -18,7 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -421,6 +423,21 @@ public class MigrationDiagramMarshallerTest {
         assertEdgeEquals(oldDiagram, newDiagram);
     }
 
+    @Test
+    public void testUnmarshallLanes() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_LANES);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_LANES);
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
+    }
+
+
+
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
         Set<Node> oldNodes = asNodeSet(oldDiagram.getGraph().nodes());
         Set<Node> newNodes = asNodeSet(newDiagram.getGraph().nodes());
@@ -440,11 +457,46 @@ public class MigrationDiagramMarshallerTest {
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
         assertEquals("Number of edges should match", oldEdges.size(), newEdges.size());
-        assertEquals("The generated set of edges should match",
-                     oldEdges.stream()
-                             .filter(e -> !isRelationshipConnector(e)).collect(Collectors.toSet()),
-                     newEdges.stream()
-                             .filter(e -> !isRelationshipConnector(e)).collect(Collectors.toSet()));
+
+        {
+            Set<Edge> nonRelOldEdges = oldEdges.stream()
+                    .filter(MigrationDiagramMarshallerTest::nonRelationshipConnector)
+                    .collect(Collectors.toSet());
+
+            Set<Edge> nonRelNewEdges = newEdges.stream()
+                    .filter(MigrationDiagramMarshallerTest::nonRelationshipConnector)
+                    .collect(Collectors.toSet());
+
+            assertEquals(nonRelOldEdges, nonRelNewEdges);
+        }
+
+        {
+
+            List<Edge> relOldEdges = oldEdges.stream()
+                    .filter(MigrationDiagramMarshallerTest::isRelationshipConnector)
+                    .collect(Collectors.toList());
+            List<Edge> relNewEdges = newEdges.stream()
+                    .filter(MigrationDiagramMarshallerTest::isRelationshipConnector)
+                    .collect(Collectors.toList());
+
+            // sort lexicografically by source + target IDs
+            relOldEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID()+e.getTargetNode().getUUID()));
+            relNewEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID()+e.getTargetNode().getUUID()));
+
+            Iterator<Edge> oldIt = relOldEdges.iterator();
+            Iterator<Edge> newIt = relNewEdges.iterator();
+
+            for (int i = 0; i < relOldEdges.size(); i++) {
+                Edge oldEdge = oldIt.next();
+                Edge newEdge = newIt.next();
+
+                // (relationship) edges are equal iff <source, target> match respectively
+                assertEquals(oldEdge.getTargetNode(), newEdge.getTargetNode());
+                assertEquals(oldEdge.getSourceNode(), newEdge.getSourceNode());
+            }
+        }
+
+
     }
 
     private Set<Edge> asEdgeSet(Iterable nodes) {

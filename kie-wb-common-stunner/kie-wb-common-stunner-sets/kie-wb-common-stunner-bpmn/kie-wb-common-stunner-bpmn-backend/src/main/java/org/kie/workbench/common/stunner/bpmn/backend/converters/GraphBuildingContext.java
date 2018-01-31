@@ -60,6 +60,16 @@ public class GraphBuildingContext {
         execute(addNodeCommand);
     }
 
+    public void addChildNode(String parentId, String childId) {
+        Node parent = executionContext.getGraphIndex().getNode(parentId);
+        Node child = executionContext.getGraphIndex().getNode(childId);
+
+        AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
+        execute(addChildNodeCommand);
+    }
+
+
+
     public void addChildNode(Node parent, Node child) {
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);

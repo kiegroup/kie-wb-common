@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
@@ -26,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
@@ -77,24 +82,34 @@ public class ProcessConverter {
         ));
         context.addNode(firstDiagramNode);
 
-        process.getFlowElements()
-                .stream()
-                .map(flowElementConverter::convertNode)
-                .filter(Result::notIgnored)
-                .map(Result::value)
-                .forEach(n -> {
-                    layout.updateNode(n);
-                    context.addChildNode(firstDiagramNode, n);
-                });
+        Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
+                process.getFlowElements()
+                        .stream()
+                        .map(flowElementConverter::convertNode)
+                        .filter(Result::notIgnored)
+                        .map(Result::value)
+                        .collect(Collectors.toMap(Node::getUUID, Function.identity()));
 
         process.getLaneSets()
                 .stream()
                 .flatMap(laneSet -> laneSet.getLanes().stream())
-                .map(laneConverter::convert)
-                .forEach(n -> {
-                    layout.updateNode(n);
-                    context.addChildNode(firstDiagramNode, n);
+
+                .forEach(lane -> {
+                    Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
+                            laneConverter.convert(lane);
+
+                    lane.getFlowNodeRefs().forEach(node -> {
+                        Node child = freeFloatingNodes.get(node.getId());
+                        context.addChildNode(laneNode, child);
+                        freeFloatingNodes.remove(node.getId());
+                    });
+
+                    layout.updateNode(laneNode);
+                    context.addChildNode(firstDiagramNode, laneNode);
                 });
+
+        freeFloatingNodes.values()
+                .forEach(n -> context.addChildNode(firstDiagramNode, n));
 
         process.getFlowElements()
                 .stream()
