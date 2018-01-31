@@ -144,7 +144,10 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         BPMNPlane plane = findPlane(definitions);
         Layout layout = new Layout(plane);
 
-        new ProcessConverter(typedFactoryManager, definitionResolver, layout, context).convert(definitionsId, process);
+        context.clearGraph();
+
+        new ProcessConverter(typedFactoryManager, definitionResolver, layout, context)
+                .convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");
         return graph;

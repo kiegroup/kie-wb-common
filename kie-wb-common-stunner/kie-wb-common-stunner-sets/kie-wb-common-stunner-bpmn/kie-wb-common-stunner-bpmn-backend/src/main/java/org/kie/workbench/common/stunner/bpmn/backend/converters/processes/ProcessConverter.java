@@ -37,8 +37,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ProcessConverter {
@@ -66,6 +69,12 @@ public class ProcessConverter {
         Node<View<BPMNDiagramImpl>, ?> firstDiagramNode =
                 convertProcessNode(definitionsId, process);
 
+        firstDiagramNode.getContent().setBounds(new BoundsImpl(
+                new BoundImpl(0d,
+                              0d),
+                new BoundImpl(BPMNGraphFactory.GRAPH_DEFAULT_WIDTH,
+                              BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
+        ));
         context.addNode(firstDiagramNode);
 
         process.getFlowElements()
