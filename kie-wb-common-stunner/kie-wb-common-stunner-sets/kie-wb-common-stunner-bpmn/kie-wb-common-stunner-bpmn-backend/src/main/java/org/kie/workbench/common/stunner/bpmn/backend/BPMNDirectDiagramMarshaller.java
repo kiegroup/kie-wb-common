@@ -142,7 +142,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         GraphBuildingContext context = graphContextOf(graph);
 
         BPMNPlane plane = findPlane(definitions);
-        Layout layout = new Layout(plane);
+        Layout layout = new Layout(plane, context);
 
         context.clearGraph();
 

@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class SequenceFlowConverter {
@@ -61,12 +62,20 @@ public class SequenceFlowConverter {
         String sourceId = seq.getSourceRef().getId();
         String targetId = seq.getTargetRef().getId();
 
+        MagnetConnection sourceConnection =
+                MagnetConnection.Builder.at(0, 0)
+                        .setAuto(p.isAutoConnectionSource());
+
+        MagnetConnection targetConnection =
+                MagnetConnection.Builder.at(0, 0)
+                        .setAuto(p.isAutoConnectionTarget());
+
         context.addEdge(
                 edge,
                 sourceId,
-                p.isAutoConnectionSource(),
+                sourceConnection,
                 targetId,
-                p.isAutoConnectionTarget());
+                targetConnection);
 
         return edge;
     }

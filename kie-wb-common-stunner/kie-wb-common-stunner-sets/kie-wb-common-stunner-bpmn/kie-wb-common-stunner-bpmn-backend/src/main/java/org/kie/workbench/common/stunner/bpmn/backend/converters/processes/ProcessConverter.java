@@ -47,6 +47,7 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ProcessConverter {
@@ -99,9 +100,9 @@ public class ProcessConverter {
                             laneConverter.convert(lane);
 
                     lane.getFlowNodeRefs().forEach(node -> {
-                        Node child = freeFloatingNodes.get(node.getId());
+                        Node child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
-                        freeFloatingNodes.remove(node.getId());
+                        layout.updateChildNode(laneNode, child);
                     });
 
                     layout.updateNode(laneNode);
@@ -109,7 +110,10 @@ public class ProcessConverter {
                 });
 
         freeFloatingNodes.values()
-                .forEach(n -> context.addChildNode(firstDiagramNode, n));
+                .forEach(n -> {
+                    layout.updateNode(n);
+                    context.addChildNode(firstDiagramNode, n);
+                });
 
         process.getFlowElements()
                 .stream()

@@ -44,43 +44,70 @@ public class Layout {
     private static final Logger logger = LoggerFactory.getLogger(Layout.class);
 
     org.eclipse.bpmn2.di.BPMNPlane plane;
+    private final GraphBuildingContext context;
 
-    public Layout(BPMNPlane plane) {
+    public Layout(BPMNPlane plane, GraphBuildingContext context) {
         this.plane = plane;
+        this.context = context;
+    }
+
+    public void updateChildNode(
+            Node<? extends View<? extends BPMNViewDefinition>, ?> parent,
+            Node<? extends View<? extends BPMNViewDefinition>, ?> child) {
+
+        BPMNShape parentShape = getBPMNShapeForElement(parent.getUUID());
+        BPMNShape childShape = getBPMNShapeForElement(child.getUUID());
+        Bounds parentBounds = parentShape.getBounds();
+        Bounds childBounds = childShape.getBounds();
+
+        float offsetX = parentBounds.getX();
+        float offsetY = parentBounds.getY();
+
+        float relativeX = childBounds.getX() - offsetX;
+        float relativeY = childBounds.getY() - offsetY;
+
+        context.updatePosition(child, Point2D.create(relativeX, relativeY));
+
+        logger.info(child.getContent().getDefinition().toString() + child.getContent().getBounds().toString());
     }
 
     public void updateNode(Node<? extends View<? extends BPMNViewDefinition>, ?> node) {
-        getBPMNShapeForElement(node.getUUID()).ifPresent(shape -> {
-            Bounds bounds = shape.getBounds();
+        BPMNShape shape = getBPMNShapeForElement(node.getUUID());
+        Bounds bounds = shape.getBounds();
 
-            double x, y;
+        double x, y;
 
-            BaseElement bpmnElement = shape.getBpmnElement();
-            if (bpmnElement instanceof BoundaryEvent) {
-                // then we must check the overrides
-                Point2D docker = Properties.docker((BoundaryEvent) bpmnElement);
-                x = docker.getX();
-                y = docker.getY();
-            } else {
-                x = bounds.getX();
-                y = bounds.getY();
-            }
+        BaseElement bpmnElement = shape.getBpmnElement();
+        if (bpmnElement instanceof BoundaryEvent) {
+            // then we must check the overrides
+            Point2D docker = Properties.docker((BoundaryEvent) bpmnElement);
+            x = docker.getX();
+            y = docker.getY();
+        } else {
+            x = bounds.getX();
+            y = bounds.getY();
+        }
 
-            BoundsImpl convertedBounds = BoundsImpl.build(
-                    x,
-                    y,
-                    x + bounds.getWidth(),
-                    y + bounds.getHeight());
-            node.getContent().setBounds(convertedBounds);
-        });
+        BoundsImpl convertedBounds = BoundsImpl.build(
+                x,
+                y,
+                x + bounds.getWidth(),
+                y + bounds.getHeight());
+        node.getContent().setBounds(convertedBounds);
+
+        context.updatePosition(node, Point2D.create(x, y));
+
+        logger.info(node.getContent().getDefinition().toString() + node.getContent().getBounds().toString());
     }
 
     public void updateEdge(Edge<?, ?> edge) {
-        String sourceId = edge.getSourceNode().getUUID();
-        String targetId = edge.getTargetNode().getUUID();
+        Node sourceNode = edge.getSourceNode();
+        String sourceId = sourceNode.getUUID();
+        Node targetNode = edge.getTargetNode();
+        String targetId = targetNode.getUUID();
 
-        Bounds sourceBounds = getBPMNShapeForElement(sourceId).get().getBounds();
-        Bounds targetBounds = getBPMNShapeForElement(targetId).get().getBounds();
+        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
+        Bounds targetBounds = getBPMNShapeForElement(targetId).getBounds();
 
         getBPMNEdgeForElement(edge.getUUID()).ifPresent(bpmnEdge -> {
             List<Point2D> pts = points(sourceBounds,
@@ -94,6 +121,13 @@ public class Layout {
             Optional<Connection> targetConnection = ((ViewConnector) edge.getContent()).getTargetConnection();
             targetConnection.get().getLocation().setX(pts.get(1).getX());
             targetConnection.get().getLocation().setY(pts.get(1).getY());
+//
+//            context.updatePosition(sourceNode, pts.get(0));
+//            context.updatePosition(targetNode, pts.get(1));
+//
+//            logger.info(sourceNode.getContent().getDefinition().toString()+sourceNode.getContent().getBounds().toString());
+//            logger.info(targetNode.getContent().getDefinition().toString()+targetNode.getContent().getBounds().toString());
+
         });
     }
 
@@ -105,12 +139,12 @@ public class Layout {
                 .findFirst();
     }
 
-    private Optional<BPMNShape> getBPMNShapeForElement(String elementId) {
+    private BPMNShape getBPMNShapeForElement(String elementId) {
         return plane.getPlaneElement().stream()
                 .filter(dia -> dia instanceof BPMNShape)
                 .map(shape -> (BPMNShape) shape)
                 .filter(shape -> shape.getBpmnElement().getId().equals(elementId))
-                .findFirst();
+                .findFirst().get();
     }
 
     private List<Point2D> points(Bounds sourceBounds, Bounds targetBounds, List<Point> waypoints) {

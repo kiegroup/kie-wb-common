@@ -31,9 +31,11 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.AddNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionSourceNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand;
+import org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
@@ -68,11 +70,14 @@ public class GraphBuildingContext {
         execute(addChildNodeCommand);
     }
 
-
-
     public void addChildNode(Node parent, Node child) {
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);
+    }
+
+    public void updatePosition(Node node, Point2D position) {
+        UpdateElementPositionCommand updateElementPositionCommand = new UpdateElementPositionCommand(node, position);
+        execute(updateElementPositionCommand);
     }
 
     public void addNode(Node node) {
@@ -83,9 +88,9 @@ public class GraphBuildingContext {
     public void addEdge(
             Edge<? extends View<?>, Node> edge,
             String sourceId,
-            boolean isAutoConnectionSource,
+            Connection sourceConnection,
             String targetId,
-            boolean isAutoConnectionTarget) {
+            Connection targetConnection) {
 
         Node source = executionContext.getGraphIndex().getNode(sourceId);
         Node target = executionContext.getGraphIndex().getNode(targetId);
@@ -93,37 +98,13 @@ public class GraphBuildingContext {
         Objects.requireNonNull(source);
         Objects.requireNonNull(target);
 
-        MagnetConnection sourceConnection = MagnetConnection.Builder.at(0, 0).setAuto(isAutoConnectionSource);
-        MagnetConnection targetConnection = MagnetConnection.Builder.at(0, 0).setAuto(isAutoConnectionTarget);
+        SetConnectionSourceNodeCommand setSourceNode =
+                commandFactory.setSourceNode(source, edge, sourceConnection);
 
-        SetConnectionSourceNodeCommand setSourceNode = commandFactory.setSourceNode(source, edge, sourceConnection);
-        SetConnectionTargetNodeCommand setTargetNode = commandFactory.setTargetNode(target, edge, targetConnection);
+        SetConnectionTargetNodeCommand setTargetNode =
+                commandFactory.setTargetNode(target, edge, targetConnection);
 
         execute(setSourceNode);
-        execute(setTargetNode);
-    }
-
-    public void addEdge(
-            Edge<? extends View<?>, Node> edge,
-            Node<? extends View<?>, Edge> source,
-            Node<? extends View<?>, Edge> target) {
-        SetConnectionSourceNodeCommand setSourceNode = commandFactory.setSourceNode(source, edge, null);
-        SetConnectionTargetNodeCommand setTargetNode = commandFactory.setTargetNode(target, edge, null);
-        execute(setSourceNode);
-        execute(setTargetNode);
-    }
-
-    public void setEdgeSourceConnection(String edgeId, Connection connection) {
-        Edge edge = executionContext.getGraphIndex().getEdge(edgeId);
-        Node sourceNode = edge.getSourceNode();
-        SetConnectionSourceNodeCommand setSourceNode = commandFactory.setSourceNode(sourceNode, edge, connection);
-        execute(setSourceNode);
-    }
-
-    public void setEdgeTargetConnection(String edgeId, Connection connection) {
-        Edge edge = executionContext.getGraphIndex().getEdge(edgeId);
-        Node targetNode = edge.getTargetNode();
-        SetConnectionTargetNodeCommand setTargetNode = commandFactory.setTargetNode(targetNode, edge, connection);
         execute(setTargetNode);
     }
 

@@ -436,6 +436,20 @@ public class MigrationDiagramMarshallerTest {
         assertEdgeEquals(oldDiagram, newDiagram);
     }
 
+    @Test
+    public void testUnmarshallEvaluation() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_EVALUATION);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_EVALUATION);
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
+    }
+
+
 
 
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
