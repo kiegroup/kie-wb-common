@@ -16,23 +16,15 @@
 
 package org.kie.workbench.common.screens.examples.backend.server;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-
 import javax.enterprise.event.Event;
 
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.events.NewProjectEvent;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
@@ -55,8 +47,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
@@ -69,6 +65,12 @@ import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.spaces.Space;
 import org.uberfire.spaces.SpacesAPI;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExamplesServiceImplRepositoryNamesTest {
@@ -117,11 +119,17 @@ public class ExamplesServiceImplRepositoryNamesTest {
     @Mock
     private SpacesAPI spaces;
 
+    @Mock
+    private ProjectScreenService projectScreenService;
+
     private ExamplesServiceImpl service;
 
     @Mock
     private ExampleOrganizationalUnit exampleOrganizationalUnit;
     private List<ExampleProject> exampleProjects;
+
+    @Captor
+    private ArgumentCaptor<ProjectScreenModel> modelCapture;
 
     @Before
     public void setup() {
@@ -135,7 +143,8 @@ public class ExamplesServiceImplRepositoryNamesTest {
                                               projectService,
                                               metadataService,
                                               spaces,
-                                              newProjectEvent));
+                                              newProjectEvent,
+                                              projectScreenService));
         when(ouService.getOrganizationalUnits()).thenReturn(new HashSet<OrganizationalUnit>() {{
             add(new OrganizationalUnitImpl("ou1Name",
                                            "ou1Owner",
@@ -189,62 +198,94 @@ public class ExamplesServiceImplRepositoryNamesTest {
 
         when(ouService.getOrganizationalUnit(eq("ou"))).thenReturn(ou);
 
+        doReturn("module1").when(repository1).getAlias();
         doReturn(repository1).when(repositoryCopier).copy(eq(ou),
                                                           anyString(),
                                                           eq(module1Root));
-        final WorkspaceProject project = new WorkspaceProject();
+
+        final WorkspaceProject project = spy(new WorkspaceProject());
+        doReturn(repository1.getAlias()).when(project).getName();
+        doReturn(mock(Module.class)).when(project).getMainModule();
+        doReturn(mock(OrganizationalUnit.class)).when(project).getOrganizationalUnit();
         doReturn(project).when(projectService).resolveProject(repository1);
+        doReturn(project).when(projectService).resolveProject(any(Path.class));
+
+        final ProjectScreenModel model = new ProjectScreenModel();
+        model.setPOM(new POM());
+        doReturn(model).when(projectScreenService).load(any());
     }
 
     @Test
     public void nameIsNotTaken() {
-
         service.setupExamples(exampleOrganizationalUnit,
                               exampleProjects);
 
         verify(repositoryCopier).copy(any(OrganizationalUnit.class),
                                       eq("module1"),
                                       any(Path.class));
+        verify(projectScreenService,
+               never()).save(any(),
+                             any(),
+                             any());
     }
 
     @Test
     public void nameIsTaken() {
         doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("module1"));
 
+        WorkspaceProject project1 = mock(WorkspaceProject.class);
+        doReturn("module1").when(project1).getName();
+        List<WorkspaceProject> projects = new ArrayList<>();
+        projects.add(project1);
+        projects.add(project1);
+        doReturn(projects).when(projectService).getAllWorkspaceProjectsByName(any(),
+                                                                              eq("module1"));
+
         service.setupExamples(exampleOrganizationalUnit,
                               exampleProjects);
 
         verify(repositoryCopier).copy(any(OrganizationalUnit.class),
-                                      eq("ou-module1"),
+                                      eq("module1-2"),
                                       any(Path.class));
+        verify(projectScreenService).save(any(),
+                                          modelCapture.capture(),
+                                          any());
+        final ProjectScreenModel model = modelCapture.getValue();
+        assertEquals("module1 [2]",
+                     model.getPOM().getName());
     }
 
     @Test
-    public void evenTheOuRepositoryComboNameIsTaken() {
-
+    public void evenTheSecundaryNameIsTaken() {
         doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("module1"));
-        doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("ou-module1"));
+        doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("module1-2"));
+
+        WorkspaceProject project1 = mock(WorkspaceProject.class);
+        doReturn("module1").when(project1).getName();
+        List<WorkspaceProject> projects1 = new ArrayList<>();
+        projects1.add(project1);
+        projects1.add(project1);
+        doReturn(projects1).when(projectService).getAllWorkspaceProjectsByName(any(),
+                                                                              eq("module1"));
+
+        WorkspaceProject project2 = mock(WorkspaceProject.class);
+        doReturn("module1 [2]").when(project2).getName();
+        List<WorkspaceProject> projects2 = new ArrayList<>();
+        projects2.add(project2);
+        doReturn(projects2).when(projectService).getAllWorkspaceProjectsByName(any(),
+                                                                              eq("module1 [2]"));
 
         service.setupExamples(exampleOrganizationalUnit,
                               exampleProjects);
 
         verify(repositoryCopier).copy(any(OrganizationalUnit.class),
-                                      eq("ou-module1-1"),
+                                      eq("module1-3"),
                                       any(Path.class));
-    }
-
-    @Test
-    public void evenTheOuRepositoryComboPlusNumberNameIsTaken() {
-
-        doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("module1"));
-        doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("ou-module1"));
-        doReturn(mock(Repository.class)).when(repositoryService).getRepositoryFromSpace(any(Space.class), eq("ou-module1-1"));
-
-        service.setupExamples(exampleOrganizationalUnit,
-                              exampleProjects);
-
-        verify(repositoryCopier).copy(any(OrganizationalUnit.class),
-                                      eq("ou-module1-2"),
-                                      any(Path.class));
+        verify(projectScreenService).save(any(),
+                                          modelCapture.capture(),
+                                          any());
+        final ProjectScreenModel model = modelCapture.getValue();
+        assertEquals("module1 [3]",
+                     model.getPOM().getName());
     }
 }

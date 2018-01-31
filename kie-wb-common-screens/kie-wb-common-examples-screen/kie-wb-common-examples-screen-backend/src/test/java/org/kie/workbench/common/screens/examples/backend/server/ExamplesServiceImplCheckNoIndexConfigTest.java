@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
+import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -79,6 +80,9 @@ public class ExamplesServiceImplCheckNoIndexConfigTest {
     @Mock
     private SpacesAPI spaces;
 
+    @Mock
+    private ProjectScreenService projectScreenService;
+
     @Spy
     private Event<NewProjectEvent> newProjectEvent = new EventSourceMock<NewProjectEvent>() {
         @Override
@@ -104,7 +108,8 @@ public class ExamplesServiceImplCheckNoIndexConfigTest {
                                               projectService,
                                               metadataService,
                                               spaces,
-                                              newProjectEvent));
+                                              newProjectEvent,
+                                              projectScreenService));
     }
 
     @Test

@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.nio.file.SimpleFileVisitor;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -62,6 +63,8 @@ import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
 import org.kie.workbench.common.screens.examples.model.ExamplesMetaData;
 import org.kie.workbench.common.screens.examples.service.ExamplesService;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +101,7 @@ public class ExamplesServiceImpl implements ExamplesService {
     private MetadataService metadataService;
     private SpacesAPI spaces;
     private ExampleRepository playgroundRepository;
+    private ProjectScreenService projectScreenService;
 
     public ExamplesServiceImpl() {
         //Zero-parameter Constructor for CDI proxies
@@ -114,7 +118,8 @@ public class ExamplesServiceImpl implements ExamplesService {
                                final WorkspaceProjectService projectService,
                                final MetadataService metadataService,
                                final SpacesAPI spaces,
-                               final Event<NewProjectEvent> newProjectEvent) {
+                               final Event<NewProjectEvent> newProjectEvent,
+                               final ProjectScreenService projectScreenService) {
         this.ioService = ioService;
         this.configurationFactory = configurationFactory;
         this.repositoryFactory = repositoryFactory;
@@ -126,6 +131,7 @@ public class ExamplesServiceImpl implements ExamplesService {
         this.metadataService = metadataService;
         this.spaces = spaces;
         this.newProjectEvent = newProjectEvent;
+        this.projectScreenService = projectScreenService;
     }
 
     @PostConstruct
@@ -385,7 +391,9 @@ public class ExamplesServiceImpl implements ExamplesService {
 
                 // Signal creation of new Project (Creation of OU and Repository, if applicable,
                 // are already handled in the corresponding services).
-                final WorkspaceProject project = projectService.resolveProject(targetRepository);
+                WorkspaceProject project = projectService.resolveProject(targetRepository);
+                project = renameIfNecessary(targetOU,
+                                            project);
                 newProjectEvent.fire(new NewProjectEvent(project));
 
                 //Store first new example project
@@ -402,26 +410,47 @@ public class ExamplesServiceImpl implements ExamplesService {
         return new WorkspaceProjectContextChangeEvent(firstExampleProject);
     }
 
+    private WorkspaceProject renameIfNecessary(final OrganizationalUnit ou,
+                                               final WorkspaceProject project) {
+        int i = 1;
+        String name = project.getName();
+        Collection<WorkspaceProject> projectsWithSameName = projectService.getAllWorkspaceProjectsByName(ou,
+                                                                                                         name);
+
+        if (projectsWithSameName.size() > 1) {
+            while (!projectsWithSameName.isEmpty()) {
+                i++;
+                name = project.getName() + " [" + i + "]";
+                projectsWithSameName = projectService.getAllWorkspaceProjectsByName(ou,
+                                                                                    name);
+            }
+        }
+
+        if (!name.equals(project.getName())) {
+            final Path pomXMLPath = project.getMainModule().getPomXMLPath();
+            final ProjectScreenModel model = projectScreenService.load(pomXMLPath);
+            model.getPOM().setName(name);
+            projectScreenService.save(pomXMLPath,
+                                      model,
+                                      "");
+            return projectService.resolveProject(pomXMLPath);
+        }
+
+        return project;
+    }
+
     private String resolveRepositoryName(final OrganizationalUnit targetOU,
                                          final ExampleProject exampleProject) {
-        final String newRepositoryName = exampleProject.getName().replace(' ', '-');
-        final String newTeamRepositoryName = targetOU.getName().replace(' ', '-') + "-" + newRepositoryName;
         final Space space = spaces.getSpace(targetOU.getName());
-
-        if (repositoryService.getRepositoryFromSpace(space, newRepositoryName) == null) {
-            return newRepositoryName;
-        } else if (repositoryService.getRepositoryFromSpace(space, newTeamRepositoryName) == null) {
-            return newTeamRepositoryName;
-        }
+        final String newRepositoryName = exampleProject.getName().replace(' ', '-');
 
         int index = 1;
-        String tempRepositoryName = newTeamRepositoryName + "-1";
-        while (repositoryService.getRepositoryFromSpace(space, tempRepositoryName) != null) {
-            index++;
-            tempRepositoryName = newTeamRepositoryName + "-" + index;
+        String suffix = "";
+        while (repositoryService.getRepositoryFromSpace(space, newRepositoryName + suffix) != null) {
+            suffix = "-" + ++index;
         }
 
-        return tempRepositoryName;
+        return newRepositoryName + suffix;
     }
 
     private OrganizationalUnit getOrganizationalUnit(String targetOUName) {

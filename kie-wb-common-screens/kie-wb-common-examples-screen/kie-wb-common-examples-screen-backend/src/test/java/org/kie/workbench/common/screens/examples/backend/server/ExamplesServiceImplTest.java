@@ -56,6 +56,7 @@ import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit
 import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
 import org.kie.workbench.common.screens.examples.model.ExamplesMetaData;
+import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.mockito.Mock;
@@ -121,6 +122,9 @@ public class ExamplesServiceImplTest {
     @Mock
     private SpacesAPI spaces;
 
+    @Mock
+    private ProjectScreenService projectScreenService;
+
     private ExamplesServiceImpl service;
 
     @Before
@@ -135,7 +139,8 @@ public class ExamplesServiceImplTest {
                                               projectService,
                                               metadataService,
                                               spaces,
-                                              newProjectEvent));
+                                              newProjectEvent,
+                                              projectScreenService));
         when(ouService.getOrganizationalUnits()).thenReturn(new HashSet<OrganizationalUnit>() {{
             add(new OrganizationalUnitImpl("ou1Name",
                                            "ou1Owner",
@@ -357,7 +362,8 @@ public class ExamplesServiceImplTest {
         when(repositoryCopier.copy(eq(ou),
                                    anyString(),
                                    eq(moduleRoot))).thenReturn(repository);
-        final WorkspaceProject project = new WorkspaceProject();
+        final WorkspaceProject project = spy(new WorkspaceProject());
+        doReturn("project").when(project).getName();
         doReturn(project).when(projectService).resolveProject(repository);
 
         final WorkspaceProjectContextChangeEvent event = service.setupExamples(exOU,
@@ -423,7 +429,8 @@ public class ExamplesServiceImplTest {
         doReturn(repository1).when(repositoryCopier).copy(eq(ou),
                                                           anyString(),
                                                           eq(module2Root));
-        final WorkspaceProject project = new WorkspaceProject();
+        final WorkspaceProject project = spy(new WorkspaceProject());
+        doReturn("project").when(project).getName();
         doReturn(project).when(projectService).resolveProject(repository1);
 
         final WorkspaceProjectContextChangeEvent event = service.setupExamples(exOU,
