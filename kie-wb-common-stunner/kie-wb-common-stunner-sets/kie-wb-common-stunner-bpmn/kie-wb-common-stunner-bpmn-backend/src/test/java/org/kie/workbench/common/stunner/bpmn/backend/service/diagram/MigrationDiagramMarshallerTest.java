@@ -80,9 +80,11 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Parent;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
@@ -453,15 +455,45 @@ public class MigrationDiagramMarshallerTest {
 
 
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
-        Set<Node> oldNodes = asNodeSet(oldDiagram.getGraph().nodes());
-        Set<Node> newNodes = asNodeSet(newDiagram.getGraph().nodes());
+        Set<Node<View,?>> oldNodes = asNodeSet(oldDiagram.getGraph().nodes());
+        Set<Node<View,?>> newNodes = asNodeSet(newDiagram.getGraph().nodes());
 
         assertEquals("Number of nodes should match", oldNodes.size(), newNodes.size());
-        assertEquals("The generated set of nodes should match", oldNodes, newNodes);
+
+        Iterator<Node<View,?>> oldIt = oldNodes.iterator();
+        Iterator<Node<View,?>> newIt = newNodes.iterator();
+
+
+        for (int i = 0; i < oldNodes.size(); i++) {
+            Node<View, ?> o = oldIt.next();
+            Node<View, ?> n = newIt.next();
+
+            View oldContent = o.getContent();
+            View newContent = n.getContent();
+
+            Bounds oldBounds = oldContent.getBounds();
+            Bounds newBounds = newContent.getBounds();
+
+            assertEquals(
+                    oldBounds,
+                    newBounds
+            );
+
+            Object oldDefinition = oldContent.getDefinition();
+            Object newDefinition = newContent.getDefinition();
+
+            assertEquals(
+                    oldDefinition,
+                    newDefinition
+            );
+
+
+        }
+
     }
 
-    private Set<Node> asNodeSet(Iterable nodes) {
-        Set<Node> oldNodes = new HashSet<>();
+    private Set<Node<View,?>> asNodeSet(Iterable nodes) {
+        Set<Node<View,?>> oldNodes = new HashSet<>();
         nodes.forEach(n -> oldNodes.add((Node) n));
         return oldNodes;
     }
