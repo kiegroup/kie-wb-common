@@ -35,10 +35,12 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -48,7 +50,15 @@ public class BPMNProjectDiagramFactoryTest {
 
     private static final String NAME = "name1";
     private static final String DIAGRAM_NODE_UUID = "dnuuid";
-    private static final String PKG = "org.kie.wb.common.stunner.bpmn.project.test";
+    private static final org.guvnor.common.services.project.model.Package PKG =
+            new org.guvnor.common.services.project.model.Package(mock(Path.class),
+                                                                 mock(Path.class),
+                                                                 mock(Path.class),
+                                                                 mock(Path.class),
+                                                                 mock(Path.class),
+                                                                 "packageName",
+                                                                 "packageCaption",
+                                                                 "");
 
     @Mock
     ProjectMetadata metadata;
@@ -113,7 +123,7 @@ public class BPMNProjectDiagramFactoryTest {
     public void testBuild() {
         final String pName = "p1";
         when(metadata.getProjectPackage()).thenReturn(PKG);
-        when(metadata.getProjectName()).thenReturn(pName);
+        when(metadata.getModuleName()).thenReturn(pName);
         ProjectDiagram pdiagram = tested.build(NAME,
                                                metadata,
                                                graph);
@@ -122,7 +132,7 @@ public class BPMNProjectDiagramFactoryTest {
                      pdiagram.getGraph());
         assertEquals(pName + "." + NAME,
                      diagram.getDiagramSet().getId().getValue());
-        assertEquals(PKG,
+        assertEquals("packageName",
                      diagram.getDiagramSet().getPackageProperty().getValue());
         verify(metadata,
                times(1)).setCanvasRootUUID(eq(DIAGRAM_NODE_UUID));

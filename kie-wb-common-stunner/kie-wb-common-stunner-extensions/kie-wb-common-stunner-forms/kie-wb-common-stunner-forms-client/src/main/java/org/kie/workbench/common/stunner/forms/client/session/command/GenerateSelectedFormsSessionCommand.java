@@ -80,7 +80,7 @@ public class GenerateSelectedFormsSessionCommand extends AbstractClientSessionCo
             service.generateSelectedForms(getCanvasHandler().getDiagram(),
                                           selectedItems);
         } else {
-            formGenerationNotifier.showNotification(translationService.getKeyValue(FormsClientConstants.FormsNoItemsSelectedForGeneration));
+            formGenerationNotifier.showNotification(translationService.getValue(FormsClientConstants.FormsNoItemsSelectedForGeneration));
         }
     }
 

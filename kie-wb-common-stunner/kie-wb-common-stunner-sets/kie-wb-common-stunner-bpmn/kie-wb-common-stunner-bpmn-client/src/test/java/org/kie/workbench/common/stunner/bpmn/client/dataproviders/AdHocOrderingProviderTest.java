@@ -50,8 +50,8 @@ public class AdHocOrderingProviderTest {
 
     @Before
     public void setUp() {
-        when(translationService.getKeyValue(PARALELL_KEY)).thenReturn(PARALELL_LABEL);
-        when(translationService.getKeyValue(SEQUENTIAL_KEY)).thenReturn(SEQUENTIAL_LABEL);
+        when(translationService.getValue(PARALELL_KEY)).thenReturn(PARALELL_LABEL);
+        when(translationService.getValue(SEQUENTIAL_KEY)).thenReturn(SEQUENTIAL_LABEL);
         provider = new AdHocOrderingProvider(translationService);
         provider.init();
     }

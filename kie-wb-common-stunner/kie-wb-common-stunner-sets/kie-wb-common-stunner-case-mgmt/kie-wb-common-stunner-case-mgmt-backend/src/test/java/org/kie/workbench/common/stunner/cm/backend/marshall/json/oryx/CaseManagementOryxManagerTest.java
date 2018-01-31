@@ -80,7 +80,8 @@ public class CaseManagementOryxManagerTest {
 
     @Before
     public void setup() {
-        this.oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager);
+        this.oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager,
+                                                      () -> new WorkItemDefinitionEmptyRegistry());
         this.definitionUtils = new DefinitionUtils(definitionManager,
                                                    factoryManager);
         this.oryxPropertySerializers = new ArrayList<>();

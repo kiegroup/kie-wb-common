@@ -89,7 +89,7 @@ public class AdHocOrderingProvider
         Map<Object, String> values = new TreeMap<>((o1, o2) -> valuePosition.get(o1).compareTo(valuePosition.get(o2)));
         Arrays.stream(ORDERING.values())
                 .forEach(scope -> values.put(scope.value(),
-                                             translationService.getKeyValue(scope.i18nKey())));
+                                             translationService.getValue(scope.i18nKey())));
 
         return new SelectorData(values,
                                 ORDERING.SEQUENTIAL.value());

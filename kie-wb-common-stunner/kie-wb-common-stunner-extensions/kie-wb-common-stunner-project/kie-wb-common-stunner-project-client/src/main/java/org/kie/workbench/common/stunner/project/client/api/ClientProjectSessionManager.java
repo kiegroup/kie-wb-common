@@ -66,19 +66,4 @@ public class ClientProjectSessionManager extends ClientSessionManagerImpl {
               sessionResumedEvent,
               sessionErrorEvent);
     }
-
-    @Override
-    protected void postOpen() {
-        super.postOpen();
-    }
-
-    @Override
-    protected void postResume() {
-        super.postResume();
-    }
-
-    @Override
-    protected void postDestroy() {
-        super.postDestroy();
-    }
 }

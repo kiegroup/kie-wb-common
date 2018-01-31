@@ -56,6 +56,8 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.events.ChangeTitleWidgetEvent;
@@ -78,6 +80,7 @@ import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -178,9 +181,18 @@ public class ProjectDiagramEditorTest {
         when(sessionCommandFactory.newValidateCommand()).thenReturn(sessionValidateCommand);
         when(presenterFactory.newPresenterEditor()).thenReturn(presenter);
         when(clientSessionManager.getCurrentSession()).thenReturn(fullSession);
-        when(clientSessionManager.getSessionFactory(diagram,
+        when(clientSessionManager.getSessionFactory(metadata,
                                                     ClientFullSession.class)).thenReturn(clientSessionFactory);
-        when(clientSessionFactory.newSession()).thenReturn((fullSession));
+        doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+                final Consumer<ClientFullSessionImpl> sessionConsumer =
+                        (Consumer<ClientFullSessionImpl>) invocationOnMock.getArguments()[1];
+                sessionConsumer.accept(fullSession);
+                return null;
+            }
+        }).when(clientSessionFactory).newSession(eq(metadata),
+                                                 any(Consumer.class));
         when(presenter.getInstance()).thenReturn(fullSession);
         when(presenter.withToolbar(anyBoolean())).thenReturn(presenter);
         when(presenter.withPalette(anyBoolean())).thenReturn(presenter);

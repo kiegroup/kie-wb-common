@@ -103,7 +103,7 @@ public class AdapterRegistryImpl implements AdapterRegistry,
                 return adapter;
             }
         }
-        return nullHandling(PriorityAdapter.class,
+        return nullHandling(PropertyAdapter.class,
                             type);
     }
 

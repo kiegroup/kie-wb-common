@@ -24,6 +24,16 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 public interface StunnerTranslationService {
 
     /**
+     * Returns the localized value for a key.
+     */
+    String getValue(String key);
+
+    /**
+     * Returns the localized value for a key
+     */
+    String getValue(String key, Object... args);
+
+    /**
      * Retrieves the description for the given Definition Set ID
      */
     String getDefinitionSetDescription(String defSetId);
@@ -37,11 +47,6 @@ public interface StunnerTranslationService {
      * Retrieves the title for the given Definition ID
      */
     String getDefinitionTitle(String defId);
-
-    /**
-     * Retrieves the category for the given Definition ID
-     */
-    String getDefinitionCategory(String defId);
 
     /**
      * Retrieves the description for the given Definition ID

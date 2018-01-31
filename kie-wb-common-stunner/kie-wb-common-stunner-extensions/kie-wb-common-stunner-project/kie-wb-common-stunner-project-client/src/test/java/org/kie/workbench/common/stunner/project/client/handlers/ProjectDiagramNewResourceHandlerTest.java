@@ -47,7 +47,6 @@ import static org.mockito.Mockito.when;
 public class ProjectDiagramNewResourceHandlerTest {
 
     private static final String DEFSET_ID = "ds1";
-    private static final String PROJ_PKG = "org.kie.stunner.test";
     private static final String PROJ_ROOT_FILENAME = "rootFileName";
     private static final String MODULE_NAME = "moduleName";
 
@@ -92,7 +91,7 @@ public class ProjectDiagramNewResourceHandlerTest {
         when(definitionSetRegistry.getDefinitionSetByType(any(Class.class))).thenReturn(definitionSet);
         when(definitionSetAdapter.getId(eq(definitionSet))).thenReturn(DEFSET_ID);
         when(aPackage.getPackageMainResourcesPath()).thenReturn(path);
-        when(aPackage.getPackageName()).thenReturn(PROJ_PKG);
+        when(aPackage.getPackageName()).thenReturn("packageName");
         when(aPackage.getModuleRootPath()).thenReturn(moduleRootPath);
         when(moduleRootPath.getFileName()).thenReturn(PROJ_ROOT_FILENAME);
         when(context.getActiveModule()).thenReturn(Optional.of(module));
@@ -117,7 +116,7 @@ public class ProjectDiagramNewResourceHandlerTest {
                                 eq("file1"),
                                 eq(DEFSET_ID),
                                 eq(MODULE_NAME),
-                                eq(PROJ_PKG),
+                                any(Package.class),
                                 any(ServiceCallback.class));
     }
 
