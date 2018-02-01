@@ -61,7 +61,7 @@ public class CharacterEditableColumnGenerator extends AbstractEditableColumnGene
             @Override
             protected boolean validate(String value,
                                        TableEntry<String> model) {
-                if (value != null) {
+                if (value != null && !value.isEmpty()) {
                     if (value.length() != 1) {
                         cellEditionHandler.showValidationError(translationService.getTranslation(FormRenderingConstants.CharacterEditableColumnGeneratorValidationError));
                         return false;
@@ -69,6 +69,14 @@ public class CharacterEditableColumnGenerator extends AbstractEditableColumnGene
                 }
 
                 return true;
+            }
+
+            @Override
+            protected String convert(String flatValue) {
+                if(flatValue == null || flatValue.isEmpty()) {
+                    return null;
+                }
+                return super.convert(flatValue);
             }
         };
 

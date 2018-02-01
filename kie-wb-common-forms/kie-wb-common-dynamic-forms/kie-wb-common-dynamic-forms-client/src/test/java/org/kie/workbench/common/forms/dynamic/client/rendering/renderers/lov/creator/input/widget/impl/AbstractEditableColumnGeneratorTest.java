@@ -33,6 +33,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public abstract class AbstractEditableColumnGeneratorTest<TYPE, GENERATOR extends AbstractEditableColumnGenerator<TYPE>> {
@@ -41,7 +42,7 @@ public abstract class AbstractEditableColumnGeneratorTest<TYPE, GENERATOR extend
     protected UberfirePagedTable<TableEntry<TYPE>> pagedTable;
 
     @Mock
-    protected CellEditionHandler<TYPE> callback;
+    protected CellEditionHandler<TYPE> cellEditionHandler;
 
     @Mock
     protected TranslationService translationService;
@@ -64,31 +65,24 @@ public abstract class AbstractEditableColumnGeneratorTest<TYPE, GENERATOR extend
     @Test
     public void testGetEditableColumn() {
 
-        generator.registerColumn(pagedTable, callback,false);
-
-        verify(generator, never()).getReadOnlyColumn();
-        verify(generator).getEditableColumn(pagedTable, callback);
-
-        verify(translationService).getTranslation(FormRenderingConstants.EditableColumnGeneratorValueHeader);
-
-        ArgumentCaptor<Column> columnArgumentCaptor = ArgumentCaptor.forClass(Column.class);
-
-        verify(pagedTable).addColumn(columnArgumentCaptor.capture(), anyString());
-
-        Column column = columnArgumentCaptor.getValue();
-
-        assertNotNull(column);
-        assertNotNull(column.getFieldUpdater());
+        testGetColumn(false);
 
     }
 
     @Test
     public void testGetReadOnlyColumn() {
 
-        generator.registerColumn(pagedTable, callback,true);
+        testGetColumn(true);
 
-        verify(generator, never()).getEditableColumn(pagedTable, callback);
-        verify(generator).getReadOnlyColumn();
+    }
+
+    protected void testGetColumn(boolean readOnly) {
+        generator.registerColumn(pagedTable,
+                                 cellEditionHandler, readOnly);
+
+        verify(generator, readOnly ? never() : times(1)).getEditableColumn(pagedTable,
+                                                                           cellEditionHandler);
+        verify(generator, readOnly ? times(1) : never()).getReadOnlyColumn();
 
         verify(translationService).getTranslation(FormRenderingConstants.EditableColumnGeneratorValueHeader);
 
@@ -99,11 +93,15 @@ public abstract class AbstractEditableColumnGeneratorTest<TYPE, GENERATOR extend
         Column column = columnArgumentCaptor.getValue();
 
         assertNotNull(column);
-        assertNull(column.getFieldUpdater());
 
+        if(readOnly) {
+            assertNull(column.getFieldUpdater());
+        } else {
+            assertNotNull(column.getFieldUpdater());
+        }
     }
 
-    abstract GENERATOR getGeneratorInstance(TranslationService translationService);
+    protected abstract GENERATOR getGeneratorInstance(TranslationService translationService);
 
-    abstract String[] getSupportedTypes();
+    protected abstract String[] getSupportedTypes();
 }

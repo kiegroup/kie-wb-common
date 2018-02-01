@@ -66,7 +66,16 @@ public interface FormRenderingConstants {
     String CharacterEditableColumnGeneratorValidationError = "CharacterEditableColumnGenerator.validationError";
 
     @TranslationKey(defaultValue = "")
-    String IntegerEditableColumnGeneratorInvalidNumber = "IntegerEditableColumnGenerator.invalidNumber";
+    String InvalidInteger = "InvalidInteger";
+
+    @TranslationKey(defaultValue = "")
+    String InvalidIntegerWithRange = "InvalidIntegerWithRange";
+
+    @TranslationKey(defaultValue = "")
+    String InvalidDecimal = "InvalidDecimal";
+
+    @TranslationKey(defaultValue = "")
+    String InvalidDecimalWithRange = "InvalidDecimalWithRange";
 
     @TranslationKey(defaultValue = "")
     String DecimalEditableColumnGeneratorInvalidNumber = "DecimalEditableColumnGenerator.invalidNumber";
