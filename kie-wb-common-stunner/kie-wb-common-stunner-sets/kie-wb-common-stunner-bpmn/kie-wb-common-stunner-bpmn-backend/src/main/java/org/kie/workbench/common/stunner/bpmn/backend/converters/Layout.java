@@ -29,6 +29,11 @@ import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -60,11 +65,30 @@ public class Layout {
         Bounds parentBounds = parentShape.getBounds();
         Bounds childBounds = childShape.getBounds();
 
-        float offsetX = parentBounds.getX();
-        float offsetY = parentBounds.getY();
+        float relativeX = childBounds.getX() - parentBounds.getX();
+        float relativeY = childBounds.getY() - parentBounds.getY();
 
-        float relativeX = childBounds.getX() - offsetX;
-        float relativeY = childBounds.getY() - offsetY;
+        BoundsImpl convertedBounds = BoundsImpl.build(
+                relativeX,
+                relativeY,
+                relativeX + childBounds.getWidth(),
+                relativeY + childBounds.getHeight());
+        child.getContent().setBounds(convertedBounds);
+
+        if (child.getContent() instanceof BaseTask) {
+            BaseTask content = (BaseTask) child.getContent();
+            content.setDimensionsSet(new RectangleDimensionsSet(
+                    (double) childBounds.getWidth(),
+                    (double) childBounds.getHeight()
+            ));
+        }
+
+        if (child.getContent() instanceof BaseEndEvent) {
+            BaseEndEvent content = (BaseEndEvent) child.getContent();
+            content.setDimensionsSet(new CircleDimensionSet(new Radius(
+                    childBounds.getHeight() / 2d
+            )));
+        }
 
         context.updatePosition(child, Point2D.create(relativeX, relativeY));
 
@@ -75,30 +99,50 @@ public class Layout {
         BPMNShape shape = getBPMNShapeForElement(node.getUUID());
         Bounds bounds = shape.getBounds();
 
-        double x, y;
-
         BaseElement bpmnElement = shape.getBpmnElement();
         if (bpmnElement instanceof BoundaryEvent) {
             // then we must check the overrides
             Point2D docker = Properties.docker((BoundaryEvent) bpmnElement);
-            x = docker.getX();
-            y = docker.getY();
+            BoundsImpl convertedBounds = BoundsImpl.build(
+                    docker.getX(),
+                    docker.getY(),
+                    docker.getX() + bounds.getWidth(),
+                    docker.getY() + bounds.getHeight());
+            node.getContent().setBounds(convertedBounds);
         } else {
-            x = bounds.getX();
-            y = bounds.getY();
+            BoundsImpl convertedBounds = BoundsImpl.build(
+                    bounds.getX(),
+                    bounds.getY(),
+                    bounds.getX() + bounds.getWidth(),
+                    bounds.getY() + bounds.getHeight());
+            node.getContent().setBounds(convertedBounds);
+
         }
 
-        BoundsImpl convertedBounds = BoundsImpl.build(
-                x,
-                y,
-                x + bounds.getWidth(),
-                y + bounds.getHeight());
-        node.getContent().setBounds(convertedBounds);
 
-        context.updatePosition(node, Point2D.create(x, y));
+
+//        context.updatePosition(node, Point2D.create(x, y));
 
         logger.info(node.getContent().getDefinition().toString() + node.getContent().getBounds().toString());
     }
+//    public void updateEdge(Edge<?, ?> edge) {
+//        Node sourceNode = edge.getSourceNode();
+//        String sourceId = sourceNode.getUUID();
+//        Node targetNode = edge.getTargetNode();
+//        String targetId = targetNode.getUUID();
+//        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
+//        Bounds targetBounds = getBPMNShapeForElement(targetId).getBounds();
+//
+//        Optional<Connection> sourceConnection = ((ViewConnector) edge.getContent()).getSourceConnection();
+//
+//        sourceConnection.get().getLocation().setX(0);
+//        sourceConnection.get().getLocation().setY(sourceBounds.getHeight() / 2);
+//
+//
+//        points.add(Point2D.create(sourceBounds.getWidth(),
+//                                  sourceBounds.getHeight() / 2));
+//
+//    }
 
     public void updateEdge(Edge<?, ?> edge) {
         Node sourceNode = edge.getSourceNode();
@@ -131,6 +175,32 @@ public class Layout {
         });
     }
 
+    public Point2D sourcePosition(Node sourceNode, Point wayPoint) {
+        String sourceId = sourceNode.getUUID();
+        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
+        if (wayPoint == null) {
+            return Point2D.create(sourceBounds.getWidth() / 2,
+                                  sourceBounds.getHeight() / 2);
+        } else {
+            return Point2D.create(
+                    wayPoint.getX() - sourceBounds.getX(),
+                    wayPoint.getY() - sourceBounds.getY());
+        }
+    }
+
+    public Point2D targetPosition(Node sourceNode, Point wayPoint) {
+        String sourceId = sourceNode.getUUID();
+        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
+        if (wayPoint == null) {
+            return Point2D.create(sourceBounds.getWidth() / 2,
+                                  sourceBounds.getHeight() / 2);
+        } else {
+            return Point2D.create(
+                    wayPoint.getX() - sourceBounds.getX(),
+                    wayPoint.getY() - sourceBounds.getY());
+        }
+    }
+
     private Optional<BPMNEdge> getBPMNEdgeForElement(String elementId) {
         return plane.getPlaneElement().stream()
                 .filter(dia -> dia instanceof BPMNEdge)
@@ -151,10 +221,9 @@ public class Layout {
         List<Point2D> points = new ArrayList<>();
 
         if (waypoints.isEmpty()) {
-            points.add(Point2D.create(sourceBounds.getWidth() / 2,
+            points.add(Point2D.create(sourceBounds.getWidth(),
                                       sourceBounds.getHeight() / 2));
-
-            points.add(Point2D.create(targetBounds.getWidth() / 2,
+            points.add(Point2D.create(0,
                                       targetBounds.getHeight() / 2));
         } else {
             if (waypoints.size() != 2) {
@@ -162,8 +231,8 @@ public class Layout {
             }
             Point firstWaypoint = waypoints.get(0);
             points.add(Point2D.create(
-                    firstWaypoint.getX() - sourceBounds.getX(),
-                    firstWaypoint.getY() - sourceBounds.getY()));
+                            firstWaypoint.getX() - sourceBounds.getX(),
+                            firstWaypoint.getY() - sourceBounds.getY()));
 
             // will skip these for now...
             // for (int i = 1; i < waypoints.size() - 1; i++) {

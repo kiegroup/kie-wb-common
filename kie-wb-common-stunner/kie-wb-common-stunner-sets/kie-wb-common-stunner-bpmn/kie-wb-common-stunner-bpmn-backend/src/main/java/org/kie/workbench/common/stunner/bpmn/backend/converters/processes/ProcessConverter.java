@@ -78,8 +78,8 @@ public class ProcessConverter {
         firstDiagramNode.getContent().setBounds(new BoundsImpl(
                 new BoundImpl(0d,
                               0d),
-                new BoundImpl(BPMNGraphFactory.GRAPH_DEFAULT_WIDTH,
-                              BPMNGraphFactory.GRAPH_DEFAULT_HEIGHT)
+                new BoundImpl(950d,
+                              950d)
         ));
         context.addNode(firstDiagramNode);
 
