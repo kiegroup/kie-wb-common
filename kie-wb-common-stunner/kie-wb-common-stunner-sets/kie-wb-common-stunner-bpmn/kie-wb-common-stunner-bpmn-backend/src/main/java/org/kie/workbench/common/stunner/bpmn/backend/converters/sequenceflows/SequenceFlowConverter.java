@@ -31,7 +31,6 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 
 public class SequenceFlowConverter {
 
@@ -70,8 +69,6 @@ public class SequenceFlowConverter {
         MagnetConnection targetConnection =
                 MagnetConnection.Builder.at(0, 0)
                         .setAuto(p.isAutoConnectionTarget());
-
-        Index<?, ?> index = context.executionContext().getGraphIndex();
 
         context.addEdge(
                 edge,
