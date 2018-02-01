@@ -51,7 +51,6 @@ import org.guvnor.common.services.project.social.ModuleEventType;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.repositories.Branch;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.RepositoryRemovedEvent;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -711,43 +710,6 @@ public class LibraryPlacesTest {
                                                                                                      scopeResolutionStrategyInfo,
                                                                                                      null));
         verify(libraryPlaces).setupLibraryBreadCrumbsForPreferences();
-    }
-
-    @Test
-    public void projectDeletedRedirectsToLibraryWhenItIsOpenedTest() {
-//        final Repository activeRepository = mock(Repository.class);
-        final RepositoryRemovedEvent repositoryRemovedEvent = mock(RepositoryRemovedEvent.class);
-
-        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        doReturn(activeRepository).when(repositoryRemovedEvent).getRepository();
-
-        libraryPlaces.goToProject();
-        libraryPlaces.onProjectDeleted(repositoryRemovedEvent);
-
-        verify(libraryPlaces).closeAllPlaces();
-        verify(libraryPlaces).goToLibrary();
-        verify(notificationEvent).fire(any());
-    }
-
-    @Test
-    public void projectDeletedDoesNotRedirectToLibraryWhenItIsNotOpenedTest() {
-
-        libraryPlaces.goToProject();
-
-        final Repository deletedRepository = mock(Repository.class);
-        final RepositoryRemovedEvent repositoryRemovedEvent = mock(RepositoryRemovedEvent.class);
-
-        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.LIBRARY_PERSPECTIVE);
-        doReturn(deletedRepository).when(repositoryRemovedEvent).getRepository();
-
-        libraryPlaces.onProjectDeleted(repositoryRemovedEvent);
-
-        verify(libraryPlaces,
-               never()).closeAllPlaces();
-        verify(libraryPlaces,
-               never()).goToLibrary();
-        verify(notificationEvent,
-               never()).fire(any());
     }
 
     @Test

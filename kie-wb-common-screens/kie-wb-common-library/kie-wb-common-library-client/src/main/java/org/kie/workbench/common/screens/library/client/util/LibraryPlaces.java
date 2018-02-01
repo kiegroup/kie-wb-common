@@ -263,17 +263,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         }
     }
 
-    public void onProjectDeleted(@Observes final RepositoryRemovedEvent repositoryRemovedEvent) {
-        if (isLibraryPerspectiveOpen()) {
-            if (repositoryRemovedEvent.getRepository().equals(lastViewedProject.getRepository())) {
-                closeAllPlaces();
-                goToLibrary();
-                notificationEvent.fire(new NotificationEvent(ts.getTranslation(LibraryConstants.ProjectDeleted),
-                                                             NotificationEvent.NotificationType.DEFAULT));
-            }
-        }
-    }
-
     public void onProjectRenamed(@Observes final RenameModuleEvent renameModuleEvent) {
         if (isLibraryPerspectiveOpen()) {
             projectContext.getActiveWorkspaceProject()
