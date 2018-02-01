@@ -80,7 +80,7 @@ public class EmptyProjectView implements EmptyProjectScreen.View,
         this.presenter = presenter;
         resourceHandlerContainer.setTextContent("");
         assetsActionsWidget.init();
-        projectActionsWidget.init(presenter::goToSettings);
+        projectActionsWidget.init(presenter::getPomXmlPath);
         assetsToolbar.appendChild(assetsActionsWidget.getView().getElement());
         projectToolbar.appendChild(projectActionsWidget.getView().getElement());
     }

@@ -209,7 +209,7 @@ public class NewProjectWizard
                 NewProjectWizard.super.complete();
                 invokeCallback(project);
                 if (openEditor) {
-                    placeManager.goTo("projectScreen");
+                    placeManager.goTo("ProjectSettings");
                 }
                 notificationEvent.fire(new NotificationEvent(CommonConstants.INSTANCE.ItemCreatedSuccessfully()));
                 busyIndicatorView.hideBusyIndicator();

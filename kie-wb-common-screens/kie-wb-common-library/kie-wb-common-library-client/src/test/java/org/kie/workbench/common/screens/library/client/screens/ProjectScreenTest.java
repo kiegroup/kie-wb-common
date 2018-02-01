@@ -53,7 +53,6 @@ public class ProjectScreenTest
                                               ts,
                                               new CallerMock<>(libraryService),
                                               assetClassifier,
-                                              assetDetailEvent,
                                               busyIndicatorView,
                                               projectController) {
             @Override
@@ -202,14 +201,6 @@ public class ProjectScreenTest
         projectScreen.onFilterChange();
 
         verify(view).resetPageRangeIndicator();
-    }
-
-    @Test
-    public void goToSettingsTest() {
-        projectScreen.goToSettings();
-
-        verify(assetDetailEvent).fire(new AssetDetailEvent(projectInfo,
-                                                           null));
     }
 
     @Test

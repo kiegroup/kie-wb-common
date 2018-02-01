@@ -95,7 +95,7 @@ public class ProjectView
     @Override
     public void init(ProjectScreen presenter) {
         this.presenter = presenter;
-        projectActionsWidget.init(presenter::goToSettings);
+        projectActionsWidget.init(presenter::getPomXmlPath);
         filterText.setAttribute("placeholder",
                                 ts.getTranslation(LibraryConstants.FilterByName));
         projectToolbar.appendChild(projectActionsWidget.getView().getElement());

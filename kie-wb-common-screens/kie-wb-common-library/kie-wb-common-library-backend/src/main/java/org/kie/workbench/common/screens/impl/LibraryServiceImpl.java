@@ -402,6 +402,7 @@ public class LibraryServiceImpl implements LibraryService {
                   final GAV gav) {
         return new POM(projectName,
                        projectDescription,
+                       "",
                        gav);
     }
 

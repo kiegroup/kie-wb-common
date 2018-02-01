@@ -52,7 +52,6 @@ public class ProjectScreenReloadTest
                                           ts,
                                           new CallerMock<>(libraryService),
                                           assetClassifier,
-                                          assetDetailEvent,
                                           busyIndicatorView,
                                           projectController) {
             @Override

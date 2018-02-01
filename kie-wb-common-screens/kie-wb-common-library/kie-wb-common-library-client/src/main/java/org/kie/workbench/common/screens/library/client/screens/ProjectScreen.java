@@ -17,7 +17,7 @@
 package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.List;
-import javax.enterprise.event.Event;
+
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
@@ -37,7 +37,6 @@ import org.kie.workbench.common.screens.library.api.AssetInfo;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetsQuery;
 import org.kie.workbench.common.screens.library.api.ProjectInfo;
-import org.kie.workbench.common.screens.library.client.events.AssetDetailEvent;
 import org.kie.workbench.common.screens.library.client.events.ProjectDetailEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
@@ -100,7 +99,6 @@ public class ProjectScreen {
     private TranslationService ts;
     private Caller<LibraryService> libraryService;
     private Classifier assetClassifier;
-    private Event<AssetDetailEvent> assetDetailEvent;
     private BusyIndicatorView busyIndicatorView;
     private ProjectController projectController;
     private ProjectInfo projectInfo;
@@ -117,7 +115,6 @@ public class ProjectScreen {
                          final TranslationService ts,
                          final Caller<LibraryService> libraryService,
                          final Classifier assetClassifier,
-                         final Event<AssetDetailEvent> assetDetailEvent,
                          final BusyIndicatorView busyIndicatorView,
                          final ProjectController projectController) {
         this.view = view;
@@ -126,7 +123,6 @@ public class ProjectScreen {
         this.ts = ts;
         this.libraryService = libraryService;
         this.assetClassifier = assetClassifier;
-        this.assetDetailEvent = assetDetailEvent;
         this.busyIndicatorView = busyIndicatorView;
         this.projectController = projectController;
     }
@@ -168,11 +164,6 @@ public class ProjectScreen {
             projectLoadTimer.cancel();
             projectLoadTimer = null;
         }
-    }
-
-    public void goToSettings() {
-        assetDetailEvent.fire(new AssetDetailEvent(projectInfo,
-                                                   null));
     }
 
     public String getProjectName() {
@@ -265,6 +256,10 @@ public class ProjectScreen {
                 }
             });
         }
+    }
+
+    public Path getPomXmlPath() {
+        return projectInfo.getProject().getPomXMLPath();
     }
 
     private boolean isFilterEmpty() {

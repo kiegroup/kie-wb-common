@@ -28,6 +28,7 @@ import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.ResourceUtils;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceHandler;
 import org.kie.workbench.common.widgets.client.handlers.NewResourcePresenter;
+import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
@@ -118,8 +119,8 @@ public class EmptyProjectScreen {
         }
     }
 
-    public void goToSettings() {
-        libraryPlaces.goToSettings(projectInfo);
+    public Path getPomXmlPath() {
+        return projectInfo.getProject().getPomXMLPath();
     }
 
     public NewResourceHandler getUploadHandler() {

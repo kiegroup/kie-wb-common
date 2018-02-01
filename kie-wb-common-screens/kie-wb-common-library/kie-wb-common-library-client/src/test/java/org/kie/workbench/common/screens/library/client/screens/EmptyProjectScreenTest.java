@@ -164,11 +164,4 @@ public class EmptyProjectScreenTest {
         verify(libraryPlaces,
                never()).goToProject(any(ProjectInfo.class));
     }
-
-    @Test
-    public void goToSettingsTest() {
-        emptyProjectScreen.goToSettings();
-
-        verify(libraryPlaces).goToSettings(any(ProjectInfo.class));
-    }
 }
