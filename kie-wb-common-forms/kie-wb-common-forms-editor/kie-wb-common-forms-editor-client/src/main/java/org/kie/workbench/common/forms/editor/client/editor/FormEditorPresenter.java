@@ -265,8 +265,7 @@ public class FormEditorPresenter extends KieEditor {
         if (canUpdateProject()) {
             fileMenuBuilder
                     .addSave(versionRecordManager.newSaveMenuItem(() -> saveAction()))
-                    .addCopy(versionRecordManager.getCurrentPath(),
-                             assetUpdateValidator)
+                    .addCopy(this::safeCopy)
                     .addRename(this::safeRename)
                     .addDelete(this::safeDelete);
         }
@@ -280,8 +279,72 @@ public class FormEditorPresenter extends KieEditor {
                              } )*/
     }
 
-    protected void safeRename() {
+    protected void safeCopy() {
+        if (this.isDirty(editorHelper.getContent().getDefinition().hashCode())) {
 
+            view.showSavePopup(versionRecordManager.getCurrentPath(),
+                               () -> copy(true),
+                               () -> copy(false));
+        } else {
+            copy(false);
+        }
+    }
+
+    protected void copy(final boolean save) {
+
+        if (save) {
+            synchronizeFormLayout();
+        }
+
+        copyPopUpPresenter.show(versionRecordManager.getCurrentPath(),
+                                assetUpdateValidator,
+                                getCopyCommand(save));
+    }
+
+    protected CommandWithFileNameAndCommitMessage getCopyCommand(boolean save) {
+        return details -> copyCommand(details,
+                                      save);
+    }
+
+    public void copyCommand(FileNameAndCommitMessage details,
+                               boolean save) {
+        view.showBusyIndicator(org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.Renaming());
+
+        editorService.call(getCopySuccessCallback(save),
+                           getCopyErrorCallback()).copy(versionRecordManager.getPathToLatest(),
+                                                        details.getNewFileName(),
+                                                        details.getCommitMessage(),
+                                                        save,
+                                                        editorHelper.getContent(),
+                                                        metadata);
+    }
+
+    public RemoteCallback<Path> getCopySuccessCallback(boolean save) {
+        return path -> {
+            copyPopUpPresenter.getView().hide();
+            view.hideBusyIndicator();
+            notification.fire(new NotificationEvent(org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants.INSTANCE.ItemCopiedSuccessfully(),
+                                                    NotificationEvent.NotificationType.SUCCESS));
+            if(save) {
+                setOriginalHash(editorHelper.getContent().getDefinition().hashCode());
+            }
+        };
+    }
+
+    public HasBusyIndicatorDefaultErrorCallback getCopyErrorCallback() {
+        return new HasBusyIndicatorDefaultErrorCallback(view) {
+
+            @Override
+            public boolean error(final Message message,
+                                 final Throwable throwable) {
+                copyPopUpPresenter.getView().hide();
+                return super.error(message,
+                                   throwable);
+            }
+        };
+    }
+
+    protected void safeRename() {
         if (this.isDirty(editorHelper.getContent().getDefinition().hashCode())) {
 
             view.showSavePopup(versionRecordManager.getCurrentPath(),
@@ -336,6 +399,7 @@ public class FormEditorPresenter extends KieEditor {
             public boolean error(final Message message,
                                  final Throwable throwable) {
                 renamePopupView.hide();
+                view.hideBusyIndicator();
                 return super.error(message,
                                    throwable);
             }
@@ -378,7 +442,7 @@ public class FormEditorPresenter extends KieEditor {
 
             // If the event is caused by a element move we must hold the field on the form.
             // If not it means that it should be removed.
-            if(!event.getFromMove()) {
+            if (!event.getFromMove()) {
                 editorHelper.removeField(fieldId,
                                          true);
                 onSyncPalette(formId);

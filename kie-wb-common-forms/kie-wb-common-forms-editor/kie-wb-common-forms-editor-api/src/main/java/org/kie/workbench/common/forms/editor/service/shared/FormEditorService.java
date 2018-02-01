@@ -44,4 +44,11 @@ public interface FormEditorService {
                               boolean saveBeforeRenaming,
                               FormModelerContent content,
                               Metadata metadata);
+
+    Path copy(Path path,
+              String newFileName,
+              String commitMessage,
+              boolean saveBeforeRenaming,
+              FormModelerContent content,
+              Metadata metadata);
 }
