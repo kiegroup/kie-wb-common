@@ -16,8 +16,22 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Optional;
+
 import org.eclipse.bpmn2.BaseElement;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderSize;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderSize;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontColor;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontFamily;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
 
 public class AbstractPropertyReader {
 
@@ -38,8 +52,40 @@ public class AbstractPropertyReader {
         return metaData("customDescription");
     }
 
+    public FontSet getFontSet() {
+        return new FontSet(
+                new FontFamily(),
+                new FontColor(attribute("fontcolor")), // or "color"
+                new FontSize(optionalAttribute("fontsize")
+                                     .map(Double::parseDouble).orElse(null)),
+                new FontBorderSize(),
+                new FontBorderColor());
+    }
+
+    public BackgroundSet getBackgroundSet() {
+        return new BackgroundSet(
+                new BgColor(attribute("bgcolor")), // or background-color
+                new BorderColor(attribute("border-color")), // or bordercolor
+                new BorderSize()
+        );
+    }
+
+    protected Optional<String> optionalAttribute(String attributeId) {
+        return element.getAnyAttribute().stream()
+                .filter(e -> e.getEStructuralFeature().getName().equals(attributeId))
+                .map(e -> e.getValue().toString())
+                .findFirst();
+    }
+
+
     protected String attribute(String attributeId) {
-        return Properties.findAnyAttribute(element, attributeId);
+        return attribute(attributeId, "");
+    }
+
+
+    protected String attribute(String attributeId, Object orElse) {
+        return optionalAttribute(attributeId)
+                .orElse(String.valueOf(orElse));
     }
 
     protected String metaData(String name) {

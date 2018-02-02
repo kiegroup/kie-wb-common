@@ -116,33 +116,22 @@ public class Layout {
                     bounds.getX() + bounds.getWidth(),
                     bounds.getY() + bounds.getHeight());
             node.getContent().setBounds(convertedBounds);
-
         }
-
-
 
 //        context.updatePosition(node, Point2D.create(x, y));
 
         logger.info(node.getContent().getDefinition().toString() + node.getContent().getBounds().toString());
     }
-//    public void updateEdge(Edge<?, ?> edge) {
-//        Node sourceNode = edge.getSourceNode();
-//        String sourceId = sourceNode.getUUID();
-//        Node targetNode = edge.getTargetNode();
-//        String targetId = targetNode.getUUID();
-//        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
-//        Bounds targetBounds = getBPMNShapeForElement(targetId).getBounds();
-//
-//        Optional<Connection> sourceConnection = ((ViewConnector) edge.getContent()).getSourceConnection();
-//
-//        sourceConnection.get().getLocation().setX(0);
-//        sourceConnection.get().getLocation().setY(sourceBounds.getHeight() / 2);
-//
-//
-//        points.add(Point2D.create(sourceBounds.getWidth(),
-//                                  sourceBounds.getHeight() / 2));
-//
-//    }
+
+    public CircleDimensionSet circleDimensionSet(String id) {
+        return new CircleDimensionSet(new Radius(
+                getBPMNShapeForElement(id).getBounds().getWidth() / 2d));
+    }
+
+    public RectangleDimensionsSet rectangleDimensionsSet(String id) {
+        Bounds bounds = getBPMNShapeForElement(id).getBounds();
+        return new RectangleDimensionsSet((double) bounds.getWidth(), (double) bounds.getHeight());
+    }
 
     public void updateEdge(Edge<?, ?> edge) {
         Node sourceNode = edge.getSourceNode();
@@ -231,8 +220,8 @@ public class Layout {
             }
             Point firstWaypoint = waypoints.get(0);
             points.add(Point2D.create(
-                            firstWaypoint.getX() - sourceBounds.getX(),
-                            firstWaypoint.getY() - sourceBounds.getY()));
+                    firstWaypoint.getX() - sourceBounds.getX(),
+                    firstWaypoint.getY() - sourceBounds.getY()));
 
             // will skip these for now...
             // for (int i = 1; i < waypoints.size() - 1; i++) {

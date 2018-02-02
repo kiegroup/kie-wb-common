@@ -482,10 +482,10 @@ public class MigrationDiagramMarshallerTest {
             Object oldDefinition = oldContent.getDefinition();
             Object newDefinition = newContent.getDefinition();
 
-//            assertEquals(
-//                    oldDefinition,
-//                    newDefinition
-//            );
+            assertEquals(
+                    oldDefinition,
+                    newDefinition
+            );
 
 
         }

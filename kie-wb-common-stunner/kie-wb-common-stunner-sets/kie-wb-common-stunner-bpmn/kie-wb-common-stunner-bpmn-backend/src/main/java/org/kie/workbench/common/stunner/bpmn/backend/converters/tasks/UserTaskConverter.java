@@ -85,6 +85,9 @@ public class UserTaskConverter {
                 new ScriptLanguage(p.getScriptLanguage())
         ));
 
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
         return node;
     }
 }

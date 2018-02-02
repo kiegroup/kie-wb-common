@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTar
 import org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
-import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
@@ -63,11 +62,15 @@ public class GraphBuildingContext {
     }
 
     public void addChildNode(String parentId, String childId) {
-        Node parent = executionContext.getGraphIndex().getNode(parentId);
+        Node parent = getNode(parentId);
         Node child = executionContext.getGraphIndex().getNode(childId);
 
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);
+    }
+
+    public Node getNode(String id) {
+        return executionContext.getGraphIndex().getNode(id);
     }
 
     public void addChildNode(Node parent, Node child) {
@@ -87,6 +90,22 @@ public class GraphBuildingContext {
 
     public void addEdge(
             Edge<? extends View<?>, Node> edge,
+            Node source,
+            Connection sourceConnection,
+            Node target,
+            Connection targetConnection) {
+        SetConnectionSourceNodeCommand setSourceNode =
+                commandFactory.setSourceNode(source, edge, sourceConnection);
+
+        SetConnectionTargetNodeCommand setTargetNode =
+                commandFactory.setTargetNode(target, edge, targetConnection);
+
+        execute(setSourceNode);
+        execute(setTargetNode);
+    }
+
+    public void addEdge(
+            Edge<? extends View<?>, Node> edge,
             String sourceId,
             Connection sourceConnection,
             String targetId,
@@ -98,14 +117,7 @@ public class GraphBuildingContext {
         Objects.requireNonNull(source);
         Objects.requireNonNull(target);
 
-        SetConnectionSourceNodeCommand setSourceNode =
-                commandFactory.setSourceNode(source, edge, sourceConnection);
-
-        SetConnectionTargetNodeCommand setTargetNode =
-                commandFactory.setTargetNode(target, edge, targetConnection);
-
-        execute(setSourceNode);
-        execute(setTargetNode);
+        addEdge(edge, source, sourceConnection, target, targetConnection);
     }
 
     public void setBounds(String elementId, int x1, int y1, int x2, int y2) {
