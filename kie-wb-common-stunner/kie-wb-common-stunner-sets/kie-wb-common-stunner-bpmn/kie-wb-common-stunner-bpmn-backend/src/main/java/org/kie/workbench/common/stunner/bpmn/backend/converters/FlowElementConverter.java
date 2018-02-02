@@ -63,7 +63,7 @@ public class FlowElementConverter {
     private final CallActivityConverter callActivityConverter;
     private final SubProcessConverter subProcessConverter;
 
-    public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context, Layout layout) {
+    public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context) {
         this.factoryManager = factoryManager;
         this.context = context;
         this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
@@ -75,7 +75,7 @@ public class FlowElementConverter {
         this.gatewayConverter = new GatewayConverter(factoryManager, propertyReaderFactory);
         this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, propertyReaderFactory, definitionResolver, context);
         this.callActivityConverter = new CallActivityConverter(factoryManager, propertyReaderFactory);
-        this.subProcessConverter = new SubProcessConverter(factoryManager, propertyReaderFactory, definitionResolver, this, context, layout);
+        this.subProcessConverter = new SubProcessConverter(factoryManager, propertyReaderFactory, definitionResolver, this, context);
         this.definitionResolver = definitionResolver;
     }
 

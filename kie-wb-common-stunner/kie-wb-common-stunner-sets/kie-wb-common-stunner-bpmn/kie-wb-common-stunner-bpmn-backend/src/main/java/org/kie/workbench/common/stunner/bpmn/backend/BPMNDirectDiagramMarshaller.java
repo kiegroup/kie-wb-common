@@ -41,7 +41,6 @@ import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadat
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
@@ -117,7 +116,6 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         this.legacyMarshaller = legacyMarshaller;
     }
 
-
     @Override
     @SuppressWarnings("unchecked")
     public String marshall(final Diagram diagram) throws IOException {
@@ -144,11 +142,10 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
         BPMNPlane plane = findPlane(definitions);
         PropertyReaderFactory propertyReaderFactory = new PropertyReaderFactory(plane);
-        Layout layout = new Layout(plane, context);
 
         context.clearGraph();
 
-        new ProcessConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, layout, context)
+        new ProcessConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context)
                 .convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");

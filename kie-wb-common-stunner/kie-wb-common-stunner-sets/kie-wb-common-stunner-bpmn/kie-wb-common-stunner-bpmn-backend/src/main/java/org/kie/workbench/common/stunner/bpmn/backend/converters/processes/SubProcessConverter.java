@@ -25,7 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
@@ -49,14 +48,13 @@ public class SubProcessConverter {
     private final FlowElementConverter flowElementConverter;
     private final LaneConverter laneConverter;
     private final GraphBuildingContext context;
-    private final Layout layout;
 
     public SubProcessConverter(
             TypedFactoryManager factoryManager,
             PropertyReaderFactory propertyReaderFactory,
             DefinitionResolver definitionResolver,
             FlowElementConverter flowElementConverter,
-            GraphBuildingContext context, Layout layout) {
+            GraphBuildingContext context) {
 
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
@@ -64,7 +62,6 @@ public class SubProcessConverter {
 
         this.flowElementConverter = flowElementConverter;
         this.laneConverter = new LaneConverter(factoryManager, propertyReaderFactory, definitionResolver);
-        this.layout = layout;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {

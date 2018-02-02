@@ -25,7 +25,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
@@ -56,22 +55,19 @@ public class ProcessConverter {
     private final GraphBuildingContext context;
     private final FlowElementConverter flowElementConverter;
     private final LaneConverter laneConverter;
-    private final Layout layout;
     private final TypedFactoryManager factoryManager;
 
     public ProcessConverter(
             TypedFactoryManager typedFactoryManager,
             PropertyReaderFactory propertyReaderFactory,
             DefinitionResolver definitionResolver,
-            Layout layout,
             GraphBuildingContext context) {
 
         this.factoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
         this.context = context;
-        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context, layout);
+        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context);
         this.laneConverter = new LaneConverter(typedFactoryManager, propertyReaderFactory, definitionResolver);
-        this.layout = layout;
     }
 
     public void convert(String definitionsId, Process process) {
@@ -105,7 +101,7 @@ public class ProcessConverter {
                     BasicPropertyReader p = propertyReaderFactory.of(lane);
 
                     lane.getFlowNodeRefs().forEach(node -> {
-                        Node<? extends View,?> child = freeFloatingNodes.remove(node.getId());
+                        Node<? extends View, ?> child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
                     });
 
