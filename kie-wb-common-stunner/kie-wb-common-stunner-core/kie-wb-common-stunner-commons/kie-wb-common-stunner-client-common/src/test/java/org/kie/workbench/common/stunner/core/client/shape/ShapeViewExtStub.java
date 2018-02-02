@@ -198,6 +198,25 @@ public class ShapeViewExtStub
     }
 
     @Override
+    public List<ControlPoint> addControlPoint(ControlPoint... controlPoint) {
+        if (hasControlPoints.isPresent()){
+            return hasControlPoints.get().addControlPoint(controlPoint);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public ShapeViewExtStub removeControlPoint(ControlPoint... controlPoint) {
+        hasControlPoints.ifPresent(HasControlPoints::removeControlPoint);
+        return this;
+    }
+
+    @Override
+    public List<ControlPoint> getShapeControlPoints() {
+        return hasControlPoints.isPresent() ? hasControlPoints.get().getShapeControlPoints() : Collections.emptyList();
+    }
+
+    @Override
     public boolean areControlsVisible() {
         return hasControlPoints.isPresent() && hasControlPoints.get().areControlsVisible();
     }

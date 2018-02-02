@@ -226,6 +226,24 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         return cast();
     }
 
+    @Override
+    public List<ControlPoint> addControlPoint(ControlPoint... controlPoint) {
+        //TODO: check if this is applied here
+        return Collections.emptyList();
+    }
+
+    @Override
+    public T removeControlPoint(ControlPoint... controlPoint) {
+        //TODO: check if this is applied here
+        return cast();
+    }
+
+    @Override
+    public List<ControlPoint> getShapeControlPoints() {
+        //TODO: check if this is applied here
+        return Collections.emptyList();
+    }
+
     public T updateControlPoints(final ControlPointType type) {
         if (areControlsVisible()) {
             showControlPoints(type);
