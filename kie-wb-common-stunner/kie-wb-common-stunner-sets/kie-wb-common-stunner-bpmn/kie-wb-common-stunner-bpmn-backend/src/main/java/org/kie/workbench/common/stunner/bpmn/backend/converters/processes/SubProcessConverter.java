@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
@@ -60,23 +64,38 @@ public class SubProcessConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
         Node<? extends View<? extends BPMNViewDefinition>, ?> subProcessNode = convertSubProcessNode(subProcess);
+        layout.updateNode(subProcessNode);
 
-        subProcess.getFlowElements()
-                .stream()
-                .map(flowElementConverter::convertNode)
-                .filter(Result::notIgnored)
-                .map(Result::value)
-                .forEach(n -> {
-                    layout.updateNode(n);
-                    context.addChildNode(subProcessNode, n);
-                });
+        Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
+                subProcess.getFlowElements()
+                        .stream()
+                        .map(flowElementConverter::convertNode)
+                        .filter(Result::notIgnored)
+                        .map(Result::value)
+                        .collect(Collectors.toMap(Node::getUUID, Function.identity()));
 
         subProcess.getLaneSets()
                 .stream()
                 .flatMap(laneSet -> laneSet.getLanes().stream())
-                .map(laneConverter::convert)
+
+                .forEach(lane -> {
+                    Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
+                            laneConverter.convert(lane);
+
+                    lane.getFlowNodeRefs().forEach(node -> {
+                        Node child = freeFloatingNodes.remove(node.getId());
+                        context.addChildNode(laneNode, child);
+                        layout.updateChildNode(laneNode, child);
+                    });
+
+                    layout.updateChildNode(subProcessNode, laneNode);
+                    context.addChildNode(subProcessNode, laneNode);
+                });
+
+
+        freeFloatingNodes.values()
                 .forEach(n -> {
-                    layout.updateNode(n);
+                    layout.updateChildNode(subProcessNode, n);
                     context.addChildNode(subProcessNode, n);
                 });
 

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
@@ -55,7 +57,7 @@ public class AbstractPropertyReader {
     public FontSet getFontSet() {
         return new FontSet(
                 new FontFamily(),
-                new FontColor(attribute("fontcolor")), // or "color"
+                new FontColor(attribute("fontcolor", "color")),
                 new FontSize(optionalAttribute("fontsize")
                                      .map(Double::parseDouble).orElse(null)),
                 new FontBorderSize(),
@@ -64,28 +66,23 @@ public class AbstractPropertyReader {
 
     public BackgroundSet getBackgroundSet() {
         return new BackgroundSet(
-                new BgColor(attribute("bgcolor")), // or background-color
-                new BorderColor(attribute("border-color")), // or bordercolor
+                new BgColor(attribute("bgcolor", "background-color")),
+                new BorderColor(attribute("border-color", "bordercolor")),
                 new BorderSize()
         );
     }
 
-    protected Optional<String> optionalAttribute(String attributeId) {
+    protected Optional<String> optionalAttribute(String... attributeIds) {
+        List<String> attributes = Arrays.asList(attributeIds);
         return element.getAnyAttribute().stream()
-                .filter(e -> e.getEStructuralFeature().getName().equals(attributeId))
+                .filter(e -> attributes.contains(e.getEStructuralFeature().getName()))
                 .map(e -> e.getValue().toString())
                 .findFirst();
     }
 
 
-    protected String attribute(String attributeId) {
-        return attribute(attributeId, "");
-    }
-
-
-    protected String attribute(String attributeId, Object orElse) {
-        return optionalAttribute(attributeId)
-                .orElse(String.valueOf(orElse));
+    protected String attribute(String... attributeId) {
+        return optionalAttribute(attributeId).orElse("");
     }
 
     protected String metaData(String name) {
