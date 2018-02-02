@@ -20,6 +20,7 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.CancellingTimerEventExecutionSet;
@@ -34,9 +35,11 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateTimerEventConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public IntermediateTimerEventConverter(TypedFactoryManager factoryManager) {
+    public IntermediateTimerEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<View<IntermediateTimerEvent>, Edge> convert(CatchEvent event, TimerEventDefinition e) {
@@ -44,7 +47,7 @@ public class IntermediateTimerEventConverter {
         Node<View<IntermediateTimerEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateTimerEvent.class);
 
         IntermediateTimerEvent definition = node.getContent().getDefinition();
-        EventPropertyReader p = EventPropertyReader.of(event);
+        EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
@@ -56,6 +59,7 @@ public class IntermediateTimerEventConverter {
                 new TimerSettings(p.getTimerSettings(e))
         ));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

@@ -19,13 +19,14 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.SubProcess;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class SubProcessPropertyReader extends AbstractPropertyReader {
+public class SubProcessPropertyReader extends BasePropertyReader {
 
     private final SubProcess process;
 
-    public SubProcessPropertyReader(SubProcess element) {
-        super(element);
+    public SubProcessPropertyReader(SubProcess element, BPMNShape plane) {
+        super(element, plane);
         this.process = element;
     }
 

@@ -95,34 +95,6 @@ public class Layout {
         logger.info(child.getContent().getDefinition().toString() + child.getContent().getBounds().toString());
     }
 
-    public void updateNode(Node<? extends View<? extends BPMNViewDefinition>, ?> node) {
-        BPMNShape shape = getBPMNShapeForElement(node.getUUID());
-        Bounds bounds = shape.getBounds();
-
-        BaseElement bpmnElement = shape.getBpmnElement();
-        if (bpmnElement instanceof BoundaryEvent) {
-            // then we must check the overrides
-            Point2D docker = Properties.docker((BoundaryEvent) bpmnElement);
-            BoundsImpl convertedBounds = BoundsImpl.build(
-                    docker.getX(),
-                    docker.getY(),
-                    docker.getX() + bounds.getWidth(),
-                    docker.getY() + bounds.getHeight());
-            node.getContent().setBounds(convertedBounds);
-        } else {
-            BoundsImpl convertedBounds = BoundsImpl.build(
-                    bounds.getX(),
-                    bounds.getY(),
-                    bounds.getX() + bounds.getWidth(),
-                    bounds.getY() + bounds.getHeight());
-            node.getContent().setBounds(convertedBounds);
-        }
-
-//        context.updatePosition(node, Point2D.create(x, y));
-
-        logger.info(node.getContent().getDefinition().toString() + node.getContent().getBounds().toString());
-    }
-
     public CircleDimensionSet circleDimensionSet(String id) {
         return new CircleDimensionSet(new Radius(
                 getBPMNShapeForElement(id).getBounds().getWidth() / 2d));

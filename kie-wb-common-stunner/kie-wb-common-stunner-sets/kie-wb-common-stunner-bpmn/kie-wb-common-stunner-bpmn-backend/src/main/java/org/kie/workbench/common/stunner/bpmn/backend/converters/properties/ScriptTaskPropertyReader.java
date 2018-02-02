@@ -17,12 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.ScriptTask;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class ScriptTaskPropertyReader extends AbstractPropertyReader {
+public class ScriptTaskPropertyReader extends BasePropertyReader {
         private final ScriptTask task;
 
-        public ScriptTaskPropertyReader(ScriptTask task) {
-            super(task);
+        public ScriptTaskPropertyReader(ScriptTask task, BPMNShape plane) {
+            super(task, plane);
             this.task = task;
         }
 

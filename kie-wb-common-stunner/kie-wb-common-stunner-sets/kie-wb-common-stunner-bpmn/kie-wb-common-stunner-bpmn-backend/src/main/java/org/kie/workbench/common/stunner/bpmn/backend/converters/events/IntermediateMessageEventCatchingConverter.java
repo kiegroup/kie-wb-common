@@ -20,13 +20,13 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.CancelActivity;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.CancellingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
-import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
@@ -37,9 +37,11 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateMessageEventCatchingConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public IntermediateMessageEventCatchingConverter(TypedFactoryManager factoryManager) {
+    public IntermediateMessageEventCatchingConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<View<IntermediateMessageEventCatching>, Edge> convert(CatchEvent event, MessageEventDefinition e) {
@@ -47,7 +49,7 @@ public class IntermediateMessageEventCatchingConverter {
         Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
 
         IntermediateMessageEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = EventPropertyReader.of(event);
+        EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
@@ -63,6 +65,7 @@ public class IntermediateMessageEventCatchingConverter {
                 new MessageRef(e.getMessageRef().getName())
         ));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

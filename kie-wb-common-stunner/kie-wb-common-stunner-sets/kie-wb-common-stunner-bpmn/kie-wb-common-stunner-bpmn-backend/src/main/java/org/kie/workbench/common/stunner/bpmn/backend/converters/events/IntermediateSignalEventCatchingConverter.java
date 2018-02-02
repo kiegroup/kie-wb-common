@@ -21,6 +21,7 @@ import org.eclipse.bpmn2.SignalEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -37,10 +38,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateSignalEventCatchingConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver definitionResolver;
 
-    public IntermediateSignalEventCatchingConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public IntermediateSignalEventCatchingConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
     }
 
@@ -49,7 +52,7 @@ public class IntermediateSignalEventCatchingConverter {
         Node<View<IntermediateSignalEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class);
 
         IntermediateSignalEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = EventPropertyReader.of(event);
+        EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
@@ -64,6 +67,7 @@ public class IntermediateSignalEventCatchingConverter {
                 new CancelActivity(p.isCancelActivity()),
                 new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
         ));
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

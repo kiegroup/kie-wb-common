@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
@@ -59,10 +60,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class StartEventConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver definitionResolver;
 
-    public StartEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public StartEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
     }
 
@@ -79,12 +82,14 @@ public class StartEventConverter {
             case 0: {
                 Node<View<StartNoneEvent>, Edge> node = factoryManager.newNode(nodeId, StartNoneEvent.class);
                 StartNoneEvent definition = node.getContent().getDefinition();
-                EventPropertyReader p = EventPropertyReader.of(event);
+                EventPropertyReader p = propertyReaderFactory.of(event);
 
                 definition.setGeneral(new BPMNGeneralSet(
                         new Name(event.getName()),
                         new Documentation(p.getDocumentation())
                 ));
+
+                node.getContent().setBounds(p.getBounds());
                 return node;
             }
             case 1:
@@ -93,7 +98,7 @@ public class StartEventConverter {
                             Node<View<StartSignalEvent>, Edge> node = factoryManager.newNode(nodeId, StartSignalEvent.class);
 
                             StartSignalEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -105,13 +110,14 @@ public class StartEventConverter {
                                     new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<StartMessageEvent>, Edge> node = factoryManager.newNode(nodeId, StartMessageEvent.class);
 
                             StartMessageEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -127,13 +133,14 @@ public class StartEventConverter {
                                     new MessageRef(e.getMessageRef().getName())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(TimerEventDefinition.class, e -> {
                             Node<View<StartTimerEvent>, Edge> node = factoryManager.newNode(nodeId, StartTimerEvent.class);
 
                             StartTimerEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -145,13 +152,14 @@ public class StartEventConverter {
                                     new TimerSettings(p.getTimerSettings(e))
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<StartErrorEvent>, Edge> node = factoryManager.newNode(nodeId, StartErrorEvent.class);
 
                             StartErrorEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -167,6 +175,7 @@ public class StartEventConverter {
                                     new ErrorRef(e.getErrorRef().getErrorCode())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .missing(ConditionalEventDefinition.class)

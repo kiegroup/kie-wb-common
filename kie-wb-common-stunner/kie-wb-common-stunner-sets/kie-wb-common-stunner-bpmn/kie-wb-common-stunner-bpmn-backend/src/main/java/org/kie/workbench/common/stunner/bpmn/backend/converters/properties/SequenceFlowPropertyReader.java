@@ -18,13 +18,14 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SequenceFlow;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class SequenceFlowPropertyReader extends AbstractPropertyReader {
+public class SequenceFlowPropertyReader extends BasePropertyReader {
 
     final FormalExpression conditionExpression;
 
-    public SequenceFlowPropertyReader(SequenceFlow seq) {
-        super(seq);
+    public SequenceFlowPropertyReader(SequenceFlow seq, BPMNShape plane) {
+        super(seq, plane);
         conditionExpression = (FormalExpression) seq.getConditionExpression();
     }
 

@@ -17,11 +17,12 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class GatewayPropertyReader extends AbstractPropertyReader {
+public class GatewayPropertyReader extends BasePropertyReader {
 
-    public GatewayPropertyReader(BaseElement element) {
-        super(element);
+    public GatewayPropertyReader(BaseElement element, BPMNShape plane) {
+        super(element, plane);
     }
 
     public String getDefaultRoute() {

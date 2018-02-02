@@ -23,13 +23,14 @@ import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class ActivityPropertyReader extends AbstractPropertyReader {
+public class ActivityPropertyReader extends BasePropertyReader {
 
     private final Activity activity;
 
-    public ActivityPropertyReader(Activity activity) {
-        super(activity);
+    public ActivityPropertyReader(Activity activity, BPMNShape plane) {
+        super(activity, plane);
         this.activity = activity;
     }
 

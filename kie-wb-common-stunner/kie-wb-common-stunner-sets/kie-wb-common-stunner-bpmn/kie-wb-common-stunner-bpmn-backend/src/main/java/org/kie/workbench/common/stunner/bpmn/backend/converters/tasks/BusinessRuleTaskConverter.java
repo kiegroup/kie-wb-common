@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BusinessRuleTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -39,16 +40,18 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class BusinessRuleTaskConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public BusinessRuleTaskConverter(TypedFactoryManager factoryManager) {
+    public BusinessRuleTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.BusinessRuleTask task) {
         Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(task.getId(), BusinessRuleTask.class);
 
         BusinessRuleTask definition = node.getContent().getDefinition();
-        BusinessRuleTaskPropertyReader p = new BusinessRuleTaskPropertyReader(task);
+        BusinessRuleTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(task.getName()),
@@ -67,6 +70,7 @@ public class BusinessRuleTaskConverter {
                 new IsAsync(p.isAsync()),
                 new AdHocAutostart(p.isAdHocAutoStart())
         ));
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

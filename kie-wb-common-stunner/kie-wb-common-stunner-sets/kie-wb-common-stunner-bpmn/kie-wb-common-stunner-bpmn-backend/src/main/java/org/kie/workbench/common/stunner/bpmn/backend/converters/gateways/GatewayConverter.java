@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.gateways;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.GatewayPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
@@ -35,19 +35,26 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class GatewayConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public GatewayConverter(TypedFactoryManager factoryManager) {
+    public GatewayConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<? extends View<? extends BaseGateway>, ?> convert(org.eclipse.bpmn2.Gateway gateway) {
         return Match.ofNode(org.eclipse.bpmn2.Gateway.class, BaseGateway.class)
-                .when(org.eclipse.bpmn2.ParallelGateway.class, e -> factoryManager.newNode(gateway.getId(), ParallelGateway.class))
+                .when(org.eclipse.bpmn2.ParallelGateway.class, e -> {
+                    Node<View<ParallelGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ParallelGateway.class);
+                    GatewayPropertyReader p = propertyReaderFactory.of(gateway);
+                    node.getContent().setBounds(p.getBounds());
+                    return node;
+                })
                 .when(org.eclipse.bpmn2.ExclusiveGateway.class, e -> {
                     Node<View<ExclusiveDatabasedGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ExclusiveDatabasedGateway.class);
 
                     ExclusiveDatabasedGateway definition = node.getContent().getDefinition();
-                    GatewayPropertyReader p = new GatewayPropertyReader(gateway);
+                    GatewayPropertyReader p = propertyReaderFactory.of(gateway);
 
                     definition.setGeneral(new BPMNGeneralSet(
                             new Name(gateway.getName()),
@@ -58,6 +65,7 @@ public class GatewayConverter {
                             new DefaultRoute(p.getDefaultRoute())
                     ));
 
+                    node.getContent().setBounds(p.getBounds());
                     return node;
                 })
                 .apply(gateway).asSuccess().value();

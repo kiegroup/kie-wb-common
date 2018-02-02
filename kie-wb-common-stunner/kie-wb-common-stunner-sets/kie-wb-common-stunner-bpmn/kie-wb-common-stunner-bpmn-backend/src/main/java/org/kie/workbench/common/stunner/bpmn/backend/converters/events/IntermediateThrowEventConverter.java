@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
@@ -51,10 +52,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateThrowEventConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver definitionResolver;
 
-    public IntermediateThrowEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public IntermediateThrowEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
     }
 
@@ -71,7 +74,7 @@ public class IntermediateThrowEventConverter {
                                     factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class);
 
                             IntermediateSignalEventThrowing definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -87,6 +90,7 @@ public class IntermediateThrowEventConverter {
                                     new SignalScope(p.getSignalScope())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
@@ -94,7 +98,7 @@ public class IntermediateThrowEventConverter {
                                     factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class);
 
                             IntermediateMessageEventThrowing definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -109,6 +113,7 @@ public class IntermediateThrowEventConverter {
                                     new MessageRef(e.getMessageRef().getName())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .missing(ErrorEventDefinition.class)

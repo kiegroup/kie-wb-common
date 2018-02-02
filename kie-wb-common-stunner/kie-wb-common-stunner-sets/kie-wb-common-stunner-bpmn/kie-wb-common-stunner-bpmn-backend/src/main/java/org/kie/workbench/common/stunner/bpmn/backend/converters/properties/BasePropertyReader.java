@@ -21,26 +21,32 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.BoundaryEvent;
+import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderSize;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderSize;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontFamily;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
-public class AbstractPropertyReader {
+public class BasePropertyReader {
 
     protected final BaseElement element;
+    protected final BPMNShape shape;
 
-    public AbstractPropertyReader(BaseElement element) {
+    public BasePropertyReader(BaseElement element, BPMNShape shape) {
         this.element = element;
+        this.shape = shape;
     }
 
     public String getDocumentation() {
@@ -80,6 +86,16 @@ public class AbstractPropertyReader {
                 .findFirst();
     }
 
+    public Bounds getBounds() {
+        if (shape == null) return BoundsImpl.build();
+        org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
+        return BoundsImpl.build(
+                bounds.getX(),
+                bounds.getY(),
+                bounds.getX() + bounds.getWidth(),
+                bounds.getY() + bounds.getHeight());
+    }
+
 
     protected String attribute(String... attributeId) {
         return optionalAttribute(attributeId).orElse("");
@@ -88,4 +104,5 @@ public class AbstractPropertyReader {
     protected String metaData(String name) {
         return Utils.getMetaDataValue(element.getExtensionValues(), name);
     }
+
 }

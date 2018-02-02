@@ -20,23 +20,28 @@ import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ActivityPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class TaskConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final BusinessRuleTaskConverter businessRuleTaskConverter;
     private final UserTaskConverter userTaskConverter;
     private final ScriptTaskConverter scriptTaskConverter;
 
-    public TaskConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
-        this.businessRuleTaskConverter = new BusinessRuleTaskConverter(factoryManager);
-        this.userTaskConverter = new UserTaskConverter(factoryManager, definitionResolver);
-        this.scriptTaskConverter = new ScriptTaskConverter(factoryManager);
+        this.propertyReaderFactory = propertyReaderFactory;
+        this.businessRuleTaskConverter = new BusinessRuleTaskConverter(factoryManager, propertyReaderFactory);
+        this.userTaskConverter = new UserTaskConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.scriptTaskConverter = new ScriptTaskConverter(factoryManager, propertyReaderFactory);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.Task task) {
@@ -46,9 +51,12 @@ public class TaskConverter {
                 .when(org.eclipse.bpmn2.UserTask.class, userTaskConverter::convert)
                 .missing(org.eclipse.bpmn2.ServiceTask.class)
                 .missing(org.eclipse.bpmn2.ManualTask.class)
-                .orElse(t ->
-                                factoryManager.newNode(t.getId(), NoneTask.class)
-                )
+                .orElse(t -> {
+                    Node<View<NoneTask>, Edge> node = factoryManager.newNode(t.getId(), NoneTask.class);
+                    ActivityPropertyReader p = propertyReaderFactory.of(task);
+                    node.getContent().setBounds(p.getBounds());
+                    return node;
+                })
                 .apply(task)
                 .asSuccess().value();
     }

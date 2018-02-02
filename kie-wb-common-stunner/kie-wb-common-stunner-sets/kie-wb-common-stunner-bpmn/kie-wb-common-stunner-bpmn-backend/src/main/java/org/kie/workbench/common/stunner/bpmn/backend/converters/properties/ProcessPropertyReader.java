@@ -19,24 +19,30 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class ProcessPropertyReader extends AbstractPropertyReader {
+public class ProcessPropertyReader extends BasePropertyReader {
 
     private final Process process;
 
-    public ProcessPropertyReader(Process element) {
-        super(element);
+    public ProcessPropertyReader(Process element, BPMNShape plane) {
+        super(element, plane);
         this.process = element;
     }
+
     public String getPackageName() {
         return attribute("packageName");
     }
+
     public String getVersion() {
         return attribute("version");
     }
+
     public boolean isAdHoc() {
         return Boolean.parseBoolean(attribute("adHoc"));
     }
+
     public boolean isAsync() {
         return Boolean.parseBoolean(metaData("customAsync"));
     }

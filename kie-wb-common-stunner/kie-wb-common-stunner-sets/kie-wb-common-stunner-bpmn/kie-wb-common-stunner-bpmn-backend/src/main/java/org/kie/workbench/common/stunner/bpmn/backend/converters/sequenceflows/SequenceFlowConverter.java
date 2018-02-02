@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SequenceFlowPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpression;
@@ -35,10 +36,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class SequenceFlowConverter {
 
     private TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final GraphBuildingContext context;
 
-    public SequenceFlowConverter(TypedFactoryManager factoryManager, GraphBuildingContext context) {
+    public SequenceFlowConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.context = context;
     }
 
@@ -46,7 +49,7 @@ public class SequenceFlowConverter {
         Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
 
         SequenceFlow definition = edge.getContent().getDefinition();
-        SequenceFlowPropertyReader p = new SequenceFlowPropertyReader(seq);
+        SequenceFlowPropertyReader p = propertyReaderFactory.of(seq);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(seq.getName()),

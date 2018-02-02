@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
@@ -57,10 +58,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class EndEventConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver definitionResolver;
 
-    public EndEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public EndEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
     }
 
@@ -72,13 +75,14 @@ public class EndEventConverter {
             case 0: {
                 Node<View<EndNoneEvent>, Edge> node = factoryManager.newNode(nodeId, EndNoneEvent.class);
                 EndNoneEvent definition = node.getContent().getDefinition();
-                EventPropertyReader p = EventPropertyReader.of(event);
+                EventPropertyReader p = propertyReaderFactory.of(event);
 
                 definition.setGeneral(new BPMNGeneralSet(
                         new Name(event.getName()),
                         new Documentation(p.getDocumentation())
                 ));
 
+                node.getContent().setBounds(p.getBounds());
                 return node;
             }
             case 1:
@@ -87,21 +91,21 @@ public class EndEventConverter {
                             Node<View<EndTerminateEvent>, Edge> node = factoryManager.newNode(nodeId, EndTerminateEvent.class);
 
                             EndTerminateEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
                                     new Documentation(p.getDocumentation())
                             ));
 
-
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(SignalEventDefinition.class, e -> {
                             Node<View<EndSignalEvent>, Edge> node = factoryManager.newNode(nodeId, EndSignalEvent.class);
 
                             EndSignalEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -117,13 +121,14 @@ public class EndEventConverter {
                                     new SignalScope(p.getSignalScope())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
                             Node<View<EndMessageEvent>, Edge> node = factoryManager.newNode(nodeId, EndMessageEvent.class);
 
                             EndMessageEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -137,13 +142,14 @@ public class EndEventConverter {
                             definition.setExecutionSet(new MessageEventExecutionSet(
                                     new MessageRef(e.getMessageRef().getName())
                             ));
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
                             Node<View<EndErrorEvent>, Edge> node = factoryManager.newNode(nodeId, EndErrorEvent.class);
 
                             EndErrorEvent definition = node.getContent().getDefinition();
-                            EventPropertyReader p = EventPropertyReader.of(event);
+                            EventPropertyReader p = propertyReaderFactory.of(event);
 
                             definition.setGeneral(new BPMNGeneralSet(
                                     new Name(event.getName()),
@@ -158,6 +164,7 @@ public class EndEventConverter {
                                     new ErrorRef(e.getErrorRef().getErrorCode())
                             ));
 
+                            node.getContent().setBounds(p.getBounds());
                             return node;
                         })
                         .missing(EscalationEventDefinition.class)

@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -45,15 +46,15 @@ public class BoundaryEventConverter {
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
 
-    public BoundaryEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver, GraphBuildingContext context) {
+    public BoundaryEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context) {
 
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
         this.context = context;
 
-        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, definitionResolver);
-        this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager);
-        this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager);
+        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager, propertyReaderFactory);
+        this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager, propertyReaderFactory);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(BoundaryEvent event) {

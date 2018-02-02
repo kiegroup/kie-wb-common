@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
@@ -34,16 +35,18 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class ScriptTaskConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public ScriptTaskConverter(TypedFactoryManager factoryManager) {
+    public ScriptTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.ScriptTask task) {
         Node<View<ScriptTask>, Edge> node = factoryManager.newNode(task.getId(), ScriptTask.class);
 
         ScriptTask definition = node.getContent().getDefinition();
-        ScriptTaskPropertyReader p = new ScriptTaskPropertyReader(task);
+        ScriptTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(task.getName()),
@@ -56,6 +59,7 @@ public class ScriptTaskConverter {
                 new IsAsync(p.isAsync())
         ));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

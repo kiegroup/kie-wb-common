@@ -44,6 +44,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingCon
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -142,11 +143,12 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         GraphBuildingContext context = graphContextOf(graph);
 
         BPMNPlane plane = findPlane(definitions);
+        PropertyReaderFactory propertyReaderFactory = new PropertyReaderFactory(plane);
         Layout layout = new Layout(plane, context);
 
         context.clearGraph();
 
-        new ProcessConverter(typedFactoryManager, definitionResolver, layout, context)
+        new ProcessConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, layout, context)
                 .convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");

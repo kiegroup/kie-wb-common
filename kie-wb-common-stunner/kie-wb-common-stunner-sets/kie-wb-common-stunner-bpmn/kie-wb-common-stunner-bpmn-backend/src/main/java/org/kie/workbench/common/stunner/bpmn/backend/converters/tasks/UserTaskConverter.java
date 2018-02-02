@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.UserTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
@@ -46,10 +47,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class UserTaskConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver resolver;
 
-    public UserTaskConverter(TypedFactoryManager factoryManager, DefinitionResolver resolver) {
+    public UserTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver resolver) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.resolver = resolver;
     }
 
@@ -57,7 +60,7 @@ public class UserTaskConverter {
         Node<View<UserTask>, Edge> node = factoryManager.newNode(task.getId(), UserTask.class);
 
         UserTask definition = node.getContent().getDefinition();
-        UserTaskPropertyReader p = new UserTaskPropertyReader(task);
+        UserTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(task.getName()),
@@ -88,6 +91,7 @@ public class UserTaskConverter {
         definition.setBackgroundSet(p.getBackgroundSet());
         definition.setFontSet(p.getFontSet());
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

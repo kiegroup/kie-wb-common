@@ -19,6 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.activities;
 import org.eclipse.bpmn2.CallActivity;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ActivityPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -38,9 +40,11 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class CallActivityConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public CallActivityConverter(TypedFactoryManager factoryManager) {
+    public CallActivityConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(CallActivity activity) {
@@ -48,7 +52,7 @@ public class CallActivityConverter {
 
         ReusableSubprocess definition = node.getContent().getDefinition();
 
-        ActivityPropertyReader p = new ActivityPropertyReader(activity);
+        ActivityPropertyReader p = propertyReaderFactory.of(activity);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(activity.getName()),
@@ -66,6 +70,7 @@ public class CallActivityConverter {
                 new AssignmentsInfo(p.getAssignmentsInfo()))
         );
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

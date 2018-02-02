@@ -30,6 +30,7 @@ import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseCatchingIntermediateEvent;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -44,14 +45,14 @@ public class IntermediateCatchEventConverter {
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private final IntermediateErrorEventCatchingConverter intermediateErrorEventCatchingConverter;
 
-    public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver) {
+    public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
         this.factoryManager = factoryManager;
         this.definitionResolver = definitionResolver;
 
-        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, definitionResolver);
-        this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager);
-        this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager);
-        this.intermediateErrorEventCatchingConverter = new IntermediateErrorEventCatchingConverter(factoryManager);
+        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager, propertyReaderFactory);
+        this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager, propertyReaderFactory);
+        this.intermediateErrorEventCatchingConverter = new IntermediateErrorEventCatchingConverter(factoryManager, propertyReaderFactory);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateCatchEvent event) {

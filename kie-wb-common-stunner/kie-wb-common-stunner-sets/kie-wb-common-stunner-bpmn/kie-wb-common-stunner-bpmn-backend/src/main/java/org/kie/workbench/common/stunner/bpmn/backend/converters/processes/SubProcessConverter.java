@@ -28,6 +28,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
@@ -43,6 +45,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class SubProcessConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final FlowElementConverter flowElementConverter;
     private final LaneConverter laneConverter;
     private final GraphBuildingContext context;
@@ -50,21 +53,23 @@ public class SubProcessConverter {
 
     public SubProcessConverter(
             TypedFactoryManager factoryManager,
+            PropertyReaderFactory propertyReaderFactory,
             DefinitionResolver definitionResolver,
             FlowElementConverter flowElementConverter,
             GraphBuildingContext context, Layout layout) {
 
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.context = context;
 
         this.flowElementConverter = flowElementConverter;
-        this.laneConverter = new LaneConverter(factoryManager, definitionResolver);
+        this.laneConverter = new LaneConverter(factoryManager, propertyReaderFactory, definitionResolver);
         this.layout = layout;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
         Node<? extends View<? extends BPMNViewDefinition>, ?> subProcessNode = convertSubProcessNode(subProcess);
-        layout.updateNode(subProcessNode);
+//        layout.updateNode(subProcessNode);
 
         Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
                 subProcess.getFlowElements()
@@ -116,7 +121,7 @@ public class SubProcessConverter {
         Node<View<EmbeddedSubprocess>, Edge> node = factoryManager.newNode(subProcess.getId(), EmbeddedSubprocess.class);
 
         EmbeddedSubprocess definition = node.getContent().getDefinition();
-        SubProcessPropertyReader p = new SubProcessPropertyReader(subProcess);
+        SubProcessPropertyReader p = propertyReaderFactory.of(subProcess);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(subProcess.getName()),
@@ -131,6 +136,7 @@ public class SubProcessConverter {
         definition.setProcessData(new ProcessData(
                 new ProcessVariables(p.getProcessVariables())));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

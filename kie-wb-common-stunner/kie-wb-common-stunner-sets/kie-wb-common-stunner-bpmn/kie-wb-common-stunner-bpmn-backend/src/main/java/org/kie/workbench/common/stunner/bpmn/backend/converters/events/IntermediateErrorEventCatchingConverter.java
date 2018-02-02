@@ -20,6 +20,7 @@ import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -36,9 +37,11 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateErrorEventCatchingConverter {
 
     private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
 
-    public IntermediateErrorEventCatchingConverter(TypedFactoryManager factoryManager) {
+    public IntermediateErrorEventCatchingConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
     }
 
     public Node<View<IntermediateErrorEventCatching>, Edge> convert(IntermediateCatchEvent event, ErrorEventDefinition e) {
@@ -46,7 +49,7 @@ public class IntermediateErrorEventCatchingConverter {
         Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
 
         IntermediateErrorEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = EventPropertyReader.of(event);
+        EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(event.getName()),
@@ -62,6 +65,7 @@ public class IntermediateErrorEventCatchingConverter {
                 new ErrorRef(e.getErrorRef().getErrorCode())
         ));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

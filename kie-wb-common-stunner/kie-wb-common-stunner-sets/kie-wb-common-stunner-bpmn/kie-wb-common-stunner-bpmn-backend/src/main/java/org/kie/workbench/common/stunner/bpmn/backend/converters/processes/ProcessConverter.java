@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
@@ -42,16 +43,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documen
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
-import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ProcessConverter {
 
+    private final PropertyReaderFactory propertyReaderFactory;
     private final GraphBuildingContext context;
     private final FlowElementConverter flowElementConverter;
     private final LaneConverter laneConverter;
@@ -60,14 +60,16 @@ public class ProcessConverter {
 
     public ProcessConverter(
             TypedFactoryManager typedFactoryManager,
+            PropertyReaderFactory propertyReaderFactory,
             DefinitionResolver definitionResolver,
             Layout layout,
             GraphBuildingContext context) {
 
         this.factoryManager = typedFactoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.context = context;
-        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, definitionResolver, context, layout);
-        this.laneConverter = new LaneConverter(typedFactoryManager, definitionResolver);
+        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context, layout);
+        this.laneConverter = new LaneConverter(typedFactoryManager, propertyReaderFactory, definitionResolver);
         this.layout = layout;
     }
 
@@ -105,13 +107,11 @@ public class ProcessConverter {
                         layout.updateChildNode(laneNode, child);
                     });
 
-                    layout.updateNode(laneNode);
                     context.addChildNode(firstDiagramNode, laneNode);
                 });
 
         freeFloatingNodes.values()
                 .forEach(n -> {
-                    layout.updateNode(n);
                     context.addChildNode(firstDiagramNode, n);
                 });
 
@@ -131,7 +131,7 @@ public class ProcessConverter {
         Node<View<BPMNDiagramImpl>, Edge> diagramNode = factoryManager.newNode(definitionId, BPMNDiagramImpl.class);
         BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();
 
-        ProcessPropertyReader e = new ProcessPropertyReader(process);
+        ProcessPropertyReader e = propertyReaderFactory.of(process);
 
         definition.setDiagramSet(new DiagramSet(
                 new Name(process.getName()),
@@ -147,6 +147,8 @@ public class ProcessConverter {
         definition.setProcessData(new ProcessData(
                 new ProcessVariables(e.getProcessVariables())
         ));
+
+        diagramNode.getContent().setBounds(e.getBounds());
 
         return diagramNode;
     }

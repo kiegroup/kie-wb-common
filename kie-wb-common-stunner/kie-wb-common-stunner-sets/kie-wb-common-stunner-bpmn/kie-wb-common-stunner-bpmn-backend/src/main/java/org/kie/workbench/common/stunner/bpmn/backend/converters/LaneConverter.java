@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
@@ -31,10 +31,12 @@ public class LaneConverter {
 
     private final TypedFactoryManager typedFactoryManager;
     private final DefinitionResolver definitionResolver;
+    private PropertyReaderFactory propertyReaderFactory;
 
-    public LaneConverter(TypedFactoryManager typedFactoryManager, DefinitionResolver definitionResolver) {
+    public LaneConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
 
         this.typedFactoryManager = typedFactoryManager;
+        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
     }
 
@@ -42,13 +44,15 @@ public class LaneConverter {
         Node<View<Lane>, Edge> node = typedFactoryManager.newNode(lane.getId(), Lane.class);
         Lane definition = node.getContent().getDefinition();
 
-        PropertyReader p = new PropertyReader(lane);
+        BasicPropertyReader p = propertyReaderFactory.of(lane);
+
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(lane.getName()),
                 new Documentation(p.getDocumentation())
         ));
 
+        node.getContent().setBounds(p.getBounds());
         return node;
     }
 }

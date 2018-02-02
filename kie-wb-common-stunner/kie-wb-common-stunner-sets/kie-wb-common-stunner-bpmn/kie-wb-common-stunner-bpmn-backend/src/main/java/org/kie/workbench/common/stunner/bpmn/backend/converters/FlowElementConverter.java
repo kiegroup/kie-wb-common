@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.events.Intermedi
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.StartEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.gateways.GatewayConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.SubProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.TaskConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -62,19 +63,19 @@ public class FlowElementConverter {
     private final CallActivityConverter callActivityConverter;
     private final SubProcessConverter subProcessConverter;
 
-    public FlowElementConverter(TypedFactoryManager factoryManager, DefinitionResolver definitionResolver, GraphBuildingContext context, Layout layout) {
+    public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context, Layout layout) {
         this.factoryManager = factoryManager;
         this.context = context;
-        this.startEventConverter = new StartEventConverter(factoryManager, definitionResolver);
-        this.endEventConverter = new EndEventConverter(factoryManager, definitionResolver);
-        this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, definitionResolver);
-        this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, definitionResolver);
-        this.taskConverter = new TaskConverter(factoryManager, definitionResolver);
-        this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager, context);
-        this.gatewayConverter = new GatewayConverter(factoryManager);
-        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, definitionResolver, context);
-        this.callActivityConverter = new CallActivityConverter(factoryManager);
-        this.subProcessConverter = new SubProcessConverter(factoryManager, definitionResolver, this, context, layout);
+        this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.endEventConverter = new EndEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.taskConverter = new TaskConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager, propertyReaderFactory, context);
+        this.gatewayConverter = new GatewayConverter(factoryManager, propertyReaderFactory);
+        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, propertyReaderFactory, definitionResolver, context);
+        this.callActivityConverter = new CallActivityConverter(factoryManager, propertyReaderFactory);
+        this.subProcessConverter = new SubProcessConverter(factoryManager, propertyReaderFactory, definitionResolver, this, context, layout);
         this.definitionResolver = definitionResolver;
     }
 

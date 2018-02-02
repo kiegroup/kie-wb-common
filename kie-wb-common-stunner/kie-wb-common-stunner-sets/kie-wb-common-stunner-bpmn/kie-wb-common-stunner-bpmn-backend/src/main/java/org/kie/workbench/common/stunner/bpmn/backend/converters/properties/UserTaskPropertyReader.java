@@ -27,13 +27,14 @@ import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.PotentialOwner;
 import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.UserTask;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class UserTaskPropertyReader extends AbstractPropertyReader {
+public class UserTaskPropertyReader extends BasePropertyReader {
 
     private final UserTask task;
 
-    public UserTaskPropertyReader(UserTask element) {
-        super(element);
+    public UserTaskPropertyReader(UserTask element, BPMNShape plane) {
+        super(element, plane);
         this.task = element;
     }
 

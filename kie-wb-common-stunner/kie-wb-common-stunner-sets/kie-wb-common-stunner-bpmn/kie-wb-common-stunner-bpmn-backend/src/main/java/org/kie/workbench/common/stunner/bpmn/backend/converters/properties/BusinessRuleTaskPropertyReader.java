@@ -17,13 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BusinessRuleTask;
+import org.eclipse.bpmn2.di.BPMNShape;
 
-public class BusinessRuleTaskPropertyReader extends AbstractPropertyReader {
+public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
 
     private final BusinessRuleTask task;
 
-    public BusinessRuleTaskPropertyReader(BusinessRuleTask task) {
-        super(task);
+    public BusinessRuleTaskPropertyReader(BusinessRuleTask task, BPMNShape plane) {
+        super(task, plane);
         this.task = task;
     }
 
