@@ -407,7 +407,9 @@ public class ExamplesServiceImpl implements ExamplesService {
                 ioService.endBatch();
             }
         }
-        return new WorkspaceProjectContextChangeEvent(firstExampleProject);
+
+        return new WorkspaceProjectContextChangeEvent(firstExampleProject,
+                                                      firstExampleProject.getMainModule());
     }
 
     private WorkspaceProject renameIfNecessary(final OrganizationalUnit ou,
