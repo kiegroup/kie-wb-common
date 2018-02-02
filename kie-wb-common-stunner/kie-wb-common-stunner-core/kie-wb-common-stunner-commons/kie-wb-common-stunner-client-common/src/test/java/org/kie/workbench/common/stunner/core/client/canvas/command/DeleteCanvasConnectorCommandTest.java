@@ -47,8 +47,8 @@ public class DeleteCanvasConnectorCommandTest extends AbstractCanvasCommandTest 
     private DeleteCanvasConnectorCommand tested;
 
     @Before
-    public void setup() throws Exception {
-        super.setup();
+    public void setUp() throws Exception {
+        super.setUp();
         when(candidate.getUUID()).thenReturn(EDGE_ID);
         when(source.getUUID()).thenReturn(SOURCE_ID);
         when(candidate.getSourceNode()).thenReturn(source);

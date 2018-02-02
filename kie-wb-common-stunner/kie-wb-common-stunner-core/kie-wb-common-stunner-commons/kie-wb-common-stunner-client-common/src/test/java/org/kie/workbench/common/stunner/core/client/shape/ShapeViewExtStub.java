@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.shape;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
+import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 
 public class ShapeViewExtStub
         extends ShapeViewStub
@@ -193,6 +195,25 @@ public class ShapeViewExtStub
     public ShapeViewExtStub hideControlPoints() {
         hasControlPoints.ifPresent(HasControlPoints::hideControlPoints);
         return this;
+    }
+
+    @Override
+    public List<ControlPoint> addControlPoint(ControlPoint... controlPoint) {
+        if (hasControlPoints.isPresent()){
+            return hasControlPoints.get().addControlPoint(controlPoint);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public ShapeViewExtStub removeControlPoint(ControlPoint... controlPoint) {
+        hasControlPoints.ifPresent(HasControlPoints::removeControlPoint);
+        return this;
+    }
+
+    @Override
+    public List<ControlPoint> getShapeControlPoints() {
+        return hasControlPoints.isPresent() ? hasControlPoints.get().getShapeControlPoints() : Collections.emptyList();
     }
 
     @Override

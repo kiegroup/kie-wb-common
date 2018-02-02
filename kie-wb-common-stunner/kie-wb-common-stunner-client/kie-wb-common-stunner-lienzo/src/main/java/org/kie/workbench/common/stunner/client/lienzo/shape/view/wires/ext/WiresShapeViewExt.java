@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.Shape;
 import com.ait.lienzo.client.core.shape.wires.IControlHandle;
@@ -47,6 +50,7 @@ import org.kie.workbench.common.stunner.core.client.shape.view.event.TextExitEve
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewHandler;
+import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 
 public class WiresShapeViewExt<T extends WiresShapeViewExt>
         extends WiresShapeView<T>
@@ -220,6 +224,24 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
             ctrls.show();
         }
         return cast();
+    }
+
+    @Override
+    public List<ControlPoint> addControlPoint(ControlPoint... controlPoint) {
+        //TODO: check if this is applied here
+        return Collections.emptyList();
+    }
+
+    @Override
+    public T removeControlPoint(ControlPoint... controlPoint) {
+        //TODO: check if this is applied here
+        return cast();
+    }
+
+    @Override
+    public List<ControlPoint> getShapeControlPoints() {
+        //TODO: check if this is applied here
+        return Collections.emptyList();
     }
 
     public T updateControlPoints(final ControlPointType type) {

@@ -35,6 +35,15 @@ public abstract class AbstractCanvasGraphCommand
         extends AbstractCanvasCommand
         implements HasGraphCommand<AbstractCanvasHandler> {
 
+    private boolean canvasCommandFirst = false;
+
+    public AbstractCanvasGraphCommand() {
+    }
+
+    public AbstractCanvasGraphCommand(boolean canvasCommandFirst) {
+        this.canvasCommandFirst = canvasCommandFirst;
+    }
+
     /**
      * The private instance of the graph command.
      * It's a private stateful command instance - will be used for undoing the operation on the graph.
@@ -74,35 +83,41 @@ public abstract class AbstractCanvasGraphCommand
 
     @Override
     public CommandResult<CanvasViolation> allow(final AbstractCanvasHandler context) {
-        final CommandResult<CanvasViolation> canvasResult =
-                performOperationOnGraph(context,
-                                        CommandOperation.ALLOW);
-        if (canDoCanvasOperation(canvasResult)) {
-            return getCanvasCommand(context).allow(context);
+        final CommandResult<CanvasViolation> result = canvasCommandFirst ?
+                performOperationOnCanvas(context, CommandOperation.ALLOW) :
+                performOperationOnGraph(context, CommandOperation.ALLOW);
+
+        if (canDoNexOperation(result)) {
+            return canvasCommandFirst ? performOperationOnGraph(context, CommandOperation.ALLOW) :
+                    performOperationOnCanvas(context, CommandOperation.ALLOW);
         }
-        return canvasResult;
+        return result;
     }
 
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-        final CommandResult<CanvasViolation> canvasResult =
-                performOperationOnGraph(context,
-                                        CommandOperation.EXECUTE);
-        if (canDoCanvasOperation(canvasResult)) {
-            return getCanvasCommand(context).execute(context);
+        final CommandResult<CanvasViolation> result = canvasCommandFirst ?
+                performOperationOnCanvas(context, CommandOperation.EXECUTE) :
+                performOperationOnGraph(context, CommandOperation.EXECUTE);
+
+        if (canDoNexOperation(result)) {
+            return canvasCommandFirst ? performOperationOnGraph(context, CommandOperation.EXECUTE) :
+                    performOperationOnCanvas(context, CommandOperation.EXECUTE);
         }
-        return canvasResult;
+        return result;
     }
 
     @Override
     public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler context) {
-        final CommandResult<CanvasViolation> canvasResult =
-                performOperationOnGraph(context,
-                                        CommandOperation.UNDO);
-        if (canDoCanvasOperation(canvasResult)) {
-            return getCanvasCommand(context).undo(context);
+        final CommandResult<CanvasViolation> result = canvasCommandFirst ?
+                performOperationOnCanvas(context, CommandOperation.UNDO) :
+                performOperationOnGraph(context, CommandOperation.UNDO);
+
+        if (canDoNexOperation(result)) {
+            return canvasCommandFirst ? performOperationOnGraph(context, CommandOperation.UNDO) :
+                    performOperationOnCanvas(context, CommandOperation.UNDO);
         }
-        return canvasResult;
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -142,7 +157,24 @@ public abstract class AbstractCanvasGraphCommand
         return null;
     }
 
-    private boolean canDoCanvasOperation(CommandResult<CanvasViolation> result) {
+    private CommandResult<CanvasViolation> performOperationOnCanvas(final AbstractCanvasHandler context,
+                                                                    final CommandOperation op) {
+        // Ensure the canvas command is initialized before updating the element on the graph side.
+        getGraphCommand(context);
+
+        final Command<AbstractCanvasHandler, CanvasViolation> graphCommand = getCanvasCommand(context);
+        switch (op) {
+            case ALLOW:
+                return graphCommand.allow(context);
+            case EXECUTE:
+                return graphCommand.execute(context);
+            case UNDO:
+                return graphCommand.undo(context);
+        }
+        return null;
+    }
+
+    private boolean canDoNexOperation(CommandResult<CanvasViolation> result) {
         return null == result || !CommandUtils.isError(result);
     }
 
@@ -156,5 +188,13 @@ public abstract class AbstractCanvasGraphCommand
                 " [graphCommand=" +
                 (null != graphCommand ? graphCommand.toString() : null) +
                 "]";
+    }
+
+    protected boolean isCanvasCommandFirst() {
+        return canvasCommandFirst;
+    }
+
+    protected void setCanvasCommandFirst(boolean canvasCommandFirst) {
+        this.canvasCommandFirst = canvasCommandFirst;
     }
 }
