@@ -39,52 +39,43 @@ public class PropertyReaderFactory {
     }
 
     public BasicPropertyReader of(BaseElement el) {
-        return new BasicPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new BasicPropertyReader(el, plane);
     }
 
     public SequenceFlowPropertyReader of(SequenceFlow el) {
-        return new SequenceFlowPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new SequenceFlowPropertyReader(el, plane);
     }
 
     public GatewayPropertyReader of(Gateway el) {
-        return new GatewayPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new GatewayPropertyReader(el, plane);
     }
 
     public UserTaskPropertyReader of(UserTask el) {
-        return new UserTaskPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new UserTaskPropertyReader(el, plane);
     }
 
     public EventPropertyReader of(Event el) {
-        return EventPropertyReader.of(el, getBPMNShapeForElement(el.getId()));
+        return EventPropertyReader.of(el, plane);
     }
 
     public SubProcessPropertyReader of(SubProcess el) {
-        return new SubProcessPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new SubProcessPropertyReader(el, plane);
     }
 
     public BusinessRuleTaskPropertyReader of(BusinessRuleTask el) {
-        return new BusinessRuleTaskPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new BusinessRuleTaskPropertyReader(el, plane);
     }
 
     public ActivityPropertyReader of(Activity el) {
-        return new ActivityPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new ActivityPropertyReader(el, plane);
     }
 
     public ProcessPropertyReader of(Process el) {
-        return new ProcessPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new ProcessPropertyReader(el, plane);
     }
 
     public ScriptTaskPropertyReader of(ScriptTask el) {
-        return new ScriptTaskPropertyReader(el, getBPMNShapeForElement(el.getId()));
+        return new ScriptTaskPropertyReader(el, plane);
     }
-
-    private BPMNShape getBPMNShapeForElement(String elementId) {
-        return plane.getPlaneElement().stream()
-                .filter(dia -> dia instanceof BPMNShape)
-                .map(shape -> (BPMNShape) shape)
-                .filter(shape -> shape.getBpmnElement().getId().equals(elementId))
-                .findFirst().orElse(null);
-    }
-
 
 }

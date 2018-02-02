@@ -17,12 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 
 public class BasicPropertyReader extends BasePropertyReader {
 
 
-    public BasicPropertyReader(BaseElement element, BPMNShape plane) {
+    public BasicPropertyReader(BaseElement element, BPMNPlane plane) {
         super(element, plane);
     }
 }

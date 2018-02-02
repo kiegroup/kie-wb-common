@@ -105,11 +105,7 @@ public class SubProcessConverter {
                 });
 
         subProcess.getFlowElements()
-                .stream()
-                .map(flowElementConverter::convertEdge)
-                .filter(Result::isSuccess)
-                .map(Result::value)
-                .forEach(layout::updateEdge);
+                .forEach(flowElementConverter::convertEdge);
 
         subProcess.getFlowElements()
                 .forEach(flowElementConverter::convertDockedNodes);

@@ -116,11 +116,7 @@ public class ProcessConverter {
                 });
 
         process.getFlowElements()
-                .stream()
-                .map(flowElementConverter::convertEdge)
-                .filter(Result::isSuccess)
-                .map(Result::value)
-                .forEach(layout::updateEdge);
+                .forEach(flowElementConverter::convertEdge);
 
         process.getFlowElements()
                 .forEach(flowElementConverter::convertDockedNodes);

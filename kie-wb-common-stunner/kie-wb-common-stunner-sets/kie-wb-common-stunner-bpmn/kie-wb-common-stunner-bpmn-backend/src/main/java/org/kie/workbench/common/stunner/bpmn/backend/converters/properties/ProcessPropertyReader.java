@@ -26,7 +26,7 @@ public class ProcessPropertyReader extends BasePropertyReader {
 
     private final Process process;
 
-    public ProcessPropertyReader(Process element, BPMNShape plane) {
+    public ProcessPropertyReader(Process element, BPMNPlane plane) {
         super(element, plane);
         this.process = element;
     }

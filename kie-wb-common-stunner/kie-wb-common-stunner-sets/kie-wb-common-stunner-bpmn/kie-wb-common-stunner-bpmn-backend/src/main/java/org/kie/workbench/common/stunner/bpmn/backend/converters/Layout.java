@@ -20,14 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Properties;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
@@ -95,80 +92,7 @@ public class Layout {
         logger.info(child.getContent().getDefinition().toString() + child.getContent().getBounds().toString());
     }
 
-    public CircleDimensionSet circleDimensionSet(String id) {
-        return new CircleDimensionSet(new Radius(
-                getBPMNShapeForElement(id).getBounds().getWidth() / 2d));
-    }
 
-    public RectangleDimensionsSet rectangleDimensionsSet(String id) {
-        Bounds bounds = getBPMNShapeForElement(id).getBounds();
-        return new RectangleDimensionsSet((double) bounds.getWidth(), (double) bounds.getHeight());
-    }
-
-    public void updateEdge(Edge<?, ?> edge) {
-        Node sourceNode = edge.getSourceNode();
-        String sourceId = sourceNode.getUUID();
-        Node targetNode = edge.getTargetNode();
-        String targetId = targetNode.getUUID();
-
-        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
-        Bounds targetBounds = getBPMNShapeForElement(targetId).getBounds();
-
-        getBPMNEdgeForElement(edge.getUUID()).ifPresent(bpmnEdge -> {
-            List<Point2D> pts = points(sourceBounds,
-                                       targetBounds,
-                                       bpmnEdge.getWaypoint());
-
-            Optional<Connection> sourceConnection = ((ViewConnector) edge.getContent()).getSourceConnection();
-            sourceConnection.get().getLocation().setX(pts.get(0).getX());
-            sourceConnection.get().getLocation().setY(pts.get(0).getY());
-
-            Optional<Connection> targetConnection = ((ViewConnector) edge.getContent()).getTargetConnection();
-            targetConnection.get().getLocation().setX(pts.get(1).getX());
-            targetConnection.get().getLocation().setY(pts.get(1).getY());
-//
-//            context.updatePosition(sourceNode, pts.get(0));
-//            context.updatePosition(targetNode, pts.get(1));
-//
-//            logger.info(sourceNode.getContent().getDefinition().toString()+sourceNode.getContent().getBounds().toString());
-//            logger.info(targetNode.getContent().getDefinition().toString()+targetNode.getContent().getBounds().toString());
-
-        });
-    }
-
-    public Point2D sourcePosition(Node sourceNode, Point wayPoint) {
-        String sourceId = sourceNode.getUUID();
-        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
-        if (wayPoint == null) {
-            return Point2D.create(sourceBounds.getWidth() / 2,
-                                  sourceBounds.getHeight() / 2);
-        } else {
-            return Point2D.create(
-                    wayPoint.getX() - sourceBounds.getX(),
-                    wayPoint.getY() - sourceBounds.getY());
-        }
-    }
-
-    public Point2D targetPosition(Node sourceNode, Point wayPoint) {
-        String sourceId = sourceNode.getUUID();
-        Bounds sourceBounds = getBPMNShapeForElement(sourceId).getBounds();
-        if (wayPoint == null) {
-            return Point2D.create(sourceBounds.getWidth() / 2,
-                                  sourceBounds.getHeight() / 2);
-        } else {
-            return Point2D.create(
-                    wayPoint.getX() - sourceBounds.getX(),
-                    wayPoint.getY() - sourceBounds.getY());
-        }
-    }
-
-    private Optional<BPMNEdge> getBPMNEdgeForElement(String elementId) {
-        return plane.getPlaneElement().stream()
-                .filter(dia -> dia instanceof BPMNEdge)
-                .map(edge -> (BPMNEdge) edge)
-                .filter(edge -> edge.getBpmnElement().getId().equals(elementId))
-                .findFirst();
-    }
 
     private BPMNShape getBPMNShapeForElement(String elementId) {
         return plane.getPlaneElement().stream()
@@ -176,37 +100,5 @@ public class Layout {
                 .map(shape -> (BPMNShape) shape)
                 .filter(shape -> shape.getBpmnElement().getId().equals(elementId))
                 .findFirst().get();
-    }
-
-    private List<Point2D> points(Bounds sourceBounds, Bounds targetBounds, List<Point> waypoints) {
-        List<Point2D> points = new ArrayList<>();
-
-        if (waypoints.isEmpty()) {
-            points.add(Point2D.create(sourceBounds.getWidth(),
-                                      sourceBounds.getHeight() / 2));
-            points.add(Point2D.create(0,
-                                      targetBounds.getHeight() / 2));
-        } else {
-            if (waypoints.size() != 2) {
-                logger.warn("Waypoints should be either 0 or 2. Unexpected size: " + waypoints.size());
-            }
-            Point firstWaypoint = waypoints.get(0);
-            points.add(Point2D.create(
-                    firstWaypoint.getX() - sourceBounds.getX(),
-                    firstWaypoint.getY() - sourceBounds.getY()));
-
-            // will skip these for now...
-            // for (int i = 1; i < waypoints.size() - 1; i++) {
-            //     Point midWaypoints = waypoints.get(i);
-            //     points.add(Point2D.create(midWaypoints.getX(),
-            //                               midWaypoints.getY()));
-            // }
-
-            Point lastWaypoint = waypoints.get(waypoints.size() - 1);
-            points.add(Point2D.create(lastWaypoint.getX() - targetBounds.getX(),
-                                      lastWaypoint.getY() - targetBounds.getY()));
-        }
-
-        return points;
     }
 }

@@ -29,6 +29,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.background.Back
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BorderSize;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderColor;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontBorderSize;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontColor;
@@ -43,10 +46,12 @@ public class BasePropertyReader {
 
     protected final BaseElement element;
     protected final BPMNShape shape;
+    protected final BPMNPlane plane;
 
-    public BasePropertyReader(BaseElement element, BPMNShape shape) {
+    public BasePropertyReader(BaseElement element, BPMNPlane plane) {
         this.element = element;
-        this.shape = shape;
+        this.plane = plane;
+        this.shape = getShape(plane, element.getId());
     }
 
     public String getDocumentation() {
@@ -96,6 +101,18 @@ public class BasePropertyReader {
                 bounds.getY() + bounds.getHeight());
     }
 
+    public CircleDimensionSet getCircleDimensionSet() {
+        if (shape == null) return new CircleDimensionSet();
+        return new CircleDimensionSet(new Radius(
+                shape.getBounds().getWidth() / 2d));
+    }
+
+    public RectangleDimensionsSet getRectangleDimensionsSet() {
+        if (shape == null) return new RectangleDimensionsSet();
+        org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
+        return new RectangleDimensionsSet((double) bounds.getWidth(), (double) bounds.getHeight());
+    }
+
 
     protected String attribute(String... attributeId) {
         return optionalAttribute(attributeId).orElse("");
@@ -103,6 +120,15 @@ public class BasePropertyReader {
 
     protected String metaData(String name) {
         return Utils.getMetaDataValue(element.getExtensionValues(), name);
+    }
+
+
+    protected static BPMNShape getShape(BPMNPlane plane, String elementId) {
+        return plane.getPlaneElement().stream()
+                .filter(dia -> dia instanceof BPMNShape)
+                .map(shape -> (BPMNShape) shape)
+                .filter(shape -> shape.getBpmnElement().getId().equals(elementId))
+                .findFirst().orElse(null);
     }
 
 }

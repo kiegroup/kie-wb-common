@@ -16,16 +16,30 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SequenceFlow;
-import org.eclipse.bpmn2.di.BPMNShape;
+import org.eclipse.bpmn2.di.BPMNEdge;
+import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.dd.dc.Bounds;
+import org.eclipse.dd.dc.Point;
+import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
+import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SequenceFlowPropertyReader extends BasePropertyReader {
 
+    private static final Logger logger = LoggerFactory.getLogger(SequenceFlowPropertyReader.class);
     final FormalExpression conditionExpression;
+    private final SequenceFlow seq;
 
-    public SequenceFlowPropertyReader(SequenceFlow seq, BPMNShape plane) {
+    public SequenceFlowPropertyReader(SequenceFlow seq, BPMNPlane plane) {
         super(seq, plane);
+        this.seq = seq;
         conditionExpression = (FormalExpression) seq.getConditionExpression();
     }
 
@@ -43,6 +57,70 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
         return conditionExpression == null ?
                 "" :
                 Scripts.scriptLanguageFromUri(conditionExpression.getLanguage());
+    }
+
+    public String getSourceId() {
+        return seq.getSourceRef().getId();
+    }
+
+    public String getTargetId() {
+        return seq.getTargetRef().getId();
+    }
+
+    public Connection getSourceConnection() {
+        Point2D sourcePosition = getSourcePosition(element.getId(), getSourceId());
+        return MagnetConnection.Builder.at(sourcePosition.getX(), sourcePosition.getY()).setAuto(isAutoConnectionSource());
+    }
+
+    public Connection getTargetConnection() {
+        Point2D targetPosition = getTargetPosition(element.getId(), getTargetId());
+        return MagnetConnection.Builder.at(targetPosition.getX(), targetPosition.getY()).setAuto(isAutoConnectionSource());
+    }
+
+    private Point2D getSourcePosition(String edgeId, String sourceId) {
+        BPMNEdge bpmnEdge = getBPMNEdgeForElement(edgeId).get();
+        Bounds sourceBounds = getShape(plane, sourceId).getBounds();
+        List<Point> waypoint = bpmnEdge.getWaypoint();
+        return waypoint.isEmpty() ?
+                sourcePosition(sourceBounds)
+                : offsetPosition(sourceBounds, waypoint.get(0));
+    }
+
+    private Point2D getTargetPosition(String edgeId, String targetId) {
+        BPMNEdge bpmnEdge = getBPMNEdgeForElement(edgeId).get();
+        Bounds targetBounds = getShape(plane, targetId).getBounds();
+        List<Point> waypoint = bpmnEdge.getWaypoint();
+
+        if (waypoint.size() > 2) {
+            logger.warn("Waypoints should be either 0 or 2. Unexpected size: " + waypoint.size());
+        }
+
+        return waypoint.isEmpty() ?
+                targetPosition(targetBounds)
+                : offsetPosition(targetBounds, waypoint.get(waypoint.size() - 1));
+    }
+
+    private Point2D sourcePosition(Bounds sourceBounds) {
+        return Point2D.create(sourceBounds.getWidth(),
+                              sourceBounds.getHeight() / 2);
+    }
+
+    private Point2D offsetPosition(Bounds sourceBounds, Point wayPoint) {
+        return Point2D.create(wayPoint.getX() - sourceBounds.getX(),
+                              wayPoint.getY() - sourceBounds.getY());
+    }
+
+    private Point2D targetPosition(Bounds targetBounds) {
+        return Point2D.create(0,
+                              targetBounds.getHeight() / 2);
+    }
+
+    private Optional<BPMNEdge> getBPMNEdgeForElement(String elementId) {
+        return plane.getPlaneElement().stream()
+                .filter(dia -> dia instanceof BPMNEdge)
+                .map(edge -> (BPMNEdge) edge)
+                .filter(edge -> edge.getBpmnElement().getId().equals(elementId))
+                .findFirst();
     }
 
     public boolean isAutoConnectionSource() {

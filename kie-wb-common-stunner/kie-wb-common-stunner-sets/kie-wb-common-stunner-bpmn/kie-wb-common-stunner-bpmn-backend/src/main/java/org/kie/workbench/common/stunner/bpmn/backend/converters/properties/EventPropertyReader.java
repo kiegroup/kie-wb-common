@@ -23,6 +23,7 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
+import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.TimerEventDefinitionConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
@@ -32,10 +33,10 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 public abstract class EventPropertyReader extends BasePropertyReader {
 
-    public static EventPropertyReader of(Event el, BPMNShape shape) {
+    public static EventPropertyReader of(Event el, BPMNPlane plane) {
 
         if (el instanceof BoundaryEvent) {
-            return new EventPropertyReader(el, shape) {
+            return new EventPropertyReader(el, plane) {
                 @Override
                 public String getAssignmentsInfo() {
                     return Properties.getAssignmentsInfo((CatchEvent) el);
@@ -67,21 +68,21 @@ public abstract class EventPropertyReader extends BasePropertyReader {
                 }
             };
         } else if (el instanceof CatchEvent) {
-            return new EventPropertyReader(el, shape) {
+            return new EventPropertyReader(el, plane) {
                 @Override
                 public String getAssignmentsInfo() {
                     return Properties.getAssignmentsInfo((CatchEvent) el);
                 }
             };
         } else if (el instanceof ThrowEvent) {
-            return new EventPropertyReader(el, shape) {
+            return new EventPropertyReader(el, plane) {
                 @Override
                 public String getAssignmentsInfo() {
                     return Properties.getAssignmentsInfo((ThrowEvent) el);
                 }
             };
         } else if (el instanceof Activity) {
-            return new EventPropertyReader(el, shape) {
+            return new EventPropertyReader(el, plane) {
                 @Override
                 public String getAssignmentsInfo() {
                     return Properties.getAssignmentsInfo((Activity) el);
@@ -92,8 +93,8 @@ public abstract class EventPropertyReader extends BasePropertyReader {
         }
     }
 
-    EventPropertyReader(BaseElement element, BPMNShape shape) {
-        super(element, shape);
+    EventPropertyReader(BaseElement element, BPMNPlane plane) {
+        super(element, plane);
     }
 
     public String getSignalScope() {
