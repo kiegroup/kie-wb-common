@@ -48,12 +48,10 @@ public class UserTaskConverter {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final DefinitionResolver resolver;
 
-    public UserTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver resolver) {
+    public UserTaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.resolver = resolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.UserTask task) {
@@ -68,7 +66,7 @@ public class UserTaskConverter {
         ));
 
         definition.setSimulationSet(
-                resolver.extractSimulationSet(task)
+                p.getSimulationSet()
         );
 
         definition.setExecutionSet(new UserTaskExecutionSet(

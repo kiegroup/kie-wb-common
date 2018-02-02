@@ -40,19 +40,17 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class BoundaryEventConverter {
 
     private final TypedFactoryManager factoryManager;
-    private final DefinitionResolver definitionResolver;
     private final GraphBuildingContext context;
     private final IntermediateSignalEventCatchingConverter intermediateSignalEventCatchingConverter;
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
 
-    public BoundaryEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context) {
+    public BoundaryEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
 
         this.factoryManager = factoryManager;
-        this.definitionResolver = definitionResolver;
         this.context = context;
 
-        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory);
         this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager, propertyReaderFactory);
         this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager, propertyReaderFactory);
     }

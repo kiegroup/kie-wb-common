@@ -21,7 +21,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Process;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
@@ -60,14 +59,13 @@ public class ProcessConverter {
     public ProcessConverter(
             TypedFactoryManager typedFactoryManager,
             PropertyReaderFactory propertyReaderFactory,
-            DefinitionResolver definitionResolver,
             GraphBuildingContext context) {
 
         this.factoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
         this.context = context;
-        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context);
-        this.laneConverter = new LaneConverter(typedFactoryManager, propertyReaderFactory, definitionResolver);
+        this.flowElementConverter = new FlowElementConverter(typedFactoryManager, propertyReaderFactory, context);
+        this.laneConverter = new LaneConverter(typedFactoryManager, propertyReaderFactory);
     }
 
     public void convert(String definitionsId, Process process) {

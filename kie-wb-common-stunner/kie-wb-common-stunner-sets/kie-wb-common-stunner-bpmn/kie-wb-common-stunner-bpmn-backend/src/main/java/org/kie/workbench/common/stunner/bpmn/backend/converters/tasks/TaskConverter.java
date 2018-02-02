@@ -36,11 +36,11 @@ public class TaskConverter {
     private final UserTaskConverter userTaskConverter;
     private final ScriptTaskConverter scriptTaskConverter;
 
-    public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
         this.businessRuleTaskConverter = new BusinessRuleTaskConverter(factoryManager, propertyReaderFactory);
-        this.userTaskConverter = new UserTaskConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.userTaskConverter = new UserTaskConverter(factoryManager, propertyReaderFactory);
         this.scriptTaskConverter = new ScriptTaskConverter(factoryManager, propertyReaderFactory);
     }
 

@@ -27,7 +27,6 @@ import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
@@ -61,12 +60,10 @@ public class StartEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final DefinitionResolver definitionResolver;
 
-    public StartEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public StartEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.definitionResolver = definitionResolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(StartEvent startEvent) {
@@ -107,7 +104,7 @@ public class StartEventConverter {
 
                             definition.setExecutionSet(new InterruptingSignalEventExecutionSet(
                                     new IsInterrupting(event.isIsInterrupting()),
-                                    new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
+                                    new SignalRef(p.getSignalRef())
                             ));
 
                             node.getContent().setBounds(p.getBounds());

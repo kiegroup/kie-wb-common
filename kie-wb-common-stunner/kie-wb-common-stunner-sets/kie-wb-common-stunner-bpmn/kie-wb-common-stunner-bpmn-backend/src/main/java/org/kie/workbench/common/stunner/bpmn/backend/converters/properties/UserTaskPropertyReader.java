@@ -29,14 +29,18 @@ import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class UserTaskPropertyReader extends BasePropertyReader {
 
     private final UserTask task;
+    private final DefinitionResolver definitionResolver;
 
-    public UserTaskPropertyReader(UserTask element, BPMNPlane plane) {
+    public UserTaskPropertyReader(UserTask element, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(element, plane);
         this.task = element;
+        this.definitionResolver = definitionResolver;
     }
 
     public String getTaskName() {
@@ -117,5 +121,9 @@ public class UserTaskPropertyReader extends BasePropertyReader {
 
     private static Object evaluate(Assignment assignment) {
         return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
+    }
+
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(task);
     }
 }

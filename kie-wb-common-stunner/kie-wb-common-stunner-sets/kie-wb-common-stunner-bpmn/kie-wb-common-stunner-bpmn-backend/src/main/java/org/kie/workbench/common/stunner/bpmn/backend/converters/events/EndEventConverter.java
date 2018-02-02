@@ -59,12 +59,10 @@ public class EndEventConverter {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final DefinitionResolver definitionResolver;
 
-    public EndEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public EndEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.definitionResolver = definitionResolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(EndEvent event) {
@@ -117,7 +115,7 @@ public class EndEventConverter {
                             ));
 
                             definition.setExecutionSet(new ScopedSignalEventExecutionSet(
-                                    new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef())),
+                                    new SignalRef(p.getSignalRef()),
                                     new SignalScope(p.getSignalScope())
                             ));
 

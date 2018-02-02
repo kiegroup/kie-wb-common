@@ -128,8 +128,6 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         LOG.debug("Starting diagram unmarshalling...");
 
         Definitions definitions = parseDefinitions(inputStream);
-        DefinitionResolver definitionResolver =
-                new DefinitionResolver(definitions);
 
         Process process = findProcess(definitions);
 
@@ -141,11 +139,11 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         GraphBuildingContext context = graphContextOf(graph);
 
         BPMNPlane plane = findPlane(definitions);
-        PropertyReaderFactory propertyReaderFactory = new PropertyReaderFactory(plane);
+        PropertyReaderFactory propertyReaderFactory = new PropertyReaderFactory(plane, new DefinitionResolver(definitions));
 
         context.clearGraph();
 
-        new ProcessConverter(typedFactoryManager, propertyReaderFactory, definitionResolver, context)
+        new ProcessConverter(typedFactoryManager, propertyReaderFactory, context)
                 .convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");

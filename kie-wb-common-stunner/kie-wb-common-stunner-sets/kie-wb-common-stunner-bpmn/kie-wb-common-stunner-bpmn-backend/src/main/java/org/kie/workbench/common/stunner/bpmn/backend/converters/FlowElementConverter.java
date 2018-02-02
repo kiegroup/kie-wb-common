@@ -56,27 +56,25 @@ public class FlowElementConverter {
     private final SequenceFlowConverter sequenceFlowConverter;
     private final GatewayConverter gatewayConverter;
     private final BoundaryEventConverter boundaryEventConverter;
-    private final DefinitionResolver definitionResolver;
     private final EndEventConverter endEventConverter;
     private final IntermediateThrowEventConverter intermediateThrowEventConverter;
     private final IntermediateCatchEventConverter intermediateCatchEventConverter;
     private final CallActivityConverter callActivityConverter;
     private final SubProcessConverter subProcessConverter;
 
-    public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver, GraphBuildingContext context) {
+    public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
         this.factoryManager = factoryManager;
         this.context = context;
-        this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
-        this.endEventConverter = new EndEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
-        this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
-        this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, propertyReaderFactory, definitionResolver);
-        this.taskConverter = new TaskConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory);
+        this.endEventConverter = new EndEventConverter(factoryManager, propertyReaderFactory);
+        this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, propertyReaderFactory);
+        this.intermediateCatchEventConverter = new IntermediateCatchEventConverter(factoryManager, propertyReaderFactory);
+        this.taskConverter = new TaskConverter(factoryManager, propertyReaderFactory);
         this.sequenceFlowConverter = new SequenceFlowConverter(factoryManager, propertyReaderFactory, context);
         this.gatewayConverter = new GatewayConverter(factoryManager, propertyReaderFactory);
-        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, propertyReaderFactory, definitionResolver, context);
+        this.boundaryEventConverter = new BoundaryEventConverter(factoryManager, propertyReaderFactory, context);
         this.callActivityConverter = new CallActivityConverter(factoryManager, propertyReaderFactory);
-        this.subProcessConverter = new SubProcessConverter(factoryManager, propertyReaderFactory, definitionResolver, this, context);
-        this.definitionResolver = definitionResolver;
+        this.subProcessConverter = new SubProcessConverter(factoryManager, propertyReaderFactory, this, context);
     }
 
     public Result<Node<? extends View<? extends BPMNViewDefinition>, ?>> convertNode(FlowElement flowElement) {

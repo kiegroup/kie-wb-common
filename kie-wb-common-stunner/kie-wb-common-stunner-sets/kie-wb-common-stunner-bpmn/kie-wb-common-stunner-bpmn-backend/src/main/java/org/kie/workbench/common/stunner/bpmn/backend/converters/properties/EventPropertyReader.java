@@ -16,15 +16,19 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.eclipse.bpmn2.Activity;
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.Event;
+import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.TimerEventDefinitionConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
@@ -33,10 +37,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 public abstract class EventPropertyReader extends BasePropertyReader {
 
-    public static EventPropertyReader of(Event el, BPMNPlane plane) {
+    private final DefinitionResolver definitionResolver;
+    private String signalRefId = null;
+
+    public static EventPropertyReader of(Event el, BPMNPlane plane, DefinitionResolver definitionResolver) {
 
         if (el instanceof BoundaryEvent) {
-            return new EventPropertyReader(el, plane) {
+            return new EventPropertyReader(el, plane, definitionResolver, null) {
                 @Override
                 public String getAssignmentsInfo() {
                     return Properties.getAssignmentsInfo((CatchEvent) el);
@@ -68,24 +75,27 @@ public abstract class EventPropertyReader extends BasePropertyReader {
                 }
             };
         } else if (el instanceof CatchEvent) {
-            return new EventPropertyReader(el, plane) {
+            CatchEvent catchEvent = (CatchEvent) el;
+            return new EventPropertyReader(el, plane, definitionResolver, getSignalRefId(catchEvent.getEventDefinitions())) {
                 @Override
                 public String getAssignmentsInfo() {
-                    return Properties.getAssignmentsInfo((CatchEvent) el);
+                    return Properties.getAssignmentsInfo(catchEvent);
                 }
             };
         } else if (el instanceof ThrowEvent) {
-            return new EventPropertyReader(el, plane) {
+            ThrowEvent throwEvent = (ThrowEvent) el;
+            return new EventPropertyReader(el, plane, definitionResolver, getSignalRefId(throwEvent.getEventDefinitions())) {
                 @Override
                 public String getAssignmentsInfo() {
-                    return Properties.getAssignmentsInfo((ThrowEvent) el);
+                    return Properties.getAssignmentsInfo(throwEvent);
                 }
             };
         } else if (el instanceof Activity) {
-            return new EventPropertyReader(el, plane) {
+            Activity activity = (Activity) el;
+            return new EventPropertyReader(el, plane, definitionResolver, null) {
                 @Override
                 public String getAssignmentsInfo() {
-                    return Properties.getAssignmentsInfo((Activity) el);
+                    return Properties.getAssignmentsInfo(activity);
                 }
             };
         } else {
@@ -93,8 +103,17 @@ public abstract class EventPropertyReader extends BasePropertyReader {
         }
     }
 
-    EventPropertyReader(BaseElement element, BPMNPlane plane) {
+    static String getSignalRefId(List<EventDefinition> eventDefinitions) {
+        if (eventDefinitions.size() == 1 && eventDefinitions.get(0) instanceof SignalEventDefinition) {
+            return ((SignalEventDefinition) eventDefinitions.get(0)).getSignalRef();
+        }
+        return null;
+    }
+
+    EventPropertyReader(Event element, BPMNPlane plane, DefinitionResolver definitionResolver, String eventDefinition) {
         super(element, plane);
+        this.definitionResolver = definitionResolver;
+        this.signalRefId = eventDefinition;
     }
 
     public String getSignalScope() {
@@ -109,5 +128,10 @@ public abstract class EventPropertyReader extends BasePropertyReader {
 
     public TimerSettingsValue getTimerSettings(TimerEventDefinition eventDefinition) {
         return TimerEventDefinitionConverter.convertTimerEventDefinition(eventDefinition);
+    }
+
+    public String getSignalRef() {
+        Objects.requireNonNull(signalRefId);
+        return definitionResolver.resolveSignalName(signalRefId);
     }
 }

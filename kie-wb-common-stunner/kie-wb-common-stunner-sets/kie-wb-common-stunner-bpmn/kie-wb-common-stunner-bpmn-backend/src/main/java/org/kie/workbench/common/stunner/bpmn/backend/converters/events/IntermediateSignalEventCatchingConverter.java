@@ -39,12 +39,10 @@ public class IntermediateSignalEventCatchingConverter {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final DefinitionResolver definitionResolver;
 
-    public IntermediateSignalEventCatchingConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public IntermediateSignalEventCatchingConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.definitionResolver = definitionResolver;
     }
 
     public Node<View<IntermediateSignalEventCatching>, Edge> convert(CatchEvent event, SignalEventDefinition e) {
@@ -65,8 +63,9 @@ public class IntermediateSignalEventCatchingConverter {
 
         definition.setExecutionSet(new CancellingSignalEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
-                new SignalRef(definitionResolver.resolveSignalName(e.getSignalRef()))
+                new SignalRef(p.getSignalRef())
         ));
+
         node.getContent().setBounds(p.getBounds());
         return node;
     }

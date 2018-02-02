@@ -30,14 +30,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class LaneConverter {
 
     private final TypedFactoryManager typedFactoryManager;
-    private final DefinitionResolver definitionResolver;
     private PropertyReaderFactory propertyReaderFactory;
 
-    public LaneConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public LaneConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory) {
 
         this.typedFactoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.definitionResolver = definitionResolver;
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.Lane lane) {
@@ -45,7 +43,6 @@ public class LaneConverter {
         Lane definition = node.getContent().getDefinition();
 
         BasicPropertyReader p = propertyReaderFactory.of(lane);
-
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(lane.getName()),

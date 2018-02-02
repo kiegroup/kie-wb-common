@@ -29,13 +29,16 @@ import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 
 public class PropertyReaderFactory {
 
     private final BPMNPlane plane;
+    private final DefinitionResolver definitionResolver;
 
-    public PropertyReaderFactory(BPMNPlane plane) {
+    public PropertyReaderFactory(BPMNPlane plane, DefinitionResolver definitionResolver) {
         this.plane = plane;
+        this.definitionResolver = definitionResolver;
     }
 
     public BasicPropertyReader of(BaseElement el) {
@@ -51,11 +54,11 @@ public class PropertyReaderFactory {
     }
 
     public UserTaskPropertyReader of(UserTask el) {
-        return new UserTaskPropertyReader(el, plane);
+        return new UserTaskPropertyReader(el, plane, definitionResolver);
     }
 
     public EventPropertyReader of(Event el) {
-        return EventPropertyReader.of(el, plane);
+        return EventPropertyReader.of(el, plane, definitionResolver);
     }
 
     public SubProcessPropertyReader of(SubProcess el) {

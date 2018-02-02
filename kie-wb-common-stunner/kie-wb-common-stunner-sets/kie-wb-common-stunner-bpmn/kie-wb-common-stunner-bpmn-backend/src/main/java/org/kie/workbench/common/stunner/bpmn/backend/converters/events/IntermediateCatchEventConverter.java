@@ -39,17 +39,15 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 public class IntermediateCatchEventConverter {
 
     private final TypedFactoryManager factoryManager;
-    private final DefinitionResolver definitionResolver;
     private final IntermediateSignalEventCatchingConverter intermediateSignalEventCatchingConverter;
     private final IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private final IntermediateErrorEventCatchingConverter intermediateErrorEventCatchingConverter;
 
-    public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, DefinitionResolver definitionResolver) {
+    public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
-        this.definitionResolver = definitionResolver;
 
-        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory);
         this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager, propertyReaderFactory);
         this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager, propertyReaderFactory);
         this.intermediateErrorEventCatchingConverter = new IntermediateErrorEventCatchingConverter(factoryManager, propertyReaderFactory);

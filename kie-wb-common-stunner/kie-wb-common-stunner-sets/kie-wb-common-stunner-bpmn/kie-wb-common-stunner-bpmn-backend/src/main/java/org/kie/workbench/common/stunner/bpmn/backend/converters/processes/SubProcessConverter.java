@@ -52,7 +52,6 @@ public class SubProcessConverter {
     public SubProcessConverter(
             TypedFactoryManager factoryManager,
             PropertyReaderFactory propertyReaderFactory,
-            DefinitionResolver definitionResolver,
             FlowElementConverter flowElementConverter,
             GraphBuildingContext context) {
 
@@ -61,7 +60,7 @@ public class SubProcessConverter {
         this.context = context;
 
         this.flowElementConverter = flowElementConverter;
-        this.laneConverter = new LaneConverter(factoryManager, propertyReaderFactory, definitionResolver);
+        this.laneConverter = new LaneConverter(factoryManager, propertyReaderFactory);
     }
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
