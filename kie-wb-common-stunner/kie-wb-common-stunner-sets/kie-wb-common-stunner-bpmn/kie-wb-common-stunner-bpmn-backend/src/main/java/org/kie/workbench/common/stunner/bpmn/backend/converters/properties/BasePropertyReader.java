@@ -39,9 +39,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSize;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
-public class BasePropertyReader {
+public abstract class BasePropertyReader {
 
     protected final BaseElement element;
     protected final BPMNShape shape;

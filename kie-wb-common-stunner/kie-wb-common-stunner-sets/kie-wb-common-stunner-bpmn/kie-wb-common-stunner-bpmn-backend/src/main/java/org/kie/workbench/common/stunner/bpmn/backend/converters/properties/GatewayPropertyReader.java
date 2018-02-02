@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
 
 public class GatewayPropertyReader extends BasePropertyReader {
 
@@ -27,6 +26,6 @@ public class GatewayPropertyReader extends BasePropertyReader {
     }
 
     public String getDefaultRoute() {
-        return Properties.findAnyAttribute(element, "dg");
+        return attribute("dg");
     }
 }

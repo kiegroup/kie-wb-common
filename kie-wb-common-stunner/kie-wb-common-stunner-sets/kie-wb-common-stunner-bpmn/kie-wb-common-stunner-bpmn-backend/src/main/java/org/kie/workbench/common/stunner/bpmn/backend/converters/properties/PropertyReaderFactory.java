@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.Gateway;
@@ -28,7 +27,6 @@ import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 
 public class PropertyReaderFactory {
@@ -80,5 +78,4 @@ public class PropertyReaderFactory {
     public ScriptTaskPropertyReader of(ScriptTask el) {
         return new ScriptTaskPropertyReader(el, plane);
     }
-
 }

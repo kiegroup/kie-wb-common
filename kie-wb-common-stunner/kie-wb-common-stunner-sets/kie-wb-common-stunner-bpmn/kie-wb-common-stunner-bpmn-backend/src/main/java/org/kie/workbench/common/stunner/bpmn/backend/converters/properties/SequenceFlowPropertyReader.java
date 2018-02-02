@@ -47,6 +47,14 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
         return attribute("priority");
     }
 
+    public boolean isAutoConnectionSource() {
+        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
+    }
+
+    public boolean isAutoConnectionTarget() {
+        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
+    }
+
     public String getConditionExpression() {
         return conditionExpression == null ?
                 "" :
@@ -121,13 +129,5 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
                 .map(edge -> (BPMNEdge) edge)
                 .filter(edge -> edge.getBpmnElement().getId().equals(elementId))
                 .findFirst();
-    }
-
-    public boolean isAutoConnectionSource() {
-        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
-    }
-
-    public boolean isAutoConnectionTarget() {
-        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
     }
 }

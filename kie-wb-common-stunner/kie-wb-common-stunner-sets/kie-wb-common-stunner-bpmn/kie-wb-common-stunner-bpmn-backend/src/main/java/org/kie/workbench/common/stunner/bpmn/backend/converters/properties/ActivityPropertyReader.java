@@ -16,15 +16,14 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.Assignment;
-import org.eclipse.bpmn2.DataInput;
-import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
 
 public class ActivityPropertyReader extends BasePropertyReader {
 
@@ -48,7 +47,24 @@ public class ActivityPropertyReader extends BasePropertyReader {
     }
 
     public String getAssignmentsInfo() {
-        return Properties.getAssignmentsInfo(activity);
+        InputOutputSpecification ioSpecification = activity.getIoSpecification();
+        if (ioSpecification == null) {
+            return AssignmentsInfos.makeString(
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    activity.getDataInputAssociations(),
+                    Collections.emptyList(),
+                    Collections.emptyList(),
+                    activity.getDataOutputAssociations());
+        } else {
+            return AssignmentsInfos.makeWrongString(
+                    ioSpecification.getDataInputs(),
+                    //ioSpecification.getInputSets(),
+                    activity.getDataInputAssociations(),
+                    ioSpecification.getDataOutputs(),
+                    //ioSpecification.getOutputSets(),
+                    activity.getDataOutputAssociations());
+        }
     }
 
     public String getProcessVariables() {
@@ -58,20 +74,7 @@ public class ActivityPropertyReader extends BasePropertyReader {
                 .collect(Collectors.joining(","));
     }
 
-    public String input(String name) {
-        for (DataInputAssociation din : activity.getDataInputAssociations()) {
-            DataInput targetRef = (DataInput) (din.getTargetRef());
-            if (targetRef.getName().equalsIgnoreCase(name)) {
-                Assignment assignment = din.getAssignment().get(0);
-                return evaluate(assignment).toString();
-            }
-        }
-        return "";
-    }
-
     private static Object evaluate(Assignment assignment) {
         return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
     }
-
-
 }

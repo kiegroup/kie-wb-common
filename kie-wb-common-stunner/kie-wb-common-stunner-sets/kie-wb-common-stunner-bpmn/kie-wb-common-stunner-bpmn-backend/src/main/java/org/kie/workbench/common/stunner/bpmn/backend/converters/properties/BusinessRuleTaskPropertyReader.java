@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Collections;
+
 import org.eclipse.bpmn2.BusinessRuleTask;
+import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
 
 public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
 
@@ -34,7 +36,30 @@ public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
     }
 
     public String getAssignmentsInfo() {
-        return Properties.getAssignmentsInfo(task);
+        InputOutputSpecification ioSpecification = task.getIoSpecification();
+        if (ioSpecification == null) {
+            return (
+                    AssignmentsInfos.makeString(
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            task.getDataInputAssociations(),
+                            Collections.emptyList(),
+                            Collections.emptyList(),
+                            task.getDataOutputAssociations()
+                    )
+            );
+        } else {
+            return (
+                    AssignmentsInfos.makeWrongString(
+                            ioSpecification.getDataInputs(),
+                            //ioSpecification.getInputSets(),
+                            task.getDataInputAssociations(),
+                            ioSpecification.getDataOutputs(),
+                            //ioSpecification.getOutputSets(),
+                            task.getDataOutputAssociations()
+                    )
+            );
+        }
     }
 
     public boolean isAsync() {
