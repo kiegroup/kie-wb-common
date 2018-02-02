@@ -32,13 +32,18 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFact
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionSourceNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPositionCommand;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GraphBuildingContext {
+
+    private static final Logger logger = LoggerFactory.getLogger(GraphBuildingContext.class);
 
     private final GraphCommandExecutionContext executionContext;
     private final GraphCommandFactory commandFactory;
@@ -73,9 +78,23 @@ public class GraphBuildingContext {
         return executionContext.getGraphIndex().getNode(id);
     }
 
-    public void addChildNode(Node parent, Node child) {
+    public void addChildNode(Node<? extends View, ?> parent, Node<? extends View, ?> child) {
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);
+
+        translate(child, parent.getContent().getBounds());
+    }
+
+    public void translate(Node<? extends View, ?> node, Bounds constraints) {
+
+        logger.info("Translating {} into constraints {}", node.getContent().getBounds(), constraints);
+
+        Bounds childBounds = node.getContent().getBounds();
+        double constrainedX = childBounds.getUpperLeft().getX() - constraints.getUpperLeft().getX();
+        double constrainedY = childBounds.getUpperLeft().getY() - constraints.getUpperLeft().getY();
+
+        Point2D coords = Point2D.create(constrainedX, constrainedY);
+        updatePosition(node, coords);
     }
 
     public void updatePosition(Node node, Point2D position) {

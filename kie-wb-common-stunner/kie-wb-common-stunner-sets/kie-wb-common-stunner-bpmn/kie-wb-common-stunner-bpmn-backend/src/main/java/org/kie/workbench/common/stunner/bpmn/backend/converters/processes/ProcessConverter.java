@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
@@ -101,19 +102,18 @@ public class ProcessConverter {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
 
+                    BasicPropertyReader p = propertyReaderFactory.of(lane);
+
                     lane.getFlowNodeRefs().forEach(node -> {
-                        Node child = freeFloatingNodes.remove(node.getId());
+                        Node<? extends View,?> child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
-                        layout.updateChildNode(laneNode, child);
                     });
 
                     context.addChildNode(firstDiagramNode, laneNode);
                 });
 
         freeFloatingNodes.values()
-                .forEach(n -> {
-                    context.addChildNode(firstDiagramNode, n);
-                });
+                .forEach(n -> context.addChildNode(firstDiagramNode, n));
 
         process.getFlowElements()
                 .forEach(flowElementConverter::convertEdge);

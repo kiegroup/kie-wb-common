@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
@@ -92,7 +91,9 @@ public class BasePropertyReader {
     }
 
     public Bounds getBounds() {
-        if (shape == null) return BoundsImpl.build();
+        if (shape == null) {
+            return BoundsImpl.build();
+        }
         org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
         return BoundsImpl.build(
                 bounds.getX(),
@@ -102,17 +103,20 @@ public class BasePropertyReader {
     }
 
     public CircleDimensionSet getCircleDimensionSet() {
-        if (shape == null) return new CircleDimensionSet();
+        if (shape == null) {
+            return new CircleDimensionSet();
+        }
         return new CircleDimensionSet(new Radius(
                 shape.getBounds().getWidth() / 2d));
     }
 
     public RectangleDimensionsSet getRectangleDimensionsSet() {
-        if (shape == null) return new RectangleDimensionsSet();
+        if (shape == null) {
+            return new RectangleDimensionsSet();
+        }
         org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
         return new RectangleDimensionsSet((double) bounds.getWidth(), (double) bounds.getHeight());
     }
-
 
     protected String attribute(String... attributeId) {
         return optionalAttribute(attributeId).orElse("");
@@ -122,7 +126,6 @@ public class BasePropertyReader {
         return Utils.getMetaDataValue(element.getExtensionValues(), name);
     }
 
-
     protected static BPMNShape getShape(BPMNPlane plane, String elementId) {
         return plane.getPlaneElement().stream()
                 .filter(dia -> dia instanceof BPMNShape)
@@ -130,5 +133,4 @@ public class BasePropertyReader {
                 .filter(shape -> shape.getBpmnElement().getId().equals(elementId))
                 .findFirst().orElse(null);
     }
-
 }

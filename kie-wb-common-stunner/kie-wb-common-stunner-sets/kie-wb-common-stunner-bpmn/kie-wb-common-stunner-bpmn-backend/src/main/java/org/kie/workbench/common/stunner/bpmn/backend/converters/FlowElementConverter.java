@@ -102,7 +102,6 @@ public class FlowElementConverter {
 
     public void convertDockedNodes(FlowElement flowElement) {
         VoidMatch.ofEdge(FlowElement.class)
-                .when(SequenceFlow.class, sequenceFlowConverter::convert)
                 .when(BoundaryEvent.class, boundaryEventConverter::convertEdge)
                 .apply(flowElement);
     }

@@ -16,28 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.dc.Bounds;
-import org.eclipse.dd.dc.Point;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
-import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
-import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,27 +57,25 @@ public class Layout {
                 relativeY + childBounds.getHeight());
         child.getContent().setBounds(convertedBounds);
 
-        if (child.getContent() instanceof BaseTask) {
-            BaseTask content = (BaseTask) child.getContent();
-            content.setDimensionsSet(new RectangleDimensionsSet(
-                    (double) childBounds.getWidth(),
-                    (double) childBounds.getHeight()
-            ));
-        }
-
-        if (child.getContent() instanceof BaseEndEvent) {
-            BaseEndEvent content = (BaseEndEvent) child.getContent();
-            content.setDimensionsSet(new CircleDimensionSet(new Radius(
-                    childBounds.getHeight() / 2d
-            )));
-        }
-
-        context.updatePosition(child, Point2D.create(relativeX, relativeY));
+//        if (child.getContent() instanceof BaseTask) {
+//            BaseTask content = (BaseTask) child.getContent();
+//            content.setDimensionsSet(new RectangleDimensionsSet(
+//                    (double) childBounds.getWidth(),
+//                    (double) childBounds.getHeight()
+//            ));
+//        }
+//
+//        if (child.getContent() instanceof BaseEndEvent) {
+//            BaseEndEvent content = (BaseEndEvent) child.getContent();
+//            content.setDimensionsSet(new CircleDimensionSet(new Radius(
+//                    childBounds.getHeight() / 2d
+//            )));
+//        }
+//
+//        context.updatePosition(child, Point2D.create(relativeX, relativeY));
 
         logger.info(child.getContent().getDefinition().toString() + child.getContent().getBounds().toString());
     }
-
-
 
     private BPMNShape getBPMNShapeForElement(String elementId) {
         return plane.getPlaneElement().stream()

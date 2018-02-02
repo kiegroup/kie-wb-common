@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Layout;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -69,7 +69,6 @@ public class SubProcessConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
         Node<? extends View<? extends BPMNViewDefinition>, ?> subProcessNode = convertSubProcessNode(subProcess);
-//        layout.updateNode(subProcessNode);
 
         Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
                 subProcess.getFlowElements()
@@ -87,22 +86,18 @@ public class SubProcessConverter {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
 
+                    BasicPropertyReader p = propertyReaderFactory.of(lane);
+
                     lane.getFlowNodeRefs().forEach(node -> {
                         Node child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
-                        layout.updateChildNode(laneNode, child);
                     });
 
-                    layout.updateChildNode(subProcessNode, laneNode);
                     context.addChildNode(subProcessNode, laneNode);
                 });
 
-
         freeFloatingNodes.values()
-                .forEach(n -> {
-                    layout.updateChildNode(subProcessNode, n);
-                    context.addChildNode(subProcessNode, n);
-                });
+                .forEach(n -> context.addChildNode(subProcessNode, n));
 
         subProcess.getFlowElements()
                 .forEach(flowElementConverter::convertEdge);
