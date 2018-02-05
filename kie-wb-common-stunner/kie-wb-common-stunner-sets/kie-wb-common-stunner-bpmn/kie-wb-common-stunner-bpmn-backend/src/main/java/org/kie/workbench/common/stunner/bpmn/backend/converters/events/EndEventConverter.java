@@ -82,6 +82,7 @@ public class EndEventConverter {
 
                 node.getContent().setBounds(p.getBounds());
 
+                definition.setDimensionsSet(p.getCircleDimensionSet());
                 definition.setFontSet(p.getFontSet());
                 definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -102,6 +103,7 @@ public class EndEventConverter {
 
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -129,6 +131,7 @@ public class EndEventConverter {
 
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -154,6 +157,7 @@ public class EndEventConverter {
                             ));
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -180,6 +184,7 @@ public class EndEventConverter {
 
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 

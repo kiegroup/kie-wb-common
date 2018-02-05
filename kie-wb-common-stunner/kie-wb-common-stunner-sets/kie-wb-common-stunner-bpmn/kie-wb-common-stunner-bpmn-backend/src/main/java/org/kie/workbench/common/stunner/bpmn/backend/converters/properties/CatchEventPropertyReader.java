@@ -44,12 +44,12 @@ class CatchEventPropertyReader extends EventPropertyReader {
                 catchEvent.getDataOutputAssociation());
     }
 
-    @Override
-    protected String colorsDefaultBg() {
-        return catchEvent instanceof StartEvent ? "#9acd32" : Colors.defaultBgColor_CatchingEvents;
-    }
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return catchEvent instanceof StartEvent ? "#9acd32" : Colors.defaultBgColor_CatchingEvents;
+//    }
 
-    protected String colorsDefaultBr() {
-        return Colors.defaultBrColor_CatchingEvents;
-    }
+//    protected String colorsDefaultBr() {
+//        return Colors.defaultBrColor_CatchingEvents;
+//    }
 }

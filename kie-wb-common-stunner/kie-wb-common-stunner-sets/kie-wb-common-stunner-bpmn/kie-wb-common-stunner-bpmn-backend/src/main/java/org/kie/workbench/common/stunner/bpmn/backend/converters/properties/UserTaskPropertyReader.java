@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Assignment;
@@ -45,7 +46,7 @@ public class UserTaskPropertyReader extends BasePropertyReader {
     }
 
     public String getTaskName() {
-        return input("TaskName");
+        return optionalInput("TaskName").orElse("Task");
     }
 
     public String getActors() {
@@ -133,14 +134,18 @@ public class UserTaskPropertyReader extends BasePropertyReader {
     }
 
     public String input(String name) {
+        return optionalInput(name).orElse("");
+    }
+
+    public Optional<String> optionalInput(String name) {
         for (DataInputAssociation din : task.getDataInputAssociations()) {
             DataInput targetRef = (DataInput) (din.getTargetRef());
             if (targetRef.getName().equalsIgnoreCase(name)) {
                 Assignment assignment = din.getAssignment().get(0);
-                return evaluate(assignment).toString();
+                return Optional.of(evaluate(assignment).toString());
             }
         }
-        return "";
+        return Optional.empty();
     }
 
     private static Object evaluate(Assignment assignment) {

@@ -21,14 +21,19 @@ import java.util.Collections;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Simulations;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
 
     private final BusinessRuleTask task;
+    private final DefinitionResolver definitionResolver;
 
-    public BusinessRuleTaskPropertyReader(BusinessRuleTask task, BPMNPlane plane) {
+    public BusinessRuleTaskPropertyReader(BusinessRuleTask task, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(task, plane);
         this.task = task;
+        this.definitionResolver = definitionResolver;
     }
 
     public String getRuleFlowGroup() {
@@ -80,5 +85,9 @@ public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
 
     public String getScriptLanguage() {
         return Scripts.scriptLanguage(element.getExtensionValues());
+    }
+
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(task);
     }
 }

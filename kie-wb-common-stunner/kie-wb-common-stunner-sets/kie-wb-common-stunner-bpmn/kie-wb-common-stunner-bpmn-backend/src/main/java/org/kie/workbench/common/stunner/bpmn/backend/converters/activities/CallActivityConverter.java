@@ -72,8 +72,12 @@ public class CallActivityConverter {
 
         node.getContent().setBounds(p.getBounds());
 
+        definition.setSimulationSet(p.getSimulationSet());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
+
 
         return node;
     }

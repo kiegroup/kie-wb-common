@@ -31,6 +31,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.TimerEventDefinitionConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public abstract class EventPropertyReader extends BasePropertyReader {
 
@@ -83,8 +85,12 @@ public abstract class EventPropertyReader extends BasePropertyReader {
         return definitionResolver.resolveSignalName(signalRefId);
     }
 
-    @Override
-    protected String colorsDefaultBg() {
-        return Colors.defaultBgColor_Events;
+    public SimulationAttributeSet getSimulationSet() {
+        return definitionResolver.extractSimulationAttributeSet(element.getId());
     }
+
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Events;
+//    }
 }

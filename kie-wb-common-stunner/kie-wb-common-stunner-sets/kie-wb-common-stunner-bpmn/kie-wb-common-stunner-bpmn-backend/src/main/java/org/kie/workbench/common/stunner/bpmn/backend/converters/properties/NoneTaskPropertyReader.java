@@ -16,28 +16,23 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class GatewayPropertyReader extends BasePropertyReader {
+public class NoneTaskPropertyReader extends BasePropertyReader {
 
-    public GatewayPropertyReader(BaseElement element, BPMNPlane plane) {
+    private final Task task;
+    private final DefinitionResolver definitionResolver;
+
+    public NoneTaskPropertyReader(Task element, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(element, plane);
+        this.task = element;
+        this.definitionResolver = definitionResolver;
     }
 
-    public String getDefaultRoute() {
-        return attribute("dg");
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(task);
     }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Gateways;
-//    }
-//
-//    @Override
-//    protected String colorsDefaultBr() {
-//        return Colors.defaultBrColor_Gateways;
-//    }
-
 }

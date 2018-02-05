@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 
 public class ProcessPropertyReader extends BasePropertyReader {
 
@@ -32,11 +33,11 @@ public class ProcessPropertyReader extends BasePropertyReader {
     }
 
     public String getPackageName() {
-        return attribute("packageName");
+        return optionalAttribute("packageName").orElse(Package.DEFAULT_PACKAGE);
     }
 
     public String getVersion() {
-        return attribute("version");
+        return optionalAttribute("version").orElse("1.0");
     }
 
     public boolean isAdHoc() {

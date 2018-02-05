@@ -47,7 +47,19 @@ public class GatewayConverter {
                 .when(org.eclipse.bpmn2.ParallelGateway.class, e -> {
                     Node<View<ParallelGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ParallelGateway.class);
                     GatewayPropertyReader p = propertyReaderFactory.of(gateway);
+
                     node.getContent().setBounds(p.getBounds());
+                    ParallelGateway definition = node.getContent().getDefinition();
+
+                    definition.setGeneral(new BPMNGeneralSet(
+                            new Name(gateway.getName()),
+                            new Documentation(p.getDocumentation())
+                    ));
+
+                    definition.setDimensionsSet(p.getCircleDimensionSet());
+                    definition.setFontSet(p.getFontSet());
+                    definition.setBackgroundSet(p.getBackgroundSet());
+
                     return node;
                 })
                 .when(org.eclipse.bpmn2.ExclusiveGateway.class, e -> {
@@ -67,6 +79,7 @@ public class GatewayConverter {
 
                     node.getContent().setBounds(p.getBounds());
 
+                    definition.setDimensionsSet(p.getCircleDimensionSet());
                     definition.setFontSet(p.getFontSet());
                     definition.setBackgroundSet(p.getBackgroundSet());
 

@@ -54,12 +54,19 @@ public class ScriptTaskConverter {
         ));
 
         definition.setExecutionSet(new ScriptTaskExecutionSet(
-                new Script(task.getScript()),
+                new Script(p.getScript()),
                 new ScriptLanguage(p.getScriptLanguage()),
                 new IsAsync(p.isAsync())
         ));
 
         node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
+        definition.setSimulationSet(p.getSimulationSet());
+
         return node;
     }
 }

@@ -16,23 +16,37 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Optional;
+
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class ScriptTaskPropertyReader extends BasePropertyReader {
-        private final ScriptTask task;
 
-        public ScriptTaskPropertyReader(ScriptTask task, BPMNPlane plane) {
-            super(task, plane);
-            this.task = task;
-        }
+    private final ScriptTask task;
+    private final DefinitionResolver definitionResolver;
 
-        public String getScriptLanguage() {
-            return Scripts.scriptLanguageFromUri(task.getScriptFormat());
-        }
-
-        public boolean isAsync() {
-            return Boolean.parseBoolean(metaData("customAsync"));
-        }
+    public ScriptTaskPropertyReader(ScriptTask task, BPMNPlane plane, DefinitionResolver definitionResolver) {
+        super(task, plane);
+        this.task = task;
+        this.definitionResolver = definitionResolver;
     }
+
+    public String getScript() {
+        return Optional.ofNullable(task.getScript()).orElse("");
+    }
+
+    public String getScriptLanguage() {
+        return Scripts.scriptLanguageFromUri(task.getScriptFormat());
+    }
+
+    public boolean isAsync() {
+        return Boolean.parseBoolean(metaData("customAsync"));
+    }
+
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(task);
+    }
+}

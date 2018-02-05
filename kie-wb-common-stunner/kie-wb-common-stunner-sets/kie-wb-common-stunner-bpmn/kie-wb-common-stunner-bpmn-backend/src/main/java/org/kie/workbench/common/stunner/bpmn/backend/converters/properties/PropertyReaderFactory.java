@@ -26,6 +26,7 @@ import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.SubProcess;
+import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
@@ -56,8 +57,21 @@ public class PropertyReaderFactory {
         return new GatewayPropertyReader(el, plane);
     }
 
+    public NoneTaskPropertyReader of(Task el) {
+        return new NoneTaskPropertyReader(el, plane, definitionResolver);
+    }
     public UserTaskPropertyReader of(UserTask el) {
         return new UserTaskPropertyReader(el, plane, definitionResolver);
+    }
+    public ScriptTaskPropertyReader of(ScriptTask el) {
+        return new ScriptTaskPropertyReader(el, plane, definitionResolver);
+    }
+    public BusinessRuleTaskPropertyReader of(BusinessRuleTask el) {
+        return new BusinessRuleTaskPropertyReader(el, plane, definitionResolver);
+    }
+
+    public ActivityPropertyReader of(Activity el) {
+        return new ActivityPropertyReader(el, plane, definitionResolver);
     }
 
     public EventPropertyReader of(Event el) {
@@ -65,22 +79,12 @@ public class PropertyReaderFactory {
     }
 
     public SubProcessPropertyReader of(SubProcess el) {
-        return new SubProcessPropertyReader(el, plane);
+        return new SubProcessPropertyReader(el, plane, definitionResolver);
     }
 
-    public BusinessRuleTaskPropertyReader of(BusinessRuleTask el) {
-        return new BusinessRuleTaskPropertyReader(el, plane);
-    }
-
-    public ActivityPropertyReader of(Activity el) {
-        return new ActivityPropertyReader(el, plane);
-    }
 
     public ProcessPropertyReader of(Process el) {
         return new ProcessPropertyReader(el, plane);
     }
 
-    public ScriptTaskPropertyReader of(ScriptTask el) {
-        return new ScriptTaskPropertyReader(el, plane);
-    }
 }

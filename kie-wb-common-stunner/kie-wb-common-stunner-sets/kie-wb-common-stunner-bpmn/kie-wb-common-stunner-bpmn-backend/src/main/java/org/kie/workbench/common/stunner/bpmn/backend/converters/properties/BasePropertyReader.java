@@ -23,7 +23,6 @@ import java.util.Optional;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
@@ -67,7 +66,7 @@ public abstract class BasePropertyReader {
     public FontSet getFontSet() {
         return new FontSet(
                 new FontFamily(),
-                new FontColor(optionalAttribute("fontcolor", "color")
+                new FontColor(optionalAttribute("fontcolor")//, "color")
                                       .orElse(colorsDefaultFont())),
                 new FontSize(optionalAttribute("fontsize")
                                      .map(Double::parseDouble).orElse(null)),
@@ -77,24 +76,24 @@ public abstract class BasePropertyReader {
 
     public BackgroundSet getBackgroundSet() {
         return new BackgroundSet(
-                new BgColor(optionalAttribute("bgcolor", "background-color")
+                new BgColor(optionalAttribute("bgcolor")//, "background-color")
                                     .orElse(colorsDefaultBg())),
-                new BorderColor(optionalAttribute("border-color", "bordercolor")
+                new BorderColor(optionalAttribute(/*"border-color", */"bordercolor")
                                         .orElse(colorsDefaultBr())),
                 new BorderSize()
         );
     }
 
     protected String colorsDefaultBg() {
-        return "";
+        return null;
     }
 
     protected String colorsDefaultBr() {
-        return Colors.defaultBrColor;
+        return null;
     }
 
     protected String colorsDefaultFont() {
-        return Colors.defaultFontColor;
+        return null;
     }
 
     protected Optional<String> optionalAttribute(String... attributeIds) {
@@ -138,7 +137,11 @@ public abstract class BasePropertyReader {
     }
 
     protected String metaData(String name) {
-        return Utils.getMetaDataValue(element.getExtensionValues(), name);
+        return optionalMetadata(name).orElse("");
+    }
+
+    protected Optional<String> optionalMetadata(String name) {
+        return Optional.ofNullable(Utils.getMetaDataValue(element.getExtensionValues(), name));
     }
 
     protected static BPMNShape getShape(BPMNPlane plane, String elementId) {

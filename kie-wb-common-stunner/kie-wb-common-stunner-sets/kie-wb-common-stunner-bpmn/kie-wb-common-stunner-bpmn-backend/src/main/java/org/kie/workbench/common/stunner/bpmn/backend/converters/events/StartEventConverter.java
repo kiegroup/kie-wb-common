@@ -86,8 +86,11 @@ public class StartEventConverter {
                         new Documentation(p.getDocumentation())
                 ));
 
+                definition.setSimulationSet(p.getSimulationSet());
+
                 node.getContent().setBounds(p.getBounds());
 
+                definition.setDimensionsSet(p.getCircleDimensionSet());
                 definition.setFontSet(p.getFontSet());
                 definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -111,8 +114,11 @@ public class StartEventConverter {
                                     new SignalRef(p.getSignalRef())
                             ));
 
+                            definition.setSimulationSet(p.getSimulationSet());
+
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -138,10 +144,13 @@ public class StartEventConverter {
                                     new MessageRef(e.getMessageRef().getName())
                             ));
 
+                            definition.setSimulationSet(p.getSimulationSet());
+
                             node.getContent().setBounds(p.getBounds());
 
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
 
                             return node;
                         })
@@ -161,8 +170,11 @@ public class StartEventConverter {
                                     new TimerSettings(p.getTimerSettings(e))
                             ));
 
+                            definition.setSimulationSet(p.getSimulationSet());
+
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 
@@ -188,8 +200,11 @@ public class StartEventConverter {
                                     new ErrorRef(e.getErrorRef().getErrorCode())
                             ));
 
+                            definition.setSimulationSet(p.getSimulationSet());
+
                             node.getContent().setBounds(p.getBounds());
 
+                            definition.setDimensionsSet(p.getCircleDimensionSet());
                             definition.setFontSet(p.getFontSet());
                             definition.setBackgroundSet(p.getBackgroundSet());
 

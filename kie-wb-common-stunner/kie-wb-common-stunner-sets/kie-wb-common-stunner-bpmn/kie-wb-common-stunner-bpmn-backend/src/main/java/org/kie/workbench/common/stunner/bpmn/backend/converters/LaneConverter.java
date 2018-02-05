@@ -52,6 +52,7 @@ public class LaneConverter {
 
         node.getContent().setBounds(p.getBounds());
 
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 

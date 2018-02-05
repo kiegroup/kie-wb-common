@@ -28,9 +28,54 @@ import bpsim.TimeParameters;
 import bpsim.UniformDistributionType;
 import org.eclipse.emf.common.util.EList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class Simulations {
+
+    public static SimulationSet simulationSet2(ElementParameters eleType) {
+        SimulationSet simulationSet = timeParams(eleType);
+        unitCost(eleType, simulationSet);
+        controlParams(eleType, simulationSet);
+        resourceParams(eleType, simulationSet);
+        return simulationSet;
+    }
+
+    public static SimulationAttributeSet simulationAttributeSet(ElementParameters elementParameters) {
+        return timeParamsAttribute(elementParameters);
+    }
+
+    private static SimulationAttributeSet timeParamsAttribute(ElementParameters eleType) {
+        SimulationAttributeSet simulationSet = new SimulationAttributeSet();
+
+        TimeParameters timeParams = eleType.getTimeParameters();
+        if (timeParams == null) {
+            return simulationSet;
+        }
+        Parameter processingTime = timeParams.getProcessingTime();
+        ParameterValue paramValue = processingTime.getParameterValue().get(0);
+
+        return Match.of(ParameterValue.class, SimulationAttributeSet.class)
+                .when(NormalDistributionType.class, ndt -> {
+                    simulationSet.getMean().setValue(ndt.getMean());
+                    simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
+                    simulationSet.getDistributionType().setValue("normal");
+                    return simulationSet;
+                })
+                .when(UniformDistributionType.class, udt -> {
+                    simulationSet.getMin().setValue(udt.getMin());
+                    simulationSet.getMax().setValue(udt.getMax());
+                    simulationSet.getDistributionType().setValue("uniform");
+                    return simulationSet;
+                })
+                .when(PoissonDistributionType.class, pdt -> {
+                    simulationSet.getMean().setValue(pdt.getMean());
+                    simulationSet.getDistributionType().setValue("poisson");
+                    return simulationSet;
+                }).apply(paramValue).asSuccess().value();
+
+        // FIXME waittime ??
+    }
 
     public static SimulationSet simulationSet(ElementParameters eleType) {
         SimulationSet simulationSet = timeParams(eleType);
@@ -39,6 +84,8 @@ public class Simulations {
         resourceParams(eleType, simulationSet);
         return simulationSet;
     }
+
+
 
     private static SimulationSet timeParams(ElementParameters eleType) {
         SimulationSet simulationSet = new SimulationSet();
@@ -89,7 +136,9 @@ public class Simulations {
     private static void resourceParams(ElementParameters eleType, SimulationSet simulationSet) {
         ResourceParameters resourceParams = eleType.getResourceParameters();
 
-        double quantity = extractDouble(resourceParams.getQuantity());
+        if (resourceParams == null) return;
+
+        Double quantity = extractDouble(resourceParams.getQuantity());
         simulationSet.getQuantity().setValue(quantity);
 
         Double availability = extractDouble(resourceParams.getAvailability());
@@ -98,16 +147,18 @@ public class Simulations {
 
     private static Double extractDouble(Parameter parameter) {
         if (parameter == null) {
-            return null;
+            return 0.0;
         }
         return extractDouble(parameter.getParameterValue());
     }
 
-    private static double extractDouble(EList<ParameterValue> parameterValues) {
+    private static Double extractDouble(EList<ParameterValue> parameterValues) {
         if (parameterValues.isEmpty()) {
             throw new IllegalArgumentException("failure params");
         }
         ParameterValue value = parameterValues.get(0);
-        return ((FloatingParameterType) value).getValue();
+        FloatingParameterType floatingValue = (FloatingParameterType) value;
+        return floatingValue.getValue();
     }
+
 }

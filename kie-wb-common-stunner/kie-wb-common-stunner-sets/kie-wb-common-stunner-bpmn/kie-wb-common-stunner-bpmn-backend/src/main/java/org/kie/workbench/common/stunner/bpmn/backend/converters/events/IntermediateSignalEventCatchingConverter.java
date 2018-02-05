@@ -68,6 +68,7 @@ public class IntermediateSignalEventCatchingConverter {
 
         node.getContent().setBounds(p.getBounds());
 
+        definition.setDimensionsSet(p.getCircleDimensionSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 

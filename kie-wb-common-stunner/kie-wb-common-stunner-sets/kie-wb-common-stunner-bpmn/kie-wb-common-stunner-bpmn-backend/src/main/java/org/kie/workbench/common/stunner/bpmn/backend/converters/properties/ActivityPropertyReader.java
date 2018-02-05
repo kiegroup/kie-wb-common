@@ -25,14 +25,18 @@ import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class ActivityPropertyReader extends BasePropertyReader {
 
     private final Activity activity;
+    private DefinitionResolver definitionResolver;
 
-    public ActivityPropertyReader(Activity activity, BPMNPlane plane) {
+    public ActivityPropertyReader(Activity activity, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(activity, plane);
         this.activity = activity;
+        this.definitionResolver = definitionResolver;
     }
 
     public boolean isIndependent() {
@@ -75,12 +79,16 @@ public class ActivityPropertyReader extends BasePropertyReader {
                 .collect(Collectors.joining(","));
     }
 
-    @Override
-    protected String colorsDefaultBg() {
-        return Colors.defaultBgColor_Activities;
-    }
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Activities;
+//    }
 
     private static Object evaluate(Assignment assignment) {
         return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
+    }
+
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(activity.getId());
     }
 }

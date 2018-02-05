@@ -17,13 +17,16 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.eclipse.bpmn2.Task;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ActivityPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.NoneTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -53,8 +56,27 @@ public class TaskConverter {
                 .missing(org.eclipse.bpmn2.ManualTask.class)
                 .orElse(t -> {
                     Node<View<NoneTask>, Edge> node = factoryManager.newNode(t.getId(), NoneTask.class);
-                    ActivityPropertyReader p = propertyReaderFactory.of(task);
+                    NoneTaskPropertyReader p = propertyReaderFactory.of(task);
+
+                    NoneTask definition = node.getContent().getDefinition();
+
+                    definition.setGeneral(new TaskGeneralSet(
+                            new Name(task.getName()),
+                            new Documentation(p.getDocumentation())
+                    ));
+
+                    definition.setExecutionSet(new EmptyTaskExecutionSet());
+
+                    definition.setSimulationSet(
+                            p.getSimulationSet()
+                    );
+
                     node.getContent().setBounds(p.getBounds());
+
+                    definition.setDimensionsSet(p.getRectangleDimensionsSet());
+                    definition.setBackgroundSet(p.getBackgroundSet());
+                    definition.setFontSet(p.getFontSet());
+
                     return node;
                 })
                 .apply(task)

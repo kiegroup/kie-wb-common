@@ -104,7 +104,8 @@ public class AssignmentsInfos {
 
     public static String dataInputsToString(List<DataInput> dataInputs) {
         return dataInputs.stream()
-                .filter(o -> !extractDtype(o).isEmpty())
+                .filter(o -> !o.getName().equals("TaskName"))
+                //.filter(o -> !extractDtype(o).isEmpty())
                 .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }

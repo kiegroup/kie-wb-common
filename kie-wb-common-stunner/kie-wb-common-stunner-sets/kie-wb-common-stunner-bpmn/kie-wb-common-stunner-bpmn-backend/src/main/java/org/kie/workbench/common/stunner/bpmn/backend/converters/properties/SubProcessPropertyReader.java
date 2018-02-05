@@ -22,14 +22,18 @@ import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class SubProcessPropertyReader extends BasePropertyReader {
 
     private final SubProcess process;
+    private final DefinitionResolver definitionResolver;
 
-    public SubProcessPropertyReader(SubProcess element, BPMNPlane plane) {
+    public SubProcessPropertyReader(SubProcess element, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(element, plane);
         this.process = element;
+        this.definitionResolver = definitionResolver;
     }
 
     public String getOnEntryAction() {
@@ -55,9 +59,12 @@ public class SubProcessPropertyReader extends BasePropertyReader {
         return Boolean.parseBoolean(metaData("customAsync"));
     }
 
-    @Override
-    protected String colorsDefaultBg() {
-        return Colors.defaultBgColor_Activities;
-    }
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Activities;
+//    }
 
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.extractSimulationSet(process.getId());
+    }
 }

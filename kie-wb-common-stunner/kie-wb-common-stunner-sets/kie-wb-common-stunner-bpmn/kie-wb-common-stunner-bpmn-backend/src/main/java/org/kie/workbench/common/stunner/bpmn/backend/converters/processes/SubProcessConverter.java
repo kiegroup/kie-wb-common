@@ -123,9 +123,13 @@ public class SubProcessConverter {
         definition.setProcessData(new ProcessData(
                 new ProcessVariables(p.getProcessVariables())));
 
+        definition.setSimulationSet(p.getSimulationSet());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
-        
+
+
         node.getContent().setBounds(p.getBounds());
         return node;
     }

@@ -25,15 +25,13 @@ import bpsim.BPSimDataType;
 import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
-import org.eclipse.bpmn2.Activity;
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Simulations;
+import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class DefinitionResolver {
@@ -68,9 +66,19 @@ public class DefinitionResolver {
         return Optional.ofNullable(elementParameters.get(id));
     }
 
-    public SimulationSet extractSimulationSet(Task task) {
-        return this.resolveSimulationParameters(task.getId())
+    public SimulationSet extractSimulationSet(String id) {
+        return this.resolveSimulationParameters(id)
                 .map(Simulations::simulationSet)
                 .orElse(new SimulationSet());
+    }
+
+    public SimulationSet extractSimulationSet(Task task) {
+        return extractSimulationSet(task.getId());
+    }
+
+    public SimulationAttributeSet extractSimulationAttributeSet(String id) {
+        return this.resolveSimulationParameters(id)
+                .map(Simulations::simulationAttributeSet)
+                .orElse(new SimulationAttributeSet());
     }
 }

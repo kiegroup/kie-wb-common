@@ -385,17 +385,17 @@ public class MigrationDiagramMarshallerTest {
                 BPMN_ENDMESSAGEEVENT,
                 BPMN_ENDNONEEVENT,
                 BPMN_ENDTERMINATEEVENT,
-                BPMN_PROCESSPROPERTIES,
+                //BPMN_PROCESSPROPERTIES,
                 BPMN_BUSINESSRULETASKRULEFLOWGROUP,
                 BPMN_REUSABLE_SUBPROCESS,
                 BPMN_SCRIPTTASK,
-                BPMN_USERTASKASSIGNEES,
+                //BPMN_USERTASKASSIGNEES,
                 BPMN_USERTASKPROPERTIES,
                 BPMN_SEQUENCEFLOW,
                 BPMN_XORGATEWAY,
                 BPMN_TIMER_EVENT,
                 BPMN_SIMULATIONPROPERTIES,
-                BPMN_MAGNETDOCKERS,
+                //BPMN_MAGNETDOCKERS,
                 BPMN_MAGNETSINLANE,
                 BPMN_ENDERROR_EVENT
         };
@@ -415,6 +415,47 @@ public class MigrationDiagramMarshallerTest {
             assertEdgeEquals(oldDiagram, newDiagram);
         }
     }
+
+    @Test
+    public void testUnmarshallProcessProperties() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_PROCESSPROPERTIES);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_PROCESSPROPERTIES);
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
+    }
+
+    @Test
+    public void testUnmarshallUserTaskAssignees() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_USERTASKASSIGNEES);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_USERTASKASSIGNEES);
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
+    }
+
+
+    @Test
+    public void testUnmarshallUserMagnetDockers() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_MAGNETDOCKERS);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_MAGNETDOCKERS);
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertNodeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram);
+    }
+
 
     @Test
     public void testUnmarshallEmbeddedSubprocess() throws Exception {
@@ -479,13 +520,15 @@ public class MigrationDiagramMarshallerTest {
                     newBounds
             );
 
-//            Object oldDefinition = oldContent.getDefinition();
-//            Object newDefinition = newContent.getDefinition();
-//
-//            assertEquals(
-//                    oldDefinition,
-//                    newDefinition
-//            );
+            Object oldDefinition = oldContent.getDefinition();
+            Object newDefinition = newContent.getDefinition();
+
+            oldDefinition.equals(newDefinition);
+
+            assertEquals(
+                    oldDefinition,
+                    newDefinition
+            );
 
 
         }

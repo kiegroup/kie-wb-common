@@ -17,6 +17,8 @@ package org.kie.workbench.common.stunner.bpmn.definition.property.background;
 
 import javax.validation.Valid;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -130,5 +132,14 @@ public class BackgroundSet implements BPMNPropertySet {
                     borderSize.equals(other.borderSize);
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("bgColor", bgColor)
+                .add("borderColor", borderColor)
+                .add("borderSize", borderSize)
+                .toString();
     }
 }

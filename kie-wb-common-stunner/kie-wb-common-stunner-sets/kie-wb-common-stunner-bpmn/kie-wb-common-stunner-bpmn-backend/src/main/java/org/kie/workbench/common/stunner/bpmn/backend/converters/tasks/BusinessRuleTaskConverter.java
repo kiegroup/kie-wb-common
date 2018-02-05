@@ -70,7 +70,15 @@ public class BusinessRuleTaskConverter {
                 new IsAsync(p.isAsync()),
                 new AdHocAutostart(p.isAdHocAutoStart())
         ));
+
+        definition.setSimulationSet(p.getSimulationSet());
+
         node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
         return node;
     }
 }
