@@ -28,24 +28,60 @@ import bpsim.TimeParameters;
 import bpsim.UniformDistributionType;
 import org.eclipse.emf.common.util.EList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.VoidMatch;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class Simulations {
 
-    public static SimulationSet simulationSet2(ElementParameters eleType) {
-        SimulationSet simulationSet = timeParams(eleType);
-        unitCost(eleType, simulationSet);
-        controlParams(eleType, simulationSet);
-        resourceParams(eleType, simulationSet);
+    public static SimulationSet simulationSet(ElementParameters eleType) {
+        SimulationSet simulationSet = new SimulationSet();
+
+        TimeParameters timeParams = eleType.getTimeParameters();
+        if (timeParams == null) {
+            return simulationSet;
+        }
+        Parameter processingTime = timeParams.getProcessingTime();
+        ParameterValue paramValue = processingTime.getParameterValue().get(0);
+
+        VoidMatch.of(ParameterValue.class)
+                .when(NormalDistributionType.class, ndt -> {
+                    simulationSet.getMean().setValue(ndt.getMean());
+                    simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
+                    simulationSet.getDistributionType().setValue("normal");
+                })
+                .when(UniformDistributionType.class, udt -> {
+                    simulationSet.getMin().setValue(udt.getMin());
+                    simulationSet.getMax().setValue(udt.getMax());
+                    simulationSet.getDistributionType().setValue("uniform");
+                })
+                .when(PoissonDistributionType.class, pdt -> {
+                    simulationSet.getMean().setValue(pdt.getMean());
+                    simulationSet.getDistributionType().setValue("poisson");
+                }).apply(paramValue).asSuccess().value();
+
+        // FIXME waittime ??
+
+        CostParameters costParams = eleType.getCostParameters();
+        if (costParams != null) {
+            simulationSet.getUnitCost().setValue(extractDouble(costParams.getUnitCost()));
+        }
+
+        //controlParams(eleType, simulationSet);
+        ResourceParameters resourceParams = eleType.getResourceParameters();
+
+        if (resourceParams != null) {
+            Double quantity = extractDouble(resourceParams.getQuantity());
+            simulationSet.getQuantity().setValue(quantity);
+
+            Double availability = extractDouble(resourceParams.getAvailability());
+            simulationSet.getWorkingHours().setValue(availability);
+        }
+
         return simulationSet;
     }
 
-    public static SimulationAttributeSet simulationAttributeSet(ElementParameters elementParameters) {
-        return timeParamsAttribute(elementParameters);
-    }
-
-    private static SimulationAttributeSet timeParamsAttribute(ElementParameters eleType) {
+    public static SimulationAttributeSet simulationAttributeSet(ElementParameters eleType) {
         SimulationAttributeSet simulationSet = new SimulationAttributeSet();
 
         TimeParameters timeParams = eleType.getTimeParameters();
@@ -77,72 +113,9 @@ public class Simulations {
         // FIXME waittime ??
     }
 
-    public static SimulationSet simulationSet(ElementParameters eleType) {
-        SimulationSet simulationSet = timeParams(eleType);
-        unitCost(eleType, simulationSet);
-        controlParams(eleType, simulationSet);
-        resourceParams(eleType, simulationSet);
-        return simulationSet;
-    }
-
-    private static SimulationSet timeParams(ElementParameters eleType) {
-        SimulationSet simulationSet = new SimulationSet();
-
-        TimeParameters timeParams = eleType.getTimeParameters();
-        if (timeParams == null) {
-            return simulationSet;
-        }
-        Parameter processingTime = timeParams.getProcessingTime();
-        ParameterValue paramValue = processingTime.getParameterValue().get(0);
-
-        return Match.of(ParameterValue.class, SimulationSet.class)
-                .when(NormalDistributionType.class, ndt -> {
-                    simulationSet.getMean().setValue(ndt.getMean());
-                    simulationSet.getStandardDeviation().setValue(ndt.getStandardDeviation());
-                    simulationSet.getDistributionType().setValue("normal");
-                    return simulationSet;
-                })
-                .when(UniformDistributionType.class, udt -> {
-                    simulationSet.getMin().setValue(udt.getMin());
-                    simulationSet.getMax().setValue(udt.getMax());
-                    simulationSet.getDistributionType().setValue("uniform");
-                    return simulationSet;
-                })
-                .when(PoissonDistributionType.class, pdt -> {
-                    simulationSet.getMean().setValue(pdt.getMean());
-                    simulationSet.getDistributionType().setValue("poisson");
-                    return simulationSet;
-                }).apply(paramValue).asSuccess().value();
-
-        // FIXME waittime ??
-    }
-
-    private static void unitCost(ElementParameters eleType, SimulationSet simulationSet) {
-        CostParameters costParams = eleType.getCostParameters();
-        if (costParams == null) {
-            return;
-        }
-        Double unitCost = extractDouble(costParams.getUnitCost());
-        simulationSet.getUnitCost().setValue(unitCost);
-    }
-
     private static void controlParams(ElementParameters eleType, SimulationSet simulationSet) {
         // double probability = extractDouble(eleType.getControlParameters().getProbability().getParameterValue());
         // FIXME probability ???
-    }
-
-    private static void resourceParams(ElementParameters eleType, SimulationSet simulationSet) {
-        ResourceParameters resourceParams = eleType.getResourceParameters();
-
-        if (resourceParams == null) {
-            return;
-        }
-
-        Double quantity = extractDouble(resourceParams.getQuantity());
-        simulationSet.getQuantity().setValue(quantity);
-
-        Double availability = extractDouble(resourceParams.getAvailability());
-        simulationSet.getWorkingHours().setValue(availability);
     }
 
     private static Double extractDouble(Parameter parameter) {
