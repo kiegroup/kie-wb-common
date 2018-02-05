@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
 public class SubProcessPropertyReader extends BasePropertyReader {
 
@@ -53,4 +54,10 @@ public class SubProcessPropertyReader extends BasePropertyReader {
     public boolean isAsync() {
         return Boolean.parseBoolean(metaData("customAsync"));
     }
+
+    @Override
+    protected String colorsDefaultBg() {
+        return Colors.defaultBgColor_Activities;
+    }
+
 }

@@ -18,8 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.Collections;
 
+import org.eclipse.bpmn2.EndEvent;
+import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 
 class ThrowEventPropertyReader extends EventPropertyReader {
@@ -40,5 +43,15 @@ class ThrowEventPropertyReader extends EventPropertyReader {
                 Collections.emptyList(),
                 Collections.emptyList(),
                 Collections.emptyList());
+    }
+
+    @Override
+    protected String colorsDefaultBg() {
+        return throwEvent instanceof EndEvent ? Colors.defaultBgColor_EndEvents : Colors.defaultBgColor_ThrowingEvents;
+    }
+
+    @Override
+    protected String colorsDefaultBr() {
+        return Colors.defaultBgColor_ThrowingEvents;
     }
 }

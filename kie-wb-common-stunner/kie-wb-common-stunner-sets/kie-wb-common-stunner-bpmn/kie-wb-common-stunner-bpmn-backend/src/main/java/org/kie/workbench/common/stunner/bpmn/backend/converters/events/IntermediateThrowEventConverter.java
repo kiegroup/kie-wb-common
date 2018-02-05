@@ -89,6 +89,10 @@ public class IntermediateThrowEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
@@ -112,6 +116,10 @@ public class IntermediateThrowEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .missing(ErrorEventDefinition.class)

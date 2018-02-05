@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.LanePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
@@ -96,7 +97,7 @@ public class ProcessConverter {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
 
-                    BasicPropertyReader p = propertyReaderFactory.of(lane);
+                    LanePropertyReader p = propertyReaderFactory.of(lane);
 
                     lane.getFlowNodeRefs().forEach(node -> {
                         Node<? extends View, ?> child = freeFloatingNodes.remove(node.getId());
@@ -139,6 +140,9 @@ public class ProcessConverter {
         ));
 
         diagramNode.getContent().setBounds(e.getBounds());
+
+        definition.setFontSet(e.getFontSet());
+        definition.setBackgroundSet(e.getBackgroundSet());
 
         return diagramNode;
     }

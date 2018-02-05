@@ -81,6 +81,10 @@ public class EndEventConverter {
                 ));
 
                 node.getContent().setBounds(p.getBounds());
+
+                definition.setFontSet(p.getFontSet());
+                definition.setBackgroundSet(p.getBackgroundSet());
+
                 return node;
             }
             case 1:
@@ -97,6 +101,10 @@ public class EndEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(SignalEventDefinition.class, e -> {
@@ -120,6 +128,10 @@ public class EndEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
@@ -141,6 +153,10 @@ public class EndEventConverter {
                                     new MessageRef(e.getMessageRef().getName())
                             ));
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
@@ -163,6 +179,10 @@ public class EndEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .missing(EscalationEventDefinition.class)

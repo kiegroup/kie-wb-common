@@ -21,6 +21,7 @@ import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.Gateway;
+import org.eclipse.bpmn2.Lane;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.SequenceFlow;
@@ -41,6 +42,10 @@ public class PropertyReaderFactory {
 
     public BasicPropertyReader of(BaseElement el) {
         return new BasicPropertyReader(el, plane);
+    }
+
+    public LanePropertyReader of (Lane el) {
+        return new LanePropertyReader(el, plane);
     }
 
     public SequenceFlowPropertyReader of(SequenceFlow el) {

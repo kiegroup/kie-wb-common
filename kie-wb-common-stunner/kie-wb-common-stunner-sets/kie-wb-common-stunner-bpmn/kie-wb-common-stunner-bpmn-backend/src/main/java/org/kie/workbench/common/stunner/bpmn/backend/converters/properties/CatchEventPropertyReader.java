@@ -19,7 +19,9 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import java.util.Collections;
 
 import org.eclipse.bpmn2.CatchEvent;
+import org.eclipse.bpmn2.StartEvent;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 
 class CatchEventPropertyReader extends EventPropertyReader {
@@ -40,5 +42,14 @@ class CatchEventPropertyReader extends EventPropertyReader {
                 catchEvent.getDataOutputs(),
                 Collections.singletonList(catchEvent.getOutputSet()),
                 catchEvent.getDataOutputAssociation());
+    }
+
+    @Override
+    protected String colorsDefaultBg() {
+        return catchEvent instanceof StartEvent ? "#9acd32" : Colors.defaultBgColor_CatchingEvents;
+    }
+
+    protected String colorsDefaultBr() {
+        return Colors.defaultBrColor_CatchingEvents;
     }
 }

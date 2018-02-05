@@ -87,6 +87,10 @@ public class StartEventConverter {
                 ));
 
                 node.getContent().setBounds(p.getBounds());
+
+                definition.setFontSet(p.getFontSet());
+                definition.setBackgroundSet(p.getBackgroundSet());
+
                 return node;
             }
             case 1:
@@ -108,6 +112,10 @@ public class StartEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(MessageEventDefinition.class, e -> {
@@ -131,6 +139,10 @@ public class StartEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(TimerEventDefinition.class, e -> {
@@ -150,6 +162,10 @@ public class StartEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .when(ErrorEventDefinition.class, e -> {
@@ -173,6 +189,10 @@ public class StartEventConverter {
                             ));
 
                             node.getContent().setBounds(p.getBounds());
+
+                            definition.setFontSet(p.getFontSet());
+                            definition.setBackgroundSet(p.getBackgroundSet());
+
                             return node;
                         })
                         .missing(ConditionalEventDefinition.class)

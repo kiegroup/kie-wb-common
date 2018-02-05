@@ -27,6 +27,7 @@ import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.events.TimerEventDefinitionConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
@@ -80,5 +81,10 @@ public abstract class EventPropertyReader extends BasePropertyReader {
     public String getSignalRef() {
         Objects.requireNonNull(signalRefId);
         return definitionResolver.resolveSignalName(signalRefId);
+    }
+
+    @Override
+    protected String colorsDefaultBg() {
+        return Colors.defaultBgColor_Events;
     }
 }

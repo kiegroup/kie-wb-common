@@ -16,28 +16,18 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.Lane;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
-public class GatewayPropertyReader extends BasePropertyReader {
+public class LanePropertyReader extends BasePropertyReader {
 
-    public GatewayPropertyReader(BaseElement element, BPMNPlane plane) {
-        super(element, plane);
-    }
-
-    public String getDefaultRoute() {
-        return attribute("dg");
+    public LanePropertyReader(Lane el, BPMNPlane plane) {
+        super(el, plane);
     }
 
     @Override
     protected String colorsDefaultBg() {
-        return Colors.defaultBgColor_Gateways;
+        return Colors.defaultBgColor_Swimlanes;
     }
-
-    @Override
-    protected String colorsDefaultBr() {
-        return Colors.defaultBrColor_Gateways;
-    }
-
 }

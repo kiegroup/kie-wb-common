@@ -24,6 +24,7 @@ import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
 public class ActivityPropertyReader extends BasePropertyReader {
 
@@ -72,6 +73,11 @@ public class ActivityPropertyReader extends BasePropertyReader {
                 .stream()
                 .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
                 .collect(Collectors.joining(","));
+    }
+
+    @Override
+    protected String colorsDefaultBg() {
+        return Colors.defaultBgColor_Activities;
     }
 
     private static Object evaluate(Assignment assignment) {

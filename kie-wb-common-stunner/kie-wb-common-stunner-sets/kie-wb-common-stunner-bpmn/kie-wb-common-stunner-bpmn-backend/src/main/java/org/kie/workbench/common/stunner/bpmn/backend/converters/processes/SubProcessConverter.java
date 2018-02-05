@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.LanePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
@@ -81,7 +82,7 @@ public class SubProcessConverter {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
 
-                    BasicPropertyReader p = propertyReaderFactory.of(lane);
+                    LanePropertyReader p = propertyReaderFactory.of(lane);
 
                     lane.getFlowNodeRefs().forEach(node -> {
                         Node child = freeFloatingNodes.remove(node.getId());
@@ -122,6 +123,9 @@ public class SubProcessConverter {
         definition.setProcessData(new ProcessData(
                 new ProcessVariables(p.getProcessVariables())));
 
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        
         node.getContent().setBounds(p.getBounds());
         return node;
     }

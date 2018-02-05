@@ -66,6 +66,10 @@ public class GatewayConverter {
                     ));
 
                     node.getContent().setBounds(p.getBounds());
+
+                    definition.setFontSet(p.getFontSet());
+                    definition.setBackgroundSet(p.getBackgroundSet());
+
                     return node;
                 })
                 .apply(gateway).asSuccess().value();

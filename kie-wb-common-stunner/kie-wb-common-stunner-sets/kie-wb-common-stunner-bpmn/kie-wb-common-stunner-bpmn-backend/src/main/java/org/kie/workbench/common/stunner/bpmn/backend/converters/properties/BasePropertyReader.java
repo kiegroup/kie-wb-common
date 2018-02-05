@@ -23,6 +23,7 @@ import java.util.Optional;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BgColor;
@@ -66,7 +67,8 @@ public abstract class BasePropertyReader {
     public FontSet getFontSet() {
         return new FontSet(
                 new FontFamily(),
-                new FontColor(attribute("fontcolor", "color")),
+                new FontColor(optionalAttribute("fontcolor", "color")
+                                      .orElse(colorsDefaultFont())),
                 new FontSize(optionalAttribute("fontsize")
                                      .map(Double::parseDouble).orElse(null)),
                 new FontBorderSize(),
@@ -75,10 +77,24 @@ public abstract class BasePropertyReader {
 
     public BackgroundSet getBackgroundSet() {
         return new BackgroundSet(
-                new BgColor(attribute("bgcolor", "background-color")),
-                new BorderColor(attribute("border-color", "bordercolor")),
+                new BgColor(optionalAttribute("bgcolor", "background-color")
+                                    .orElse(colorsDefaultBg())),
+                new BorderColor(optionalAttribute("border-color", "bordercolor")
+                                        .orElse(colorsDefaultBr())),
                 new BorderSize()
         );
+    }
+
+    protected String colorsDefaultBg() {
+        return "";
+    }
+
+    protected String colorsDefaultBr() {
+        return Colors.defaultBrColor;
+    }
+
+    protected String colorsDefaultFont() {
+        return Colors.defaultFontColor;
     }
 
     protected Optional<String> optionalAttribute(String... attributeIds) {

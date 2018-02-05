@@ -60,6 +60,10 @@ public class IntermediateTimerEventConverter {
         ));
 
         node.getContent().setBounds(p.getBounds());
+
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+
         return node;
     }
 }
