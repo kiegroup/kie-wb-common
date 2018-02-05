@@ -20,8 +20,10 @@ import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
+import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 
 public class ProcessPropertyReader extends BasePropertyReader {
 
@@ -46,6 +48,13 @@ public class ProcessPropertyReader extends BasePropertyReader {
 
     public boolean isAsync() {
         return Boolean.parseBoolean(metaData("customAsync"));
+    }
+
+    @Override
+    public Bounds getBounds() {
+        return new BoundsImpl(
+                new BoundImpl(0d, 0d),
+                new BoundImpl(950d, 950d));
     }
 
     public String getProcessVariables() {

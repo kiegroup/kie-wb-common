@@ -26,8 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingCon
 import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.LanePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
@@ -45,8 +43,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
-import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ProcessConverter {
@@ -73,12 +69,6 @@ public class ProcessConverter {
         Node<View<BPMNDiagramImpl>, ?> firstDiagramNode =
                 convertProcessNode(definitionsId, process);
 
-        firstDiagramNode.getContent().setBounds(new BoundsImpl(
-                new BoundImpl(0d,
-                              0d),
-                new BoundImpl(950d,
-                              950d)
-        ));
         context.addNode(firstDiagramNode);
 
         Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
@@ -92,19 +82,15 @@ public class ProcessConverter {
         process.getLaneSets()
                 .stream()
                 .flatMap(laneSet -> laneSet.getLanes().stream())
-
                 .forEach(lane -> {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
-
-                    LanePropertyReader p = propertyReaderFactory.of(lane);
+                    context.addChildNode(firstDiagramNode, laneNode);
 
                     lane.getFlowNodeRefs().forEach(node -> {
                         Node<? extends View, ?> child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
                     });
-
-                    context.addChildNode(firstDiagramNode, laneNode);
                 });
 
         freeFloatingNodes.values()
@@ -132,7 +118,7 @@ public class ProcessConverter {
                 new Version(e.getVersion()),
                 new AdHoc(e.isAdHoc()),
                 new ProcessInstanceDescription(e.getDescription()),
-                new Executable()
+                new Executable(process.isIsExecutable())
         ));
 
         definition.setProcessData(new ProcessData(

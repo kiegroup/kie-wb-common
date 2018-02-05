@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BusinessRuleTask;
+import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.Lane;
@@ -36,16 +37,20 @@ public class PropertyReaderFactory {
     private final BPMNPlane plane;
     private final DefinitionResolver definitionResolver;
 
-    public PropertyReaderFactory(BPMNPlane plane, DefinitionResolver definitionResolver) {
-        this.plane = plane;
-        this.definitionResolver = definitionResolver;
+    public PropertyReaderFactory(Definitions definitions) {
+        this.plane = findPlane(definitions);
+        this.definitionResolver = new DefinitionResolver(definitions);
+    }
+
+    private BPMNPlane findPlane(Definitions definitions) {
+        return definitions.getDiagrams().get(0).getPlane();
     }
 
     public BasicPropertyReader of(BaseElement el) {
         return new BasicPropertyReader(el, plane);
     }
 
-    public LanePropertyReader of (Lane el) {
+    public LanePropertyReader of(Lane el) {
         return new LanePropertyReader(el, plane);
     }
 
@@ -60,12 +65,15 @@ public class PropertyReaderFactory {
     public NoneTaskPropertyReader of(Task el) {
         return new NoneTaskPropertyReader(el, plane, definitionResolver);
     }
+
     public UserTaskPropertyReader of(UserTask el) {
         return new UserTaskPropertyReader(el, plane, definitionResolver);
     }
+
     public ScriptTaskPropertyReader of(ScriptTask el) {
         return new ScriptTaskPropertyReader(el, plane, definitionResolver);
     }
+
     public BusinessRuleTaskPropertyReader of(BusinessRuleTask el) {
         return new BusinessRuleTaskPropertyReader(el, plane, definitionResolver);
     }
@@ -82,9 +90,7 @@ public class PropertyReaderFactory {
         return new SubProcessPropertyReader(el, plane, definitionResolver);
     }
 
-
     public ProcessPropertyReader of(Process el) {
         return new ProcessPropertyReader(el, plane);
     }
-
 }

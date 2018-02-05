@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BasicPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.LanePropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;

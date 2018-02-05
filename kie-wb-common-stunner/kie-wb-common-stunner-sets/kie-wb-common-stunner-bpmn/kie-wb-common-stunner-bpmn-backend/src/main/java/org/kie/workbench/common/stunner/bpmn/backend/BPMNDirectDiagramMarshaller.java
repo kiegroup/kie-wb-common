@@ -29,7 +29,6 @@ import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.DocumentRoot;
 import org.eclipse.bpmn2.Process;
-import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -39,7 +38,6 @@ import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverter;
@@ -58,7 +56,6 @@ import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExec
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndex;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.slf4j.Logger;
@@ -128,34 +125,32 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         LOG.debug("Starting diagram unmarshalling...");
 
         Definitions definitions = parseDefinitions(inputStream);
+        String definitionsId = definitions.getId();
 
         Process process = findProcess(definitions);
 
-        String definitionsId = definitions.getId();
         metadata.setCanvasRootUUID(definitionsId);
         metadata.setTitle(process.getName());
 
-        Graph<DefinitionSet, Node> graph = graphOf(process.getId());
-        GraphBuildingContext context = graphContextOf(graph);
+        Graph<DefinitionSet, Node> graph =
+                typedFactoryManager.newGraph(
+                        definitionsId, BPMNDefinitionSet.class);
 
-        BPMNPlane plane = findPlane(definitions);
-        PropertyReaderFactory propertyReaderFactory = new PropertyReaderFactory(plane, new DefinitionResolver(definitions));
+        GraphBuildingContext context = emptyGraphContext(graph);
 
-        context.clearGraph();
+        PropertyReaderFactory propertyReaderFactory =
+                new PropertyReaderFactory(definitions);
 
-        new ProcessConverter(typedFactoryManager, propertyReaderFactory, context)
-                .convert(definitionsId, process);
+        ProcessConverter processConverter =
+                new ProcessConverter(
+                        typedFactoryManager,
+                        propertyReaderFactory,
+                        context);
+
+        processConverter.convert(definitionsId, process);
 
         LOG.debug("Diagram unmarshalling finished successfully.");
         return graph;
-    }
-
-    private Graph<DefinitionSet, Node> graphOf(String id) {
-        return typedFactoryManager.newGraph(id, BPMNDefinitionSet.class);
-    }
-
-    public BPMNPlane findPlane(Definitions definitions) {
-        return definitions.getDiagrams().get(0).getPlane();
     }
 
     public Process findProcess(Definitions definitions) {
@@ -164,20 +159,20 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
                 .findFirst().get();
     }
 
-    private GraphBuildingContext graphContextOf(Graph<DefinitionSet, Node> graph) {
-        return new GraphBuildingContext(createExecutionContext(graph), commandFactory, commandManager);
-    }
+    private GraphBuildingContext emptyGraphContext(Graph<DefinitionSet, Node> graph) {
+        EmptyRulesCommandExecutionContext commandExecutionContext =
+                new EmptyRulesCommandExecutionContext(
+                        definitionManager,
+                        typedFactoryManager.untyped(),
+                        ruleManager,
+                        new MapIndexBuilder().build(graph));
 
-    private MapIndex createMapIndex(Graph<DefinitionSet, Node> graph) {
-        MapIndexBuilder builder = new MapIndexBuilder();
-        return builder.build(graph);
-    }
+        GraphBuildingContext ctx = new GraphBuildingContext(
+                commandExecutionContext, commandFactory, commandManager);
 
-    private EmptyRulesCommandExecutionContext createExecutionContext(Graph<DefinitionSet, Node> graph) {
-        return new EmptyRulesCommandExecutionContext(definitionManager,
-                                                     typedFactoryManager.untyped(),
-                                                     ruleManager,
-                                                     createMapIndex(graph));
+        ctx.clearGraph();
+
+        return ctx;
     }
 
     @Override

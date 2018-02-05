@@ -81,15 +81,12 @@ public class SubProcessConverter {
                 .forEach(lane -> {
                     Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
                             laneConverter.convert(lane);
-
-                    LanePropertyReader p = propertyReaderFactory.of(lane);
+                    context.addChildNode(subProcessNode, laneNode);
 
                     lane.getFlowNodeRefs().forEach(node -> {
                         Node child = freeFloatingNodes.remove(node.getId());
                         context.addChildNode(laneNode, child);
                     });
-
-                    context.addChildNode(subProcessNode, laneNode);
                 });
 
         freeFloatingNodes.values()
