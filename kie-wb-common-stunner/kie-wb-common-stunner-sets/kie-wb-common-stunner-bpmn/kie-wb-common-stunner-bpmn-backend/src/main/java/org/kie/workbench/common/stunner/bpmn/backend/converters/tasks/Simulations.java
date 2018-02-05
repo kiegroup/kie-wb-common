@@ -85,8 +85,6 @@ public class Simulations {
         return simulationSet;
     }
 
-
-
     private static SimulationSet timeParams(ElementParameters eleType) {
         SimulationSet simulationSet = new SimulationSet();
 
@@ -136,7 +134,9 @@ public class Simulations {
     private static void resourceParams(ElementParameters eleType, SimulationSet simulationSet) {
         ResourceParameters resourceParams = eleType.getResourceParameters();
 
-        if (resourceParams == null) return;
+        if (resourceParams == null) {
+            return;
+        }
 
         Double quantity = extractDouble(resourceParams.getQuantity());
         simulationSet.getQuantity().setValue(quantity);
@@ -160,5 +160,4 @@ public class Simulations {
         FloatingParameterType floatingValue = (FloatingParameterType) value;
         return floatingValue.getValue();
     }
-
 }
