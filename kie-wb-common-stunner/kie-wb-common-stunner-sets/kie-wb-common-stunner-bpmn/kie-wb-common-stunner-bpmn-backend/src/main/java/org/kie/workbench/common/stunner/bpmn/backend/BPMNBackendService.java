@@ -16,12 +16,18 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend;
 
+import java.util.Optional;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.backend.service.AbstractDefinitionSetService;
 import org.kie.workbench.common.stunner.bpmn.resource.BPMNDefinitionSetResourceType;
 import org.kie.workbench.common.stunner.core.definition.DefinitionSetResourceType;
+import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshaller;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 
 @ApplicationScoped
 public class BPMNBackendService extends AbstractDefinitionSetService {
@@ -31,14 +37,33 @@ public class BPMNBackendService extends AbstractDefinitionSetService {
 
     protected BPMNBackendService() {
         this(null,
+             null,
              null);
     }
 
     @Inject
-    public BPMNBackendService(final BPMNDirectDiagramMarshaller bpmnDiagramMarshaller,
-                              final BPMNDefinitionSetResourceType bpmnResourceType) {
-        super(bpmnDiagramMarshaller);
+    public BPMNBackendService(
+            final BPMNDiagramMarshaller bpmnDiagramMarshaller,
+            final BPMNDirectDiagramMarshaller bpmnDirectDiagramMarshaller,
+            final BPMNDefinitionSetResourceType bpmnResourceType) {
+        super(chooseMarshaller(
+                bpmnDiagramMarshaller,
+                bpmnDirectDiagramMarshaller));
         this.bpmnResourceType = bpmnResourceType;
+    }
+
+    private static DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> chooseMarshaller(
+            final BPMNDiagramMarshaller bpmnDiagramMarshaller,
+            final BPMNDirectDiagramMarshaller bpmnDirectDiagramMarshaller) {
+
+        Boolean enableExperimentalBpmnMarshaller = Optional.ofNullable(
+                System.getProperty("bpmn.marshaller.experimental"))
+                .map(Boolean::parseBoolean)
+                .orElse(false);
+
+        return (enableExperimentalBpmnMarshaller) ?
+                bpmnDirectDiagramMarshaller :
+                bpmnDiagramMarshaller;
     }
 
     @Override
