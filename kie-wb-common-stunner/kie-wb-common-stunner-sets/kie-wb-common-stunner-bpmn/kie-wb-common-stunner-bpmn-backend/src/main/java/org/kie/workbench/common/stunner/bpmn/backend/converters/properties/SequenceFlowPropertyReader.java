@@ -52,7 +52,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     }
 
     public boolean isAutoConnectionTarget() {
-        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
+        return Boolean.parseBoolean(metaData("isAutoConnection.target"));
     }
 
     public String getConditionExpression() {
@@ -82,7 +82,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
 
     public Connection getTargetConnection() {
         Point2D targetPosition = getTargetPosition(element.getId(), getTargetId());
-        return MagnetConnection.Builder.at(targetPosition.getX(), targetPosition.getY()).setAuto(isAutoConnectionSource());
+        return MagnetConnection.Builder.at(targetPosition.getX(), targetPosition.getY()).setAuto(isAutoConnectionTarget());
     }
 
     private Point2D getSourcePosition(String edgeId, String sourceId) {
