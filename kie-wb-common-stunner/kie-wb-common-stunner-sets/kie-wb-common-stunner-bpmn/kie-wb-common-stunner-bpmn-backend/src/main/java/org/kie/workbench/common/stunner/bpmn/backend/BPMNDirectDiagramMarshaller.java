@@ -180,7 +180,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         return diagramMetadataMarshaller;
     }
 
-    public static Definitions parseDefinitions(final InputStream inputStream) throws IOException {
+    private static Definitions parseDefinitions(final InputStream inputStream) throws IOException {
         DroolsPackageImpl.init();
         BpsimPackageImpl.init();
 

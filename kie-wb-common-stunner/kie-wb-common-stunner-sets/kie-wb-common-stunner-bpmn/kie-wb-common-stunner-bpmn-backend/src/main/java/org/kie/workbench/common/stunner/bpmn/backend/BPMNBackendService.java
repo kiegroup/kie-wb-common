@@ -28,9 +28,13 @@ import org.kie.workbench.common.stunner.core.definition.service.DiagramMarshalle
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class BPMNBackendService extends AbstractDefinitionSetService {
+
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(BPMNBackendService.class);
+    private static final String MARSHALLER_EXPERIMENTAL_PROPERTY = "bpmn.marshaller.experimental";
 
     @Inject
     private BPMNDefinitionSetResourceType bpmnResourceType;
@@ -57,9 +61,11 @@ public class BPMNBackendService extends AbstractDefinitionSetService {
             final BPMNDirectDiagramMarshaller bpmnDirectDiagramMarshaller) {
 
         Boolean enableExperimentalBpmnMarshaller = Optional.ofNullable(
-                System.getProperty("bpmn.marshaller.experimental"))
+                System.getProperty(MARSHALLER_EXPERIMENTAL_PROPERTY))
                 .map(Boolean::parseBoolean)
                 .orElse(false);
+
+        LOG.info("{} = {}", MARSHALLER_EXPERIMENTAL_PROPERTY, enableExperimentalBpmnMarshaller);
 
         return (enableExperimentalBpmnMarshaller) ?
                 bpmnDirectDiagramMarshaller :
