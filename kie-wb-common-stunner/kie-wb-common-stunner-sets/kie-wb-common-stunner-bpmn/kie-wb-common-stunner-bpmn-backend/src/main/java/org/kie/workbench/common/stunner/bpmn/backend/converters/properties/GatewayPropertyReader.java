@@ -17,12 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
-public class GatewayPropertyReader extends BasePropertyReader {
+public class GatewayPropertyReader extends FlowElementPropertyReader {
 
-    public GatewayPropertyReader(BaseElement element, BPMNPlane plane) {
+    public GatewayPropertyReader(Gateway element, BPMNPlane plane) {
         super(element, plane);
     }
 

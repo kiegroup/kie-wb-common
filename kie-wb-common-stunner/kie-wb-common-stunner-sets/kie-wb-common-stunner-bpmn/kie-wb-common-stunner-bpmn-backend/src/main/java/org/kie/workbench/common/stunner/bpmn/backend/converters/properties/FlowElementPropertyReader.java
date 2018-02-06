@@ -16,12 +16,20 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import org.eclipse.bpmn2.BaseElement;
+import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.di.BPMNPlane;
 
-public class BasicPropertyReader extends BasePropertyReader {
+public class FlowElementPropertyReader extends BasePropertyReader {
 
-    public BasicPropertyReader(BaseElement element, BPMNPlane plane) {
+    private final FlowElement flowElement;
+
+    public FlowElementPropertyReader(FlowElement element, BPMNPlane plane) {
         super(element, plane);
+        this.flowElement = element;
     }
+
+    public String getName() {
+        return optionalMetadata("elementname").orElse(flowElement.getName());
+    }
+
 }

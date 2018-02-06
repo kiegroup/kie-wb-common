@@ -21,15 +21,10 @@ import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class NoneTaskPropertyReader extends BasePropertyReader {
-
-    private final Task task;
-    private final DefinitionResolver definitionResolver;
+public class NoneTaskPropertyReader extends TaskPropertyReader {
 
     public NoneTaskPropertyReader(Task element, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        super(element, plane);
-        this.task = element;
-        this.definitionResolver = definitionResolver;
+        super(element, plane, definitionResolver);
     }
 
     public SimulationSet getSimulationSet() {

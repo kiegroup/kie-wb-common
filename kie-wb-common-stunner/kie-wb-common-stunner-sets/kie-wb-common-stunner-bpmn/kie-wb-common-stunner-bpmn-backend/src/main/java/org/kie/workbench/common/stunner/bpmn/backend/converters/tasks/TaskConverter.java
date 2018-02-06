@@ -61,7 +61,7 @@ public class TaskConverter {
                     NoneTask definition = node.getContent().getDefinition();
 
                     definition.setGeneral(new TaskGeneralSet(
-                            new Name(task.getName()),
+                            new Name(p.getName()),
                             new Documentation(p.getDocumentation())
                     ));
 

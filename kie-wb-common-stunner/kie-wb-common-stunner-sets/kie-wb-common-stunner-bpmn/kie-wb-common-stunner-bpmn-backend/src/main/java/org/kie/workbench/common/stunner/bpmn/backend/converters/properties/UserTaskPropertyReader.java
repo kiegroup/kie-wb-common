@@ -34,15 +34,13 @@ import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class UserTaskPropertyReader extends BasePropertyReader {
+public class UserTaskPropertyReader extends TaskPropertyReader {
 
     private final UserTask task;
-    private final DefinitionResolver definitionResolver;
 
     public UserTaskPropertyReader(UserTask element, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        super(element, plane);
+        super(element, plane, definitionResolver);
         this.task = element;
-        this.definitionResolver = definitionResolver;
     }
 
     public String getTaskName() {

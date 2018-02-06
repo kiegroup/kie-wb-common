@@ -54,7 +54,7 @@ public class BusinessRuleTaskConverter {
         BusinessRuleTaskPropertyReader p = propertyReaderFactory.of(task);
 
         definition.setGeneral(new TaskGeneralSet(
-                new Name(task.getName()),
+                new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
 

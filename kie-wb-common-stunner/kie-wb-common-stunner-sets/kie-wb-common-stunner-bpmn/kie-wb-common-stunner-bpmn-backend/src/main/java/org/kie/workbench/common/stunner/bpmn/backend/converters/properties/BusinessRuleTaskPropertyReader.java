@@ -25,15 +25,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolv
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tasks.Simulations;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class BusinessRuleTaskPropertyReader extends BasePropertyReader {
-
-    private final BusinessRuleTask task;
-    private final DefinitionResolver definitionResolver;
+public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
 
     public BusinessRuleTaskPropertyReader(BusinessRuleTask task, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        super(task, plane);
-        this.task = task;
-        this.definitionResolver = definitionResolver;
+        super(task, plane, definitionResolver);
     }
 
     public String getRuleFlowGroup() {

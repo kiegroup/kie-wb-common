@@ -53,7 +53,7 @@ public class IntermediateSignalEventCatchingConverter {
         EventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(event.getName()),
+                new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
 

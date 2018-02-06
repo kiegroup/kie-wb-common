@@ -52,7 +52,7 @@ public class GatewayConverter {
                     ParallelGateway definition = node.getContent().getDefinition();
 
                     definition.setGeneral(new BPMNGeneralSet(
-                            new Name(gateway.getName()),
+                            new Name(p.getName()),
                             new Documentation(p.getDocumentation())
                     ));
 
@@ -69,7 +69,7 @@ public class GatewayConverter {
                     GatewayPropertyReader p = propertyReaderFactory.of(gateway);
 
                     definition.setGeneral(new BPMNGeneralSet(
-                            new Name(gateway.getName()),
+                            new Name(p.getName()),
                             new Documentation(p.getDocumentation())
                     ));
 

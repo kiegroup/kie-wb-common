@@ -55,7 +55,7 @@ public class CallActivityConverter {
         ActivityPropertyReader p = propertyReaderFactory.of(activity);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(activity.getName()),
+                new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
 

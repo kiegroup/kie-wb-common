@@ -33,7 +33,6 @@ public class LaneConverter {
     private PropertyReaderFactory propertyReaderFactory;
 
     public LaneConverter(TypedFactoryManager typedFactoryManager, PropertyReaderFactory propertyReaderFactory) {
-
         this.typedFactoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
     }

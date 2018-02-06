@@ -20,12 +20,10 @@ import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.eclipse.bpmn2.di.BPMNShape;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class SubProcessPropertyReader extends BasePropertyReader {
+public class SubProcessPropertyReader extends FlowElementPropertyReader {
 
     private final SubProcess process;
     private final DefinitionResolver definitionResolver;

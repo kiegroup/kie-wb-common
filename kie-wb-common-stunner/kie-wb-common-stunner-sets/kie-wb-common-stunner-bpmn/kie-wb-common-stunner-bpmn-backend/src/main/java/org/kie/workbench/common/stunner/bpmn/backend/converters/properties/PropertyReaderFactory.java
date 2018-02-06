@@ -17,10 +17,10 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.Activity;
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Event;
+import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.Lane;
 import org.eclipse.bpmn2.Process;
@@ -46,8 +46,8 @@ public class PropertyReaderFactory {
         return definitions.getDiagrams().get(0).getPlane();
     }
 
-    public BasicPropertyReader of(BaseElement el) {
-        return new BasicPropertyReader(el, plane);
+    public FlowElementPropertyReader of(FlowElement el) {
+        return new FlowElementPropertyReader(el, plane);
     }
 
     public LanePropertyReader of(Lane el) {

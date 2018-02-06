@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-public class ActivityPropertyReader extends BasePropertyReader {
+public class ActivityPropertyReader extends FlowElementPropertyReader {
 
     private final Activity activity;
     private DefinitionResolver definitionResolver;
