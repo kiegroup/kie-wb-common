@@ -25,11 +25,11 @@ import org.kie.workbench.common.forms.dynamic.service.context.generation.dynamic
 import org.kie.workbench.common.forms.dynamic.service.context.generation.dynamic.FieldValueProcessor;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-public abstract class AbstractDateMultipleieldValueProcessor<F extends FieldDefinition> implements FieldValueProcessor<F, List<?>, List<Date>> {
+public abstract class AbstractDateMultipleFieldValueProcessor<F extends FieldDefinition> implements FieldValueProcessor<F, List<?>, List<Date>> {
 
     private LocalDateFieldValueProcessor localDateFieldValueProcessor;
 
-    public AbstractDateMultipleieldValueProcessor(LocalDateFieldValueProcessor localDateFieldValueProcessor) {
+    public AbstractDateMultipleFieldValueProcessor(LocalDateFieldValueProcessor localDateFieldValueProcessor) {
         this.localDateFieldValueProcessor = localDateFieldValueProcessor;
     }
 

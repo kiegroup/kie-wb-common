@@ -43,7 +43,7 @@ public class StringMultipleSelectorFieldDefinition extends AbstractMultipleSelec
     private List<String> listOfValues = new ArrayList<>();
 
     public StringMultipleSelectorFieldDefinition() {
-        super(Character.class.getName());
+        super(String.class.getName());
     }
 
     @Override

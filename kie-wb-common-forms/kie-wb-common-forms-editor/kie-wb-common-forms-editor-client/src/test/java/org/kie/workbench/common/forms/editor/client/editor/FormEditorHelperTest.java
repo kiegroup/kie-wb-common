@@ -300,6 +300,31 @@ public class FormEditorHelperTest {
     }
 
     @Test
+    public void testRemoveUnbindedFieldsAndAddToAvailable() {
+        testRemoveUnboundField(true);
+    }
+
+    @Test
+    public void testRemoveUnbindedFields() {
+       testRemoveUnboundField(false);
+    }
+
+    protected void testRemoveUnboundField(boolean addToAvailables) {
+        content.getDefinition().getFields().addAll(employeeFields);
+        formEditorHelper.getAvailableFields().clear();
+
+        TextBoxFieldDefinition textBoxFieldDefinition = new TextBoxFieldDefinition();
+
+        formDefinition.getFields().add(textBoxFieldDefinition);
+
+        formEditorHelper.removeField(textBoxFieldDefinition.getId(), true);
+
+        Assertions.assertThat(formEditorHelper.getAvailableFields())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
     public void testGetCompatibleModelFields() {
         List<String> compatibleModelFields = formEditorHelper.getCompatibleModelFields(nameField);
 

@@ -191,15 +191,13 @@ public class FormEditorHelper {
 
                 FieldDefinition originalField = fieldToRemove;
 
-                if (fieldToRemove.getBinding() != null) {
-                    ModelProperty property = formDefinition.getModel().getProperty(fieldToRemove.getBinding());
-
-                    fieldToRemove = fieldManager.getDefinitionByModelProperty(property);
-                } else {
-                    fieldToRemove = fieldManager.getDefinitionByDataType(fieldToRemove.getFieldTypeInfo());
-
-                    fieldToRemove.setName(originalField.getName());
+                if(fieldToRemove.getBinding() == null) {
+                    return;
                 }
+
+                ModelProperty property = formDefinition.getModel().getProperty(fieldToRemove.getBinding());
+
+                fieldToRemove = fieldManager.getDefinitionByModelProperty(property);
 
                 fieldToRemove.setId(originalField.getId());
 

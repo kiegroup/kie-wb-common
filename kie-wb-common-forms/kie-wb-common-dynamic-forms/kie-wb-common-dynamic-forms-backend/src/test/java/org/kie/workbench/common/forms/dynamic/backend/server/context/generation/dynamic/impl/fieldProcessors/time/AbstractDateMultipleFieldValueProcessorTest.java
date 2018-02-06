@@ -36,7 +36,7 @@ import org.mockito.Spy;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractDateMultipleFieldValueProcessorTest<F extends FieldDefinition, PROCESSOR extends AbstractDateMultipleieldValueProcessor<F>> {
+public abstract class AbstractDateMultipleFieldValueProcessorTest<F extends FieldDefinition, PROCESSOR extends AbstractDateMultipleFieldValueProcessor<F>> {
 
     @Spy
     protected LocalDateFieldValueProcessor dateProcessor = new LocalDateFieldValueProcessor();

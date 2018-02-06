@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.lists.selector.impl.DateMultipleSelectorFieldDefinition;
 
 @Dependent
-public class DateMultipleSelectorFieldValueProcessor extends AbstractDateMultipleieldValueProcessor<DateMultipleSelectorFieldDefinition> {
+public class DateMultipleSelectorFieldValueProcessor extends AbstractDateMultipleFieldValueProcessor<DateMultipleSelectorFieldDefinition> {
 
     @Inject
     public DateMultipleSelectorFieldValueProcessor(LocalDateFieldValueProcessor localDateFieldValueProcessor) {
