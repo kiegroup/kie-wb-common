@@ -64,6 +64,28 @@
       <artifactId>kie-wb-common-data-modeller-backend</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-test-utils</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.drools</groupId>
+      <artifactId>drools-cdi</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-adf-engine-backend</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jbpm</groupId>
+      <artifactId>jbpm-designer-backend</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
   </dependencies>
 
   <build>
