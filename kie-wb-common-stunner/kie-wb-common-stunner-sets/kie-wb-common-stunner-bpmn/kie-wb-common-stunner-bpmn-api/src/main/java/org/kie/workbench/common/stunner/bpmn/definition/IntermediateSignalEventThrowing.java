@@ -47,26 +47,12 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEvent {
+public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEvent implements Executable<ScopedSignalEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")
     @Valid
     protected ScopedSignalEventExecutionSet executionSet;
-
-    @NonPortable
-    public static class IntermediateSignalEventThrowingBuilder implements Builder<IntermediateSignalEventThrowing> {
-
-        @Override
-        public IntermediateSignalEventThrowing build() {
-            return new IntermediateSignalEventThrowing(new BPMNGeneralSet(""),
-                                                       new DataIOSet(),
-                                                       new BackgroundSet(),
-                                                       new FontSet(),
-                                                       new CircleDimensionSet(new Radius()),
-                                                       new ScopedSignalEventExecutionSet());
-        }
-    }
 
     public IntermediateSignalEventThrowing() {
     }
@@ -107,5 +93,19 @@ public class IntermediateSignalEventThrowing extends BaseThrowingIntermediateEve
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class IntermediateSignalEventThrowingBuilder implements Builder<IntermediateSignalEventThrowing> {
+
+        @Override
+        public IntermediateSignalEventThrowing build() {
+            return new IntermediateSignalEventThrowing(new BPMNGeneralSet(""),
+                                                       new DataIOSet(),
+                                                       new BackgroundSet(),
+                                                       new FontSet(),
+                                                       new CircleDimensionSet(new Radius()),
+                                                       new ScopedSignalEventExecutionSet());
+        }
     }
 }

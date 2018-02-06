@@ -40,20 +40,6 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 public class SequenceFlowExecutionSet implements BPMNPropertySet {
 
     @Property
-    @FormField
-    @Valid
-    private Priority priority;
-
-    @Property
-    @FormField(
-            type = TextAreaFieldType.class,
-            afterElement = "priority",
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private ConditionExpression conditionExpression;
-
-    @Property
     @FormField(
             type = ConditionalComboBoxFieldType.class,
             afterElement = "conditionExpression",
@@ -67,6 +53,18 @@ public class SequenceFlowExecutionSet implements BPMNPropertySet {
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ConditionLanguageFormProvider")
     @Valid
     protected ConditionExpressionLanguage conditionExpressionLanguage;
+    @Property
+    @FormField
+    @Valid
+    private Priority priority;
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "priority",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private ConditionExpression conditionExpression;
 
     public SequenceFlowExecutionSet() {
         this(new Priority(""),

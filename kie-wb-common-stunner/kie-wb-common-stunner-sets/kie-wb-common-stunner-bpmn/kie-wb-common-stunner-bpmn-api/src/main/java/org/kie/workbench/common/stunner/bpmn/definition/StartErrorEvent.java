@@ -27,6 +27,7 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
@@ -48,7 +49,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartErrorEvent extends BaseStartEvent {
+public class StartErrorEvent extends BaseStartEvent implements Executable<InterruptingErrorEventExecutionSet>,
+                                                               HasDataIOSet {
 
     @PropertySet
     @FormField(afterElement = "general")
@@ -59,21 +61,6 @@ public class StartErrorEvent extends BaseStartEvent {
     @FormField(afterElement = "executionSet")
     @Valid
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class StartErrorEventBuilder implements Builder<StartErrorEvent> {
-
-        @Override
-        public StartErrorEvent build() {
-            return new StartErrorEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new DataIOSet(),
-                                       new InterruptingErrorEventExecutionSet());
-        }
-    }
 
     public StartErrorEvent() {
     }
@@ -136,5 +123,20 @@ public class StartErrorEvent extends BaseStartEvent {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class StartErrorEventBuilder implements Builder<StartErrorEvent> {
+
+        @Override
+        public StartErrorEvent build() {
+            return new StartErrorEvent(new BPMNGeneralSet(""),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new CircleDimensionSet(new Radius()),
+                                       new SimulationAttributeSet(),
+                                       new DataIOSet(),
+                                       new InterruptingErrorEventExecutionSet());
+        }
     }
 }

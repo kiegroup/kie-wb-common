@@ -13,7 +13,7 @@
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[]]></drools:metaValue>
         </drools:metaData>
-      </bpmn2:extensionElements>
+      </bpmn2:extensionElements>skippableDataInput
       <bpmn2:outgoing>_0A9CCA81-23BE-4AE7-8A1A-65263D16A0F8</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:userTask id="_84179367-C743-4879-9221-EA0D0EFE1ECB" drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="MyTask">

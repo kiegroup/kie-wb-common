@@ -89,20 +89,20 @@ public class ReusableSubprocessTaskExecutionSet implements BPMNPropertySet {
         return calledElement;
     }
 
-    public Independent getIndependent() {
-        return independent;
-    }
-
-    public WaitForCompletion getWaitForCompletion() {
-        return waitForCompletion;
-    }
-
     public void setCalledElement(final CalledElement calledElement) {
         this.calledElement = calledElement;
     }
 
+    public Independent getIndependent() {
+        return independent;
+    }
+
     public void setIndependent(final Independent independent) {
         this.independent = independent;
+    }
+
+    public WaitForCompletion getWaitForCompletion() {
+        return waitForCompletion;
     }
 
     public void setWaitForCompletion(final WaitForCompletion waitForCompletion) {

@@ -36,7 +36,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition
-public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
+public class BusinessRuleTaskExecutionSet implements BPMNPropertySet,
+                                                     ScriptableExecutionSet {
 
     @Property
     @FormField(
@@ -47,25 +48,6 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.RuleFlowGroupFormProvider")
     @Valid
     protected RuleFlowGroup ruleFlowGroup;
-
-    @Property
-    @FormField(
-            type = TextAreaFieldType.class,
-            afterElement = "ruleFlowGroup",
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private OnEntryAction onEntryAction;
-
-    @Property
-    @FormField(
-            type = TextAreaFieldType.class,
-            afterElement = "onEntryAction",
-            settings = {@FieldParam(name = "rows", value = "5")}
-    )
-    @Valid
-    private OnExitAction onExitAction;
-
     @Property
     @FormField(
             type = ListBoxFieldType.class,
@@ -76,7 +58,22 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
             className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
     @Valid
     protected ScriptLanguage scriptLanguage;
-
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "ruleFlowGroup",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private OnEntryAction onEntryAction;
+    @Property
+    @FormField(
+            type = TextAreaFieldType.class,
+            afterElement = "onEntryAction",
+            settings = {@FieldParam(name = "rows", value = "5")}
+    )
+    @Valid
+    private OnExitAction onExitAction;
     @Property
     @FormField(
             afterElement = "scriptLanguage"
@@ -122,26 +119,32 @@ public class BusinessRuleTaskExecutionSet implements BPMNPropertySet {
         this.ruleFlowGroup = ruleFlowGroup;
     }
 
+    @Override
     public OnEntryAction getOnEntryAction() {
         return onEntryAction;
     }
 
+    @Override
     public void setOnEntryAction(OnEntryAction onEntryAction) {
         this.onEntryAction = onEntryAction;
     }
 
+    @Override
     public OnExitAction getOnExitAction() {
         return onExitAction;
     }
 
+    @Override
     public void setOnExitAction(OnExitAction onExitAction) {
         this.onExitAction = onExitAction;
     }
 
+    @Override
     public ScriptLanguage getScriptLanguage() {
         return scriptLanguage;
     }
 
+    @Override
     public void setScriptLanguage(ScriptLanguage scriptLanguage) {
         this.scriptLanguage = scriptLanguage;
     }

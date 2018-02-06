@@ -42,18 +42,6 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 )
 public class EndNoneEvent extends BaseEndEvent {
 
-    @NonPortable
-    public static class EndNoneEventBuilder implements Builder<EndNoneEvent> {
-
-        @Override
-        public EndNoneEvent build() {
-            return new EndNoneEvent(new BPMNGeneralSet(""),
-                                    new BackgroundSet(),
-                                    new FontSet(),
-                                    new CircleDimensionSet(new Radius()));
-        }
-    }
-
     public EndNoneEvent() {
     }
 
@@ -65,5 +53,17 @@ public class EndNoneEvent extends BaseEndEvent {
               backgroundSet,
               fontSet,
               dimensionsSet);
+    }
+
+    @NonPortable
+    public static class EndNoneEventBuilder implements Builder<EndNoneEvent> {
+
+        @Override
+        public EndNoneEvent build() {
+            return new EndNoneEvent(new BPMNGeneralSet(""),
+                                    new BackgroundSet(),
+                                    new FontSet(),
+                                    new CircleDimensionSet(new Radius()));
+        }
     }
 }

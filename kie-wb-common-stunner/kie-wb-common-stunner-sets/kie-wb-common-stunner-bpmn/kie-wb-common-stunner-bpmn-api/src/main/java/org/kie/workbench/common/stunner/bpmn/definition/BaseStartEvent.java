@@ -125,20 +125,20 @@ public abstract class BaseStartEvent implements BPMNViewDefinition,
         return general;
     }
 
-    public BackgroundSet getBackgroundSet() {
-        return backgroundSet;
-    }
-
-    public FontSet getFontSet() {
-        return fontSet;
-    }
-
     public void setGeneral(final BPMNGeneralSet general) {
         this.general = general;
     }
 
+    public BackgroundSet getBackgroundSet() {
+        return backgroundSet;
+    }
+
     public void setBackgroundSet(final BackgroundSet backgroundSet) {
         this.backgroundSet = backgroundSet;
+    }
+
+    public FontSet getFontSet() {
+        return fontSet;
     }
 
     public void setFontSet(final FontSet fontSet) {

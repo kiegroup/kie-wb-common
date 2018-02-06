@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.graph.content.definition;
 
-public interface Definition<T> {
+public interface Defihttps://github.com/kiegroup/kie-wb-common/pull/1390nition<T> {
 
     T getDefinition();
 

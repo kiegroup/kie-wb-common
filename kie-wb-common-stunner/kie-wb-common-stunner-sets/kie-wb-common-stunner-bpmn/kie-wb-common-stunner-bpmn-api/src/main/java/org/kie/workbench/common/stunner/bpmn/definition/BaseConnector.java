@@ -38,33 +38,21 @@ public abstract class BaseConnector implements BPMNViewDefinition {
 
     @Category
     public static final transient String category = Categories.CONNECTING_OBJECTS;
-
-    @PropertySet
-    @FormField
-    @Valid
-    protected BPMNGeneralSet general;
-
-    @PropertySet
-    @Valid
-    protected BackgroundSet backgroundSet;
-
-    @PropertySet
-    protected FontSet fontSet;
-
-    @NonPortable
-    static abstract class BaseConnectorBuilder<T extends BaseConnector> implements Builder<BaseConnector> {
-
-        public static final transient String COLOR = "#000000";
-        public static final transient String BORDER_COLOR = "#000000";
-        public static final Double BORDER_SIZE = 1d;
-    }
-
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{
         add("all");
         add("ConnectingObjectsMorph");
         add("cm_nop");
     }};
+    @PropertySet
+    @FormField
+    @Valid
+    protected BPMNGeneralSet general;
+    @PropertySet
+    @Valid
+    protected BackgroundSet backgroundSet;
+    @PropertySet
+    protected FontSet fontSet;
 
     protected BaseConnector() {
     }
@@ -128,5 +116,13 @@ public abstract class BaseConnector implements BPMNViewDefinition {
                     Objects.equals(labels, other.labels);
         }
         return false;
+    }
+
+    @NonPortable
+    static abstract class BaseConnectorBuilder<T extends BaseConnector> implements Builder<BaseConnector> {
+
+        public static final transient String COLOR = "#000000";
+        public static final transient String BORDER_COLOR = "#000000";
+        public static final Double BORDER_SIZE = 1d;
     }
 }

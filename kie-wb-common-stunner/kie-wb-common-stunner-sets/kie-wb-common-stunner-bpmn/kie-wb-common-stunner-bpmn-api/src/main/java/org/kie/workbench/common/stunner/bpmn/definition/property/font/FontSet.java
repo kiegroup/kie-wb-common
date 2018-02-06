@@ -115,36 +115,36 @@ public class FontSet implements BPMNPropertySet {
         return fontFamily;
     }
 
-    public FontColor getFontColor() {
-        return fontColor;
-    }
-
-    public FontSize getFontSize() {
-        return fontSize;
-    }
-
-    public FontBorderSize getFontBorderSize() {
-        return fontBorderSize;
-    }
-
-    public FontBorderColor getFontBorderColor() {
-        return fontBorderColor;
-    }
-
     public void setFontFamily(final FontFamily fontFamily) {
         this.fontFamily = fontFamily;
+    }
+
+    public FontColor getFontColor() {
+        return fontColor;
     }
 
     public void setFontColor(final FontColor fontColor) {
         this.fontColor = fontColor;
     }
 
+    public FontSize getFontSize() {
+        return fontSize;
+    }
+
     public void setFontSize(final FontSize fontSize) {
         this.fontSize = fontSize;
     }
 
+    public FontBorderSize getFontBorderSize() {
+        return fontBorderSize;
+    }
+
     public void setFontBorderSize(final FontBorderSize fontBorderSize) {
         this.fontBorderSize = fontBorderSize;
+    }
+
+    public FontBorderColor getFontBorderColor() {
+        return fontBorderColor;
     }
 
     public void setFontBorderColor(FontBorderColor fontBorderColor) {

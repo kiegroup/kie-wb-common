@@ -23,7 +23,6 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
-import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.I18nMode;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNBaseInfo;
@@ -139,60 +138,60 @@ public class DiagramSet implements BPMNPropertySet,
         return name;
     }
 
-    public Documentation getDocumentation() {
-        return documentation;
-    }
-
-    public Id getId() {
-        return id;
-    }
-
-    public Package getPackageProperty() {
-        return packageProperty;
-    }
-
-    public Version getVersion() {
-        return version;
-    }
-
-    public AdHoc getAdHoc() {
-        return adHoc;
-    }
-
-    public ProcessInstanceDescription getProcessInstanceDescription() {
-        return processInstanceDescription;
-    }
-
-    public Executable getExecutable() {
-        return executable;
-    }
-
     public void setName(final Name name) {
         this.name = name;
+    }
+
+    public Documentation getDocumentation() {
+        return documentation;
     }
 
     public void setDocumentation(final Documentation documentation) {
         this.documentation = documentation;
     }
 
+    public Id getId() {
+        return id;
+    }
+
     public void setId(Id id) {
         this.id = id;
+    }
+
+    public Package getPackageProperty() {
+        return packageProperty;
     }
 
     public void setPackageProperty(final Package packageProperty) {
         this.packageProperty = packageProperty;
     }
 
+    public Version getVersion() {
+        return version;
+    }
+
     public void setVersion(final Version version) {
         this.version = version;
+    }
+
+    public AdHoc getAdHoc() {
+        return adHoc;
     }
 
     public void setAdHoc(final AdHoc adHoc) {
         this.adHoc = adHoc;
     }
 
+    public ProcessInstanceDescription getProcessInstanceDescription() {
+        return processInstanceDescription;
+    }
+
     public void setProcessInstanceDescription(final ProcessInstanceDescription processInstanceDescription) {
         this.processInstanceDescription = processInstanceDescription;
+    }
+
+    public Executable getExecutable() {
+        return executable;
     }
 
     public void setExecutable(final Executable executable) {

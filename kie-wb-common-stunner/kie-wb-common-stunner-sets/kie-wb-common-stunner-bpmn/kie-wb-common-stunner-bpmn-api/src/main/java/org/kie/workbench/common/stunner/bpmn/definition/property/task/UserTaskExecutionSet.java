@@ -43,20 +43,29 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @FormDefinition(
         startElement = "taskName"
 )
-public class UserTaskExecutionSet implements BPMNPropertySet {
+public class UserTaskExecutionSet implements BPMNPropertySet,
+                                             ScriptableExecutionSet {
 
     @Property
     @FormField
     @Valid
     protected TaskName taskName;
-
+    @Property
+    @FormField(
+            type = ListBoxFieldType.class,
+            afterElement = "onExitAction"
+    )
+    @SelectorDataProvider(
+            type = SelectorDataProvider.ProviderType.REMOTE,
+            className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
+    @Valid
+    protected ScriptLanguage scriptLanguage;
     @Property
     @FormField(
             afterElement = "taskName"
     )
     @Valid
     private Subject subject;
-
     @Property
     @FormField(
             type = AssigneeEditorFieldType.class,
@@ -65,7 +74,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private Actors actors;
-
     @Property
     @FormField(
             type = AssigneeEditorFieldType.class,
@@ -74,7 +82,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private Groupid groupid;
-
     @Property
     @FormField(
             type = AssignmentsEditorFieldType.class,
@@ -82,28 +89,24 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private AssignmentsInfo assignmentsinfo;
-
     @Property
     @FormField(
             afterElement = "assignmentsinfo"
     )
     @Valid
     private IsAsync isAsync;
-
     @Property
     @FormField(
             afterElement = "isAsync"
     )
     @Valid
     private Skippable skippable;
-
     @Property
     @FormField(
             afterElement = "skippable"
     )
     @Valid
     private Priority priority;
-
     @Property
     @FormField(
             type = TextAreaFieldType.class,
@@ -111,7 +114,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private Description description;
-
     @Property
     @FormField(
             type = AssigneeEditorFieldType.class,
@@ -123,14 +125,12 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private CreatedBy createdBy;
-
     @Property
     @FormField(
             afterElement = "createdBy"
     )
     @Valid
     private AdHocAutostart adHocAutostart;
-
     @Property
     @FormField(
             type = TextAreaFieldType.class,
@@ -139,7 +139,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private OnEntryAction onEntryAction;
-
     @Property
     @FormField(
             type = TextAreaFieldType.class,
@@ -148,17 +147,6 @@ public class UserTaskExecutionSet implements BPMNPropertySet {
     )
     @Valid
     private OnExitAction onExitAction;
-
-    @Property
-    @FormField(
-            type = ListBoxFieldType.class,
-            afterElement = "onExitAction"
-    )
-    @SelectorDataProvider(
-            type = SelectorDataProvider.ProviderType.REMOTE,
-            className = "org.kie.workbench.common.stunner.bpmn.backend.dataproviders.ScriptLanguageFormProvider")
-    @Valid
-    protected ScriptLanguage scriptLanguage;
 
     public UserTaskExecutionSet() {
         this(new TaskName("Task"),

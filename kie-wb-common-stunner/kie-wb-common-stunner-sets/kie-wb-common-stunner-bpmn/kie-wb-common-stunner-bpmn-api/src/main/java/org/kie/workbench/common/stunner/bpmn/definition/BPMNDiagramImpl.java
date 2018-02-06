@@ -54,50 +54,27 @@ public class BPMNDiagramImpl implements BPMNDiagram {
 
     @Category
     public static final transient String category = Categories.CONTAINERS;
-
-    @PropertySet
-    @FormField
-    @Valid
-    private DiagramSet diagramSet;
-
+    @Labels
+    private final Set<String> labels = new HashSet<String>() {{
+        add("canContainArtifacts");
+        add("diagram");
+    }};
     @PropertySet
     @FormField(
             afterElement = "diagramSet"
     )
     @Valid
     protected ProcessData processData;
-
-    @PropertySet
-    private BackgroundSet backgroundSet;
-
-    @PropertySet
-    private FontSet fontSet;
-
     @PropertySet
     protected RectangleDimensionsSet dimensionsSet;
-
-    @Labels
-    private final Set<String> labels = new HashSet<String>() {{
-        add("canContainArtifacts");
-        add("diagram");
-    }};
-
-    @NonPortable
-    public static class BPMNDiagramBuilder implements Builder<BPMNDiagramImpl> {
-
-        public static final Double WIDTH = 950d;
-        public static final Double HEIGHT = 950d;
-
-        @Override
-        public BPMNDiagramImpl build() {
-            return new BPMNDiagramImpl(new DiagramSet(),
-                                       new ProcessData(),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new RectangleDimensionsSet(WIDTH,
-                                                                  HEIGHT));
-        }
-    }
+    @PropertySet
+    @FormField
+    @Valid
+    private DiagramSet diagramSet;
+    @PropertySet
+    private BackgroundSet backgroundSet;
+    @PropertySet
+    private FontSet fontSet;
 
     public BPMNDiagramImpl() {
     }
@@ -126,6 +103,10 @@ public class BPMNDiagramImpl implements BPMNDiagram {
         return diagramSet;
     }
 
+    public void setDiagramSet(final DiagramSet diagramSet) {
+        this.diagramSet = diagramSet;
+    }
+
     public RectangleDimensionsSet getDimensionsSet() {
         return dimensionsSet;
     }
@@ -138,24 +119,20 @@ public class BPMNDiagramImpl implements BPMNDiagram {
         return processData;
     }
 
-    public BackgroundSet getBackgroundSet() {
-        return backgroundSet;
-    }
-
-    public FontSet getFontSet() {
-        return fontSet;
-    }
-
-    public void setDiagramSet(final DiagramSet diagramSet) {
-        this.diagramSet = diagramSet;
-    }
-
     public void setProcessData(final ProcessData processData) {
         this.processData = processData;
     }
 
+    public BackgroundSet getBackgroundSet() {
+        return backgroundSet;
+    }
+
     public void setBackgroundSet(final BackgroundSet backgroundSet) {
         this.backgroundSet = backgroundSet;
+    }
+
+    public FontSet getFontSet() {
+        return fontSet;
     }
 
     public void setFontSet(final FontSet fontSet) {
@@ -187,5 +164,22 @@ public class BPMNDiagramImpl implements BPMNDiagram {
                     dimensionsSet.equals(other.dimensionsSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class BPMNDiagramBuilder implements Builder<BPMNDiagramImpl> {
+
+        public static final Double WIDTH = 950d;
+        public static final Double HEIGHT = 950d;
+
+        @Override
+        public BPMNDiagramImpl build() {
+            return new BPMNDiagramImpl(new DiagramSet(),
+                                       new ProcessData(),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new RectangleDimensionsSet(WIDTH,
+                                                                  HEIGHT));
+        }
     }
 }
