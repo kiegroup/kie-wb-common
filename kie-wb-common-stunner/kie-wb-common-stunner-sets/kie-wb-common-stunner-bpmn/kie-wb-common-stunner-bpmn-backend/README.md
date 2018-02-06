@@ -29,6 +29,9 @@ Enable with flag:
   
   Fields from the Eclipse BPMN2 model, for convience, are generally accessed through a `PropertyReader`. 
   
+  
+#### Property Readers
+  
 - `PropertyReader`s are returned from a `PropertyReaderFactory`. They retrieve properties from
   each Eclipse BPMN2 instance especially implementing custom logic for
   extended drools-related attributes, such as 
@@ -67,7 +70,7 @@ Enable with flag:
   It also implements custom logic for some actions. For example, in the case of adding child nodes, 
   it translates the coordinates of a child node into the new reference system (the parent boundaries).
 
-### Utilities
+#### Utilities
  
 - In order to minimize casts (mostly for legibility, cosmetic reasons) the following classes exist:
 
