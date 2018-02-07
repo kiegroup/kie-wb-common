@@ -41,6 +41,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.Bounds;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.mocks.EventSourceMock;
@@ -104,6 +105,7 @@ public class LiteralExpressionGridTest {
 
         doReturn(session).when(sessionManager).getCurrentSession();
         doReturn(canvasHandler).when(session).getCanvasHandler();
+        doReturn(mock(Bounds.class)).when(gridLayer).getVisibleBounds();
 
         this.grid = spy((LiteralExpressionGrid) definition.getEditor(parent,
                                                                      hasExpression,
@@ -141,7 +143,7 @@ public class LiteralExpressionGridTest {
             add(grid);
         }}).when(gridLayer).getGridWidgets();
 
-        grid.fireExpressionEditorSelectedEvent();
+        grid.select();
 
         verify(editorSelectedEvent).fire(expressionEditorSelectedEventCaptor.capture());
 

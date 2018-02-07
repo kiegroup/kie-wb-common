@@ -113,12 +113,12 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
 
     @Override
     protected void fireExpressionEditorSelectedEvent() {
-        final Optional<BaseExpressionGrid> parentGrid = findParentGrid(parent);
+        final Optional<BaseExpressionGrid> parentGrid = findParentGrid();
         editorSelectedEvent.fire(new ExpressionEditorSelectedEvent(sessionManager.getCurrentSession(),
                                                                    parentGrid));
     }
 
-    private Optional<BaseExpressionGrid> findParentGrid(final GridCellTuple parent) {
+    private Optional<BaseExpressionGrid> findParentGrid() {
         final GridData parentUiModel = parent.getGridData();
         return gridLayer.getGridWidgets()
                 .stream()
