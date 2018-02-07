@@ -178,7 +178,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
         this.hasExpression = hasExpression;
         this.expression = expression;
         this.hasName = hasName;
-        this.isHeaderHidden=isHeaderHidden;
+        this.isHeaderHidden = isHeaderHidden;
 
         doInitialisation();
     }
@@ -274,9 +274,13 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
     @Override
     public void select() {
+        fireExpressionEditorSelectedEvent();
+        super.select();
+    }
+
+    protected void fireExpressionEditorSelectedEvent() {
         editorSelectedEvent.fire(new ExpressionEditorSelectedEvent(sessionManager.getCurrentSession(),
                                                                    Optional.of(this)));
-        super.select();
     }
 
     @Override
@@ -309,7 +313,6 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
             }
             return true;
         };
-
 
         allOtherCommands.stream().filter(renderHeader).forEach(p -> p.getK2().execute(p.getK1()));
         gridLineCommands.stream().filter(renderHeader).forEach(p -> p.getK2().execute(p.getK1()));
