@@ -151,7 +151,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
-    public void testSelectFirstCellWithNowRowsOrColumns() {
+    public void testSelectFirstCellWithNoRowsOrColumns() {
         grid.selectFirstCell();
 
         assertThat(grid.getModel().getSelectedCells()).isEmpty();
