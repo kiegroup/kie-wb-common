@@ -52,6 +52,7 @@ import org.kie.workbench.common.workbench.client.events.LayoutEditorFocusEvent;
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.backend.vfs.Path;
+import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.DeletePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.file.popups.DeletePopUpView;
 import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
@@ -151,6 +152,9 @@ public class FormEditorPresenterAbstractTest {
     @Mock
     protected RenamePopUpPresenter renamePopUpPresenter;
 
+    @Mock
+    protected CopyPopUpPresenter copyPopUpPresenter;
+
     protected DeletePopUpPresenter deletePopUpPresenter;
 
     @Mock
@@ -221,8 +225,7 @@ public class FormEditorPresenterAbstractTest {
         when(layoutEditorMock.getLayout()).thenReturn(new LayoutTemplate());
 
         when(menuBuilderMock.addSave(any(MenuItem.class))).thenReturn(menuBuilderMock);
-        when(menuBuilderMock.addCopy(any(ObservablePath.class),
-                                     any(DefaultFileNameValidator.class))).thenReturn(menuBuilderMock);
+        when(menuBuilderMock.addCopy(any(Command.class))).thenReturn(menuBuilderMock);
         when(menuBuilderMock.addRename(any(ObservablePath.class),
                                        any(DefaultFileNameValidator.class))).thenReturn(menuBuilderMock);
         when(menuBuilderMock.addRename(any(Command.class))).thenReturn(menuBuilderMock);
@@ -271,6 +274,7 @@ public class FormEditorPresenterAbstractTest {
                 deletePopUpPresenter = FormEditorPresenterAbstractTest.this.deletePopUpPresenter;
                 renamePopUpPresenter = FormEditorPresenterAbstractTest.this.renamePopUpPresenter;
                 formEditorContext = mock(FormEditorContext.class);
+                copyPopUpPresenter = FormEditorPresenterAbstractTest.this.copyPopUpPresenter;
             }
 
             @Override

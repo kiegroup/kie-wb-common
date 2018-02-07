@@ -37,12 +37,14 @@ import org.mockito.verification.VerificationMode;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.client.file.CommandWithFileNameAndCommitMessage;
 import org.uberfire.ext.editor.commons.client.file.FileNameAndCommitMessage;
+import org.uberfire.ext.editor.commons.client.file.popups.CopyPopUpView;
 import org.uberfire.ext.editor.commons.client.file.popups.RenamePopUpPresenter;
 import org.uberfire.ext.editor.commons.client.validation.DefaultFileNameValidator;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.ext.layout.editor.api.editor.LayoutTemplate;
 import org.uberfire.ext.layout.editor.client.api.ComponentRemovedEvent;
 import org.uberfire.mvp.Command;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.MenuItem;
 
 import static org.junit.Assert.assertEquals;
@@ -463,8 +465,7 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         loadContent();
 
         verify(menuBuilderMock).addSave(any(MenuItem.class));
-        verify(menuBuilderMock).addCopy(any(Path.class),
-                                        any(AssetUpdateValidator.class));
+        verify(menuBuilderMock).addCopy(any(Command.class));
         verify(menuBuilderMock).addRename(any(Command.class));
         verify(menuBuilderMock).addDelete(any(Command.class));
 
@@ -633,5 +634,63 @@ public class FormEditorPresenterTest extends FormEditorPresenterAbstractTest {
         verify(view).showBusyIndicator(anyString());
         verify(presenterSpy).getRenameErrorCallback(any(RenamePopUpPresenter.View.class));
         verify(presenterSpy).getRenameSuccessCallback(any(RenamePopUpPresenter.View.class));
+    }
+
+    @Test
+    public void testCopySaving() {
+        testCopy(true);
+
+        presenter.copy(true);
+
+        verify(layoutEditorMock).getLayout();
+
+        verify(copyPopUpPresenter).show(any(), any(), any());
+    }
+
+    @Test
+    public void testCopyWithoutSaving() {
+        testCopy(false);
+    }
+
+    protected void testCopy(boolean save) {
+        testLoad();
+
+        FormEditorPresenter presenterSpy = spy(presenter);
+
+        when(presenterSpy.isDirty(any())).thenReturn(save);
+
+        presenterSpy.safeCopy();
+
+        if(save) {
+            verify(view).showSavePopup(any(), any(), any());
+        } else {
+            verify(view, never()).showSavePopup(any(), any(), any());
+
+            verify(copyPopUpPresenter).show(any(), any(), any());
+        }
+    }
+
+    @Test
+    public void testCopyCommandWithSuccess() {
+        testLoad();
+
+        CopyPopUpView copyPopupView = mock(CopyPopUpView.class);
+
+        when(copyPopUpPresenter.getView()).thenReturn(copyPopupView);
+
+        presenter.copyCommand(mock(FileNameAndCommitMessage.class), true);
+
+        verify(view).showBusyIndicator(anyString());
+
+        formEditorService.copy(any(), anyString(), anyString(), anyBoolean(), any(), any());
+
+        // Success callback
+        verify(view).hideBusyIndicator();
+
+        verify(copyPopUpPresenter).getView();
+
+        verify(copyPopupView).hide();
+
+        verify(notificationEvent).fire(any(NotificationEvent.class));
     }
 }

@@ -16,22 +16,36 @@
 
 package org.kie.workbench.common.forms.editor.backend.service.impl;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import javax.enterprise.event.Event;
 
+import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.Condition;
+import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.forms.commons.shared.layout.impl.StaticFormLayoutTemplateGenerator;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.service.backend.FormModelHandlerManager;
 import org.kie.workbench.common.forms.editor.service.shared.VFSFormFinderService;
 import org.kie.workbench.common.forms.editor.type.FormResourceTypeDefinition;
 import org.kie.workbench.common.forms.fields.test.TestFieldManager;
+import org.kie.workbench.common.forms.fields.test.TestMetaDataEntryManager;
+import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
+import org.kie.workbench.common.forms.model.FormLayoutComponent;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.kie.workbench.common.forms.serialization.FormDefinitionSerializer;
+import org.kie.workbench.common.forms.serialization.impl.FieldSerializer;
+import org.kie.workbench.common.forms.serialization.impl.FormDefinitionSerializerImpl;
+import org.kie.workbench.common.forms.serialization.impl.FormModelSerializer;
 import org.kie.workbench.common.forms.service.shared.FieldManager;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -43,16 +57,20 @@ import org.uberfire.backend.vfs.Path;
 import org.uberfire.ext.editor.commons.service.DeleteService;
 import org.uberfire.ext.editor.commons.service.RenameService;
 import org.uberfire.io.IOService;
+import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.workbench.events.ResourceOpenedEvent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.eq;
@@ -65,6 +83,8 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FormEditorServiceImplTest {
+
+    private static final String PERSON_FORM = "/org/kie/workbench/common/forms/editor/backend/indexing/PersonFull.frm";
 
     private static final String COMMIT_MESSAGE = "commit message";
 
@@ -114,6 +134,9 @@ public class FormEditorServiceImplTest {
     @Mock
     private CommentedOptionFactory commentedOptionFactory;
 
+    @Mock
+    private MetadataServerSideService metadataService;
+
     private FormEditorServiceImpl formEditorService;
 
     @Before
@@ -128,7 +151,11 @@ public class FormEditorServiceImplTest {
                                                           vfsFormFinderService,
                                                           deleteService,
                                                           commentedOptionFactory,
-                                                          renameService));
+                                                          renameService) {
+            {
+                metadataService = FormEditorServiceImplTest.this.metadataService;
+            }
+        });
 
         when(path.toURI()).thenReturn("default:///src/main/resources/test.frm");
         when(moduleService.resolveModule(any())).thenReturn(module);
@@ -222,5 +249,95 @@ public class FormEditorServiceImplTest {
         verify(formEditorService, constructContentCalls).constructContent(eq(path), any(Overview.class));
         verify(formEditorService).save(eq(path), eq(content), eq(metadata), eq(COMMIT_COMMENT));
         verify(renameService).rename(eq(path), eq(NEW_FORM_NAME), eq(COMMIT_COMMENT));
+    }
+
+    @Test
+    public void testCopyAndSave() throws IOException {
+        testCopy(true);
+    }
+
+    @Test
+    public void testCopyWithoutSaving() throws IOException {
+        testCopy(false);
+    }
+
+    protected void testCopy(boolean save) throws IOException {
+        FormDefinition formDefinition = readFormDefinitionFromResources();
+        FormModelerContent content = mock(FormModelerContent.class);
+        when(content.getDefinition()).thenReturn(formDefinition);
+        Metadata metadata = mock(Metadata.class);
+
+        formEditorService.copy(path, NEW_FORM_NAME, COMMIT_COMMENT, save, content, metadata);
+
+        if(save) {
+            verify(ioService, times(1)).write(any(org.uberfire.java.nio.file.Path.class), anyString(), anyMap(), any(CommentedOption.class));
+        }
+
+        verify(formEditorService).copyFormDefinition(formDefinition);
+
+        verify(ioService, times(1)).write(any(org.uberfire.java.nio.file.Path.class), anyString(), any(CommentedOption.class));
+
+    }
+
+    private FormDefinition readFormDefinitionFromResources() throws IOException {
+        FormDefinitionSerializerImpl serializer = new FormDefinitionSerializerImpl(new FieldSerializer(),
+                                                                                   new FormModelSerializer(),
+                                                                                   new TestMetaDataEntryManager());
+
+        String stringDefinition = IOUtils.toString(getClass().getResourceAsStream(PERSON_FORM), Charset.defaultCharset());
+
+        return serializer.deserialize(stringDefinition);
+    }
+
+    @Test
+    public void testCopyFormDefinition() throws IOException {
+        FormDefinition originalFormDefinition = readFormDefinitionFromResources();
+
+        FormDefinition copyFormDefinition = formEditorService.copyFormDefinition(originalFormDefinition);
+
+        checkFormDefinitionsCopy(originalFormDefinition, copyFormDefinition);
+    }
+
+    protected void checkFormDefinitionsCopy(FormDefinition originalFormDefinition, FormDefinition copyFormDefinition) {
+        Assertions.assertThat(copyFormDefinition)
+                .isNotNull()
+                .hasFieldOrPropertyWithValue("name", originalFormDefinition.getName())
+                .hasFieldOrPropertyWithValue("model", originalFormDefinition.getModel());
+
+        assertNotEquals(originalFormDefinition.getId(), copyFormDefinition.getId());
+
+        Assertions.assertThat(copyFormDefinition.getFields())
+                .isNotNull()
+                .isNotEmpty()
+                .isNotEqualTo(originalFormDefinition.getFields());
+
+
+        copyFormDefinition.getFields().forEach(copyField -> {
+
+            assertNull(originalFormDefinition.getFieldById(copyField.getId()));
+
+            FieldDefinition originalFieldDefinition = originalFormDefinition.getFieldByBinding(copyField.getBinding());
+
+            Assertions.assertThat(originalFieldDefinition)
+                    .isNotNull()
+                    .hasSameClassAs(copyField)
+                    .isEqualToIgnoringGivenFields(copyField, "id");
+        });
+
+        assertNotNull(copyFormDefinition.getLayoutTemplate());
+
+        copyFormDefinition.getLayoutTemplate()
+                .getRows()
+                .forEach(layoutRow -> {
+                    layoutRow.getLayoutColumns().forEach(layoutColumn -> {
+                        layoutColumn.getLayoutComponents().forEach(layoutComponent -> {
+                            layoutComponent.getDragTypeName().equals(StaticFormLayoutTemplateGenerator.DRAGGABLE_TYPE);
+
+                            Assertions.assertThat(layoutComponent.getProperties())
+                                    .hasEntrySatisfying(FormLayoutComponent.FORM_ID, new Condition<>(id -> copyFormDefinition.getId().equals(id), "Form id doesn't match"))
+                                    .hasEntrySatisfying(FormLayoutComponent.FIELD_ID, new Condition<>(id -> copyFormDefinition.getFieldById(id)!= null, "Field id doesn't match"));
+                        });
+                    });
+                });
     }
 }

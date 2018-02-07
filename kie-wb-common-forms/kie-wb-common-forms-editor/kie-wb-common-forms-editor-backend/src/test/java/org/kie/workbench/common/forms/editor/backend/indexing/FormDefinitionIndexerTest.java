@@ -70,7 +70,6 @@ public class FormDefinitionIndexerTest extends BaseIndexingTest<FormResourceType
     private static final int MAX_WAIT_TIMES = 8;
 
     private final static String[] FORMS = {
-            "none.frm",
             "PersonFull.frm",
             "PersonShort.frm",
             "test.test-taskform.frm",
