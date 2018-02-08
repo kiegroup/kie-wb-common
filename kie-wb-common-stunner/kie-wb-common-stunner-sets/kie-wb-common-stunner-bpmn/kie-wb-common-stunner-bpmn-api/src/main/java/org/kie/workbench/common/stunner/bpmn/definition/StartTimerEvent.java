@@ -47,26 +47,12 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class StartTimerEvent extends BaseStartEvent {
+public class StartTimerEvent extends BaseStartEvent implements Executable<InterruptingTimerEventExecutionSet> {
 
     @PropertySet
     @FormField(afterElement = "general")
     @Valid
     protected InterruptingTimerEventExecutionSet executionSet;
-
-    @NonPortable
-    public static class StartTimerEventBuilder implements Builder<StartTimerEvent> {
-
-        @Override
-        public StartTimerEvent build() {
-            return new StartTimerEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new InterruptingTimerEventExecutionSet());
-        }
-    }
 
     public StartTimerEvent() {
     }
@@ -107,5 +93,19 @@ public class StartTimerEvent extends BaseStartEvent {
                     executionSet.equals(other.executionSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class StartTimerEventBuilder implements Builder<StartTimerEvent> {
+
+        @Override
+        public StartTimerEvent build() {
+            return new StartTimerEvent(new BPMNGeneralSet(""),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new CircleDimensionSet(new Radius()),
+                                       new SimulationAttributeSet(),
+                                       new InterruptingTimerEventExecutionSet());
+        }
     }
 }

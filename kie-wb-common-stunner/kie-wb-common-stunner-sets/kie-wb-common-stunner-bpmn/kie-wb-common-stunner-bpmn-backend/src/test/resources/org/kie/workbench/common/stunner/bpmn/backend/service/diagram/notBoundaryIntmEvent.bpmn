@@ -29,7 +29,8 @@
       <bpmn2:incoming>_1017C897-E064-454B-AB0F-CA30081AB513</bpmn2:incoming>
     </bpmn2:endEvent>
     <bpmn2:sequenceFlow id="_1017C897-E064-454B-AB0F-CA30081AB513" drools:selectable="true" color:background-color="#000000" color:border-color="#000000" color:color="#000000" sourceRef="_0221A138-F017-4C9B-A8AE-0B1AE012B7E8" targetRef="_1688AC87-2427-4BC0-94D9-E25F541FB8DA"/>
-    <bpmn2:intermediateCatchEvent id="_CB178D55-8DC2-4CAA-8C42-4F5028D4A1F6" drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" name="mytimer">
+    <!-- drools:boundaryca has been set to "true", it was previously "" -->
+    <bpmn2:intermediateCatchEvent id="_CB178D55-8DC2-4CAA-8C42-4F5028D4A1F6" drools:selectable="true" drools:boundaryca="true" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" name="mytimer">
       <bpmn2:extensionElements>
         <drools:metaData name="elementname">
           <drools:metaValue><![CDATA[mytimer]]></drools:metaValue>

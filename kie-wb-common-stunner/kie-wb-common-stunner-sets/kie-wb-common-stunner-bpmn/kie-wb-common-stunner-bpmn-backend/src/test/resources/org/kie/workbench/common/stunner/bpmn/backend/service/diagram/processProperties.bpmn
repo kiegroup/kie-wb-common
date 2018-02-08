@@ -37,6 +37,7 @@ process]]></bpmn2:documentation>
     <bpmn2:outgoing>_4A70F211-BEA5-4865-98AB-5CA5DAB9EC21</bpmn2:outgoing>
 </bpmn2:scriptTask>
 <bpmn2:sequenceFlow id="_1D8A4236-21C9-48BA-BFC0-3E1DCC080A4A" drools:selectable="true" color:background-color="#000000" color:border-color="#000000" color:color="#000000" sourceRef="processStartEvent" targetRef="_9C1C86B3-9B8C-4B07-9BC0-1C7B75238863"/>
+<!-- what to do here?? the name is empty and there are 2 extension elements that are basically empty!! -->
 <bpmn2:endEvent id="_6D4E24BD-0D6E-4DD1-8C8B-BF4F14B6BEBC" drools:selectable="true" color:background-color="#ff6347" color:border-color="#000000" color:color="#000000" name="">
     <bpmn2:extensionElements>
         <drools:metaData name="elementname">

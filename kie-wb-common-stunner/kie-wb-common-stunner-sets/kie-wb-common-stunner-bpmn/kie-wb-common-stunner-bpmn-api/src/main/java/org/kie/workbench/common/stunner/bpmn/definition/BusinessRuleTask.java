@@ -27,6 +27,7 @@ import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
@@ -53,7 +54,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class BusinessRuleTask extends BaseTask implements DataIOModel {
+public class BusinessRuleTask extends BaseTask implements DataIOModel,
+                                                          HasDataIOSet {
 
     @PropertySet
     @FormField(
@@ -68,24 +70,6 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
     )
     @Valid
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class BusinessRuleTaskBuilder implements Builder<BusinessRuleTask> {
-
-        @Override
-        public BusinessRuleTask build() {
-            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
-                                                           new Documentation("")),
-                                        new BusinessRuleTaskExecutionSet(),
-                                        new DataIOSet(),
-                                        new BackgroundSet(),
-                                        new FontSet(),
-                                        new RectangleDimensionsSet(),
-                                        new SimulationSet(),
-                                        new TaskType(TaskTypes.BUSINESS_RULE)
-            );
-        }
-    }
 
     public BusinessRuleTask() {
         super(TaskTypes.BUSINESS_RULE);
@@ -133,12 +117,12 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
         return executionSet;
     }
 
-    public DataIOSet getDataIOSet() {
-        return dataIOSet;
-    }
-
     public void setExecutionSet(final BusinessRuleTaskExecutionSet executionSet) {
         this.executionSet = executionSet;
+    }
+
+    public DataIOSet getDataIOSet() {
+        return dataIOSet;
     }
 
     public void setDataIOSet(final DataIOSet dataIOSet) {
@@ -161,5 +145,23 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
+    }
+
+    @NonPortable
+    public static class BusinessRuleTaskBuilder implements Builder<BusinessRuleTask> {
+
+        @Override
+        public BusinessRuleTask build() {
+            return new BusinessRuleTask(new TaskGeneralSet(new Name("Task"),
+                                                           new Documentation("")),
+                                        new BusinessRuleTaskExecutionSet(),
+                                        new DataIOSet(),
+                                        new BackgroundSet(),
+                                        new FontSet(),
+                                        new RectangleDimensionsSet(),
+                                        new SimulationSet(),
+                                        new TaskType(TaskTypes.BUSINESS_RULE)
+            );
+        }
     }
 }

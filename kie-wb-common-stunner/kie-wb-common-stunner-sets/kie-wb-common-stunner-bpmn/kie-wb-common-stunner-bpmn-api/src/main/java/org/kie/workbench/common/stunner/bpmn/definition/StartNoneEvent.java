@@ -43,19 +43,6 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 )
 public class StartNoneEvent extends BaseStartEvent {
 
-    @NonPortable
-    public static class StartNoneEventBuilder implements Builder<StartNoneEvent> {
-
-        @Override
-        public StartNoneEvent build() {
-            return new StartNoneEvent(new BPMNGeneralSet(""),
-                                      new BackgroundSet(),
-                                      new FontSet(),
-                                      new CircleDimensionSet(new Radius()),
-                                      new SimulationAttributeSet());
-        }
-    }
-
     public StartNoneEvent() {
     }
 
@@ -69,5 +56,18 @@ public class StartNoneEvent extends BaseStartEvent {
               fontSet,
               dimensionsSet,
               simulationSet);
+    }
+
+    @NonPortable
+    public static class StartNoneEventBuilder implements Builder<StartNoneEvent> {
+
+        @Override
+        public StartNoneEvent build() {
+            return new StartNoneEvent(new BPMNGeneralSet(""),
+                                      new BackgroundSet(),
+                                      new FontSet(),
+                                      new CircleDimensionSet(new Radius()),
+                                      new SimulationAttributeSet());
+        }
     }
 }
