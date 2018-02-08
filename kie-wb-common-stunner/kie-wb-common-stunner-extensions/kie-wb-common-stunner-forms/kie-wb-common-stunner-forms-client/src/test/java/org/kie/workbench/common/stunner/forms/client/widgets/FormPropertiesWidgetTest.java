@@ -187,6 +187,7 @@ public class FormPropertiesWidgetTest {
                 .showByUUID(ROOT_UUID,
                             RenderMode.EDIT_MODE);
 
+        verify(formRenderer).isInitialized();
         verify(formRenderer).render(contextCaptor.capture());
         assertTrue("FormRenderingContext was not PathAware.",
                    contextCaptor.getValue() instanceof PathAware);

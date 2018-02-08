@@ -45,8 +45,6 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
     protected FieldChangeHandlerManager fieldChangeManager;
 
-    protected FormHandlerHelper<T> handlerHelper;
-
     protected DataBinder<T> binder;
 
     protected List<FormField> formFields = new ArrayList<>();
@@ -75,7 +73,6 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
         clear();
 
         this.binder = binder;
-        this.handlerHelper = new BoundBinderHelper<>(binder, bindInputs);
     }
 
     @Override
@@ -85,7 +82,6 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
         clear();
 
         this.binder = getBinderForModel(model);
-        this.handlerHelper = new NewBinderHelper<>(model);
     }
 
     protected DataBinder<T> getBinderForModel(T model) {
@@ -107,7 +103,7 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
         formFields.add(formField);
 
-        if (handlerHelper.supportsInputBinding() && formField.isBindable()) {
+        if (formField.isBindable()) {
 
             BindableProxy proxy = (BindableProxy) binder.getModel();
 
@@ -192,7 +188,7 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
     public void clear() {
 
         // Check if it's initialized before clear.
-        if (handlerHelper == null || binder == null) {
+        if (binder == null) {
             return;
         }
 
@@ -202,19 +198,20 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
         unsubscribeHandlers.clear();
         formFields.clear();
         fieldChangeManager.clear();
-        if (handlerHelper.supportsInputBinding()) {
-            binder.unbind();
-        }
+        binder.unbind();
     }
 
     @Override
     public void forceModelSynchronization() {
-        formFields.stream().filter(formField -> formField.getWidget() instanceof IsNestedModel).map(formField1 -> (IsNestedModel) formField1.getWidget()).forEach(IsNestedModel::forceModelSynchronization);
+        formFields.stream()
+                .filter(formField -> formField.getWidget() instanceof IsNestedModel)
+                .map(formField -> (IsNestedModel) formField.getWidget())
+                .forEach(IsNestedModel::forceModelSynchronization);
         binder.setModel(getModel(), StateSync.FROM_UI);
     }
 
     public T getModel() {
-        return handlerHelper.getModel();
+        return binder.getModel();
     }
 
     @Override
@@ -241,43 +238,4 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
         public T getModel();
     }
 
-    protected class BoundBinderHelper<T> implements FormHandlerHelper {
-
-        private boolean bindInputs;
-        private DataBinder<T> dataBinder;
-
-        public BoundBinderHelper(DataBinder<T> dataBinder, boolean bindInputs) {
-            this.dataBinder = dataBinder;
-            this.bindInputs = bindInputs;
-        }
-
-        @Override
-        public boolean supportsInputBinding() {
-            return bindInputs;
-        }
-
-        @Override
-        public T getModel() {
-            return dataBinder.getModel();
-        }
-    }
-
-    protected class NewBinderHelper<T> implements FormHandlerHelper {
-
-        private T model;
-
-        public NewBinderHelper(T model) {
-            this.model = model;
-        }
-
-        @Override
-        public boolean supportsInputBinding() {
-            return true;
-        }
-
-        @Override
-        public T getModel() {
-            return model;
-        }
-    }
 }

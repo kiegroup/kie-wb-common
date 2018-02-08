@@ -173,12 +173,11 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
     protected void runCorrectValidationTest(boolean skipGetModel) {
         assertTrue(formHandler.validate());
 
-        if (!skipGetModel) {
-            int expectedTimes = 1;
+        verify(proxy).deepUnwrap();
 
-            if (formHandler.handlerHelper.supportsInputBinding()) {
-                expectedTimes += formFieldProvider.getAll().size();
-            }
+        if (!skipGetModel) {
+            int expectedTimes = formFieldProvider.getAll().size() + 1;
+
             verify(binder, times(expectedTimes)).getModel();
             // checking if property is null
             verify(proxy, times(expectedTimes - 1)).get(anyString());
@@ -190,6 +189,8 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         assertTrue(formHandler.validate(USER_BIRTHDAY_FIELD));
         assertTrue(formHandler.validate(USER_MARRIED_FIELD));
         assertTrue(formHandler.validate(USER_ADDRESS_FIELD));
+
+        verify(proxy, times(7)).deepUnwrap();
     }
 
     @Test
@@ -346,6 +347,8 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         assertFalse(formHandler.validate());
 
+        verify(proxy).deepUnwrap();
+
         if (!skipGetModel) {
             verify(binder, times(formFieldProvider.getAll().size() + 1)).getModel();
             // checking if property is null
@@ -358,17 +361,15 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
         assertTrue(formHandler.validate(USER_BIRTHDAY_FIELD));
         assertTrue(formHandler.validate(USER_MARRIED_FIELD));
         assertFalse(formHandler.validate(USER_ADDRESS_FIELD));
+
+        verify(proxy, times(7)).deepUnwrap();
     }
 
     @After
     public void end() {
         formHandler.clear();
 
-        if (checkBindings) {
-            verify(binder).unbind();
-        } else {
-            verify(binder, never()).unbind();
-        }
+        verify(binder).unbind();
         verify(unsubscribeHandle, times(formFieldProvider.getAll().size())).unsubscribe();
     }
 

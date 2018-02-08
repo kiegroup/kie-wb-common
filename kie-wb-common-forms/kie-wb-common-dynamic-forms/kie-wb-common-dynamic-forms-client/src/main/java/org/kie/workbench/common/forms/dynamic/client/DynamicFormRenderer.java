@@ -128,8 +128,8 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
 
     public void bind(Object model) {
         if (context != null && model != null) {
-            context.setModel(model);
             formHandler.setUp(model);
+            context.setModel(model);
             view.bind();
         }
     }
@@ -180,6 +180,7 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
             formHandler.clear();
             view.clear();
             formHandler = null;
+            context = null;
         }
     }
 
@@ -226,7 +227,7 @@ public class DynamicFormRenderer implements IsWidget, IsFormView {
         return view.asWidget();
     }
 
-    protected boolean isInitialized() {
-        return formHandler != null;
+    public boolean isInitialized() {
+        return context != null && formHandler != null;
     }
 }
