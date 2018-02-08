@@ -25,6 +25,7 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
@@ -55,10 +56,14 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
         return Boolean.parseBoolean(metaData("isAutoConnection.target"));
     }
 
-    public String getConditionExpression() {
-        return conditionExpression == null ?
-                "" :
-                conditionExpression.getBody();
+    public ScriptTypeValue getConditionExpression() {
+        if (conditionExpression == null) {
+            return new ScriptTypeValue();
+        } else {
+            return new ScriptTypeValue(
+                    Scripts.scriptLanguageFromUri(conditionExpression.getLanguage()),
+                    conditionExpression.getBody());
+        }
     }
 
     public String getConditionExpressionLanguage() {

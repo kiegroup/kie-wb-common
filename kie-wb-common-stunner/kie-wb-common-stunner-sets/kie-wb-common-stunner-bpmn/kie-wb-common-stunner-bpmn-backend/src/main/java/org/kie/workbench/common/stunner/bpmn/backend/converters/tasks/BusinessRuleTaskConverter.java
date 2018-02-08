@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -66,7 +65,6 @@ public class BusinessRuleTaskConverter {
                 new RuleFlowGroup(p.getRuleFlowGroup()),
                 new OnEntryAction(p.getOnEntryAction()),
                 new OnExitAction(p.getOnExitAction()),
-                new ScriptLanguage(p.getScriptLanguage()),
                 new IsAsync(p.isAsync()),
                 new AdHocAutostart(p.isAdHocAutoStart())
         ));

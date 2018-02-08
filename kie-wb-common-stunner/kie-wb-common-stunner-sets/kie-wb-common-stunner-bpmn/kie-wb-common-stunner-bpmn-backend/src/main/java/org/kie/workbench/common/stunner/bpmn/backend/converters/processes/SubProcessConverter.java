@@ -112,7 +112,6 @@ public class SubProcessConverter {
 
         definition.getOnEntryAction().setValue(p.getOnEntryAction());
         definition.getOnExitAction().setValue(p.getOnExitAction());
-        definition.getScriptLanguage().setValue(p.getScriptLanguage());
         definition.getIsAsync().setValue(p.isAsync());
 
         definition.setProcessData(new ProcessData(

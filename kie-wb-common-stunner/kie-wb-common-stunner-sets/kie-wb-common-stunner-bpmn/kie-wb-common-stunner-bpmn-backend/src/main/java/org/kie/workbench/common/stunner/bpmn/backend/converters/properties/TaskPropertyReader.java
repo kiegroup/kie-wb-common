@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
 public abstract class TaskPropertyReader extends FlowElementPropertyReader {
 
@@ -29,5 +30,13 @@ public abstract class TaskPropertyReader extends FlowElementPropertyReader {
         super(task, plane);
         this.task = task;
         this.definitionResolver = definitionResolver;
+    }
+
+    public ScriptTypeListValue getOnEntryAction() {
+        return Scripts.onEntry(element.getExtensionValues());
+    }
+
+    public ScriptTypeListValue getOnExitAction() {
+        return Scripts.onExit(element.getExtensionValues());
     }
 }

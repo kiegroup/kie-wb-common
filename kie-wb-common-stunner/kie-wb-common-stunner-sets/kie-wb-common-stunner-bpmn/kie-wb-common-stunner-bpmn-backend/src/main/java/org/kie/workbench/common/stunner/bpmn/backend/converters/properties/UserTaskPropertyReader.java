@@ -33,6 +33,7 @@ import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
 public class UserTaskPropertyReader extends TaskPropertyReader {
 
@@ -117,18 +118,6 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
 
     public boolean isAdHocAutostart() {
         return Boolean.parseBoolean(metaData("customAutoStart"));
-    }
-
-    public String getOnEntryAction() {
-        return Scripts.onEntry(element.getExtensionValues());
-    }
-
-    public String getOnExitAction() {
-        return Scripts.onExit(element.getExtensionValues());
-    }
-
-    public String getScriptLanguage() {
-        return Scripts.scriptLanguage(element.getExtensionValues());
     }
 
     public String input(String name) {

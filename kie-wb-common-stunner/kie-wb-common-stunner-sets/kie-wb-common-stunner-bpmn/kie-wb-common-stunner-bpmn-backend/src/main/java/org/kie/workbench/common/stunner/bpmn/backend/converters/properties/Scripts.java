@@ -17,17 +17,17 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.ExtensionAttributeValue;
-import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.Task;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 
 public class Scripts {
 
@@ -35,38 +35,31 @@ public class Scripts {
         return new OnEntryAction(onEntry(task.getExtensionValues()));
     }
 
-    public static String onEntry(List<ExtensionAttributeValue> extensions) {
+    public static ScriptTypeListValue onEntry(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
-        List<OnEntryScriptType> onEntryExtensions =
+        List<OnEntryScriptType> onExitExtensions =
                 (List<OnEntryScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
 
-        if (!onEntryExtensions.isEmpty()) {
-            return (onEntryExtensions.get(0).getScript());
+        if (!onExitExtensions.isEmpty()) {
+            List<ScriptTypeValue> scripts =
+                    onExitExtensions.stream()
+                            .map(onEntryScriptType ->
+                                         new ScriptTypeValue(
+                                                 scriptLanguageFromUri(onEntryScriptType.getScriptFormat()),
+                                                 onEntryScriptType.getScript()
+                                         ))
+                            .collect(Collectors.toList());
+            return new ScriptTypeListValue(scripts);
         }
 
-        return "";
-    }
-
-    public static ScriptLanguage scriptLanguage(Task task) {
-        return new ScriptLanguage(scriptLanguage(task.getExtensionValues()));
-    }
-
-    public static String scriptLanguage(List<ExtensionAttributeValue> extensions) {
-        @SuppressWarnings("unchecked")
-        List<OnEntryScriptType> onEntryExtensions =
-                (List<OnEntryScriptType>) extensions.get(0).getValue()
-                        .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
-
-        if (!onEntryExtensions.isEmpty()) {
-            return (scriptLanguageFromUri(onEntryExtensions.get(0).getScriptFormat()));
-        }
-        return "";
+        return new ScriptTypeListValue()
+                .addValue(new ScriptTypeValue("java", ""));
     }
 
     public static String scriptLanguageFromUri(String format) {
         if (format == null) {
-            return "";
+            return "java";
         }
         switch (format) {
             case "http://www.java.com/java":
@@ -76,30 +69,32 @@ public class Scripts {
             case "http://www.javascript.com/javascript":
                 return "javascript";
             default:
-                return "";
+                return "java";
         }
     }
-
 
     public static OnExitAction onExit(Task task) {
         return new OnExitAction(onExit(task.getExtensionValues()));
     }
 
-    public static String onExit(List<ExtensionAttributeValue> extensions) {
+    public static ScriptTypeListValue onExit(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
         List<OnExitScriptType> onExitExtensions =
                 (List<OnExitScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT, true);
 
         if (!onExitExtensions.isEmpty()) {
-            return (onExitExtensions.get(0).getScript());
+            List<ScriptTypeValue> scripts = onExitExtensions.stream()
+                    .map(onExitScriptType ->
+                                 new ScriptTypeValue(
+                                         scriptLanguageFromUri(onExitScriptType.getScriptFormat()),
+                                         onExitScriptType.getScript()
+                                 ))
+                    .collect(Collectors.toList());
+            return new ScriptTypeListValue(scripts);
         }
 
-        return "";
-    }
-
-    public static void setProperties(ScriptTask task, ScriptTaskExecutionSet executionSet) {
-        executionSet.getScript().setValue(task.getScript());
-        executionSet.getScriptLanguage().setValue(scriptLanguageFromUri(task.getScriptFormat()));
+        return new ScriptTypeListValue()
+                .addValue(new ScriptTypeValue("java", ""));
     }
 }

@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.Descriptio
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
@@ -81,8 +80,7 @@ public class UserTaskConverter {
                 new CreatedBy(p.getCreatedBy()),
                 new AdHocAutostart(p.isAdHocAutostart()),
                 new OnEntryAction(p.getOnEntryAction()),
-                new OnExitAction(p.getOnExitAction()),
-                new ScriptLanguage(p.getScriptLanguage())
+                new OnExitAction(p.getOnExitAction())
         ));
 
         node.getContent().setBounds(p.getBounds());

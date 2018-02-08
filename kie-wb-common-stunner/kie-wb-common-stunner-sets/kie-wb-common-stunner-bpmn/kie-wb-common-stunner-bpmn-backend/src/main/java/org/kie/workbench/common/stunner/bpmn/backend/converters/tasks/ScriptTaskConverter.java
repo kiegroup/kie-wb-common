@@ -26,7 +26,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Script;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -55,7 +54,6 @@ public class ScriptTaskConverter {
 
         definition.setExecutionSet(new ScriptTaskExecutionSet(
                 new Script(p.getScript()),
-                new ScriptLanguage(p.getScriptLanguage()),
                 new IsAsync(p.isAsync())
         ));
 

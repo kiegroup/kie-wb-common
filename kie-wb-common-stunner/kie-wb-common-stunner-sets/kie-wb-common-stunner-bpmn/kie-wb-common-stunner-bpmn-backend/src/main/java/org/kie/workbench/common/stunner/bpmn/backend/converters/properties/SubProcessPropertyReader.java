@@ -22,6 +22,7 @@ import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
 public class SubProcessPropertyReader extends FlowElementPropertyReader {
 
@@ -34,16 +35,12 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
         this.definitionResolver = definitionResolver;
     }
 
-    public String getOnEntryAction() {
+    public ScriptTypeListValue getOnEntryAction() {
         return Scripts.onEntry(element.getExtensionValues());
     }
 
-    public String getOnExitAction() {
+    public ScriptTypeListValue getOnExitAction() {
         return Scripts.onExit(element.getExtensionValues());
-    }
-
-    public String getScriptLanguage() {
-        return Scripts.scriptLanguage(element.getExtensionValues());
     }
 
     public String getProcessVariables() {

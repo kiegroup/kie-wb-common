@@ -35,7 +35,7 @@ public class ProcessPropertyReader extends BasePropertyReader {
     }
 
     public String getPackageName() {
-        return optionalAttribute("packageName").orElse(Package.DEFAULT_PACKAGE);
+        return optionalAttribute("packageName").orElse(null);//.orElse(Package.DEFAULT_PACKAGE);
     }
 
     public String getVersion() {

@@ -22,7 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.Prope
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SequenceFlowPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpression;
-import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.ConditionExpressionLanguage;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -57,8 +56,7 @@ public class SequenceFlowConverter {
 
         definition.setExecutionSet(new SequenceFlowExecutionSet(
                 new Priority(p.getPriority()),
-                new ConditionExpression(p.getConditionExpression()),
-                new ConditionExpressionLanguage(p.getConditionExpressionLanguage())
+                new ConditionExpression(p.getConditionExpression())
         ));
 
         context.addEdge(
