@@ -16,10 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.view;
 
-import java.util.List;
-
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
-
 public interface HasControlPoints<T> {
 
     enum ControlPointType {
@@ -30,12 +26,6 @@ public interface HasControlPoints<T> {
     T showControlPoints(final ControlPointType type);
 
     T hideControlPoints();
-
-    List<ControlPoint> addControlPoint(ControlPoint... controlPoint);
-
-    List<ControlPoint> getShapeControlPoints();
-
-    T removeControlPoint(ControlPoint... controlPoint);
 
     boolean areControlsVisible();
 }
