@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -43,18 +44,28 @@ public class AddCanvasControlPointCommand extends AbstractCanvasCommand {
 
     @Override
     public CommandResult<CanvasViolation> allow(AbstractCanvasHandler context) {
+        if (checkExistingControlPoints(ShapeUtils.getControlPoints(candidate, context))) {
+            return buildResult();
+        }
+
+        ShapeUtils.hideControlPoints(candidate, context);
         List<ControlPoint> addedControlPoints = ShapeUtils.addControlPoints(candidate,
                                                                             context,
                                                                             this.controlPoints);
-
         if (addedControlPoints.stream().map(ControlPoint::getIndex).anyMatch(Objects::isNull)) {
             return new CanvasCommandResultBuilder()
                     .setType(CommandResult.Type.ERROR)
                     .addViolation(new CanvasViolationImpl.Builder().build(new RuleViolationImpl("Control Point out of connector")))
                     .build();
         }
+        ShapeUtils.showControlPoints(candidate, context);
         allowed = Boolean.TRUE;
         return buildResult();
+    }
+
+    private boolean checkExistingControlPoints(List<ControlPoint> currentEdgeControlPoints) {
+        return Objects.nonNull(currentEdgeControlPoints) && !currentEdgeControlPoints.isEmpty() &&
+                Arrays.stream(this.controlPoints).allMatch(cp -> currentEdgeControlPoints.contains(cp));
     }
 
     @Override
@@ -65,8 +76,8 @@ public class AddCanvasControlPointCommand extends AbstractCanvasCommand {
                 return commandResult;
             }
         }
+        allowed = null;
         //in this case, canvas command was executed on #allow method.
-
         return buildResult();
     }
 

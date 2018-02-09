@@ -45,12 +45,6 @@ public class AddCanvasConnectorCommand extends AbstractCanvasCommand {
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         context.register(shapeSetId, candidate);
         context.applyElementMutation(candidate, MutationContext.STATIC);
-        ShapeUtils.updateEdgeConnections(candidate, context);
-        ShapeUtils.applyConnections(candidate, context, MutationContext.STATIC);
-        final Node source = candidate.getSourceNode();
-        if (null != source) {
-            context.notifyCanvasElementUpdated(source);
-        }
 
         if(candidate.getContent() instanceof ViewConnector){
             ControlPoint[] controlPoints = ((ViewConnector) candidate.getContent()).getControlPoints().stream().toArray(ControlPoint[]::new);
@@ -61,6 +55,12 @@ public class AddCanvasConnectorCommand extends AbstractCanvasCommand {
             }
         }
 
+        ShapeUtils.updateEdgeConnections(candidate, context);
+        ShapeUtils.applyConnections(candidate, context, MutationContext.STATIC);
+        final Node source = candidate.getSourceNode();
+        if (null != source) {
+            context.notifyCanvasElementUpdated(source);
+        }
         return buildResult();
     }
 

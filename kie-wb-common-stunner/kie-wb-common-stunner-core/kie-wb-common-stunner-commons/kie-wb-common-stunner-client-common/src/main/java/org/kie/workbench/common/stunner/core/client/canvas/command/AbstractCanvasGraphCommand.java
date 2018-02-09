@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -114,7 +116,8 @@ public abstract class AbstractCanvasGraphCommand
                 performOperationOnGraph(context, CommandOperation.UNDO);
 
         if (canDoNexOperation(result)) {
-            return canvasCommandFirst ? performOperationOnGraph(context, CommandOperation.UNDO) :
+            return canvasCommandFirst ?
+                    performOperationOnGraph(context, CommandOperation.UNDO) :
                     performOperationOnCanvas(context, CommandOperation.UNDO);
         }
         return result;
@@ -138,40 +141,42 @@ public abstract class AbstractCanvasGraphCommand
         getCanvasCommand(context);
         // Obtain the graph execution context and execute the graph command updates.
         final GraphCommandExecutionContext graphContext = context.getGraphExecutionContext();
-        if (null != graphContext) {
-            final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = getGraphCommand(context);
-            CommandResult<RuleViolation> graphResult = null;
-            switch (op) {
-                case ALLOW:
-                    graphResult = graphCommand.allow(graphContext);
-                    break;
-                case EXECUTE:
-                    graphResult = graphCommand.execute(graphContext);
-                    break;
-                case UNDO:
-                    graphResult = graphCommand.undo(graphContext);
-                    break;
-            }
-            return new CanvasCommandResultBuilder(graphResult).build();
+        if (Objects.isNull(graphContext)) {
+            //skipping command in case there is no graph execution context
+            return CanvasCommandResultBuilder.SUCCESS;
         }
-        return null;
+
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = getGraphCommand(context);
+        CommandResult<RuleViolation> graphResult = null;
+        switch (op) {
+            case ALLOW:
+                graphResult = graphCommand.allow(graphContext);
+                break;
+            case EXECUTE:
+                graphResult = graphCommand.execute(graphContext);
+                break;
+            case UNDO:
+                graphResult = graphCommand.undo(graphContext);
+                break;
+        }
+        return new CanvasCommandResultBuilder(graphResult).build();
     }
 
     private CommandResult<CanvasViolation> performOperationOnCanvas(final AbstractCanvasHandler context,
                                                                     final CommandOperation op) {
-        // Ensure the canvas command is initialized before updating the element on the graph side.
+        // Ensure the graph command is initialized
         getGraphCommand(context);
 
-        final Command<AbstractCanvasHandler, CanvasViolation> graphCommand = getCanvasCommand(context);
+        final Command<AbstractCanvasHandler, CanvasViolation> command = getCanvasCommand(context);
         switch (op) {
             case ALLOW:
-                return graphCommand.allow(context);
+                return command.allow(context);
             case EXECUTE:
-                return graphCommand.execute(context);
+                return command.execute(context);
             case UNDO:
-                return graphCommand.undo(context);
+                return command.undo(context);
         }
-        return null;
+        return CanvasCommandResultBuilder.FAILED;
     }
 
     private boolean canDoNexOperation(CommandResult<CanvasViolation> result) {

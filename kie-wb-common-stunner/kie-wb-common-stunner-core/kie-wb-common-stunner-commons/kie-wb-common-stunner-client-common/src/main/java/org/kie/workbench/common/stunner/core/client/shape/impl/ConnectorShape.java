@@ -23,7 +23,7 @@ import org.kie.workbench.common.stunner.core.client.shape.Lifecycle;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasControlPoints;
+import org.kie.workbench.common.stunner.core.client.shape.view.HasManageableControlPoints;
 import org.kie.workbench.common.stunner.core.client.shape.view.IsConnector;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeViewDef;
@@ -83,25 +83,22 @@ public class ConnectorShape<W, D extends ShapeViewDef<W, V>, V extends ShapeView
     }
 
     public List<ControlPoint> addControlPoints(ControlPoint... controlPoints) {
-        HasControlPoints shapeView = getHasControlPoints();
-        return shapeView.addControlPoint(controlPoints);
+        return getShapeViewWithControlPoints().addControlPoint(controlPoints);
     }
 
     public void removeControlPoints(ControlPoint... controlPoints) {
-        HasControlPoints shapeView = getHasControlPoints();
-        shapeView.removeControlPoint(controlPoints);
+        getShapeViewWithControlPoints().removeControlPoint(controlPoints);
     }
 
     public List<ControlPoint> getControlPoints() {
-        HasControlPoints shapeView = getHasControlPoints();
-        return shapeView.getShapeControlPoints();
+        return getShapeViewWithControlPoints().getShapeControlPoints();
     }
 
-    private HasControlPoints getHasControlPoints() {
-        if(!(getShapeView() instanceof HasControlPoints)){
-            throw new IllegalArgumentException("ShapeView should be a HasControlPoints. " + getShapeView());
+    private HasManageableControlPoints getShapeViewWithControlPoints() {
+        if(!(getShapeView() instanceof HasManageableControlPoints)){
+            throw new IllegalArgumentException("ShapeView should be a HasManageableControlPoints. " + getShapeView());
         }
-        return (HasControlPoints) getShapeView();
+        return (HasManageableControlPoints) getShapeView();
     }
 
     @Override

@@ -16,6 +16,7 @@
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
@@ -57,6 +58,11 @@ public class AddControlPointCommand extends AbstractControlPointCommand {
 
     @Override
     public CommandResult<RuleViolation> execute(GraphCommandExecutionContext context) {
+        if (checkExistingControlPoints(getEdgeContent().getControlPoints())) {
+            //skipping in case adding already existing control points
+            return GraphCommandResultBuilder.SUCCESS;
+        }
+
         CommandResult<RuleViolation> allowResult = allow(context);
         if (CommandUtils.isError(allowResult)) {
             return allowResult;
@@ -84,6 +90,11 @@ public class AddControlPointCommand extends AbstractControlPointCommand {
         return GraphCommandResultBuilder.SUCCESS;
     }
 
+    private boolean checkExistingControlPoints(List<ControlPoint> currentControlPoints) {
+        return Objects.nonNull(currentControlPoints) && !currentControlPoints.isEmpty() &&
+                getControlPointList().stream().allMatch(cp -> getEdgeContent().getControlPoints().contains(cp));
+    }
+
     @Override
     public CommandResult<RuleViolation> undo(GraphCommandExecutionContext context) {
         return newUndoCommand().execute(context);
@@ -93,5 +104,4 @@ public class AddControlPointCommand extends AbstractControlPointCommand {
     protected DeleteControlPointCommand newUndoCommand() {
         return new DeleteControlPointCommand(edge, controlPoints);
     }
-
 }

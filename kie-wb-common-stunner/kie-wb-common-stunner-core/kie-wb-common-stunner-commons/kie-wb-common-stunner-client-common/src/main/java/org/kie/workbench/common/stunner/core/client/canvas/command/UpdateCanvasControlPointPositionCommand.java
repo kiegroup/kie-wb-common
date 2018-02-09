@@ -51,7 +51,7 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasCompo
 
     @Override
     protected AbstractCompositeCommand<AbstractCanvasHandler, CanvasViolation> initialize(AbstractCanvasHandler context) {
-        if(ShapeUtils.getControlPoints(edge, context).stream().filter(cp-> Objects.equals(cp.getLocation(), position)).findFirst().isPresent()){
+        if(ShapeUtils.getControlPoints(edge, context).stream().anyMatch(cp-> Objects.equals(cp.getLocation(), position))){
             //skip canvas commands in case the control point is already on the position
             return this;
         }
@@ -61,9 +61,13 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasCompo
     }
 
     @Override
+    protected void ensureInitialized(AbstractCanvasHandler context) {
+        initialize(context);
+    }
+
+    @Override
     public CommandResult<CanvasViolation> undo(AbstractCanvasHandler context) {
-        return newUndoCommand()
-                .execute(context);
+        return newUndoCommand().execute(context);
     }
 
     protected CompositeCommand<AbstractCanvasHandler, CanvasViolation> newUndoCommand() {

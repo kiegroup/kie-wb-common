@@ -64,8 +64,7 @@ public class UpdateControlPointPositionCommand extends AbstractGraphCompositeCom
 
     @Override
     public CommandResult<RuleViolation> undo(GraphCommandExecutionContext context) {
-        return newUndoCommand()
-                .execute(context);
+        return newUndoCommand().execute(context);
     }
 
     protected CompositeCommand<GraphCommandExecutionContext, RuleViolation> newUndoCommand() {

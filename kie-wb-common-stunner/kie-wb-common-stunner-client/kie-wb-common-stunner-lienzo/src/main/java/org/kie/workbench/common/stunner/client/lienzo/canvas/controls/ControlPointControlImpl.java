@@ -180,8 +180,7 @@ public class ControlPointControlImpl extends AbstractCanvasHandlerRegistrationCo
         if (!validateControlPointState()) {
             return;
         }
-        Point2D position = new Point2D(event.getPosition().getX(), event.getPosition().getY());
-        moveControlPoint(selectedControlPoint, position);
+        moveControlPoint(selectedControlPoint, event.getPosition());
     }
 
     protected void onCanvasControlPointDoubleClickEvent(@Observes CanvasControlPointDoubleClickEvent event) {
@@ -197,12 +196,12 @@ public class ControlPointControlImpl extends AbstractCanvasHandlerRegistrationCo
         checkAndExecuteCommand(canvasCommandFactory.deleteControlPoint(selectedEdge, controlPoint));
     }
 
-    private CommandResult<CanvasViolation> checkAndExecuteCommand(CanvasCommand<AbstractCanvasHandler> updateControlPointPositionCommand) {
-        CommandResult<CanvasViolation> allowResult = getCommandManager().allow(canvasHandler, updateControlPointPositionCommand);
+    private CommandResult<CanvasViolation> checkAndExecuteCommand(CanvasCommand<AbstractCanvasHandler> command) {
+        CommandResult<CanvasViolation> allowResult = getCommandManager().allow(canvasHandler, command);
         if (CommandUtils.isError(allowResult)) {
             return allowResult;
         }
-        return getCommandManager().execute(canvasHandler, updateControlPointPositionCommand);
+        return getCommandManager().execute(canvasHandler, command);
     }
 
     private boolean validateControlPointState() {
