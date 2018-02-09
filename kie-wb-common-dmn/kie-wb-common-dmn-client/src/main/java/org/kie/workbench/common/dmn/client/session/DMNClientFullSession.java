@@ -94,18 +94,6 @@ public class DMNClientFullSession extends AbstractClientFullSession {
         canvasInPlaceTextEditorControl.setCommandManagerProvider(() -> sessionCommandManager);
     }
 
-    @Override
-    protected void doPause() {
-        getKeyboardControl().disable();
-        super.doPause();
-    }
-
-    @Override
-    protected void doResume() {
-        getKeyboardControl().enable(getCanvas());
-        super.doResume();
-    }
-
     public LocationControl<AbstractCanvasHandler, Element> getLocationControl() {
         return locationControl;
     }
