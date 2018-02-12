@@ -59,7 +59,7 @@ public class Scripts {
 
     public static String scriptLanguageFromUri(String format) {
         if (format == null) {
-            return "java";
+            return null;
         }
         switch (format) {
             case "http://www.java.com/java":
@@ -69,7 +69,7 @@ public class Scripts {
             case "http://www.javascript.com/javascript":
                 return "javascript";
             default:
-                return "java";
+                return null;
         }
     }
 
