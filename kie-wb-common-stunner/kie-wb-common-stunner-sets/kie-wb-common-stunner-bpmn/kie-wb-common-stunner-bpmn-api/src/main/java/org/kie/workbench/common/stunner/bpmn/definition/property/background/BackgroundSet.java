@@ -19,8 +19,6 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -141,10 +139,11 @@ public class BackgroundSet implements BPMNPropertySet {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("bgColor", bgColor)
-                .add("borderColor", borderColor)
-                .add("borderSize", borderSize)
-                .toString();
+        final StringBuilder sb = new StringBuilder("BackgroundSet{");
+        sb.append("bgColor=").append(bgColor);
+        sb.append(", borderColor=").append(borderColor);
+        sb.append(", borderSize=").append(borderSize);
+        sb.append('}');
+        return sb.toString();
     }
 }
