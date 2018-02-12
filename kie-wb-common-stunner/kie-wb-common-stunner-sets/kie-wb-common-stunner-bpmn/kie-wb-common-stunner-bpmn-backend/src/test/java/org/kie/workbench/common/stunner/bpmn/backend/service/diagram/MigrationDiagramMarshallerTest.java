@@ -50,6 +50,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.DoubleTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.EnumTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.IntegerTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeListTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.StringTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TimerSettingsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.VariablesTypeSerializer;
@@ -109,7 +111,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 @RunWith(MockitoJUnitRunner.class)
 public class MigrationDiagramMarshallerTest {
 
@@ -274,6 +275,8 @@ public class MigrationDiagramMarshallerTest {
         AssignmentsTypeSerializer assignmentsTypeSerializer = new AssignmentsTypeSerializer();
         VariablesTypeSerializer variablesTypeSerializer = new VariablesTypeSerializer();
         TimerSettingsTypeSerializer timerSettingsTypeSerializer = new TimerSettingsTypeSerializer();
+        ScriptTypeTypeSerializer scriptTypeTypeSerializer = new ScriptTypeTypeSerializer();
+        ScriptTypeListTypeSerializer scriptTypeListTypeSerializer = new ScriptTypeListTypeSerializer();
         List<Bpmn2OryxPropertySerializer<?>> propertySerializers = new LinkedList<>();
         propertySerializers.add(stringTypeSerializer);
         propertySerializers.add(booleanTypeSerializer);
@@ -284,6 +287,8 @@ public class MigrationDiagramMarshallerTest {
         propertySerializers.add(assignmentsTypeSerializer);
         propertySerializers.add(variablesTypeSerializer);
         propertySerializers.add(timerSettingsTypeSerializer);
+        propertySerializers.add(scriptTypeTypeSerializer);
+        propertySerializers.add(scriptTypeListTypeSerializer);
         Bpmn2OryxPropertyManager oryxPropertyManager = new Bpmn2OryxPropertyManager(propertySerializers);
         Bpmn2OryxManager oryxManager = new Bpmn2OryxManager(oryxIdMappings,
                                                             oryxPropertyManager);
