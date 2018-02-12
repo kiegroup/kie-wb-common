@@ -76,6 +76,8 @@ public class BorderColor implements BPMNProperty {
 
     @Override
     public String toString() {
-        return String.format("BorderColor(%s)", String.valueOf(value));
+        return "BorderColor{" +
+                "value='" + value + '\'' +
+                '}';
     }
 }

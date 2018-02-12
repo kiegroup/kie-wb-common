@@ -76,7 +76,8 @@ public class FontColor implements BPMNProperty {
 
     @Override
     public String toString() {
-        return String.format("FontColor(%s)", String.valueOf(value));
+        return "FontColor{" +
+                "value='" + value + '\'' +
+                '}';
     }
-
 }
