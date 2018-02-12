@@ -37,13 +37,13 @@ public class Scripts {
 
     public static ScriptTypeListValue onEntry(List<ExtensionAttributeValue> extensions) {
         @SuppressWarnings("unchecked")
-        List<OnEntryScriptType> onExitExtensions =
+        List<OnEntryScriptType> onEntryExtensions =
                 (List<OnEntryScriptType>) extensions.get(0).getValue()
                         .get(DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT, true);
 
-        if (!onExitExtensions.isEmpty()) {
+        if (!onEntryExtensions.isEmpty()) {
             List<ScriptTypeValue> scripts =
-                    onExitExtensions.stream()
+                    onEntryExtensions.stream()
                             .map(onEntryScriptType ->
                                          new ScriptTypeValue(
                                                  scriptLanguageFromUri(onEntryScriptType.getScriptFormat()),
@@ -71,10 +71,6 @@ public class Scripts {
             default:
                 return "java";
         }
-    }
-
-    public static OnExitAction onExit(Task task) {
-        return new OnExitAction(onExit(task.getExtensionValues()));
     }
 
     public static ScriptTypeListValue onExit(List<ExtensionAttributeValue> extensions) {
