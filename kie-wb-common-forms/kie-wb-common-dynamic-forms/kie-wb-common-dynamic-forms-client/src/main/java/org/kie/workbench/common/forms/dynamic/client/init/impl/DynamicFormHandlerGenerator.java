@@ -27,6 +27,7 @@ import org.kie.workbench.common.forms.dynamic.service.shared.DynamicContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.MapModelRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.validation.DynamicModelConstraints;
 import org.kie.workbench.common.forms.model.JavaFormModel;
+import org.kie.workbench.common.forms.processing.engine.handling.DisabledFormHandlerRegistry;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldStateValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.FormHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
@@ -44,13 +45,17 @@ public class DynamicFormHandlerGenerator implements FormHandlerGenerator<MapMode
 
     protected FieldStateValidator fieldStateValidator;
 
+    protected DisabledFormHandlerRegistry registry;
+
     @Inject
     public DynamicFormHandlerGenerator(DynamicValidator validator,
                                        FieldStateValidator fieldStateValidator,
-                                       MapModelBindingHelper helper) {
+                                       MapModelBindingHelper helper,
+                                       DisabledFormHandlerRegistry registry) {
         this.validator = validator;
         this.fieldStateValidator = fieldStateValidator;
         this.helper = helper;
+        this.registry = registry;
     }
 
     @Override
@@ -70,7 +75,8 @@ public class DynamicFormHandlerGenerator implements FormHandlerGenerator<MapMode
                                                             fieldStateValidator);
 
         FormHandler handler = new FormHandlerImpl(formValidator,
-                                                  new FieldChangeHandlerManagerImpl());
+                                                  new FieldChangeHandlerManagerImpl(),
+                                                  registry);
 
         if (context.getParentContext() == null) {
             helper.initContext(context);

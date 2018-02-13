@@ -188,10 +188,9 @@ public class FormPropertiesWidget implements IsElement, FormPropertiesWidgetView
             final Path diagramPath = session.getCanvasHandler().getDiagram().getMetadata().getPath();
             final StaticModelFormRenderingContext generatedCtx = modelGenerator.getContextForModel(proxy.deepUnwrap());
             final FormRenderingContext<?> pathAwareCtx = new PathAwareFormContext<>(generatedCtx, diagramPath);
-            if(formRenderer.isInitialized()) {
-                doClear();
-            }
+
             formRenderer.render(pathAwareCtx);
+
             formRenderer.addFieldChangeHandler((fieldName, newValue) -> {
                 try {
                     final HasProperties hasProperties = (HasProperties) DataBinder.forModel(definition).getModel();
@@ -272,9 +271,6 @@ public class FormPropertiesWidget implements IsElement, FormPropertiesWidgetView
     }
 
     private void doClear() {
-        if (formRenderer.isValid()) {
-            formRenderer.forceModelSynchronization();
-        }
         formRenderer.unBind();
     }
 

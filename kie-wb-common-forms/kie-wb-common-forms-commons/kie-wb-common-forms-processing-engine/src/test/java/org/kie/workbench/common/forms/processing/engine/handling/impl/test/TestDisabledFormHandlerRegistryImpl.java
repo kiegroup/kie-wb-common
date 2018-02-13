@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.processing.engine.handling;
+package org.kie.workbench.common.forms.processing.engine.handling.impl.test;
 
 import java.util.Collection;
 
-/**
- * Component that provides the FormFields
- */
-public interface FormFieldProvider {
+import org.kie.workbench.common.forms.processing.engine.handling.impl.DisabledFormHandlerRegistryImpl;
 
-    /**
-     * Retrieves the FormField identified by the given name
-     */
-    FormField findFormField(String fieldName);
+public class TestDisabledFormHandlerRegistryImpl extends DisabledFormHandlerRegistryImpl {
 
-    /**
-     * Retrieves all the available fields on the Form
-     */
-    Collection<FormField> getAll();
+    public Collection<FormHandlerBatch> getActiveBatches() {
+        return activeBatches;
+    }
 }

@@ -17,7 +17,6 @@
 package org.kie.workbench.common.forms.processing.engine.handling.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,15 +30,18 @@ import org.jboss.errai.databinding.client.PropertyChangeUnsubscribeHandle;
 import org.jboss.errai.databinding.client.api.Converter;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
+import org.kie.workbench.common.forms.processing.engine.handling.DisabledFormHandlerRegistry;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandlerManager;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
-import org.kie.workbench.common.forms.processing.engine.handling.FormFieldProvider;
 import org.kie.workbench.common.forms.processing.engine.handling.FormHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.IsNestedModel;
 
-public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
+public class FormHandlerImpl<T> implements FormHandler<T> {
+
+    protected DisabledFormHandlerRegistry registry;
 
     protected FormValidator validator;
 
@@ -47,28 +49,34 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
     protected DataBinder<T> binder;
 
-    protected List<FormField> formFields = new ArrayList<>();
-
     protected List<PropertyChangeUnsubscribeHandle> unsubscribeHandlers = new ArrayList<>();
 
+    protected Form form;
+
     @Inject
-    public FormHandlerImpl(FormValidator validator, FieldChangeHandlerManager fieldChangeManager) {
+    public FormHandlerImpl(FormValidator validator,
+                           FieldChangeHandlerManager fieldChangeManager,
+                           DisabledFormHandlerRegistry registry) {
         this.validator = validator;
         this.fieldChangeManager = fieldChangeManager;
+        this.registry = registry;
 
-        this.validator.setFormFieldProvider(this);
+        this.form = new Form();
 
         fieldChangeManager.setValidator(validator);
     }
 
     @Override
     public void setUp(DataBinder<T> binder) {
-        setUp(binder, false);
+        setUp(binder,
+              false);
     }
 
     @Override
-    public void setUp(DataBinder<T> binder, boolean bindInputs) {
-        Assert.notNull("DataBinder cannot be null", binder);
+    public void setUp(DataBinder<T> binder,
+                      boolean bindInputs) {
+        Assert.notNull("DataBinder cannot be null",
+                       binder);
 
         clear();
 
@@ -77,7 +85,8 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
     @Override
     public void setUp(T model) {
-        Assert.notNull("Model cannot be null", model);
+        Assert.notNull("Model cannot be null",
+                       model);
 
         clear();
 
@@ -90,33 +99,42 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
     @Override
     public void registerInput(FormField formField) {
-        registerInput(formField, null);
+        registerInput(formField,
+                      null);
     }
 
     @Override
-    public void registerInput(FormField formField, Converter valueConverter) {
-        Assert.notNull("FormHandler isn't correctly initialized, please run any of the setUp methods before use", binder);
-        Assert.notNull("FormField cannot be null!", formField);
+    public void registerInput(FormField formField,
+                              Converter valueConverter) {
+        Assert.notNull("FormHandler isn't correctly initialized, please run any of the setUp methods before use",
+                       binder);
+        Assert.notNull("FormField cannot be null!",
+                       formField);
 
         String fieldName = formField.getFieldName();
         IsWidget widget = formField.getWidget();
 
-        formFields.add(formField);
+        form.addField(formField);
 
         if (formField.isBindable()) {
 
             BindableProxy proxy = (BindableProxy) binder.getModel();
 
-            Object modelValue = readPropertyValue(proxy, formField.getFieldBinding());
+            Object modelValue = readPropertyValue(proxy,
+                                                  formField.getFieldBinding());
 
             StateSync stateSync = Optional.ofNullable(modelValue).isPresent() ? StateSync.FROM_MODEL : StateSync.FROM_UI;
 
-            binder.bind(widget, formField.getFieldBinding(), valueConverter, stateSync);
+            binder.bind(widget,
+                        formField.getFieldBinding(),
+                        valueConverter,
+                        stateSync);
         }
 
-        fieldChangeManager.registerField(formField.getFieldName(), formField.isValidateOnChange());
+        fieldChangeManager.registerField(formField);
 
-        formField.getChangeListeners().forEach(listener -> fieldChangeManager.addFieldChangeHandler(listener.getFieldToListen(), listener.getChangeHandler()));
+        formField.getChangeListeners().forEach(listener -> fieldChangeManager.addFieldChangeHandler(listener.getFieldToListen(),
+                                                                                                    listener.getChangeHandler()));
 
         /**
          * if field isn't bindable we cannot listen to field value changes.
@@ -127,39 +145,50 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
         if (widget instanceof IsNestedModel) {
             IsNestedModel nestedModelWidget = (IsNestedModel) widget;
-            nestedModelWidget.addFieldChangeHandler((childFieldName, newValue) -> fieldChangeManager.notifyFieldChange(fieldName + "." + childFieldName, newValue));
+            nestedModelWidget.addFieldChangeHandler((childFieldName, newValue) -> fieldChangeManager.notifyFieldChange(fieldName + "." + childFieldName,
+                                                                                                                       newValue));
         } else {
-            PropertyChangeUnsubscribeHandle unsubscribeHandle = binder.addPropertyChangeHandler(formField.getFieldBinding(), event -> fieldChangeManager.processFieldChange(fieldName, event.getNewValue(), binder.getModel()));
+            PropertyChangeUnsubscribeHandle unsubscribeHandle = binder.addPropertyChangeHandler(formField.getFieldBinding(),
+                                                                                                event -> fieldChangeManager.processFieldChange(fieldName,
+                                                                                                                                               event.getNewValue(),
+                                                                                                                                               binder.getModel()));
             unsubscribeHandlers.add(unsubscribeHandle);
         }
     }
 
-    protected Object readPropertyValue(BindableProxy proxy, String fieldBinding) {
+    protected Object readPropertyValue(BindableProxy proxy,
+                                       String fieldBinding) {
         if (fieldBinding.indexOf(".") != -1) {
             // Nested property
 
             int separatorPosition = fieldBinding.indexOf(".");
-            String nestedModelName = fieldBinding.substring(0, separatorPosition);
+            String nestedModelName = fieldBinding.substring(0,
+                                                            separatorPosition);
             String property = fieldBinding.substring(separatorPosition + 1);
             Object nestedModel = proxy.get(nestedModelName);
             if (nestedModel == null) {
                 return null;
             }
 
-            return readPropertyValue((BindableProxy) BindableProxyFactory.getBindableProxy(nestedModel), property);
+            return readPropertyValue((BindableProxy) BindableProxyFactory.getBindableProxy(nestedModel),
+                                     property);
         }
         return proxy.get(fieldBinding);
     }
 
     public void addFieldChangeHandler(FieldChangeHandler handler) {
-        addFieldChangeHandler(null, handler);
+        addFieldChangeHandler(null,
+                              handler);
     }
 
-    public void addFieldChangeHandler(String fieldName, FieldChangeHandler handler) {
-        Assert.notNull("FieldChangeHandler cannot be null", handler);
+    public void addFieldChangeHandler(String fieldName,
+                                      FieldChangeHandler handler) {
+        Assert.notNull("FieldChangeHandler cannot be null",
+                       handler);
 
         if (fieldName != null) {
-            fieldChangeManager.addFieldChangeHandler(fieldName, handler);
+            fieldChangeManager.addFieldChangeHandler(fieldName,
+                                                     handler);
         } else {
             fieldChangeManager.addFieldChangeHandler(handler);
         }
@@ -167,21 +196,41 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
 
     @Override
     public boolean validate() {
-        return validator.validate(getModel());
+        return validator.validate(form,
+                                  getModel());
     }
 
     @Override
     public boolean validate(String propertyName) {
-        return validator.validate(propertyName, getModel());
+        return validator.validate(form.findFormField(propertyName),
+                                  getModel());
     }
 
     @Override
     public void setReadOnly(boolean readOnly) {
-        formFields.forEach(field -> field.setReadOnly(readOnly));
+        form.getFields().forEach(field -> field.setReadOnly(readOnly));
     }
 
-    public void setField(String propertyName, Object value) {
-        fieldChangeManager.processFieldChange(propertyName, value, binder.getModel());
+    @Override
+    public void disable() {
+        if(!registry.isBatchActive()) {
+            registry.startBatch(this);
+            disableNestedForms();
+            registry.finishBatch();
+        } else {
+            disableNestedForms();
+            registry.addToActiveBatch(this);
+        }
+    }
+
+    public void disableNestedForms() {
+        form.getFields().stream()
+                .filter(formField -> formField.getWidget() instanceof IsNestedModel)
+                .map(formField -> (IsNestedModel) formField.getWidget())
+                .forEach(IsNestedModel::clear);
+        T model = getModel();
+        binder.setModel(model,
+                        StateSync.FROM_UI);
     }
 
     @Override
@@ -192,50 +241,18 @@ public class FormHandlerImpl<T> implements FormHandler<T>, FormFieldProvider {
             return;
         }
 
-        for (PropertyChangeUnsubscribeHandle handle : unsubscribeHandlers) {
-            handle.unsubscribe();
-        }
-        unsubscribeHandlers.clear();
-        formFields.clear();
-        fieldChangeManager.clear();
-        binder.unbind();
-    }
+        unsubscribeHandlers.forEach(PropertyChangeUnsubscribeHandle::unsubscribe);
 
-    @Override
-    public void forceModelSynchronization() {
-        formFields.stream()
-                .filter(formField -> formField.getWidget() instanceof IsNestedModel)
-                .map(formField -> (IsNestedModel) formField.getWidget())
-                .forEach(IsNestedModel::forceModelSynchronization);
-        binder.setModel(getModel(), StateSync.FROM_UI);
+        unsubscribeHandlers.clear();
+
+        fieldChangeManager.clear();
+
+        binder.unbind();
+
+        form = null;
     }
 
     public T getModel() {
         return binder.getModel();
     }
-
-    @Override
-    public FormField findFormField(String fieldName) {
-
-        for (FormField field : formFields) {
-            if (field.getFieldName().equals(fieldName) || fieldName.equals(field.getFieldBinding())) {
-                return field;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public Collection<FormField> getAll() {
-        return formFields;
-    }
-
-    public interface FormHandlerHelper<T> {
-
-        public boolean supportsInputBinding();
-
-        public T getModel();
-    }
-
 }

@@ -18,6 +18,7 @@ package org.kie.workbench.common.forms.processing.engine.handling.impl.test;
 
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.api.DataBinder;
+import org.kie.workbench.common.forms.processing.engine.handling.DisabledFormHandlerRegistry;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandlerManager;
 import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.FormHandlerImpl;
@@ -30,10 +31,12 @@ public class TestFormHandler extends FormHandlerImpl {
 
     public TestFormHandler(FormValidator validator,
                            FieldChangeHandlerManager fieldChangeManager,
-                           DataBinder binder) {
+                           DisabledFormHandlerRegistry registry,
+                           DataBinder dataBinder) {
         super(validator,
-              fieldChangeManager);
-        this.dataBinder = binder;
+              fieldChangeManager,
+              registry);
+        this.dataBinder = dataBinder;
     }
 
     @Override

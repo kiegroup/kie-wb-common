@@ -18,11 +18,14 @@ package org.kie.workbench.common.forms.processing.engine.handling;
 
 public interface IsNestedModel {
 
-    void addFieldChangeHandler(FieldChangeHandler notifyParentField);
+    /**
+     * Clears the nested form if exists.
+     */
+    void clear();
 
     /**
-     * Synchronize model data with UI. Should only be used in controlled
-     * environments.
+     * Adds a {@link FieldChangeHandler} to notify the parent form that fields on the nested model have changed
+     * @param notifyParentField the change handler.
      */
-    void forceModelSynchronization();
+    void addFieldChangeHandler(FieldChangeHandler notifyParentField);
 }
