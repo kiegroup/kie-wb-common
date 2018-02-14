@@ -34,6 +34,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSel
 @Templated
 public class ListSelectorViewImpl implements ListSelectorView {
 
+    private static final String OPEN = "open";
+
     @DataField("items-container")
     private UnorderedList itemsContainer;
 
@@ -88,11 +90,11 @@ public class ListSelectorViewImpl implements ListSelectorView {
 
     @Override
     public void show() {
-        getElement().getClassList().add("open");
+        getElement().getClassList().add(OPEN);
     }
 
     @Override
     public void hide() {
-        getElement().getClassList().remove("open");
+        getElement().getClassList().remove(OPEN);
     }
 }
