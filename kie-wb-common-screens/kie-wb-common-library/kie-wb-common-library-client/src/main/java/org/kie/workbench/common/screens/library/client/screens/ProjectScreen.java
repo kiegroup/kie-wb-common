@@ -109,6 +109,7 @@ public class ProjectScreen {
     private Timer projectLoadTimer;
     private boolean isProjectLoadPending = false;
     private boolean isProjectLoadInProgress = false;
+    private Scheduler scheduler;
 
     @Inject
     public ProjectScreen(final View view,
@@ -119,7 +120,8 @@ public class ProjectScreen {
                          final Classifier assetClassifier,
                          final Event<AssetDetailEvent> assetDetailEvent,
                          final BusyIndicatorView busyIndicatorView,
-                         final ProjectController projectController) {
+                         final ProjectController projectController,
+                         final Scheduler scheduler) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
         this.projectsDetailScreen = projectsDetailScreen;
@@ -129,6 +131,7 @@ public class ProjectScreen {
         this.assetDetailEvent = assetDetailEvent;
         this.busyIndicatorView = busyIndicatorView;
         this.projectController = projectController;
+        this.scheduler = scheduler;
     }
 
     public void onStartup(@Observes final ProjectDetailEvent projectDetailEvent) {
@@ -295,14 +298,10 @@ public class ProjectScreen {
     }
 
     protected void reload() {
-        Scheduler.get().scheduleFixedDelay(new Scheduler.RepeatingCommand() {
-                                               @Override
-                                               public boolean execute() {
-                                                   loadProjectInfo();
-                                                   return false;
-                                               }
-                                           },
-                                           2000);
+        scheduler.scheduleFixedDelay(() -> {
+            loadProjectInfo();
+            return false;
+        }, 2000);
     }
 
     public void onFilterChange() {

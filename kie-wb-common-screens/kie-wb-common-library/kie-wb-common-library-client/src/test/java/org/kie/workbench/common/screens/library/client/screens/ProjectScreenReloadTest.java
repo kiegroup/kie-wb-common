@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.screens;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,6 +41,9 @@ public class ProjectScreenReloadTest
     @Mock
     private Timer timer;
 
+    @Mock
+    private Scheduler scheduler;
+
     private int numberOfCalls;
 
     @Before
@@ -54,7 +58,8 @@ public class ProjectScreenReloadTest
                                           assetClassifier,
                                           assetDetailEvent,
                                           busyIndicatorView,
-                                          projectController) {
+                                          projectController,
+                                          scheduler) {
             @Override
             String getCreatedTime(AssetInfo asset) {
                 return "";

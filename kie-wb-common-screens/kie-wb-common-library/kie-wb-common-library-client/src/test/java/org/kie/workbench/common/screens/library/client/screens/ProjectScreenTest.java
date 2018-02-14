@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.library.client.screens;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.junit.Before;
@@ -45,6 +46,9 @@ public class ProjectScreenTest
     @Mock
     private Timer timer;
 
+    @Mock
+    private Scheduler scheduler;
+
     @Before
     public void setup() {
         projectScreen = spy(new ProjectScreen(view,
@@ -55,7 +59,8 @@ public class ProjectScreenTest
                                               assetClassifier,
                                               assetDetailEvent,
                                               busyIndicatorView,
-                                              projectController) {
+                                              projectController,
+                                              scheduler) {
             @Override
             protected void reload() {
                 onFilterChange();
