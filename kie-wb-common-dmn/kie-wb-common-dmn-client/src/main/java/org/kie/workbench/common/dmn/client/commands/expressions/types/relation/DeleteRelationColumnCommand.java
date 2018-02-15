@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,16 @@
 
 package org.kie.workbench.common.dmn.client.commands.expressions.types.relation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.List;
-import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
 import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapperHelper;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
@@ -37,33 +37,55 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecution
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCell;
 
-public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
-                                                                                 VetoUndoCommand {
+public class DeleteRelationColumnCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
+                                                                                       VetoUndoCommand {
 
     private final Relation relation;
-    private final List row;
     private final GridData uiModel;
-    private final DMNGridRow uiModelRow;
-    private final int uiRowIndex;
-    private final RelationUIModelMapper uiModelMapper;
+    private final int uiColumnIndex;
     private final org.uberfire.mvp.Command canvasOperation;
 
-    public AddRelationRowCommand(final Relation relation,
-                                 final List row,
-                                 final GridData uiModel,
-                                 final DMNGridRow uiModelRow,
-                                 final int uiRowIndex,
-                                 final RelationUIModelMapper uiModelMapper,
-                                 final org.uberfire.mvp.Command canvasOperation) {
+    private final InformationItem oldInformationItem;
+    private final GridColumn<?> oldUiModelColumn;
+    private final List<GridCell<?>> oldUiModelColumnData;
+
+    private static class NullGridCell extends BaseGridCell<Void> {
+
+        public NullGridCell() {
+            super(null);
+        }
+    }
+
+    public DeleteRelationColumnCommand(final Relation relation,
+                                       final GridData uiModel,
+                                       final int uiColumnIndex,
+                                       final org.uberfire.mvp.Command canvasOperation) {
         this.relation = relation;
-        this.row = row;
         this.uiModel = uiModel;
-        this.uiModelRow = uiModelRow;
-        this.uiRowIndex = uiRowIndex;
-        this.uiModelMapper = uiModelMapper;
+        this.uiColumnIndex = uiColumnIndex;
         this.canvasOperation = canvasOperation;
+
+        this.oldInformationItem = relation.getColumn().get(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT);
+        this.oldUiModelColumn = uiModel.getColumns().get(uiColumnIndex);
+        this.oldUiModelColumnData = extractColumnData(uiColumnIndex);
+    }
+
+    private List<GridCell<?>> extractColumnData(final int uiColumnIndex) {
+        final List<GridCell<?>> cells = new ArrayList<>();
+        for (int uiRowIndex = 0; uiRowIndex < uiModel.getRowCount(); uiRowIndex++) {
+            final GridCell<?> cell = uiModel.getCell(uiRowIndex, uiColumnIndex);
+            if (cell == null) {
+                cells.add(new NullGridCell());
+            } else {
+                cells.add(cell);
+            }
+        }
+        return cells;
     }
 
     @Override
@@ -76,19 +98,15 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                relation.getRow().add(uiRowIndex,
-                                      row);
-                relation.getColumn().forEach(ii -> {
-                    final LiteralExpression le = new LiteralExpression();
-                    row.getExpression().add(le);
-                });
+                relation.getColumn().remove(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                relation.getRow().remove(row);
+                relation.getColumn().add(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT,
+                                         oldInformationItem);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
@@ -100,17 +118,9 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler handler) {
-                int columnIndex = 0;
-                uiModel.insertRow(uiRowIndex,
-                                  uiModelRow);
-                uiModelMapper.fromDMNModel(uiRowIndex,
-                                           columnIndex++);
-                for (int ii = 0; ii < relation.getColumn().size(); ii++) {
-                    uiModelMapper.fromDMNModel(uiRowIndex,
-                                               columnIndex++);
-                }
+                final GridColumn<?> gridColumn = uiModel.getColumns().get(uiColumnIndex);
+                uiModel.deleteColumn(gridColumn);
 
-                updateRowNumbers();
                 updateParentInformation();
 
                 canvasOperation.execute();
@@ -120,10 +130,18 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
-                final int rowIndex = uiModel.getRows().indexOf(uiModelRow);
-                uiModel.deleteRow(rowIndex);
+                uiModel.insertColumn(uiColumnIndex,
+                                     oldUiModelColumn);
+                IntStream.range(0, uiModel.getRowCount())
+                        .forEach(uiRowIndex -> {
+                            final GridCell<?> cell = oldUiModelColumnData.get(uiRowIndex);
+                            if (!(cell instanceof NullGridCell)) {
+                                uiModel.setCell(uiRowIndex,
+                                                uiColumnIndex,
+                                                () -> cell);
+                            }
+                        });
 
-                updateRowNumbers();
                 updateParentInformation();
 
                 canvasOperation.execute();
@@ -131,12 +149,6 @@ public class AddRelationRowCommand extends AbstractCanvasGraphCommand implements
                 return CanvasCommandResultBuilder.SUCCESS;
             }
         };
-    }
-
-    public void updateRowNumbers() {
-        CommandUtils.updateRowNumbers(uiModel,
-                                      IntStream.range(0,
-                                                      uiModel.getRowCount()));
     }
 
     public void updateParentInformation() {

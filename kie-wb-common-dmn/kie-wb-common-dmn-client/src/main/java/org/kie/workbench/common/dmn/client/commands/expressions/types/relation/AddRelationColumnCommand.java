@@ -21,8 +21,10 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapperHelper;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
@@ -43,6 +45,7 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
     private final InformationItem informationItem;
     private final GridData uiModel;
     private final RelationColumn uiModelColumn;
+    private final int uiColumnIndex;
     private final RelationUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
@@ -50,12 +53,14 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
                                     final InformationItem informationItem,
                                     final GridData uiModel,
                                     final RelationColumn uiModelColumn,
+                                    final int uiColumnIndex,
                                     final RelationUIModelMapper uiModelMapper,
                                     final org.uberfire.mvp.Command canvasOperation) {
         this.relation = relation;
         this.informationItem = informationItem;
         this.uiModel = uiModel;
         this.uiModelColumn = uiModelColumn;
+        this.uiColumnIndex = uiColumnIndex;
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
     }
@@ -70,7 +75,8 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                relation.getColumn().add(informationItem);
+                relation.getColumn().add(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT,
+                                         informationItem);
                 relation.getRow().forEach(row -> {
                     final LiteralExpression le = new LiteralExpression();
                     row.getExpression().add(le);
@@ -95,12 +101,14 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler handler) {
-                uiModel.appendColumn(uiModelColumn);
-                final int columnIndex = uiModel.getColumns().indexOf(uiModelColumn);
+                uiModel.insertColumn(uiColumnIndex,
+                                     uiModelColumn);
                 for (int rowIndex = 0; rowIndex < relation.getRow().size(); rowIndex++) {
                     uiModelMapper.fromDMNModel(rowIndex,
-                                               columnIndex);
+                                               uiColumnIndex);
                 }
+
+                updateParentInformation();
 
                 canvasOperation.execute();
 
@@ -111,10 +119,16 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
                 uiModel.deleteColumn(uiModelColumn);
 
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
             }
         };
+    }
+
+    public void updateParentInformation() {
+        CommandUtils.updateParentInformation(uiModel);
     }
 }

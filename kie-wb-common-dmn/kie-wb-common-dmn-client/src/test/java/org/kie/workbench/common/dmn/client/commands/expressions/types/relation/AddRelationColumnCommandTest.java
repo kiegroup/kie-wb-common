@@ -27,6 +27,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -46,6 +47,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,6 +58,9 @@ public class AddRelationColumnCommandTest {
 
     @Mock
     private RelationColumn uiModelColumn;
+
+    @Mock
+    private ListSelector listSelector;
 
     @Mock
     private org.uberfire.mvp.Command canvasOperation;
@@ -86,14 +91,16 @@ public class AddRelationColumnCommandTest {
         this.uiModel = new BaseGridData();
         this.uiModel.appendColumn(uiRowNumberColumn);
         this.uiModelMapper = new RelationUIModelMapper(() -> uiModel,
-                                                       () -> Optional.of(relation));
+                                                       () -> Optional.of(relation),
+                                                       listSelector);
 
-        this.command = new AddRelationColumnCommand(relation,
-                                                    informationItem,
-                                                    uiModel,
-                                                    uiModelColumn,
-                                                    uiModelMapper,
-                                                    canvasOperation);
+        this.command = spy(new AddRelationColumnCommand(relation,
+                                                        informationItem,
+                                                        uiModel,
+                                                        uiModelColumn,
+                                                        1,
+                                                        uiModelMapper,
+                                                        canvasOperation));
         doReturn(ruleManager).when(handler).getRuleManager();
         doReturn(0).when(uiRowNumberColumn).getIndex();
         doReturn(1).when(uiModelColumn).getIndex();
@@ -208,6 +215,8 @@ public class AddRelationColumnCommandTest {
         assertEquals("",
                      uiModel.getCell(0, 1).getValue().getValue());
 
+        verify(command).updateParentInformation();
+
         verify(canvasOperation).execute();
     }
 
@@ -229,6 +238,8 @@ public class AddRelationColumnCommandTest {
         assertEquals(0,
                      uiModel.getRowCount());
 
+        verify(command).updateParentInformation();
+
         verify(canvasOperation).execute();
     }
 
@@ -247,7 +258,7 @@ public class AddRelationColumnCommandTest {
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      cc.execute(handler));
 
-        reset(canvasOperation);
+        reset(command, canvasOperation);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      cc.undo(handler));
 
@@ -261,6 +272,8 @@ public class AddRelationColumnCommandTest {
                      uiModel.getRows().get(0).getCells().size());
         assertEquals(1,
                      uiModel.getCell(0, 0).getValue().getValue());
+
+        verify(command).updateParentInformation();
 
         verify(canvasOperation).execute();
     }
@@ -276,7 +289,7 @@ public class AddRelationColumnCommandTest {
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      cc.execute(handler));
 
-        reset(canvasOperation);
+        reset(command, canvasOperation);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      cc.undo(handler));
 
@@ -286,6 +299,8 @@ public class AddRelationColumnCommandTest {
                      uiModel.getColumns().get(0));
         assertEquals(0,
                      uiModel.getRowCount());
+
+        verify(command).updateParentInformation();
 
         verify(canvasOperation).execute();
     }
