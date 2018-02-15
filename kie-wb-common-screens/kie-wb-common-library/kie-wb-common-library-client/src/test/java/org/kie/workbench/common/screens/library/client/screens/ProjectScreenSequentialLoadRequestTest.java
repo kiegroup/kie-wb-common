@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.screens;
 
 import java.util.List;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Timer;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +42,9 @@ public class ProjectScreenSequentialLoadRequestTest
     @Mock
     private Timer timer;
 
+    @Mock
+    private Scheduler scheduler;
+
     @Captor
     private ArgumentCaptor<ProjectAssetsQuery> queryCaptor;
 
@@ -55,7 +59,8 @@ public class ProjectScreenSequentialLoadRequestTest
                                               assetClassifier,
                                               assetDetailEvent,
                                               busyIndicatorView,
-                                              projectController) {
+                                              projectController,
+                                              scheduler) {
             @Override
             protected void reload() {
                 onFilterChange();
