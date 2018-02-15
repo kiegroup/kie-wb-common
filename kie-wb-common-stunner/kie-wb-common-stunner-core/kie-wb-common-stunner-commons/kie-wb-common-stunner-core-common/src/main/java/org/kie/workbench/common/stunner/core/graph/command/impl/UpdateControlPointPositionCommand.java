@@ -16,6 +16,7 @@
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.AbstractCompositeCommand;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
@@ -45,9 +46,9 @@ public class UpdateControlPointPositionCommand extends AbstractGraphCompositeCom
                                              final ControlPoint controlPoint,
                                              final Point2D position) {
 
-        this.candidate = candidate;
-        this.controlPoint = controlPoint;
-        this.position = position;
+        this.candidate = PortablePreconditions.checkNotNull("candidate", candidate);
+        this.controlPoint = PortablePreconditions.checkNotNull("controlPoint", controlPoint);
+        this.position = PortablePreconditions.checkNotNull("position", position);
         this.positionedControlPoint = getUpdatedControlPoint(position);
     }
 

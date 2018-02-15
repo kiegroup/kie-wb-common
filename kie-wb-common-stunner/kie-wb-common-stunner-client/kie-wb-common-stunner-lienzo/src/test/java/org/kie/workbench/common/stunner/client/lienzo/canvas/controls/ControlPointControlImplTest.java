@@ -40,7 +40,11 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -120,6 +124,17 @@ public class ControlPointControlImplTest extends AbstractCanvasControlTest {
         verify(canvasCommandFactory).updateControlPointPosition(edge, controlPoint1, newControlPointPosition);
         ArgumentCaptor<UpdateControlPointPositionCommand> commandArgumentCaptor = ArgumentCaptor.forClass(UpdateControlPointPositionCommand.class);
         verify(commandManager).execute(eq(canvasHandler), commandArgumentCaptor.capture());
+    }
+
+    @Test
+    public void testMoveNullControlPoint() {
+        controlPointControl.onCanvasControlPointDragEndEvent(canvasControlPointDragEndEvent);
+        verify(canvasCommandFactory, never()).updateControlPointPosition(any(), any(), any());
+        try {
+            controlPointControl.moveControlPoint(null, newControlPointPosition);
+        }catch (IllegalStateException e){
+            assertNotNull(e);
+        }
     }
 
     @Test

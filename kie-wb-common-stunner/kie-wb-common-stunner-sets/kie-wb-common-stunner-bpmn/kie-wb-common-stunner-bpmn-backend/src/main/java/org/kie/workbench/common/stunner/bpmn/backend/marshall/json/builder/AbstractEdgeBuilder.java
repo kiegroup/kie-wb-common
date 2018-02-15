@@ -93,56 +93,72 @@ public abstract class AbstractEdgeBuilder<W, T extends Edge<View<W>, Node>>
         // Outgoing connections.
         if (outgoingResourceIds != null && !outgoingResourceIds.isEmpty()) {
             for (String outgoingNodeId : outgoingResourceIds) {
-                GraphObjectBuilder<?, ?> outgoingNodeBuilder = getBuilder(context,
-                                                                          outgoingNodeId);
-                if (outgoingNodeBuilder == null) {
-                    throw new RuntimeException("No edge for " + outgoingNodeId);
-                }
-                Node node = (Node) outgoingNodeBuilder.build(context);
-                // Command - Add the node into the graph store.
                 GraphCommandFactory commandFactory = context.getCommandFactory();
-                AddNodeCommand addNodeCommand = commandFactory.addNode(node);
+
+                // Command - Add the node into the graph store.
+                Node node = buildTargetNode(context, outgoingNodeId, commandFactory);
+
                 // Command - Set the edge connection's target node.
-                Double targetDocker[] = null;
-                if (dockers != null && dockers.size() > 1) {
-                    targetDocker = dockers.get(dockers.size() - 1);
-                }
+                buildTargetConnection(context, edge, node, commandFactory);
 
-                Connection targetConnection = null;
-                if (null != targetDocker) {
-                    targetConnection = MagnetConnection.Builder
-                            .at(targetDocker[0],
-                                targetDocker[1])
-                            .setAuto(isTargetAutoConnection());
-                }
+                //Command - ControlPoints
+                buildControlPoints(context, edge, commandFactory);
+            }
+        }
+    }
 
-                SetConnectionTargetNodeCommand setTargetNodeCommand = commandFactory.setTargetNode(node,
-                                                                                                                edge,
-                                                                                                                targetConnection);
-                CommandResult<RuleViolation> results1 = context.execute(addNodeCommand);
-                if (hasErrors(results1)) {
-                    throw new RuntimeException("Error building BPMN graph. Command 'addNodeCommand' execution failed.");
-                }
-                CommandResult<RuleViolation> results2 = context.execute(setTargetNodeCommand);
-                if (hasErrors(results2)) {
-                    throw new RuntimeException("Error building BPMN graph. Command 'SetConnectionTargetNodeCommand' execution failed.");
-                }
+    private Node buildTargetNode(BuilderContext context, String outgoingNodeId, GraphCommandFactory commandFactory) {
+        GraphObjectBuilder<?, ?> outgoingNodeBuilder = getBuilder(context,
+                                                                  outgoingNodeId);
+        if (outgoingNodeBuilder == null) {
+            throw new RuntimeException("No edge for " + outgoingNodeId);
+        }
+        Node node = (Node) outgoingNodeBuilder.build(context);
+        AddNodeCommand addNodeCommand = commandFactory.addNode(node);
+        CommandResult<RuleViolation> addEdgeResult = context.execute(addNodeCommand);
+        if (hasErrors(addEdgeResult)) {
+            throw new RuntimeException("Error building BPMN graph. Command 'addNodeCommand' execution failed.");
+        }
+        return node;
+    }
 
-                //ControlPoints
-                if(dockers.size()>2) {
-                    Counter indexCounter = new Counter(0);
-                    ControlPoint[] controlPoints = dockers.subList(1, dockers.size() - 1).stream()
-                            .sequential()
-                            .map(docker -> Objects.equals(docker.length, 2) ? new Point2D(docker[0], docker[1]) : null)
-                            .filter(Objects::nonNull)
-                            .map(point -> new ControlPointImpl(point, indexCounter.increment()))
-                            .toArray(ControlPoint[]::new);
+    private void buildTargetConnection(BuilderContext context, T edge, Node node, GraphCommandFactory commandFactory) {
+        Double targetDocker[] = null;
+        if (dockers != null && dockers.size() > 1) {
+            targetDocker = dockers.get(dockers.size() - 1);
+        }
 
-                    CommandResult<RuleViolation> addControlPointsResult = context.execute(commandFactory.addControlPoint(edge, controlPoints));
-                    if (hasErrors(addControlPointsResult)) {
-                        throw new RuntimeException("Error building BPMN graph. Command 'AddControlPointCommand' execution failed." + addControlPointsResult);
-                    }
-                }
+        Connection targetConnection = null;
+        if (null != targetDocker) {
+            targetConnection = MagnetConnection.Builder
+                    .at(targetDocker[0],
+                        targetDocker[1])
+                    .setAuto(isTargetAutoConnection());
+        }
+
+        SetConnectionTargetNodeCommand setTargetNodeCommand = commandFactory.setTargetNode(node,
+                                                                                           edge,
+                                                                                           targetConnection);
+
+        CommandResult<RuleViolation> setTargetResult = context.execute(setTargetNodeCommand);
+        if (hasErrors(setTargetResult)) {
+            throw new RuntimeException("Error building BPMN graph. Command 'SetConnectionTargetNodeCommand' execution failed.");
+        }
+    }
+
+    private void buildControlPoints(BuilderContext context, T edge, GraphCommandFactory commandFactory) {
+        if (dockers.size() > 2) {
+            Counter indexCounter = new Counter(0);
+            ControlPoint[] controlPoints = dockers.subList(1, dockers.size() - 1).stream()
+                    .sequential()
+                    .map(docker -> (docker.length == 2 ? new Point2D(docker[0], docker[1]) : null))
+                    .filter(Objects::nonNull)
+                    .map(point -> new ControlPointImpl(point, indexCounter.increment()))
+                    .toArray(ControlPoint[]::new);
+
+            CommandResult<RuleViolation> addControlPointsResult = context.execute(commandFactory.addControlPoint(edge, controlPoints));
+            if (hasErrors(addControlPointsResult)) {
+                throw new RuntimeException("Error building BPMN graph. Command 'AddControlPointCommand' execution failed." + addControlPointsResult);
             }
         }
     }

@@ -177,7 +177,7 @@ public class ControlPointControlImpl extends AbstractCanvasHandlerRegistrationCo
     }
 
     protected void onCanvasControlPointDragEndEvent(@Observes CanvasControlPointDragEndEvent event) {
-        if (!validateControlPointState()) {
+        if (!validateControlPointState() || Objects.isNull(selectedControlPoint)) {
             return;
         }
         moveControlPoint(selectedControlPoint, event.getPosition());
@@ -211,6 +211,9 @@ public class ControlPointControlImpl extends AbstractCanvasHandlerRegistrationCo
     @Override
     public void moveControlPoint(ControlPoint controlPoint, Point2D position) {
         validateControlPointState();
+        if (Objects.isNull(controlPoint)) {
+            throw new IllegalStateException("ControlPoint is null.");
+        }
         checkAndExecuteCommand(canvasCommandFactory.updateControlPointPosition(selectedEdge, controlPoint, position));
     }
 
