@@ -326,7 +326,6 @@ public class Bpmn2JsonMarshaller {
         marshallDefinitions(def,
                             generator,
                             preProcessingData);
-        //generator.close(); FIXME: can we remove this from here?
     }
 
     private void linkSequenceFlows(List<FlowElement> flowElements) {
