@@ -142,7 +142,6 @@ public class BPMNGraphGenerator extends JsonGenerator {
     @Override
     @SuppressWarnings("unchecked")
     public void close() throws IOException {
-        logBuilders();
     }
 
     public Graph<DefinitionSet, Node> createGraph() {
