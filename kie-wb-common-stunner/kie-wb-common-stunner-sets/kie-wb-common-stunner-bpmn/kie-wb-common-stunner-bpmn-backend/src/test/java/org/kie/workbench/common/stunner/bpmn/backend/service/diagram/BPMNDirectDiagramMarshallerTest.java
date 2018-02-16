@@ -38,7 +38,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
@@ -158,8 +158,6 @@ public class BPMNDirectDiagramMarshallerTest {
     private static final String BPMN_MAGNETSINLANE = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetsInLane.bpmn";
     private static final String BPMN_ENDERROR_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endErrorEvent.bpmn";
 
-
-
     @Mock
     DefinitionManager definitionManager;
 
@@ -234,7 +232,6 @@ public class BPMNDirectDiagramMarshallerTest {
         when(adapterManager.forPropertySet()).thenReturn(propertySetAdapter);
         when(adapterManager.forProperty()).thenReturn(propertyAdapter);
     }
-
 
     // 4 nodes expected: BPMNDiagram, StartNode, Task and EndNode
     @Test
@@ -1004,7 +1001,7 @@ public class BPMNDirectDiagramMarshallerTest {
             Element element = it.next();
             if (element.getContent() instanceof View) {
                 Object oDefinition = ((View) element.getContent()).getDefinition();
-                if (oDefinition instanceof ExclusiveDatabasedGateway) {
+                if (oDefinition instanceof ExclusiveGateway) {
                     List<Edge> outEdges = ((NodeImpl) element).getOutEdges();
                     for (Edge edge : outEdges) {
                         SequenceFlow flow = (SequenceFlow) ((ViewConnectorImpl) ((EdgeImpl) edge).getContent()).getDefinition();
@@ -1106,10 +1103,10 @@ public class BPMNDirectDiagramMarshallerTest {
                      "XORGateway");
         Graph graph = diagram.getGraph();
         Node<? extends Definition, ?> gatewayNode = graph.getNode("_877EA035-1A14-42E9-8CAA-43E9BF908C70");
-        ExclusiveDatabasedGateway xorGateway = (ExclusiveDatabasedGateway) gatewayNode.getContent().getDefinition();
+        ExclusiveGateway xorGateway = (ExclusiveGateway) gatewayNode.getContent().getDefinition();
         assertEquals("AgeSplit",
                      xorGateway.getGeneral().getName().getValue());
-        assertEquals("under 10 : _5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD",
+        assertEquals("_5110D608-BDAD-47BF-A3F9-E1DBE43ED7CD",
                      xorGateway.getExecutionSet().getDefaultRoute().getValue());
         SequenceFlow sequenceFlow1 = null;
         SequenceFlow sequenceFlow2 = null;

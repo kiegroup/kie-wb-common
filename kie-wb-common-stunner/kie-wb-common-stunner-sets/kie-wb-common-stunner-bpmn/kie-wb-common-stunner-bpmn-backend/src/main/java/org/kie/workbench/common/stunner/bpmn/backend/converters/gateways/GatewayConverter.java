@@ -21,10 +21,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.GatewayPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
-import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveDatabasedGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.DefaultRoute;
-import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.ExclusiveGatewayExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
@@ -63,9 +63,9 @@ public class GatewayConverter {
                     return node;
                 })
                 .when(org.eclipse.bpmn2.ExclusiveGateway.class, e -> {
-                    Node<View<ExclusiveDatabasedGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ExclusiveDatabasedGateway.class);
+                    Node<View<ExclusiveGateway>, Edge> node = factoryManager.newNode(gateway.getId(), ExclusiveGateway.class);
 
-                    ExclusiveDatabasedGateway definition = node.getContent().getDefinition();
+                    ExclusiveGateway definition = node.getContent().getDefinition();
                     GatewayPropertyReader p = propertyReaderFactory.of(gateway);
 
                     definition.setGeneral(new BPMNGeneralSet(
@@ -73,7 +73,7 @@ public class GatewayConverter {
                             new Documentation(p.getDocumentation())
                     ));
 
-                    definition.setExecutionSet(new ExclusiveGatewayExecutionSet(
+                    definition.setExecutionSet(new GatewayExecutionSet(
                             new DefaultRoute(p.getDefaultRoute())
                     ));
 

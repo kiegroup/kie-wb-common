@@ -16,10 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
 public class GatewayPropertyReader extends FlowElementPropertyReader {
 
@@ -28,7 +26,9 @@ public class GatewayPropertyReader extends FlowElementPropertyReader {
     }
 
     public String getDefaultRoute() {
-        return attribute("dg");
+        String result = attribute("dg");
+        // this is for compatibility with legacy marshallers
+        return result.isEmpty() ? null : result;
     }
 
 //    @Override
@@ -40,5 +40,4 @@ public class GatewayPropertyReader extends FlowElementPropertyReader {
 //    protected String colorsDefaultBr() {
 //        return Colors.defaultBrColor_Gateways;
 //    }
-
 }
