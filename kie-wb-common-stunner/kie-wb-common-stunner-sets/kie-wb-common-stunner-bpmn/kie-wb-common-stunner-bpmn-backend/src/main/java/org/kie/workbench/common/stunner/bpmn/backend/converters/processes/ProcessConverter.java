@@ -104,7 +104,6 @@ public class ProcessConverter {
     }
 
     private Node<View<BPMNDiagramImpl>, ?> convertProcessNode(String definitionId, Process process) {
-        // FIXME why must we inherit the container's id ??
         Node<View<BPMNDiagramImpl>, Edge> diagramNode = factoryManager.newNode(definitionId, BPMNDiagramImpl.class);
         BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();
 

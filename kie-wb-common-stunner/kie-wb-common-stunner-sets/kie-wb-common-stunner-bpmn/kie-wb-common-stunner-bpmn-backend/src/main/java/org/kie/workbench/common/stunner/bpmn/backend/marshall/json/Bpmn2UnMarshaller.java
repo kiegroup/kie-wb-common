@@ -116,7 +116,6 @@ public class Bpmn2UnMarshaller extends Bpmn2JsonMarshaller {
         super.marshall(bpmnGraphGenerator,
                        def,
                        preProcessingData);
-        bpmnGraphGenerator.close();
-        return bpmnGraphGenerator.createGraph();
+        return bpmnGraphGenerator.getGraph();
     }
 }

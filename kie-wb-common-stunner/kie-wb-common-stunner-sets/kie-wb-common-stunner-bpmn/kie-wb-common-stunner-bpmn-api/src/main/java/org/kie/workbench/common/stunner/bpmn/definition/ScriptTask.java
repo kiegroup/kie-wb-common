@@ -61,6 +61,22 @@ public class ScriptTask extends BaseTask {
     @Valid
     protected ScriptTaskExecutionSet executionSet;
 
+    @NonPortable
+    public static class ScriptTaskBuilder implements Builder<ScriptTask> {
+
+        @Override
+        public ScriptTask build() {
+            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
+                                                     new Documentation("")),
+                                  new ScriptTaskExecutionSet(),
+                                  new BackgroundSet(),
+                                  new FontSet(),
+                                  new RectangleDimensionsSet(),
+                                  new SimulationSet(),
+                                  new TaskType(TaskTypes.SCRIPT));
+        }
+    }
+
     public ScriptTask() {
         super(TaskTypes.SCRIPT);
     }
@@ -103,21 +119,5 @@ public class ScriptTask extends BaseTask {
                     executionSet.equals(other.executionSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class ScriptTaskBuilder implements Builder<ScriptTask> {
-
-        @Override
-        public ScriptTask build() {
-            return new ScriptTask(new TaskGeneralSet(new Name("Task"),
-                                                     new Documentation("")),
-                                  new ScriptTaskExecutionSet(),
-                                  new BackgroundSet(),
-                                  new FontSet(),
-                                  new RectangleDimensionsSet(),
-                                  new SimulationSet(),
-                                  new TaskType(TaskTypes.SCRIPT));
-        }
     }
 }

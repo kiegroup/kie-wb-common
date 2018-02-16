@@ -39,6 +39,22 @@ public abstract class BaseGateway implements BPMNViewDefinition {
 
     @Category
     public static final transient String category = Categories.GATEWAYS;
+
+    @PropertySet
+    @FormField
+    @Valid
+    protected BPMNGeneralSet general;
+
+    @PropertySet
+    @Valid
+    protected BackgroundSet backgroundSet;
+
+    @PropertySet
+    protected FontSet fontSet;
+
+    @PropertySet
+    protected CircleDimensionSet dimensionsSet;
+
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{
         add("all");
@@ -50,17 +66,6 @@ public abstract class BaseGateway implements BPMNViewDefinition {
         add("GatewaysMorph");
         add("cm_nop");
     }};
-    @PropertySet
-    @FormField
-    @Valid
-    protected BPMNGeneralSet general;
-    @PropertySet
-    @Valid
-    protected BackgroundSet backgroundSet;
-    @PropertySet
-    protected FontSet fontSet;
-    @PropertySet
-    protected CircleDimensionSet dimensionsSet;
 
     public BaseGateway() {
     }
@@ -87,20 +92,20 @@ public abstract class BaseGateway implements BPMNViewDefinition {
         return general;
     }
 
-    public void setGeneral(final BPMNGeneralSet general) {
-        this.general = general;
-    }
-
     public BackgroundSet getBackgroundSet() {
         return backgroundSet;
     }
 
-    public void setBackgroundSet(final BackgroundSet backgroundSet) {
-        this.backgroundSet = backgroundSet;
-    }
-
     public FontSet getFontSet() {
         return fontSet;
+    }
+
+    public void setGeneral(final BPMNGeneralSet general) {
+        this.general = general;
+    }
+
+    public void setBackgroundSet(final BackgroundSet backgroundSet) {
+        this.backgroundSet = backgroundSet;
     }
 
     public void setFontSet(final FontSet fontSet) {

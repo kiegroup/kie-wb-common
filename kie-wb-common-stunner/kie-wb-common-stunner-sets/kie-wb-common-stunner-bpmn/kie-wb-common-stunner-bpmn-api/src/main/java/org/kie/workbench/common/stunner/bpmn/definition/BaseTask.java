@@ -46,6 +46,54 @@ public abstract class BaseTask implements BPMNViewDefinition {
 
     @Category
     public static final transient String category = Categories.ACTIVITIES;
+
+    @PropertySet
+    @FormField
+    @Valid
+    protected TaskGeneralSet general;
+
+    @Property
+    @MorphProperty(binder = TaskTypeMorphPropertyBinding.class)
+    protected TaskType taskType;
+
+    @PropertySet
+    @Valid
+    protected BackgroundSet backgroundSet;
+
+    @PropertySet
+    protected FontSet fontSet;
+
+    @PropertySet
+    protected SimulationSet simulationSet;
+
+    @PropertySet
+    protected RectangleDimensionsSet dimensionsSet;
+
+    public static class TaskTypeMorphPropertyBinding implements MorphPropertyValueBinding<TaskType, TaskTypes> {
+
+        private static final Map<TaskTypes, Class<?>> MORPH_TARGETS =
+                new HashMap<TaskTypes, Class<?>>(4) {{
+                    put(TaskTypes.NONE,
+                        NoneTask.class);
+                    put(TaskTypes.USER,
+                        UserTask.class);
+                    put(TaskTypes.SCRIPT,
+                        ScriptTask.class);
+                    put(TaskTypes.BUSINESS_RULE,
+                        BusinessRuleTask.class);
+                }};
+
+        @Override
+        public TaskTypes getValue(final TaskType property) {
+            return property.getValue();
+        }
+
+        @Override
+        public Map<TaskTypes, Class<?>> getMorphTargets() {
+            return MORPH_TARGETS;
+        }
+    }
+
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{
         add("all");
@@ -60,22 +108,6 @@ public abstract class BaseTask implements BPMNViewDefinition {
         add("ActivitiesMorph");
         add("cm_activity");
     }};
-    @PropertySet
-    @FormField
-    @Valid
-    protected TaskGeneralSet general;
-    @Property
-    @MorphProperty(binder = TaskTypeMorphPropertyBinding.class)
-    protected TaskType taskType;
-    @PropertySet
-    @Valid
-    protected BackgroundSet backgroundSet;
-    @PropertySet
-    protected FontSet fontSet;
-    @PropertySet
-    protected SimulationSet simulationSet;
-    @PropertySet
-    protected RectangleDimensionsSet dimensionsSet;
 
     protected BaseTask(final TaskTypes type) {
         this.taskType = new TaskType(type);
@@ -107,20 +139,20 @@ public abstract class BaseTask implements BPMNViewDefinition {
         return general;
     }
 
-    public void setGeneral(final TaskGeneralSet general) {
-        this.general = general;
-    }
-
     public BackgroundSet getBackgroundSet() {
         return backgroundSet;
     }
 
-    public void setBackgroundSet(final BackgroundSet backgroundSet) {
-        this.backgroundSet = backgroundSet;
-    }
-
     public FontSet getFontSet() {
         return fontSet;
+    }
+
+    public void setGeneral(final TaskGeneralSet general) {
+        this.general = general;
+    }
+
+    public void setBackgroundSet(final BackgroundSet backgroundSet) {
+        this.backgroundSet = backgroundSet;
     }
 
     public void setFontSet(final FontSet fontSet) {
@@ -175,30 +207,5 @@ public abstract class BaseTask implements BPMNViewDefinition {
                     Objects.equals(labels, other.labels);
         }
         return false;
-    }
-
-    public static class TaskTypeMorphPropertyBinding implements MorphPropertyValueBinding<TaskType, TaskTypes> {
-
-        private static final Map<TaskTypes, Class<?>> MORPH_TARGETS =
-                new HashMap<TaskTypes, Class<?>>(4) {{
-                    put(TaskTypes.NONE,
-                        NoneTask.class);
-                    put(TaskTypes.USER,
-                        UserTask.class);
-                    put(TaskTypes.SCRIPT,
-                        ScriptTask.class);
-                    put(TaskTypes.BUSINESS_RULE,
-                        BusinessRuleTask.class);
-                }};
-
-        @Override
-        public TaskTypes getValue(final TaskType property) {
-            return property.getValue();
-        }
-
-        @Override
-        public Map<TaskTypes, Class<?>> getMorphTargets() {
-            return MORPH_TARGETS;
-        }
     }
 }

@@ -49,12 +49,26 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateMessageEventThrowing extends BaseThrowingIntermediateEvent implements Executable<MessageEventExecutionSet> {
+public class IntermediateMessageEventThrowing extends BaseThrowingIntermediateEvent {
 
     @PropertySet
     @FormField(afterElement = "general")
     @Valid
     protected MessageEventExecutionSet executionSet;
+
+    @NonPortable
+    public static class IntermediateMessageEventThrowingBuilder implements Builder<IntermediateMessageEventThrowing> {
+
+        @Override
+        public IntermediateMessageEventThrowing build() {
+            return new IntermediateMessageEventThrowing(new BPMNGeneralSet(""),
+                                                        new DataIOSet(),
+                                                        new BackgroundSet(),
+                                                        new FontSet(),
+                                                        new CircleDimensionSet(new Radius()),
+                                                        new MessageEventExecutionSet());
+        }
+    }
 
     public IntermediateMessageEventThrowing() {
     }
@@ -115,19 +129,5 @@ public class IntermediateMessageEventThrowing extends BaseThrowingIntermediateEv
                     Objects.equals(labels, other.labels);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class IntermediateMessageEventThrowingBuilder implements Builder<IntermediateMessageEventThrowing> {
-
-        @Override
-        public IntermediateMessageEventThrowing build() {
-            return new IntermediateMessageEventThrowing(new BPMNGeneralSet(""),
-                                                        new DataIOSet(),
-                                                        new BackgroundSet(),
-                                                        new FontSet(),
-                                                        new CircleDimensionSet(new Radius()),
-                                                        new MessageEventExecutionSet());
-        }
     }
 }

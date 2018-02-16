@@ -33,8 +33,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Bindable
 @PropertySet
 @FormDefinition(startElement = "messageRef")
-public class MessageEventExecutionSet implements BPMNPropertySet,
-                                                 MessageRefExecutionSet {
+public class MessageEventExecutionSet implements BPMNPropertySet {
 
     @Property
     @FormField(type = ComboBoxFieldType.class)

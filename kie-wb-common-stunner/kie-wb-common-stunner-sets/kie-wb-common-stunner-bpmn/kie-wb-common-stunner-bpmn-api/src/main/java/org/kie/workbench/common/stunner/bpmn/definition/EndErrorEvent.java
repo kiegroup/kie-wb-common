@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.ErrorEventExecutionSet;
@@ -48,8 +47,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class EndErrorEvent extends BaseEndEvent implements Executable<ErrorEventExecutionSet>,
-                                                           HasDataIOSet {
+public class EndErrorEvent extends BaseEndEvent {
 
     @PropertySet
     @FormField(afterElement = "general")
@@ -59,6 +57,20 @@ public class EndErrorEvent extends BaseEndEvent implements Executable<ErrorEvent
     @PropertySet
     @FormField(afterElement = "executionSet")
     protected DataIOSet dataIOSet;
+
+    @NonPortable
+    public static class EndNoneEventBuilder implements Builder<EndErrorEvent> {
+
+        @Override
+        public EndErrorEvent build() {
+            return new EndErrorEvent(new BPMNGeneralSet(""),
+                                     new BackgroundSet(),
+                                     new FontSet(),
+                                     new CircleDimensionSet(new Radius()),
+                                     new ErrorEventExecutionSet(),
+                                     new DataIOSet());
+        }
+    }
 
     public EndErrorEvent() {
     }
@@ -128,19 +140,5 @@ public class EndErrorEvent extends BaseEndEvent implements Executable<ErrorEvent
         return HashUtil.combineHashCodes(super.hashCode(),
                                          executionSet.hashCode(),
                                          dataIOSet.hashCode());
-    }
-
-    @NonPortable
-    public static class EndNoneEventBuilder implements Builder<EndErrorEvent> {
-
-        @Override
-        public EndErrorEvent build() {
-            return new EndErrorEvent(new BPMNGeneralSet(""),
-                                     new BackgroundSet(),
-                                     new FontSet(),
-                                     new CircleDimensionSet(new Radius()),
-                                     new ErrorEventExecutionSet(),
-                                     new DataIOSet());
-        }
     }
 }

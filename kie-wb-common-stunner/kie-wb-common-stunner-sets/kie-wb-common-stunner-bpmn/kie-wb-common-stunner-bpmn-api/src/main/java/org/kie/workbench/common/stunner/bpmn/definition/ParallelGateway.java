@@ -42,6 +42,18 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 )
 public class ParallelGateway extends BaseGateway {
 
+    @NonPortable
+    public static class ParallelGatewayBuilder implements Builder<ParallelGateway> {
+
+        @Override
+        public ParallelGateway build() {
+            return new ParallelGateway(new BPMNGeneralSet(""),
+                                       new BackgroundSet(),
+                                       new FontSet(),
+                                       new CircleDimensionSet(new Radius()));
+        }
+    }
+
     public ParallelGateway() {
     }
 
@@ -53,17 +65,5 @@ public class ParallelGateway extends BaseGateway {
               backgroundSet,
               fontSet,
               dimensionsSet);
-    }
-
-    @NonPortable
-    public static class ParallelGatewayBuilder implements Builder<ParallelGateway> {
-
-        @Override
-        public ParallelGateway build() {
-            return new ParallelGateway(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()));
-        }
     }
 }

@@ -57,6 +57,22 @@ public class NoneTask extends BaseTask {
     @Valid
     protected EmptyTaskExecutionSet executionSet;
 
+    @NonPortable
+    public static class NoneTaskBuilder implements Builder<NoneTask> {
+
+        @Override
+        public NoneTask build() {
+            return new NoneTask(new TaskGeneralSet(new Name("Task"),
+                                                   new Documentation("")),
+                                new EmptyTaskExecutionSet(),
+                                new BackgroundSet(),
+                                new FontSet(),
+                                new RectangleDimensionsSet(),
+                                new SimulationSet(),
+                                new TaskType(TaskTypes.NONE));
+        }
+    }
+
     public NoneTask() {
         super(TaskTypes.NONE);
     }
@@ -99,21 +115,5 @@ public class NoneTask extends BaseTask {
                     executionSet.equals(other.executionSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class NoneTaskBuilder implements Builder<NoneTask> {
-
-        @Override
-        public NoneTask build() {
-            return new NoneTask(new TaskGeneralSet(new Name("Task"),
-                                                   new Documentation("")),
-                                new EmptyTaskExecutionSet(),
-                                new BackgroundSet(),
-                                new FontSet(),
-                                new RectangleDimensionsSet(),
-                                new SimulationSet(),
-                                new TaskType(TaskTypes.NONE));
-        }
     }
 }

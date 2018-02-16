@@ -142,11 +142,9 @@ public class BPMNGraphGenerator extends JsonGenerator {
     @Override
     @SuppressWarnings("unchecked")
     public void close() throws IOException {
-    }
-
-    public Graph<DefinitionSet, Node> createGraph() {
-        Graph<DefinitionSet, Node> graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
-                                                                                                  diagramDefinitionSetClass);
+        logBuilders();
+        this.graph = (Graph<DefinitionSet, Node>) factoryManager.newElement(UUID.uuid(),
+                                                                            diagramDefinitionSetClass);
         // TODO: Where are the BPMN diagram bounds in the Oryx json structure? Exist?
         if (null == graph.getContent().getBounds()) {
             graph.getContent().setBounds(new BoundsImpl(
@@ -168,10 +166,7 @@ public class BPMNGraphGenerator extends JsonGenerator {
         }
         Node<View<BPMNDefinition>, Edge> diagramNode = (Node<View<BPMNDefinition>, Edge>) diagramBuilder.build(builderContext);
         graph.addNode(diagramNode);
-
-        logBuilders();
-
-        return graph;
+        this.isClosed = true;
     }
 
     @SuppressWarnings("unchecked")
@@ -190,6 +185,11 @@ public class BPMNGraphGenerator extends JsonGenerator {
             }
         }
         return null;
+    }
+
+    public Graph<DefinitionSet, Node> getGraph() {
+        assert isClosed();
+        return this.graph;
     }
 
     final GraphObjectBuilder.BuilderContext builderContext = new GraphObjectBuilder.BuilderContext() {
@@ -247,7 +247,7 @@ public class BPMNGraphGenerator extends JsonGenerator {
 
     // For local testing...
     private void logBuilders() {
-        log("Logging builders at creation time...");
+        log("Logging builders at close time...");
         for (GraphObjectBuilder<?, ?> builder : builders) {
             log(builder.toString());
         }

@@ -53,6 +53,22 @@ public class Lane implements BPMNViewDefinition {
 
     @Category
     public static final transient String category = Categories.CONTAINERS;
+
+    @PropertySet
+    @FormField
+    @Valid
+    protected BPMNGeneralSet general;
+
+    @PropertySet
+    @Valid
+    protected BackgroundSet backgroundSet;
+
+    @PropertySet
+    private FontSet fontSet;
+
+    @PropertySet
+    protected RectangleDimensionsSet dimensionsSet;
+
     @Labels
     private final Set<String> labels = new HashSet<String>() {{
         add("all");
@@ -61,17 +77,18 @@ public class Lane implements BPMNViewDefinition {
         add("canContainArtifacts");
         add("cm_nop");
     }};
-    @PropertySet
-    @FormField
-    @Valid
-    protected BPMNGeneralSet general;
-    @PropertySet
-    @Valid
-    protected BackgroundSet backgroundSet;
-    @PropertySet
-    protected RectangleDimensionsSet dimensionsSet;
-    @PropertySet
-    private FontSet fontSet;
+
+    @NonPortable
+    public static class LaneBuilder implements Builder<Lane> {
+
+        @Override
+        public Lane build() {
+            return new Lane(new BPMNGeneralSet("Lane"),
+                            new BackgroundSet(),
+                            new FontSet(),
+                            new RectangleDimensionsSet());
+        }
+    }
 
     public Lane() {
     }
@@ -98,16 +115,8 @@ public class Lane implements BPMNViewDefinition {
         return general;
     }
 
-    public void setGeneral(final BPMNGeneralSet general) {
-        this.general = general;
-    }
-
     public BackgroundSet getBackgroundSet() {
         return backgroundSet;
-    }
-
-    public void setBackgroundSet(final BackgroundSet backgroundSet) {
-        this.backgroundSet = backgroundSet;
     }
 
     public FontSet getFontSet() {
@@ -116,6 +125,14 @@ public class Lane implements BPMNViewDefinition {
 
     public void setFontSet(final FontSet fontSet) {
         this.fontSet = fontSet;
+    }
+
+    public void setBackgroundSet(final BackgroundSet backgroundSet) {
+        this.backgroundSet = backgroundSet;
+    }
+
+    public void setGeneral(final BPMNGeneralSet general) {
+        this.general = general;
     }
 
     public RectangleDimensionsSet getDimensionsSet() {
@@ -144,17 +161,5 @@ public class Lane implements BPMNViewDefinition {
                     dimensionsSet.equals(other.dimensionsSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class LaneBuilder implements Builder<Lane> {
-
-        @Override
-        public Lane build() {
-            return new Lane(new BPMNGeneralSet("Lane"),
-                            new BackgroundSet(),
-                            new FontSet(),
-                            new RectangleDimensionsSet());
-        }
     }
 }

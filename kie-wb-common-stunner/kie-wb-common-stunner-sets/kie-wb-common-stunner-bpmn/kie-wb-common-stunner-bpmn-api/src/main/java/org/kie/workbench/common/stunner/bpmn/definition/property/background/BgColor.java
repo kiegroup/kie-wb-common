@@ -73,11 +73,4 @@ public class BgColor implements BPMNProperty {
         }
         return false;
     }
-
-    @Override
-    public String toString() {
-        return "BgColor{" +
-                "value='" + value + '\'' +
-                '}';
-    }
 }

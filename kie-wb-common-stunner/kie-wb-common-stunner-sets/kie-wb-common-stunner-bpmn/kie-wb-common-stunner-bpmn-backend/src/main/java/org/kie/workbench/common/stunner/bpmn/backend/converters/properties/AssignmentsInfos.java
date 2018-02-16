@@ -171,7 +171,7 @@ public class AssignmentsInfos {
     }
 
     private static String extractDtype(BaseElement el) {
-        return getAnyAttributeValue(el, "dtype"); // fixme: look for a safer way to do this
+        return getAnyAttributeValue(el, "dtype");
     }
 
     static String getAnyAttributeValue(BaseElement el, String attrName) {

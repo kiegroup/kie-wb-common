@@ -66,6 +66,22 @@ public class ReusableSubprocess extends BaseSubprocess implements DataIOModel {
     @Valid
     protected DataIOSet dataIOSet;
 
+    @NonPortable
+    public static class ReusableSubprocessBuilder implements Builder<ReusableSubprocess> {
+
+        @Override
+        public ReusableSubprocess build() {
+            return new ReusableSubprocess(
+                    new BPMNGeneralSet("Sub-process"),
+                    new ReusableSubprocessTaskExecutionSet(),
+                    new DataIOSet(),
+                    new BackgroundSet(),
+                    new FontSet(),
+                    new RectangleDimensionsSet(),
+                    new SimulationSet());
+        }
+    }
+
     public ReusableSubprocess() {
         super();
     }
@@ -110,12 +126,12 @@ public class ReusableSubprocess extends BaseSubprocess implements DataIOModel {
         return executionSet;
     }
 
-    public void setExecutionSet(final ReusableSubprocessTaskExecutionSet executionSet) {
-        this.executionSet = executionSet;
-    }
-
     public DataIOSet getDataIOSet() {
         return dataIOSet;
+    }
+
+    public void setExecutionSet(final ReusableSubprocessTaskExecutionSet executionSet) {
+        this.executionSet = executionSet;
     }
 
     public void setDataIOSet(final DataIOSet dataIOSet) {
@@ -138,21 +154,5 @@ public class ReusableSubprocess extends BaseSubprocess implements DataIOModel {
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class ReusableSubprocessBuilder implements Builder<ReusableSubprocess> {
-
-        @Override
-        public ReusableSubprocess build() {
-            return new ReusableSubprocess(
-                    new BPMNGeneralSet("Sub-process"),
-                    new ReusableSubprocessTaskExecutionSet(),
-                    new DataIOSet(),
-                    new BackgroundSet(),
-                    new FontSet(),
-                    new RectangleDimensionsSet(),
-                    new SimulationSet());
-        }
     }
 }

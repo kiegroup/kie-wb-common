@@ -46,12 +46,25 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateTimerEvent extends BaseCatchingIntermediateEvent implements Executable<CancellingTimerEventExecutionSet> {
+public class IntermediateTimerEvent extends BaseCatchingIntermediateEvent {
 
     @PropertySet
     @FormField(afterElement = "general")
     @Valid
     protected CancellingTimerEventExecutionSet executionSet;
+
+    @NonPortable
+    public static class IntermediateTimerEventBuilder implements Builder<IntermediateTimerEvent> {
+
+        @Override
+        public IntermediateTimerEvent build() {
+            return new IntermediateTimerEvent(new BPMNGeneralSet(""),
+                                              new BackgroundSet(),
+                                              new FontSet(),
+                                              new CircleDimensionSet(new Radius()),
+                                              new CancellingTimerEventExecutionSet());
+        }
+    }
 
     public IntermediateTimerEvent() {
     }
@@ -95,18 +108,5 @@ public class IntermediateTimerEvent extends BaseCatchingIntermediateEvent implem
                     executionSet.equals(other.executionSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class IntermediateTimerEventBuilder implements Builder<IntermediateTimerEvent> {
-
-        @Override
-        public IntermediateTimerEvent build() {
-            return new IntermediateTimerEvent(new BPMNGeneralSet(""),
-                                              new BackgroundSet(),
-                                              new FontSet(),
-                                              new CircleDimensionSet(new Radius()),
-                                              new CancellingTimerEventExecutionSet());
-        }
     }
 }

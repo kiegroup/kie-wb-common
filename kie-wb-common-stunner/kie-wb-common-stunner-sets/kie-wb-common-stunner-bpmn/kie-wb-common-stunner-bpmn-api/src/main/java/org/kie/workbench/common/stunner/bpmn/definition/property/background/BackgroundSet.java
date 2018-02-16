@@ -96,20 +96,20 @@ public class BackgroundSet implements BPMNPropertySet {
         return bgColor;
     }
 
-    public void setBgColor(final BgColor bgColor) {
-        this.bgColor = bgColor;
-    }
-
     public BorderColor getBorderColor() {
         return borderColor;
     }
 
-    public void setBorderColor(final BorderColor borderColor) {
-        this.borderColor = borderColor;
-    }
-
     public BorderSize getBorderSize() {
         return borderSize;
+    }
+
+    public void setBgColor(final BgColor bgColor) {
+        this.bgColor = bgColor;
+    }
+
+    public void setBorderColor(final BorderColor borderColor) {
+        this.borderColor = borderColor;
     }
 
     public void setBorderSize(final BorderSize borderSize) {
@@ -135,15 +135,5 @@ public class BackgroundSet implements BPMNPropertySet {
                                    other.borderSize);
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("BackgroundSet{");
-        sb.append("bgColor=").append(bgColor);
-        sb.append(", borderColor=").append(borderColor);
-        sb.append(", borderSize=").append(borderSize);
-        sb.append('}');
-        return sb.toString();
     }
 }

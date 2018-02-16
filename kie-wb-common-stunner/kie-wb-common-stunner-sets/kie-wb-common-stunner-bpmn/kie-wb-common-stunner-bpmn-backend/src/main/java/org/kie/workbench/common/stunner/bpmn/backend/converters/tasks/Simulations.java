@@ -60,8 +60,6 @@ public class Simulations {
                     simulationSet.getDistributionType().setValue("poisson");
                 }).apply(paramValue).asSuccess().value();
 
-        // FIXME waittime ??
-
         CostParameters costParams = eleType.getCostParameters();
         if (costParams != null) {
             simulationSet.getUnitCost().setValue(extractDouble(costParams.getUnitCost()));
@@ -110,12 +108,6 @@ public class Simulations {
                     return simulationSet;
                 }).apply(paramValue).asSuccess().value();
 
-        // FIXME waittime ??
-    }
-
-    private static void controlParams(ElementParameters eleType, SimulationSet simulationSet) {
-        // double probability = extractDouble(eleType.getControlParameters().getProbability().getParameterValue());
-        // FIXME probability ???
     }
 
     private static Double extractDouble(Parameter parameter) {

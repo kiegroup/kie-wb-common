@@ -27,7 +27,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.HasDataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.CircleDimensionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.Radius;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.CancellingErrorEventExecutionSet;
@@ -48,8 +47,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED
 )
-public class IntermediateErrorEventCatching extends BaseCatchingIntermediateEvent implements Executable<CancellingErrorEventExecutionSet>,
-                                                                                             HasDataIOSet {
+public class IntermediateErrorEventCatching extends BaseCatchingIntermediateEvent {
 
     @PropertySet
     @FormField(afterElement = "general")
@@ -60,6 +58,20 @@ public class IntermediateErrorEventCatching extends BaseCatchingIntermediateEven
     @FormField(afterElement = "executionSet")
     @Valid
     protected DataIOSet dataIOSet;
+
+    @NonPortable
+    public static class IntermediateErrorEventCatchingBuilder implements Builder<IntermediateErrorEventCatching> {
+
+        @Override
+        public IntermediateErrorEventCatching build() {
+            return new IntermediateErrorEventCatching(new BPMNGeneralSet(""),
+                                                      new BackgroundSet(),
+                                                      new FontSet(),
+                                                      new CircleDimensionSet(new Radius()),
+                                                      new DataIOSet(),
+                                                      new CancellingErrorEventExecutionSet());
+        }
+    }
 
     public IntermediateErrorEventCatching() {
     }
@@ -127,19 +139,5 @@ public class IntermediateErrorEventCatching extends BaseCatchingIntermediateEven
                     dataIOSet.equals(other.dataIOSet);
         }
         return false;
-    }
-
-    @NonPortable
-    public static class IntermediateErrorEventCatchingBuilder implements Builder<IntermediateErrorEventCatching> {
-
-        @Override
-        public IntermediateErrorEventCatching build() {
-            return new IntermediateErrorEventCatching(new BPMNGeneralSet(""),
-                                                      new BackgroundSet(),
-                                                      new FontSet(),
-                                                      new CircleDimensionSet(new Radius()),
-                                                      new DataIOSet(),
-                                                      new CancellingErrorEventExecutionSet());
-        }
     }
 }

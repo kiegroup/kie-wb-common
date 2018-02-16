@@ -42,6 +42,18 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 )
 public class EndTerminateEvent extends BaseEndEvent {
 
+    @NonPortable
+    public static class EndTerminateEventBuilder implements Builder<EndTerminateEvent> {
+
+        @Override
+        public EndTerminateEvent build() {
+            return new EndTerminateEvent(new BPMNGeneralSet(""),
+                                         new BackgroundSet(),
+                                         new FontSet(),
+                                         new CircleDimensionSet(new Radius()));
+        }
+    }
+
     public EndTerminateEvent() {
     }
 
@@ -53,17 +65,5 @@ public class EndTerminateEvent extends BaseEndEvent {
               backgroundSet,
               fontSet,
               dimensionsSet);
-    }
-
-    @NonPortable
-    public static class EndTerminateEventBuilder implements Builder<EndTerminateEvent> {
-
-        @Override
-        public EndTerminateEvent build() {
-            return new EndTerminateEvent(new BPMNGeneralSet(""),
-                                         new BackgroundSet(),
-                                         new FontSet(),
-                                         new CircleDimensionSet(new Radius()));
-        }
     }
 }

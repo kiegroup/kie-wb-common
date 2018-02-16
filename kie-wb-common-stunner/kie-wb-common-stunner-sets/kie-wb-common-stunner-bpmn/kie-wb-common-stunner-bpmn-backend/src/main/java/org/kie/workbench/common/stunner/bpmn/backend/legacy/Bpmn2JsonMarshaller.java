@@ -326,6 +326,7 @@ public class Bpmn2JsonMarshaller {
         marshallDefinitions(def,
                             generator,
                             preProcessingData);
+        generator.close();
     }
 
     private void linkSequenceFlows(List<FlowElement> flowElements) {
