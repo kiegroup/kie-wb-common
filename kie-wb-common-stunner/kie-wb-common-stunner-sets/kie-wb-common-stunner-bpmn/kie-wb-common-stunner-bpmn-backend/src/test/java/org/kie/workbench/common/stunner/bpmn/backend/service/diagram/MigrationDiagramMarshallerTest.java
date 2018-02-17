@@ -30,7 +30,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
@@ -418,8 +417,7 @@ public class MigrationDiagramMarshallerTest {
             // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
             // Let's check nodes only.
-            assertNodeEquals(oldDiagram, newDiagram);
-            assertEdgeEquals(oldDiagram, newDiagram);
+            assertDiagramEquals(oldDiagram, newDiagram, fileName);
         }
     }
 
@@ -432,8 +430,7 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_PROCESSPROPERTIES);
     }
 
     @Test
@@ -445,8 +442,7 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_USERTASKASSIGNEES);
     }
 
 
@@ -459,8 +455,7 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_MAGNETDOCKERS);
     }
 
 
@@ -473,8 +468,7 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_EMBEDDED_SUBPROCESS);
     }
 
     @Test
@@ -486,8 +480,7 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_LANES);
     }
 
     @Test
@@ -499,18 +492,17 @@ public class MigrationDiagramMarshallerTest {
         // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
 
         // Let's check nodes only.
-        assertNodeEquals(oldDiagram, newDiagram);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_EVALUATION);
     }
 
 
 
 
-    private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+    private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Map<String, Node<View,?>> oldNodes = asNodeMap(oldDiagram.getGraph().nodes());
         Map<String, Node<View,?>> newNodes = asNodeMap(newDiagram.getGraph().nodes());
 
-        assertEquals("Number of nodes should match", oldNodes.size(), newNodes.size());
+        assertEquals(fileName + ": Number of nodes should match", oldNodes.size(), newNodes.size());
 
         for (Node<View, ?> o: oldNodes.values()) {
             Node<View, ?> n = newNodes.get(o.getUUID());
@@ -522,7 +514,7 @@ public class MigrationDiagramMarshallerTest {
             Bounds newBounds = newContent.getBounds();
 
             assertEquals(
-                    "Bounds should match for " + o.getUUID(),
+                    fileName + ": Bounds should match for " + o.getUUID(),
                     oldBounds,
                     newBounds
             );
@@ -533,6 +525,7 @@ public class MigrationDiagramMarshallerTest {
             oldDefinition.equals(newDefinition);
 
             assertEquals(
+                    fileName + ": Definitions should match for " + o.getUUID(),
                     oldDefinition,
                     newDefinition
             );
@@ -551,7 +544,12 @@ public class MigrationDiagramMarshallerTest {
         return oldNodes;
     }
 
-    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+    private void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+        assertNodeEquals(oldDiagram, newDiagram, fileName);
+        assertEdgeEquals(oldDiagram, newDiagram, fileName);
+    }
+
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
