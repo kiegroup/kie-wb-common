@@ -29,6 +29,13 @@ class BoundaryEventPropertyReader extends CatchEventPropertyReader {
         super(el, plane, definitionResolver);
     }
 
+    public boolean isCancelActivity() {
+        return optionalAttribute("boundaryca")
+                .filter(s -> !s.isEmpty())
+                .map(Boolean::parseBoolean)
+                .orElse(false);
+    }
+
     @Override
     public Bounds getBounds() {
         org.eclipse.dd.dc.Bounds bounds = shape.getBounds();
