@@ -31,6 +31,7 @@ import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.types.Point2D;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
@@ -38,6 +39,7 @@ import org.kie.workbench.common.dmn.client.commands.general.DeleteCellValueComma
 import org.kie.workbench.common.dmn.client.commands.general.DeleteHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetCellValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderGridWidgetMouseDoubleClickHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
@@ -56,6 +58,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanva
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.util.CoordinateUtilities;
@@ -67,6 +70,8 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedra
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
 
 public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIModelMapper<E>> extends BaseGridWidget implements HasExpressionEditorControls {
+
+    static final double DEFAULT_PADDING = 10.0;
 
     protected final GridCellTuple parent;
 
@@ -80,6 +85,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
     protected final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     protected final Event<ExpressionEditorSelectedEvent> editorSelectedEvent;
     protected final CellEditorControls cellEditorControls;
+    protected final TranslationService translationService;
 
     protected M uiModelMapper;
 
@@ -96,6 +102,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                               final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
                               final CellEditorControls cellEditorControls,
+                              final TranslationService translationService,
                               final boolean isHeaderHidden) {
         this(parent,
              hasExpression,
@@ -108,6 +115,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
              sessionCommandManager,
              editorSelectedEvent,
              cellEditorControls,
+             translationService,
              () -> isHeaderHidden);
     }
 
@@ -123,6 +131,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                               final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
                               final CellEditorControls cellEditorControls,
+                              final TranslationService translationService,
                               final boolean isHeaderHidden) {
         this(parent,
              hasExpression,
@@ -136,6 +145,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
              sessionCommandManager,
              editorSelectedEvent,
              cellEditorControls,
+             translationService,
              () -> isHeaderHidden);
     }
 
@@ -151,6 +161,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                        final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
                        final CellEditorControls cellEditorControls,
+                       final TranslationService translationService,
                        final Supplier<Boolean> isHeaderHidden) {
         this(parent,
              hasExpression,
@@ -164,6 +175,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
              sessionCommandManager,
              editorSelectedEvent,
              cellEditorControls,
+             translationService,
              isHeaderHidden);
     }
 
@@ -179,6 +191,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                        final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
                        final CellEditorControls cellEditorControls,
+                       final TranslationService translationService,
                        final Supplier<Boolean> isHeaderHidden) {
         super(gridData,
               gridLayer,
@@ -191,6 +204,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
         this.sessionCommandManager = sessionCommandManager;
         this.editorSelectedEvent = editorSelectedEvent;
         this.cellEditorControls = cellEditorControls;
+        this.translationService = translationService;
 
         this.hasExpression = hasExpression;
         this.expression = expression;
@@ -237,6 +251,10 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                                              extractEditableHeaderMetaData(gcv),
                                              gridLayer::batch);
         };
+    }
+
+    public double getPadding() {
+        return findParentGrid().isPresent() ? DEFAULT_PADDING : 0.0;
     }
 
     protected EditableHeaderMetaData extractEditableHeaderMetaData(final GridCellTuple gc) {
@@ -312,11 +330,20 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
         if (!(uiRowIndex == null || uiColumnIndex == null)) {
             final GridCell<?> cell = getModel().getCell(uiRowIndex, uiColumnIndex);
+            if (cell == null) {
+                return false;
+            }
+            final GridCellValue<?> value = cell.getValue();
+            if (value instanceof ExpressionCellValue) {
+                return false;
+            }
             if (cell instanceof HasCellEditorControls) {
                 final HasCellEditorControls hasControls = (HasCellEditorControls) cell;
                 final Optional<HasCellEditorControls.Editor> editor = hasControls.getEditor();
                 editor.ifPresent(e -> {
-                    e.bind(this);
+                    e.bind(this,
+                           uiRowIndex,
+                           uiColumnIndex);
                     cellEditorControls.show(e,
                                             (int) (ap.getX() + getAbsoluteX()),
                                             (int) (ap.getY() + getAbsoluteY()));
@@ -352,9 +379,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
         final Predicate<Pair<Group, GridRenderer.RendererCommand>> renderHeader = (p) -> {
             final GridRenderer.RendererCommand command = p.getK2();
-            if (command instanceof GridRenderer.RenderGridBoundaryCommand) {
-                return false;
-            } else if (isHeaderHidden.get()) {
+            if (isHeaderHidden.get()) {
                 return !(command instanceof GridRenderer.RendererHeaderCommand);
             }
             return true;
@@ -414,5 +439,15 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                 .map(c -> uiModel.getColumns().indexOf(c))
                 .findFirst()
                 .ifPresent(index -> uiModel.selectCell(0, index));
+    }
+
+    protected Optional<BaseExpressionGrid> findParentGrid() {
+        final GridData parentUiModel = parent.getGridData();
+        return gridLayer.getGridWidgets()
+                .stream()
+                .filter(gridWidget -> gridWidget instanceof BaseExpressionGrid)
+                .filter(gridWidget -> gridWidget.getModel().equals(parentUiModel))
+                .map(gridWidget -> (BaseExpressionGrid) gridWidget)
+                .findFirst();
     }
 }
