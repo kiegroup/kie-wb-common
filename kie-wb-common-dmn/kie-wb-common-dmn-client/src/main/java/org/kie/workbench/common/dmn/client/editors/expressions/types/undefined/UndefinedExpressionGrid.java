@@ -140,6 +140,7 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
         return Optional.empty();
     }
 
+    @Override
     public double getPadding() {
         return PADDING;
     }

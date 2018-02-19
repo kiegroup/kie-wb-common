@@ -208,7 +208,7 @@ public class ExpressionEditorColumnTest {
         gridData.appendRow(new DMNGridRow());
         gridData.appendRow(new DMNGridRow());
         gridData.appendRow(new DMNGridRow());
-        mockCellsWithPadding(0, 0, PADDING, 100d);
+        mockCellsWithPadding(0, 0, PADDING, 100);
         mockCellsWithPadding(1, 0, PADDING, 150);
         mockCellsWithPadding(2, 0, PADDING, 125);
         Assertions.assertThat(column.getMinimumWidth()).isEqualTo(170);

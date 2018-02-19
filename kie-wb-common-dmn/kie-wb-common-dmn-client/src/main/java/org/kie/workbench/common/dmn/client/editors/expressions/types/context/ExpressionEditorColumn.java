@@ -63,7 +63,7 @@ public class ExpressionEditorColumn extends DMNGridColumn<Optional<BaseExpressio
                     if (value instanceof ExpressionCellValue) {
                         final ExpressionCellValue ecv = (ExpressionCellValue) value;
                         final Optional<BaseExpressionGrid> editor = ecv.getValue();
-                        final double padding = editor.map(BaseExpressionGrid::getPadding).orElse(0.0);
+                        final double padding = editor.map(BaseExpressionGrid::getPadding).get();
                         minimumWidth = Math.max(minimumWidth,
                                                 ecv.getMinimumWidth().orElse(0.0) + padding * 2);
                     }
