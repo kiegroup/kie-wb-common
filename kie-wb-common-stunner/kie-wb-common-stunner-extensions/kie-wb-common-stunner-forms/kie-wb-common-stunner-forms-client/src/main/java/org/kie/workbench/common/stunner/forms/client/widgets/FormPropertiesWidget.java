@@ -75,6 +75,8 @@ public class FormPropertiesWidget implements IsElement, FormPropertiesWidgetView
     private FormFeaturesSessionProvider featuresSessionProvider;
     private final DynamicFormModelGenerator modelGenerator;
 
+    private String currentElementId;
+
     protected FormPropertiesWidget() {
         this(null, null, null, null, null, null);
     }
@@ -183,6 +185,10 @@ public class FormPropertiesWidget implements IsElement, FormPropertiesWidgetView
     public void showByUUID(final String uuid, final RenderMode renderMode, final Command callback) {
         final Element<? extends Definition<?>> element = (null != uuid && null != getCanvasHandler()) ? getCanvasHandler().getGraphIndex().get(uuid) : null;
         if (null != element) {
+            if(uuid.equals(currentElementId)) {
+                return;
+            }
+            this.currentElementId = uuid;
             final Object definition = element.getContent().getDefinition();
             final BindableProxy<?> proxy = (BindableProxy<?>) BindableProxyFactory.getBindableProxy(definition);
             final Path diagramPath = session.getCanvasHandler().getDiagram().getMetadata().getPath();
@@ -271,6 +277,7 @@ public class FormPropertiesWidget implements IsElement, FormPropertiesWidgetView
     }
 
     private void doClear() {
+        currentElementId = null;
         formRenderer.unBind();
     }
 

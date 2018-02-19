@@ -51,6 +51,7 @@ import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -182,15 +183,28 @@ public class FormPropertiesWidgetTest {
         when(metadata.getPath()).thenReturn(path);
         when(nodeContent.getDefinition()).thenReturn(unmockedDef);
 
-        tested
-                .bind(session)
-                .showByUUID(ROOT_UUID,
-                            RenderMode.EDIT_MODE);
+        tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
 
         verify(formRenderer).render(contextCaptor.capture());
         assertTrue("FormRenderingContext was not PathAware.",
                    contextCaptor.getValue() instanceof PathAware);
         assertSame(path,
                    ((PathAware) contextCaptor.getValue()).getPath());
+    }
+
+    @Test
+    public void testClickOnSameElement() {
+        when(metadata.getPath()).thenReturn(path);
+        when(nodeContent.getDefinition()).thenReturn(unmockedDef);
+
+        tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
+
+        verify(modelGenerator, times(1)).getContextForModel(any());
+        verify(formRenderer, times(1)).render(any());
+
+        tested.showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
+
+        verify(modelGenerator, times(1)).getContextForModel(any());
+        verify(formRenderer, times(1)).render(any());
     }
 }
