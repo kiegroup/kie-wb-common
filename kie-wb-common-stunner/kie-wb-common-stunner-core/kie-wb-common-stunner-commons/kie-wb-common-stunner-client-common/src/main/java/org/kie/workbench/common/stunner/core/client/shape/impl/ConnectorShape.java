@@ -75,10 +75,9 @@ public class ConnectorShape<W, D extends ShapeViewDef<W, V>, V extends ShapeView
         if (null != source && null != target) {
             IsConnector shapeView = (IsConnector) getShapeView();
             shapeView.connect(source,
-                                                   sourceConnection,
-                                                   target,
-                                                   targetConnection);
-
+                              sourceConnection,
+                              target,
+                              targetConnection);
         }
     }
 
@@ -95,7 +94,7 @@ public class ConnectorShape<W, D extends ShapeViewDef<W, V>, V extends ShapeView
     }
 
     private HasManageableControlPoints getShapeViewWithControlPoints() {
-        if(!(getShapeView() instanceof HasManageableControlPoints)){
+        if (!(getShapeView() instanceof HasManageableControlPoints)) {
             throw new IllegalArgumentException("ShapeView should be a HasManageableControlPoints. " + getShapeView());
         }
         return (HasManageableControlPoints) getShapeView();

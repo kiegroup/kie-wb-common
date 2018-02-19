@@ -168,7 +168,7 @@ public final class LienzoMultipleSelectionControl<H extends AbstractCanvasHandle
     }
 
     private void clear() {
-        if(Objects.nonNull(getSelectionControl().getCanvasHandler())) {
+        if (Objects.nonNull(getSelectionControl().getCanvasHandler())) {
             getSelectionManager().clearSelection();
         }
     }

@@ -39,7 +39,6 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasCompo
     private final Point2D position;
     private final ControlPoint positionedControlPoint;
 
-
     public UpdateCanvasControlPointPositionCommand(final Edge edge,
                                                    final ControlPoint controlPoint,
                                                    final Point2D position) {
@@ -51,7 +50,7 @@ public class UpdateCanvasControlPointPositionCommand extends AbstractCanvasCompo
 
     @Override
     protected AbstractCompositeCommand<AbstractCanvasHandler, CanvasViolation> initialize(AbstractCanvasHandler context) {
-        if(ShapeUtils.getControlPoints(edge, context).stream().anyMatch(cp-> Objects.equals(cp.getLocation(), position))){
+        if (ShapeUtils.getControlPoints(edge, context).stream().anyMatch(cp -> Objects.equals(cp.getLocation(), position))) {
             //skip canvas commands in case the control point is already on the position
             return this;
         }

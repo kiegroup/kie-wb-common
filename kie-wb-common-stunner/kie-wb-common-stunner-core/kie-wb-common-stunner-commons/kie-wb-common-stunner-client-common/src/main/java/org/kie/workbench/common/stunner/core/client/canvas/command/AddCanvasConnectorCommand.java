@@ -46,11 +46,11 @@ public class AddCanvasConnectorCommand extends AbstractCanvasCommand {
         context.register(shapeSetId, candidate);
         context.applyElementMutation(candidate, MutationContext.STATIC);
 
-        if(candidate.getContent() instanceof ViewConnector){
+        if (candidate.getContent() instanceof ViewConnector) {
             ControlPoint[] controlPoints = ((ViewConnector) candidate.getContent()).getControlPoints().stream().toArray(ControlPoint[]::new);
             CommandResult<CanvasViolation> addControlPointsResult = new AddCanvasControlPointCommand(candidate, controlPoints).execute(context);
             ShapeUtils.hideControlPoints(candidate, context);
-            if(CommandUtils.isError(addControlPointsResult)){
+            if (CommandUtils.isError(addControlPointsResult)) {
                 return addControlPointsResult;
             }
         }
