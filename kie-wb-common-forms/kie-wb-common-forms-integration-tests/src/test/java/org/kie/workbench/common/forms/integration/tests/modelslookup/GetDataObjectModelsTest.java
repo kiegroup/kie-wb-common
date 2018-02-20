@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -48,7 +49,7 @@ import org.uberfire.backend.vfs.PathFactory;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
-public class GetDataObjectModelsTest extends GetModelsTest {
+public class GetDataObjectModelsTest extends AbstractGetModelsTest {
 
     private static DataModelerService dataModelerService;
     private static FieldManager fieldManager;
@@ -58,15 +59,15 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     private static DataObjectFormModelCreationService creationService;
 
     private static final String
-            DATAOBJECTS_PACKAGE = "/src/main/java/com/myteam/modelslookup/",
-            DO_PATH_FORMAT = PROJECT_ROOT + DATAOBJECTS_PACKAGE + "%s.java";
+            DO_PACKAGE_PATH = "/src/main/java/com/myteam/modelslookup/",
+            DO_PATH_FORMAT = PROJECT_ROOT + DO_PACKAGE_PATH + "%s.java";
 
     private static final String
             ORDER = "Order",
             ORDER_COPY = "OrderCopy",
+            ORDER_RENAMED = "OrderRenamed",
+            ORDER_RENAMED_FQN = DO_PACKAGE + ORDER_RENAMED,
             ORDER_COPY_FQN = DO_PACKAGE + ORDER_COPY,
-            HUMAN = "Human",
-            HUMAN_FQN = DO_PACKAGE + HUMAN,
             CREATED_DO = "CreatedDataObject",
             CREATED_DO_FQN = DO_PACKAGE + CREATED_DO;
 
@@ -94,22 +95,15 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     }
 
     @Test
-    public void testGetModelsAfterRenameCopyDeleteAndCreate() throws URISyntaxException, IOException {
+    public void testGetModelsAfterCopyRenameCreateAndDelete() throws URISyntaxException, IOException {
         assertOriginalModel();
-        assertModelsAfterRename();
         assertModelsAfterCopy();
-        assertModelsAfterDelete();
+        assertModelsAfterRename();
         assertModelsAfterCreate();
+        assertModelsAfterDelete();
     }
 
     private void assertOriginalModel() {
-        assertExpectedLoaded(expectedModel);
-    }
-
-    private void assertModelsAfterRename() throws IOException, URISyntaxException {
-        renameDO(PERSON, HUMAN);
-        expectedModel.remove(PERSON_FQN);
-        expectedModel.put(HUMAN_FQN, PERSON_FIELDS);
         assertExpectedLoaded(expectedModel);
     }
 
@@ -119,15 +113,24 @@ public class GetDataObjectModelsTest extends GetModelsTest {
         assertExpectedLoaded(expectedModel);
     }
 
-    private void assertModelsAfterDelete() throws IOException, URISyntaxException {
-        deleteDO(ADDRESS);
-        expectedModel.remove(ADDRESS_FQN);
+    private void assertModelsAfterRename() throws IOException, URISyntaxException {
+        renameDO(ORDER_COPY, ORDER_RENAMED);
+        expectedModel.remove(ORDER_COPY_FQN);
+        expectedModel.put(ORDER_RENAMED_FQN, ORDER_FIELDS);
         assertExpectedLoaded(expectedModel);
     }
 
     private void assertModelsAfterCreate() throws URISyntaxException {
         createDO(CREATED_DO);
         expectedModel.put(CREATED_DO_FQN, Collections.emptySet());
+        assertExpectedLoaded(expectedModel);
+    }
+
+    private void assertModelsAfterDelete() throws IOException, URISyntaxException {
+        deleteDO(CREATED_DO);
+        deleteDO(ORDER_RENAMED);
+        expectedModel.remove(CREATED_DO_FQN);
+        expectedModel.remove(ORDER_RENAMED_FQN);
         assertExpectedLoaded(expectedModel);
     }
 
@@ -156,7 +159,7 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     private void createDO(String name) throws URISyntaxException {
         //DataObject dataObject = new DataObjectImpl(name, pkg);
         Path dataObjectPath = PathFactory.newPath(name + ".java",
-                                                  "file://" + ROOT_URL.toURI().getPath() + DATAOBJECTS_PACKAGE);
+                                                  "file://" + ROOT_URL.toURI().getPath() + DO_PACKAGE_PATH);
         dataModelerService.createJavaFile(dataObjectPath, name + ".java", "comment");
     }
 
@@ -223,7 +226,11 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     private Map<String, Set<String>> getDataObjectsMap(List<DataObjectFormModel> dataObjects) {
         return dataObjects.stream().collect(Collectors.toMap(
                 DataObjectFormModel::getClassName,
-                d -> d.getProperties().stream().map(ModelProperty::getName).collect(Collectors.toSet()))
-        );
+                getModelPropertyNameSet()
+        ));
+    }
+
+    private static Function<DataObjectFormModel, Set<String>> getModelPropertyNameSet() {
+        return d -> d.getProperties().stream().map(ModelProperty::getName).collect(Collectors.toSet());
     }
 }

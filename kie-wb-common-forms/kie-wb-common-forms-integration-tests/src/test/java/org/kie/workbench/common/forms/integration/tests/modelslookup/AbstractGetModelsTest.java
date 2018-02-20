@@ -31,7 +31,7 @@ import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.java.nio.fs.file.SimpleFileSystemProvider;
 
-public class GetModelsTest {
+public abstract class AbstractGetModelsTest {
 
     protected static final SimpleFileSystemProvider FS = new SimpleFileSystemProvider();
 
@@ -44,9 +44,9 @@ public class GetModelsTest {
             ORDER_FQN = DO_PACKAGE + "Order",
             PERSON_FQN = DO_PACKAGE + PERSON,
             ITEM_FQN = DO_PACKAGE + ITEM,
-            ADDRESS_FQN = DO_PACKAGE + "Address";
+            ADDRESS_FQN = DO_PACKAGE + ADDRESS;
 
-    protected static final URL ROOT_URL = GetModelsTest.class.getResource(PROJECT_ROOT);
+    protected static final URL ROOT_URL = AbstractGetModelsTest.class.getResource(PROJECT_ROOT);
 
     protected static Path rootPath;
 
@@ -85,10 +85,6 @@ public class GetModelsTest {
 
     protected void deleteResource(String resourcePath) throws URISyntaxException, IOException {
         Files.delete(getNioPath(resourcePath));
-    }
-
-    protected boolean isResourcePresent(String resourcePath) {
-        return getClass().getResource(resourcePath) != null;
     }
 
     protected java.nio.file.Path getNioPath(String pathToConvert) {

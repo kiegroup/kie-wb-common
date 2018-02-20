@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -49,7 +50,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GetProcessModelsTest extends GetModelsTest {
+public class GetProcessModelsTest extends AbstractGetModelsTest {
 
     private static final String
             ORDER_COPY = "order-copy",
@@ -95,6 +96,7 @@ public class GetProcessModelsTest extends GetModelsTest {
     private static BPMNFormModelGenerator bpmnFormModelGenerator;
 
     private static BPMFinderServiceImpl finderService;
+    private final String ORDER_RENAMED = "order-renamed";
 
     private List<JBPMProcessModel> availableProcessModels;
 
@@ -116,17 +118,19 @@ public class GetProcessModelsTest extends GetModelsTest {
     public void testGetModelsAfterCopyRenameAndDelete() throws IOException, URISyntaxException {
         assertOriginalState();
 
-        //renaming the process (asset) should't have any effect on the models
-        renameProcess(NEW_EMPLOYEE, "new-employee-renamed");
-        assertOriginalState();
-
+        //copying process changes it's id and asset name, but not process name
         copyProcess(ORDER, ORDER_COPY);
         assertModelsAfterCopy();
 
-        changeProcessName(ORDER_COPY, ORDER, ORDER_COPY);
+        //renaming the process changes only the asset name, but keeps process name and process id
+        renameProcess(ORDER_COPY, ORDER_RENAMED);
+        assertModelsAfterCopy();
+
+        //this method changes the process name (in UI has to be done in process properties)
+        changeProcessName(ORDER_RENAMED, ORDER, ORDER_COPY);
         assertModelsAfterProcessRename();
 
-        deleteProcess(ORDER_COPY);
+        deleteProcess(ORDER_RENAMED);
         assertOriginalState();
     }
 
@@ -141,7 +145,7 @@ public class GetProcessModelsTest extends GetModelsTest {
         availableProcessModels = finderService.getAvailableProcessModels(rootPath);
         assertThat(availableProcessModels).hasSize(3);
         assertModelWithName(NEW_EMPLOYEE, NEW_EMPLOYEE_VARIABLES, NEW_EMPLOYEE_TASK_MODELS);
-        assertModelWithName("order-renamed", ORDER_VARIABLES, ORDER_TASK_MODELS);
+        assertModelWithName(ORDER_RENAMED, ORDER_VARIABLES, ORDER_TASK_MODELS);
         assertModelWithName(ORDER, ORDER_VARIABLES, ORDER_TASK_MODELS);
     }
 
@@ -172,10 +176,14 @@ public class GetProcessModelsTest extends GetModelsTest {
     private Map<String, Map<String, String>> getTaskModels(JBPMProcessModel model) {
         return model.getTaskFormModels().stream().collect(Collectors.toMap(
                 TaskFormModel::getTaskName,
-                t -> t.getProperties().stream().collect(Collectors.toMap(
-                        ModelProperty::getName,
-                        p -> p.getTypeInfo().getClassName()
-                ))
+                getTaskVariables()
+        ));
+    }
+
+    private static Function<TaskFormModel, Map<String, String>> getTaskVariables() {
+        return t -> t.getProperties().stream().collect(Collectors.toMap(
+                ModelProperty::getName,
+                p -> p.getTypeInfo().getClassName()
         ));
     }
 
