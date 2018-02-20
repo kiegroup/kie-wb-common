@@ -19,7 +19,6 @@ package org.kie.workbench.common.forms.integration.tests.modelslookup;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
@@ -33,8 +32,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.ResourceNotFoundException;
-import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.forms.data.modeller.model.DataObjectFormModel;
@@ -65,11 +62,13 @@ public class GetDataObjectModelsTest extends GetModelsTest {
             DO_PATH_FORMAT = PROJECT_ROOT + DATAOBJECTS_PACKAGE + "%s.java";
 
     private static final String
+            ORDER = "Order",
+            ORDER_COPY = "OrderCopy",
+            ORDER_COPY_FQN = DO_PACKAGE + ORDER_COPY,
             HUMAN = "Human",
-            NEW_PERSON = "NewPerson",
-            PERSON_BACKUP = "PersonBackup",
+            HUMAN_FQN = DO_PACKAGE + HUMAN,
             CREATED_DO = "CreatedDataObject",
-            PERSON_BACKUP_FQN = DO_PACKAGE + PERSON_BACKUP;
+            CREATED_DO_FQN = DO_PACKAGE + CREATED_DO;
 
     private static final Set<String>
             ADDRESS_FIELDS = new HashSet<>(Arrays.asList("street", "number", "city", "zip")),
@@ -77,10 +76,9 @@ public class GetDataObjectModelsTest extends GetModelsTest {
             PERSON_FIELDS = new HashSet<>(Arrays.asList("name", "address", "salary", "married")),
             ITEM_FIELDS = new HashSet<>(Arrays.asList("id", "name", "price"));
 
-    private static final Map<String, Set<String>> ORIGINAL_MODEL = new HashMap<String, Set<String>>() {{
+    private static Map<String, Set<String>> expectedModel = new HashMap<String, Set<String>>() {{
         put(ADDRESS_FQN, ADDRESS_FIELDS);
         put(PERSON_FQN, PERSON_FIELDS);
-        put(PERSON_BACKUP_FQN, PERSON_FIELDS);
         put(ITEM_FQN, ITEM_FIELDS);
         put(ORDER_FQN, ORDER_FIELDS);
     }};
@@ -96,74 +94,47 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     }
 
     @Test
-    public void testGetModelsAfterRename() throws URISyntaxException, IOException {
+    public void testGetModelsAfterRenameCopyDeleteAndCreate() throws URISyntaxException, IOException {
+        assertOriginalModel();
+        assertModelsAfterRename();
+        assertModelsAfterCopy();
+        assertModelsAfterDelete();
+        assertModelsAfterCreate();
+    }
+
+    private void assertOriginalModel() {
+        assertExpectedLoaded(expectedModel);
+    }
+
+    private void assertModelsAfterRename() throws IOException, URISyntaxException {
         renameDO(PERSON, HUMAN);
-
-        final Map<String, Set<String>> expectedDataObjects = new HashMap<String, Set<String>>(ORIGINAL_MODEL) {{
-            remove(PERSON_FQN);
-            put(DO_PACKAGE + HUMAN, PERSON_FIELDS);
-        }};
-
-        assertExpectedLoaded(expectedDataObjects);
+        expectedModel.remove(PERSON_FQN);
+        expectedModel.put(HUMAN_FQN, PERSON_FIELDS);
+        assertExpectedLoaded(expectedModel);
     }
 
-    @Test
-    public void testGetModelsAfterCopy() throws IOException, URISyntaxException {
-        copyDO(PERSON, NEW_PERSON);
-
-        final Map<String, Set<String>> expectedDataObjects = new HashMap<String, Set<String>>(ORIGINAL_MODEL) {{
-            put(DO_PACKAGE + NEW_PERSON, PERSON_FIELDS);
-        }};
-
-        assertExpectedLoaded(expectedDataObjects);
+    private void assertModelsAfterCopy() throws IOException, URISyntaxException {
+        copyDO(ORDER, ORDER_COPY);
+        expectedModel.put(ORDER_COPY_FQN, ORDER_FIELDS);
+        assertExpectedLoaded(expectedModel);
     }
 
-    @Test
-    public void testGetModelsAfterDelete() throws IOException, URISyntaxException {
-        deleteDO(PERSON);
-
-        final Map<String, Set<String>> expectedDataObjects = new HashMap<String, Set<String>>(ORIGINAL_MODEL) {{
-            remove(PERSON_FQN);
-        }};
-
-        assertExpectedLoaded(expectedDataObjects);
+    private void assertModelsAfterDelete() throws IOException, URISyntaxException {
+        deleteDO(ADDRESS);
+        expectedModel.remove(ADDRESS_FQN);
+        assertExpectedLoaded(expectedModel);
     }
 
-    @Test
-    public void testGetModelsAfterCreate() throws URISyntaxException {
+    private void assertModelsAfterCreate() throws URISyntaxException {
         createDO(CREATED_DO);
-
-        final Map<String, Set<String>> expectedDataObjects = new HashMap<String, Set<String>>(ORIGINAL_MODEL) {{
-            put(DO_PACKAGE + CREATED_DO, Collections.emptySet());
-        }};
-
-        assertExpectedLoaded(expectedDataObjects);
-    }
-
-    @After
-    public void cleanUp() throws Exception {
-        if (isDataObjectInResources(HUMAN)) {
-            renameDO(HUMAN, PERSON);
-        }
-        if (isDataObjectInResources(NEW_PERSON)) {
-            deleteDO(NEW_PERSON);
-        }
-        if (!isDataObjectInResources(PERSON)) {
-            copyDO(PERSON_BACKUP, PERSON);
-        }
-        if (isDataObjectInResources(CREATED_DO)) {
-            deleteDO(CREATED_DO);
-        }
+        expectedModel.put(CREATED_DO_FQN, Collections.emptySet());
+        assertExpectedLoaded(expectedModel);
     }
 
     private void assertExpectedLoaded(Map<String, Set<String>> expectedDataObjects) {
         final List<DataObjectFormModel> dataObjects = creationService.getAvailableDataObjects(rootPath);
         final Map<String, Set<String>> actualDataObjects = getDataObjectsMap(dataObjects);
         assertThat(actualDataObjects).isEqualTo(expectedDataObjects);
-    }
-
-    private boolean isDataObjectInResources(String dataObject) {
-        return isResourcePresent(getDOPath(dataObject));
     }
 
     private void renameDO(String oldName, String newName) throws URISyntaxException, IOException {
@@ -199,12 +170,13 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     private void refactorReferencesInOtherClasses(File[] files, String oldFieldType, String newFieldType) throws IOException {
         final String fieldTypeFQN = DO_PACKAGE + oldFieldType;
         for (File file : files) {
-            if (isCandidateForRefactoring(oldFieldType, newFieldType, file)) {
-                String fileContent = FileUtils.readFileToString(file, Charset.defaultCharset());
-                if (needsRefactoring(fieldTypeFQN, fileContent)) {
-                    fileContent = refactorFields(oldFieldType, newFieldType, fileContent);
-                    FileUtils.write(file, fileContent, Charset.defaultCharset());
-                }
+            if (!isCandidateForRefactoring(oldFieldType, newFieldType, file)) {
+                continue;
+            }
+            String fileContent = FileUtils.readFileToString(file, Charset.defaultCharset());
+            if (needsRefactoring(fieldTypeFQN, fileContent)) {
+                fileContent = refactorFields(oldFieldType, newFieldType, fileContent);
+                FileUtils.write(file, fileContent, Charset.defaultCharset());
             }
         }
     }
@@ -214,20 +186,24 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     }
 
     private boolean isCandidateForRefactoring(String oldClassName, String newClassName, File file) {
-        return !Objects.equals(file.getName(), oldClassName + ".java") && !Objects.equals(file.getName(), newClassName + ".java");
+        final String fileName = file.getName();
+        final String sourceFileName = oldClassName + ".java";
+        final String targetFileName = newClassName + ".java";
+        return !Objects.equals(fileName, sourceFileName) && !Objects.equals(fileName, targetFileName);
     }
 
     private String refactorFields(String oldFieldType, String newFieldType, String fileContent) {
         final String oldFieldName = StringUtils.uncapitalize(oldFieldType);
         final String newFieldName = StringUtils.uncapitalize(newFieldType);
         //replace field types, strings, getters and setters
-        fileContent = replaceAllSurroundedBy(fileContent, Arrays.asList(DO_PACKAGE, "\"", "get", "set"), Arrays.asList("", "\"", "(", "("), oldFieldType, newFieldType);
+        String updatedFileContent = replaceAllSurroundedBy(fileContent, Arrays.asList(DO_PACKAGE, "\"", "get", "set"), Arrays.asList("", "\"", "(", "("), oldFieldType, newFieldType);
         //replace field declarations, method parameters and inner field references
-        fileContent = replaceAllSurroundedBy(fileContent, Arrays.asList(" ", " ", " ", ".", ".", "."), Arrays.asList(";", ",", ")", " ", ";", ","), oldFieldName, newFieldName);
-        return fileContent;
+        updatedFileContent = replaceAllSurroundedBy(updatedFileContent, Arrays.asList(" ", " ", " ", ".", ".", "."), Arrays.asList(";", ",", ")", " ", ";", ","), oldFieldName, newFieldName);
+        return updatedFileContent;
     }
 
     private String replaceAllSurroundedBy(String fileContent, List<String> prefixes, List<String> suffixes, String oldName, String newName) {
+        String updatedFileContent = fileContent;
         for (int i = 0; i < prefixes.size(); i++) {
             String prefix = prefixes.get(i);
             String suffix = suffixes.get(i);
@@ -235,21 +211,9 @@ public class GetDataObjectModelsTest extends GetModelsTest {
             if (")".equals(suffix) || "(".equals(suffix)) {
                 regexSuffix = "[" + suffix + "]";
             }
-            fileContent = fileContent.replaceAll(prefix + oldName + regexSuffix, prefix + newName + suffix);
+            updatedFileContent = updatedFileContent.replaceAll(prefix + oldName + regexSuffix, prefix + newName + suffix);
         }
-        return fileContent;
-    }
-
-    private java.nio.file.Path getDataObjectPath(String dataObject) throws URISyntaxException {
-        final URL url = getDataObjectURL(dataObject);
-        if (url == null) {
-            throw new ResourceNotFoundException("The resource: " + dataObject + ".java was not found");
-        }
-        return java.nio.file.Paths.get(url.toURI());
-    }
-
-    private URL getDataObjectURL(String dataObject) {
-        return getClass().getResource(getDOPath(dataObject));
+        return updatedFileContent;
     }
 
     private String getDOPath(String dataObject) {
@@ -257,10 +221,9 @@ public class GetDataObjectModelsTest extends GetModelsTest {
     }
 
     private Map<String, Set<String>> getDataObjectsMap(List<DataObjectFormModel> dataObjects) {
-        Map<String, Set<String>> actualDataObjects = new HashMap<>();
-        for (DataObjectFormModel dataObject : dataObjects) {
-            actualDataObjects.put(dataObject.getClassName(), dataObject.getProperties().stream().map(ModelProperty::getName).collect(Collectors.toSet()));
-        }
-        return actualDataObjects;
+        return dataObjects.stream().collect(Collectors.toMap(
+                DataObjectFormModel::getClassName,
+                d -> d.getProperties().stream().map(ModelProperty::getName).collect(Collectors.toSet()))
+        );
     }
 }

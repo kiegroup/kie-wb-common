@@ -39,6 +39,7 @@ public class GetModelsTest {
             PROJECT_ROOT = "project",
             PERSON = "Person",
             ITEM = "Item",
+            ADDRESS = "Address",
             DO_PACKAGE = "com.myteam.modelslookup.",
             ORDER_FQN = DO_PACKAGE + "Order",
             PERSON_FQN = DO_PACKAGE + PERSON,

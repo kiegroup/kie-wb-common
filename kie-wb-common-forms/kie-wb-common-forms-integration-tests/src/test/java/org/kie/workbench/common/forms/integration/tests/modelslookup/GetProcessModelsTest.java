@@ -132,14 +132,14 @@ public class GetProcessModelsTest extends GetModelsTest {
 
     private void assertOriginalState() {
         availableProcessModels = finderService.getAvailableProcessModels(rootPath);
-        assertNumberOfModels(2);
+        assertThat(availableProcessModels).hasSize(2);
         assertModelWithName(ORDER, ORDER_VARIABLES, ORDER_TASK_MODELS);
         assertModelWithName(NEW_EMPLOYEE, NEW_EMPLOYEE_VARIABLES, NEW_EMPLOYEE_TASK_MODELS);
     }
 
     private void assertModelsAfterProcessRename() throws IOException {
         availableProcessModels = finderService.getAvailableProcessModels(rootPath);
-        assertNumberOfModels(3);
+        assertThat(availableProcessModels).hasSize(3);
         assertModelWithName(NEW_EMPLOYEE, NEW_EMPLOYEE_VARIABLES, NEW_EMPLOYEE_TASK_MODELS);
         assertModelWithName("order-renamed", ORDER_VARIABLES, ORDER_TASK_MODELS);
         assertModelWithName(ORDER, ORDER_VARIABLES, ORDER_TASK_MODELS);
@@ -147,14 +147,10 @@ public class GetProcessModelsTest extends GetModelsTest {
 
     private void assertModelsAfterCopy() {
         availableProcessModels = finderService.getAvailableProcessModels(rootPath);
-        assertNumberOfModels(3);
+        assertThat(availableProcessModels).hasSize(3);
         //there are two models with process name order (because asset rename doesn't change process name)
         assertModelWithName(ORDER, ORDER_VARIABLES, ORDER_TASK_MODELS);
         assertModelWithName(NEW_EMPLOYEE, NEW_EMPLOYEE_VARIABLES, NEW_EMPLOYEE_TASK_MODELS);
-    }
-
-    private void assertNumberOfModels(int expectedNumber) {
-        assertThat(availableProcessModels.size()).isEqualTo(expectedNumber);
     }
 
     private void assertModelWithName(String process, Map<String, String> variables, Map<String, Map<String, String>> tasks) {
@@ -167,22 +163,20 @@ public class GetProcessModelsTest extends GetModelsTest {
     }
 
     private Map<String, String> getProcessVariables(JBPMProcessModel model) {
-        Map<String, String> variables = new HashMap<>();
-        final List<ModelProperty> properties = model.getProcessFormModel().getProperties();
-        for (ModelProperty property : properties) {
-            variables.put(property.getName(), property.getTypeInfo().getClassName());
-        }
-        return variables;
+        return model.getProcessFormModel().getProperties().stream().collect(Collectors.toMap(
+                ModelProperty::getName,
+                p -> p.getTypeInfo().getClassName()
+        ));
     }
 
     private Map<String, Map<String, String>> getTaskModels(JBPMProcessModel model) {
-        Map<String, Map<String, String>> taskModels = new HashMap<>();
-        final List<TaskFormModel> taskFormModels = model.getTaskFormModels();
-        for (TaskFormModel taskFormModel : taskFormModels) {
-            final Map<String, String> taskVariables = taskFormModel.getProperties().stream().collect(Collectors.toMap(ModelProperty::getName, p -> p.getTypeInfo().getClassName()));
-            taskModels.put(taskFormModel.getTaskName(), taskVariables);
-        }
-        return taskModels;
+        return model.getTaskFormModels().stream().collect(Collectors.toMap(
+                TaskFormModel::getTaskName,
+                t -> t.getProperties().stream().collect(Collectors.toMap(
+                        ModelProperty::getName,
+                        p -> p.getTypeInfo().getClassName()
+                ))
+        ));
     }
 
     private void copyProcess(String oldName, String newName) throws IOException {
