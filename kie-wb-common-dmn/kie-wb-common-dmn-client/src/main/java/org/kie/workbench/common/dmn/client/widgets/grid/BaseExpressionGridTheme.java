@@ -67,6 +67,8 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
 
     public static final String FONT_FAMILY_EXPRESSION = "Courier New";
 
+    public static final double STROKE_WIDTH = 1.0;
+
     @Override
     public String getName() {
         return "DMN Editor";
@@ -103,7 +105,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public MultiPath getHeaderGridLine() {
         return new MultiPath()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -151,7 +153,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public MultiPath getBodyGridLine() {
         return new MultiPath()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -170,7 +172,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Rectangle getGridBoundary() {
         return new Rectangle(0, 0)
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -178,7 +180,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Line getGridHeaderBodyDivider() {
         return new Line()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 }
