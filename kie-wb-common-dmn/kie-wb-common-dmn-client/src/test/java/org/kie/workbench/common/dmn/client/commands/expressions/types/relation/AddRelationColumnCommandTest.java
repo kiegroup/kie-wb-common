@@ -134,6 +134,36 @@ public class AddRelationColumnCommandTest {
     }
 
     @Test
+    public void testGraphCommandExecuteWithExistingColumn_InsertBefore() {
+        final InformationItem existingInformationItem = new InformationItem();
+        relation.getColumn().add(existingInformationItem);
+
+        final List row = new List();
+        relation.getRow().add(row);
+
+        final LiteralExpression existingLiteralExpression = new LiteralExpression();
+        row.getExpression().add(0, existingLiteralExpression);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+        assertEquals(2,
+                     relation.getColumn().size());
+        assertEquals(informationItem,
+                     relation.getColumn().get(0));
+        assertEquals(existingInformationItem,
+                     relation.getColumn().get(1));
+        assertEquals(1,
+                     relation.getRow().size());
+        assertEquals(2,
+                     relation.getRow().get(0).getExpression().size());
+        assertTrue(relation.getRow().get(0).getExpression().get(0) instanceof LiteralExpression);
+        assertEquals(existingLiteralExpression,
+                     relation.getRow().get(0).getExpression().get(1));
+    }
+
+    @Test
     public void testGraphCommandExecuteWithNoRows() {
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -162,6 +192,8 @@ public class AddRelationColumnCommandTest {
                      relation.getColumn().size());
         assertEquals(1,
                      relation.getRow().size());
+        assertEquals(0,
+                     relation.getRow().get(0).getExpression().size());
     }
 
     @Test

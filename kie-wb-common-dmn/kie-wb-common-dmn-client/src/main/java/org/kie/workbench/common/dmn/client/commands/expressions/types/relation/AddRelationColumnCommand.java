@@ -75,11 +75,13 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                relation.getColumn().add(uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT,
+                final int iiIndex = uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT;
+                relation.getColumn().add(iiIndex,
                                          informationItem);
                 relation.getRow().forEach(row -> {
                     final LiteralExpression le = new LiteralExpression();
-                    row.getExpression().add(le);
+                    row.getExpression().add(iiIndex,
+                                            le);
                 });
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -117,6 +119,7 @@ public class AddRelationColumnCommand extends AbstractCanvasGraphCommand impleme
 
             @Override
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
+                //Deleting the GridColumn also deletes the underlying data
                 uiModel.deleteColumn(uiModelColumn);
 
                 updateParentInformation();

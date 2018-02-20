@@ -264,6 +264,7 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationUIModelMa
                                           new DeleteRelationColumnCommand(relation,
                                                                           model,
                                                                           index,
+                                                                          uiModelMapper,
                                                                           () -> {
                                                                               final int parentColumnIndex = getParentInformation().getColumnIndex();
                                                                               final GridData parentGridData = getParentInformation().getGridData();
@@ -283,6 +284,7 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationUIModelMa
                                           new DeleteRelationRowCommand(relation,
                                                                        model,
                                                                        index,
+                                                                       uiModelMapper,
                                                                        () -> {
                                                                            gridPanel.refreshScrollPosition();
                                                                            gridPanel.updatePanelSize();

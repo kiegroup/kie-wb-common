@@ -16,13 +16,18 @@
 
 package org.kie.workbench.common.dmn.client.commands.expressions.types.relation;
 
+import java.util.Optional;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.v1_1.List;
+import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationColumn;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -54,6 +59,9 @@ public class DeleteRelationRowCommandTest {
     private RelationColumn uiModelColumn;
 
     @Mock
+    private ListSelector listSelector;
+
+    @Mock
     private org.uberfire.mvp.Command canvasOperation;
 
     @Mock
@@ -69,6 +77,8 @@ public class DeleteRelationRowCommandTest {
 
     private GridData uiModel;
 
+    private RelationUIModelMapper uiModelMapper;
+
     private DeleteRelationRowCommand command;
 
     @Before
@@ -79,9 +89,14 @@ public class DeleteRelationRowCommandTest {
         this.uiModel.appendRow(new DMNGridRow());
         this.uiModel.appendColumn(uiRowNumberColumn);
 
+        this.uiModelMapper = new RelationUIModelMapper(() -> uiModel,
+                                                       () -> Optional.of(relation),
+                                                       listSelector);
+
         this.command = spy(new DeleteRelationRowCommand(relation,
                                                         uiModel,
                                                         0,
+                                                        uiModelMapper,
                                                         canvasOperation));
         doReturn(ruleManager).when(handler).getRuleManager();
         doReturn(0).when(uiRowNumberColumn).getIndex();
@@ -99,6 +114,7 @@ public class DeleteRelationRowCommandTest {
     @Test
     public void testGraphCommandExecuteWithColumns() {
         relation.getColumn().add(new InformationItem());
+        relation.getRow().get(0).getExpression().add(new LiteralExpression());
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -123,6 +139,8 @@ public class DeleteRelationRowCommandTest {
     @Test
     public void testGraphCommandUndoWithColumns() {
         relation.getColumn().add(new InformationItem());
+        relation.getRow().get(0).getExpression().add(new LiteralExpression());
+        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -135,6 +153,10 @@ public class DeleteRelationRowCommandTest {
                      relation.getColumn().size());
         assertEquals(1,
                      relation.getRow().size());
+        assertEquals(1,
+                     relation.getRow().get(0).getExpression().size());
+        assertEquals("value",
+                     ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).getText());
     }
 
     @Test
@@ -204,7 +226,12 @@ public class DeleteRelationRowCommandTest {
 
     @Test
     public void testCanvasCommandUndoWithColumns() {
+        relation.getColumn().add(new InformationItem());
+        relation.getRow().get(0).getExpression().add(new LiteralExpression());
+        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
         uiModel.appendColumn(uiModelColumn);
+        uiModelMapper.fromDMNModel(0, 0);
+        uiModelMapper.fromDMNModel(0, 1);
 
         //Delete row and then undo
         final Command<AbstractCanvasHandler, CanvasViolation> cc = command.newCanvasCommand(handler);
@@ -224,6 +251,10 @@ public class DeleteRelationRowCommandTest {
                      uiModel.getColumns().get(1));
         assertEquals(1,
                      uiModel.getRowCount());
+        assertEquals(1,
+                     uiModel.getCell(0, 0).getValue().getValue());
+        assertEquals("value",
+                     uiModel.getCell(0, 1).getValue().getValue());
 
         verify(command).updateRowNumbers();
         verify(command).updateParentInformation();
@@ -249,6 +280,8 @@ public class DeleteRelationRowCommandTest {
                      uiModel.getColumns().get(0));
         assertEquals(1,
                      uiModel.getRowCount());
+        assertEquals(1,
+                     uiModel.getCell(0, 0).getValue().getValue());
 
         verify(command).updateRowNumbers();
         verify(command).updateParentInformation();
