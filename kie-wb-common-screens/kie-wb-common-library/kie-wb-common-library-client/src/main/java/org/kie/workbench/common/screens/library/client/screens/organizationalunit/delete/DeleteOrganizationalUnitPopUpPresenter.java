@@ -48,7 +48,6 @@ public class DeleteOrganizationalUnitPopUpPresenter {
 
         String getDeletingMessage();
 
-        String getDeleteSuccessMessage();
     }
 
     private View view;
@@ -103,8 +102,6 @@ public class DeleteOrganizationalUnitPopUpPresenter {
         organizationalUnitService.call(v -> {
                                            afterDeleteOrganizationalUnitEvent.fire(new AfterDeleteOrganizationalUnitEvent(organizationalUnit));
                                            view.hideBusyIndicator();
-                                           notificationEvent.fire(new NotificationEvent(view.getDeleteSuccessMessage(),
-                                                                                        NotificationEvent.NotificationType.SUCCESS));
                                            view.hide();
                                            libraryPlaces.goToOrganizationalUnits();
                                        },

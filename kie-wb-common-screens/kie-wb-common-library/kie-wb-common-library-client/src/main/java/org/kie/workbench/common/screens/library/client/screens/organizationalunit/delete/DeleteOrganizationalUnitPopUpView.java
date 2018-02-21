@@ -120,12 +120,6 @@ public class DeleteOrganizationalUnitPopUpView implements DeleteOrganizationalUn
                          translationUtils.getOrganizationalUnitAliasInSingular().toLowerCase());
     }
 
-    @Override
-    public String getDeleteSuccessMessage() {
-        return ts.format(LibraryConstants.DeleteOrganizationalUnitSuccess,
-                         translationUtils.getOrganizationalUnitAliasInSingular());
-    }
-
     private void modalSetup() {
         this.modal = new CommonModalBuilder()
                 .addHeader(ts.format(LibraryConstants.DeleteOrganizationalUnit,
