@@ -52,6 +52,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteRelationRowCommandTest {
 
+    private static final String VALUE = "value";
+
     @Mock
     private RowNumberColumn uiRowNumberColumn;
 
@@ -139,8 +141,9 @@ public class DeleteRelationRowCommandTest {
     @Test
     public void testGraphCommandUndoWithColumns() {
         relation.getColumn().add(new InformationItem());
-        relation.getRow().get(0).getExpression().add(new LiteralExpression());
-        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
+        final LiteralExpression literalExpression = new LiteralExpression();
+        literalExpression.setText(VALUE);
+        relation.getRow().get(0).getExpression().add(literalExpression);
 
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
@@ -155,7 +158,7 @@ public class DeleteRelationRowCommandTest {
                      relation.getRow().size());
         assertEquals(1,
                      relation.getRow().get(0).getExpression().size());
-        assertEquals("value",
+        assertEquals(VALUE,
                      ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).getText());
     }
 
@@ -227,8 +230,9 @@ public class DeleteRelationRowCommandTest {
     @Test
     public void testCanvasCommandUndoWithColumns() {
         relation.getColumn().add(new InformationItem());
-        relation.getRow().get(0).getExpression().add(new LiteralExpression());
-        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
+        final LiteralExpression literalExpression = new LiteralExpression();
+        literalExpression.setText(VALUE);
+        relation.getRow().get(0).getExpression().add(literalExpression);
         uiModel.appendColumn(uiModelColumn);
         uiModelMapper.fromDMNModel(0, 0);
         uiModelMapper.fromDMNModel(0, 1);
@@ -253,7 +257,7 @@ public class DeleteRelationRowCommandTest {
                      uiModel.getRowCount());
         assertEquals(1,
                      uiModel.getCell(0, 0).getValue().getValue());
-        assertEquals("value",
+        assertEquals(VALUE,
                      uiModel.getCell(0, 1).getValue().getValue());
 
         verify(command).updateRowNumbers();

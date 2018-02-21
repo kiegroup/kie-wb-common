@@ -73,8 +73,10 @@ public class DeleteRelationColumnCommand extends AbstractCanvasGraphCommand impl
 
     private List<Expression> extractColumnData(final int uiColumnIndex) {
         final int iiIndex = uiColumnIndex - RelationUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT;
-        final List<Expression> values = relation.getRow().stream().map(row -> row.getExpression().get(iiIndex)).collect(Collectors.toList());
-        return values;
+        return relation.getRow()
+                .stream()
+                .map(row -> row.getExpression().get(iiIndex))
+                .collect(Collectors.toList());
     }
 
     @Override

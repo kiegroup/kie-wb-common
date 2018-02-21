@@ -52,6 +52,8 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class DeleteRelationColumnCommandTest {
 
+    private static final String VALUE = "value";
+
     @Mock
     private RowNumberColumn uiRowNumberColumn;
 
@@ -155,8 +157,9 @@ public class DeleteRelationColumnCommandTest {
     @Test
     public void testGraphCommandUndoWithRows() {
         relation.getRow().add(new List());
-        relation.getRow().get(0).getExpression().add(new LiteralExpression());
-        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
+        final LiteralExpression literalExpression = new LiteralExpression();
+        literalExpression.setText(VALUE);
+        relation.getRow().get(0).getExpression().add(literalExpression);
 
         makeCommand();
 
@@ -173,7 +176,7 @@ public class DeleteRelationColumnCommandTest {
                      relation.getRow().size());
         assertEquals(1,
                      relation.getRow().get(0).getExpression().size());
-        assertEquals("value",
+        assertEquals(VALUE,
                      ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).getText());
     }
 
@@ -257,8 +260,9 @@ public class DeleteRelationColumnCommandTest {
     @Test
     public void testCanvasCommandUndoWithRows() {
         relation.getRow().add(new List());
-        relation.getRow().get(0).getExpression().add(new LiteralExpression());
-        ((LiteralExpression) relation.getRow().get(0).getExpression().get(0)).setText("value");
+        final LiteralExpression literalExpression = new LiteralExpression();
+        literalExpression.setText(VALUE);
+        relation.getRow().get(0).getExpression().add(literalExpression);
         uiModel.appendRow(new DMNGridRow());
         uiModelMapper.fromDMNModel(0, 1);
 
@@ -284,7 +288,7 @@ public class DeleteRelationColumnCommandTest {
                      uiModel.getRowCount());
         assertEquals(1,
                      uiModel.getRows().get(0).getCells().size());
-        assertEquals("value",
+        assertEquals(VALUE,
                      uiModel.getCell(0, 1).getValue().getValue());
 
         verify(command).updateParentInformation();
