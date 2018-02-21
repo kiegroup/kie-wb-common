@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPerspective;
 import org.uberfire.client.mvp.PlaceManager;
 import org.uberfire.client.workbench.panels.impl.MultiListWorkbenchPanelPresenter;
-import org.uberfire.mvp.Command;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.workbench.model.PerspectiveDefinition;
 import org.uberfire.workbench.model.impl.PerspectiveDefinitionImpl;
@@ -44,7 +43,6 @@ import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.MenuItem;
 import org.uberfire.workbench.model.menu.MenuPosition;
 import org.uberfire.workbench.model.menu.Menus;
-
 
 /**
  * A Perspective for Rule authors. Note the @WorkbenchPerspective has the same identifier as kie-drools-wb
@@ -78,22 +76,21 @@ public class AuthoringPerspective {
 
     @PostConstruct
     public void setup() {
-        docks.setup( "AuthoringPerspective", new DefaultPlaceRequest( "org.kie.guvnor.explorer" ) );
+        docks.setup("AuthoringPerspective", new DefaultPlaceRequest("org.kie.guvnor.explorer"));
     }
 
     @Perspective
     public PerspectiveDefinition buildPerspective() {
-        final PerspectiveDefinitionImpl perspective = new PerspectiveDefinitionImpl( MultiListWorkbenchPanelPresenter.class.getName() );
-        perspective.setName( "Author" );
+        final PerspectiveDefinitionImpl perspective = new PerspectiveDefinitionImpl(MultiListWorkbenchPanelPresenter.class.getName());
+        perspective.setName("Author");
 
         return perspective;
     }
 
     @WorkbenchMenu
     public Menus buildMenuBar() {
-        if ( ApplicationPreferences.getBooleanPref( ExamplesService.EXAMPLES_SYSTEM_PROPERTY ) ) {
+        if (ApplicationPreferences.getBooleanPref(ExamplesService.EXAMPLES_SYSTEM_PROPERTY)) {
             return buildMenuBarWithExamples();
-
         } else {
             return buildMenuBarWithoutExamples();
         }
@@ -101,70 +98,49 @@ public class AuthoringPerspective {
 
     private Menus buildMenuBarWithExamples() {
         return MenuFactory
-                .newTopLevelMenu( AppConstants.INSTANCE.Examples() )
-                .respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        wizard.start();
-                    }
-                } )
+                .newTopLevelMenu(AppConstants.INSTANCE.Examples())
+                .respondsWith(() -> wizard.start())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Explore() )
-                .withItems( getExploreMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Explore())
+                .withItems(getExploreMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.New() )
-                .withItems( newResourcesMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.New())
+                .withItems(newResourcesMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Project() )
-                .withItems( projectMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Project())
+                .withItems(projectMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Repository() )
-                .withItems( repositoryMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Repository())
+                .withItems(repositoryMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.assetSearch() ).position( MenuPosition.RIGHT ).respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        placeManager.goTo( "FindForm" );
-                    }
-                } )
+                .newTopLevelMenu(AppConstants.INSTANCE.assetSearch()).position(MenuPosition.RIGHT).respondsWith(() -> placeManager.goTo("FindForm"))
                 .endMenu()
                 .build();
     }
 
     private Menus buildMenuBarWithoutExamples() {
         return MenuFactory
-                .newTopLevelMenu( AppConstants.INSTANCE.Explore() )
-                .withItems( getExploreMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Explore())
+                .withItems(getExploreMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.New() )
-                .withItems( newResourcesMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.New())
+                .withItems(newResourcesMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Project() )
-                .withItems( projectMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Project())
+                .withItems(projectMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Repository() )
-                .withItems( repositoryMenu.getMenuItems() )
+                .newTopLevelMenu(AppConstants.INSTANCE.Repository())
+                .withItems(repositoryMenu.getMenuItems())
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.assetSearch() ).position( MenuPosition.RIGHT ).respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        placeManager.goTo( "FindForm" );
-                    }
-                } )
+                .newTopLevelMenu(AppConstants.INSTANCE.assetSearch()).position(MenuPosition.RIGHT).respondsWith(() -> placeManager.goTo("FindForm"))
                 .endMenu()
                 .build();
     }
 
     private List<? extends MenuItem> getExploreMenuItems() {
         ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
-        menuItems.add( MenuFactory.newSimpleItem( AppConstants.INSTANCE.Projects() ).respondsWith(
-                new Command() {
-                    @Override
-                    public void execute() {
-                        placeManager.goTo( "org.kie.guvnor.explorer" );
-                    }
-                } ).endMenu().build().getItems().get( 0 ) );
+        menuItems.add(MenuFactory.newSimpleItem(AppConstants.INSTANCE.Projects()).respondsWith(
+                () -> placeManager.goTo("org.kie.guvnor.explorer")).endMenu().build().getItems().get(0));
         return menuItems;
     }
-
 }

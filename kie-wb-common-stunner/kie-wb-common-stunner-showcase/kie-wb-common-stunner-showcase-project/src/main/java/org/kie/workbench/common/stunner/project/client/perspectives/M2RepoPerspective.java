@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import org.kie.workbench.common.workbench.client.PerspectiveIds;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPanel;
 import org.uberfire.client.annotations.WorkbenchPerspective;
-import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuFactory;
 import org.uberfire.workbench.model.menu.Menus;
 
@@ -40,7 +39,7 @@ import org.uberfire.workbench.model.menu.Menus;
  */
 @Templated
 @Dependent
-@WorkbenchPerspective( identifier = PerspectiveIds.GUVNOR_M2REPO )
+@WorkbenchPerspective(identifier = PerspectiveIds.GUVNOR_M2REPO)
 public class M2RepoPerspective implements IsElement {
 
     @Inject
@@ -51,29 +50,20 @@ public class M2RepoPerspective implements IsElement {
 
     @Inject
     @DataField
-    @WorkbenchPanel( parts = "M2RepoEditor" )
+    @WorkbenchPanel(parts = "M2RepoEditor")
     Div m2RepoEditor;
 
     @WorkbenchMenu
     public Menus getMenus() {
-        return MenuFactory.newTopLevelMenu(AppConstants.INSTANCE.Upload() )
-                .respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        UploadFormPresenter uploadFormPresenter = iocManager.lookupBean( UploadFormPresenter.class ).getInstance();
-                        uploadFormPresenter.showView();
-                    }
-                } )
+        return MenuFactory.newTopLevelMenu(AppConstants.INSTANCE.Upload())
+                .respondsWith(() -> {
+                    UploadFormPresenter uploadFormPresenter = iocManager.lookupBean(UploadFormPresenter.class).getInstance();
+                    uploadFormPresenter.showView();
+                })
                 .endMenu()
-                .newTopLevelMenu( AppConstants.INSTANCE.Refresh() )
-                .respondsWith( new Command() {
-                    @Override
-                    public void execute() {
-                        refreshEvents.fire( new M2RepoRefreshEvent() );
-                    }
-                } )
+                .newTopLevelMenu(AppConstants.INSTANCE.Refresh())
+                .respondsWith(() -> refreshEvents.fire(new M2RepoRefreshEvent()))
                 .endMenu()
                 .build();
     }
-
 }
