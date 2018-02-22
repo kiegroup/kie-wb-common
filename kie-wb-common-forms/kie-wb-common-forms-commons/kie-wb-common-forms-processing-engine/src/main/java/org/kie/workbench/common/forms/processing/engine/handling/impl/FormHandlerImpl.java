@@ -30,7 +30,6 @@ import org.jboss.errai.databinding.client.PropertyChangeUnsubscribeHandle;
 import org.jboss.errai.databinding.client.api.Converter;
 import org.jboss.errai.databinding.client.api.DataBinder;
 import org.jboss.errai.databinding.client.api.StateSync;
-import org.kie.workbench.common.forms.processing.engine.handling.DisabledFormHandlerRegistry;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandlerManager;
 import org.kie.workbench.common.forms.processing.engine.handling.Form;
@@ -40,8 +39,6 @@ import org.kie.workbench.common.forms.processing.engine.handling.FormValidator;
 import org.kie.workbench.common.forms.processing.engine.handling.IsNestedModel;
 
 public class FormHandlerImpl<T> implements FormHandler<T> {
-
-    protected DisabledFormHandlerRegistry registry;
 
     protected FormValidator validator;
 
@@ -55,11 +52,9 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
 
     @Inject
     public FormHandlerImpl(FormValidator validator,
-                           FieldChangeHandlerManager fieldChangeManager,
-                           DisabledFormHandlerRegistry registry) {
+                           FieldChangeHandlerManager fieldChangeManager) {
         this.validator = validator;
         this.fieldChangeManager = fieldChangeManager;
-        this.registry = registry;
 
         this.form = new Form();
 
@@ -211,26 +206,11 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
         form.getFields().forEach(field -> field.setReadOnly(readOnly));
     }
 
-    @Override
-    public void disable() {
-        if(!registry.isBatchActive()) {
-            registry.startBatch(this);
-            disableNestedForms();
-            registry.finishBatch();
-        } else {
-            disableNestedForms();
-            registry.addToActiveBatch(this);
-        }
-    }
-
     public void disableNestedForms() {
         form.getFields().stream()
                 .filter(formField -> formField.getWidget() instanceof IsNestedModel)
                 .map(formField -> (IsNestedModel) formField.getWidget())
                 .forEach(IsNestedModel::clear);
-        T model = getModel();
-        binder.setModel(model,
-                        StateSync.FROM_UI);
     }
 
     @Override
@@ -240,6 +220,8 @@ public class FormHandlerImpl<T> implements FormHandler<T> {
         if (binder == null) {
             return;
         }
+
+        disableNestedForms();
 
         unsubscribeHandlers.forEach(PropertyChangeUnsubscribeHandle::unsubscribe);
 

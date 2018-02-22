@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.forms.processing.engine.handling.impl.test;
+package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
-import java.util.Collection;
+import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.uberfire.client.mvp.UberElement;
 
-import org.kie.workbench.common.forms.processing.engine.handling.impl.DisabledFormHandlerRegistryImpl;
+public interface FormDisplayerView extends UberElement<FormDisplayerView.Presenter> {
 
-public class TestDisabledFormHandlerRegistryImpl extends DisabledFormHandlerRegistryImpl {
+    void show();
 
-    public Collection<FormHandlerBatch> getActiveBatches() {
-        return activeBatches;
+    void hide();
+
+    interface Presenter {
+
+        DynamicFormRenderer getRenderer();
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.forms.client.widgets;
+package org.kie.workbench.common.stunner.forms.client.widgets.container;
 
-import org.jboss.errai.common.client.dom.HTMLElement;
-import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
-import org.uberfire.client.mvp.UberElement;
+import org.jboss.errai.common.client.api.IsElement;
+import org.kie.workbench.common.stunner.forms.client.widgets.container.displayer.FormDisplayer;
 
-public interface FormPropertiesWidgetView extends UberElement<FormPropertiesWidgetView.Presenter> {
+public interface FormsContainerView extends IsElement {
 
-    interface Presenter {
+    void addDisplayer(FormDisplayer displayer);
 
-        HTMLElement getDisplayerElement();
-    }
+    void clear();
+
+    void removeDisplayer(FormDisplayer displayer);
 }

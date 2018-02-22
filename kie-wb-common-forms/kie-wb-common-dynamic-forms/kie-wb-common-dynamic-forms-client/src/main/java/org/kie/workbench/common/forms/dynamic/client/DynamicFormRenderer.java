@@ -193,7 +193,7 @@ public class DynamicFormRenderer implements IsWidget,
 
     public void unBind() {
         if (isInitialized()) {
-            formHandler.disable();
+            formHandler.clear();
             view.clear();
             formHandler = null;
             context = null;

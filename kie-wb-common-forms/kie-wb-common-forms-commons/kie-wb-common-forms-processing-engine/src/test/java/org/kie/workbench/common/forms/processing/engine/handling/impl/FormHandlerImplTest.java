@@ -28,7 +28,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.processing.engine.handling.DisabledFormHandlerRegistry;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.model.ModelProxy;
 import org.kie.workbench.common.forms.processing.engine.handling.impl.test.TestFormHandler;
 import org.mockito.Mock;
@@ -51,9 +50,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
     @Mock
     protected PropertyChangeUnsubscribeHandle unsubscribeHandle;
-
-    @Mock
-    protected DisabledFormHandlerRegistry handlerRegistry;
 
     @Mock
     protected TranslationService translationService;
@@ -88,7 +84,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
         formHandler = new TestFormHandler(formValidator,
                                           fieldChangeHandlerManager,
-                                          handlerRegistry,
                                           binder);
     }
 
@@ -252,9 +247,6 @@ public class FormHandlerImplTest extends AbstractFormEngineTest {
 
     @After
     public void end() {
-        formHandler.disable();
-
-        verify(handlerRegistry).startBatch(formHandler);
 
         formHandler.clear();
 
