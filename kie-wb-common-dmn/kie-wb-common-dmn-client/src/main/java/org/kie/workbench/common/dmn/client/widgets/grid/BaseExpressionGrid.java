@@ -66,7 +66,6 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.impl.BaseGridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
-import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer.GridRendererContext;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
@@ -387,27 +386,11 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
             return true;
         };
 
-        allOtherCommands.stream().filter(renderHeader).forEach(p -> p.getK2().execute(makeGridRendererContext(p.getK1(),
-                                                                                                              isSelectionLayer)));
-        gridLineCommands.stream().filter(renderHeader).forEach(p -> p.getK2().execute(makeGridRendererContext(p.getK1(),
-                                                                                                              isSelectionLayer)));
-        selectedCellsCommands.stream().filter(renderHeader).forEach(p -> p.getK2().execute(makeGridRendererContext(p.getK1(),
-                                                                                                                   isSelectionLayer)));
-    }
-
-    private GridRendererContext makeGridRendererContext(final Group group,
-                                                        final boolean isSelectionLayer) {
-        return new GridRendererContext() {
-            @Override
-            public Group getGroup() {
-                return group;
-            }
-
-            @Override
-            public boolean isSelectionLayer() {
-                return isSelectionLayer;
-            }
-        };
+        renderQueue.clear();
+        allOtherCommands.stream().filter(renderHeader).forEach(p -> addCommandToRenderQueue(p.getK1(), p.getK2()));
+        gridLineCommands.stream().filter(renderHeader).forEach(p -> addCommandToRenderQueue(p.getK1(), p.getK2()));
+        selectedCellsCommands.stream().filter(renderHeader).forEach(p -> addCommandToRenderQueue(p.getK1(), p.getK2()));
+        super.executeRenderQueueCommands(isSelectionLayer);
     }
 
     public GridCellTuple getParentInformation() {
