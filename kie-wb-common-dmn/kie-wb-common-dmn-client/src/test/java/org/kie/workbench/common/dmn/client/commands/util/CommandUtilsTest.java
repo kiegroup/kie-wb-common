@@ -239,7 +239,7 @@ public class CommandUtilsTest {
         doReturn(gridData).when(gridWidget).getModel();
         doReturn(null).when(gridData).getCell(rowIndex, columnIndex);
 
-        Assertions.assertThat(CommandUtils.extractGridCellValue(cellTuple)).isNull();
+        Assertions.assertThat(CommandUtils.extractGridCellValue(cellTuple)).isEmpty();
     }
 
     @Test
@@ -256,7 +256,7 @@ public class CommandUtilsTest {
         doReturn(gridCell).when(gridData).getCell(rowIndex, columnIndex);
         doReturn(gridCellValue).when(gridCell).getValue();
 
-        Assertions.assertThat(CommandUtils.extractGridCellValue(cellTuple)).isEqualTo(gridCellValue);
+        Assertions.assertThat(CommandUtils.extractGridCellValue(cellTuple)).hasValue(gridCellValue);
     }
 
     private void assertParentInformationValues(final int expressionColumnIndex) {

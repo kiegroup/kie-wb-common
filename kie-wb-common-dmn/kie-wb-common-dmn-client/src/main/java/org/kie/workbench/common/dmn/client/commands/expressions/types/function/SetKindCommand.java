@@ -68,7 +68,7 @@ public class SetKindCommand extends AbstractCanvasGraphCommand implements VetoEx
 
         this.oldKind = getKind();
         this.oldExpression = Optional.ofNullable(function.getExpression());
-        this.oldCellValue = Optional.ofNullable(extractGridCellValue(cellTuple));
+        this.oldCellValue = extractGridCellValue(cellTuple);
     }
 
 

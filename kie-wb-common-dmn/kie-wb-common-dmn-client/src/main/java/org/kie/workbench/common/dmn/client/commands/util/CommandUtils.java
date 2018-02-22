@@ -95,9 +95,9 @@ public class CommandUtils {
         });
     }
 
-    public static GridCellValue<?> extractGridCellValue(final GridCellTuple cellTuple) {
+    public static Optional<GridCellValue<?>> extractGridCellValue(final GridCellTuple cellTuple) {
         final GridCell<?> cell = cellTuple.getGridWidget().getModel().getCell(cellTuple.getRowIndex(),
                                                                               cellTuple.getColumnIndex());
-        return cell == null ? null : cell.getValue();
+        return Optional.ofNullable(cell == null ? null : cell.getValue());
     }
 }

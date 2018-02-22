@@ -54,7 +54,7 @@ public class DeleteCellValueCommand extends AbstractCanvasGraphCommand implement
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
 
-        this.oldCellValue = Optional.ofNullable(extractGridCellValue(cellTuple));
+        this.oldCellValue = extractGridCellValue(cellTuple);
     }
 
     @Override
