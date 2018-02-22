@@ -120,36 +120,53 @@ public class FormDisplayerTest {
 
     @Test
     public void testRenderElement() {
-        testRender(1, 0, 1);
+        testRender(1, 1, 1, 0, 1);
     }
 
     @Test
     public void testRenderElementForSecondTime() {
 
         // Rendering form for first time
-        testRender(1, 0, 1);
+        testRender(1, 1, 1, 0, 1);
+
+        when(formRenderer.isInitialized()).thenReturn(true);
+        when(formRenderer.isValid()).thenReturn(true);
 
         // Rendering for second time, checks are the same but the view.show() that must be called twice
-        testRender(1, 0, 2);
+        testRender(1, 1, 1, 0, 2);
     }
 
     @Test
     public void testRenderElementForSecondTimeWithDefinitionChange() {
-        testRender(1, 0, 1);
+
+        testRender(1, 1, 1, 0, 1);
 
         SecondDefinition newDefinition = new SecondDefinition();
         when(nodeContent.getDefinition()).thenReturn(newDefinition);
         when(formRenderer.isInitialized()).thenReturn(true);
 
-        testRender(2, 1, 2);
+        testRender(2, 2, 2, 1, 2);
     }
 
-    private void testRender(int renderingTimes, int boundTimes, int viewTimes) {
+    @Test
+    public void testRenderElementForSecondTimeWithValidationFailure() {
+
+        // Rendering form for first time
+        testRender(1, 1, 1, 0, 1);
+
+        when(formRenderer.isInitialized()).thenReturn(true);
+        when(formRenderer.isValid()).thenReturn(false);
+
+        // Rendering for second time, checks are the same but the view.show() that must be called twice
+        testRender(2, 2, 2, 1, 2);
+    }
+
+    private void testRender(int renderingTimes, int initializedTimes, int newContextTimes, int boundTimes, int viewTimes) {
         displayer.render(node, path, fieldChangeHandler);
 
-        verify(formRenderer, times(renderingTimes)).isInitialized();
+        verify(formRenderer, times(initializedTimes)).isInitialized();
         verify(formRenderer, times(boundTimes)).unBind();
-        verify(dynamicFormModelGenerator, times(renderingTimes)).getContextForModel(elementDefinition);
+        verify(dynamicFormModelGenerator, times(newContextTimes)).getContextForModel(elementDefinition);
         verify(formRenderer, times(renderingTimes)).render(any(PathAwareFormContext.class));
         verify(formRenderer, times(renderingTimes)).addFieldChangeHandler(fieldChangeHandler);
 

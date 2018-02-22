@@ -36,12 +36,12 @@ public class FormDisplayerViewImpl implements FormDisplayerView,
 
     @Override
     public void show() {
-        getElement().getStyle().removeProperty("display");
+        getElement().setHidden(false);
     }
 
     @Override
     public void hide() {
-        getElement().getStyle().setProperty("display", "none");
+        getElement().setHidden(true);
     }
 
     @Override

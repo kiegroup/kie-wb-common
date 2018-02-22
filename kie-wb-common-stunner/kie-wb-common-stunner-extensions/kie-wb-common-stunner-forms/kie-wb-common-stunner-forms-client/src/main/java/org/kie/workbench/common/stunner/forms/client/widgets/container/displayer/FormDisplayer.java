@@ -68,29 +68,32 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
 
         // If currentDefinitionId is empty or definitionId is different we must render the form.
         // if currentDefinitionId & definitionId are the same means that the form is already rendered so no need to render again
-        if(null == currentDefinitionId || !definitionId.equals(currentDefinitionId)) {
-
-            if(renderer.isInitialized()) {
-                LOGGER.fine("Clearing previous form");
-                renderer.unBind();
-            }
-
-            LOGGER.fine("Rendering a new form for element");
-
-            final BindableProxy<?> proxy = (BindableProxy<?>) BindableProxyFactory.getBindableProxy(definition);
-            final StaticModelFormRenderingContext generatedCtx = modelGenerator.getContextForModel(proxy.deepUnwrap());
-            final FormRenderingContext<?> pathAwareCtx = new PathAwareFormContext<>(generatedCtx, diagramPath);
-
-            currentDefinitionId = definitionId;
-
-            renderer.render(pathAwareCtx);
-
-            renderer.addFieldChangeHandler(changeHandler);
-        } else {
-            LOGGER.fine("Form already rendered, no need to render again");
+        if (null == currentDefinitionId || !definitionId.equals(currentDefinitionId)) {
+            doRender(definitionId, definition, diagramPath, changeHandler);
+        } else if (!renderer.isValid()) {
+            doRender(definitionId, definition, diagramPath, changeHandler);
         }
 
         show();
+    }
+
+    private void doRender(String definitionId, Object definition, Path diagramPath, FieldChangeHandler changeHandler) {
+        if (renderer.isInitialized()) {
+            LOGGER.fine("Clearing previous form");
+            renderer.unBind();
+        }
+
+        LOGGER.fine("Rendering a new form for element");
+
+        final BindableProxy<?> proxy = (BindableProxy<?>) BindableProxyFactory.getBindableProxy(definition);
+        final StaticModelFormRenderingContext generatedCtx = modelGenerator.getContextForModel(proxy.deepUnwrap());
+        final FormRenderingContext<?> pathAwareCtx = new PathAwareFormContext<>(generatedCtx, diagramPath);
+
+        currentDefinitionId = definitionId;
+
+        renderer.render(pathAwareCtx);
+
+        renderer.addFieldChangeHandler(changeHandler);
     }
 
     protected String getDefinitionId(Object definition) {
