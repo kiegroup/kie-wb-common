@@ -19,6 +19,7 @@ package org.kie.workbench.common.forms.processing.engine.handling;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class Form {
 
@@ -38,7 +39,7 @@ public class Form {
 
     public FormField findFormField(String fieldName) {
         return fields.stream()
-                .filter(field -> field.getFieldName().equals(fieldName) || fieldName.equals(field.getFieldBinding()))
+                .filter(field -> Objects.equals(field.getFieldName(), fieldName) || Objects.equals(fieldName, field.getFieldBinding()))
                 .findFirst()
                 .orElse(null);
     }

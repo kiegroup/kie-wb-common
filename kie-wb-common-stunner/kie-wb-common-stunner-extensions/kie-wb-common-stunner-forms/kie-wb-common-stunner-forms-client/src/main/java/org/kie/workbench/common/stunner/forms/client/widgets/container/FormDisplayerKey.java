@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets.container;
 
+import java.util.Objects;
+
 public class FormDisplayerKey {
 
     private String graphUuid;
@@ -45,10 +47,7 @@ public class FormDisplayerKey {
 
         FormDisplayerKey that = (FormDisplayerKey) o;
 
-        if (!graphUuid.equals(that.graphUuid)) {
-            return false;
-        }
-        return elementUid.equals(that.elementUid);
+        return Objects.equals(graphUuid, that.graphUuid) && Objects.equals(elementUid, that.elementUid);
     }
 
     @Override

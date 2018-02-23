@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.forms.client.widgets.container;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.assertj.core.api.Assertions;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +31,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.uberfire.backend.vfs.Path;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -139,9 +139,7 @@ public class FormsContainerTest {
 
         verify(displayersInstance, times(expectedDisplayers)).get();
 
-        Assertions.assertThat(activeDisplayers)
-                .isNotEmpty()
-                .hasSize(expectedDisplayers);
+        assertThat(activeDisplayers).isNotEmpty().hasSize(expectedDisplayers);
 
         FormDisplayer displayer = activeDisplayers.get(expectedDisplayers - 1);
 
