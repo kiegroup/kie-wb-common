@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 
-import java.util.Collections;
-
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +23,9 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -35,9 +36,9 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
     @Before
     @SuppressWarnings("unchecked")
     public void init() {
-        when(prim.getId()).thenReturn(EventCancelActivityViewHandler.INTERMEDIATE_CIRCLE_ID);
-        when(prim.get()).thenReturn(circle);
-        when(view.getChildren()).thenReturn(Collections.singletonList(prim));
+        super.init();
+        when(child1.getId()).thenReturn(EventCancelActivityViewHandler.ID_INTERMEDIATE);
+        when(child2.getId()).thenReturn(EventCancelActivityViewHandler.ID_INTERMEDIATE_NON_INTERRUPTING);
         tested = new EventCancelActivityViewHandler();
     }
 
@@ -49,7 +50,8 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
         bean.getExecutionSet().getCancelActivity().setValue(false);
         tested.handle(bean,
                       view);
-        verifyCircleDashed(circle);
+        verify(prim1, times(1)).setAlpha(eq(0d));
+        verify(prim2, times(1)).setAlpha(eq(1d));
     }
 
     @Test
@@ -60,7 +62,8 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
         bean.getExecutionSet().getCancelActivity().setValue(true);
         tested.handle(bean,
                       view);
-        verifyCircleNotDashed(circle);
+        verify(prim1, times(1)).setAlpha(eq(1d));
+        verify(prim2, times(1)).setAlpha(eq(0d));
     }
 
     @Test
@@ -71,7 +74,8 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
         bean.getExecutionSet().getCancelActivity().setValue(false);
         tested.handle(bean,
                       view);
-        verifyCircleDashed(circle);
+        verify(prim1, times(1)).setAlpha(eq(0d));
+        verify(prim2, times(1)).setAlpha(eq(1d));
     }
 
     @Test
@@ -82,6 +86,7 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
         bean.getExecutionSet().getCancelActivity().setValue(true);
         tested.handle(bean,
                       view);
-        verifyCircleNotDashed(circle);
+        verify(prim1, times(1)).setAlpha(eq(1d));
+        verify(prim2, times(1)).setAlpha(eq(0d));
     }
 }

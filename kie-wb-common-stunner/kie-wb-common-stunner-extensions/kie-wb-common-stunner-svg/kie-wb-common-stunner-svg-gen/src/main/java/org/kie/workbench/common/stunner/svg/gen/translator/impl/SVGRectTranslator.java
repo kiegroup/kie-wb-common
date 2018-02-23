@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.svg.gen.translator.impl;
 import org.kie.workbench.common.stunner.svg.gen.exception.TranslatorException;
 import org.kie.workbench.common.stunner.svg.gen.model.impl.RectDefinition;
 import org.kie.workbench.common.stunner.svg.gen.translator.SVGTranslatorContext;
-import org.kie.workbench.common.stunner.svg.gen.translator.css.SVGAttributeParserUtils;
+import org.kie.workbench.common.stunner.svg.gen.translator.css.SVGAttributeParser;
 import org.w3c.dom.Element;
 
 public class SVGRectTranslator extends AbstractSVGShapeTranslator<Element, RectDefinition> {
@@ -42,8 +42,8 @@ public class SVGRectTranslator extends AbstractSVGShapeTranslator<Element, RectD
         final String width = rectElement.getAttribute(WIDTH);
         final String height = rectElement.getAttribute(HEIGHT);
         return new RectDefinition(getId(rectElement),
-                                  SVGAttributeParserUtils.toPixelValue(width),
-                                  SVGAttributeParserUtils.toPixelValue(height),
+                                  SVGAttributeParser.toPixelValue(width),
+                                  SVGAttributeParser.toPixelValue(height),
                                   getCornerRadius(rx,
                                                   ry));
     }
@@ -55,10 +55,10 @@ public class SVGRectTranslator extends AbstractSVGShapeTranslator<Element, RectD
 
     private double getCornerRadius(final String rx,
                                    final String ry) {
-        final double cx = SVGAttributeParserUtils.toPixelValue(rx,
-                                                               0d);
-        final double cy = SVGAttributeParserUtils.toPixelValue(ry,
-                                                               0d);
+        final double cx = SVGAttributeParser.toPixelValue(rx,
+                                                          0d);
+        final double cy = SVGAttributeParser.toPixelValue(ry,
+                                                          0d);
         return cx > cy ? cx : cy;
     }
 }

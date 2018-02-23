@@ -50,7 +50,7 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
     public static final Map<Class<? extends BaseSubprocess>, SvgDataUriGlyph> GLYPHS =
             new HashMap<Class<? extends BaseSubprocess>, SvgDataUriGlyph>() {{
                 put(ReusableSubprocess.class, BPMNSVGGlyphFactory.REUSABLE_SUBPROCESS_GLYPH);
-                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
+                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.EMBEDDED_SUBPROCESS_GLYPH);
                 put(EventSubprocess.class, BPMNSVGGlyphFactory.EVENT_SUBPROCESS_GLYPH);
                 put(AdHocSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
                 put(MultipleInstanceSubprocess.class, BPMNSVGGlyphFactory.MULTIPLE_INSTANCE_SUBPROCESS_GLYPH);

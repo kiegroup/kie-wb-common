@@ -23,7 +23,7 @@ import com.ait.lienzo.shared.core.types.Color;
 import com.ait.lienzo.shared.core.types.ColorName;
 import org.apache.commons.lang3.StringUtils;
 
-public class SVGAttributeParserUtils {
+public class SVGAttributeParser {
 
     private static final Pattern RBG_PATTERN = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
 

@@ -84,7 +84,7 @@ public class MultiPathDefinitionGeneratorTest {
                                                                       VBOX_MIN_X,
                                                                       VBOX_MIN_Y));
         final String generated = tested.generate(definition).toString();
-        assertTrue(generated.contains("new " + MultiPath.class.getName() + "(" + GeneratorAssertions.formatString(PATH) + ")"));
+        assertTrue(generated.contains("new " + MultiPath.class.getName() + "(" + SVGViewFactoryGenerator.FIELD_STATICS + ID.toUpperCase() + ")"));
         GeneratorAssertions.assertDraggable(generated);
         GeneratorAssertions.assertID(generated,
                                      ID);
