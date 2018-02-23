@@ -47,14 +47,15 @@ public class CanvasDockNodeCommand extends AbstractCanvasCommand {
                 .findAny()
                 .ifPresent(e -> context.removeChild(e.getSourceNode(),
                                                     candidate));
-        // Dock the candidate shape into the parent one.
-        context.dock(parent,
-                     candidate);
         // Update both shape view's attributes.
         context.applyElementMutation(parent,
                                      MutationContext.STATIC);
         context.applyElementMutation(candidate,
                                      MutationContext.STATIC);
+
+        // Dock the candidate shape into the parent one.
+        context.dock(parent,
+                     candidate);
         return buildResult();
     }
 

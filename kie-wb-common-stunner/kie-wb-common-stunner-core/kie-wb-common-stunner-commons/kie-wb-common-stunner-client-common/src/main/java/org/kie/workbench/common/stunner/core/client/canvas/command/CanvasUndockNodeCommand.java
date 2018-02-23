@@ -15,11 +15,15 @@
  */
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
+import java.util.Objects;
+
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 
 /**
  * Removes the parent-dock relationship between two nodes in the canvas context.
@@ -37,12 +41,18 @@ public class CanvasUndockNodeCommand extends AbstractCanvasCommand {
 
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-        context.undock(parent,
-                       child);
-        context.applyElementMutation(parent,
-                                     MutationContext.STATIC);
-        context.applyElementMutation(child,
-                                     MutationContext.STATIC);
+        if (Objects.nonNull(parent) && Objects.nonNull(child)) {
+            context.undock(parent, child);
+            // on canvas side undock removes the parent that was in which it was docked
+            // so, it is necessary to add the current parent
+            getChild().getInEdges().stream()
+                    .filter(e -> e.getContent() instanceof Child)
+                    .findAny()
+                    .ifPresent(e -> context.addChild(e.getSourceNode(), child));
+
+            context.applyElementMutation(parent, MutationContext.STATIC);
+            context.applyElementMutation(child, MutationContext.STATIC);
+        }
         return buildResult();
     }
 
@@ -56,7 +66,7 @@ public class CanvasUndockNodeCommand extends AbstractCanvasCommand {
         return parent;
     }
 
-    public Node getChild() {
+    public Node<?, Edge> getChild() {
         return child;
     }
 

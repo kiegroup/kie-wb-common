@@ -43,12 +43,12 @@ public class AddCanvasDockedNodeCommand extends AbstractCanvasCommand {
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
         context.register(ssid,
                          candidate);
-        context.dock(parent,
-                     candidate);
         context.applyElementMutation(candidate,
                                      MutationContext.STATIC);
         context.applyElementMutation(parent,
                                      MutationContext.STATIC);
+        context.dock(parent,
+                     candidate);
         return buildResult();
     }
 

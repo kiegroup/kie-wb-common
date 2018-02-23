@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -287,7 +288,24 @@ public class GraphUtils {
         return Objects.nonNull(element.getOutEdges()) ?
                 element.getOutEdges()
                         .stream()
-                        .allMatch(edge -> (edge.getContent() instanceof Dock)) :
+                        .anyMatch(edge -> (edge.getContent() instanceof Dock)) :
+                false;
+    }
+
+    public static List<Node> getDockedNodes(final Node<?, ? extends Edge> element) {
+        Objects.requireNonNull(element.getOutEdges());
+        return element.getOutEdges()
+                        .stream()
+                        .filter(edge -> (edge.getContent() instanceof Dock))
+                        .map(Edge::getTargetNode)
+                        .collect(Collectors.toList());
+    }
+
+    public static boolean isDockedNode(final Node<?, ? extends Edge> element) {
+        return Objects.nonNull(element.getInEdges()) ?
+                element.getInEdges()
+                        .stream()
+                        .anyMatch(edge -> edge.getContent() instanceof Dock) :
                 false;
     }
 

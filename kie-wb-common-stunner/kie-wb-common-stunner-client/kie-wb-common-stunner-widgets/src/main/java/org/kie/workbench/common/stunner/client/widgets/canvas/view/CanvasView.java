@@ -149,8 +149,9 @@ public class CanvasView extends Composite implements AbstractCanvas.View<com.ait
 
     AbstractCanvas.View dockShape(final WiresContainer parentShape,
                                   final WiresShape childShape) {
-        parentShape.add(childShape);
-        childShape.setDockedTo(parentShape);
+        childShape.getControl()
+                .getDockingControl()
+                .dock(childShape, parentShape, childShape.getLocation());
         return this;
     }
 

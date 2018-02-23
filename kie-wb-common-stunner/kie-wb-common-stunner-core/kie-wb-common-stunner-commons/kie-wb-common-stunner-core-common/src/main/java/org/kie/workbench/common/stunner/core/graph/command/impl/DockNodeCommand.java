@@ -94,8 +94,8 @@ public final class DockNodeCommand extends AbstractGraphCommand {
 
     @Override
     public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext context) {
-        final UnDockNodeCommand undoCommand = new UnDockNodeCommand(parent,
-                                                                    candidate);
+        final UnDockNodeCommand undoCommand = new UnDockNodeCommand(getParent(context),
+                                                                    getCandidate(context));
         return undoCommand.execute(context);
     }
 

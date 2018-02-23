@@ -20,6 +20,9 @@ import com.ait.lienzo.client.core.shape.Layer;
 import com.ait.lienzo.client.core.shape.Scene;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.client.core.shape.wires.handlers.WiresDockingControl;
+import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeControl;
+import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwt.dom.client.Style;
 import org.junit.Before;
@@ -133,12 +136,18 @@ public class CanvasViewTest {
     public void testDock() {
         final WiresShape wiresShape = mock(WiresShape.class);
         final WiresShape parentWiresShape = mock(WiresShape.class);
+        final WiresShapeControl wiresShapeControl = mock(WiresShapeControl.class);
+        final WiresDockingControl dockingControl = mock(WiresDockingControl.class);
+        final Point2D location = mock(Point2D.class);
+
+        when(wiresShape.getControl()).thenReturn(wiresShapeControl);
+        when(wiresShapeControl.getDockingControl()).thenReturn(dockingControl);
+        when(wiresShape.getLocation()).thenReturn(location);
+
         tested.dockShape(parentWiresShape,
                          wiresShape);
-        verify(parentWiresShape,
-               times(1)).add(eq(wiresShape));
-        verify(wiresShape,
-               times(1)).setDockedTo(eq(parentWiresShape));
+        verify(dockingControl, times(1))
+                .dock(wiresShape, parentWiresShape, location);
     }
 
     @Test
