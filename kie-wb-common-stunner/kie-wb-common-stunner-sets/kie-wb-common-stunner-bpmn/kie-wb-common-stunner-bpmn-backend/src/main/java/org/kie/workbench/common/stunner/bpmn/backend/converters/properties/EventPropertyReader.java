@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.Simu
 public abstract class EventPropertyReader extends FlowElementPropertyReader {
 
     private final DefinitionResolver definitionResolver;
-    private String signalRefId = null;
+    private String signalRefId;
 
     public static EventPropertyReader of(Event el, BPMNPlane plane, DefinitionResolver definitionResolver) {
         if (el instanceof BoundaryEvent) {
@@ -89,9 +89,4 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     public SimulationAttributeSet getSimulationSet() {
         return definitionResolver.extractSimulationAttributeSet(element.getId());
     }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Events;
-//    }
 }

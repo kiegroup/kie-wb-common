@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -35,7 +34,7 @@ public class ProcessPropertyReader extends BasePropertyReader {
     }
 
     public String getPackageName() {
-        return optionalAttribute("packageName").orElse(null);//.orElse(Package.DEFAULT_PACKAGE);
+        return optionalAttribute("packageName").orElse(null);
     }
 
     public String getVersion() {

@@ -18,16 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.Lane;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 
 public class LanePropertyReader extends BasePropertyReader {
 
     public LanePropertyReader(Lane el, BPMNPlane plane) {
         super(el, plane);
     }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Swimlanes;
-//    }
 }

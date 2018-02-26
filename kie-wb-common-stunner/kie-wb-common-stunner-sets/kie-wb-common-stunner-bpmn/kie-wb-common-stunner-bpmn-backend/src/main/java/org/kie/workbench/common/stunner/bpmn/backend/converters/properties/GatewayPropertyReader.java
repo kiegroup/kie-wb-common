@@ -30,14 +30,4 @@ public class GatewayPropertyReader extends FlowElementPropertyReader {
         // this is for compatibility with legacy marshallers
         return result.isEmpty() ? null : result;
     }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Gateways;
-//    }
-//
-//    @Override
-//    protected String colorsDefaultBr() {
-//        return Colors.defaultBrColor_Gateways;
-//    }
 }

@@ -38,10 +38,10 @@ import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.BPMN
 
 public class MockApplicationFactoryManager extends ApplicationFactoryManager {
 
-    final GraphFactory bpmnGraphFactory;
-    final TestScopeModelFactory testScopeModelFactory;
-    final EdgeFactory<Object> connectionEdgeFactory;
-    final NodeFactory<Object> viewNodeFactory;
+    private final GraphFactory bpmnGraphFactory;
+    private final TestScopeModelFactory testScopeModelFactory;
+    private final EdgeFactory<Object> connectionEdgeFactory;
+    private final NodeFactory<Object> viewNodeFactory;
 
     public MockApplicationFactoryManager(
             GraphFactory bpmnGraphFactory,
@@ -63,8 +63,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
     @Override
     public Element<?> newElement(String uuid, String id) {
         if (BPMNDefinitionSet.class.getName().equals(id)) {
-            Graph graph = (Graph) bpmnGraphFactory.build(uuid,
-                                                         BPMN_DEF_SET_ID);
+            Graph graph = bpmnGraphFactory.build(uuid, BPMN_DEF_SET_ID);
             return graph;
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
@@ -87,8 +86,7 @@ public class MockApplicationFactoryManager extends ApplicationFactoryManager {
     public Element<?> newElement(String uuid, Class<?> type) {
         String id = BindableAdapterUtils.getGenericClassName(type);
         if (BPMNDefinitionSet.class.equals(type)) {
-            Graph graph = (Graph) bpmnGraphFactory.build(uuid,
-                                                         BPMN_DEF_SET_ID);
+            Graph graph = bpmnGraphFactory.build(uuid, BPMN_DEF_SET_ID);
             return graph;
         }
         Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;

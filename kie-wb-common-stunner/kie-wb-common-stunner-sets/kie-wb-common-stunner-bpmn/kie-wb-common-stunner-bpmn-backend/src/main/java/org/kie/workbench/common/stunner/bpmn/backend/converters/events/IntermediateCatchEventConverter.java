@@ -27,7 +27,6 @@ import org.eclipse.bpmn2.IntermediateCatchEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
@@ -38,15 +37,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class IntermediateCatchEventConverter {
 
-    private final TypedFactoryManager factoryManager;
     private final IntermediateSignalEventCatchingConverter intermediateSignalEventCatchingConverter;
     private final IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private final IntermediateErrorEventCatchingConverter intermediateErrorEventCatchingConverter;
 
     public IntermediateCatchEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
-        this.factoryManager = factoryManager;
-
         this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory);
         this.intermediateMessageEventCatchingConverter = new IntermediateMessageEventCatchingConverter(factoryManager, propertyReaderFactory);
         this.intermediateTimerEventConverter = new IntermediateTimerEventConverter(factoryManager, propertyReaderFactory);
@@ -55,7 +51,6 @@ public class IntermediateCatchEventConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateCatchEvent event) {
         List<EventDefinition> eventDefinitions = event.getEventDefinitions();
-        String nodeId = event.getId();
         switch (eventDefinitions.size()) {
             case 0:
                 throw new UnsupportedOperationException("An intermediate catch event should contain exactly one definition");

@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
-import java.io.ByteArrayInputStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -95,7 +94,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.DiscreteConnecti
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
-import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
@@ -178,13 +176,9 @@ public class BPMNDirectDiagramMarshallerTest {
         return Unmarshalling.unmarshall(tested, s);
     }
 
-    private Diagram<Graph, Metadata> unmarshall(ByteArrayInputStream s) throws Exception {
-        return Unmarshalling.unmarshall(tested, s);
-    }
-
     @Before
     @SuppressWarnings("unchecked")
-    public void setup() throws Exception {
+    public void setup() {
 
         // Graph utils.
         when(definitionManager.adapters()).thenReturn(adapterManager);
@@ -342,9 +336,9 @@ public class BPMNDirectDiagramMarshallerTest {
                      diagramProperties.getId().getValue());
         assertEquals("org.jbpm",
                      diagramProperties.getPackageProperty().getValue());
-        assertEquals(Boolean.valueOf(true),
+        assertEquals(Boolean.TRUE,
                      diagramProperties.getExecutable().getValue());
-        assertEquals(Boolean.valueOf(true),
+        assertEquals(Boolean.TRUE,
                      diagramProperties.getAdHoc().getValue());
         assertEquals("This is the\n" +
                              "Process\n" +
@@ -1004,7 +998,7 @@ public class BPMNDirectDiagramMarshallerTest {
                 if (oDefinition instanceof ExclusiveGateway) {
                     List<Edge> outEdges = ((NodeImpl) element).getOutEdges();
                     for (Edge edge : outEdges) {
-                        SequenceFlow flow = (SequenceFlow) ((ViewConnectorImpl) ((EdgeImpl) edge).getContent()).getDefinition();
+                        SequenceFlow flow = (SequenceFlow) ((ViewConnectorImpl) edge.getContent()).getDefinition();
                         if ("route1".equals(flow.getGeneral().getName().getValue())) {
                             sequenceFlow1 = flow;
                         }
@@ -1120,7 +1114,7 @@ public class BPMNDirectDiagramMarshallerTest {
                 }
             }
         }
-        Node<? extends Definition, ?> sequenceFlowNode1 = graph.getNode("_C72E00C3-70DC-4BC9-A08E-761B4263A239");
+
         assertNotNull(sequenceFlow1);
         assertEquals("10 and over",
                      sequenceFlow1.getGeneral().getName().getValue());
@@ -1240,7 +1234,7 @@ public class BPMNDirectDiagramMarshallerTest {
         testMagnetDockers(diagram);
     }
 
-    private void testMagnetDockers(Diagram<Graph, Metadata> diagram) throws Exception {
+    private void testMagnetDockers(Diagram<Graph, Metadata> diagram) {
         Node userTaskNode = (Node) findElementByContentType(diagram,
                                                             UserTask.class);
         Node businessRuleTaskNode = (Node) findElementByContentType(diagram,
@@ -1400,7 +1394,7 @@ public class BPMNDirectDiagramMarshallerTest {
         testMagnetsInLane(diagram);
     }
 
-    private void testMagnetsInLane(Diagram<Graph, Metadata> diagram) throws Exception {
+    private void testMagnetsInLane(Diagram<Graph, Metadata> diagram) {
         Node userTaskNode = (Node) findElementByContentType(diagram,
                                                             UserTask.class);
         Node scriptTaskNode = (Node) findElementByContentType(diagram,

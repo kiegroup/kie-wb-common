@@ -20,11 +20,8 @@ import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Activity;
-import org.eclipse.bpmn2.Assignment;
-import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Colors;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
@@ -64,10 +61,8 @@ public class ActivityPropertyReader extends FlowElementPropertyReader {
         } else {
             return AssignmentsInfos.makeWrongString(
                     ioSpecification.getDataInputs(),
-                    //ioSpecification.getInputSets(),
                     activity.getDataInputAssociations(),
                     ioSpecification.getDataOutputs(),
-                    //ioSpecification.getOutputSets(),
                     activity.getDataOutputAssociations());
         }
     }
@@ -77,15 +72,6 @@ public class ActivityPropertyReader extends FlowElementPropertyReader {
                 .stream()
                 .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
                 .collect(Collectors.joining(","));
-    }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Activities;
-//    }
-
-    private static Object evaluate(Assignment assignment) {
-        return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
     }
 
     public SimulationSet getSimulationSet() {

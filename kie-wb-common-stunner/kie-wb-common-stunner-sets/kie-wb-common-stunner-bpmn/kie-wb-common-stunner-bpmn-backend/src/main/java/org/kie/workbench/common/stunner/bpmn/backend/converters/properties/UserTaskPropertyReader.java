@@ -16,11 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
@@ -33,7 +31,8 @@ import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
+
+import static java.util.stream.Collectors.joining;
 
 public class UserTaskPropertyReader extends TaskPropertyReader {
 
@@ -51,14 +50,16 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
     public String getActors() {
         // get the user task actors
         List<ResourceRole> roles = task.getResources();
-        List<String> users = new ArrayList<>();
-        for (ResourceRole role : roles) {
-            if (role instanceof PotentialOwner) {
-                FormalExpression fe = (FormalExpression) role.getResourceAssignmentExpression().getExpression();
-                users.add(fe.getBody());
-            }
-        }
-        return users.stream().collect(Collectors.joining(","));
+        return roles.stream()
+                .filter(role -> role instanceof PotentialOwner)
+                .map(this::getRoleName)
+                .collect(joining(","));
+    }
+
+    private String getRoleName(ResourceRole role) {
+        return (
+                (FormalExpression) role.getResourceAssignmentExpression().getExpression()
+        ).getBody();
     }
 
     public String getGroupid() {
@@ -82,10 +83,8 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
             return (
                     AssignmentsInfos.makeWrongString(
                             ioSpecification.getDataInputs(),
-                            //ioSpecification.getInputSets(),
                             task.getDataInputAssociations(),
                             ioSpecification.getDataOutputs(),
-                            //ioSpecification.getOutputSets(),
                             task.getDataOutputAssociations()
                     )
             );
@@ -124,7 +123,7 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
         return optionalInput(name).orElse("");
     }
 
-    public Optional<String> optionalInput(String name) {
+    private Optional<String> optionalInput(String name) {
         for (DataInputAssociation din : task.getDataInputAssociations()) {
             DataInput targetRef = (DataInput) (din.getTargetRef());
             if (targetRef.getName().equalsIgnoreCase(name)) {
