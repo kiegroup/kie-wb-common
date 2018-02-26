@@ -27,7 +27,6 @@ import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
@@ -39,15 +38,12 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class BoundaryEventConverter {
 
-    private final TypedFactoryManager factoryManager;
     private final GraphBuildingContext context;
     private final IntermediateSignalEventCatchingConverter intermediateSignalEventCatchingConverter;
     private final IntermediateTimerEventConverter intermediateTimerEventConverter;
     private IntermediateMessageEventCatchingConverter intermediateMessageEventCatchingConverter;
 
     public BoundaryEventConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
-
-        this.factoryManager = factoryManager;
         this.context = context;
 
         this.intermediateSignalEventCatchingConverter = new IntermediateSignalEventCatchingConverter(factoryManager, propertyReaderFactory);
@@ -61,7 +57,6 @@ public class BoundaryEventConverter {
             case 0:
                 throw new UnsupportedOperationException("A boundary event should contain exactly one definition");
             case 1:
-
                 return Match.ofNode(EventDefinition.class, BaseCatchingIntermediateEvent.class)
                         .when(SignalEventDefinition.class, e -> intermediateSignalEventCatchingConverter.convert(event, e))
                         .when(TimerEventDefinition.class, e -> intermediateTimerEventConverter.convert(event, e))

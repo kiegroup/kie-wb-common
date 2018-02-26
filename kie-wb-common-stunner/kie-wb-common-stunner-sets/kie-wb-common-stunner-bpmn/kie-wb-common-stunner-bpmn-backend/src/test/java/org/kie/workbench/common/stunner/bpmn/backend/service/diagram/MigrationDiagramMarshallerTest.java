@@ -522,8 +522,6 @@ public class MigrationDiagramMarshallerTest {
             Object oldDefinition = oldContent.getDefinition();
             Object newDefinition = newContent.getDefinition();
 
-            oldDefinition.equals(newDefinition);
-
             assertEquals(
                     fileName + ": Definitions should match for " + o.getUUID(),
                     oldDefinition,
@@ -546,10 +544,10 @@ public class MigrationDiagramMarshallerTest {
 
     private void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         assertNodeEquals(oldDiagram, newDiagram, fileName);
-        assertEdgeEquals(oldDiagram, newDiagram, fileName);
+        assertEdgeEquals(oldDiagram, newDiagram);
     }
 
-    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 

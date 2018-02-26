@@ -68,9 +68,7 @@ public class StartEventConverter {
 
     public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(StartEvent startEvent) {
         List<EventDefinition> eventDefinitions = startEvent.getEventDefinitions();
-        Node<? extends View<? extends BaseStartEvent>, ?> convertedStartEvent = convertStartEvent(startEvent, eventDefinitions);
-
-        return convertedStartEvent;
+        return convertStartEvent(startEvent, eventDefinitions);
     }
 
     private Node<? extends View<? extends BaseStartEvent>, ?> convertStartEvent(StartEvent event, List<EventDefinition> eventDefinitions) {

@@ -54,11 +54,6 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
         return Boolean.parseBoolean(metaData("customAsync"));
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Activities;
-//    }
-
     public SimulationSet getSimulationSet() {
         return definitionResolver.extractSimulationSet(process.getId());
     }

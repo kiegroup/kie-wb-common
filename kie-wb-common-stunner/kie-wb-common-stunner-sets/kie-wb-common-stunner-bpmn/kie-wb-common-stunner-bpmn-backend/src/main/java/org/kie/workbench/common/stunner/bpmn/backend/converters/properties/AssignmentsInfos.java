@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -30,7 +29,6 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.OutputSet;
-import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.emf.ecore.util.FeatureMap;
 
 public class AssignmentsInfos {
@@ -38,10 +36,8 @@ public class AssignmentsInfos {
     // this is actually for compatibility with the previous generator
     public static String makeWrongString(
             final List<DataInput> datainput,
-            //final List<InputSet> inputSets,
             final List<DataInputAssociation> inputAssociations,
             final List<DataOutput> dataoutput,
-            //final List<OutputSet> dataoutputset,
             final List<DataOutputAssociation> outputAssociations) {
 
         String dataInputString = dataInputsToString(datainput);
@@ -105,7 +101,6 @@ public class AssignmentsInfos {
     public static String dataInputsToString(List<DataInput> dataInputs) {
         return dataInputs.stream()
                 .filter(o -> !o.getName().equals("TaskName"))
-                //.filter(o -> !extractDtype(o).isEmpty())
                 .map(AssignmentsInfos::toString)
                 .collect(Collectors.joining(","));
     }
@@ -130,11 +125,7 @@ public class AssignmentsInfos {
         for (DataOutputAssociation doa : outputAssociations) {
             String doaName = ((DataOutput) doa.getSourceRef().get(0)).getName();
             if (doaName != null && doaName.length() > 0) {
-
-                if (doaName != null && doaName.length() > 0) {
-                    result.add(
-                            String.format("[dout]%s->%s", doaName, doa.getTargetRef().getId()));
-                }
+                result.add(String.format("[dout]%s->%s", doaName, doa.getTargetRef().getId()));
             }
         }
         return result;
@@ -150,8 +141,7 @@ public class AssignmentsInfos {
             }
             String doaName = sourceRef.get(0).getId();
             if (doaName != null && doaName.length() > 0) {
-                result.add(
-                        String.format("[din]%s->%s", doaName, ((DataInput) dia.getTargetRef()).getName()));
+                result.add(String.format("[din]%s->%s", doaName, ((DataInput) dia.getTargetRef()).getName()));
             }
         }
 
@@ -181,34 +171,5 @@ public class AssignmentsInfos {
             }
         }
         return "";
-    }
-
-    @Deprecated
-    private void marshallItemAwareElements(Activity activity,
-                                           List<? extends ItemAwareElement> elements,
-                                           StringBuilder buffer,
-                                           List<String> disallowedNames) {
-        for (ItemAwareElement element : elements) {
-            String name = null;
-            if (element instanceof DataInput) {
-                name = ((DataInput) element).getName();
-            }
-            if (element instanceof DataOutput) {
-                name = ((DataOutput) element).getName();
-            }
-            if (name != null && !name.isEmpty() && !disallowedNames.contains(name)) {
-                buffer.append(name);
-                if (element.getItemSubjectRef() != null && element.getItemSubjectRef().getStructureRef() != null && !element.getItemSubjectRef().getStructureRef().isEmpty()) {
-                    buffer.append(":").append(element.getItemSubjectRef().getStructureRef());
-                } else if (activity.eContainer() instanceof SubProcess) {
-                    // BZ1247105: for Outputs on Tasks inside sub-processes
-                    String dtype = extractDtype(element);
-                    if (dtype != null && !dtype.isEmpty()) {
-                        buffer.append(":").append(dtype);
-                    }
-                }
-                buffer.append(",");
-            }
-        }
     }
 }

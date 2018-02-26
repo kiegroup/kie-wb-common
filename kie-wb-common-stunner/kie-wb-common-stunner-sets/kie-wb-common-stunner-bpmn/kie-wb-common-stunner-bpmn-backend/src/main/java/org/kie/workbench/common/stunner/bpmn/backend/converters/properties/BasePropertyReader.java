@@ -66,7 +66,7 @@ public abstract class BasePropertyReader {
     public FontSet getFontSet() {
         return new FontSet(
                 new FontFamily(),
-                new FontColor(optionalAttribute("fontcolor")//, "color")
+                new FontColor(optionalAttribute("fontcolor")
                                       .orElse(colorsDefaultFont())),
                 new FontSize(optionalAttribute("fontsize")
                                      .map(Double::parseDouble).orElse(null)),
@@ -76,9 +76,9 @@ public abstract class BasePropertyReader {
 
     public BackgroundSet getBackgroundSet() {
         return new BackgroundSet(
-                new BgColor(optionalAttribute("bgcolor")//, "background-color")
+                new BgColor(optionalAttribute("bgcolor")
                                     .orElse(colorsDefaultBg())),
-                new BorderColor(optionalAttribute(/*"border-color", */"bordercolor")
+                new BorderColor(optionalAttribute("bordercolor")
                                         .orElse(colorsDefaultBr())),
                 new BorderSize()
         );

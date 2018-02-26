@@ -51,10 +51,8 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
             return (
                     AssignmentsInfos.makeWrongString(
                             ioSpecification.getDataInputs(),
-                            //ioSpecification.getInputSets(),
                             task.getDataInputAssociations(),
                             ioSpecification.getDataOutputs(),
-                            //ioSpecification.getOutputSets(),
                             task.getDataOutputAssociations()
                     )
             );

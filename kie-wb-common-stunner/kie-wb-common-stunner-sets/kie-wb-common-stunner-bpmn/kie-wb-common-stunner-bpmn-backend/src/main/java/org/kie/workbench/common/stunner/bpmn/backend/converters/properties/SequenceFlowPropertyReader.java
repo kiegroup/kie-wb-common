@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public class SequenceFlowPropertyReader extends BasePropertyReader {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceFlowPropertyReader.class);
-    final FormalExpression conditionExpression;
+    private final FormalExpression conditionExpression;
     private final SequenceFlow seq;
 
     public SequenceFlowPropertyReader(SequenceFlow seq, BPMNPlane plane) {
@@ -64,12 +64,6 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
                     Scripts.scriptLanguageFromUri(conditionExpression.getLanguage()),
                     conditionExpression.getBody());
         }
-    }
-
-    public String getConditionExpressionLanguage() {
-        return conditionExpression == null ?
-                "" :
-                Scripts.scriptLanguageFromUri(conditionExpression.getLanguage());
     }
 
     public String getSourceId() {
@@ -104,7 +98,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
         Bounds targetBounds = getShape(plane, targetId).getBounds();
         List<Point> waypoint = bpmnEdge.getWaypoint();
 
-        if (waypoint.size() > 2) {
+        if (waypoint.size() != 2 && waypoint.size() != 0) {
             logger.warn("Waypoints should be either 0 or 2. Unexpected size: " + waypoint.size());
         }
 

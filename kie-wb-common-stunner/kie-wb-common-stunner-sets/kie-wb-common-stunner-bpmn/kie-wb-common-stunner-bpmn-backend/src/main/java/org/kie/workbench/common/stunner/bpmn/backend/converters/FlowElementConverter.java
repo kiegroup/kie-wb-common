@@ -42,15 +42,9 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class FlowElementConverter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FlowElementConverter.class);
-
-    private final TypedFactoryManager factoryManager;
-    private final GraphBuildingContext context;
     private final StartEventConverter startEventConverter;
     private final TaskConverter taskConverter;
     private final SequenceFlowConverter sequenceFlowConverter;
@@ -63,8 +57,6 @@ public class FlowElementConverter {
     private final SubProcessConverter subProcessConverter;
 
     public FlowElementConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
-        this.factoryManager = factoryManager;
-        this.context = context;
         this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory);
         this.endEventConverter = new EndEventConverter(factoryManager, propertyReaderFactory);
         this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(factoryManager, propertyReaderFactory);
