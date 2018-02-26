@@ -149,8 +149,4 @@ public class DMNGridLayer extends DefaultGridLayer {
         return new DelegatingGridWidgetDndMouseMoveHandler(this,
                                                            getGridWidgetHandlersState());
     }
-
-    public void clearAllSelections() {
-        getGridWidgets().forEach(grid -> grid.getModel().clearSelections());
-    }
 }

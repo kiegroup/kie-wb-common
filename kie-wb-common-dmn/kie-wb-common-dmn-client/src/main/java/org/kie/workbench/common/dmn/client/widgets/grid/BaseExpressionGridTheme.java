@@ -67,6 +67,8 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
 
     public static final String FONT_FAMILY_EXPRESSION = "Courier New";
 
+    public static final double SELECTOR_STROKE_WIDTH = 2.0;
+
     public static final double STROKE_WIDTH = 1.0;
 
     @Override
@@ -81,7 +83,9 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
 
     @Override
     public Rectangle getCellSelectorBorder() {
-        return new Rectangle(0, 0).setStrokeColor(HOVER_STATE_STROKE_COLOUR).setStrokeWidth(2.0);
+        return new Rectangle(0, 0)
+                .setStrokeColor(HOVER_STATE_STROKE_COLOUR)
+                .setStrokeWidth(SELECTOR_STROKE_WIDTH);
     }
 
     @Override

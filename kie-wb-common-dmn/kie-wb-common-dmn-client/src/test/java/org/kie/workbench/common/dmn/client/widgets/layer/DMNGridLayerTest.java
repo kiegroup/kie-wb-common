@@ -26,6 +26,7 @@ import com.ait.lienzo.client.core.shape.Rectangle;
 import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.client.core.types.Transform;
+import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwtmockito.GwtMockito;
 import org.junit.Before;
@@ -168,6 +169,10 @@ public class DMNGridLayerTest {
 
         verify(ghostRectangle).setWidth(eq(CONTAINER_WIDTH + BaseExpressionGridTheme.STROKE_WIDTH));
         verify(ghostRectangle).setHeight(eq(CONTAINER_HEIGHT + BaseExpressionGridTheme.STROKE_WIDTH));
+        verify(ghostRectangle).setFillColor(ColorName.WHITE);
+        verify(ghostRectangle).setAlpha(0.50);
+        verify(ghostRectangle).setListening(false);
+
         verify(ghostGroup).setX(CONTAINER_X + VIEWPORT_TRANSLATE_X);
         verify(ghostGroup).setY(CONTAINER_Y + VIEWPORT_TRANSLATE_Y);
         verify(ghostGroup).setPathClipper(any(InverseGridWidgetClipper.class));
