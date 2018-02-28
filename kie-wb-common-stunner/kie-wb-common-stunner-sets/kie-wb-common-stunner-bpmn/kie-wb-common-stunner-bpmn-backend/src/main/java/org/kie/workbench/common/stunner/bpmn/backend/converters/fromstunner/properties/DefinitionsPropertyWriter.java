@@ -30,7 +30,7 @@ public class DefinitionsPropertyWriter {
         definitions.getRelationships().add(relationship);
     }
 
-    public void addAllRootElements(Collection<RootElement> rootElements) {
+    public void addAllRootElements(Collection<? extends RootElement> rootElements) {
         definitions.getRootElements().addAll(rootElements);
     }
 

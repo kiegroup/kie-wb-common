@@ -26,8 +26,6 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class SubProcessPropertyWriter extends PropertyWriter implements ElementContainer {
 
-    public static final String defaultRelationshipType = "BPSimData";
-
     private final SubProcess process;
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
     private Map<String, BasePropertyWriter> childElements = new HashMap<>();
@@ -35,10 +33,6 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
     public SubProcessPropertyWriter(SubProcess process, VariableScope variableScope) {
         super(process, variableScope);
         this.process = process;
-    }
-
-    public void addSimulationSet(SimulationSet simulations) {
-        this.simulationParameters.add(SimulationSets.toElementParameters(simulations));
     }
 
     public Collection<ElementParameters> getSimulationParameters() {
@@ -57,7 +51,10 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
             }
         }
 
-        addAllBaseElements(p.getBaseElements());
+        this.itemDefinitions.addAll(p.itemDefinitions);
+        this.dataInputs.addAll(p.dataInputs);
+        this.dataOutputs.addAll(p.dataOutputs);
+        this.rootElements.addAll(p.rootElements);
     }
 
     public BasePropertyWriter getChildElement(String id) {
@@ -67,10 +64,6 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
     @Override
     public void addChildEdge(BPMNEdge edge) {
 
-    }
-
-    public void addAllBaseElements(Collection<BaseElement> baseElements) {
-        baseElements.forEach(el -> this.baseElements.put(el.getId(), el));
     }
 
     public void setDocumentation(String documentation) {
@@ -104,7 +97,6 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
             VariableScope.Variable variable =
                     variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType());
             properties.add(variable.getTypedIdentifier());
-            addBaseElement(variable.getTypeDeclaration());
         });
     }
 

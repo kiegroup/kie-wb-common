@@ -16,35 +16,31 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.bpmn2.BaseElement;
-import org.eclipse.bpmn2.Bpmn2Factory;
+import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.Documentation;
-import org.eclipse.bpmn2.ExtensionAttributeValue;
+import org.eclipse.bpmn2.ItemDefinition;
+import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.di.BPMNShape;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.impl.EAttributeImpl;
-import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
-import org.eclipse.emf.ecore.util.FeatureMap;
-import org.jboss.drools.DroolsFactory;
-import org.jboss.drools.DroolsPackage;
-import org.jboss.drools.MetaDataType;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.dc;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.metaData;
 
 public abstract class BasePropertyWriter {
 
     protected final BaseElement baseElement;
-    protected final Map<String, BaseElement> baseElements = new HashMap<>();
     protected final VariableScope variableScope;
     protected BPMNShape shape;
+    protected final List<ItemDefinition> itemDefinitions = new ArrayList<>();
+    protected final List<DataInput> dataInputs = new ArrayList<>();
+    protected final List<DataOutput> dataOutputs = new ArrayList<>();
+    protected final List<RootElement> rootElements = new ArrayList<>();
 
     public BasePropertyWriter(BaseElement baseElement, VariableScope variableScope) {
         this.baseElement = baseElement;
@@ -70,14 +66,6 @@ public abstract class BasePropertyWriter {
 
     public BaseElement getElement() {
         return baseElement;
-    }
-
-    protected void addBaseElement(BaseElement element) {
-        this.baseElements.put(element.getId(), element);
-    }
-
-    public Collection<BaseElement> getBaseElements() {
-        return this.baseElements.values();
     }
 
     public void setDocumentation(String value) {
@@ -139,40 +127,28 @@ public abstract class BasePropertyWriter {
         return bounds;
     }
 
-    public static FeatureMap.Entry attribute(String attributeId, Object value) {
-        EAttributeImpl extensionAttribute = (EAttributeImpl) metaData.demandFeature(
-                "http://www.jboss.org/drools",
-                attributeId,
-                false,
-                false);
-
-        return new EStructuralFeatureImpl.SimpleFeatureMapEntry(
-                extensionAttribute, value);
-    }
-
-    protected void setMeta(
-            String attributeId,
-            String metaDataValue) {
-
-        if (baseElement != null) {
-            MetaDataType eleMetadata = DroolsFactory.eINSTANCE.createMetaDataType();
-            eleMetadata.setName(attributeId);
-            eleMetadata.setMetaValue(asCData(metaDataValue));
-
-            if (baseElement.getExtensionValues() == null || baseElement.getExtensionValues().isEmpty()) {
-                ExtensionAttributeValue extensionElement = Bpmn2Factory.eINSTANCE.createExtensionAttributeValue();
-                baseElement.getExtensionValues().add(extensionElement);
-            }
-
-            FeatureMap.Entry eleExtensionElementEntry = new EStructuralFeatureImpl.SimpleFeatureMapEntry(
-                    (EStructuralFeature.Internal) DroolsPackage.Literals.DOCUMENT_ROOT__META_DATA,
-                    eleMetadata);
-            baseElement.getExtensionValues().get(0).getValue().add(eleExtensionElementEntry);
-        }
-    }
-
     // eww
     protected String asCData(String original) {
         return "<![CDATA[" + original + "]]>";
+    }
+
+    protected void addItemDefinition(ItemDefinition itemDefinition) {
+        this.itemDefinitions.add(itemDefinition);
+    }
+
+    protected void addDataInput(DataInput dataInput) {
+        this.dataInputs.add(dataInput);
+    }
+
+    protected void addDataOutput(DataOutput dataOutput) {
+        this.dataOutputs.add(dataOutput);
+    }
+
+    protected void addRootElement(RootElement rootElement) {
+        this.rootElements.add(rootElement);
+    }
+
+    public List<ItemDefinition> getItemDefinitions() {
+        return itemDefinitions;
     }
 }

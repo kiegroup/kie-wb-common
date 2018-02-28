@@ -53,6 +53,7 @@ public class DefinitionsConverter {
         p.setDiagram(pp.getBpmnDiagram());
         p.setRelationship(pp.getRelationship());
         p.addAllRootElements(pp.getRootElements());
+        p.addAllRootElements(pp.getItemDefinitions());
 
         return definitions;
     }

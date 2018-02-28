@@ -41,9 +41,8 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                                 .getInputs()
                                 .lookup(declaration.getRight()))
                 ).forEach(dia -> {
-            //this.addBaseElement(dia.getItemDefinition());
-            //this.addBaseElement(dia.getProperty());
-            this.addBaseElement(dia.getDataInput());
+            this.addItemDefinition(dia.getItemDefinition());
+            this.addDataInput(dia.getDataInput());
             throwEvent.setInputSet(dia.getInputSet());
             throwEvent.getDataInputAssociation().add(dia.getAssociation());
         });

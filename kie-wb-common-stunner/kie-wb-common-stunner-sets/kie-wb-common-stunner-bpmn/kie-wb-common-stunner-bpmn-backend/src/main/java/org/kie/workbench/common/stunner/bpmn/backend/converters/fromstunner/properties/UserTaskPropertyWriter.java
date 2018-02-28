@@ -31,25 +31,25 @@ public class UserTaskPropertyWriter extends ActivityPropertyWriter {
         this.task = task;
 
         this.skippable = CustomInput.skippable.of(task);
-        this.addBaseElement(this.skippable.typeDef());
+        this.addItemDefinition(this.skippable.typeDef());
 
         this.priority = CustomInput.priority.of(task);
-        this.addBaseElement(this.priority.typeDef());
+        this.addItemDefinition(this.priority.typeDef());
 
         this.subject = CustomInput.subject.of(task);
-        this.addBaseElement(this.subject.typeDef());
+        this.addItemDefinition(this.subject.typeDef());
 
         this.description = CustomInput.description.of(task);
-        this.addBaseElement(this.description.typeDef());
+        this.addItemDefinition(this.description.typeDef());
 
         this.createdBy = CustomInput.createdBy.of(task);
-        this.addBaseElement(this.createdBy.typeDef());
+        this.addItemDefinition(this.createdBy.typeDef());
 
         this.taskName = CustomInput.taskName.of(task);
-        this.addBaseElement(this.taskName.typeDef());
+        this.addItemDefinition(this.taskName.typeDef());
 
         this.groupId = CustomInput.groupId.of(task);
-        this.addBaseElement(this.skippable.typeDef());
+        this.addItemDefinition(this.groupId.typeDef());
     }
 
     public void setAsync(boolean async) {

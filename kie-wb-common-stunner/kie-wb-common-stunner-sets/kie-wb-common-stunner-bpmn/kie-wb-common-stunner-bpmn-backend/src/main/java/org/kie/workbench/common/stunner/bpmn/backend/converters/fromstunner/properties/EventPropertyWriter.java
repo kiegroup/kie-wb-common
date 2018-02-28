@@ -57,7 +57,7 @@ public abstract class EventPropertyWriter extends PropertyWriter {
         messageEventDefinition.setMessageRef(message);
 
         addEventDefinition(messageEventDefinition);
-        addBaseElement(message);
+        addRootElement(message);
     }
 
     public void addSignal(SignalRef signalRef) {
@@ -71,7 +71,7 @@ public abstract class EventPropertyWriter extends PropertyWriter {
         signalEventDefinition.setSignalRef(signal.getId());
 
         addEventDefinition(signalEventDefinition);
-        addBaseElement(signal);
+        addRootElement(signal);
     }
 
     public void addSignalScope(SignalScope signalScope) {
@@ -91,7 +91,7 @@ public abstract class EventPropertyWriter extends PropertyWriter {
         CustomAttribute.errorName.of(errorEventDefinition).set(errorCode);
 
         addEventDefinition(errorEventDefinition);
-        addBaseElement(error);
+        addRootElement(error);
     }
 
     public void addTerminate() {

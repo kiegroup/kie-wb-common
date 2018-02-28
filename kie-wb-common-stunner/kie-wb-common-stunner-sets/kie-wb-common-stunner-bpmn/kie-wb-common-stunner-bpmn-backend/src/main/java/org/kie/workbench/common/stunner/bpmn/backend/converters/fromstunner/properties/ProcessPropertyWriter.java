@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -102,23 +103,14 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
             addChildEdge(((SequenceFlowPropertyWriter) p).getEdge());
         }
         addChildShape(p.getShape());
-        addAllBaseElements(p.getBaseElements());
+        this.itemDefinitions.addAll(p.itemDefinitions);
+        this.dataInputs.addAll(p.dataInputs);
+        this.dataOutputs.addAll(p.dataOutputs);
+        this.rootElements.addAll(p.rootElements);
     }
 
     public BasePropertyWriter getChildElement(String id) {
         return this.childElements.get(id);
-    }
-
-    protected void addBaseElement(BaseElement element) {
-        if (element instanceof Property) {
-            process.getProperties().add((Property) element);
-        } else {
-            super.addBaseElement(element);
-        }
-    }
-
-    public void addAllBaseElements(Collection<BaseElement> baseElements) {
-        baseElements.forEach(this::addBaseElement);
     }
 
     public void setName(String value) {
@@ -144,11 +136,11 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public void setAdHoc(Boolean adHoc) {
-        process.getAnyAttribute().add(attribute("adHoc", String.valueOf(adHoc)));
+        CustomAttribute.adHoc.of(process).set(adHoc);
     }
 
     public void setDescription(String value) {
-        setMeta("customDescription", value);
+        CustomElement.description.of(process).set(value);
     }
 
     // eww
@@ -165,7 +157,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
             VariableScope.Variable variable =
                     variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType());
             properties.add(variable.getTypedIdentifier());
-            addBaseElement(variable.getTypeDeclaration());
+            this.itemDefinitions.add(variable.getTypeDeclaration());
         });
     }
 
@@ -208,8 +200,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public Collection<RootElement> getRootElements() {
-        return baseElements.values().stream().filter(e -> e instanceof RootElement)
-                .map(e -> (RootElement) e)
-                .collect(Collectors.toList());
+        return rootElements;
     }
 }

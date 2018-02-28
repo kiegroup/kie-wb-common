@@ -45,9 +45,8 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
                         variableScope.lookup(declaration.getRight())
                 ))
                 .forEach(doa -> {
-                    this.addBaseElement(doa.getItemDefinition());
-                    //this.addBaseElement(doa.getProperty());
-                    this.addBaseElement(doa.getDataOutput());
+                    this.addItemDefinition(doa.getItemDefinition());
+                    this.addDataOutput(doa.getDataOutput());
                     event.setOutputSet(doa.getOutputSet());
                     event.getDataOutputAssociation().add(doa.getAssociation());
                 });
