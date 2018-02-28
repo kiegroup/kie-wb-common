@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.undefined;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -42,9 +43,7 @@ public class UndefinedExpressionColumn extends DMNGridColumn<UndefinedExpression
                                      final UndefinedExpressionGrid gridWidget,
                                      final CellEditorControls cellEditorControls,
                                      final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
-        this(new ArrayList<HeaderMetaData>() {{
-                 add(headerMetaData);
-             }},
+        this(Collections.singletonList(headerMetaData),
              gridWidget,
              cellEditorControls,
              expressionEditorDefinitionsSupplier);
