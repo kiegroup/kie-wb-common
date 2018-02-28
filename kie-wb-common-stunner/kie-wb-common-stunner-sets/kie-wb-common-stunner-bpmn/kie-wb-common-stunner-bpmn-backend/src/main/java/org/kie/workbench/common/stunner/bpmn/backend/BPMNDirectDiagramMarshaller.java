@@ -42,12 +42,12 @@ import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverterFactory;
-import org.kie.workbench.common.stunner.bpmn.backend.fromstunner.DefinitionsConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -137,7 +137,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
         LOG.debug("Diagram marshalling completed successfully.");
         String outputString = renderToString(resource);
-        LOG.info(outputString);
+        LOG.trace(outputString);
         return outputString;
     }
 
