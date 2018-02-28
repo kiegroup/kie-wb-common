@@ -26,16 +26,13 @@ import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.IntermediateThrowEvent;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.SignalEventDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseThrowingIntermediateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
@@ -59,78 +56,85 @@ public class IntermediateThrowEventConverter {
         this.propertyReaderFactory = propertyReaderFactory;
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(IntermediateThrowEvent event) {
+    public BpmnNode convert(IntermediateThrowEvent event) {
         List<EventDefinition> eventDefinitions = event.getEventDefinitions();
-        String nodeId = event.getId();
         switch (eventDefinitions.size()) {
             case 0:
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");
             case 1:
-                return Match.ofNode(EventDefinition.class, BaseThrowingIntermediateEvent.class)
-                        .when(SignalEventDefinition.class, e -> {
-                            Node<View<IntermediateSignalEventThrowing>, Edge> node =
-                                    factoryManager.newNode(nodeId, IntermediateSignalEventThrowing.class);
-
-                            IntermediateSignalEventThrowing definition = node.getContent().getDefinition();
-                            EventPropertyReader p = propertyReaderFactory.of(event);
-
-                            definition.setGeneral(new BPMNGeneralSet(
-                                    new Name(p.getName()),
-                                    new Documentation(p.getDocumentation())
-                            ));
-
-                            definition.setDataIOSet(new DataIOSet(
-                               new AssignmentsInfo(p.getAssignmentsInfo())
-                            ));
-
-                            definition.setExecutionSet(new ScopedSignalEventExecutionSet(
-                                    new SignalRef(p.getSignalRef()),
-                                    new SignalScope(p.getSignalScope())
-                            ));
-
-                            node.getContent().setBounds(p.getBounds());
-
-                            definition.setDimensionsSet(p.getCircleDimensionSet());
-                            definition.setFontSet(p.getFontSet());
-                            definition.setBackgroundSet(p.getBackgroundSet());
-
-                            return node;
-                        })
-                        .when(MessageEventDefinition.class, e -> {
-                            Node<View<IntermediateMessageEventThrowing>, Edge> node =
-                                    factoryManager.newNode(nodeId, IntermediateMessageEventThrowing.class);
-
-                            IntermediateMessageEventThrowing definition = node.getContent().getDefinition();
-                            EventPropertyReader p = propertyReaderFactory.of(event);
-
-                            definition.setGeneral(new BPMNGeneralSet(
-                                    new Name(p.getName()),
-                                    new Documentation(p.getDocumentation())
-                            ));
-
-                            definition.setDataIOSet(new DataIOSet(
-                                    new AssignmentsInfo(p.getAssignmentsInfo())
-                            ));
-
-                            definition.setExecutionSet(new MessageEventExecutionSet(
-                                    new MessageRef(e.getMessageRef().getName())
-                            ));
-
-                            node.getContent().setBounds(p.getBounds());
-
-                            definition.setDimensionsSet(p.getCircleDimensionSet());
-                            definition.setFontSet(p.getFontSet());
-                            definition.setBackgroundSet(p.getBackgroundSet());
-
-                            return node;
-                        })
+                return Match.of(EventDefinition.class, BpmnNode.class)
+                        .when(SignalEventDefinition.class, e -> signalEvent(event, e))
+                        .when(MessageEventDefinition.class, e -> messageEvent(event, e))
                         .missing(ErrorEventDefinition.class)
                         .missing(EscalationEventDefinition.class)
                         .missing(CompensateEventDefinition.class)
                         .missing(ConditionalEventDefinition.class)
-                        .apply(eventDefinitions.get(0)).asSuccess().value();
+                        .apply(eventDefinitions.get(0)).value();
             default:
                 throw new UnsupportedOperationException("Multiple definitions not supported for intermediate throw event");
         }
+    }
+
+    private BpmnNode messageEvent(
+            IntermediateThrowEvent event, MessageEventDefinition eventDefinition) {
+        Node<View<IntermediateMessageEventThrowing>, Edge> node =
+                factoryManager.newNode(event.getId(), IntermediateMessageEventThrowing.class);
+
+        IntermediateMessageEventThrowing definition = node.getContent().getDefinition();
+        EventPropertyReader p = propertyReaderFactory.of(event);
+
+        definition.setGeneral(new BPMNGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setDataIOSet(new DataIOSet(
+                p.getAssignmentsInfo()
+        ));
+
+        definition.setExecutionSet(new MessageEventExecutionSet(
+                new MessageRef(eventDefinition.getMessageRef().getName())
+        ));
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getCircleDimensionSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+
+        return BpmnNode.of(node);
+    }
+
+    private BpmnNode signalEvent(
+            IntermediateThrowEvent event,
+            SignalEventDefinition eventDefinition) {
+
+        Node<View<IntermediateSignalEventThrowing>, Edge> node =
+                factoryManager.newNode(event.getId(), IntermediateSignalEventThrowing.class);
+
+        IntermediateSignalEventThrowing definition = node.getContent().getDefinition();
+        EventPropertyReader p = propertyReaderFactory.of(event);
+
+        definition.setGeneral(new BPMNGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setDataIOSet(new DataIOSet(
+                p.getAssignmentsInfo()
+        ));
+
+        definition.setExecutionSet(new ScopedSignalEventExecutionSet(
+                new SignalRef(p.getSignalRef()),
+                new SignalScope(p.getSignalScope())
+        ));
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getCircleDimensionSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+
+        return BpmnNode.of(node);
     }
 }

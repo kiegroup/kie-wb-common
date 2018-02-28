@@ -16,10 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNShape;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
@@ -27,26 +32,26 @@ import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 public class ProcessPropertyReader extends BasePropertyReader {
 
     private final Process process;
+    private final Map<String, FlowElement> flowElements;
 
-    public ProcessPropertyReader(Process element, BPMNPlane plane) {
-        super(element, plane);
+    public ProcessPropertyReader(Process element, BPMNPlane plane, BPMNShape shape) {
+        super(element, plane, shape);
         this.process = element;
+        this.flowElements =
+                process.getFlowElements().stream()
+                        .collect(Collectors.toMap(FlowElement::getId, Function.identity()));
     }
 
     public String getPackageName() {
-        return optionalAttribute("packageName").orElse(null);
+        return Attribute.packageName.of(element).get();
     }
 
     public String getVersion() {
-        return optionalAttribute("version").orElse("1.0");
+        return Attribute.version.of(element).get();
     }
 
     public boolean isAdHoc() {
-        return Boolean.parseBoolean(attribute("adHoc"));
-    }
-
-    public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+        return Attribute.adHoc.of(element).get();
     }
 
     @Override
@@ -61,5 +66,9 @@ public class ProcessPropertyReader extends BasePropertyReader {
                 .stream()
                 .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
                 .collect(Collectors.joining(","));
+    }
+
+    public FlowElement getFlowElement(String id) {
+        return flowElements.get(id);
     }
 }

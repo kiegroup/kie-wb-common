@@ -17,19 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.processes;
 
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.SubProcess;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.FlowElementConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.LaneConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.SubProcessPropertyReader;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
@@ -41,66 +36,44 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class SubProcessConverter {
 
-    private final TypedFactoryManager factoryManager;
-    private final PropertyReaderFactory propertyReaderFactory;
-    private final FlowElementConverter flowElementConverter;
-    private final LaneConverter laneConverter;
-    private final GraphBuildingContext context;
+    protected final TypedFactoryManager factoryManager;
+    protected final PropertyReaderFactory propertyReaderFactory;
+
+    private final ProcessConverterFactory processConverterFactory;
 
     public SubProcessConverter(
-            TypedFactoryManager factoryManager,
+            TypedFactoryManager typedFactoryManager,
             PropertyReaderFactory propertyReaderFactory,
-            FlowElementConverter flowElementConverter,
-            GraphBuildingContext context) {
+            ProcessConverterFactory processConverterFactory) {
 
-        this.factoryManager = factoryManager;
+        this.factoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.context = context;
-
-        this.flowElementConverter = flowElementConverter;
-        this.laneConverter = new LaneConverter(factoryManager, propertyReaderFactory);
+        this.processConverterFactory = processConverterFactory;
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(SubProcess subProcess) {
-        Node<? extends View<? extends BPMNViewDefinition>, ?> subProcessNode = convertSubProcessNode(subProcess);
+    public BpmnNode convertSubProcess(SubProcess subProcess) {
+        BpmnNode subProcessRoot =
+                subProcess.isTriggeredByEvent() ?
+                        convertEventSubprocessNode(subProcess)
+                        : convertEmbeddedSubprocessNode(subProcess);
 
-        Map<String, Node<? extends View<? extends BPMNViewDefinition>, ?>> freeFloatingNodes =
-                subProcess.getFlowElements()
-                        .stream()
-                        .map(flowElementConverter::convertNode)
-                        .filter(Result::notIgnored)
-                        .map(Result::value)
-                        .collect(Collectors.toMap(Node::getUUID, Function.identity()));
+        Map<String, BpmnNode> nodes =
+                processConverterFactory.convertChildNodes(
+                        subProcessRoot,
+                        subProcess.getFlowElements(),
+                        subProcess.getLaneSets());
 
-        subProcess.getLaneSets()
-                .stream()
-                .flatMap(laneSet -> laneSet.getLanes().stream())
+        processConverterFactory.convertEdges(
+                subProcessRoot,
+                subProcess.getFlowElements(),
+                nodes);
 
-                .forEach(lane -> {
-                    Node<? extends View<? extends BPMNViewDefinition>, ?> laneNode =
-                            laneConverter.convert(lane);
-                    context.addChildNode(subProcessNode, laneNode);
-
-                    lane.getFlowNodeRefs().forEach(node -> {
-                        Node child = freeFloatingNodes.remove(node.getId());
-                        context.addChildNode(laneNode, child);
-                    });
-                });
-
-        freeFloatingNodes.values()
-                .forEach(n -> context.addChildNode(subProcessNode, n));
-
-        subProcess.getFlowElements()
-                .forEach(flowElementConverter::convertEdge);
-
-        subProcess.getFlowElements()
-                .forEach(flowElementConverter::convertDockedNodes);
-
-        return subProcessNode;
+        return subProcessRoot;
     }
 
-    private Node<? extends View<? extends BPMNViewDefinition>, ?> convertSubProcessNode(SubProcess subProcess) {
-        Node<View<EmbeddedSubprocess>, Edge> node = factoryManager.newNode(subProcess.getId(), EmbeddedSubprocess.class);
+    private BpmnNode convertEmbeddedSubprocessNode(SubProcess subProcess) {
+        Node<View<EmbeddedSubprocess>, Edge> node =
+                factoryManager.newNode(subProcess.getId(), EmbeddedSubprocess.class);
 
         EmbeddedSubprocess definition = node.getContent().getDefinition();
         SubProcessPropertyReader p = propertyReaderFactory.of(subProcess);
@@ -123,8 +96,35 @@ public class SubProcessConverter {
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 
+        node.getContent().setBounds(p.getBounds());
+        return BpmnNode.of(node);
+    }
+
+    private BpmnNode convertEventSubprocessNode(SubProcess subProcess) {
+        Node<View<EventSubprocess>, Edge> node =
+                factoryManager.newNode(subProcess.getId(), EventSubprocess.class);
+
+        EventSubprocess definition = node.getContent().getDefinition();
+        SubProcessPropertyReader p = propertyReaderFactory.of(subProcess);
+
+        definition.setGeneral(new BPMNGeneralSet(
+                new Name(subProcess.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.getIsAsync().setValue(p.isAsync());
+
+        definition.setProcessData(new ProcessData(
+                new ProcessVariables(p.getProcessVariables())));
+
+        definition.setSimulationSet(p.getSimulationSet());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
 
         node.getContent().setBounds(p.getBounds());
-        return node;
+
+        return BpmnNode.of(node);
     }
 }

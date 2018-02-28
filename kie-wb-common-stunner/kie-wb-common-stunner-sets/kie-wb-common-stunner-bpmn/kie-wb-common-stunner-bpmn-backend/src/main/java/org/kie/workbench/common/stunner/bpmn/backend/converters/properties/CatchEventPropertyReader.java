@@ -21,6 +21,7 @@ import java.util.Collections;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 class CatchEventPropertyReader extends EventPropertyReader {
 
@@ -32,13 +33,21 @@ class CatchEventPropertyReader extends EventPropertyReader {
     }
 
     @Override
-    public String getAssignmentsInfo() {
-        return AssignmentsInfos.makeString(
-                Collections.emptyList(),
+    public AssignmentsInfo getAssignmentsInfo() {
+        return AssignmentsInfos.of(
                 Collections.emptyList(),
                 Collections.emptyList(),
                 catchEvent.getDataOutputs(),
-                Collections.singletonList(catchEvent.getOutputSet()),
-                catchEvent.getDataOutputAssociation());
+                catchEvent.getDataOutputAssociation(),
+                false);
     }
+
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return catchEvent instanceof StartEvent ? "#9acd32" : Colors.defaultBgColor_CatchingEvents;
+//    }
+
+//    protected String colorsDefaultBr() {
+//        return Colors.defaultBrColor_CatchingEvents;
+//    }
 }

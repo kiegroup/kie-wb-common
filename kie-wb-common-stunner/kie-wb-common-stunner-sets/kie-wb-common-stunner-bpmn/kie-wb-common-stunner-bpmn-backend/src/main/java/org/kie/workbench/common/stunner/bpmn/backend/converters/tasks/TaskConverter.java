@@ -17,16 +17,40 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tasks;
 
 import org.eclipse.bpmn2.Task;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.NoneTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.BusinessRuleTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.ScriptTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.TaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.UserTaskPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
+import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
+import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
+import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Groupid;
+import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.Priority;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.TaskGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocAutostart;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.BusinessRuleTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Script;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Skippable;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.Subject;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -35,51 +59,147 @@ public class TaskConverter {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final BusinessRuleTaskConverter businessRuleTaskConverter;
-    private final UserTaskConverter userTaskConverter;
-    private final ScriptTaskConverter scriptTaskConverter;
 
     public TaskConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.businessRuleTaskConverter = new BusinessRuleTaskConverter(factoryManager, propertyReaderFactory);
-        this.userTaskConverter = new UserTaskConverter(factoryManager, propertyReaderFactory);
-        this.scriptTaskConverter = new ScriptTaskConverter(factoryManager, propertyReaderFactory);
     }
 
-    public Node<? extends View<? extends BPMNViewDefinition>, ?> convert(org.eclipse.bpmn2.Task task) {
-        return Match.ofNode(Task.class, BPMNViewDefinition.class)
-                .when(org.eclipse.bpmn2.BusinessRuleTask.class, businessRuleTaskConverter::convert)
-                .when(org.eclipse.bpmn2.ScriptTask.class, scriptTaskConverter::convert)
-                .when(org.eclipse.bpmn2.UserTask.class, userTaskConverter::convert)
+    public BpmnNode convert(org.eclipse.bpmn2.Task task) {
+        return Match.of(Task.class, BpmnNode.class)
+                .when(org.eclipse.bpmn2.BusinessRuleTask.class, this::businessRuleTask)
+                .when(org.eclipse.bpmn2.ScriptTask.class, this::scriptTask)
+                .when(org.eclipse.bpmn2.UserTask.class, this::userTask)
                 .missing(org.eclipse.bpmn2.ServiceTask.class)
                 .missing(org.eclipse.bpmn2.ManualTask.class)
-                .orElse(t -> {
-                    Node<View<NoneTask>, Edge> node = factoryManager.newNode(t.getId(), NoneTask.class);
-                    NoneTaskPropertyReader p = propertyReaderFactory.of(task);
+                .orElse(this::noneTask)
+                .apply(task).value();
+    }
 
-                    NoneTask definition = node.getContent().getDefinition();
+    private BpmnNode businessRuleTask(org.eclipse.bpmn2.BusinessRuleTask task) {
+        Node<View<BusinessRuleTask>, Edge> node = factoryManager.newNode(task.getId(), BusinessRuleTask.class);
 
-                    definition.setGeneral(new TaskGeneralSet(
-                            new Name(p.getName()),
-                            new Documentation(p.getDocumentation())
-                    ));
+        BusinessRuleTask definition = node.getContent().getDefinition();
+        BusinessRuleTaskPropertyReader p = propertyReaderFactory.of(task);
 
-                    definition.setExecutionSet(new EmptyTaskExecutionSet());
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
 
-                    definition.setSimulationSet(
-                            p.getSimulationSet()
-                    );
+        definition.setDataIOSet(new DataIOSet(
+                p.getAssignmentsInfo()
+        ));
 
-                    node.getContent().setBounds(p.getBounds());
+        definition.setExecutionSet(new BusinessRuleTaskExecutionSet(
+                new RuleFlowGroup(p.getRuleFlowGroup()),
+                new OnEntryAction(p.getOnEntryAction()),
+                new OnExitAction(p.getOnExitAction()),
+                new IsAsync(p.isAsync()),
+                new AdHocAutostart(p.isAdHocAutoStart())
+        ));
 
-                    definition.setDimensionsSet(p.getRectangleDimensionsSet());
-                    definition.setBackgroundSet(p.getBackgroundSet());
-                    definition.setFontSet(p.getFontSet());
+        definition.setSimulationSet(p.getSimulationSet());
 
-                    return node;
-                })
-                .apply(task)
-                .asSuccess().value();
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
+        return BpmnNode.of(node);
+    }
+
+    private BpmnNode scriptTask(org.eclipse.bpmn2.ScriptTask task) {
+        Node<View<ScriptTask>, Edge> node = factoryManager.newNode(task.getId(), ScriptTask.class);
+
+        ScriptTask definition = node.getContent().getDefinition();
+        ScriptTaskPropertyReader p = propertyReaderFactory.of(task);
+
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setExecutionSet(new ScriptTaskExecutionSet(
+                new Script(p.getScript()),
+                new IsAsync(p.isAsync())
+        ));
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
+        definition.setSimulationSet(p.getSimulationSet());
+
+        return BpmnNode.of(node);
+    }
+
+    private BpmnNode userTask(org.eclipse.bpmn2.UserTask task) {
+        Node<View<UserTask>, Edge> node = factoryManager.newNode(task.getId(), UserTask.class);
+
+        UserTask definition = node.getContent().getDefinition();
+        UserTaskPropertyReader p = propertyReaderFactory.of(task);
+
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setSimulationSet(
+                p.getSimulationSet()
+        );
+
+        definition.setExecutionSet(new UserTaskExecutionSet(
+                new TaskName(p.getTaskName()),
+                new Actors(p.getActors()),
+                new Groupid(p.getGroupid()),
+                p.getAssignmentsInfo(),
+                new IsAsync(p.isAsync()),
+                new Skippable(p.isSkippable()),
+                new Priority(p.getPriority()),
+                new Subject(p.getSubject()),
+                new Description(p.getDescription()),
+                new CreatedBy(p.getCreatedBy()),
+                new AdHocAutostart(p.isAdHocAutostart()),
+                new OnEntryAction(p.getOnEntryAction()),
+                new OnExitAction(p.getOnExitAction())
+        ));
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
+        return BpmnNode.of(node);
+    }
+
+    private BpmnNode noneTask(Task task) {
+        Node<View<NoneTask>, Edge> node = factoryManager.newNode(task.getId(), NoneTask.class);
+        TaskPropertyReader p = propertyReaderFactory.of(task);
+
+        NoneTask definition = node.getContent().getDefinition();
+
+        definition.setGeneral(new TaskGeneralSet(
+                new Name(p.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setExecutionSet(new EmptyTaskExecutionSet());
+
+        definition.setSimulationSet(
+                p.getSimulationSet()
+        );
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+        definition.setFontSet(p.getFontSet());
+
+        return BpmnNode.of(node);
     }
 }

@@ -16,160 +16,85 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
-import org.eclipse.bpmn2.InputSet;
-import org.eclipse.bpmn2.ItemAwareElement;
-import org.eclipse.bpmn2.OutputSet;
-import org.eclipse.emf.ecore.util.FeatureMap;
+import org.eclipse.bpmn2.Property;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration.Direction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationList;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.VariableDeclaration;
+
+import static org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration.Type;
 
 public class AssignmentsInfos {
 
-    // this is actually for compatibility with the previous generator
-    public static String makeWrongString(
+    public static AssignmentsInfo of(
             final List<DataInput> datainput,
             final List<DataInputAssociation> inputAssociations,
             final List<DataOutput> dataoutput,
-            final List<DataOutputAssociation> outputAssociations) {
+            final List<DataOutputAssociation> outputAssociations,
+            boolean alternativeEncoding) {
 
-        String dataInputString = dataInputsToString(datainput);
-        List<String> dataInputAssociationsToString = inAssociationsToString(inputAssociations);
+        DeclarationList inputs = dataInputDeclarations(datainput);
+        DeclarationList outputs = dataOutputDeclarations(dataoutput);
 
-        String dataOutputString = dataOutputsToString(dataoutput);
-        List<String> dataOutputAssociationsToString = outAssociationsToString(outputAssociations);
+        AssociationList associations = new AssociationList(
+                inAssociationDeclarations(inputAssociations),
+                outAssociationDeclarations(outputAssociations));
 
-        String associationString =
-                Stream.concat(dataInputAssociationsToString.stream(), dataOutputAssociationsToString.stream())
-                        .collect(Collectors.joining(","));
-
-        return Stream.of("",
-                         dataInputString,
-                         "",
-                         dataOutputString,
-                         associationString)
-                .collect(Collectors.joining("|"));
+        return new AssignmentsInfo(inputs, outputs, associations, alternativeEncoding);
     }
 
-    public static String makeString(
-            final List<DataInput> datainput,
-            final List<InputSet> inputSets,
-            final List<DataInputAssociation> inputAssociations,
-            final List<DataOutput> dataoutput,
-            final List<OutputSet> dataoutputset,
-            final List<DataOutputAssociation> outputAssociations) {
-
-        String dataInputString = dataInputsToString(datainput);
-        String inputSetsToString = inputSetsToString(inputSets);
-        List<String> dataInputAssociationsToString = inAssociationsToString(inputAssociations);
-
-        String dataOutputString = dataOutputsToString(dataoutput);
-        String outputSetsToString = outputSetsToString(dataoutputset);
-        List<String> dataOutputAssociationsToString = outAssociationsToString(outputAssociations);
-
-        String associationString =
-                Stream.concat(dataInputAssociationsToString.stream(), dataOutputAssociationsToString.stream())
-                        .collect(Collectors.joining(","));
-
-        return Stream.of(dataInputString,
-                         inputSetsToString,
-                         dataOutputString,
-                         outputSetsToString,
-                         associationString)
-                .collect(Collectors.joining("|"));
+    private static DeclarationList dataInputDeclarations(List<DataInput> dataInputs) {
+        return new DeclarationList(
+                dataInputs.stream()
+                        .filter(o -> !o.getName().equals("TaskName"))
+                        .map(in -> new VariableDeclaration(
+                                in.getName(),
+                                Attribute.dtype.of(in).get()))
+                        .collect(Collectors.toList()));
     }
 
-    private static String inputSetsToString(List<InputSet> inputSets) {
-        return inputSets.stream()
-                .map(AssignmentsInfos::toString)
-                .collect(Collectors.joining(","));
+    private static DeclarationList dataOutputDeclarations(List<DataOutput> dataInputs) {
+        return new DeclarationList(
+                dataInputs.stream()
+                        .filter(o -> !Attribute.dtype.of(o).get().isEmpty())
+                        .map(out -> new VariableDeclaration(
+                                out.getName(),
+                                Attribute.dtype.of(out).get()))
+                        .collect(Collectors.toList()));
     }
 
-    private static String outputSetsToString(List<OutputSet> outputSets) {
-        return outputSets.stream()
-                .map(AssignmentsInfos::toString)
-                .collect(Collectors.joining(","));
+    private static List<AssociationDeclaration> inAssociationDeclarations(List<DataInputAssociation> inputAssociations) {
+        return inputAssociations.stream()
+                .filter(association -> !association.getSourceRef().isEmpty())
+                .map(in -> new AssociationDeclaration(
+                        Direction.Input,
+                        Type.SourceTarget,
+                        getPropertyName((Property) in.getSourceRef().get(0)),
+                        ((DataInput) in.getTargetRef()).getName()))
+                .collect(Collectors.toList());
     }
 
-    public static String dataInputsToString(List<DataInput> dataInputs) {
-        return dataInputs.stream()
-                .filter(o -> !o.getName().equals("TaskName"))
-                .map(AssignmentsInfos::toString)
-                .collect(Collectors.joining(","));
+    private static List<AssociationDeclaration> outAssociationDeclarations(List<DataOutputAssociation> outputAssociations) {
+        return outputAssociations.stream()
+                .map(out -> new AssociationDeclaration(
+                        Direction.Output,
+                        Type.SourceTarget,
+                        ((DataOutput) out.getSourceRef().get(0)).getName(),
+                        getPropertyName((Property) out.getTargetRef())))
+                .collect(Collectors.toList());
     }
 
-    public static String dataOutputsToString(List<DataOutput> dataInputs) {
-        return dataInputs.stream()
-                .filter(o -> !extractDtype(o).isEmpty())
-                .map(AssignmentsInfos::toString)
-                .collect(Collectors.joining(","));
-    }
-
-    private static String toString(OutputSet outputSet) {
-        return "";
-    }
-
-    public static String toString(InputSet dataInput) {
-        return "";
-    }
-
-    public static List<String> outAssociationsToString(List<DataOutputAssociation> outputAssociations) {
-        List<String> result = new ArrayList<>();
-        for (DataOutputAssociation doa : outputAssociations) {
-            String doaName = ((DataOutput) doa.getSourceRef().get(0)).getName();
-            if (doaName != null && doaName.length() > 0) {
-                result.add(String.format("[dout]%s->%s", doaName, doa.getTargetRef().getId()));
-            }
-        }
-        return result;
-    }
-
-    public static List<String> inAssociationsToString(List<DataInputAssociation> inputAssociations) {
-        List<String> result = new ArrayList<>();
-
-        for (DataInputAssociation dia : inputAssociations) {
-            List<ItemAwareElement> sourceRef = dia.getSourceRef();
-            if (sourceRef.isEmpty()) {
-                continue;
-            }
-            String doaName = sourceRef.get(0).getId();
-            if (doaName != null && doaName.length() > 0) {
-                result.add(String.format("[din]%s->%s", doaName, ((DataInput) dia.getTargetRef()).getName()));
-            }
-        }
-
-        return result;
-    }
-
-    public static String toString(DataInput dataInput) {
-        String name = dataInput.getName();
-        String dtype = extractDtype(dataInput);
-        return dtype.isEmpty() ? name : name + ':' + dtype;
-    }
-
-    public static String toString(DataOutput dataInput) {
-        String name = dataInput.getName();
-        String dtype = extractDtype(dataInput);
-        return dtype.isEmpty() ? name : name + ':' + dtype;
-    }
-
-    private static String extractDtype(BaseElement el) {
-        return getAnyAttributeValue(el, "dtype");
-    }
-
-    static String getAnyAttributeValue(BaseElement el, String attrName) {
-        for (FeatureMap.Entry entry : el.getAnyAttribute()) {
-            if (attrName.equals(entry.getEStructuralFeature().getName())) {
-                return entry.getValue().toString();
-            }
-        }
-        return "";
+    // fallback to ID for https://issues.jboss.org/browse/JBPM-6708
+    private static String getPropertyName(Property prop) {
+        return prop.getName() == null ? prop.getId() : prop.getName();
     }
 }

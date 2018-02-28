@@ -16,6 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.sequenceflows;
 
+import java.util.Map;
+
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnEdge;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
@@ -35,15 +39,13 @@ public class SequenceFlowConverter {
 
     private TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
-    private final GraphBuildingContext context;
 
-    public SequenceFlowConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory, GraphBuildingContext context) {
+    public SequenceFlowConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.context = context;
     }
 
-    public Edge<? extends View<SequenceFlow>, ?> convert(org.eclipse.bpmn2.SequenceFlow seq) {
+    public BpmnEdge convertEdge(org.eclipse.bpmn2.SequenceFlow seq, Map<String, BpmnNode> nodes) {
         Edge<View<SequenceFlow>, Node> edge = factoryManager.newEdge(seq.getId(), SequenceFlow.class);
 
         SequenceFlow definition = edge.getContent().getDefinition();
@@ -59,13 +61,11 @@ public class SequenceFlowConverter {
                 new ConditionExpression(p.getConditionExpression())
         ));
 
-        context.addEdge(
-                edge,
-                p.getSourceId(),
-                p.getSourceConnection(),
-                p.getTargetId(),
-                p.getTargetConnection());
-
-        return edge;
+        return BpmnEdge.of(
+               edge,
+               nodes.get(p.getSourceId()),
+               p.getSourceConnection(),
+               nodes.get(p.getTargetId()),
+               p.getTargetConnection());
     }
 }

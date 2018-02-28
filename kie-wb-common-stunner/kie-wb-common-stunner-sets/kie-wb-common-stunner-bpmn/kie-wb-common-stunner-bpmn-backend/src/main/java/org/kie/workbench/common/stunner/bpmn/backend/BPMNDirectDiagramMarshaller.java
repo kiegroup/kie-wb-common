@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -24,24 +25,29 @@ import java.util.Map;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import bpsim.impl.BpsimFactoryImpl;
 import bpsim.impl.BpsimPackageImpl;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.DocumentRoot;
-import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.util.Bpmn2Resource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.jboss.drools.DroolsPackage;
+import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.processes.ProcessConverterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -115,8 +121,31 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
     @Override
     @SuppressWarnings("unchecked")
-    public String marshall(final Diagram diagram) throws IOException {
-        return legacyMarshaller.marshall(diagram);
+    public String marshall(final Diagram<Graph, Metadata> diagram) throws IOException {
+        LOG.debug("Starting diagram marshalling...");
+
+        Bpmn2Resource resource = createBpmn2Resource();
+
+        // we start converting from the root, then pull out the result
+        DefinitionsConverter definitionsConverter =
+                new DefinitionsConverter(diagram.getGraph());
+
+        Definitions definitions =
+                definitionsConverter.toDefinitions();
+
+        resource.getContents().add(definitions);
+
+        LOG.debug("Diagram marshalling completed successfully.");
+        String outputString = renderToString(resource);
+        LOG.info(outputString);
+        return outputString;
+    }
+
+    private String renderToString(Bpmn2Resource resource) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        resource.save(outputStream, new HashMap<>());
+        return StringEscapeUtils.unescapeHtml4(
+                outputStream.toString("UTF-8"));
     }
 
     @Override
@@ -125,38 +154,73 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         LOG.debug("Starting diagram unmarshalling...");
 
         Definitions definitions = parseDefinitions(inputStream);
-        String definitionsId = definitions.getId();
 
-        Process process = findProcess(definitions);
+        // the stunner model aggregates in a node different aspects:
+        // - type (e.g., Task)
+        // - format (e.g., colors)
+        // - layout (position)
+        // thus, we need a mechanism to resolve these different concerns
+        // as we convert FlowElements
+        DefinitionResolver definitionResolver =
+                new DefinitionResolver(definitions);
 
-        metadata.setCanvasRootUUID(definitionsId);
-        metadata.setTitle(process.getName());
+        // process converters are a bit more involved than other
+        // converters, so we use a factory
+        ProcessConverterFactory processConverterFactory =
+                new ProcessConverterFactory(
+                        typedFactoryManager,
+                        definitionResolver);
 
+        BpmnNode root =
+                processConverterFactory
+                        .processConverter()
+                        .convertProcess();
+
+        metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
+        metadata.setTitle(definitionResolver.getProcess().getName());
+
+        LOG.debug("Diagram unmarshalling completed successfully.");
+
+        // the root node contains all of the information
+        // needed to build the entire graph (including parent/child relationships)
+        // thus, we can simply walk the graph to issue all the commands
+        // to draw it on our canvas
+        return renderGraph(definitionResolver.getDefinitions().getId(), root);
+    }
+
+    private Bpmn2Resource createBpmn2Resource() {
+        DroolsFactoryImpl.init();
+        BpsimFactoryImpl.init();
+
+        ResourceSet rSet = new ResourceSetImpl();
+
+        rSet.getResourceFactoryRegistry()
+                .getExtensionToFactoryMap()
+                .put("bpmn2",
+                     new JBPMBpmn2ResourceFactoryImpl());
+
+        Bpmn2Resource resource =
+                (Bpmn2Resource) rSet.createResource(
+                        URI.createURI("virtual.bpmn2"));
+
+        rSet.getResources().add(resource);
+        return resource;
+    }
+
+    /**
+     * Creates a graph context and then walks the graph
+     * to draw it on the canvas
+     */
+    private Graph<DefinitionSet, Node> renderGraph(String definitionsId, BpmnNode root) {
         Graph<DefinitionSet, Node> graph =
                 typedFactoryManager.newGraph(
                         definitionsId, BPMNDefinitionSet.class);
 
-        GraphBuildingContext context = emptyGraphContext(graph);
+        emptyGraphContext(graph)
+                .buildGraph(root);
 
-        PropertyReaderFactory propertyReaderFactory =
-                new PropertyReaderFactory(definitions);
-
-        ProcessConverter processConverter =
-                new ProcessConverter(
-                        typedFactoryManager,
-                        propertyReaderFactory,
-                        context);
-
-        processConverter.convert(definitionsId, process);
-
-        LOG.debug("Diagram unmarshalling finished successfully.");
+        LOG.debug("Diagram drawing completed successfully.");
         return graph;
-    }
-
-    public Process findProcess(Definitions definitions) {
-        return (Process) definitions.getRootElements().stream()
-                .filter(el -> el instanceof Process)
-                .findFirst().get();
     }
 
     private GraphBuildingContext emptyGraphContext(Graph<DefinitionSet, Node> graph) {
@@ -213,5 +277,9 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         final DocumentRoot root = (DocumentRoot) resource.getContents().get(0);
 
         return root.getDefinitions();
+    }
+
+    public JBPMBpmn2ResourceImpl marshallToBpmn2Resource(Diagram<Graph, Metadata> diagram) {
+        return null;
     }
 }

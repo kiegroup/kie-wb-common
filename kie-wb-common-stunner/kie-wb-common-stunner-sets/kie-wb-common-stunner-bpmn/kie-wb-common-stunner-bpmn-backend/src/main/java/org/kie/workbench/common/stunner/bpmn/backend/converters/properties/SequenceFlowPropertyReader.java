@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SequenceFlow;
@@ -25,6 +24,7 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
@@ -35,25 +35,27 @@ import org.slf4j.LoggerFactory;
 public class SequenceFlowPropertyReader extends BasePropertyReader {
 
     private static final Logger logger = LoggerFactory.getLogger(SequenceFlowPropertyReader.class);
-    private final FormalExpression conditionExpression;
+    final FormalExpression conditionExpression;
+    private final DefinitionResolver definitionResolver;
     private final SequenceFlow seq;
 
-    public SequenceFlowPropertyReader(SequenceFlow seq, BPMNPlane plane) {
-        super(seq, plane);
+    public SequenceFlowPropertyReader(SequenceFlow seq, BPMNPlane plane, DefinitionResolver definitionResolver) {
+        super(seq, plane, definitionResolver.getShape(seq.getId()));
         this.seq = seq;
         conditionExpression = (FormalExpression) seq.getConditionExpression();
+        this.definitionResolver = definitionResolver;
     }
 
     public String getPriority() {
-        return attribute("priority");
+        return Attribute.priority.of(element).get();
     }
 
     public boolean isAutoConnectionSource() {
-        return Boolean.parseBoolean(metaData("isAutoConnection.source"));
+        return CustomElement.autoConnectionSource.of(element).get();
     }
 
     public boolean isAutoConnectionTarget() {
-        return Boolean.parseBoolean(metaData("isAutoConnection.target"));
+        return CustomElement.autoConnectionTarget.of(element).get();
     }
 
     public ScriptTypeValue getConditionExpression() {
@@ -65,7 +67,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
                     conditionExpression.getBody());
         }
     }
-
+    
     public String getSourceId() {
         return seq.getSourceRef().getId();
     }
@@ -85,8 +87,8 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     }
 
     private Point2D getSourcePosition(String edgeId, String sourceId) {
-        BPMNEdge bpmnEdge = getBPMNEdgeForElement(edgeId).get();
-        Bounds sourceBounds = getShape(plane, sourceId).getBounds();
+        BPMNEdge bpmnEdge = definitionResolver.getEdge(edgeId).get();
+        Bounds sourceBounds = definitionResolver.getShape(sourceId).getBounds();
         List<Point> waypoint = bpmnEdge.getWaypoint();
         return waypoint.isEmpty() ?
                 sourcePosition(sourceBounds)
@@ -94,11 +96,11 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     }
 
     private Point2D getTargetPosition(String edgeId, String targetId) {
-        BPMNEdge bpmnEdge = getBPMNEdgeForElement(edgeId).get();
-        Bounds targetBounds = getShape(plane, targetId).getBounds();
+        BPMNEdge bpmnEdge = definitionResolver.getEdge(edgeId).get();
+        Bounds targetBounds = definitionResolver.getShape(targetId).getBounds();
         List<Point> waypoint = bpmnEdge.getWaypoint();
 
-        if (waypoint.size() != 2 && waypoint.size() != 0) {
+        if (waypoint.size() > 2) {
             logger.warn("Waypoints should be either 0 or 2. Unexpected size: " + waypoint.size());
         }
 
@@ -120,13 +122,5 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     private Point2D targetPosition(Bounds targetBounds) {
         return Point2D.create(0,
                               targetBounds.getHeight() / 2);
-    }
-
-    private Optional<BPMNEdge> getBPMNEdgeForElement(String elementId) {
-        return plane.getPlaneElement().stream()
-                .filter(dia -> dia instanceof BPMNEdge)
-                .map(edge -> (BPMNEdge) edge)
-                .filter(edge -> edge.getBpmnElement().getId().equals(elementId))
-                .findFirst();
     }
 }

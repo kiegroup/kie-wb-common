@@ -16,13 +16,12 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.eclipse.bpmn2.Assignment;
-import org.eclipse.bpmn2.DataInput;
-import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.PotentialOwner;
@@ -30,9 +29,8 @@ import org.eclipse.bpmn2.ResourceRole;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-
-import static java.util.stream.Collectors.joining;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
 public class UserTaskPropertyReader extends TaskPropertyReader {
 
@@ -43,102 +41,77 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
         this.task = element;
     }
 
-    public String getTaskName() {
-        return optionalInput("TaskName").orElse("Task");
-    }
-
-    public String getActors() {
+    public Collection<String> getActors() {
         // get the user task actors
         List<ResourceRole> roles = task.getResources();
-        return roles.stream()
-                .filter(role -> role instanceof PotentialOwner)
-                .map(this::getRoleName)
-                .collect(joining(","));
+        List<String> users = new ArrayList<>();
+        for (ResourceRole role : roles) {
+            if (role instanceof PotentialOwner) {
+                FormalExpression fe = (FormalExpression)
+                        role.getResourceAssignmentExpression()
+                                .getExpression();
+                users.add(fe.getBody());
+            }
+        }
+        return users;
     }
 
-    private String getRoleName(ResourceRole role) {
-        return (
-                (FormalExpression) role.getResourceAssignmentExpression().getExpression()
-        ).getBody();
+    public AssignmentsInfo getAssignmentsInfo() {
+        Optional<InputOutputSpecification> ioSpecification =
+                Optional.ofNullable(task.getIoSpecification());
+
+        return AssignmentsInfos.of(
+                ioSpecification.map(InputOutputSpecification::getDataInputs)
+                        .orElse(Collections.emptyList()),
+                task.getDataInputAssociations(),
+                ioSpecification.map(InputOutputSpecification::getDataOutputs)
+                        .orElse(Collections.emptyList()),
+                task.getDataOutputAssociations(),
+                ioSpecification.isPresent()
+        );
+    }
+
+    public ScriptTypeListValue getOnEntryAction() {
+        return Scripts.onEntry(element.getExtensionValues());
+    }
+
+    public ScriptTypeListValue getOnExitAction() {
+        return Scripts.onExit(element.getExtensionValues());
+    }
+
+    public String getTaskName() {
+        return CustomInput.taskName.of(task).get();
     }
 
     public String getGroupid() {
-        return input("GroupId");
-    }
-
-    public String getAssignmentsInfo() {
-        InputOutputSpecification ioSpecification = task.getIoSpecification();
-        if (ioSpecification == null) {
-            return (
-                    AssignmentsInfos.makeString(
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            task.getDataInputAssociations(),
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            task.getDataOutputAssociations()
-                    )
-            );
-        } else {
-            return (
-                    AssignmentsInfos.makeWrongString(
-                            ioSpecification.getDataInputs(),
-                            task.getDataInputAssociations(),
-                            ioSpecification.getDataOutputs(),
-                            task.getDataOutputAssociations()
-                    )
-            );
-        }
+        return CustomInput.groupId.of(task).get();
     }
 
     public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+        return CustomElement.async.of(element).get();
     }
 
     public boolean isSkippable() {
-        return Boolean.parseBoolean(input("Skippable"));
+        return CustomInput.skippable.of(task).get();
     }
 
     public String getPriority() {
-        return input("Priority");
+        return CustomInput.priority.of(task).get();
     }
 
     public String getSubject() {
-        return input("Comment");
+        return CustomInput.subject.of(task).get();
     }
 
     public String getDescription() {
-        return input("Description");
+        return CustomInput.description.of(task).get();
     }
 
     public String getCreatedBy() {
-        return input("CreatedBy");
+        return CustomInput.createdBy.of(task).get();
     }
 
     public boolean isAdHocAutostart() {
-        return Boolean.parseBoolean(metaData("customAutoStart"));
-    }
-
-    public String input(String name) {
-        return optionalInput(name).orElse("");
-    }
-
-    private Optional<String> optionalInput(String name) {
-        for (DataInputAssociation din : task.getDataInputAssociations()) {
-            DataInput targetRef = (DataInput) (din.getTargetRef());
-            if (targetRef.getName().equalsIgnoreCase(name)) {
-                Assignment assignment = din.getAssignment().get(0);
-                return Optional.of(evaluate(assignment).toString());
-            }
-        }
-        return Optional.empty();
-    }
-
-    private static Object evaluate(Assignment assignment) {
-        return ((FormalExpression) assignment.getFrom()).getMixed().getValue(0);
-    }
-
-    public SimulationSet getSimulationSet() {
-        return definitionResolver.extractSimulationSet(task);
+        return CustomElement.autoStart.of(element).get();
     }
 }

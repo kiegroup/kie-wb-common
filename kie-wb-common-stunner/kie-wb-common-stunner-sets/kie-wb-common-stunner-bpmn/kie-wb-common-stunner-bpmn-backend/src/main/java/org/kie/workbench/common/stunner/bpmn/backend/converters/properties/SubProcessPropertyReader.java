@@ -30,7 +30,7 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
     private final DefinitionResolver definitionResolver;
 
     public SubProcessPropertyReader(SubProcess element, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        super(element, plane);
+        super(element, plane, definitionResolver.getShape(element.getId()));
         this.process = element;
         this.definitionResolver = definitionResolver;
     }
@@ -51,10 +51,17 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
     }
 
     public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+        return CustomElement.async.of(element).get();
     }
 
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Activities;
+//    }
+
     public SimulationSet getSimulationSet() {
-        return definitionResolver.extractSimulationSet(process.getId());
+        return definitionResolver.resolveSimulationParameters(element.getId())
+                .map(SimulationSets::of)
+                .orElse(new SimulationSet());
     }
 }

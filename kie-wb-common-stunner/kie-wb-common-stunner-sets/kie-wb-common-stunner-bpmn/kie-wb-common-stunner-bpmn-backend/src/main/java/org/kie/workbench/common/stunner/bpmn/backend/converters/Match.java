@@ -42,6 +42,10 @@ public class Match<In, Out> {
         return new Match<>(outputType);
     }
 
+    public static <In, Out> Match<Node<? extends View<? extends In>, ?>, Out> fromNode(Class<In> inputType, Class<Out> outputType) {
+        return new Match<>(outputType);
+    }
+
     public static <In, Out> Match<In, Edge<? extends View<? extends Out>, ?>> ofEdge(Class<In> inputType, Class<Out> outputType) {
         return new Match<>(outputType);
     }

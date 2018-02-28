@@ -17,12 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.Collections;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 public class ActivityPropertyReader extends FlowElementPropertyReader {
@@ -31,50 +32,46 @@ public class ActivityPropertyReader extends FlowElementPropertyReader {
     private DefinitionResolver definitionResolver;
 
     public ActivityPropertyReader(Activity activity, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        super(activity, plane);
+        super(activity, plane, definitionResolver.getShape(activity.getId()));
         this.activity = activity;
         this.definitionResolver = definitionResolver;
     }
 
     public boolean isIndependent() {
-        return Boolean.parseBoolean(attribute("independent"));
+        return Attribute.independent.of(element).get();
     }
 
     public boolean isWaitForCompletion() {
-        return Boolean.parseBoolean(attribute("waitForCompletion"));
+        return Attribute.waitForCompletion.of(element).get();
     }
 
     public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+        return CustomElement.async.of(element).get();
     }
 
-    public String getAssignmentsInfo() {
-        InputOutputSpecification ioSpecification = activity.getIoSpecification();
-        if (ioSpecification == null) {
-            return AssignmentsInfos.makeString(
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    activity.getDataInputAssociations(),
-                    Collections.emptyList(),
-                    Collections.emptyList(),
-                    activity.getDataOutputAssociations());
-        } else {
-            return AssignmentsInfos.makeWrongString(
-                    ioSpecification.getDataInputs(),
-                    activity.getDataInputAssociations(),
-                    ioSpecification.getDataOutputs(),
-                    activity.getDataOutputAssociations());
-        }
+    public AssignmentsInfo getAssignmentsInfo() {
+        Optional<InputOutputSpecification> ioSpecification =
+                Optional.ofNullable(activity.getIoSpecification());
+
+        return AssignmentsInfos.of(
+                ioSpecification.map(InputOutputSpecification::getDataInputs)
+                        .orElse(Collections.emptyList()),
+                activity.getDataInputAssociations(),
+                ioSpecification.map(InputOutputSpecification::getDataOutputs)
+                        .orElse(Collections.emptyList()),
+                activity.getDataOutputAssociations(),
+                ioSpecification.isPresent()
+        );
     }
 
-    public String getProcessVariables() {
-        return activity.getProperties()
-                .stream()
-                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
-                .collect(Collectors.joining(","));
-    }
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Activities;
+//    }
 
     public SimulationSet getSimulationSet() {
-        return definitionResolver.extractSimulationSet(activity.getId());
+        return definitionResolver.resolveSimulationParameters(element.getId())
+                .map(SimulationSets::of)
+                .orElse(new SimulationSet());
     }
 }

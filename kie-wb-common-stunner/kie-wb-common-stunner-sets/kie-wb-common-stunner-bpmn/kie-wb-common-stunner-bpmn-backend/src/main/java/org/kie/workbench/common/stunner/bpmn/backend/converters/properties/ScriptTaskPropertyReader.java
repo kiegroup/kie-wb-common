@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
+import java.util.Optional;
+
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
@@ -34,15 +36,17 @@ public class ScriptTaskPropertyReader extends TaskPropertyReader {
     public ScriptTypeValue getScript() {
         return new ScriptTypeValue(
                 Scripts.scriptLanguageFromUri(task.getScriptFormat()),
-                task.getScript()
+                Optional.ofNullable(task.getScript()).orElse(null)
         );
     }
 
-    public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+    public SimulationSet getSimulationSet() {
+        return definitionResolver.resolveSimulationParameters(task.getId())
+                .map(SimulationSets::of)
+                .orElse(new SimulationSet());
     }
 
-    public SimulationSet getSimulationSet() {
-        return definitionResolver.extractSimulationSet(task);
+    public boolean isAsync() {
+        return CustomElement.async.of(element).get();
     }
 }

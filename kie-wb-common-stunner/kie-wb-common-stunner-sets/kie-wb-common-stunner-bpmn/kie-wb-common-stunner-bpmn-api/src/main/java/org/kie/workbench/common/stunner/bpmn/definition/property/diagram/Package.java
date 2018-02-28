@@ -43,7 +43,7 @@ public class Package implements BPMNProperty {
     @FieldValue
     @NotNull
     @NotEmpty
-    private String value;
+    private String value = DEFAULT_PACKAGE;
 
     public Package() {
     }

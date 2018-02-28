@@ -544,14 +544,14 @@ public class MigrationDiagramMarshallerTest {
 
     private void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         assertNodeEquals(oldDiagram, newDiagram, fileName);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram, fileName);
     }
 
-    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
-        assertEquals("Number of edges should match", oldEdges.size(), newEdges.size());
+        assertEquals(fileName + ": Number of edges should match", oldEdges.size(), newEdges.size());
 
         {
             Map<String, Edge> nonRelOldEdges = oldEdges.stream()
@@ -568,9 +568,9 @@ public class MigrationDiagramMarshallerTest {
                 Edge<ViewConnector, ?> newEdge = nonRelNewEdges.get(oldEdge.getUUID());
 
                 // (relationship) edges are equal iff <source, target> match respectively
-                assertEquals("Source Connection should match for " + oldEdge.getUUID(),
+                assertEquals(fileName + ": Source Connection should match for " + oldEdge.getUUID(),
                              oldEdge.getContent().getSourceConnection(), newEdge.getContent().getSourceConnection());
-                assertEquals("Target Connection should match for " + oldEdge.getUUID(),
+                assertEquals(fileName + ": Target Connection should match for " + oldEdge.getUUID(),
                              oldEdge.getContent().getTargetConnection(), newEdge.getContent().getTargetConnection());
             }
 
@@ -596,8 +596,8 @@ public class MigrationDiagramMarshallerTest {
                 Edge<ViewConnector, ?> oldEdge = oldIt.next();
                 Edge<ViewConnector, ?> newEdge = newIt.next();
 
-                assertEquals(oldEdge.getTargetNode(), newEdge.getTargetNode());
-                assertEquals(oldEdge.getSourceNode(), newEdge.getSourceNode());
+                assertEquals(fileName + ": target node did not match", oldEdge.getTargetNode(), newEdge.getTargetNode());
+                assertEquals(fileName + ": source node did not match", oldEdge.getSourceNode(), newEdge.getSourceNode());
             }
         }
 

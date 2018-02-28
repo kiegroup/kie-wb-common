@@ -17,8 +17,9 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.BusinessRuleTask;
-import org.eclipse.bpmn2.Definitions;
+import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
@@ -28,6 +29,7 @@ import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.Task;
+import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.UserTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
@@ -37,33 +39,29 @@ public class PropertyReaderFactory {
     private final BPMNPlane plane;
     private final DefinitionResolver definitionResolver;
 
-    public PropertyReaderFactory(Definitions definitions) {
-        this.plane = findPlane(definitions);
-        this.definitionResolver = new DefinitionResolver(definitions);
-    }
-
-    private BPMNPlane findPlane(Definitions definitions) {
-        return definitions.getDiagrams().get(0).getPlane();
+    public PropertyReaderFactory(DefinitionResolver definitionResolver) {
+        this.plane = definitionResolver.getPlane();
+        this.definitionResolver = definitionResolver;
     }
 
     public FlowElementPropertyReader of(FlowElement el) {
-        return new FlowElementPropertyReader(el, plane);
+        return new FlowElementPropertyReader(el, plane, definitionResolver.getShape(el.getId()));
     }
 
     public LanePropertyReader of(Lane el) {
-        return new LanePropertyReader(el, plane);
+        return new LanePropertyReader(el, plane, definitionResolver.getShape(el.getId()));
     }
 
     public SequenceFlowPropertyReader of(SequenceFlow el) {
-        return new SequenceFlowPropertyReader(el, plane);
+        return new SequenceFlowPropertyReader(el, plane, definitionResolver);
     }
 
     public GatewayPropertyReader of(Gateway el) {
-        return new GatewayPropertyReader(el, plane);
+        return new GatewayPropertyReader(el, plane, definitionResolver.getShape(el.getId()));
     }
 
-    public NoneTaskPropertyReader of(Task el) {
-        return new NoneTaskPropertyReader(el, plane, definitionResolver);
+    public TaskPropertyReader of(Task el) {
+        return new TaskPropertyReader(el, plane, definitionResolver);
     }
 
     public UserTaskPropertyReader of(UserTask el) {
@@ -83,7 +81,17 @@ public class PropertyReaderFactory {
     }
 
     public EventPropertyReader of(Event el) {
-        return EventPropertyReader.of(el, plane, definitionResolver);
+        if (el instanceof BoundaryEvent) {
+            return new BoundaryEventPropertyReader((BoundaryEvent) el, plane, definitionResolver);
+        } else if (el instanceof CatchEvent) {
+            CatchEvent catchEvent = (CatchEvent) el;
+            return new CatchEventPropertyReader(catchEvent, plane, definitionResolver);
+        } else if (el instanceof ThrowEvent) {
+            ThrowEvent throwEvent = (ThrowEvent) el;
+            return new ThrowEventPropertyReader(throwEvent, plane, definitionResolver);
+        } else {
+            throw new IllegalArgumentException(el.toString());
+        }
     }
 
     public SubProcessPropertyReader of(SubProcess el) {
@@ -91,6 +99,6 @@ public class PropertyReaderFactory {
     }
 
     public ProcessPropertyReader of(Process el) {
-        return new ProcessPropertyReader(el, plane);
+        return new ProcessPropertyReader(el, plane, definitionResolver.getShape(el.getId()));
     }
 }

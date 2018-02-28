@@ -17,12 +17,14 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
 public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
 
@@ -31,43 +33,37 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
     }
 
     public String getRuleFlowGroup() {
-        return attribute("ruleFlowGroup");
+        return Attribute.ruleFlowGroup.of(element).get();
     }
 
-    public String getAssignmentsInfo() {
-        InputOutputSpecification ioSpecification = task.getIoSpecification();
-        if (ioSpecification == null) {
-            return (
-                    AssignmentsInfos.makeString(
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            task.getDataInputAssociations(),
-                            Collections.emptyList(),
-                            Collections.emptyList(),
-                            task.getDataOutputAssociations()
-                    )
-            );
-        } else {
-            return (
-                    AssignmentsInfos.makeWrongString(
-                            ioSpecification.getDataInputs(),
-                            task.getDataInputAssociations(),
-                            ioSpecification.getDataOutputs(),
-                            task.getDataOutputAssociations()
-                    )
-            );
-        }
+    public AssignmentsInfo getAssignmentsInfo() {
+        Optional<InputOutputSpecification> ioSpecification =
+                Optional.ofNullable(task.getIoSpecification());
+
+        return AssignmentsInfos.of(
+                ioSpecification.map(InputOutputSpecification::getDataInputs)
+                        .orElse(Collections.emptyList()),
+                task.getDataInputAssociations(),
+                ioSpecification.map(InputOutputSpecification::getDataOutputs)
+                        .orElse(Collections.emptyList()),
+                task.getDataOutputAssociations(),
+                ioSpecification.isPresent()
+        );
+    }
+
+    public ScriptTypeListValue getOnEntryAction() {
+        return Scripts.onEntry(element.getExtensionValues());
+    }
+
+    public ScriptTypeListValue getOnExitAction() {
+        return Scripts.onExit(element.getExtensionValues());
     }
 
     public boolean isAsync() {
-        return Boolean.parseBoolean(metaData("customAsync"));
+        return CustomElement.async.of(element).get();
     }
 
     public boolean isAdHocAutoStart() {
-        return Boolean.parseBoolean(metaData("customAutoStart"));
-    }
-
-    public SimulationSet getSimulationSet() {
-        return definitionResolver.extractSimulationSet(task);
+        return CustomElement.autoStart.of(element).get();
     }
 }

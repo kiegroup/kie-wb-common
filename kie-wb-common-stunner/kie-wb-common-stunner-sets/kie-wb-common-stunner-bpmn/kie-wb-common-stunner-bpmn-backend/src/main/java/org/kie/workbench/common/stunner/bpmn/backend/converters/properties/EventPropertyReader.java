@@ -23,33 +23,21 @@ import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.TimerEventDefinition;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.events.TimerEventDefinitionConverter;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettings;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.TimerSettingsValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 
 public abstract class EventPropertyReader extends FlowElementPropertyReader {
 
     private final DefinitionResolver definitionResolver;
-    private String signalRefId;
-
-    public static EventPropertyReader of(Event el, BPMNPlane plane, DefinitionResolver definitionResolver) {
-        if (el instanceof BoundaryEvent) {
-            return new BoundaryEventPropertyReader((BoundaryEvent) el, plane, definitionResolver);
-        } else if (el instanceof CatchEvent) {
-            CatchEvent catchEvent = (CatchEvent) el;
-            return new CatchEventPropertyReader(catchEvent, plane, definitionResolver);
-        } else if (el instanceof ThrowEvent) {
-            ThrowEvent throwEvent = (ThrowEvent) el;
-            return new ThrowEventPropertyReader(throwEvent, plane, definitionResolver);
-        } else {
-            throw new IllegalArgumentException(el.toString());
-        }
-    }
+    private String signalRefId = null;
 
     static String getSignalRefId(List<EventDefinition> eventDefinitions) {
         if (eventDefinitions.size() == 1 && eventDefinitions.get(0) instanceof SignalEventDefinition) {
@@ -59,26 +47,39 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     }
 
     EventPropertyReader(Event element, BPMNPlane plane, DefinitionResolver definitionResolver, String eventDefinition) {
-        super(element, plane);
+        super(element, plane, definitionResolver.getShape(element.getId()));
         this.definitionResolver = definitionResolver;
         this.signalRefId = eventDefinition;
     }
 
     public String getSignalScope() {
-        return metaData("customScope");
+        return CustomElement.scope.of(element).get();
     }
 
-    public abstract String getAssignmentsInfo();
+    public abstract AssignmentsInfo getAssignmentsInfo();
 
     public boolean isCancelActivity() {
-        return optionalAttribute("boundaryca")
-                .filter(s -> !s.isEmpty())
-                .map(Boolean::parseBoolean)
-                .orElse(true);
+        return Attribute.boundarycaForEvent.of(element).get();
     }
 
     public TimerSettingsValue getTimerSettings(TimerEventDefinition eventDefinition) {
-        return TimerEventDefinitionConverter.convertTimerEventDefinition(eventDefinition);
+        TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
+        FormalExpression timeCycle = (FormalExpression) eventDefinition.getTimeCycle();
+        if (timeCycle != null) {
+            timerSettingsValue.setTimeCycle(timeCycle.getBody());
+            timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
+        }
+
+        FormalExpression timeDate = (FormalExpression) eventDefinition.getTimeDate();
+        if (timeDate != null) {
+            timerSettingsValue.setTimeDate(timeDate.getBody());
+        }
+
+        FormalExpression timeDateDuration = (FormalExpression) eventDefinition.getTimeDuration();
+        if (timeDateDuration != null) {
+            timerSettingsValue.setTimeDuration(timeDateDuration.getBody());
+        }
+        return (timerSettingsValue);
     }
 
     public String getSignalRef() {
@@ -87,6 +88,13 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     }
 
     public SimulationAttributeSet getSimulationSet() {
-        return definitionResolver.extractSimulationAttributeSet(element.getId());
+        return definitionResolver.resolveSimulationParameters(element.getId())
+                .map(SimulationAttributeSets::of)
+                .orElse(new SimulationAttributeSet());
     }
+
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Events;
+//    }
 }

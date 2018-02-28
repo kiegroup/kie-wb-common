@@ -30,10 +30,7 @@ class BoundaryEventPropertyReader extends CatchEventPropertyReader {
     }
 
     public boolean isCancelActivity() {
-        return optionalAttribute("boundaryca")
-                .filter(s -> !s.isEmpty())
-                .map(Boolean::parseBoolean)
-                .orElse(false);
+        return Attribute.boundarycaForBoundaryEvent.of(element).get();
     }
 
     @Override
@@ -48,16 +45,6 @@ class BoundaryEventPropertyReader extends CatchEventPropertyReader {
     }
 
     public Point2D getDockerInfo() {
-        String dockerInfoStr = attribute("dockerinfo");
-
-        dockerInfoStr = dockerInfoStr.substring(0, dockerInfoStr.length() - 1);
-        String[] dockerInfoParts = dockerInfoStr.split("\\|");
-        String infoPartsToUse = dockerInfoParts[0];
-        String[] infoPartsToUseParts = infoPartsToUse.split("\\^");
-
-        double x = Double.valueOf(infoPartsToUseParts[0]);
-        double y = Double.valueOf(infoPartsToUseParts[1]);
-
-        return Point2D.create(x, y);
+        return Attribute.dockerInfo.of(element).get();
     }
 }

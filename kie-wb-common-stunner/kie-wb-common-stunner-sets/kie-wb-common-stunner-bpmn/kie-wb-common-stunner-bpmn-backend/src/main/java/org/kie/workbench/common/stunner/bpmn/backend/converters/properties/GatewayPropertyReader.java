@@ -18,16 +18,25 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.properties;
 
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.eclipse.bpmn2.di.BPMNShape;
 
 public class GatewayPropertyReader extends FlowElementPropertyReader {
 
-    public GatewayPropertyReader(Gateway element, BPMNPlane plane) {
-        super(element, plane);
+    public GatewayPropertyReader(Gateway element, BPMNPlane plane, BPMNShape shape) {
+        super(element, plane, shape);
     }
 
     public String getDefaultRoute() {
-        String result = attribute("dg");
-        // this is for compatibility with legacy marshallers
-        return result.isEmpty() ? null : result;
+        return Attribute.dg.of(element).get();
     }
+
+//    @Override
+//    protected String colorsDefaultBg() {
+//        return Colors.defaultBgColor_Gateways;
+//    }
+//
+//    @Override
+//    protected String colorsDefaultBr() {
+//        return Colors.defaultBrColor_Gateways;
+//    }
 }

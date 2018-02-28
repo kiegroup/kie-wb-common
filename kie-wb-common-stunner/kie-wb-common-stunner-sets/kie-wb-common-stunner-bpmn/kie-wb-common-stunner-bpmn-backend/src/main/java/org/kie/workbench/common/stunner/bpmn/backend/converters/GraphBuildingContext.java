@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
@@ -41,6 +45,10 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A wrapper for graph command execution,
+ * exposing a simple, method-based API
+ */
 public class GraphBuildingContext {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphBuildingContext.class);
@@ -58,10 +66,41 @@ public class GraphBuildingContext {
         this.commandManager = commandManager;
     }
 
+    /**
+     * Starting from the given root node,
+     * it walks the graph breadth-first and issues
+     * all the required commands to draw it on the canvas
+     */
+    public void buildGraph(BpmnNode rootNode) {
+        this.addNode(rootNode.value());
+        rootNode.getEdges().forEach(this::addEdge);
+        Deque<BpmnNode> workingSet = new ArrayDeque<>(rootNode.getChildren());
+        Set<BpmnNode> workedOff = new HashSet<>();
+        while (!workingSet.isEmpty()) {
+            BpmnNode current = workingSet.pop();
+            // ensure we visit this node only once
+            if (workedOff.contains(current)) {
+                continue;
+            }
+            workedOff.add(current);
+            workingSet.addAll(current.getChildren());
+            logger.debug("{} :: {}",
+                         current.getParent().value().getUUID(),
+                         current.value().getUUID());
+
+            this.addChildNode(current.getParent().value(), current.value());
+            current.getEdges().forEach(this::addEdge);
+        }
+    }
+
     public void addDockedNode(String parentId, String candidateId) {
         Node parent = executionContext.getGraphIndex().getNode(parentId);
         Node candidate = executionContext.getGraphIndex().getNode(candidateId);
 
+        addDockedNode(parent, candidate);
+    }
+
+    private void addDockedNode(Node parent, Node candidate) {
         AddDockedNodeCommand addNodeCommand = commandFactory.addDockedNode(parent, candidate);
         execute(addNodeCommand);
     }
@@ -82,23 +121,31 @@ public class GraphBuildingContext {
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);
 
-        translate(child, parent.getContent().getBounds());
+        translate(child, parent.getContent().getBounds().getUpperLeft());
     }
 
-    public void translate(Node<? extends View, ?> node, Bounds constraints) {
+    /**
+     * Move node into a new coordinate system with origin in newOrigin.
+     *
+     * E.g., assume origin is currently (0,0), and consider node at (10,11).
+     * If we move node into a new coordinate system where the origin is in (3, 4)
+     * then the new coordinates for node are: (10-3, 11-4) = (7,7)
+     */
+    public void translate(Node<? extends View, ?> node, Bounds.Bound newOrigin) {
 
-        logger.info("Translating {} into constraints {}", node.getContent().getBounds(), constraints);
+        logger.debug("Translating {} into constraints {}", node.getContent().getBounds(), newOrigin);
 
         Bounds childBounds = node.getContent().getBounds();
-        double constrainedX = childBounds.getUpperLeft().getX() - constraints.getUpperLeft().getX();
-        double constrainedY = childBounds.getUpperLeft().getY() - constraints.getUpperLeft().getY();
+        double constrainedX = childBounds.getUpperLeft().getX() - newOrigin.getX();
+        double constrainedY = childBounds.getUpperLeft().getY() - newOrigin.getY();
 
         Point2D coords = Point2D.create(constrainedX, constrainedY);
         updatePosition(node, coords);
     }
 
     public void updatePosition(Node node, Point2D position) {
-        UpdateElementPositionCommand updateElementPositionCommand = new UpdateElementPositionCommand(node, position);
+        UpdateElementPositionCommand updateElementPositionCommand =
+                commandFactory.updatePosition(node, position);
         execute(updateElementPositionCommand);
     }
 
@@ -154,5 +201,20 @@ public class GraphBuildingContext {
 
     public CommandResult<RuleViolation> clearGraph() {
         return commandManager.execute(executionContext, commandFactory.clearGraph());
+    }
+
+    public void addEdge(BpmnEdge edge) {
+        VoidMatch.of(BpmnEdge.class)
+                .when(BpmnEdge.Simple.class, e ->
+                        addEdge(e.getEdge(),
+                                e.getSource().value(),
+                                e.getSourceConnection(),
+                                e.getTarget().value(),
+                                e.getTargetConnection())
+                )
+                .when(BpmnEdge.Docked.class, e ->
+                        addDockedNode(e.getSource().value(),
+                                      e.getTarget().value())
+                ).apply(edge);
     }
 }

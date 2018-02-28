@@ -20,7 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.ExtensionAttributeValue;
+import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Task;
+import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
+import org.eclipse.emf.ecore.util.FeatureMap;
+import org.jboss.drools.DroolsFactory;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;
@@ -28,6 +34,11 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAct
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
+
+import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT;
+import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT;
+import static org.kie.workbench.common.stunner.bpmn.backend.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.bpmn.backend.fromstunner.Factories.droolsFactory;
 
 public class Scripts {
 
@@ -55,6 +66,22 @@ public class Scripts {
 
         return new ScriptTypeListValue()
                 .addValue(new ScriptTypeValue("java", ""));
+    }
+
+    public static String scriptLanguageToUri(String language) {
+        if (language == null) {
+            return "http://www.java.com/java";
+        }
+        switch (language) {
+            case "java":
+                return "http://www.java.com/java";
+            case "mvel":
+                return "http://www.mvel.org/2.0";
+            case "javascript":
+                return "http://www.javascript.com/javascript";
+            default:
+                return "http://www.java.com/java";
+        }
     }
 
     public static String scriptLanguageFromUri(String format) {
@@ -92,5 +119,55 @@ public class Scripts {
 
         return new ScriptTypeListValue()
                 .addValue(new ScriptTypeValue("java", ""));
+    }
+
+    public static void setOnEntryAction(FlowElement flowElement, OnEntryAction onEntryAction) {
+        ScriptTypeListValue value = onEntryAction.getValue();
+        for (ScriptTypeValue scriptTypeValue : value.getValues()) {
+            if (scriptTypeValue.getScript() == null && scriptTypeValue.getScript().isEmpty()) {
+                continue;
+            }
+            OnEntryScriptType script = droolsFactory.createOnEntryScriptType();
+            script.setScript(asCData(scriptTypeValue.getScript()));
+            String scriptLanguage = Scripts.scriptLanguageToUri(scriptTypeValue.getLanguage());
+            script.setScriptFormat(scriptLanguage);
+            addExtensionValue(flowElement, DOCUMENT_ROOT__ON_ENTRY_SCRIPT, script);
+        }
+    }
+
+    public static void setOnExitAction(FlowElement flowElement, OnExitAction onExitAction) {
+        ScriptTypeListValue value = onExitAction.getValue();
+        for (ScriptTypeValue scriptTypeValue : value.getValues()) {
+            if (scriptTypeValue.getScript() == null && scriptTypeValue.getScript().isEmpty()) {
+                continue;
+            }
+            OnExitScriptType script = droolsFactory.createOnExitScriptType();
+            script.setScript(asCData(scriptTypeValue.getScript()));
+            String scriptLanguage = Scripts.scriptLanguageToUri(scriptTypeValue.getLanguage());
+            script.setScriptFormat(scriptLanguage);
+            addExtensionValue(flowElement, DOCUMENT_ROOT__ON_EXIT_SCRIPT, script);
+        }
+    }
+
+    private static void addExtensionValue(FlowElement flowElement, EReference eref, Object value) {
+        FeatureMap.Entry entry = entryOf(eref, value);
+        addExtensionValue(flowElement, entry);
+    }
+
+    private static EStructuralFeatureImpl.SimpleFeatureMapEntry entryOf(EReference eref, Object script) {
+        return new EStructuralFeatureImpl.SimpleFeatureMapEntry(
+                (EStructuralFeature.Internal) eref,
+                script);
+    }
+
+    private static void addExtensionValue(FlowElement flowElement, FeatureMap.Entry value) {
+        ExtensionAttributeValue eav = bpmn2.createExtensionAttributeValue();
+        flowElement.getExtensionValues().add(eav);
+        eav.getValue().add(value);
+    }
+
+    // eww
+    public static String asCData(String original) {
+        return "<![CDATA[" + original + "]]>";
     }
 }
