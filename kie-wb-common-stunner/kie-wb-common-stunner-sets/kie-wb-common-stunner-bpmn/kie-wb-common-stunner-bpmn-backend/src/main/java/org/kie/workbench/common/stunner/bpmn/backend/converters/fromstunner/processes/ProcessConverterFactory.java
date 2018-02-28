@@ -88,7 +88,6 @@ public class ProcessConverterFactory {
                 .collect(Collectors.toList());
 
         p.addLaneSet(collect);
-        collect.forEach(p::addChildElement);
     }
 
     public void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {

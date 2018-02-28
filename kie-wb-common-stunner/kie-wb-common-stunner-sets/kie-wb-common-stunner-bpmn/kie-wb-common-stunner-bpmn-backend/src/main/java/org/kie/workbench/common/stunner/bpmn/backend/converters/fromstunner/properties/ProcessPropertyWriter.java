@@ -5,17 +5,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import bpsim.BPSimDataType;
 import bpsim.BpsimPackage;
 import bpsim.ElementParameters;
 import bpsim.Scenario;
 import bpsim.ScenarioParameters;
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
-import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.Property;
@@ -75,30 +72,14 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     // fixme these instanceof have to go!
-    public void addChildElement(BasePropertyWriter p) {
+    public void addChildElement(PropertyWriter p) {
         this.childElements.put(p.getElement().getId(), p);
-        if (p.getElement() instanceof FlowElement) {
-            process.getFlowElements().add((FlowElement) p.getElement());
-        }
-        if (p instanceof CatchEventPropertyWriter) {
-            ElementParameters simulationParameters = ((CatchEventPropertyWriter) p).getSimulationParameters();
-            if (simulationParameters != null) {
-                this.simulationParameters.add(simulationParameters);
-            }
-        }
+        process.getFlowElements().add(p.getFlowElement());
 
-        if (p instanceof ActivityPropertyWriter) {
-            ElementParameters simulationParameters = ((ActivityPropertyWriter) p).getSimulationParameters();
-            if (simulationParameters != null) {
-                this.simulationParameters.add(simulationParameters);
-            }
+        ElementParameters simulationParameters = p.getSimulationParameters();
+        if (simulationParameters != null) {
+            this.simulationParameters.add(simulationParameters);
         }
-
-        if (p instanceof SubProcessPropertyWriter) {
-            Collection<ElementParameters> simulationParameters = ((SubProcessPropertyWriter) p).getSimulationParameters();
-            this.simulationParameters.addAll(simulationParameters);
-        }
-
         if (p instanceof SequenceFlowPropertyWriter) {
             addChildEdge(((SequenceFlowPropertyWriter) p).getEdge());
         }
@@ -169,6 +150,11 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
+        lanes.forEach(l -> {
+            this.childElements.put(l.getElement().getId(), l);
+            addChildShape(l.getShape());
+
+        });
     }
 
     public Collection<ElementParameters> getSimulationParameters() {

@@ -7,17 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 import bpsim.ElementParameters;
-import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.Documentation;
-import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNEdge;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -35,20 +32,13 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         this.process = process;
     }
 
-    public Collection<ElementParameters> getSimulationParameters() {
-        return simulationParameters;
-    }
-
-    public void addChildElement(BasePropertyWriter p) {
+    public void addChildElement(PropertyWriter p) {
         this.childElements.put(p.getElement().getId(), p);
-        if (p.getElement() instanceof FlowElement) {
-            process.getFlowElements().add((FlowElement) p.getElement());
-        }
-        if (p instanceof ActivityPropertyWriter) {
-            ElementParameters simulationParameters = ((ActivityPropertyWriter) p).getSimulationParameters();
-            if (simulationParameters != null) {
-                this.simulationParameters.add(simulationParameters);
-            }
+        process.getFlowElements().add(p.getFlowElement());
+
+        ElementParameters simulationParameters = p.getSimulationParameters();
+        if (simulationParameters != null) {
+            this.simulationParameters.add(simulationParameters);
         }
 
         this.itemDefinitions.addAll(p.itemDefinitions);
@@ -71,7 +61,6 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         d.setText(asCData(documentation));
         process.getDocumentation().add(d);
     }
-
 
     public void setDescription(String value) {
         CustomElement.description.of(flowElement).set(value);
@@ -108,5 +97,8 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         List<org.eclipse.bpmn2.Lane> laneList = laneSet.getLanes();
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
+        lanes.forEach(l -> {
+            this.childElements.put(l.getElement().getId(), l);
+        });
     }
 }

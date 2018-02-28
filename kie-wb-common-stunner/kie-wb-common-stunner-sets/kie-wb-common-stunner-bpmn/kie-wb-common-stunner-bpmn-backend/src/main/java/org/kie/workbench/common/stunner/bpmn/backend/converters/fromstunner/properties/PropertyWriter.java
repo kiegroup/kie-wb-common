@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.FlowElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
@@ -45,4 +46,10 @@ public class PropertyWriter extends BasePropertyWriter {
         documentation.setText(asCData(value));
         flowElement.getDocumentation().add(documentation);
     }
+
+    public ElementParameters getSimulationParameters() {
+        return null;
+    }
+
+
 }
