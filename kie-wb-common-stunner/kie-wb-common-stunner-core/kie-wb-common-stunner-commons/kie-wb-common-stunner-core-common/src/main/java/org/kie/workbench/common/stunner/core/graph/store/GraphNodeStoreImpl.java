@@ -59,17 +59,4 @@ public class GraphNodeStoreImpl implements GraphNodeStore<Node> {
         return nodes.values().iterator();
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (other instanceof GraphNodeStoreImpl) {
-            return nodes.equals(((GraphNodeStoreImpl) other).nodes);
-        }
-
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return nodes.hashCode();
-    }
 }
