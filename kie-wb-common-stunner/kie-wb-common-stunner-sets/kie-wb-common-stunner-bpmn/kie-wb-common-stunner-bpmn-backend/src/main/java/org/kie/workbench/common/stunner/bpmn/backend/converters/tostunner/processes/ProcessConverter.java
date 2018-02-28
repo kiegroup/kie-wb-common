@@ -91,7 +91,7 @@ public class ProcessConverter {
                 new Name(process.getName()),
                 new Documentation(e.getDocumentation()),
                 new Id(process.getId()),
-                new Package(e.getPackageName()),
+                new Package(e.getPackage()),
                 new Version(e.getVersion()),
                 new AdHoc(e.isAdHoc()),
                 new ProcessInstanceDescription(e.getDescription()),

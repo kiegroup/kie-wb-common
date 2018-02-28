@@ -6,33 +6,31 @@ Enable with flag:
 
     -Dbpmn.marshaller.experimental=true
     
-### Design
-
 - Entry point: `BPMNDirectDiagramMarshaller` which implements `BPMNDirectDiagramMarshaller` 
 - Actual unmarshalling from XML is delegated to Eclipse BPMN2 library
 - Mapping between Eclipse BPMN2 data model to Stunner BPMN data model is performed through **Converter** classes
 
-#### Converters
+### Converters To Stunner model
 
-- A **Converter** is a class with a `convert` method, that converts an Eclipse BPMN2 object into either:
+- A **Converter _to_ the Stunner model** is a class (basically, a function) that converts an Eclipse BPMN2 object into:
 
-   - a `Node<View<BPMNDiagramImpl>, ?>` in the case of a `Process`
-   - a `Node<? extends View<? extends BPMNViewDefinition>>` instance in the case of a FlowElement 
-     (e.g. `StartEvent`, `Task`, etc.), a Lane, or a SubProcess
-   - an `Edge<? extends View<? extends BPMNViewDefinition>, ?>` in the case of a SequenceFlow
+   - a `BPMNNode`, i.e.:  a wrapper for a `Node<? extends View<? extends BPMNViewDefinition>, ?>` ,
+     enhanced with:
+         - ability to record parent/child relationship; in other words, a `BPMNNode` may be child/parent of other `BPMNode`s
+         - ability to "contain" `BPMNEdge`s (see below); in other words a `BPMNNode` may represent a subgraph (e.g. in the case of a `(Sub)Process`)
+   - a `BPMNEdge`, i.e.: a wrapper for an `Edge<? extends View<? extends BPMNViewDefinition>, ?>` 
    
 - Each converter is responsible of handling a set of classes from Eclipse BPMN2 model. For instance,
   `TaskConverter` handles `Task`s. It instances a `Node`/`Edge` object (throught the `TypedFactoryManager` -- see below)
   for the recognized type, and fills its fields with all the supported values in the original model.
-  At the end of the conversion it usually **return the element**, and/or, in some cases, it may **add it to the canvas** 
-  (e.g., subprocess converters return their subprocess node, but also add in their child nodes).
+  At the end of the conversion it **returns the element**
   
-  Fields from the Eclipse BPMN2 model, for convience, are generally accessed through a `PropertyReader`. 
+  Fields from the Eclipse BPMN2 model, for convenience, are generally accessed through a `PropertyReader`. 
   
   
 #### Property Readers
   
-- `PropertyReader`s are returned from a `PropertyReaderFactory`. They retrieve properties from
+`PropertyReader`s are returned from a `PropertyReaderFactory`. They retrieve properties from
   each Eclipse BPMN2 instance especially implementing custom logic for
   extended drools-related attributes, such as 
   - `<bpmn2:extensionElements>` (e.g. `elementname`)
@@ -60,19 +58,89 @@ Enable with flag:
       
       // ... etc.
 
-- a `GraphBuildingContext` object issues commands to the canvas while building the graph. 
+### GraphBuildingContext
+
+A `GraphBuildingContext` object issues commands to the canvas while building the graph. 
   It is a wrapper around: 
    - `GraphCommandExecutionContext`
    - `GraphCommandFactory` 
    - `GraphCommandManager` 
    
-  `GraphBuildingContext` is used for convenience, to avoid explicitly creating command instances.
-  It also implements custom logic for some actions. For example, in the case of adding child nodes, 
-  it translates the coordinates of a child node into the new reference system (the parent boundaries).
+`GraphBuildingContext` is used for convenience, to avoid explicitly creating command instances.
+ It also implements custom logic for some actions. For example, in the case of adding child nodes, 
+ it translates the coordinates of a child node into the new reference system (the parent boundaries).
 
-#### Utilities
+`GraphBuildingContext` builds the entire graph (`GraphBuildingContext#buildGraph(BpmnNode rootNode)`)
+once all the conversions have took place: it traverses the entire directed graph described by the `BPMNNode`s
+starting from the "root node", which represents the root of the diagram, and visiting
+the parent/child relations in each BPMNNode and the `BPMNEdge` they may contain.
+
+      
+### Converters From Stunner Model
+
+A converter **Converter _from_ the Stunner model** is a class (basically, a function) that converts a 
+Stunner `Node<? extends View<? extends BPMNViewDefinition>, ?>` to a `PropertyWriter`. A `PropertyWriter`
+is a wrapper around an Eclipse BPMN2 element (see below)
+
+#### Property Writers
+
+`PropertyWriter`s are returned from a `PropertyWriterFactory`. They store properties to
+  each Eclipse BPMN2 instance especially implementing custom logic for
+  extended drools-related attributes, such as 
+  - `<bpmn2:extensionElements>` (e.g. `elementname`)
+  - `itemDefinition`s / `dataInput`s / `dataOutput`s (e.g. `Subject`, `Comment`)
+  - attributes under the`drools:` namespace (e.g. `drools:docker`)
+  - attributes under the `color:` namespace (e.g. `color:background-color`)
+  - bounds/shape/edge data defined in the `BPMNDiagram/BPMNPlane/BPMNShape` section
+  
+  For instance, for `BusinesRuleTask task`:
+  
+      BusinessRuleTaskPropertyReader p = propertyWriterFactory.of(task);
+      // write the extended name under the `elementname` extension metadata,
+      // and add a regular (whitespace trimmed) <bpmn2:businessRuleTask name="...">
+      p.setName(name);
+      
+      // look set the documentation sequence from the given string
+      p.setDocumentation(documentation);
+      
+      // converts stunner representation of the coordinates to bounds
+      // of this element
+      p.setBounds(node.getContent().getBounds());
+      
+      // ... etc.
+
+
+### Utilities
+
+#### Custom Attributes, Elements
+
+Custom attributes and elements have been defined in form of singletons under the `customproperties`
+subpackage of `org.kie.workbench.common.stunner.bpmn.backend.converters`.
+
+Under this package, we define `CustomAttribute`s (such as `"drools:packageName"`), 
+`CustomElement`s such as `<elementname>` in the form of singleton objects that read/write
+such attributes to a given element. 
+
+For example:
+
+    public String getPackage() {
+        return CustomAttribute.packageName.of(element).get();
+    }
+
+    public void setPackage(String value) {
+        CustomAttribute.packageName.of(process).set(value);
+    }
+
+
+Please notice that these singletons are not supposed to be used directly,
+but their getters and setters will be generally wrapped in a `PropertyReader`
+or `PropertyWriter`, respectively. For instance `getPackage()` is a member
+of `ProcessPropertyReader`, and `setPackage()` is a member of `ProcessPropertyWriter`.
+
+
+#### Misc
  
-- In order to minimize casts (mostly for legibility, cosmetic reasons) the following classes exist:
+In order to minimize casts (mostly for legibility, cosmetic reasons) the following classes exist:
 
    - `TypedFactoryManager`: a wrapper around `FactoryManager` that creates 
      an instance of `Node<T,U>`, `Edge<T,U>`, `Graph<T,U>`, with proper type parameters. Examples:
@@ -122,4 +190,3 @@ Enable with flag:
                       })
                       .apply(task)
                       .asSuccess().value();
-      

@@ -136,8 +136,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public void setPackage(String value) {
-        process.getAnyAttribute().add(
-                attribute("packageName", String.valueOf(value)));
+        CustomAttribute.packageName.of(process).set(value);
     }
 
     public void setVersion(String value) {

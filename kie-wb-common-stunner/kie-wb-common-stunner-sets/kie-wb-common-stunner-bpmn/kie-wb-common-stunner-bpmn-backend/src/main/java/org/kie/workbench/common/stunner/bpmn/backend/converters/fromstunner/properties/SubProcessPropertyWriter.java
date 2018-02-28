@@ -73,27 +73,12 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         baseElements.forEach(el -> this.baseElements.put(el.getId(), el));
     }
 
-//    public void setName(String value) {
-//        process.setName(value);
-//    }
-
     public void setDocumentation(String documentation) {
         Documentation d = bpmn2.createDocumentation();
         d.setText(asCData(documentation));
         process.getDocumentation().add(d);
     }
 
-    public void setPackage(String value) {
-        CustomAttribute.packageName.of(flowElement).set(value);
-    }
-
-    public void setVersion(String value) {
-        CustomAttribute.version.of(flowElement).set(value);
-    }
-
-    public void setAdHoc(Boolean adHoc) {
-        CustomAttribute.adHoc.of(flowElement).set(adHoc);
-    }
 
     public void setDescription(String value) {
         CustomElement.description.of(flowElement).set(value);

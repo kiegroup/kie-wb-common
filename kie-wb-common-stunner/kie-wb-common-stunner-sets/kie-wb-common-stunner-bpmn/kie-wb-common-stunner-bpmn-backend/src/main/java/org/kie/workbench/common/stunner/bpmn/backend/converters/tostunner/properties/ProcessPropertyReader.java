@@ -42,7 +42,7 @@ public class ProcessPropertyReader extends BasePropertyReader {
                         .collect(Collectors.toMap(FlowElement::getId, Function.identity()));
     }
 
-    public String getPackageName() {
+    public String getPackage() {
         return CustomAttribute.packageName.of(element).get();
     }
 
