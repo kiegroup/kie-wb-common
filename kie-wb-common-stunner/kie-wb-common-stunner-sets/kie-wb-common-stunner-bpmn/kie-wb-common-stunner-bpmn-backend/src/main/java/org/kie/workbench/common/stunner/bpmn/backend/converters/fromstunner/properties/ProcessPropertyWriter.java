@@ -64,14 +64,15 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public void addChildEdge(BPMNEdge edge) {
-        bpmnDiagram.getPlane().getPlaneElement().add(edge);
+        if (edge != null) {
+            bpmnDiagram.getPlane().getPlaneElement().add(edge);
+        }
     }
 
     public BPMNDiagram getBpmnDiagram() {
         return bpmnDiagram;
     }
 
-    // fixme these instanceof have to go!
     public void addChildElement(PropertyWriter p) {
         this.childElements.put(p.getElement().getId(), p);
         process.getFlowElements().add(p.getFlowElement());
@@ -80,10 +81,8 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         if (simulationParameters != null) {
             this.simulationParameters.add(simulationParameters);
         }
-        if (p instanceof SequenceFlowPropertyWriter) {
-            addChildEdge(((SequenceFlowPropertyWriter) p).getEdge());
-        }
         addChildShape(p.getShape());
+        addChildEdge(p.getEdge());
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.dataInputs.addAll(p.dataInputs);
         this.dataOutputs.addAll(p.dataOutputs);
@@ -124,11 +123,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         CustomElement.description.of(process).set(value);
     }
 
-    // eww
-    protected String asCData(String original) {
-        return "<![CDATA[" + original + "]]>";
-    }
-
     public void setProcessVariables(ProcessVariables processVariables) {
         String value = processVariables.getValue();
         DeclarationList declarationList = DeclarationList.fromString(value);
@@ -153,7 +147,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         lanes.forEach(l -> {
             this.childElements.put(l.getElement().getId(), l);
             addChildShape(l.getShape());
-
         });
     }
 

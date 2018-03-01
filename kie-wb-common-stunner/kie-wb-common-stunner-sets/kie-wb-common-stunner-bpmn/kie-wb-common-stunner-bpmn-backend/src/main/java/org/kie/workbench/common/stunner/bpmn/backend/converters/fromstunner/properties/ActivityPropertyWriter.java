@@ -85,12 +85,4 @@ public class ActivityPropertyWriter extends PropertyWriter {
         return ioSpecification;
     }
 
-//    protected void setInput(String name, String value) {
-//        if (value == null || value.isEmpty()) {
-//            return;
-//        }
-//        DataInputAssociation input = input(name, value);
-//        getIoSpecification().getDataInputs().add((DataInput) input.getTargetRef());
-//        activity.getDataInputAssociations().add(input);
-//    }
 }

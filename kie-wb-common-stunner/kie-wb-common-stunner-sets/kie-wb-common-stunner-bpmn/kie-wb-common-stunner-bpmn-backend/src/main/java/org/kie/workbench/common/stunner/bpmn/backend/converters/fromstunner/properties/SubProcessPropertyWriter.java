@@ -72,11 +72,6 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         this.simulationParameters.add(elementParameters);
     }
 
-    // eww
-    protected String asCData(String original) {
-        return "<![CDATA[" + original + "]]>";
-    }
-
     public void setProcessVariables(ProcessVariables processVariables) {
         String value = processVariables.getValue();
         DeclarationList declarationList = DeclarationList.fromString(value);

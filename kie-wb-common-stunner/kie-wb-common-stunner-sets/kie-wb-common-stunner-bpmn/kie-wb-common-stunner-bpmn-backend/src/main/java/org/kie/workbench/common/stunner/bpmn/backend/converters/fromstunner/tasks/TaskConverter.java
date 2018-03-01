@@ -140,15 +140,11 @@ public class TaskConverter {
         Task task = bpmn2.createTask();
         task.setId(n.getUUID());
         NoneTask definition = n.getContent().getDefinition();
-        ActivityPropertyWriter p =  propertyWriterFactory.of(task);
+        ActivityPropertyWriter p = propertyWriterFactory.of(task);
         p.setName(definition.getGeneral().getName().getValue());
         p.setBounds(n.getContent().getBounds());
 
         p.setSimulationSet(definition.getSimulationSet());
         return p;
-    }
-
-    protected String asCData(String value) {
-        return "<![CDATA[" + value + "]]>";
     }
 }

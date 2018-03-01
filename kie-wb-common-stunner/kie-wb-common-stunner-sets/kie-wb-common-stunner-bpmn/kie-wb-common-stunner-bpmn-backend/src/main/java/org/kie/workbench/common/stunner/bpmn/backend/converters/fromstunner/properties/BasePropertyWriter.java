@@ -26,6 +26,7 @@ import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.RootElement;
+import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 
@@ -75,8 +76,19 @@ public abstract class BasePropertyWriter {
         baseElement.getDocumentation().add(documentation);
     }
 
+
+    /**
+     * @returns the shape associated to this element, shape if it's not an edge
+     */
     public BPMNShape getShape() {
         return shape;
+    }
+
+    /**
+     * @returns the edge associated to this element, null if it's not an edge
+     */
+    public BPMNEdge getEdge() {
+        return null;
     }
 
     public void setSource(BasePropertyWriter source) {

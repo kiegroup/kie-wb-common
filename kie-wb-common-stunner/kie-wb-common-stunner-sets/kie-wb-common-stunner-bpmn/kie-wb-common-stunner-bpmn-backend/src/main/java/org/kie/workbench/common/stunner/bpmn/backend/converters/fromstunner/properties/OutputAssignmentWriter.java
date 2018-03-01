@@ -58,7 +58,6 @@ public class OutputAssignmentWriter {
 
     private DataOutput writeOutputTo(String sourceName, ItemDefinition typeDef) {
         DataOutput dataOutput = bpmn2.createDataOutput();
-        // the id is an encoding of the node id + the name of the output
         dataOutput.setId(Ids.dataOutput(parentId, decl.getIdentifier()));
         dataOutput.setName(sourceName);
         dataOutput.setItemSubjectRef(typeDef);
