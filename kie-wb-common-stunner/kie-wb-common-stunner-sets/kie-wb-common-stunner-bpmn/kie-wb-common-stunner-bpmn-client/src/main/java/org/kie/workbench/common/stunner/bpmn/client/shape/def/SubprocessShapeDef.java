@@ -48,16 +48,16 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
     public static final Map<Class<? extends BaseSubprocess>, SvgDataUriGlyph> GLYPHS =
             new HashMap<Class<? extends BaseSubprocess>, SvgDataUriGlyph>() {{
                 put(ReusableSubprocess.class, BPMNSVGGlyphFactory.REUSABLE_SUBPROCESS_GLYPH);
-                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
+                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.EMBEDDED_SUBPROCESS_GLYPH);
                 put(EventSubprocess.class, BPMNSVGGlyphFactory.EVENT_SUBPROCESS_GLYPH);
                 put(AdHocSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
             }};
 
     private static HasTitle.Position getSubprocessTextPosition(final BaseSubprocess bean) {
-        if ((bean instanceof EmbeddedSubprocess) || (bean instanceof EventSubprocess) || (bean instanceof AdHocSubprocess)) {
-            return HasTitle.Position.TOP;
+        if (bean instanceof ReusableSubprocess) {
+           return HasTitle.Position.CENTER;
         } else {
-            return HasTitle.Position.CENTER;
+            return HasTitle.Position.TOP;
         }
     }
 
@@ -71,12 +71,12 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
     @Override
     public SizeHandler<BaseSubprocess, SVGShapeView> newSizeHandler() {
         return newSizeHandlerBuilder()
-                .width(task -> task.getDimensionsSet().getWidth().getValue())
-                .height(task -> task.getDimensionsSet().getHeight().getValue())
-                .minWidth(task -> 25d)
-                .maxWidth(task -> 1200d)
-                .minHeight(task -> 25d)
-                .maxHeight(task -> 1200d)
+                .width(subprocess -> subprocess.getDimensionsSet().getWidth().getValue())
+                .height(subprocess -> subprocess.getDimensionsSet().getHeight().getValue())
+                .minWidth(subprocess -> 25d)
+                .maxWidth(subprocess -> 1200d)
+                .minHeight(subprocess -> 25d)
+                .maxHeight(subprocess -> 1200d)
                 .build();
     }
 

@@ -117,12 +117,6 @@ public interface BPMNSVGGlyphFactory {
                             BPMNImageResources.INSTANCE.eventEndError().getSafeUri())
                     .build("eventEndError");
 
-    SvgDataUriGlyph INTERMEDIATE_NONE_EVENT_GLYPH =
-            SvgDataUriGlyph.Builder
-                    .create()
-                    .setUri(BPMNImageResources.INSTANCE.eventIntermediate().getSafeUri())
-                    .build();
-
     SvgDataUriGlyph INTERMEDIATE_MESSAGE_EVENT_GLYPH =
             SvgDataUriGlyph.Builder
                     .create()
@@ -186,5 +180,7 @@ public interface BPMNSVGGlyphFactory {
             SvgDataUriGlyph.Builder
                     .create()
                     .setUri(BPMNImageResources.INSTANCE.subProcessEvent().getSafeUri())
+                    .addUri("subProcessEvent",
+                            BPMNImageResources.INSTANCE.subProcessAdHoc().getSafeUri())
                     .build("subProcessEvent");
 }
