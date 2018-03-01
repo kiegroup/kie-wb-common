@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.dataio;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
+@Portable
 public class AssociationDeclaration {
 
     public static AssociationDeclaration fromString(String encoded) {
@@ -52,10 +55,13 @@ public class AssociationDeclaration {
         }
     }
 
-    private final Direction direction;
-    private final Type type;
-    private final String left;
-    private final String right;
+    private Direction direction;
+    private Type type;
+    private String left;
+    private String right;
+
+    public AssociationDeclaration() {
+    }
 
     public AssociationDeclaration(Direction direction, Type type, String left, String right) {
         this.direction = direction;
@@ -74,6 +80,22 @@ public class AssociationDeclaration {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setLeft(String left) {
+        this.left = left;
+    }
+
+    public void setRight(String right) {
+        this.right = right;
     }
 
     @Override

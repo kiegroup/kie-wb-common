@@ -16,13 +16,17 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.dataio;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
 public class VariableDeclaration {
 
-    private final String identifier;
-    private final String type;
+    private String identifier;
+    private String type;
+
+    public VariableDeclaration() {}
 
     public VariableDeclaration(String identifier, String type) {
         this.identifier = identifier;
@@ -37,6 +41,14 @@ public class VariableDeclaration {
         return type;
     }
 
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public String toString() {
         if (type == null || type.isEmpty()) {
@@ -46,10 +58,28 @@ public class VariableDeclaration {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        VariableDeclaration that = (VariableDeclaration) o;
+        return Objects.equals(identifier, that.identifier) &&
+                Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(identifier, type);
+    }
+
     public static VariableDeclaration fromString(String encoded) {
         String[] split = encoded.split(":");
         String identifier = split[0];
-        String type = (split.length == 2)? split[1] : null;
+        String type = (split.length == 2) ? split[1] : null;
         return new VariableDeclaration(identifier, type);
     }
 }
