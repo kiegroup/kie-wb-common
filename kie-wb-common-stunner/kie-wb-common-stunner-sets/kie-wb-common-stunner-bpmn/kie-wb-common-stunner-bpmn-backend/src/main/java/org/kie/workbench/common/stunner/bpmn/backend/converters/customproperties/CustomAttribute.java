@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import org.eclipse.bpmn2.BaseElement;
 import org.jboss.drools.DroolsPackage;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 public class CustomAttribute<T> {
@@ -31,7 +30,15 @@ public class CustomAttribute<T> {
     public static final AttributeDefinition<Boolean> adHoc = new BooleanAttribute(droolsns, "adHoc", false);
     public static final AttributeDefinition<Boolean> waitForCompletion = new BooleanAttribute(droolsns, "waitForCompletion", false);
     public static final AttributeDefinition<String> ruleFlowGroup = new StringAttribute(droolsns, "ruleFlowGroup", "");
-    public static final AttributeDefinition<String> packageName = new StringAttribute(droolsns, "packageName", Package.DEFAULT_PACKAGE);
+    public static final AttributeDefinition<String> packageName = new StringAttribute(droolsns, "packageName", null) {
+        @Override
+        public void setValue(BaseElement element, String value) {
+            // do not set if null or the XML serializer will NPE
+            if (value != null) {
+                super.setValue(element, value);
+            }
+        }
+    };
     public static final AttributeDefinition<String> version = new StringAttribute(droolsns, "version", "1.0");
     public static final AttributeDefinition<String> errorName = new StringAttribute(droolsns, "erefname", "");
     public static final AttributeDefinition<Boolean> boundarycaForBoundaryEvent = new BooleanAttribute(droolsns, "boundaryca", false) {
