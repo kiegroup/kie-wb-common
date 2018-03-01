@@ -403,8 +403,6 @@ public class ExamplesServiceImpl implements ExamplesService {
             } catch (IOException ioe) {
                 logger.error("Unable to create Example(s).",
                              ioe);
-            } finally {
-                ioService.endBatch();
             }
         }
 
