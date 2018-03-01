@@ -17,9 +17,9 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.gateways;
 
 import org.eclipse.bpmn2.Gateway;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.GatewayPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;

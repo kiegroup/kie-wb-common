@@ -39,5 +39,4 @@ public class ScriptTaskPropertyWriter extends ActivityPropertyWriter {
     public void setAsync(Boolean async) {
         CustomElement.async.of(scriptTask).set(async);
     }
-
 }

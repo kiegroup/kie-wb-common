@@ -143,5 +143,4 @@ public abstract class BasePropertyReader {
 //    protected Optional<String> optionalMetadata(String name) {
 //        return Optional.ofNullable(Utils.getMetaDataValue(element.getExtensionValues(), name));
 //    }
-
 }

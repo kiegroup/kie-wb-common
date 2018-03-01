@@ -17,8 +17,8 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.activities;
 
 import org.eclipse.bpmn2.CallActivity;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ActivityPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;

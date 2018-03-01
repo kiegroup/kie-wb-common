@@ -107,7 +107,6 @@ public class Simulations {
                     simulationSet.getDistributionType().setValue("poisson");
                     return simulationSet;
                 }).apply(paramValue).asSuccess().value();
-
     }
 
     private static Double extractDouble(Parameter parameter) {

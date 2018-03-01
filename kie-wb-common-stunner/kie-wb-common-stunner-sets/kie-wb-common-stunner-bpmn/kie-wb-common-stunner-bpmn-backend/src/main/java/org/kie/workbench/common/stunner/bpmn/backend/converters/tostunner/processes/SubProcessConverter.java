@@ -19,8 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proce
 import java.util.Map;
 
 import org.eclipse.bpmn2.SubProcess;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;

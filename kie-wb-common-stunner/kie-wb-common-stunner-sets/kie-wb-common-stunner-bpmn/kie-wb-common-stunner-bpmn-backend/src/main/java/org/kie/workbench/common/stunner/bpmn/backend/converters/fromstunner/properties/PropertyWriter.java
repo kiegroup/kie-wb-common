@@ -50,6 +50,4 @@ public class PropertyWriter extends BasePropertyWriter {
     public ElementParameters getSimulationParameters() {
         return null;
     }
-
-
 }

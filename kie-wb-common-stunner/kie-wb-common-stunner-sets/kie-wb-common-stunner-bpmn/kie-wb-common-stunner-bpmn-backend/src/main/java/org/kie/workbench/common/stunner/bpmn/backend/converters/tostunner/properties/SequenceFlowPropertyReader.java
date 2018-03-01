@@ -69,7 +69,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
                     conditionExpression.getBody());
         }
     }
-    
+
     public String getSourceId() {
         return seq.getSourceRef().getId();
     }

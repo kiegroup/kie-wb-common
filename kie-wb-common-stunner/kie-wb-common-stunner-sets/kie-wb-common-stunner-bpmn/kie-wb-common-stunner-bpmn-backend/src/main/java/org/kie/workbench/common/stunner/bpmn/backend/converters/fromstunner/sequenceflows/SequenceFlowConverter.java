@@ -18,18 +18,18 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.seq
 
 import org.eclipse.bpmn2.FormalExpression;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SequenceFlowPropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
 public class SequenceFlowConverter {
 

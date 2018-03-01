@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
-import org.jboss.drools.DroolsFactory;
 import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.OnEntryScriptType;
 import org.jboss.drools.OnExitScriptType;

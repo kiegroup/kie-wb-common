@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.ArrayList;
 import java.util.List;
 
-import bpsim.ElementParameters;
 import org.eclipse.bpmn2.BaseElement;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataOutput;
@@ -38,11 +37,11 @@ public abstract class BasePropertyWriter {
 
     protected final BaseElement baseElement;
     protected final VariableScope variableScope;
-    protected BPMNShape shape;
     protected final List<ItemDefinition> itemDefinitions = new ArrayList<>();
     protected final List<DataInput> dataInputs = new ArrayList<>();
     protected final List<DataOutput> dataOutputs = new ArrayList<>();
     protected final List<RootElement> rootElements = new ArrayList<>();
+    protected BPMNShape shape;
 
     public BasePropertyWriter(BaseElement baseElement, VariableScope variableScope) {
         this.baseElement = baseElement;
@@ -75,7 +74,6 @@ public abstract class BasePropertyWriter {
         documentation.setText(asCData(value));
         baseElement.getDocumentation().add(documentation);
     }
-
 
     /**
      * @returns the shape associated to this element, shape if it's not an edge

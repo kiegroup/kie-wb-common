@@ -38,17 +38,17 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     private final DefinitionResolver definitionResolver;
     private String signalRefId = null;
 
+    EventPropertyReader(Event element, BPMNPlane plane, DefinitionResolver definitionResolver, String eventDefinition) {
+        super(element, plane, definitionResolver.getShape(element.getId()));
+        this.definitionResolver = definitionResolver;
+        this.signalRefId = eventDefinition;
+    }
+
     static String getSignalRefId(List<EventDefinition> eventDefinitions) {
         if (eventDefinitions.size() == 1 && eventDefinitions.get(0) instanceof SignalEventDefinition) {
             return ((SignalEventDefinition) eventDefinitions.get(0)).getSignalRef();
         }
         return null;
-    }
-
-    EventPropertyReader(Event element, BPMNPlane plane, DefinitionResolver definitionResolver, String eventDefinition) {
-        super(element, plane, definitionResolver.getShape(element.getId()));
-        this.definitionResolver = definitionResolver;
-        this.signalRefId = eventDefinition;
     }
 
     public String getSignalScope() {

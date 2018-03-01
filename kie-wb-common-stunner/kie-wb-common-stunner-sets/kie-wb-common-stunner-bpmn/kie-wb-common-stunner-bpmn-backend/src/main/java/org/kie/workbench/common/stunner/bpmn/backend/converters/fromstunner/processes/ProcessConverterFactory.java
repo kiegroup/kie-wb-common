@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ViewDefinitionConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lanes.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ActivityPropertyWriter;
@@ -31,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;

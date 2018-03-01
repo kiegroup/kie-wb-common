@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.dataio;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -177,17 +176,25 @@ public class AssignmentsInfo implements BPMNProperty {
         if (!split[0].isEmpty()) {
             // then it is certainly canonicalEncoding (see canonicalEncoding())
             this.inputs = DeclarationList.fromString(split[0]);
-            if (split.length < 3) return;
+            if (split.length < 3) {
+                return;
+            }
             this.outputs = DeclarationList.fromString(split[2]);
-            if (split.length < 5) return;
+            if (split.length < 5) {
+                return;
+            }
             this.associations = AssociationList.fromString(split[4]);
         } else {
             // otherwise, let's try offsetting by one -- fixme: verify this assumption is good enough
             this.alternativeEncoding = true;
             this.inputs = DeclarationList.fromString(split[1]);
-            if (split.length < 4) return;
+            if (split.length < 4) {
+                return;
+            }
             this.outputs = DeclarationList.fromString(split[3]);
-            if (split.length < 5) return;
+            if (split.length < 5) {
+                return;
+            }
             this.associations = AssociationList.fromString(split[4]); // associations are always last
         }
     }

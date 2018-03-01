@@ -28,8 +28,6 @@ import bpsim.TimeParameters;
 import bpsim.UniformDistributionType;
 import org.eclipse.emf.common.util.EList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.VoidMatch;
-import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpsim;
@@ -163,5 +161,4 @@ public class SimulationSets {
         FloatingParameterType floatingValue = (FloatingParameterType) value;
         return floatingValue.getValue();
     }
-
 }

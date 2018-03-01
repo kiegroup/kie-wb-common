@@ -127,7 +127,7 @@ public class GraphBuildingContext {
 
     /**
      * Move node into a new coordinate system with origin in newOrigin.
-     *
+     * <p>
      * E.g., assume origin is currently (0,0), and consider node at (10,11).
      * If we move node into a new coordinate system where the origin is in (3, 4)
      * then the new coordinates for node are: (10-3, 11-4) = (7,7)

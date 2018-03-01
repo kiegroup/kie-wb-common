@@ -71,10 +71,11 @@ public class BoundaryEventPropertyWriter extends CatchEventPropertyWriter {
      *
      */
     protected org.eclipse.dd.dc.Bounds getParentActivityBounds(org.eclipse.dd.dc.Bounds parentRect) {
-        if (getShape().getBounds() == null)
+        if (getShape().getBounds() == null) {
             throw new IllegalArgumentException(
                     "Cannot set parent bounds if the child " +
                             "has undefined bounds. Use setBounds() first.");
+        }
 
         org.eclipse.dd.dc.Bounds relativeBounds = getShape().getBounds();
         float x = relativeBounds.getX();

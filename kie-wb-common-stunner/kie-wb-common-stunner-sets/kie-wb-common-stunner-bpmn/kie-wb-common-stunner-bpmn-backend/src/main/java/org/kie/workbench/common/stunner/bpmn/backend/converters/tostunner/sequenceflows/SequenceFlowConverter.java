@@ -18,9 +18,9 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.seque
 
 import java.util.Map;
 
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnEdge;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SequenceFlowPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
@@ -36,8 +36,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class SequenceFlowConverter {
 
-    private TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
+    private TypedFactoryManager factoryManager;
 
     public SequenceFlowConverter(TypedFactoryManager factoryManager, PropertyReaderFactory propertyReaderFactory) {
         this.factoryManager = factoryManager;
@@ -61,10 +61,10 @@ public class SequenceFlowConverter {
         ));
 
         return BpmnEdge.of(
-               edge,
-               nodes.get(p.getSourceId()),
-               p.getSourceConnection(),
-               nodes.get(p.getTargetId()),
-               p.getTargetConnection());
+                edge,
+                nodes.get(p.getSourceId()),
+                p.getSourceConnection(),
+                nodes.get(p.getTargetId()),
+                p.getTargetConnection());
     }
 }

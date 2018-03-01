@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.UUID;
 
 public class Ids {
+
     public static String fromString(String myString) {
         try {
             return "_" + UUID.nameUUIDFromBytes(myString.getBytes("UTF-8"));
@@ -51,6 +52,4 @@ public class Ids {
     public static String dataOutputItem(String parentId, String outputId) {
         return "_" + Ids.dataOutput(parentId, outputId) + "Item";
     }
-
-
 }
