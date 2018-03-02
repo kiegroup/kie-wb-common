@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddParameterCommandTest {
+public class RemoveParameterCommandTest {
 
     @Mock
     private org.uberfire.mvp.Command canvasOperation;
@@ -55,15 +55,16 @@ public class AddParameterCommandTest {
 
     private InformationItem parameter;
 
-    private AddParameterCommand command;
+    private RemoveParameterCommand command;
 
     @Before
     public void setup() {
         this.function = new FunctionDefinition();
         this.parameter = new InformationItem();
-        this.command = new AddParameterCommand(function,
-                                               parameter,
-                                               canvasOperation);
+        this.function.getFormalParameter().add(parameter);
+        this.command = new RemoveParameterCommand(function,
+                                                  parameter,
+                                                  canvasOperation);
         doReturn(ruleManager).when(handler).getRuleManager();
     }
 
@@ -85,8 +86,8 @@ public class AddParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertFormalParameters(2,
-                               otherParameter, parameter);
+        assertFormalParameters(1,
+                               otherParameter);
     }
 
     @Test
@@ -96,8 +97,7 @@ public class AddParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertFormalParameters(1,
-                               parameter);
+        assertFormalParameters(0);
     }
 
     @Test
@@ -113,8 +113,8 @@ public class AddParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertFormalParameters(1,
-                               otherParameter);
+        assertFormalParameters(2,
+                               parameter, otherParameter);
     }
 
     @Test
@@ -127,7 +127,8 @@ public class AddParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertFormalParameters(0);
+        assertFormalParameters(1,
+                               parameter);
     }
 
     private void assertFormalParameters(final int expectedCount,

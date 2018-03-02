@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,10 +31,12 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters.ParametersEditorView;
 import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControls;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
@@ -77,16 +78,16 @@ public class FunctionEditorDefinitionTest {
     private EventSourceMock<ExpressionEditorSelectedEvent> editorSelectedEvent;
 
     @Mock
-    private ManagedInstance<FunctionGridControls> controlsProvider;
-
-    @Mock
-    private FunctionGridControls controls;
-
-    @Mock
     private CellEditorControls cellEditorControls;
 
     @Mock
     private TranslationService translationService;
+
+    @Mock
+    private ListSelector listSelector;
+
+    @Mock
+    private ParametersEditorView.Presenter parametersEditor;
 
     @Mock
     private GridCellTuple parent;
@@ -110,11 +111,11 @@ public class FunctionEditorDefinitionTest {
                                                        editorSelectedEvent,
                                                        cellEditorControls,
                                                        translationService,
-                                                       controlsProvider);
+                                                       listSelector,
+                                                       parametersEditor);
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
 
-        doReturn(controls).when(controlsProvider).get();
         doReturn(expressionEditorDefinitions).when(expressionEditorDefinitionsSupplier).get();
         doReturn(expressionEditorDefinitions).when(supplementaryEditorDefinitionsSupplier).get();
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
