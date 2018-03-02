@@ -61,8 +61,8 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
 
     private static final String EXPRESSION_COLUMN_GROUP = "ContextGrid$ExpressionColumn1";
 
-    private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-    private ListSelector listSelector;
+    private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+    private final ListSelector listSelector;
 
     public ContextGrid(final GridCellTuple parent,
                        final HasExpression hasExpression,
@@ -84,7 +84,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
               hasName,
               gridPanel,
               gridLayer,
-              new ContextGridData(new DMNGridData(gridLayer),
+              new ContextGridData(new DMNGridData(),
                                   sessionManager,
                                   sessionCommandManager,
                                   expression,

@@ -18,6 +18,7 @@ package org.kie.workbench.common.dmn.client.commands.expressions.types.invocatio
 
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.NameColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.invocation.InvocationUIModelMapper;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
@@ -75,6 +77,9 @@ public class AddParameterBindingCommandTest {
     private ExpressionEditorDefinitions expressionEditorDefinitions;
 
     @Mock
+    private ListSelector listSelector;
+
+    @Mock
     private org.uberfire.mvp.Command canvasOperation;
 
     @Mock
@@ -107,7 +112,7 @@ public class AddParameterBindingCommandTest {
         parameter.setName(new Name("p" + invocation.getBinding().size()));
         this.binding.setParameter(parameter);
 
-        this.uiModel = new BaseGridData();
+        this.uiModel = new BaseGridData(false);
         this.uiModelRow = new DMNGridRow();
         this.uiModel.appendColumn(uiRowNumberColumn);
         this.uiModel.appendColumn(uiNameColumn);
@@ -116,14 +121,8 @@ public class AddParameterBindingCommandTest {
         this.uiModelMapper = new InvocationUIModelMapper(gridWidget,
                                                          () -> uiModel,
                                                          () -> Optional.of(invocation),
-                                                         () -> expressionEditorDefinitions);
-
-        this.command = new AddParameterBindingCommand(invocation,
-                                                      binding,
-                                                      uiModel,
-                                                      uiModelRow,
-                                                      uiModelMapper,
-                                                      canvasOperation);
+                                                         () -> expressionEditorDefinitions,
+                                                         listSelector);
 
         doReturn(ruleManager).when(handler).getRuleManager();
         doReturn(0).when(uiRowNumberColumn).getIndex();
@@ -134,8 +133,50 @@ public class AddParameterBindingCommandTest {
         doReturn(Optional.empty()).when(expressionEditorDefinitions).getExpressionEditorDefinition(any(Optional.class));
     }
 
+    private void makeCommand(final int uiRowIndex, final Binding rowBindingEntry, final DMNGridRow uiGridRow) {
+        this.command = new AddParameterBindingCommand(invocation,
+                                                      rowBindingEntry,
+                                                      uiModel,
+                                                      uiGridRow,
+                                                      uiRowIndex,
+                                                      uiModelMapper,
+                                                      canvasOperation);
+    }
+
+    private void makeCommand() {
+        makeCommand(invocation.getBinding().size(), binding, uiModelRow);
+    }
+
+    private void makeCommand(final int uiRowIndex) {
+        makeCommand(uiRowIndex, binding, uiModelRow);
+    }
+
+    private void makeCommand(final int uiRowIndex, final String bindingName, final DMNGridRow uiGridRow) {
+        final Binding rowEntry = new Binding();
+        final InformationItem parameter = new InformationItem();
+        parameter.setName(new Name(bindingName));
+        rowEntry.setParameter(parameter);
+        makeCommand(uiRowIndex, rowEntry, uiGridRow);
+    }
+
+    private void assertBindingDefinitions(final Binding... bindings) {
+        Assertions.assertThat(invocation.getBinding()).containsExactly(bindings);
+    }
+
+    private void assertRowValues(final int rowNumberIndex, final int rowNumberValue, final String nameColumnValue) {
+        assertEquals(2,
+                     uiModel.getRows().get(rowNumberIndex).getCells().size());
+        assertEquals(rowNumberValue,
+                     uiModel.getCell(rowNumberIndex, ROW_NUMBER_COLUMN_INDEX).getValue().getValue());
+        assertEquals(nameColumnValue,
+                     uiModel.getCell(rowNumberIndex, BINDING_PARAMETER_COLUMN_INDEX).getValue().getValue());
+        assertNull(uiModel.getCell(rowNumberIndex, BINDING_EXPRESSION_COLUMN_INDEX));
+    }
+
     @Test
     public void testGraphCommandAllow() {
+        makeCommand();
+
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
@@ -147,24 +188,60 @@ public class AddParameterBindingCommandTest {
         final Binding otherBinding = new Binding();
         invocation.getBinding().add(otherBinding);
 
+        makeCommand();
+
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertBindingDefinitions(2,
-                                 otherBinding, binding);
+        assertBindingDefinitions(otherBinding, binding);
+    }
+
+    @Test
+    public void testGraphCommandExecuteInsertToFirstPlace() {
+        final Binding firstBinding = new Binding();
+        final Binding secondBinding = new Binding();
+        invocation.getBinding().add(firstBinding);
+        invocation.getBinding().add(secondBinding);
+
+        makeCommand(0);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+
+        assertBindingDefinitions(binding, firstBinding, secondBinding);
+    }
+
+    @Test
+    public void testGraphCommandExecuteInsertIntoMiddle() {
+        final Binding firstBinding = new Binding();
+        final Binding secondBinding = new Binding();
+        invocation.getBinding().add(firstBinding);
+        invocation.getBinding().add(secondBinding);
+
+        makeCommand(1);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+
+        assertBindingDefinitions(firstBinding, binding, secondBinding);
     }
 
     @Test
     public void testGraphCommandExecuteWithNoParameters() {
+        makeCommand();
+
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertBindingDefinitions(1,
-                                 binding);
+        assertBindingDefinitions(binding);
     }
 
     @Test
@@ -172,6 +249,8 @@ public class AddParameterBindingCommandTest {
         final Binding otherBinding = new Binding();
         invocation.getBinding().add(otherBinding);
 
+        makeCommand();
+
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
         //Add parameter and then undo
@@ -180,12 +259,53 @@ public class AddParameterBindingCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertBindingDefinitions(1,
-                                 otherBinding);
+        assertBindingDefinitions(otherBinding);
+    }
+
+    @Test
+    public void testGraphCommandUndoFromStart() {
+        final Binding firstBinding = new Binding();
+        final Binding secondBinding = new Binding();
+        invocation.getBinding().add(firstBinding);
+        invocation.getBinding().add(secondBinding);
+
+        makeCommand(0);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        //Add parameter and then undo
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.undo(gce));
+
+        assertBindingDefinitions(firstBinding, secondBinding);
+    }
+
+    @Test
+    public void testGraphCommandUndoFromMiddle() {
+        final Binding firstBinding = new Binding();
+        final Binding secondBinding = new Binding();
+        invocation.getBinding().add(firstBinding);
+        invocation.getBinding().add(secondBinding);
+
+        makeCommand(1);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        //Add parameter and then undo
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.undo(gce));
+
+        assertBindingDefinitions(firstBinding, secondBinding);
     }
 
     @Test
     public void testGraphCommandUndoWithNoParameters() {
+        makeCommand();
+
         final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
 
         //Add parameter and then undo
@@ -194,21 +314,13 @@ public class AddParameterBindingCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertBindingDefinitions(0);
-    }
-
-    private void assertBindingDefinitions(final int expectedCount,
-                                          final Binding... bindings) {
-        assertEquals(expectedCount,
-                     invocation.getBinding().size());
-        for (int i = 0; i < expectedCount; i++) {
-            assertEquals(bindings[i],
-                         invocation.getBinding().get(i));
-        }
+        assertBindingDefinitions();
     }
 
     @Test
     public void testCanvasCommandAllow() {
+        makeCommand();
+
         //There are no Canvas mutations by the
         final Command<AbstractCanvasHandler, CanvasViolation> c = command.newCanvasCommand(handler);
 
@@ -218,6 +330,8 @@ public class AddParameterBindingCommandTest {
 
     @Test
     public void testCanvasCommandExecute() {
+        makeCommand();
+
         //Add Graph entry first as InvocationUIModelMapper relies on the model being first updated
         command.newGraphCommand(handler).execute(gce);
 
@@ -251,34 +365,39 @@ public class AddParameterBindingCommandTest {
     @Test
     public void testCanvasCommandExecuteMultipleEntries() {
         // first row
+        final String firstRowText = "p0";
+        makeCommand();
         command.newGraphCommand(handler).execute(gce);
         final Command<AbstractCanvasHandler, CanvasViolation> firstEntryCanvasCommand = command.newCanvasCommand(handler);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      firstEntryCanvasCommand.execute(handler));
 
         // second row
-        final Binding secondRowEntry = new Binding();
-        final InformationItem parameter = new InformationItem();
-        parameter.setName(new Name("last entry"));
-        secondRowEntry.setParameter(parameter);
+        final String secondRowText = "second entry";
         final DMNGridRow uiSecondModelRow = new DMNGridRow();
-        command = new AddParameterBindingCommand(invocation,
-                                                 secondRowEntry,
-                                                 uiModel,
-                                                 uiSecondModelRow,
-                                                 uiModelMapper,
-                                                 canvasOperation);
+        makeCommand(1, secondRowText, uiSecondModelRow);
         command.newGraphCommand(handler).execute(gce);
         final Command<AbstractCanvasHandler, CanvasViolation> secondEntryCanvasCommand = command.newCanvasCommand(handler);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      secondEntryCanvasCommand.execute(handler));
 
-        assertEquals(2,
+        // third row
+        final String thirdRowText = "third entry";
+        final DMNGridRow uiThirdModelRow = new DMNGridRow();
+        makeCommand(0, thirdRowText, uiThirdModelRow);
+        command.newGraphCommand(handler).execute(gce);
+        final Command<AbstractCanvasHandler, CanvasViolation> thirdEntryCanvasCommand = command.newCanvasCommand(handler);
+        assertEquals(CanvasCommandResultBuilder.SUCCESS,
+                     thirdEntryCanvasCommand.execute(handler));
+
+        assertEquals(3,
                      uiModel.getRowCount());
-        assertEquals(uiModelRow,
+        assertEquals(uiThirdModelRow,
                      uiModel.getRows().get(0));
-        assertEquals(uiSecondModelRow,
+        assertEquals(uiModelRow,
                      uiModel.getRows().get(1));
+        assertEquals(uiSecondModelRow,
+                     uiModel.getRows().get(2));
         assertEquals(3,
                      uiModel.getColumnCount());
         assertEquals(uiRowNumberColumn,
@@ -287,24 +406,18 @@ public class AddParameterBindingCommandTest {
                      uiModel.getColumns().get(BINDING_PARAMETER_COLUMN_INDEX));
         assertEquals(uiExpressionEditorColumn,
                      uiModel.getColumns().get(BINDING_EXPRESSION_COLUMN_INDEX));
-        assertEquals(2,
-                     uiModel.getRows().get(0).getCells().size());
-        assertEquals(1,
-                     uiModel.getCell(0, ROW_NUMBER_COLUMN_INDEX).getValue().getValue());
-        assertEquals("p0",
-                     uiModel.getCell(0, BINDING_PARAMETER_COLUMN_INDEX).getValue().getValue());
-        assertNull(uiModel.getCell(0, BINDING_EXPRESSION_COLUMN_INDEX));
-        assertEquals(2,
-                     uiModel.getCell(1, ROW_NUMBER_COLUMN_INDEX).getValue().getValue());
-        assertEquals("last entry",
-                     uiModel.getCell(1, BINDING_PARAMETER_COLUMN_INDEX).getValue().getValue());
-        assertNull(uiModel.getCell(1, BINDING_EXPRESSION_COLUMN_INDEX));
 
-        verify(canvasOperation, times(2)).execute();
+        assertRowValues(0, 1, thirdRowText);
+        assertRowValues(1, 2, firstRowText);
+        assertRowValues(2, 3, secondRowText);
+
+        verify(canvasOperation, times(3)).execute();
     }
 
     @Test
     public void testCanvasCommandUndo() {
+        makeCommand();
+
         //Add Graph entry first as InvocationUIModelMapper relies on the model being first updated
         command.newGraphCommand(handler).execute(gce);
 

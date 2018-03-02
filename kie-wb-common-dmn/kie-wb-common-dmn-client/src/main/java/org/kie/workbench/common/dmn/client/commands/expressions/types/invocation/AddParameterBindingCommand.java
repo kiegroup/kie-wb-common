@@ -16,10 +16,13 @@
 
 package org.kie.workbench.common.dmn.client.commands.expressions.types.invocation;
 
+import java.util.stream.IntStream;
+
 import org.kie.workbench.common.dmn.api.definition.v1_1.Binding;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Invocation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.invocation.InvocationUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -42,6 +45,7 @@ public class AddParameterBindingCommand extends AbstractCanvasGraphCommand imple
     private final Binding binding;
     private final GridData uiModel;
     private final DMNGridRow uiModelRow;
+    private final int uiRowIndex;
     private final InvocationUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
@@ -49,12 +53,14 @@ public class AddParameterBindingCommand extends AbstractCanvasGraphCommand imple
                                       final Binding binding,
                                       final GridData uiModel,
                                       final DMNGridRow uiModelRow,
+                                      final int uiRowIndex,
                                       final InvocationUIModelMapper uiModelMapper,
                                       final org.uberfire.mvp.Command canvasOperation) {
         this.invocation = invocation;
         this.binding = binding;
         this.uiModel = uiModel;
         this.uiModelRow = uiModelRow;
+        this.uiRowIndex = uiRowIndex;
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
     }
@@ -69,7 +75,8 @@ public class AddParameterBindingCommand extends AbstractCanvasGraphCommand imple
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                invocation.getBinding().add(binding);
+                invocation.getBinding().add(uiRowIndex,
+                                            binding);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
@@ -88,14 +95,18 @@ public class AddParameterBindingCommand extends AbstractCanvasGraphCommand imple
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler handler) {
-                uiModel.appendRow(uiModelRow);
-                final int lastRowIndex = uiModel.getRowCount() - 1;
-                uiModelMapper.fromDMNModel(lastRowIndex,
+                uiModel.insertRow(uiRowIndex,
+                                  uiModelRow);
+                uiModelMapper.fromDMNModel(uiRowIndex,
                                            InvocationUIModelMapper.ROW_NUMBER_COLUMN_INDEX);
-                uiModelMapper.fromDMNModel(lastRowIndex,
+                uiModelMapper.fromDMNModel(uiRowIndex,
                                            InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX);
-                uiModelMapper.fromDMNModel(lastRowIndex,
+                uiModelMapper.fromDMNModel(uiRowIndex,
                                            InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX);
+
+                updateRowNumbers();
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
@@ -105,10 +116,24 @@ public class AddParameterBindingCommand extends AbstractCanvasGraphCommand imple
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
                 final int rowIndex = uiModel.getRows().indexOf(uiModelRow);
                 uiModel.deleteRow(rowIndex);
+
+                updateRowNumbers();
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
             }
         };
+    }
+
+    public void updateRowNumbers() {
+        CommandUtils.updateRowNumbers(uiModel,
+                                      IntStream.range(0,
+                                                      uiModel.getRowCount()));
+    }
+
+    public void updateParentInformation() {
+        CommandUtils.updateParentInformation(uiModel);
     }
 }

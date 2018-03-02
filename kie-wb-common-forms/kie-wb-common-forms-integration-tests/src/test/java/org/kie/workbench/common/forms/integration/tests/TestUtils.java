@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.expressions.types.invocation;
+package org.kie.workbench.common.forms.integration.tests;
 
-import org.uberfire.client.mvp.UberElement;
+import org.eclipse.bpmn2.Definitions;
+import org.jbpm.simulation.util.BPMN2Utils;
 
-public interface InvocationGridControls extends org.jboss.errai.ui.client.local.api.IsElement,
-                                                UberElement<InvocationGridControls.Presenter> {
+public class TestUtils {
 
-    interface Presenter {
-
-        void addParameterBinding();
+    public static Definitions getDefinitionsFromResources(Class klass, String resourcePath) {
+        return BPMN2Utils.getDefinitions(klass.getResourceAsStream(resourcePath));
     }
 }

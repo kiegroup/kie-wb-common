@@ -24,7 +24,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 
 public class ContextGridCell<T> extends DMNGridCell<T> {
 
-    private ListSelector listSelector;
+    private final ListSelector listSelector;
 
     public ContextGridCell(final GridCellValue<T> value,
                            final ListSelector listSelector) {

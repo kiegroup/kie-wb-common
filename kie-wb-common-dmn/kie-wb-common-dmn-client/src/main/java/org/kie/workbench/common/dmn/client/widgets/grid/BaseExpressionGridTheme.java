@@ -23,6 +23,7 @@ import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.shared.core.types.TextBaseLine;
+import com.ait.lienzo.shared.core.types.TextUnit;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.NameColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DescriptionColumn;
@@ -61,11 +62,17 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
 
     public static final String RELATION_BACKGROUND_FILL_COLOUR = "#f7f7f7";
 
-    public static final String FONT_FAMILY_HEADER = "Times New Roman";
+    public static final String FONT_FAMILY_HEADER = "Open Sans, Helvetica, Arial, sans-serif";
 
-    public static final String FONT_FAMILY_LABEL = "Times New Roman";
+    public static final String FONT_FAMILY_LABEL = "Open Sans, Helvetica, Arial, sans-serif";
 
     public static final String FONT_FAMILY_EXPRESSION = "Courier New";
+
+    public static final double SELECTOR_STROKE_WIDTH = 2.0;
+
+    public static final double STROKE_WIDTH = 1.0;
+
+    public static final int FONT_SIZE = 10;
 
     @Override
     public String getName() {
@@ -79,7 +86,9 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
 
     @Override
     public Rectangle getCellSelectorBorder() {
-        return new Rectangle(0, 0).setStrokeColor(HOVER_STATE_STROKE_COLOUR).setStrokeWidth(2.0);
+        return new Rectangle(0, 0)
+                .setStrokeColor(HOVER_STATE_STROKE_COLOUR)
+                .setStrokeWidth(SELECTOR_STROKE_WIDTH);
     }
 
     @Override
@@ -103,7 +112,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public MultiPath getHeaderGridLine() {
         return new MultiPath()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -111,8 +120,9 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Text getHeaderText() {
         return new Text("")
                 .setFillColor(ColorName.BLACK)
-                .setFontSize(12)
+                .setFontSize(FONT_SIZE)
                 .setFontFamily(FONT_FAMILY_HEADER)
+                .setTextUnit(TextUnit.PT)
                 .setListening(false)
                 .setTextBaseLine(TextBaseLine.MIDDLE)
                 .setTextAlign(TextAlign.CENTER);
@@ -151,7 +161,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public MultiPath getBodyGridLine() {
         return new MultiPath()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -159,8 +169,9 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Text getBodyText() {
         return new Text("")
                 .setFillColor(ColorName.BLACK)
-                .setFontSize(12)
+                .setFontSize(FONT_SIZE)
                 .setFontFamily(FONT_FAMILY_LABEL)
+                .setTextUnit(TextUnit.PT)
                 .setListening(false)
                 .setTextBaseLine(TextBaseLine.MIDDLE)
                 .setTextAlign(TextAlign.CENTER);
@@ -170,7 +181,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Rectangle getGridBoundary() {
         return new Rectangle(0, 0)
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 
@@ -178,7 +189,7 @@ public class BaseExpressionGridTheme implements GridRendererTheme {
     public Line getGridHeaderBodyDivider() {
         return new Line()
                 .setStrokeColor(GRID_STROKE_COLOUR)
-                .setStrokeWidth(1.0)
+                .setStrokeWidth(STROKE_WIDTH)
                 .setVisible(true);
     }
 }

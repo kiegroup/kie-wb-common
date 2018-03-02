@@ -38,7 +38,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControls;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelector;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -54,8 +53,8 @@ public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, Conte
 
     private static final String EXPRESSION_COLUMN_GROUP = "FunctionSupplementaryGrid$ExpressionColumn1";
 
-    private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-    private ListSelector listSelector;
+    private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+    private final ListSelector listSelector;
 
     public FunctionSupplementaryGrid(final GridCellTuple parent,
                                      final HasExpression hasExpression,
@@ -76,7 +75,7 @@ public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, Conte
               hasName,
               gridPanel,
               gridLayer,
-              new FunctionSupplementaryGridData(new DMNGridData(gridLayer),
+              new FunctionSupplementaryGridData(new DMNGridData(),
                                                 sessionManager,
                                                 sessionCommandManager,
                                                 expression,
@@ -113,7 +112,7 @@ public class FunctionSupplementaryGrid extends BaseExpressionGrid<Context, Conte
 
     @Override
     public void initialiseUiColumns() {
-        final DMNGridColumn<String> nameColumn = new NameColumn(this);
+        final NameColumn nameColumn = new NameColumn(this);
         final ExpressionEditorColumn expressionColumn = new ExpressionEditorColumn(gridLayer,
                                                                                    new BaseHeaderMetaData("",
                                                                                                           EXPRESSION_COLUMN_GROUP),
