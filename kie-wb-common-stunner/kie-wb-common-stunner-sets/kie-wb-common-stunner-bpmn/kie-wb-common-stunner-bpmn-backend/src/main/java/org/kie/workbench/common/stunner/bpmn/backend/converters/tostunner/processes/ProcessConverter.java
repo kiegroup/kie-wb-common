@@ -40,6 +40,9 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+/**
+ * Convert the root Process with all its children to a BPMNDiagram
+ */
 public class ProcessConverter {
 
     protected final TypedFactoryManager factoryManager;
