@@ -14,18 +14,30 @@ Enable with flag:
 
 - A **Converter _to_ the Stunner model** is a class (basically, a function) that converts an Eclipse BPMN2 object into:
 
-   - a `BPMNNode`, i.e.:  a wrapper for a `Node<? extends View<? extends BPMNViewDefinition>, ?>` ,
-     enhanced with:
-         - ability to record parent/child relationship; in other words, a `BPMNNode` may be child/parent of other `BPMNode`s
-         - ability to "contain" `BPMNEdge`s (see below); in other words a `BPMNNode` may represent a subgraph (e.g. in the case of a `(Sub)Process`)
-   - a `BPMNEdge`, i.e.: a wrapper for an `Edge<? extends View<? extends BPMNViewDefinition>, ?>` 
-   
+- a `BPMNNode`, i.e.:  a wrapper for a `Node<? extends View<? extends BPMNViewDefinition>, ?>` ,
+ enhanced with:
+     - ability to record parent/child relationship; in other words, a `BPMNNode` may be child/parent of other `BPMNode`s
+     - ability to "contain" `BPMNEdge`s (see below); in other words a `BPMNNode` may represent a subgraph (e.g. in the case of a `(Sub)Process`)
+- a `BPMNEdge`, i.e.: a wrapper for an `Edge<? extends View<? extends BPMNViewDefinition>, ?>` 
+
+- Converter classes form a delegation tree. The root of such a tree is the converter for the Diagram root, called "Process" 
+when converting *to* the Stunner model, called "ViewDefinitionConverter" when converting *from* the Stunner model. 
+The delegation tree follows the hierarchy and structure of the BPMN data model. 
+
+- For instance, a Process converter will convert all of the FlowElements contained in the Process section. 
+A suitable conversion method is invoked, depending on the type of each FlowElement. The way matching is done, 
+is describe through code, using a `Match` helper (see Utilities section)
+
 - Each converter is responsible of handling a set of classes from Eclipse BPMN2 model. For instance,
   `TaskConverter` handles `Task`s. It instances a `Node`/`Edge` object (throught the `TypedFactoryManager` -- see below)
   for the recognized type, and fills its fields with all the supported values in the original model.
-  At the end of the conversion it **returns the element**
-  
-  Fields from the Eclipse BPMN2 model, for convenience, are generally accessed through a `PropertyReader`. 
+  At the end of the conversion it usually **return the element**, and/or, in some cases, it may **add it to the canvas** 
+  (e.g., subprocess converters return their subprocess node, but also add in their child nodes).
+
+
+
+  Fields from the Eclipse BPMN2 model, for convience, are generally accessed through a `PropertyReader`. 
+>>>>>>> 864a7fd95... Update docs for marshallers
   
   
 #### Property Readers
