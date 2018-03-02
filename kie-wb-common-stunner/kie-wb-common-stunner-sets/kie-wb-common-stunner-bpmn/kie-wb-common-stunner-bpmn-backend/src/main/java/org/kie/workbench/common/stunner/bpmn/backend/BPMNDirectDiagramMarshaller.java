@@ -44,7 +44,8 @@ import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadat
 import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnProcessNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
@@ -129,37 +130,33 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
                                                  final InputStream inputStream) throws IOException {
         LOG.debug("Starting diagram unmarshalling...");
 
-        Definitions definitions = parseDefinitions(inputStream);
+        // definition resolver provides utlities to access elements of the BPMN datamodel
+        DefinitionResolver definitionResolver =
+                new DefinitionResolver(parseDefinitions(inputStream));
 
-        // convert the diagram using the Definitions instance
+        // setup metadata
+        metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
+        metadata.setTitle(definitionResolver.getProcess().getName());
+
+        // perform actual conversion
         DiagramConverter diagramConverter =
-                new DiagramConverter(typedFactoryManager, definitions);
-        BpmnProcessNode diagramRoot = diagramConverter.getDiagramRoot();
-
-        metadata.setCanvasRootUUID(definitions.getId());
-        metadata.setTitle(
-                diagramRoot.value().getContent()
-                        .getDefinition()
-                        .getDiagramSet()
-                        .getName()
-                        .getValue());
+                new DiagramConverter(typedFactoryManager, definitionResolver);
+        BpmnNode diagramRoot = diagramConverter.getDiagramRoot();
 
         LOG.debug("Diagram unmarshalling completed successfully.");
 
         // the root node contains all of the information
         // needed to build the entire graph (including parent/child relationships)
-        // thus, we can simply walk the graph to issue all the commands
+        // thus, we can now walk the graph to issue all the commands
         // to draw it on our canvas
-
         GraphBuildingContext graphBuildingContext =
                 new GraphBuildingContext(
-                        definitions.getId(),
+                        definitionResolver.getDefinitions().getId(),
                         definitionManager,
                         typedFactoryManager,
                         ruleManager,
                         commandFactory,
                         commandManager);
-
         graphBuildingContext.render(diagramRoot);
 
         LOG.debug("Diagram drawing completed successfully.");

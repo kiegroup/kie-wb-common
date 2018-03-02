@@ -21,7 +21,6 @@ import java.util.Map;
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnProcessNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
@@ -61,9 +60,9 @@ public class ProcessConverter {
         this.processConverterFactory = processConverterFactory;
     }
 
-    public BpmnProcessNode convertProcess() {
+    public BpmnNode convertProcess() {
         Process process = definitionResolver.getProcess();
-        BpmnProcessNode processRoot = convertProcessNode(
+        BpmnNode processRoot = convertProcessNode(
                 definitionResolver.getDefinitions().getId(),
                 process);
 
@@ -81,7 +80,7 @@ public class ProcessConverter {
         return processRoot;
     }
 
-    private BpmnProcessNode convertProcessNode(String id, Process process) {
+    private BpmnNode convertProcessNode(String id, Process process) {
         Node<View<BPMNDiagramImpl>, Edge> diagramNode =
                 factoryManager.newNode(id, BPMNDiagramImpl.class);
         BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();
@@ -108,6 +107,6 @@ public class ProcessConverter {
         definition.setFontSet(e.getFontSet());
         definition.setBackgroundSet(e.getBackgroundSet());
 
-        return BpmnNode.ofProcess(diagramNode);
+        return BpmnNode.of(diagramNode);
     }
 }

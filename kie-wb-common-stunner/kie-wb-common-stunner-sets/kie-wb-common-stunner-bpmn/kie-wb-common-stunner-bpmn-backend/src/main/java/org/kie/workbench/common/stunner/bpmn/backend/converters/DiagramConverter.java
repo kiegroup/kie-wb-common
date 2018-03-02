@@ -16,8 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters;
 
-import org.eclipse.bpmn2.Definitions;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnProcessNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
 
@@ -31,16 +30,14 @@ public class DiagramConverter {
         this.definitionResolver = definitionResolver;
     }
 
-    public DiagramConverter(TypedFactoryManager typedFactoryManager, Definitions definitions) {
+    public DiagramConverter(TypedFactoryManager typedFactoryManager, DefinitionResolver definitionResolver) {
         // the stunner model aggregates in a node different aspects:
         // - type (e.g., Task)
         // - format (e.g., colors)
         // - layout (position)
         // thus, we need a mechanism to resolve these different concerns
         // as we convert FlowElements
-        this.definitionResolver =
-                new DefinitionResolver(definitions);
-
+        this.definitionResolver = definitionResolver;
         // process converters are a bit more involved than other
         // converters, so we use a factory
         this.processConverterFactory =
@@ -49,7 +46,7 @@ public class DiagramConverter {
                         definitionResolver);
     }
 
-    public BpmnProcessNode getDiagramRoot() {
+    public BpmnNode getDiagramRoot() {
         return processConverterFactory
                 .processConverter()
                 .convertProcess();

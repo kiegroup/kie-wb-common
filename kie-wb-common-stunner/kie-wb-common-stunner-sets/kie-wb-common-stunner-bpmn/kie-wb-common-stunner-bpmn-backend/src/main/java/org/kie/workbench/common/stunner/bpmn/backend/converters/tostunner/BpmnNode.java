@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -43,10 +42,6 @@ public class BpmnNode {
 
     protected BpmnNode(Node<? extends View<? extends BPMNViewDefinition>, ?> value) {
         this.value = value;
-    }
-
-    public static BpmnProcessNode ofProcess(Node<? extends View<BPMNDiagramImpl>, ?> value) {
-        return new BpmnProcessNode(value);
     }
 
     public static BpmnNode of(Node<? extends View<? extends BPMNViewDefinition>, ?> value) {
