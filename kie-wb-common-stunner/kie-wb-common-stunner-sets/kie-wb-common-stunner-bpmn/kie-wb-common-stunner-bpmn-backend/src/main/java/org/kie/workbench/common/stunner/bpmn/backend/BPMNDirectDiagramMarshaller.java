@@ -41,6 +41,7 @@ import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
+import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
@@ -155,9 +156,13 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         // needed to build the entire graph (including parent/child relationships)
         // thus, we can now walk the graph to issue all the commands
         // to draw it on our canvas
+        Diagram<Graph<DefinitionSet, Node>, Metadata> diagram = typedFactoryManager.newDiagram(
+                definitionResolver.getDefinitions().getId(),
+                BPMNDefinitionSet.class,
+                metadata);
         GraphBuildingContext graphBuildingContext =
                 new GraphBuildingContext(
-                        definitionResolver.getDefinitions().getId(),
+                        diagram.getGraph(),
                         definitionManager,
                         typedFactoryManager,
                         ruleManager,
@@ -166,7 +171,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         graphBuildingContext.render(diagramRoot);
 
         LOG.debug("Diagram drawing completed successfully.");
-        return graphBuildingContext.getGraph();
+        return diagram.getGraph();
     }
 
     private Bpmn2Resource createBpmn2Resource() {

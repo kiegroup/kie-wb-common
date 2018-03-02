@@ -68,15 +68,13 @@ public class GraphBuildingContext {
     private final Graph<DefinitionSet, Node> graph;
 
     public GraphBuildingContext(
-            String diagramId,
+            Graph<DefinitionSet, Node> graph,
             DefinitionManager definitionManager,
             TypedFactoryManager typedFactoryManager,
             RuleManager ruleManager,
             GraphCommandFactory commandFactory,
             GraphCommandManager commandManager) {
-        this.graph =
-                typedFactoryManager.newGraph(
-                        diagramId, BPMNDefinitionSet.class);
+        this.graph = graph;
         this.executionContext = new EmptyRulesCommandExecutionContext(
                 definitionManager,
                 typedFactoryManager.untyped(),
@@ -93,10 +91,6 @@ public class GraphBuildingContext {
     public void render(BpmnNode root) {
         clearGraph();
         buildGraph(root);
-    }
-
-    public Graph<DefinitionSet, Node> getGraph() {
-        return this.graph;
     }
 
     /**

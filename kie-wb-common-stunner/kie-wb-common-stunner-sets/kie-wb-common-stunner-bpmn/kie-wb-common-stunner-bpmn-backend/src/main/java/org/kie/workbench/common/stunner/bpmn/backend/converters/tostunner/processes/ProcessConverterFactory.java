@@ -31,6 +31,14 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.FlowEl
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.lanes.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 
+/**
+ * Creates converters for Processes and SubProcesses
+ * <p>
+ * Processes and SubProcesses are alike, but are not exactly compatible
+ * type-wise. However, they may contain the same type of nodes.
+ * ProcessConverterFactory returns instances of ProcessConverters
+ * and SubprocessConverters.
+ */
 public class ProcessConverterFactory {
 
     private final TypedFactoryManager factoryManager;

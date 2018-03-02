@@ -45,7 +45,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
@@ -96,6 +95,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskEx
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertyAdapter;
@@ -202,7 +202,7 @@ public class BPMNDirectDiagramMarshallerTest {
     @Mock
     RuleManager rulesManager;
 
-    ApplicationFactoryManager applicationFactoryManager;
+    FactoryManager applicationFactoryManager;
 
     private BPMNDirectDiagramMarshaller tested;
 
@@ -236,6 +236,7 @@ public class BPMNDirectDiagramMarshallerTest {
         mockAdapterManager(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         mockAdapterRegistry(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         applicationFactoryManager = new MockApplicationFactoryManager(
+                definitionManager,
                 new GraphFactoryImpl(definitionManager),
                 testScopeModelFactory,
                 new EdgeFactoryImpl(definitionManager),
@@ -1211,7 +1212,6 @@ public class BPMNDirectDiagramMarshallerTest {
                      sequenceFlow2.getGeneral().getName().getValue());
     }
 
-
     @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallInclusiveGateway() throws Exception {
@@ -1677,14 +1677,14 @@ public class BPMNDirectDiagramMarshallerTest {
         assertNotNull(rootElements);
 
         assertItemExists(rootElements,
-                                        "_employeeItem",
-                                        "java.lang.String");
+                         "_employeeItem",
+                         "java.lang.String");
         assertItemExists(rootElements,
-                                        "_reasonItem",
-                                        "java.lang.String");
+                         "_reasonItem",
+                         "java.lang.String");
         assertItemExists(rootElements,
-                                        "_performanceItem",
-                                        "java.lang.String");
+                         "_performanceItem",
+                         "java.lang.String");
 
         Process process = getProcess(definitions);
         assertNotNull(process);
@@ -2327,7 +2327,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(flatResult.contains("<drools:script><![CDATA[System.out.println(\"Bye\");]]></drools:script>"));
     }
 
-
     @Test
     public void testMarshallInclusiveGateway() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_INCLUSIVE_GATEWAY);
@@ -2527,8 +2526,8 @@ public class BPMNDirectDiagramMarshallerTest {
     }
 
     private void assertItemExists(List<RootElement> rootElements,
-                                             String id,
-                                             String structureRef) {
+                                  String id,
+                                  String structureRef) {
         for (RootElement rootElement : rootElements) {
             if (id.equals(rootElement.getId()) && rootElement instanceof ItemDefinition) {
                 ItemDefinition itemDefinition = (ItemDefinition) rootElement;
@@ -2536,11 +2535,11 @@ public class BPMNDirectDiagramMarshallerTest {
                     // pass;
                     return;
                 } else {
-                    fail("Found mismatching item with id = "+id+" "+itemDefinition);
+                    fail("Found mismatching item with id = " + id + " " + itemDefinition);
                 }
             }
         }
-        fail("Could not find item id = "+id);
+        fail("Could not find item id = " + id);
     }
 
     private Property getProcessProperty(List<Property> properties,
@@ -2652,7 +2651,7 @@ public class BPMNDirectDiagramMarshallerTest {
                     ItemAwareElement result = Arrays.stream(sourceRef.toArray(new ItemAwareElement[sourceRef.size()]))
                             .filter(itemAwareElement ->
                                             id.equals(itemAwareElement.getId())
-                            || id.equals(((Property)itemAwareElement).getName()))
+                                                    || id.equals(((Property) itemAwareElement).getName()))
                             .findFirst()
                             .orElse(null);
                     if (result != null) {
@@ -2706,7 +2705,7 @@ public class BPMNDirectDiagramMarshallerTest {
                 ItemAwareElement targetRef = dataOutputAssociation.getTargetRef();
                 if (targetRef != null &&
                         id.equals(targetRef.getId())
-                        || id.equals(((Property)targetRef).getName())) {
+                        || id.equals(((Property) targetRef).getName())) {
                     return targetRef;
                 }
             }
