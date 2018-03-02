@@ -22,12 +22,17 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.VoidMatch;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AddChildNodeCommand;
@@ -38,10 +43,13 @@ import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionSou
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
+import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,14 +65,38 @@ public class GraphBuildingContext {
     private final GraphCommandExecutionContext executionContext;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
+    private final Graph<DefinitionSet, Node> graph;
 
     public GraphBuildingContext(
-            GraphCommandExecutionContext executionContext,
+            String diagramId,
+            DefinitionManager definitionManager,
+            TypedFactoryManager typedFactoryManager,
+            RuleManager ruleManager,
             GraphCommandFactory commandFactory,
             GraphCommandManager commandManager) {
-        this.executionContext = executionContext;
+        this.graph =
+                typedFactoryManager.newGraph(
+                        diagramId, BPMNDefinitionSet.class);
+        this.executionContext = new EmptyRulesCommandExecutionContext(
+                definitionManager,
+                typedFactoryManager.untyped(),
+                ruleManager,
+                new MapIndexBuilder().build(graph));
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
+    }
+
+    /**
+     * Clears the context and then walks the graph root
+     * to draw it on the canvas
+     */
+    public void render(BpmnNode root) {
+        clearGraph();
+        buildGraph(root);
+    }
+
+    public Graph<DefinitionSet, Node> getGraph() {
+        return this.graph;
     }
 
     /**

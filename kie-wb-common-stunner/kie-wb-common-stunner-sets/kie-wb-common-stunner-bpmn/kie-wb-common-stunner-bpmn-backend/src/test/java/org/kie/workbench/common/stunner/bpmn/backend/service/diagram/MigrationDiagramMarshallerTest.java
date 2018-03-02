@@ -348,7 +348,13 @@ public class MigrationDiagramMarshallerTest {
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The tested BPMN marshaller.
-        newMarshaller = new BPMNDirectDiagramMarshaller(definitionManager, rulesManager, applicationFactoryManager, commandFactory, commandManager);
+        newMarshaller = new BPMNDirectDiagramMarshaller(
+                new XMLEncoderDiagramMetadataMarshaller(),
+                definitionManager,
+                rulesManager,
+                applicationFactoryManager,
+                commandFactory,
+                commandManager);
     }
 
     private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {

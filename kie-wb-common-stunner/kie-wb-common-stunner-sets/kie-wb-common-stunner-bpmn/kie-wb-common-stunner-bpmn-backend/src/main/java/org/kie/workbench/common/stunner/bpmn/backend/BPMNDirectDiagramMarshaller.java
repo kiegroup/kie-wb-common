@@ -41,13 +41,11 @@ import org.jboss.drools.DroolsPackage;
 import org.jboss.drools.impl.DroolsFactoryImpl;
 import org.jboss.drools.impl.DroolsPackageImpl;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
-import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.DiagramConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnProcessNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuildingContext;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -58,11 +56,9 @@ import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.command.EmptyRulesCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
-import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,24 +78,6 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
     private final TypedFactoryManager typedFactoryManager;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
-    private final BPMNDiagramMarshaller legacyMarshaller;
-
-    public BPMNDirectDiagramMarshaller(
-            final DefinitionManager definitionManager,
-            final RuleManager ruleManager,
-            final FactoryManager factoryManager,
-            final GraphCommandFactory commandFactory,
-            final GraphCommandManager commandManager) {
-        this.definitionManager = definitionManager;
-        this.ruleManager = ruleManager;
-        this.typedFactoryManager = new TypedFactoryManager(factoryManager);
-        this.commandFactory = commandFactory;
-        this.commandManager = commandManager;
-
-        // these are not used in tests
-        this.legacyMarshaller = null;
-        this.diagramMetadataMarshaller = null;
-    }
 
     @Inject
     public BPMNDirectDiagramMarshaller(
@@ -108,15 +86,13 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
             final RuleManager ruleManager,
             final FactoryManager factoryManager,
             final GraphCommandFactory commandFactory,
-            final GraphCommandManager commandManager,
-            final BPMNDiagramMarshaller legacyMarshaller) {
+            final GraphCommandManager commandManager) {
         this.diagramMetadataMarshaller = diagramMetadataMarshaller;
         this.definitionManager = definitionManager;
         this.ruleManager = ruleManager;
         this.typedFactoryManager = new TypedFactoryManager(factoryManager);
         this.commandFactory = commandFactory;
         this.commandManager = commandManager;
-        this.legacyMarshaller = legacyMarshaller;
     }
 
     @Override
@@ -155,29 +131,18 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
         Definitions definitions = parseDefinitions(inputStream);
 
-        // the stunner model aggregates in a node different aspects:
-        // - type (e.g., Task)
-        // - format (e.g., colors)
-        // - layout (position)
-        // thus, we need a mechanism to resolve these different concerns
-        // as we convert FlowElements
-        DefinitionResolver definitionResolver =
-                new DefinitionResolver(definitions);
+        // convert the diagram using the Definitions instance
+        DiagramConverter diagramConverter =
+                new DiagramConverter(typedFactoryManager, definitions);
+        BpmnProcessNode diagramRoot = diagramConverter.getDiagramRoot();
 
-        // process converters are a bit more involved than other
-        // converters, so we use a factory
-        ProcessConverterFactory processConverterFactory =
-                new ProcessConverterFactory(
-                        typedFactoryManager,
-                        definitionResolver);
-
-        BpmnNode root =
-                processConverterFactory
-                        .processConverter()
-                        .convertProcess();
-
-        metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
-        metadata.setTitle(definitionResolver.getProcess().getName());
+        metadata.setCanvasRootUUID(definitions.getId());
+        metadata.setTitle(
+                diagramRoot.value().getContent()
+                        .getDefinition()
+                        .getDiagramSet()
+                        .getName()
+                        .getValue());
 
         LOG.debug("Diagram unmarshalling completed successfully.");
 
@@ -185,7 +150,20 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         // needed to build the entire graph (including parent/child relationships)
         // thus, we can simply walk the graph to issue all the commands
         // to draw it on our canvas
-        return renderGraph(definitionResolver.getDefinitions().getId(), root);
+
+        GraphBuildingContext graphBuildingContext =
+                new GraphBuildingContext(
+                        definitions.getId(),
+                        definitionManager,
+                        typedFactoryManager,
+                        ruleManager,
+                        commandFactory,
+                        commandManager);
+
+        graphBuildingContext.render(diagramRoot);
+
+        LOG.debug("Diagram drawing completed successfully.");
+        return graphBuildingContext.getGraph();
     }
 
     private Bpmn2Resource createBpmn2Resource() {
@@ -205,38 +183,6 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
         rSet.getResources().add(resource);
         return resource;
-    }
-
-    /**
-     * Creates a graph context and then walks the graph
-     * to draw it on the canvas
-     */
-    private Graph<DefinitionSet, Node> renderGraph(String definitionsId, BpmnNode root) {
-        Graph<DefinitionSet, Node> graph =
-                typedFactoryManager.newGraph(
-                        definitionsId, BPMNDefinitionSet.class);
-
-        emptyGraphContext(graph)
-                .buildGraph(root);
-
-        LOG.debug("Diagram drawing completed successfully.");
-        return graph;
-    }
-
-    private GraphBuildingContext emptyGraphContext(Graph<DefinitionSet, Node> graph) {
-        EmptyRulesCommandExecutionContext commandExecutionContext =
-                new EmptyRulesCommandExecutionContext(
-                        definitionManager,
-                        typedFactoryManager.untyped(),
-                        ruleManager,
-                        new MapIndexBuilder().build(graph));
-
-        GraphBuildingContext ctx = new GraphBuildingContext(
-                commandExecutionContext, commandFactory, commandManager);
-
-        ctx.clearGraph();
-
-        return ctx;
     }
 
     @Override
@@ -277,9 +223,5 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         final DocumentRoot root = (DocumentRoot) resource.getContents().get(0);
 
         return root.getDefinitions();
-    }
-
-    public JBPMBpmn2ResourceImpl marshallToBpmn2Resource(Diagram<Graph, Metadata> diagram) {
-        return null;
     }
 }

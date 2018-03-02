@@ -47,6 +47,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
+import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
@@ -120,7 +121,6 @@ import org.kie.workbench.common.stunner.core.graph.content.view.DiscreteConnecti
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnectorImpl;
-import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
 import org.kie.workbench.common.stunner.core.rule.RuleEvaluationContext;
@@ -248,7 +248,13 @@ public class BPMNDirectDiagramMarshallerTest {
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The tested BPMN marshaller.
-        tested = new BPMNDirectDiagramMarshaller(definitionManager, rulesManager, applicationFactoryManager, commandFactory, commandManager);
+        tested = new BPMNDirectDiagramMarshaller(
+                new XMLEncoderDiagramMetadataMarshaller(),
+                definitionManager,
+                rulesManager,
+                applicationFactoryManager,
+                commandFactory,
+                commandManager);
     }
 
     private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
