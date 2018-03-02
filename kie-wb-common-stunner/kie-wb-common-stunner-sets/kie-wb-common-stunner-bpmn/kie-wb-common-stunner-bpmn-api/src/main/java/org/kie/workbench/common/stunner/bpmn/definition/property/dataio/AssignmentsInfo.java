@@ -31,6 +31,29 @@ import org.kie.workbench.common.stunner.core.definition.annotation.property.Type
 import org.kie.workbench.common.stunner.core.definition.annotation.property.Value;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 
+/**
+ * AssignmentsInfo represents variables, their types, and their assignments
+ * in a Task.
+ * <p>
+ * It has historically been represented through a delimited String.
+ * The format of such a String follows the following EBNF:
+ * <p>
+ * <pre>
+ * AssignmentInfoString ::= InputDeclarations ‘|’ OutputDeclarations ‘|’ Assignments
+ * InputDeclarations ::= (Declaration (‘,’ Declaration)*)?
+ * OutputDeclarations ::= (Declaration (‘,’ Declaration)*)?
+ * Declaration ::= ( identifier ( ‘:’ type )? )
+ * Assignments ::= (Assignment (‘,’ Assignment)* )?;
+ * Assignment ::= InputAssignment | OutputAssignment;
+ * InputAssignment ::= ‘[din]’ identifier ‘->’ identifier;
+ * OutputAssignment ::= ‘[dout]’ identifier ‘->’ identifier;
+ *
+ * </pre>
+ * Where identifier is a valid identifier, and type is a valid identifier
+ * representing a data type.
+ * Semantically, the identifiers that has been declared in an InputDeclaration
+ * or an OutputDeclaration, or in a ProcessVariable that contains this Task
+ */
 @Portable
 @Bindable
 @Property
