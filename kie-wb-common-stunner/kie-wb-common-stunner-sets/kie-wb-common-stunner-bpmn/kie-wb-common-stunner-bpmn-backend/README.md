@@ -37,7 +37,6 @@ is describe through code, using a `Match` helper (see Utilities section)
 
 
   Fields from the Eclipse BPMN2 model, for convience, are generally accessed through a `PropertyReader`. 
->>>>>>> 864a7fd95... Update docs for marshallers
   
   
 #### Property Readers
