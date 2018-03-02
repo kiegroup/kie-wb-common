@@ -80,7 +80,7 @@ public class SequenceFlow extends BaseConnector {
 
         @Override
         public SequenceFlow build() {
-            return new SequenceFlow(new BPMNGeneralSet("Sequence"),
+            return new SequenceFlow(new BPMNGeneralSet(),
                                     new SequenceFlowExecutionSet(),
                                     new BackgroundSet(COLOR,
                                                       BORDER_COLOR,
