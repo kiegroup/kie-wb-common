@@ -145,6 +145,8 @@ is describe through code, using a `Match` helper (see Utilities section)
       BackgroundSet backgroundSet = p.getBackgroundSet();
       
       // ... etc.
+      
+See [docs/extending.md] for more information on extending PropertyReaders.
 
 #### GraphBuilder
 
@@ -223,6 +225,7 @@ is a wrapper around an Eclipse BPMN2 element (see below)
       
       // ... etc.
 
+See [docs/extending.md] for more information on extending PropertyWriters.
 
 ### Utilities
 
