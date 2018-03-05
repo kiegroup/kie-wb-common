@@ -46,7 +46,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuilder;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
@@ -156,19 +156,20 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         // needed to build the entire graph (including parent/child relationships)
         // thus, we can now walk the graph to issue all the commands
         // to draw it on our canvas
-        Diagram<Graph<DefinitionSet, Node>, Metadata> diagram = typedFactoryManager.newDiagram(
-                definitionResolver.getDefinitions().getId(),
-                BPMNDefinitionSet.class,
-                metadata);
-        GraphBuildingContext graphBuildingContext =
-                new GraphBuildingContext(
+        Diagram<Graph<DefinitionSet, Node>, Metadata> diagram =
+                typedFactoryManager.newDiagram(
+                    definitionResolver.getDefinitions().getId(),
+                    BPMNDefinitionSet.class,
+                    metadata);
+        GraphBuilder graphBuilder =
+                new GraphBuilder(
                         diagram.getGraph(),
                         definitionManager,
                         typedFactoryManager,
                         ruleManager,
                         commandFactory,
                         commandManager);
-        graphBuildingContext.render(diagramRoot);
+        graphBuilder.render(diagramRoot);
 
         LOG.debug("Diagram drawing completed successfully.");
         return diagram.getGraph();

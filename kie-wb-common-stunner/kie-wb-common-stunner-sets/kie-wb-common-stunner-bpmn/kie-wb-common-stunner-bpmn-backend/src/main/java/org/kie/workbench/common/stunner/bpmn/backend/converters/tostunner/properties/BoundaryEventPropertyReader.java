@@ -45,7 +45,7 @@ class BoundaryEventPropertyReader extends CatchEventPropertyReader {
                 docker.getY() + bounds.getHeight());
     }
 
-    public Point2D getDockerInfo() {
+    private Point2D getDockerInfo() {
         return CustomAttribute.dockerInfo.of(element).get();
     }
 }

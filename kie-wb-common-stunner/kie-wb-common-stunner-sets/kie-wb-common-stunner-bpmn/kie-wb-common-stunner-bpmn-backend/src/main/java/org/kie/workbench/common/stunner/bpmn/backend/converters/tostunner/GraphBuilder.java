@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.VoidMatch;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -56,18 +55,35 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A wrapper for graph command execution,
- * exposing a simple, method-based API
+ * exposing a simple, method-based API.
+ * <p>
+ * A `GraphBuilder` object issues commands to the canvas while building the graph.
+ * It is a wrapper around
+ * <ul>
+ * <li>GraphCommandExecutionContext</li>
+ * <li>GraphCommandFactory</li>
+ * <li>GraphCommandManager</li>
+ * </ul>
+ * <p>
+ * `GraphBuilder` is used for convenience, to avoid explicitly creating command instances.
+ * It also implements custom logic for some actions. For example, in the case of adding child nodes,
+ * it translates the coordinates of a child node into the new reference system (the parent boundaries).
+ * <p>
+ * `GraphBuilder` builds the entire graph {@link GraphBuilder#buildGraph(BpmnNode)}
+ * once all the conversions have took place: it traverses the entire directed graph described by the `BPMNNode`s
+ * starting from the "root node", which represents the root of the diagram, and visiting
+ * the parent/child relations in each BPMNNode and the `BPMNEdge` they may contain.
  */
-public class GraphBuildingContext {
+public class GraphBuilder {
 
-    private static final Logger logger = LoggerFactory.getLogger(GraphBuildingContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(GraphBuilder.class);
 
     private final GraphCommandExecutionContext executionContext;
     private final GraphCommandFactory commandFactory;
     private final GraphCommandManager commandManager;
     private final Graph<DefinitionSet, Node> graph;
 
-    public GraphBuildingContext(
+    public GraphBuilder(
             Graph<DefinitionSet, Node> graph,
             DefinitionManager definitionManager,
             TypedFactoryManager typedFactoryManager,
@@ -120,7 +136,7 @@ public class GraphBuildingContext {
         }
     }
 
-    public void addDockedNode(String parentId, String candidateId) {
+    private void addDockedNode(String parentId, String candidateId) {
         Node parent = executionContext.getGraphIndex().getNode(parentId);
         Node candidate = executionContext.getGraphIndex().getNode(candidateId);
 
@@ -140,11 +156,11 @@ public class GraphBuildingContext {
         execute(addChildNodeCommand);
     }
 
-    public Node getNode(String id) {
+    private Node getNode(String id) {
         return executionContext.getGraphIndex().getNode(id);
     }
 
-    public void addChildNode(Node<? extends View, ?> parent, Node<? extends View, ?> child) {
+    private void addChildNode(Node<? extends View, ?> parent, Node<? extends View, ?> child) {
         AddChildNodeCommand addChildNodeCommand = commandFactory.addChildNode(parent, child);
         execute(addChildNodeCommand);
 
@@ -158,7 +174,7 @@ public class GraphBuildingContext {
      * If we move node into a new coordinate system where the origin is in (3, 4)
      * then the new coordinates for node are: (10-3, 11-4) = (7,7)
      */
-    public void translate(Node<? extends View, ?> node, Bounds.Bound newOrigin) {
+    private void translate(Node<? extends View, ?> node, Bounds.Bound newOrigin) {
 
         logger.debug("Translating {} into constraints {}", node.getContent().getBounds(), newOrigin);
 
@@ -170,18 +186,18 @@ public class GraphBuildingContext {
         updatePosition(node, coords);
     }
 
-    public void updatePosition(Node node, Point2D position) {
+    private void updatePosition(Node node, Point2D position) {
         UpdateElementPositionCommand updateElementPositionCommand =
                 commandFactory.updatePosition(node, position);
         execute(updateElementPositionCommand);
     }
 
-    public void addNode(Node node) {
+    private void addNode(Node node) {
         AddNodeCommand addNodeCommand = commandFactory.addNode(node);
         execute(addNodeCommand);
     }
 
-    public void addEdge(
+    private void addEdge(
             Edge<? extends View<?>, Node> edge,
             Node source,
             Connection sourceConnection,
@@ -197,7 +213,7 @@ public class GraphBuildingContext {
         execute(setTargetNode);
     }
 
-    public void addEdge(
+    private void addEdge(
             Edge<? extends View<?>, Node> edge,
             String sourceId,
             Connection sourceConnection,
@@ -213,7 +229,7 @@ public class GraphBuildingContext {
         addEdge(edge, source, sourceConnection, target, targetConnection);
     }
 
-    public void setBounds(String elementId, int x1, int y1, int x2, int y2) {
+    private void setBounds(String elementId, int x1, int y1, int x2, int y2) {
         Element<? extends View<?>> element = executionContext.getGraphIndex().get(elementId);
         element.getContent().setBounds(BoundsImpl.build(x1, y1, x2, y2));
     }
@@ -222,15 +238,15 @@ public class GraphBuildingContext {
         return commandManager.execute(executionContext, command);
     }
 
-    public GraphCommandExecutionContext executionContext() {
+    private GraphCommandExecutionContext executionContext() {
         return executionContext;
     }
 
-    public CommandResult<RuleViolation> clearGraph() {
+    private CommandResult<RuleViolation> clearGraph() {
         return commandManager.execute(executionContext, commandFactory.clearGraph());
     }
 
-    public void addEdge(BpmnEdge edge) {
+    private void addEdge(BpmnEdge edge) {
         VoidMatch.of(BpmnEdge.class)
                 .when(BpmnEdge.Simple.class, e ->
                         addEdge(e.getEdge(),

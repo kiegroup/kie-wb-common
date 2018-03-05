@@ -1,16 +1,95 @@
 # BPMN Backend
 
-## Experimental Marshallers
-
-Enable with flag:
-
-    -Dbpmn.marshaller.experimental=true
+- Experimental Marshallers
     
-- Entry point: `BPMNDirectDiagramMarshaller` which implements `BPMNDirectDiagramMarshaller` 
-- Actual unmarshalling from XML is delegated to Eclipse BPMN2 library
-- Mapping between Eclipse BPMN2 data model to Stunner BPMN data model is performed through **Converter** classes
+    Enable with flag:
+    
+        -Dbpmn.marshaller.experimental=true
+        
+    - Entry point: `BPMNDirectDiagramMarshaller` which implements `BPMNDirectDiagramMarshaller` 
+    - Actual unmarshalling from XML is delegated to Eclipse BPMN2 library
+    - Mapping between Eclipse BPMN2 data model to Stunner BPMN data model is performed through **Converter** classes
 
-### Converters To Stunner model
+## Unmarshalling
+
+Unmarshalling converts an **Eclipse BPMN2** document into a **Stunner Diagram**.
+There are a few differences between the Eclipse BPMN2 data model and the Stunner graph representation:
+
+BPMN is an XML document, therefore the Eclipse BPMN2 implementation exposes the document as a **tree**. 
+
+The tree of the BPMN2 model, however, contains 3 different subtrees:
+1. the tree of flow elements (shapes of the diagram, including visible edges a.k.a. `SequenceFlow`s) rooted
+   at the `bpmn2:process` element.
+2. the tree of the layout of the shapes: rooted at`bpmndi:BPMNDiagram`, it contains `BPMNShape`s and `BPMNEdge`s with their 
+  coordinates on the canvas. These coordinates are **absolute**.
+3. the tree of the simulation properties, rooted at `bpmn2:relationship`
+
+Each section may refer to another; in particular, section 2. and 3. refer to
+elements defined in section 1.; moreover there may be cross-references within elements of section 1.
+
+The main differences with BPM are that 
+- in Stunner, Nodes and Edges are distinct entities, while, in a BPM document, 
+ SequenceFlows are represented together with other Elements
+- each Stunner POJO aggregates all of 1., 2., 3. 
+
+In fact, a stunner `Node` represents an Element (e.g. a `Task`)
+with all of its other properties, such as position on the canvas, simulation properties, etc.
+There is also an additional constraint: coordinates may be relative to a container,
+whereas they are always absolute in the BPMN2 model (e.g. a `Lane` may contain
+a `Task`: in Stunner this `Task`'s position will be relative to the `Lane`'s. 
+but the `BPMNShape` will report absolute coordinates)
+
+Although conversion can be seen as a **visit** of the BPMN2 document tree, 
+the entire visit is driven by the the `Process` subtree (1.), because it contains
+all of the visible elements of the diagram. However, every time an element of the `Process`
+subtree is visited, all of the potential cross-references must be resolved,
+thus a `Context` wrapper has to be brought along.
+
+The visit is implemented as a series of **`Converters`** that **delegate** to each other.
+For instance, there is a Converter for `FlowElements` (children of the document root, `Definitions`)
+that delegates to one Converter for each subtype of `FlowElement`, e.g., `TaskConverter`, `StartEventConverter`, etc.
+Each of such converters checks the type of the element that is being visited,
+and if it *matches* (that is, this converter is able to *convert* that type to a Node or an Edge), 
+then it dispatches the conversion, which results in returning
+a Stunner `Node` or a Stunner `Edge`.
+
+The visit is separate for nodes and edges. A few passes are implemented:
+
+- a pass over the nodes, that is: 
+    - a pass over all child of a `Process`, excepted sequence flows; including 
+      `SubProcess`es, which may contain other children
+    - a pass over the lanes (which are not included as children of a `Process`)
+    
+- a pass over the edges; includes
+    - sequence flows, ignored in the previous pass
+    - boundary elements, which are represented as a special kind of edge
+
+Please also notice that the total number of Stunner edges is usually greater
+that the number of edges in a BPM: in fact, in Stunner, edges may represent
+both an edge that is **drawn** on the canvas, and a **relationship** between
+two nodes. The former would be an element that has an actual representation
+in the BPM; the latter encodes parent/child or docking relationships.
+But, while the first kind of edges is actually generated during the 
+visit of BPM edges (SequenceFlows), the latter are really generated 
+during the visit of Nodes!
+
+The parent/child edges form a "tree of subgraphs", whose root is the whole Diagram.
+The Diagram "contains" other nodes of the graph (i.e., it has an edge to them); 
+and each Node inside such a graph may "contain" other nodes, in such a way, 
+that by walking all of the relationship edges, all of the nodes in the graph
+are visited.
+
+
+**Note.** For the reader familiar with common design patterns, because the visit is type-driven, it is -- of course --
+implemented through a rendition of the traditional Visitor pattern. However, because the Visitor pattern
+really implements a form of "pattern matching",  we have deemed more readable to implement a helper for "pattern matching" 
+(actually, *type matching*, see Section "Utilities" and the JavaDoc for details). Moreover,
+as opposed to the Visitor pattern, this makes it possible to avoid defining an `accept()` method
+on each Stunner POJO, leaving it agnostic to any implementation detail of this visit.
+
+### Implementation
+     
+#### Converters To Stunner model
 
 - A **Converter _to_ the Stunner model** is a class (basically, a function) that converts an Eclipse BPMN2 object into:
 
@@ -34,9 +113,7 @@ is describe through code, using a `Match` helper (see Utilities section)
   At the end of the conversion it usually **return the element**, and/or, in some cases, it may **add it to the canvas** 
   (e.g., subprocess converters return their subprocess node, but also add in their child nodes).
 
-
-
-  Fields from the Eclipse BPMN2 model, for convience, are generally accessed through a `PropertyReader`. 
+  Fields from the Eclipse BPMN2 model, for convenience, are generally accessed through a `PropertyReader`. 
   
   
 #### Property Readers
@@ -69,27 +146,53 @@ is describe through code, using a `Match` helper (see Utilities section)
       
       // ... etc.
 
-### GraphBuildingContext
+#### GraphBuilder
 
-A `GraphBuildingContext` object issues commands to the canvas while building the graph. 
+A `GraphBuilder` object issues commands to the canvas while building the graph. 
   It is a wrapper around: 
    - `GraphCommandExecutionContext`
    - `GraphCommandFactory` 
    - `GraphCommandManager` 
    
-`GraphBuildingContext` is used for convenience, to avoid explicitly creating command instances.
+`GraphBuilder` is used for convenience, to avoid explicitly creating command instances.
  It also implements custom logic for some actions. For example, in the case of adding child nodes, 
  it translates the coordinates of a child node into the new reference system (the parent boundaries).
 
-`GraphBuildingContext` builds the entire graph (`GraphBuildingContext#buildGraph(BpmnNode rootNode)`)
+`GraphBuilder` builds the entire graph (`GraphBuilder#buildGraph(BpmnNode)`)
 once all the conversions have took place: it traverses the entire directed graph described by the `BPMNNode`s
 starting from the "root node", which represents the root of the diagram, and visiting
 the parent/child relations in each BPMNNode and the `BPMNEdge` they may contain.
 
-      
+
+## Marshalling
+
+In this case we visit the Stunner graph and convert it back into a BPMN2 tree.
+
+The Stunner graph is represented as a bag of nodes. Each node contains references
+to its **inbound** edges and its **outgoing** edges.
+
+The visit is performed as follows: first the "root node" of the diagram is found, 
+then we implement the following passes
+
+- nodes:
+    - a pass over the root process node
+    - then, a pass on all non-root nodes, including 
+        - a pass over all subprocesses (with all its subchildren)
+        - a pass over all lanes
+
+- let us now call E the union of all inbound and outgoing edges for all nodes in the Graph;
+  then the folowing passes are implemented
+    - a pass over all Child edges in E
+    - a pass over all Dock edges in E
+    - a pass over all SequenceFlow edges in E
+
+During this passes, all the references to the graph nodes are resolved as
+correctly assigned to the BPM nodes.
+
+
 ### Converters From Stunner Model
 
-A converter **Converter _from_ the Stunner model** is a class (basically, a function) that converts a 
+A **Converter _from_ the Stunner model** is a class that converts a 
 Stunner `Node<? extends View<? extends BPMNViewDefinition>, ?>` to a `PropertyWriter`. A `PropertyWriter`
 is a wrapper around an Eclipse BPMN2 element (see below)
 
