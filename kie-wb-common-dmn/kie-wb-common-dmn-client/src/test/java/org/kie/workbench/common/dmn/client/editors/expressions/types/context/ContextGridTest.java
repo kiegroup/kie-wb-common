@@ -309,6 +309,11 @@ public class ContextGridTest {
         assertThat(items.get(DIVIDER)).isInstanceOf(HasListSelectorControl.ListSelectorDividerItem.class);
         assertListSelectorItem(items.get(CLEAR_EXPRESSION_TYPE),
                                DMNEditorConstants.ExpressionEditor_Clear);
+
+        ((HasListSelectorControl.ListSelectorTextItem) items.get(CLEAR_EXPRESSION_TYPE)).getCommand().execute();
+        verify(cellEditorControls).hide();
+        verify(sessionCommandManager).execute(eq(handler),
+                                              any(ClearExpressionTypeCommand.class));
     }
 
     private void assertDefaultListItems(final List<HasListSelectorControl.ListSelectorItem> items) {

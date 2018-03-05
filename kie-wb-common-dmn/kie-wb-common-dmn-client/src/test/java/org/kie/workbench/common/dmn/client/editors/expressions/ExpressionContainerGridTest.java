@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.client.commands.general.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
@@ -66,6 +67,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -242,6 +244,7 @@ public class ExpressionContainerGridTest {
 
     @Test
     public void testGetItems() {
+        grid.setExpression(Optional.of(hasName), hasExpression);
         final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 0);
 
         assertThat(items.size()).isEqualTo(1);
@@ -251,6 +254,10 @@ public class ExpressionContainerGridTest {
         assertThat(item).isInstanceOf(HasListSelectorControl.ListSelectorTextItem.class);
         final HasListSelectorControl.ListSelectorTextItem ti = (HasListSelectorControl.ListSelectorTextItem) item;
         assertThat(ti.getText()).isEqualTo(DMNEditorConstants.ExpressionEditor_Clear);
+        ti.getCommand().execute();
+        verify(cellEditorControls).hide();
+        verify(sessionCommandManager).execute(eq(canvasHandler),
+                                              any(ClearExpressionTypeCommand.class));
     }
 
     @Test
