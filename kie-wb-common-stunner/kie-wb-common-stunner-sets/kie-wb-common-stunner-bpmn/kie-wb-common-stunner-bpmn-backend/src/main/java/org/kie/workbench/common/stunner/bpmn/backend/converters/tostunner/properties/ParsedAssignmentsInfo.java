@@ -16,10 +16,62 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationList;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
 
+
+/**
+ *
+ * Parses and generate the AssignmentsInfo string
+ *
+ * AssignmentsInfo represents variables, their types, and their assignments
+ * in a Task.
+ * <p>
+ * It has historically been represented through a delimited String.
+ * The format of such a String follows the following EBNF:
+ * <p>
+ * <pre>
+ * AssignmentInfoString ::= InputDeclarations ‘|’ OutputDeclarations ‘|’ Assignments
+ * InputDeclarations ::= (Declaration (‘,’ Declaration)*)?
+ * OutputDeclarations ::= (Declaration (‘,’ Declaration)*)?
+ * Declaration ::= ( identifier ( ‘:’ type )? )
+ * Assignments ::= (Assignment (‘,’ Assignment)* )?;
+ * Assignment ::= InputAssignment | OutputAssignment;
+ * InputAssignment ::= ‘[din]’ identifier ‘->’ identifier;
+ * OutputAssignment ::= ‘[dout]’ identifier ‘->’ identifier;
+ *
+ * </pre>
+ * Where identifier is a valid identifier, and type is a valid identifier
+ * representing a data type.
+ * Semantically, the identifiers that has been declared in an InputDeclaration
+ * or an OutputDeclaration, or in a ProcessVariable that contains this Task
+ *
+ *
+ * The input String follows the following rules:
+ *
+ * <pre>
+ * |      | in | inSet | out | outSet | assignments |
+ * +------+----+-------+-----+--------+-------------+
+ * |Catch |    |       |  x  |        |      x      |
+ * |Throw | x  |       |     |        |      x      |
+ * |Other |    |  x    |     |  x     |      x      |
+ * +------+----+-------+-----+--------+-------------+
+ * </pre>
+ *
+ * Where Other are CallActivity, Task, SubProcess.
+ *
+ * The distinction between input/inputSet,
+ * and output/outputSet is really not necessary
+ * because we just need to know what are the inputs
+ * and what are the outputs.
+ *
+ * Thus, we can just use one field for inputs, and one field for outputs.
+ *
+ */
 public class ParsedAssignmentsInfo {
 
     private final DeclarationList inputs;
@@ -50,10 +102,6 @@ public class ParsedAssignmentsInfo {
         return associations;
     }
 
-    public boolean isAlternativeEncoding() {
-        return alternativeEncoding;
-    }
-
     public static ParsedAssignmentsInfo fromString(String encoded) {
         DeclarationList inputs = new DeclarationList();
         DeclarationList outputs = new DeclarationList();
@@ -69,7 +117,7 @@ public class ParsedAssignmentsInfo {
             );
         }
 
-        String[] split = encoded.split("\\|");
+        String[] split = encoded.split("\\|", -1 /* preserve empty fields */);
         if (split.length == 0) {
             return new ParsedAssignmentsInfo(
                     inputs,
@@ -79,51 +127,66 @@ public class ParsedAssignmentsInfo {
             );
         }
 
-        if (!split[0].isEmpty()) {
-            // then it is certainly canonicalEncoding (see canonicalEncoding())
-            inputs = DeclarationList.fromString(split[0]);
-            if (split.length < 3) {
-                return new ParsedAssignmentsInfo(
-                        inputs,
-                        outputs,
-                        associations,
-                        alternativeEncoding
-                );
-            }
-            outputs = DeclarationList.fromString(split[2]);
-            if (split.length < 5) {
-                return new ParsedAssignmentsInfo(
-                        inputs,
-                        outputs,
-                        associations,
-                        alternativeEncoding
-                );
-            }
-            associations = AssociationList.fromString(split[4]);
-        } else {
-            // otherwise, let's try offsetting by one -- fixme: verify this assumption is good enough
-            alternativeEncoding = true;
-            inputs = DeclarationList.fromString(split[1]);
-            if (split.length < 4) {
-                return new ParsedAssignmentsInfo(
-                        inputs,
-                        outputs,
-                        associations,
-                        alternativeEncoding
-                );
-            }
-            outputs = DeclarationList.fromString(split[3]);
-            if (split.length < 5) {
-                return new ParsedAssignmentsInfo(
-                        inputs,
-                        outputs,
-                        associations,
-                        alternativeEncoding
-                );
-            }
-            associations = AssociationList.fromString(split[4]); // associations are always last
+        if (split.length < 5) {
+            throw new IllegalArgumentException(encoded);
         }
 
-        return new ParsedAssignmentsInfo(inputs, outputs, associations, alternativeEncoding);
+        String in = split[0];
+        String out = split[2];
+        String assoc = split[4];
+
+        if (in.isEmpty() && out.isEmpty()) {
+            if (!split[1].isEmpty() || !split[3].isEmpty()) {
+                alternativeEncoding = true;
+                in = split[1];
+                out = split[3];
+            }
+        }
+
+        return new ParsedAssignmentsInfo(
+                DeclarationList.fromString(in),
+                DeclarationList.fromString(out),
+                AssociationList.fromString(assoc),
+                alternativeEncoding);
+    }
+
+    @Override
+    public String toString() {
+        return encodeStringRepresentation(
+                inputs,
+                outputs,
+                associations,
+                alternativeEncoding);
+    }
+
+    private static String encodeStringRepresentation(
+            DeclarationList inputs,
+            DeclarationList outputs,
+            AssociationList associations,
+            boolean alternativeEncoding) {
+        if (alternativeEncoding) {
+            return nonCanonicalEncoding(inputs, outputs, associations);
+        } else {
+            return canonicalEncoding(inputs, outputs, associations);
+        }
+    }
+
+    private static String canonicalEncoding(DeclarationList inputs, DeclarationList outputs, AssociationList associations) {
+        return Stream.of(
+                inputs.toString(),
+                "",
+                outputs.toString(),
+                "",
+                associations.toString())
+                .collect(Collectors.joining("|"));
+    }
+
+    private static String nonCanonicalEncoding(DeclarationList inputs, DeclarationList outputs, AssociationList associations) {
+        return Stream.of("",
+                         inputs.toString(),
+                         "",
+                         outputs.toString(),
+                         associations.toString())
+                .collect(Collectors.joining("|"));
     }
 }

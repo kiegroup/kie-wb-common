@@ -68,7 +68,8 @@ public class AssociationList {
     }
 
     public static AssociationList fromString(String encoded) {
-        return new AssociationList(
+        if (encoded.isEmpty()) return new AssociationList();
+        else return new AssociationList(
                 Arrays.asList(encoded.split(",")).stream()
                         .map(AssociationDeclaration::fromString)
                         .collect(Collectors.toList()));
