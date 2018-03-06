@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.core.graph.content.Bounds;
 import org.kie.workbench.common.stunner.core.graph.content.view.BoundsImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
-class BoundaryEventPropertyReader extends CatchEventPropertyReader {
+public class BoundaryEventPropertyReader extends CatchEventPropertyReader {
 
     public BoundaryEventPropertyReader(BoundaryEvent el, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(el, plane, definitionResolver);

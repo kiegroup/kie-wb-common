@@ -16,14 +16,17 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
+import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
-class ThrowEventPropertyReader extends EventPropertyReader {
+public class ThrowEventPropertyReader extends EventPropertyReader {
 
     private final ThrowEvent throwEvent;
 
@@ -40,6 +43,16 @@ class ThrowEventPropertyReader extends EventPropertyReader {
                 Collections.emptyList(),
                 Collections.emptyList(), false);
     }
+
+    public List<EventDefinition> getEventDefinitions() {
+        List<EventDefinition> eventDefinitions = throwEvent.getEventDefinitions();
+        List<EventDefinition> eventDefinitionRefs = throwEvent.getEventDefinitionRefs();
+        ArrayList<EventDefinition> result = new ArrayList<>();
+        result.addAll(eventDefinitions);
+        result.addAll(eventDefinitionRefs);
+        return result;
+    }
+
 
 //    @Override
 //    protected String colorsDefaultBg() {

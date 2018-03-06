@@ -20,7 +20,6 @@ import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.CatchEvent;
-import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Gateway;
 import org.eclipse.bpmn2.Lane;
@@ -80,18 +79,16 @@ public class PropertyReaderFactory {
         return new ActivityPropertyReader(el, plane, definitionResolver);
     }
 
-    public EventPropertyReader of(Event el) {
+    public CatchEventPropertyReader of(CatchEvent el) {
         if (el instanceof BoundaryEvent) {
             return new BoundaryEventPropertyReader((BoundaryEvent) el, plane, definitionResolver);
-        } else if (el instanceof CatchEvent) {
-            CatchEvent catchEvent = (CatchEvent) el;
-            return new CatchEventPropertyReader(catchEvent, plane, definitionResolver);
-        } else if (el instanceof ThrowEvent) {
-            ThrowEvent throwEvent = (ThrowEvent) el;
-            return new ThrowEventPropertyReader(throwEvent, plane, definitionResolver);
         } else {
-            throw new IllegalArgumentException(el.toString());
+            return new CatchEventPropertyReader(el, plane, definitionResolver);
         }
+    }
+
+    public ThrowEventPropertyReader of(ThrowEvent el) {
+        return new ThrowEventPropertyReader(el, plane, definitionResolver);
     }
 
     public SubProcessPropertyReader of(SubProcess el) {

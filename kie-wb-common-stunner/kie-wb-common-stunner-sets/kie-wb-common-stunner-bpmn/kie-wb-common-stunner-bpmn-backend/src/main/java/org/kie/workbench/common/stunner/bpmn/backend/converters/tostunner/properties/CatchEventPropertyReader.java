@@ -16,14 +16,17 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.bpmn2.CatchEvent;
+import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
-class CatchEventPropertyReader extends EventPropertyReader {
+public class CatchEventPropertyReader extends EventPropertyReader {
 
     private final CatchEvent catchEvent;
 
@@ -40,6 +43,15 @@ class CatchEventPropertyReader extends EventPropertyReader {
                 catchEvent.getDataOutputs(),
                 catchEvent.getDataOutputAssociation(),
                 false);
+    }
+
+    public List<EventDefinition> getEventDefinitions() {
+        List<EventDefinition> eventDefinitions = catchEvent.getEventDefinitions();
+        List<EventDefinition> eventDefinitionRefs = catchEvent.getEventDefinitionRefs();
+        ArrayList<EventDefinition> result = new ArrayList<>();
+        result.addAll(eventDefinitions);
+        result.addAll(eventDefinitionRefs);
+        return result;
     }
 
 //    @Override

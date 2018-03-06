@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryMana
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ThrowEventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -57,7 +58,8 @@ public class IntermediateThrowEventConverter {
     }
 
     public BpmnNode convert(IntermediateThrowEvent event) {
-        List<EventDefinition> eventDefinitions = event.getEventDefinitions();
+        ThrowEventPropertyReader p = propertyReaderFactory.of(event);
+        List<EventDefinition> eventDefinitions = p.getEventDefinitions();
         switch (eventDefinitions.size()) {
             case 0:
                 throw new UnsupportedOperationException("An intermediate throw event should contain exactly one definition");

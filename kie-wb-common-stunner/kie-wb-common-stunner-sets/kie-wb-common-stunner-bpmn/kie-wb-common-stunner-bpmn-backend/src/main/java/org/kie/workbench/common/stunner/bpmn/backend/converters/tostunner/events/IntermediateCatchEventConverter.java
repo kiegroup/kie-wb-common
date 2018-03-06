@@ -32,6 +32,7 @@ import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CatchEventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
@@ -66,7 +67,8 @@ public class IntermediateCatchEventConverter {
     }
 
     public BpmnNode convertIntermediateCatchEvent(IntermediateCatchEvent event) {
-        List<EventDefinition> eventDefinitions = event.getEventDefinitions();
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
+        List<EventDefinition> eventDefinitions = p.getEventDefinitions();
         switch (eventDefinitions.size()) {
             case 0:
                 throw new UnsupportedOperationException("An intermediate catch event should contain exactly one definition");
@@ -86,7 +88,8 @@ public class IntermediateCatchEventConverter {
     }
 
     public BpmnNode convertBoundaryEvent(BoundaryEvent event) {
-        List<EventDefinition> eventDefinitions = event.getEventDefinitions();
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
+        List<EventDefinition> eventDefinitions = p.getEventDefinitions();
         switch (eventDefinitions.size()) {
             case 0:
                 throw new UnsupportedOperationException("A boundary event should contain exactly one definition");

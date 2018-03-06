@@ -30,6 +30,7 @@ import org.eclipse.bpmn2.TimerEventDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CatchEventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
@@ -65,7 +66,8 @@ public class StartEventConverter {
     }
 
     public BpmnNode convert(StartEvent startEvent) {
-        List<EventDefinition> eventDefinitions = startEvent.getEventDefinitions();
+        CatchEventPropertyReader p = propertyReaderFactory.of(startEvent);
+        List<EventDefinition> eventDefinitions = p.getEventDefinitions();
         return convertStartEvent(startEvent, eventDefinitions);
     }
 

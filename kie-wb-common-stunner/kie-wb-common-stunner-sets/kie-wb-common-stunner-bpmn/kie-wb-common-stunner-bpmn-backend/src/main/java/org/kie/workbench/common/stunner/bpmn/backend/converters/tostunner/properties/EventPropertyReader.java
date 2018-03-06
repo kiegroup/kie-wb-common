@@ -18,9 +18,11 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.Expression;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SignalEventDefinition;
 import org.eclipse.bpmn2.TimerEventDefinition;
@@ -63,22 +65,27 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
 
     public TimerSettingsValue getTimerSettings(TimerEventDefinition eventDefinition) {
         TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
-        FormalExpression timeCycle = (FormalExpression) eventDefinition.getTimeCycle();
-        if (timeCycle != null) {
+        toFormalExpression(eventDefinition.getTimeCycle()).ifPresent(timeCycle -> {
             timerSettingsValue.setTimeCycle(timeCycle.getBody());
             timerSettingsValue.setTimeCycleLanguage(timeCycle.getLanguage());
-        }
+        });
 
-        FormalExpression timeDate = (FormalExpression) eventDefinition.getTimeDate();
-        if (timeDate != null) {
+        toFormalExpression(eventDefinition.getTimeDate()).ifPresent(timeDate -> {
             timerSettingsValue.setTimeDate(timeDate.getBody());
-        }
+        });
 
-        FormalExpression timeDateDuration = (FormalExpression) eventDefinition.getTimeDuration();
-        if (timeDateDuration != null) {
+        toFormalExpression(eventDefinition.getTimeDuration()).ifPresent(timeDateDuration -> {
             timerSettingsValue.setTimeDuration(timeDateDuration.getBody());
+        });
+        return timerSettingsValue;
+    }
+
+    private Optional<FormalExpression> toFormalExpression(Expression e) {
+        if (e instanceof FormalExpression) {
+            return Optional.of((FormalExpression) e);
+        } else {
+            return Optional.empty();
         }
-        return (timerSettingsValue);
     }
 
     public String getSignalRef() {
