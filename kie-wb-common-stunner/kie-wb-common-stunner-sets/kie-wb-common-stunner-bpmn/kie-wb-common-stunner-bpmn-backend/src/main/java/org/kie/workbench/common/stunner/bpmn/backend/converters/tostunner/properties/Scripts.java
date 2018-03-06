@@ -46,6 +46,8 @@ public class Scripts {
     }
 
     public static ScriptTypeListValue onEntry(List<ExtensionAttributeValue> extensions) {
+        if (extensions.isEmpty()) return new ScriptTypeListValue();
+
         @SuppressWarnings("unchecked")
         List<OnEntryScriptType> onEntryExtensions =
                 (List<OnEntryScriptType>) extensions.get(0).getValue()
@@ -100,6 +102,8 @@ public class Scripts {
     }
 
     public static ScriptTypeListValue onExit(List<ExtensionAttributeValue> extensions) {
+        if (extensions.isEmpty()) return new ScriptTypeListValue();
+
         @SuppressWarnings("unchecked")
         List<OnExitScriptType> onExitExtensions =
                 (List<OnExitScriptType>) extensions.get(0).getValue()

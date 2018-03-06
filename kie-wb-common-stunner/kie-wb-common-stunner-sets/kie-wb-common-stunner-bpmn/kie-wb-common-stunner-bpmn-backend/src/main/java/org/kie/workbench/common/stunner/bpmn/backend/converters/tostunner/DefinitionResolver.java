@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import bpsim.ElementParameters;
 import bpsim.Scenario;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.Relationship;
 import org.eclipse.bpmn2.RootElement;
 import org.eclipse.bpmn2.Signal;
 import org.eclipse.bpmn2.di.BPMNEdge;
@@ -126,8 +128,10 @@ public class DefinitionResolver {
 
     private Map<String, ElementParameters> initSimulationParameters(Definitions definitions) {
         Map<String, ElementParameters> simulationParameters = new HashMap<>();
+        List<Relationship> relationships = definitions.getRelationships();
+        if (relationships.isEmpty()) return Collections.emptyMap();
         FeatureMap value =
-                definitions.getRelationships().get(0)
+                relationships.get(0)
                         .getExtensionValues().get(0)
                         .getValue();
 
