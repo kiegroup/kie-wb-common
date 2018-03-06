@@ -129,7 +129,9 @@ public class DefinitionResolver {
     private Map<String, ElementParameters> initSimulationParameters(Definitions definitions) {
         Map<String, ElementParameters> simulationParameters = new HashMap<>();
         List<Relationship> relationships = definitions.getRelationships();
-        if (relationships.isEmpty()) return Collections.emptyMap();
+        if (relationships.isEmpty()) {
+            return Collections.emptyMap();
+        }
         FeatureMap value =
                 relationships.get(0)
                         .getExtensionValues().get(0)
