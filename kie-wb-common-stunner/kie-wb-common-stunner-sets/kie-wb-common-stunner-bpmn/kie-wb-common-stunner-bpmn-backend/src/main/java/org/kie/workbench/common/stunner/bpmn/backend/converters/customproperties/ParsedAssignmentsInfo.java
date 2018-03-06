@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationList;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
-
 
 /**
  *

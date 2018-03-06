@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ParsedAssignmentsInfo;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 public class ThrowEventPropertyWriter extends EventPropertyWriter {

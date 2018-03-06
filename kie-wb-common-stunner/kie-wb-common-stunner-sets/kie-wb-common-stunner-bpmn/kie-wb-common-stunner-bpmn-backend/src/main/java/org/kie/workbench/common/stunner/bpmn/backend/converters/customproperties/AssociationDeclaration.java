@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.definition.property.dataio;
+package org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 

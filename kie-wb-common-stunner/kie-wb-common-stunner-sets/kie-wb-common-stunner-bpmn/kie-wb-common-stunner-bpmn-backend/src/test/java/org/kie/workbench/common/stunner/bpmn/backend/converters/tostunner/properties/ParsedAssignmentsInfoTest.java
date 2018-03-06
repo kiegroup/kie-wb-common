@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
 import org.junit.Test;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 
 import static org.junit.Assert.*;
 

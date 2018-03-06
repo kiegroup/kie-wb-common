@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -26,14 +25,15 @@ import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration.Direction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationList;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DeclarationList;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.VariableDeclaration;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration.Direction;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationList;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 
-import static org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssociationDeclaration.Type;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration.Type;
 
 public class AssignmentsInfos {
 
