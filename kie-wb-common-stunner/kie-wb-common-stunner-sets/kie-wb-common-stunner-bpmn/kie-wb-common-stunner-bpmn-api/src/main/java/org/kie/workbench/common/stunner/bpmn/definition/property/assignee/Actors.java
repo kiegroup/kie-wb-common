@@ -16,11 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.definition.property.assignee;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
@@ -39,7 +34,6 @@ public class Actors implements BPMNProperty {
     @Value
     @FieldValue
     private String value;
-    private Collection<String> actors;
 
     public Actors() {
         this("");
@@ -47,29 +41,6 @@ public class Actors implements BPMNProperty {
 
     public Actors(final String value) {
         this.value = value;
-        this.actors = parse(value);
-    }
-
-    public Actors(final Collection<String> actors) {
-        this.value = render(actors);
-        this.actors = actors;
-    }
-
-    private List<String> parse(String value) {
-        return Arrays.asList(value.split(","));
-    }
-
-    private String render(final Collection<String> actors) {
-        return actors.stream().collect(Collectors.joining(","));
-    }
-
-    public Collection<String> getActors() {
-        return actors;
-    }
-
-    public void setActors(Collection<String> actors) {
-        this.actors = actors;
-        this.value = render(actors);
     }
 
     public String getValue() {
@@ -78,7 +49,6 @@ public class Actors implements BPMNProperty {
 
     public void setValue(final String value) {
         this.value = value;
-        this.actors = parse(value);
     }
 
     @Override

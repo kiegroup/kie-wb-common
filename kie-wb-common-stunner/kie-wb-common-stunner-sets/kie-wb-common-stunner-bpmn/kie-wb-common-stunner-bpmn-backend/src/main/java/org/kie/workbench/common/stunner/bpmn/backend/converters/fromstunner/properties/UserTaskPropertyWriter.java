@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 import org.eclipse.bpmn2.FormalExpression;
@@ -101,7 +103,7 @@ public class UserTaskPropertyWriter extends ActivityPropertyWriter {
     }
 
     public void setActors(Actors actors) {
-        for (String actor : actors.getActors()) {
+        for (String actor : fromActorString(actors.getValue())) {
             PotentialOwner potentialOwner = bpmn2.createPotentialOwner();
             potentialOwner.setId(UUID.randomUUID().toString());
 
@@ -116,6 +118,10 @@ public class UserTaskPropertyWriter extends ActivityPropertyWriter {
 
             task.getResources().add(potentialOwner);
         }
+    }
+
+    private List<String> fromActorString(String delimitedActors) {
+        return Arrays.asList(delimitedActors.split(","));
     }
 
     public void setGroupId(String value) {

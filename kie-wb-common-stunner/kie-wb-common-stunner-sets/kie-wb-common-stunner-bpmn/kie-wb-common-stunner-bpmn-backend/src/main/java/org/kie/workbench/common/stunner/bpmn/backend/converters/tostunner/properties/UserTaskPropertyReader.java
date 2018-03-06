@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
@@ -31,6 +32,7 @@ import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomInput;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.definition.property.assignee.Actors;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
 
@@ -43,7 +45,7 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
         this.task = element;
     }
 
-    public Collection<String> getActors() {
+    public Actors getActors() {
         // get the user task actors
         List<ResourceRole> roles = task.getResources();
         List<String> users = new ArrayList<>();
@@ -55,7 +57,11 @@ public class UserTaskPropertyReader extends TaskPropertyReader {
                 users.add(fe.getBody());
             }
         }
-        return users;
+        return new Actors(renderActors(users));
+    }
+
+    private String renderActors(final Collection<String> actors) {
+        return actors.stream().collect(Collectors.joining(","));
     }
 
     public AssignmentsInfo getAssignmentsInfo() {

@@ -154,7 +154,7 @@ public class TaskConverter {
 
         definition.setExecutionSet(new UserTaskExecutionSet(
                 new TaskName(p.getTaskName()),
-                new Actors(p.getActors()),
+                p.getActors(),
                 new Groupid(p.getGroupid()),
                 p.getAssignmentsInfo(),
                 new IsAsync(p.isAsync()),
