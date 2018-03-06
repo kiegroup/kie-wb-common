@@ -52,6 +52,7 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
     private final Point2D previousLocation;
     private transient Node<? extends View<?>, Edge> node;
     private Element<? extends View<?>> parent;
+    private Boolean isDocked;
 
     public UpdateElementPositionCommand(final @MapsTo("uuid") String uuid,
                                         final @MapsTo("location") Point2D location,
@@ -118,7 +119,7 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
 
         final Bounds parentBounds = getParentBounds(element, graph);
 
-        if (GraphUtils.checkBoundsExceeded(parentBounds, newBounds) || GraphUtils.isDockedNode(element)) {
+        if (GraphUtils.checkBoundsExceeded(parentBounds, newBounds) || isDockedNode(element)) {
             //in case of docked node the location should not be considered, because it is relative to the dock parent
             element.getContent().setBounds(newBounds);
         } else {
@@ -126,6 +127,13 @@ public final class UpdateElementPositionCommand extends AbstractGraphCommand {
         }
 
         return result.build();
+    }
+
+    private boolean isDockedNode(Node<? extends View<?>, Edge> element) {
+        if(Objects.isNull(isDocked)){
+            isDocked = GraphUtils.isDockedNode(element);
+        }
+        return isDocked;
     }
 
     @SuppressWarnings("unchecked")
