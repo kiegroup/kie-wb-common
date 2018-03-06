@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.EventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
@@ -33,7 +34,8 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
         this.event = event;
     }
 
-    public void setAssignmentsInfo(AssignmentsInfo assignmentsInfo) {
+    public void setAssignmentsInfo(AssignmentsInfo info) {
+        ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         assignmentsInfo.getAssociations()
                 .getOutputs()
                 .stream()

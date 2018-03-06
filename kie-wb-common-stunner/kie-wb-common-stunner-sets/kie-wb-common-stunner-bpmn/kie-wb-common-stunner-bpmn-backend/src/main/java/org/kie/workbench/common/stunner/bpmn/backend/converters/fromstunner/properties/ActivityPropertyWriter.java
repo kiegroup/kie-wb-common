@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.InputOutputSpecification;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
@@ -49,7 +50,8 @@ public class ActivityPropertyWriter extends PropertyWriter {
         return simulationParameters;
     }
 
-    public void setAssignmentsInfo(AssignmentsInfo assignmentsInfo) {
+    public void setAssignmentsInfo(AssignmentsInfo info) {
+        final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
 
         assignmentsInfo.getAssociations()

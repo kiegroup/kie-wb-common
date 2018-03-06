@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -50,7 +51,39 @@ public class AssignmentsInfos {
                 inAssociationDeclarations(inputAssociations),
                 outAssociationDeclarations(outputAssociations));
 
-        return new AssignmentsInfo(inputs, outputs, associations, alternativeEncoding);
+        return new AssignmentsInfo(encodeStringRepresentation(
+                inputs, outputs, associations, alternativeEncoding));
+    }
+
+    private static String encodeStringRepresentation(
+            DeclarationList inputs,
+            DeclarationList outputs,
+            AssociationList associations,
+            boolean alternativeEncoding) {
+        if (alternativeEncoding) {
+            return nonCanonicalEncoding(inputs, outputs, associations);
+        } else {
+            return canonicalEncoding(inputs, outputs, associations);
+        }
+    }
+
+    private static String canonicalEncoding(DeclarationList inputs, DeclarationList outputs, AssociationList associations) {
+        return Stream.of(
+                inputs.toString(),
+                "",
+                outputs.toString(),
+                "",
+                associations.toString())
+                .collect(Collectors.joining("|"));
+    }
+
+    private static String nonCanonicalEncoding(DeclarationList inputs, DeclarationList outputs, AssociationList associations) {
+        return Stream.of("",
+                         inputs.toString(),
+                         "",
+                         outputs.toString(),
+                         associations.toString())
+                .collect(Collectors.joining("|"));
     }
 
     private static DeclarationList dataInputDeclarations(List<DataInput> dataInputs) {
