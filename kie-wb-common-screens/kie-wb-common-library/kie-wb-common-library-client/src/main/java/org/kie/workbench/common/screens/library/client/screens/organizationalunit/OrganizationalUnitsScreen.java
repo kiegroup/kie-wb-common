@@ -59,7 +59,7 @@ public class OrganizationalUnitsScreen {
 
         String getNumberOfContributorsLabel(int numberOfContributors);
 
-        String getNumberOfRepositoriesLabel(int numberOfRepositories);
+        String getNumberOfProjectsLabel(int numberOfProjects);
 
         void showNoOrganizationalUnits(HTMLElement view);
 
@@ -149,7 +149,7 @@ public class OrganizationalUnitsScreen {
             tileWidget.init(organizationalUnit.getName(),
                             view.getNumberOfContributorsLabel(organizationalUnit.getContributors().size()),
                             String.valueOf(organizationalUnit.getRepositories().size()),
-                            view.getNumberOfRepositoriesLabel(organizationalUnit.getRepositories().size()),
+                            view.getNumberOfProjectsLabel(organizationalUnit.getRepositories().size()),
                             () -> open(organizationalUnit));
             view.addOrganizationalUnit(tileWidget);
         });
