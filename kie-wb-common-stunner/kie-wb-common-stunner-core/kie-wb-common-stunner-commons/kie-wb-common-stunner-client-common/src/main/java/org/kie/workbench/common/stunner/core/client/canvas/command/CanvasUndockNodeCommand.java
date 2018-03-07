@@ -41,18 +41,20 @@ public class CanvasUndockNodeCommand extends AbstractCanvasCommand {
 
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-        if (Objects.nonNull(parent) && Objects.nonNull(child)) {
-            context.undock(parent, child);
-            // on canvas side undock removes the parent that was in which it was docked
-            // so, it is necessary to add the current parent
-            getChild().getInEdges().stream()
-                    .filter(e -> e.getContent() instanceof Child)
-                    .findAny()
-                    .ifPresent(e -> context.addChild(e.getSourceNode(), child));
-
-            context.applyElementMutation(parent, MutationContext.STATIC);
-            context.applyElementMutation(child, MutationContext.STATIC);
+        if (Objects.isNull(parent) || Objects.isNull(child)) {
+            throw new IllegalArgumentException("Parent and child should not be null");
         }
+        context.undock(parent, child);
+        // on canvas side undock removes the parent that was in which it was docked
+        // so, it is necessary to add the current parent
+        getChild().getInEdges().stream()
+                .filter(e -> e.getContent() instanceof Child)
+                .findAny()
+                .ifPresent(e -> context.addChild(e.getSourceNode(), child));
+
+        context.applyElementMutation(parent, MutationContext.STATIC);
+        context.applyElementMutation(child, MutationContext.STATIC);
+
         return buildResult();
     }
 
