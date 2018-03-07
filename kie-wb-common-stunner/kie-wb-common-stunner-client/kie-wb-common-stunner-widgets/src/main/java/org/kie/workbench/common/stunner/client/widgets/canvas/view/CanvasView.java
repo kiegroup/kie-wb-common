@@ -166,8 +166,10 @@ public class CanvasView extends Composite implements AbstractCanvas.View<com.ait
 
     AbstractCanvas.View undock(final WiresShape targetShape,
                                final WiresShape childShape) {
-        targetShape.remove(childShape);
-        childShape.setDockedTo(null);
+
+        childShape.getControl()
+                .getDockingControl()
+                .undock(childShape, targetShape);
         return this;
     }
 
