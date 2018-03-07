@@ -155,12 +155,15 @@ public class CanvasViewTest {
     public void testUndock() {
         final WiresShape wiresShape = mock(WiresShape.class);
         final WiresShape targetWiresShape = mock(WiresShape.class);
-        tested.undock(targetWiresShape,
-                      wiresShape);
-        verify(targetWiresShape,
-               times(1)).remove(eq(wiresShape));
-        verify(wiresShape,
-               times(1)).setDockedTo((WiresContainer) isNull());
+        final WiresShapeControl wiresShapeControl = mock(WiresShapeControl.class);
+        final WiresDockingControl dockingControl = mock(WiresDockingControl.class);
+
+        when(wiresShape.getControl()).thenReturn(wiresShapeControl);
+        when(wiresShapeControl.getDockingControl()).thenReturn(dockingControl);
+        tested.undock(targetWiresShape, wiresShape);
+
+        verify(dockingControl, times(1))
+                .undock(wiresShape, targetWiresShape);
     }
 
     @Test
