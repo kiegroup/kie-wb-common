@@ -25,6 +25,8 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.api.LibraryService;
+import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
+import org.kie.workbench.common.screens.library.api.Routed;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.widgets.client.handlers.NewResourceSuccessEvent;
@@ -72,22 +74,30 @@ public class AssetsScreen {
         this.showAssets();
     }
 
-    private void observeAddAsset(@Observes NewResourceSuccessEvent event) {
+    public void observeAddAsset(@Observes NewResourceSuccessEvent event) {
         this.showAssets();
+    }
+
+    public void onAssetListUpdated(@Observes @Routed ProjectAssetListUpdated event) {
+        if (event.getProject().getRepository().getIdentifier().equals(projectInfo.getRepository().getIdentifier())) {
+            this.showAssets();
+        }
     }
 
     protected void showAssets() {
         busyIndicatorView.showBusyIndicator(ts.getTranslation(LibraryConstants.LoadingAssets));
         libraryService.call((Boolean hasAssets) -> {
-                                if (hasAssets) {
-                                    this.view.setContent(populatedAssetsScreen.getView().getElement());
-                                } else {
-                                    this.view.setContent(emptyAssetsScreen.getView().getElement());
-                                }
+            final HTMLElement element =
+                    (hasAssets) ? populatedAssetsScreen.getView().getElement() : emptyAssetsScreen.getView().getElement();
+            ensureContentSet(element);
+            busyIndicatorView.hideBusyIndicator();
+        }, new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).hasAssets(this.projectInfo);
+    }
 
-                                busyIndicatorView.hideBusyIndicator();
-                            },
-                            new HasBusyIndicatorDefaultErrorCallback(busyIndicatorView)).hasAssets(this.projectInfo);
+    private void ensureContentSet(final HTMLElement element) {
+        if (element.parentNode == null) {
+            this.view.setContent(element);
+        }
     }
 
     public View getView() {
