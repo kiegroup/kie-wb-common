@@ -37,6 +37,13 @@ public class DeclarationList {
         this.declarations = declarations;
     }
 
+    public static DeclarationList fromString(String encoded) {
+        return new DeclarationList(
+                Arrays.asList(encoded.split(",")).stream()
+                        .map(VariableDeclaration::fromString)
+                        .collect(Collectors.toList()));
+    }
+
     public VariableDeclaration lookup(String identifier) {
         return declarations.stream().filter(d -> identifier.equals(d.getIdentifier()))
                 .findFirst().orElse(null);
@@ -51,12 +58,5 @@ public class DeclarationList {
         return declarations.stream()
                 .map(VariableDeclaration::toString)
                 .collect(Collectors.joining(","));
-    }
-
-    public static DeclarationList fromString(String encoded) {
-        return new DeclarationList(
-                Arrays.asList(encoded.split(",")).stream()
-                        .map(VariableDeclaration::fromString)
-                        .collect(Collectors.toList()));
     }
 }

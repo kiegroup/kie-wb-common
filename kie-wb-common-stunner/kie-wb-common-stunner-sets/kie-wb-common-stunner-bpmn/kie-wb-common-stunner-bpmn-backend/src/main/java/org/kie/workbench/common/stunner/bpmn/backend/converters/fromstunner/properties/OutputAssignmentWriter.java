@@ -22,8 +22,8 @@ import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.OutputSet;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 

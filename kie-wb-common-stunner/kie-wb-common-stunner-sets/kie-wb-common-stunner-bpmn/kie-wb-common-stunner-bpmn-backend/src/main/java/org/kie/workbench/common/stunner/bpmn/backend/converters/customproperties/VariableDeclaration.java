@@ -26,23 +26,31 @@ public class VariableDeclaration {
     private String identifier;
     private String type;
 
-    public VariableDeclaration() {}
+    public VariableDeclaration() {
+    }
 
     public VariableDeclaration(String identifier, String type) {
         this.identifier = identifier;
         this.type = type;
     }
 
+    public static VariableDeclaration fromString(String encoded) {
+        String[] split = encoded.split(":");
+        String identifier = split[0];
+        String type = (split.length == 2) ? split[1] : null;
+        return new VariableDeclaration(identifier, type);
+    }
+
     public String getIdentifier() {
         return identifier;
     }
 
-    public String getType() {
-        return type;
-    }
-
     public void setIdentifier(String identifier) {
         this.identifier = identifier;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
@@ -74,13 +82,6 @@ public class VariableDeclaration {
     @Override
     public int hashCode() {
         return Objects.hash(identifier, type);
-    }
-
-    public static VariableDeclaration fromString(String encoded) {
-        String[] split = encoded.split(":");
-        String identifier = split[0];
-        String type = (split.length == 2) ? split[1] : null;
-        return new VariableDeclaration(identifier, type);
     }
 }
 

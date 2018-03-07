@@ -43,8 +43,8 @@ import org.eclipse.emf.ecore.impl.EStructuralFeatureImpl;
 import org.eclipse.emf.ecore.util.FeatureMap;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;

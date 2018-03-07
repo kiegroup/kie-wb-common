@@ -19,7 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ParsedAssignmentsInfoTest {
 
@@ -29,6 +29,7 @@ public class ParsedAssignmentsInfoTest {
                 "|input1:String,input2:String||output1:String,output2:String|[din]pv1->input1,[din]pv2->input2,[dout]output1->pv2,[dout]output2->pv2";
         assertParseUnparse(original);
     }
+
     @Test
     public void fromString2() {
         String original =

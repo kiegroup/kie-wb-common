@@ -22,9 +22,8 @@ import java.util.stream.Stream;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 /**
- *
  * Parses and generate the AssignmentsInfo string
- *
+ * <p>
  * AssignmentsInfo represents variables, their types, and their assignments
  * in a Task.
  * <p>
@@ -46,10 +45,10 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
  * representing a data type.
  * Semantically, the identifiers that has been declared in an InputDeclaration
  * or an OutputDeclaration, or in a ProcessVariable that contains this Task
- *
- *
+ * <p>
+ * <p>
  * The input String follows the following rules:
- *
+ * <p>
  * <pre>
  * |      | in | inSet | out | outSet | assignments |
  * +------+----+-------+-----+--------+-------------+
@@ -58,16 +57,15 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
  * |Other |    |  x    |     |  x     |      x      |
  * +------+----+-------+-----+--------+-------------+
  * </pre>
- *
+ * <p>
  * Where Other are CallActivity, Task, SubProcess.
- *
+ * <p>
  * The distinction between input/inputSet,
  * and output/outputSet is really not necessary
  * because we just need to know what are the inputs
  * and what are the outputs.
- *
+ * <p>
  * Thus, we can just use one field for inputs, and one field for outputs.
- *
  */
 public class ParsedAssignmentsInfo {
 
@@ -85,18 +83,6 @@ public class ParsedAssignmentsInfo {
 
     public static ParsedAssignmentsInfo of(AssignmentsInfo assignmentsInfo) {
         return fromString(assignmentsInfo.getValue());
-    }
-
-    public DeclarationList getInputs() {
-        return inputs;
-    }
-
-    public DeclarationList getOutputs() {
-        return outputs;
-    }
-
-    public AssociationList getAssociations() {
-        return associations;
     }
 
     public static ParsedAssignmentsInfo fromString(String encoded) {
@@ -147,15 +133,6 @@ public class ParsedAssignmentsInfo {
                 alternativeEncoding);
     }
 
-    @Override
-    public String toString() {
-        return encodeStringRepresentation(
-                inputs,
-                outputs,
-                associations,
-                alternativeEncoding);
-    }
-
     private static String encodeStringRepresentation(
             DeclarationList inputs,
             DeclarationList outputs,
@@ -185,5 +162,26 @@ public class ParsedAssignmentsInfo {
                          outputs.toString(),
                          associations.toString())
                 .collect(Collectors.joining("|"));
+    }
+
+    public DeclarationList getInputs() {
+        return inputs;
+    }
+
+    public DeclarationList getOutputs() {
+        return outputs;
+    }
+
+    public AssociationList getAssociations() {
+        return associations;
+    }
+
+    @Override
+    public String toString() {
+        return encodeStringRepresentation(
+                inputs,
+                outputs,
+                associations,
+                alternativeEncoding);
     }
 }

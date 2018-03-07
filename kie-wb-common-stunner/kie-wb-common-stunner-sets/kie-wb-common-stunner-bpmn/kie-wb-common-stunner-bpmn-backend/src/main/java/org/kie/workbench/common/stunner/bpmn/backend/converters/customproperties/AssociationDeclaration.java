@@ -21,8 +21,54 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class AssociationDeclaration {
 
+    private Direction direction;
+    private Type type;
+    private String left;
+    private String right;
+    public AssociationDeclaration() {
+    }
+    public AssociationDeclaration(Direction direction, Type type, String left, String right) {
+        this.direction = direction;
+        this.type = type;
+        this.left = left;
+        this.right = right;
+    }
+
     public static AssociationDeclaration fromString(String encoded) {
         return AssociationParser.parse(encoded);
+    }
+
+    public String getLeft() {
+        return left;
+    }
+
+    public void setLeft(String left) {
+        this.left = left;
+    }
+
+    public String getRight() {
+        return right;
+    }
+
+    public void setRight(String right) {
+        this.right = right;
+    }
+
+    public Direction getDirection() {
+        return direction;
+    }
+
+    public void setDirection(Direction direction) {
+        this.direction = direction;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return direction.prefix() + left + type.op() + right;
     }
 
     public enum Direction {
@@ -53,54 +99,6 @@ public class AssociationDeclaration {
         public String op() {
             return op;
         }
-    }
-
-    private Direction direction;
-    private Type type;
-    private String left;
-    private String right;
-
-    public AssociationDeclaration() {
-    }
-
-    public AssociationDeclaration(Direction direction, Type type, String left, String right) {
-        this.direction = direction;
-        this.type = type;
-        this.left = left;
-        this.right = right;
-    }
-
-    public String getLeft() {
-        return left;
-    }
-
-    public String getRight() {
-        return right;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public void setDirection(Direction direction) {
-        this.direction = direction;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
-
-    public void setLeft(String left) {
-        this.left = left;
-    }
-
-    public void setRight(String right) {
-        this.right = right;
-    }
-
-    @Override
-    public String toString() {
-        return direction.prefix() + left + type.op() + right;
     }
 }
 

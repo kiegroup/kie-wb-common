@@ -52,6 +52,17 @@ public class AssociationList {
         this.outputs = new ArrayList<>();
     }
 
+    public static AssociationList fromString(String encoded) {
+        if (encoded.isEmpty()) {
+            return new AssociationList();
+        } else {
+            return new AssociationList(
+                    Arrays.asList(encoded.split(",")).stream()
+                            .map(AssociationDeclaration::fromString)
+                            .collect(Collectors.toList()));
+        }
+    }
+
     public List<AssociationDeclaration> getInputs() {
         return inputs;
     }
@@ -65,13 +76,5 @@ public class AssociationList {
         return Stream.concat(inputs.stream(), outputs.stream())
                 .map(AssociationDeclaration::toString)
                 .collect(Collectors.joining(","));
-    }
-
-    public static AssociationList fromString(String encoded) {
-        if (encoded.isEmpty()) return new AssociationList();
-        else return new AssociationList(
-                Arrays.asList(encoded.split(",")).stream()
-                        .map(AssociationDeclaration::fromString)
-                        .collect(Collectors.toList()));
     }
 }
