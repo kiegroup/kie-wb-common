@@ -16,11 +16,13 @@
 
 package org.kie.workbench.common.dmn.client.commands.expressions.types.function;
 
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -86,8 +88,7 @@ public class RemoveParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertFormalParameters(1,
-                               otherParameter);
+        assertFormalParameters(otherParameter);
     }
 
     @Test
@@ -97,7 +98,7 @@ public class RemoveParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.execute(gce));
 
-        assertFormalParameters(0);
+        assertFormalParameters();
     }
 
     @Test
@@ -113,8 +114,35 @@ public class RemoveParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertFormalParameters(2,
-                               parameter, otherParameter);
+        assertFormalParameters(parameter, otherParameter);
+    }
+
+    @Test
+    public void testRemoveFromMiddleThenUndo() {
+        final InformationItem firstParameter = new InformationItem();
+        firstParameter.setName(new Name("first"));
+        function.getFormalParameter().add(0, firstParameter);
+
+        final InformationItem lastParameter = new InformationItem();
+        lastParameter.setName(new Name("last"));
+        function.getFormalParameter().add(lastParameter);
+
+        // call to get proper old index of parameter
+        this.command = new RemoveParameterCommand(function,
+                                                  parameter,
+                                                  canvasOperation);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> c = command.newGraphCommand(handler);
+
+        //Add parameter and then undo
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.execute(gce));
+        assertFormalParameters(firstParameter, lastParameter);
+
+        assertEquals(GraphCommandResultBuilder.SUCCESS,
+                     c.undo(gce));
+
+        assertFormalParameters(firstParameter, parameter, lastParameter);
     }
 
     @Test
@@ -127,18 +155,12 @@ public class RemoveParameterCommandTest {
         assertEquals(GraphCommandResultBuilder.SUCCESS,
                      c.undo(gce));
 
-        assertFormalParameters(1,
-                               parameter);
+        assertFormalParameters(parameter);
     }
 
-    private void assertFormalParameters(final int expectedCount,
-                                        final InformationItem... parameters) {
-        assertEquals(expectedCount,
-                     function.getFormalParameter().size());
-        for (int i = 0; i < expectedCount; i++) {
-            assertEquals(parameters[i],
-                         function.getFormalParameter().get(i));
-        }
+    private void assertFormalParameters(final InformationItem... parameters) {
+
+        Assertions.assertThat(function.getFormalParameter()).containsExactly(parameters);
     }
 
     @Test

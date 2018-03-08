@@ -64,7 +64,6 @@ import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
-import org.uberfire.ext.wires.core.grids.client.widget.dnd.GridWidgetDnDHandlersState;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedrawManager;
 import org.uberfire.mocks.EventSourceMock;
@@ -159,9 +158,6 @@ public class FunctionGridTest {
     private GridWidget supplementaryLiteralExpressionEditor;
 
     private LiteralExpression supplementaryLiteralExpression = new LiteralExpression();
-
-    @Mock
-    private GridWidgetDnDHandlersState dndHandlersState;
 
     @Captor
     private ArgumentCaptor<Optional<Expression>> expressionCaptor;
@@ -386,7 +382,7 @@ public class FunctionGridTest {
     public void testAddParameter() {
         grid.addParameter(() -> {/*Nothing*/});
 
-        verify(sessionCommandManager).execute(any(AbstractCanvasHandler.class),
+        verify(sessionCommandManager).execute(eq(handler),
                                               any(AddParameterCommand.class));
     }
 
@@ -395,7 +391,7 @@ public class FunctionGridTest {
         grid.removeParameter(parameter,
                              () -> {/*Nothing*/});
 
-        verify(sessionCommandManager).execute(any(AbstractCanvasHandler.class),
+        verify(sessionCommandManager).execute(eq(handler),
                                               any(RemoveParameterCommand.class));
     }
 
@@ -404,7 +400,7 @@ public class FunctionGridTest {
         grid.updateParameterName(parameter,
                                  "name");
 
-        verify(sessionCommandManager).execute(any(AbstractCanvasHandler.class),
+        verify(sessionCommandManager).execute(eq(handler),
                                               any(UpdateParameterNameCommand.class));
     }
 
@@ -451,7 +447,7 @@ public class FunctionGridTest {
         assertEquals(expectedEditor,
                      gridWidgetCaptor.getValue().get());
 
-        verify(sessionCommandManager).execute(any(AbstractCanvasHandler.class),
+        verify(sessionCommandManager).execute(eq(handler),
                                               any(SetKindCommand.class));
     }
 
@@ -459,7 +455,7 @@ public class FunctionGridTest {
     public void testClearExpressionType() {
         grid.clearExpressionType();
 
-        verify(sessionCommandManager).execute(any(AbstractCanvasHandler.class),
+        verify(sessionCommandManager).execute(eq(handler),
                                               any(ClearExpressionTypeCommand.class));
     }
 
