@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
+import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.GridColumnRenderer;
@@ -49,6 +52,24 @@ public class DMNGridColumn<G extends GridWidget, T> extends BaseGridColumn<T> {
               columnRenderer,
               DEFAULT_WIDTH);
         this.gridWidget = gridWidget;
+    }
+
+    protected GridCell<T> assertCell(final GridCell<T> cell) {
+        if (cell != null) {
+            return cell;
+        }
+        return new BaseGridCell<>(makeDefaultCellValue());
+    }
+
+    protected GridCellValue<T> assertCellValue(final GridCellValue<T> cellValue) {
+        if (cellValue != null) {
+            return cellValue;
+        }
+        return makeDefaultCellValue();
+    }
+
+    protected GridCellValue<T> makeDefaultCellValue() {
+        return null;
     }
 
     public void setWidthInternal(final double width) {
