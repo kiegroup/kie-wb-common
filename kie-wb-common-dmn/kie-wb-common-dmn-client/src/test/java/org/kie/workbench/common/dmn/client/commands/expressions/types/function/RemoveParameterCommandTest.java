@@ -159,7 +159,6 @@ public class RemoveParameterCommandTest {
     }
 
     private void assertFormalParameters(final InformationItem... parameters) {
-
         Assertions.assertThat(function.getFormalParameter()).containsExactly(parameters);
     }
 

@@ -24,7 +24,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
 public class KindUtilities {
 
-    static final String DROOLS_QNAME = "drools";
+    static final String DROOLS_QNAME_PREFIX = "drools";
 
     public static FunctionDefinition.Kind getKind(final FunctionDefinition function) {
         final Map<QName, String> attributes = function.getAdditionalAttributes();
@@ -34,7 +34,7 @@ public class KindUtilities {
     public static void setKind(final FunctionDefinition function,
                                final FunctionDefinition.Kind kind) {
         final Map<String, String> nsContext = function.getNsContext();
-        nsContext.put(DROOLS_QNAME,
+        nsContext.put(DROOLS_QNAME_PREFIX,
                       DMNModelInstrumentedBase.URI_KIE);
         final Map<QName, String> attributes = function.getAdditionalAttributes();
         attributes.put(FunctionDefinition.KIND_QNAME,

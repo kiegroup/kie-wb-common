@@ -61,7 +61,7 @@ public class FunctionColumnParametersHeaderMetaData implements EditableHeaderMet
     @Override
     public String getTitle() {
         //TODO {manstis} We need the FunctionGridRendered to render the two sections as different cells
-        final StringBuffer sb = new StringBuffer(getExpressionLanguageTitle());
+        final StringBuilder sb = new StringBuilder(getExpressionLanguageTitle());
         sb.append(" : ");
         sb.append(getFormalParametersTitle());
         return sb.toString();
@@ -98,11 +98,11 @@ public class FunctionColumnParametersHeaderMetaData implements EditableHeaderMet
                     uiRowIndex,
                     uiColumnIndex);
         final double[] dxy = {0.0, 0.0};
+        final double headerRowHeight = context.getCellHeight();
         final Optional<Point2D> rx = context.getRelativeLocation();
         rx.ifPresent(r -> {
-            final double headerRowHeight = context.getCellHeight();
-            dxy[1] = r.getY() - headerRowHeight * uiRowIndex;
             dxy[0] = r.getX();
+            dxy[1] = r.getY() - headerRowHeight * uiRowIndex;
         });
         cellEditorControls.show(editor,
                                 (int) (absoluteCellX + dxy[0]),

@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
@@ -139,6 +140,8 @@ public class FunctionEditorDefinitionTest {
         assertTrue(oModel.isPresent());
 
         final FunctionDefinition model = oModel.get();
+        assertEquals(DMNModelInstrumentedBase.URI_KIE,
+                     model.getNsContext().get(KindUtilities.DROOLS_QNAME_PREFIX));
         assertEquals(FunctionDefinition.Kind.FEEL.code(),
                      model.getAdditionalAttributes().get(FunctionDefinition.KIND_QNAME));
         assertTrue(model.getExpression() instanceof LiteralExpression);

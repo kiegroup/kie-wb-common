@@ -324,14 +324,15 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, Functio
     }
 
     void clearExpressionType() {
-        final GridCellTuple gc = new GridCellTuple(0,
-                                                   0,
-                                                   this);
-        final FunctionDefinition function = expression.get();
-        sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                      new ClearExpressionTypeCommand(gc,
-                                                                     function,
-                                                                     uiModelMapper,
-                                                                     () -> synchroniseViewWhenExpressionEditorChanged(Optional.empty())));
+        expression.ifPresent(function -> {
+            final GridCellTuple gc = new GridCellTuple(0,
+                                                       0,
+                                                       this);
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          new ClearExpressionTypeCommand(gc,
+                                                                         function,
+                                                                         uiModelMapper,
+                                                                         () -> synchroniseViewWhenExpressionEditorChanged(Optional.empty())));
+        });
     }
 }
