@@ -108,6 +108,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
         boolean validateToolbarCommandEnabled = false;
         boolean exportToPngToolbarCommandEnabled = false;
         boolean exportToJpgToolbarCommandEnabled = false;
+        boolean exportToSvgToolbarCommandEnabled = false;
         boolean exportToPdfToolbarCommandEnabled = false;
         boolean copyCommandEnabled = false;
         boolean cutCommandEnabled = false;
@@ -128,6 +129,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             this.validateToolbarCommandEnabled = toolbar.isEnabled(toolbar.getValidateToolbarCommand());
             this.exportToPngToolbarCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getExportToPngToolbarCommand());
             this.exportToJpgToolbarCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getExportToJpgToolbarCommand());
+            this.exportToSvgToolbarCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getExportToSvgToolbarCommand());
             this.exportToPdfToolbarCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getExportToPdfToolbarCommand());
             this.copyCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getCopyToolbarCommand());
             this.cutCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getCutToolbarCommand());
@@ -152,6 +154,8 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             enableToolbarCommand(toolbar.getExportToPngToolbarCommand(),
                                  false);
             enableToolbarCommand(toolbar.getExportToJpgToolbarCommand(),
+                                 false);
+            enableToolbarCommand(toolbar.getExportToSvgToolbarCommand(),
                                  false);
             enableToolbarCommand(toolbar.getExportToPdfToolbarCommand(),
                                  false);
@@ -183,6 +187,8 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             enableToolbarCommand(toolbar.getExportToPngToolbarCommand(),
                                  exportToPngToolbarCommandEnabled);
             enableToolbarCommand(toolbar.getExportToJpgToolbarCommand(),
+                                 exportToJpgToolbarCommandEnabled);
+            enableToolbarCommand(toolbar.getExportToSvgToolbarCommand(),
                                  exportToJpgToolbarCommandEnabled);
             enableToolbarCommand(toolbar.getExportToPdfToolbarCommand(),
                                  exportToPdfToolbarCommandEnabled);

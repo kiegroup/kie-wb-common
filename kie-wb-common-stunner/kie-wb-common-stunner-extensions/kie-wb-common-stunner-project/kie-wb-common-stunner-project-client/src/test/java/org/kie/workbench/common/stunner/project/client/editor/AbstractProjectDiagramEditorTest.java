@@ -38,6 +38,7 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportT
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToJpgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPdfSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToPngSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToSvgSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.PasteSelectionSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.RedoSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
@@ -163,6 +164,7 @@ public class AbstractProjectDiagramEditorTest {
         doReturn(mock(ValidateSessionCommand.class)).when(sessionCommandFactory).newValidateCommand();
         doReturn(mock(ExportToPngSessionCommand.class)).when(sessionCommandFactory).newExportToPngSessionCommand();
         doReturn(mock(ExportToJpgSessionCommand.class)).when(sessionCommandFactory).newExportToJpgSessionCommand();
+        doReturn(mock(ExportToSvgSessionCommand.class)).when(sessionCommandFactory).newExportToSvgSessionCommand();
         doReturn(mock(ExportToPdfSessionCommand.class)).when(sessionCommandFactory).newExportToPdfSessionCommand();
         doReturn(mock(ExportToBpmnSessionCommand.class)).when(sessionCommandFactory).newExportToBpmnSessionCommand();
         doReturn(mock(CopySelectionSessionCommand.class)).when(sessionCommandFactory).newCopySelectionCommand();
@@ -176,7 +178,7 @@ public class AbstractProjectDiagramEditorTest {
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newUndoItem(any(Command.class));
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newRedoItem(any(Command.class));
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newValidateItem(any(Command.class));
-        doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newExportsItem(any(Command.class), any(Command.class), any(Command.class), any(Command.class));
+        doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newExportsItem(any(Command.class), any(Command.class), any(Command.class), any(Command.class), any(Command.class));
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newPasteItem(any(Command.class));
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newCopyItem(any(Command.class));
         doReturn(mock(MenuItem.class)).when(projectMenuItemsBuilder).newCutItem(any(Command.class));

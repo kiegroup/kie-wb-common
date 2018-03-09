@@ -22,6 +22,7 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ClearStat
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToJpgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPdfToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPngToolbarCommand;
+import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToSvgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.SwitchGridToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ToolbarCommandFactory;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.VisitGraphToolbarCommand;
@@ -49,6 +50,7 @@ public class ViewerToolbar extends AbstractToolbar<AbstractClientReadOnlySession
         addCommand(commandFactory.newSwitchGridCommand());
         addCommand(commandFactory.newExportToPngToolbarCommand());
         addCommand(commandFactory.newExportToJpgToolbarCommand());
+        addCommand(commandFactory.newExportToSvgToolbarCommand());
         addCommand(commandFactory.newExportToPdfToolbarCommand());
     }
 
@@ -77,7 +79,11 @@ public class ViewerToolbar extends AbstractToolbar<AbstractClientReadOnlySession
         return (ExportToJpgToolbarCommand) getCommand(4);
     }
 
+    public ExportToSvgToolbarCommand getExportToSvgToolbarCommand() {
+        return (ExportToSvgToolbarCommand) getCommand(5);
+    }
+
     public ExportToPdfToolbarCommand getExportToPdfToolbarCommand() {
-        return (ExportToPdfToolbarCommand) getCommand(5);
+        return (ExportToPdfToolbarCommand) getCommand(6);
     }
 }

@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.command.DeleteSel
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToJpgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPdfToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPngToolbarCommand;
+import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToSvgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.RedoToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.SwitchGridToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ToolbarCommandFactory;
@@ -84,6 +85,9 @@ public class EditorToolbarTest {
     private ExportToJpgToolbarCommand exportToJpgToolbarCommand;
 
     @Mock
+    private ExportToSvgToolbarCommand exportToSvgToolbarCommand;
+
+    @Mock
     private ExportToPdfToolbarCommand exportToPdfToolbarCommand;
 
     private EditorToolbar toolbar;
@@ -102,6 +106,7 @@ public class EditorToolbarTest {
         when(commandFactory.newExportToPngToolbarCommand()).thenReturn(exportToPngToolbarCommand);
         when(commandFactory.newExportToJpgToolbarCommand()).thenReturn(exportToJpgToolbarCommand);
         when(commandFactory.newExportToPdfToolbarCommand()).thenReturn(exportToPdfToolbarCommand);
+        when(commandFactory.newExportToSvgToolbarCommand()).thenReturn(exportToSvgToolbarCommand);
         this.toolbar = new EditorToolbar(commandFactory,
                                          items,
                                          toolbarView);
@@ -131,5 +136,7 @@ public class EditorToolbarTest {
                      toolbar.getExportToJpgToolbarCommand());
         assertEquals(exportToPdfToolbarCommand,
                      toolbar.getExportToPdfToolbarCommand());
+        assertEquals(exportToSvgToolbarCommand,
+                     toolbar.getExportToSvgToolbarCommand());
     }
 }

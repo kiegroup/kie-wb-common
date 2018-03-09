@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.client.widgets.toolbar.command.DeleteSel
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToJpgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPdfToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToPngToolbarCommand;
+import org.kie.workbench.common.stunner.client.widgets.toolbar.command.ExportToSvgToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.PasteToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.RedoToolbarCommand;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.command.SwitchGridToolbarCommand;
@@ -62,6 +63,7 @@ public class EditorToolbar extends AbstractToolbar<AbstractClientFullSession> {
         addCommand(commandFactory.newValidateCommand());
         addCommand(commandFactory.newExportToPngToolbarCommand());
         addCommand(commandFactory.newExportToJpgToolbarCommand());
+        addCommand(commandFactory.newExportToSvgToolbarCommand());
         addCommand(commandFactory.newExportToPdfToolbarCommand());
         addCommand(commandFactory.newCopyCommand());
         addCommand(commandFactory.newCutToolbarCommand());
@@ -114,19 +116,23 @@ public class EditorToolbar extends AbstractToolbar<AbstractClientFullSession> {
         return (ExportToJpgToolbarCommand) getCommand(9);
     }
 
+    public ExportToSvgToolbarCommand getExportToSvgToolbarCommand() {
+        return (ExportToSvgToolbarCommand) getCommand(10);
+    }
+
     public ExportToPdfToolbarCommand getExportToPdfToolbarCommand() {
-        return (ExportToPdfToolbarCommand) getCommand(10);
+        return (ExportToPdfToolbarCommand) getCommand(11);
     }
 
     public CopyToolbarCommand getCopyToolbarCommand() {
-        return (CopyToolbarCommand) getCommand(11);
+        return (CopyToolbarCommand) getCommand(12);
     }
 
     public CutToolbarCommand getCutToolbarCommand() {
-        return (CutToolbarCommand) getCommand(12);
+        return (CutToolbarCommand) getCommand(13);
     }
 
     public PasteToolbarCommand getPasteToolbarCommand() {
-        return (PasteToolbarCommand) getCommand(13);
+        return (PasteToolbarCommand) getCommand(14);
     }
 }
