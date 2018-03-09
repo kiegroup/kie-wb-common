@@ -93,9 +93,4 @@ public class JavaEditorPresenter
         return super.getWidget();
     }
 
-    @Override
-    protected Command onValidate() {
-        return null;
-    }
-
 }

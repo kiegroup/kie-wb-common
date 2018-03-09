@@ -241,7 +241,7 @@ public abstract class KieEditor
                 .addRename( versionRecordManager.getPathToLatest(),
                             fileNameValidator )
                 .addDelete( versionRecordManager.getPathToLatest() )
-                .addValidate( onValidate() )
+                .addValidate( getValidateCommand() )
                 .addNewTopLevelMenu( versionRecordManager.buildMenu() )
                 .build();
     }

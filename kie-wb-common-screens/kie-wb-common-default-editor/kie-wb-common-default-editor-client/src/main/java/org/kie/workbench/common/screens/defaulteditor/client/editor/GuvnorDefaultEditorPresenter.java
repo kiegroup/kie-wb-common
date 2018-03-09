@@ -131,9 +131,4 @@ public class GuvnorDefaultEditorPresenter
         return super.getWidget();
     }
 
-    @Override
-    protected Command onValidate() {
-        return null;
-    }
-
 }
