@@ -135,19 +135,13 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         DefinitionResolver definitionResolver =
                 new DefinitionResolver(parseDefinitions(inputStream));
 
-        // setup metadata
         metadata.setCanvasRootUUID(definitionResolver.getDefinitions().getId());
         metadata.setTitle(definitionResolver.getProcess().getName());
-
-        // perform actual conversion. Process is the root of the diagram
-//        ProcessConverter processConverter =
-//                new ProcessConverter(
-//                        typedFactoryManager,
-//                        definitionResolver);
 
         ConverterFactory converterFactory =
                 new ConverterFactory(definitionResolver, typedFactoryManager);
 
+        // perform actual conversion. Process is the root of the diagram
         BpmnNode diagramRoot =
                 converterFactory
                         .rootProcessConverter()
