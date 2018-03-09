@@ -309,6 +309,16 @@ public class GraphUtils {
                 false;
     }
 
+    public static Optional<Node> getDockParent(final Node<?, ? extends Edge> element) {
+        return Objects.nonNull(element.getInEdges()) ?
+                element.getInEdges()
+                        .stream()
+                        .filter(edge -> edge.getContent() instanceof Dock)
+                        .map(Edge::getSourceNode)
+                        .findFirst() :
+                Optional.empty();
+    }
+
     @SuppressWarnings("unchecked")
     public static Long countChildren(final Node<?, ? extends Edge> element) {
         return element.getOutEdges().stream()
