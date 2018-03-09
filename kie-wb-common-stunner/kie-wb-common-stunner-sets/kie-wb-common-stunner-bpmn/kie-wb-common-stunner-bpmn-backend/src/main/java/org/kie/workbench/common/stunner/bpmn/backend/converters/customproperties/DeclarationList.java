@@ -39,7 +39,7 @@ public class DeclarationList {
 
     public static DeclarationList fromString(String encoded) {
         return new DeclarationList(
-                Arrays.asList(encoded.split(",")).stream()
+                Arrays.stream(encoded.split(","))
                         .map(VariableDeclaration::fromString)
                         .collect(Collectors.toList()));
     }

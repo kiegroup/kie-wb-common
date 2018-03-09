@@ -89,14 +89,13 @@ public class ParsedAssignmentsInfo {
         DeclarationList inputs = new DeclarationList();
         DeclarationList outputs = new DeclarationList();
         AssociationList associations = new AssociationList();
-        boolean alternativeEncoding = false;
 
         if (encoded.isEmpty()) {
             return new ParsedAssignmentsInfo(
                     inputs,
                     outputs,
                     associations,
-                    alternativeEncoding
+                    false
             );
         }
 
@@ -106,7 +105,7 @@ public class ParsedAssignmentsInfo {
                     inputs,
                     outputs,
                     associations,
-                    alternativeEncoding
+                    false
             );
         }
 
@@ -114,6 +113,7 @@ public class ParsedAssignmentsInfo {
             throw new IllegalArgumentException(encoded);
         }
 
+        boolean alternativeEncoding = false;
         String in = split[0];
         String out = split[2];
         String assoc = split[4];

@@ -52,15 +52,11 @@ public class ViewDefinitionConverter {
     private final ReusableSubprocessConverter reusableSubprocessConverter;
     private final SubProcessConverter subProcessConverter;
     private final GatewayConverter gatewayConverter;
-    private final DefinitionsBuildingContext context;
-    private final PropertyWriterFactory propertyWriterFactory;
 
     public ViewDefinitionConverter(
             DefinitionsBuildingContext context,
             PropertyWriterFactory propertyWriterFactory,
             ProcessConverterFactory processConverterFactory) {
-        this.context = context;
-        this.propertyWriterFactory = propertyWriterFactory;
 
         this.startEventConverter = new StartEventConverter(propertyWriterFactory);
         this.endEventConverter = new EndEventConverter(propertyWriterFactory);

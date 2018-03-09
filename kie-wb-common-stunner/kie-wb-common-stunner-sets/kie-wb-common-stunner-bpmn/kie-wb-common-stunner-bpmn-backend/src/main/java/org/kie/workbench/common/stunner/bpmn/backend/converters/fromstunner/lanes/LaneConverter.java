@@ -30,7 +30,7 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class LaneConverter {
 
-    final PropertyWriterFactory propertyWriterFactory;
+    private final PropertyWriterFactory propertyWriterFactory;
 
     public LaneConverter(PropertyWriterFactory propertyWriterFactory) {
         this.propertyWriterFactory = propertyWriterFactory;

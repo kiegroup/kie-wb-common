@@ -146,19 +146,13 @@ public class IntermediateCatchEventConverter {
 
     @SuppressWarnings("unchecked")
     private Node<View, Edge> getDockSourceNode(final Node<View, Edge> node) {
-        List<Edge> inEdges = node.getInEdges();
-        if (null != inEdges && !inEdges.isEmpty()) {
-            for (Edge edge : inEdges) {
-                if (isDockEdge(edge)) {
-                    return edge.getSourceNode();
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean isViewEdge(final Edge edge) {
-        return edge.getContent() instanceof ViewConnector;
+        return (Node<View, Edge>) node
+                .getInEdges()
+                .stream()
+                .filter(this::isDockEdge)
+                .map(Edge::getSourceNode)
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean isDockEdge(final Edge edge) {

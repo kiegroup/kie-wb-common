@@ -60,7 +60,7 @@ public class CustomInput<T> {
         setStringValue(String.valueOf(value));
     }
 
-    void setStringValue(String value) {
+    private void setStringValue(String value) {
         if (value == null || value.isEmpty()) {
             return;
         }
@@ -90,10 +90,10 @@ public class CustomInput<T> {
 
         // then we create the actual association between the two
         // e.g. foo := myInput (or, to put it differently, myInput -> foo)
-        DataInputAssociation dataInputAssociation =
+        DataInputAssociation association =
                 associationOf(assignment, target);
 
-        return dataInputAssociation;
+        return association;
     }
 
     private DataInput readInputFrom(String targetName, ItemDefinition typeDef) {
@@ -127,13 +127,6 @@ public class CustomInput<T> {
         dataInputAssociation
                 .setTargetRef(dataInput);
         return dataInputAssociation;
-    }
-
-    private Property varDecl(String varName, ItemDefinition typeDef) {
-        Property source = bpmn2.createProperty();
-        source.setId(varName);
-        source.setItemSubjectRef(typeDef);
-        return source;
     }
 
     private ItemDefinition typedefInput(String name, String type) {

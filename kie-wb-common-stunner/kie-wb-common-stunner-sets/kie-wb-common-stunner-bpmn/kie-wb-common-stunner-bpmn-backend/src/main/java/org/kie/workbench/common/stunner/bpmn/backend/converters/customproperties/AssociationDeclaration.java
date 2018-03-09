@@ -25,8 +25,7 @@ public class AssociationDeclaration {
     private Type type;
     private String left;
     private String right;
-    public AssociationDeclaration() {
-    }
+
     public AssociationDeclaration(Direction direction, Type type, String left, String right) {
         this.direction = direction;
         this.type = type;
@@ -115,7 +114,7 @@ class AssociationParser {
         throw new IllegalArgumentException("Cannot parse " + encoded);
     }
 
-    static AssociationDeclaration parseAssociation(AssociationDeclaration.Direction direction, String rest) {
+    private static AssociationDeclaration parseAssociation(AssociationDeclaration.Direction direction, String rest) {
         for (AssociationDeclaration.Type type : AssociationDeclaration.Type.values()) {
             if (rest.contains(type.op())) {
                 String[] association = rest.split(type.op());

@@ -57,7 +57,7 @@ public class AssociationList {
             return new AssociationList();
         } else {
             return new AssociationList(
-                    Arrays.asList(encoded.split(",")).stream()
+                    Arrays.stream(encoded.split(","))
                             .map(AssociationDeclaration::fromString)
                             .collect(Collectors.toList()));
         }

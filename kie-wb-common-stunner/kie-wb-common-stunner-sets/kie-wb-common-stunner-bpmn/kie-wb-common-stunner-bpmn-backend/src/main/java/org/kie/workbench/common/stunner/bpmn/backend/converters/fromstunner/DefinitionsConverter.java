@@ -28,12 +28,10 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class DefinitionsConverter {
 
-    private final DefinitionsBuildingContext context;
     private final ProcessConverter processConverter;
     private final PropertyWriterFactory propertyWriterFactory;
 
     public DefinitionsConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory) {
-        this.context = context;
         this.processConverter = new ProcessConverter(context, propertyWriterFactory, new ProcessConverterFactory(context, propertyWriterFactory));
         this.propertyWriterFactory = propertyWriterFactory;
     }

@@ -24,11 +24,36 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
+/**
+ * Creates a specialized pattern matching function for Stunner Nodes.
+ * <p>
+ * Usage is similar to {@link Match}, but matches against the Definition
+ * of a Stunner node.
+ * <p>
+ * Example usage:
+ * <p>
+ * <pre>
+ *     // let be T1 a class, and let be T1a, T1b subclasses of T1
+ *     // then, let be T2 a class, and let be T2a, T2b subclasses of T2
+ *     // such that T1a corresponds to T2a, T1b corresponds to T2b:
+ *     Match<T1, T2> m =
+ *         Match.of(T1.class, T2.class)
+ *           .when(T1a.class, (Node<View<T1a>,?> n) -> ... create an equivalent t2a instance)
+ *           .when(T1b.class, (Node<View<T1a>,?> n) -> ... create an equivalent t2b instance)
+ *     T1 myT1 = ...;
+ *
+ *     Result<T2> result = myT1.apply(myT1);
+ *     // unwrap the result on success, raise an exception otherwise
+ *     T2 t2 = result.value();
+ * </pre>
+ * @param <In> the input type of the match
+ * @param <Out> the type of the result of the match
+ */
 public class NodeMatch<In, Out> {
 
     private final Class<?> outputType;
-    LinkedList<NodeMatch.Case<?, Out>> cases = new LinkedList<>();
-    Function<Node<? extends View<? extends BPMNViewDefinition>, ?>, Out> orElse;
+    private final LinkedList<NodeMatch.Case<?, Out>> cases = new LinkedList<>();
+    private Function<Node<? extends View<? extends BPMNViewDefinition>, ?>, Out> orElse;
 
     public NodeMatch(Class<?> outputType) {
         this.outputType = outputType;
@@ -38,7 +63,7 @@ public class NodeMatch<In, Out> {
         return new NodeMatch<>(outputType);
     }
 
-    static <T, U> Function<T, Result<U>> reportMissing(Class<?> expectedClass) {
+    private static <T, U> Function<T, Result<U>> reportMissing(Class<?> expectedClass) {
         return t ->
                 Result.failure(
                         "Not yet implemented: " +
@@ -47,7 +72,7 @@ public class NodeMatch<In, Out> {
                                         .orElse("null -- expected " + expectedClass.getCanonicalName()));
     }
 
-    static <T, U> Function<T, Result<U>> ignored(Class<?> expectedClass) {
+    private static <T, U> Function<T, Result<U>> ignored(Class<?> expectedClass) {
         return t ->
                 Result.ignored(
                         "Ignored: " +
@@ -61,7 +86,7 @@ public class NodeMatch<In, Out> {
         return when_(type, thenWrapped);
     }
 
-    public <Sub> NodeMatch<In, Out> when_(Class<Sub> type, Function<Node<View<Sub>, ?>, Result<Out>> then) {
+    private <Sub> NodeMatch<In, Out> when_(Class<Sub> type, Function<Node<View<Sub>, ?>, Result<Out>> then) {
         cases.add(new NodeMatch.Case<>(type, then));
         return this;
     }
@@ -104,7 +129,7 @@ public class NodeMatch<In, Out> {
         public final Class<T> when;
         public final Function<Node<View<T>, ?>, Result<R>> then;
 
-        public Case(Class<T> when, Function<Node<View<T>, ?>, Result<R>> then) {
+        private Case(Class<T> when, Function<Node<View<T>, ?>, Result<R>> then) {
             this.when = when;
             this.then = then;
         }

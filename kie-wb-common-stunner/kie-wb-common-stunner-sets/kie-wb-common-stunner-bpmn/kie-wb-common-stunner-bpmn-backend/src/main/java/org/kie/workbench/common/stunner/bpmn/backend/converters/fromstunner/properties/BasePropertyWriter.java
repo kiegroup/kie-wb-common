@@ -76,14 +76,14 @@ public abstract class BasePropertyWriter {
     }
 
     /**
-     * @returns the shape associated to this element, shape if it's not an edge
+     * @return the shape associated to this element, shape if it's not an edge
      */
     public BPMNShape getShape() {
         return shape;
     }
 
     /**
-     * @returns the edge associated to this element, null if it's not an edge
+     * @return the edge associated to this element, null if it's not an edge
      */
     public BPMNEdge getEdge() {
         return null;
@@ -138,7 +138,8 @@ public abstract class BasePropertyWriter {
         return bounds;
     }
 
-    // eww
+    // Apparently, the only way to wrap text in CDATA is to actually concat
+    // "<![CDATA[", "]]>" to the input string
     protected String asCData(String original) {
         return "<![CDATA[" + original + "]]>";
     }
