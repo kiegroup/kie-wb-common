@@ -207,6 +207,7 @@ public class BPMNDiagramMarshallerTest {
     private static final String BPMN_REUSABLE_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/reusableSubprocessCalledElement.bpmn";
     private static final String BPMN_EMBEDDED_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/embeddedSubprocess.bpmn";
     private static final String BPMN_EVENT_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/eventSubprocess.bpmn";
+    private static final String BPMN_EVENT_SUBPROCESS_STARTERROREVENT= "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/isInterruptingStartErrorEvent.bpmn";
     private static final String BPMN_ADHOC_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/adHocSubProcess.bpmn";
     private static final String BPMN_SCRIPTTASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/scriptTask.bpmn";
     private static final String BPMN_USERTASKASSIGNEES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/userTaskAssignees.bpmn";
@@ -651,10 +652,33 @@ public class BPMNDiagramMarshallerTest {
         assertNotNull(startErrorEvent.getExecutionSet().getErrorRef());
         assertEquals("MyError",
                      startErrorEvent.getExecutionSet().getErrorRef().getValue());
-
+        assertEquals(true,startErrorEvent.getExecutionSet().getIsInterrupting().getValue());
         DataIOSet dataIOSet = startErrorEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||errorOutput_:String||[dout]errorOutput_->var1",
+                     assignmentsInfo.getValue());
+    }
+
+    @Test
+    public void testUnmarshallIsInterruptingStartErrorEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTERROREVENT);
+        assertDiagram(diagram,
+                      4);
+        assertEquals("EventSubprocessStartErrorEvent",
+                     diagram.getMetadata().getTitle());
+        Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("_9AAC784C-FEC9-49CA-A6F0-19D210C1BE72");
+        StartErrorEvent startErrorEvent = (StartErrorEvent) startEventNode.getContent().getDefinition();
+        assertNotNull(startErrorEvent.getGeneral());
+        assertEquals("StartErrorEvent",
+                     startErrorEvent.getGeneral().getName().getValue());
+        assertNotNull(startErrorEvent.getExecutionSet());
+        assertNotNull(startErrorEvent.getExecutionSet().getErrorRef());
+        assertEquals("Error1",
+                     startErrorEvent.getExecutionSet().getErrorRef().getValue());
+        assertEquals(false,startErrorEvent.getExecutionSet().getIsInterrupting().getValue());
+        DataIOSet dataIOSet = startErrorEvent.getDataIOSet();
+        AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
+        assertEquals("||Var1:String||[dout]Var1->Var1",
                      assignmentsInfo.getValue());
     }
 
@@ -2067,6 +2091,27 @@ public class BPMNDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:error"));
         assertTrue(result.contains("id=\"MyError\""));
         assertTrue(result.contains("errorCode=\"MyError\""));
+        assertFalse(result.contains("isInterrupting"));
+    }
+
+    @Test
+    public void testMarshallIsInterruptingStartErrorEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTERROREVENT);
+        String result = tested.marshall(diagram);
+        assertDiagram(result,
+                      1,
+                      3,
+                      1);
+
+        assertTrue(result.contains("<bpmn2:startEvent"));
+        assertTrue(result.contains(" name=\"EventSubprocessStartErrorEvent\""));
+        assertTrue(result.contains("<bpmn2:errorEventDefinition"));
+        assertTrue(result.contains("errorRef=\"Error1\""));
+        assertTrue(result.contains("drools:erefname=\"Error1\""));
+        assertTrue(result.contains("<bpmn2:error"));
+        assertTrue(result.contains("id=\"Error1\""));
+        assertTrue(result.contains("errorCode=\"Error1\""));
+        assertTrue(result.contains("isInterrupting=\"false\""));
     }
 
     @Test
