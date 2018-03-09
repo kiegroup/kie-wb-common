@@ -161,9 +161,9 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         // to draw it on our canvas
         Diagram<Graph<DefinitionSet, Node>, Metadata> diagram =
                 typedFactoryManager.newDiagram(
-                    definitionResolver.getDefinitions().getId(),
-                    BPMNDefinitionSet.class,
-                    metadata);
+                        definitionResolver.getDefinitions().getId(),
+                        BPMNDefinitionSet.class,
+                        metadata);
         GraphBuilder graphBuilder =
                 new GraphBuilder(
                         diagram.getGraph(),

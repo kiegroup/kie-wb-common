@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
 import org.eclipse.bpmn2.Process;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
@@ -28,23 +29,22 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class RootProcessConverter {
+public class RootProcessConverter extends AbstractProcessConverter {
 
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;
-    private final ProcessConverterDelegate delegate;
 
-    public RootProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory, ProcessConverterDelegate delegate) {
+    public RootProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory, ConverterFactory converterFactory) {
+        super(converterFactory);
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
-        this.delegate = delegate;
     }
 
     public ProcessPropertyWriter convertProcess() {
         ProcessPropertyWriter processRoot = convertProcessNode(context.firstNode());
 
-        delegate.convertChildNodes(processRoot, context.nodes(), context.lanes());
-        delegate.convertEdges(processRoot, context);
+        super.convertChildNodes(processRoot, context.nodes(), context.lanes());
+        super.convertEdges(processRoot, context);
 
         return processRoot;
     }

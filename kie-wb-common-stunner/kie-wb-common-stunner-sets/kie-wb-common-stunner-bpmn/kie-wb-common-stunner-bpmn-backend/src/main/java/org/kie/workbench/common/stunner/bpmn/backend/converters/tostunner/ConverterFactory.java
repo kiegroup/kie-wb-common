@@ -34,6 +34,7 @@ public class ConverterFactory {
     private final DefinitionResolver definitionResolver;
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
+
     private final TaskConverter taskConverter;
     private final EdgeConverter edgeConverter;
 

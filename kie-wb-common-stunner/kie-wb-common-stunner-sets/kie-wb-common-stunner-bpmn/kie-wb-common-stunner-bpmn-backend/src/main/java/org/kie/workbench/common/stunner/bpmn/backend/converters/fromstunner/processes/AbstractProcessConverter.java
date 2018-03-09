@@ -21,45 +21,30 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ViewDefinitionConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lanes.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ActivityPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.sequenceflows.SequenceFlowConverter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class ProcessConverterDelegate {
-    private final ViewDefinitionConverter viewDefinitionConverter;
-    private final LaneConverter laneConverter;
-    private final SequenceFlowConverter sequenceFlowConverter;
+public class AbstractProcessConverter {
 
-    public ProcessConverterDelegate(
-            PropertyWriterFactory propertyWriterFactory,
-            ProcessConverter factory) {
-        this.viewDefinitionConverter =
-                new ViewDefinitionConverter(
-                        propertyWriterFactory,
-                        factory);
+    private final ConverterFactory converterFactory;
 
-        this.laneConverter =
-                new LaneConverter(propertyWriterFactory);
-
-        this.sequenceFlowConverter =
-                new SequenceFlowConverter(propertyWriterFactory);
+    public AbstractProcessConverter(ConverterFactory converterFactory) {
+        this.converterFactory = converterFactory;
     }
 
     public void convertChildNodes(
             ElementContainer p,
             Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> nodes,
             Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes) {
-        nodes.map(viewDefinitionConverter::toFlowElement)
+        nodes.map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
                 .forEach(p::addChildElement);
@@ -71,7 +56,7 @@ public class ProcessConverterDelegate {
             Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes,
             ElementContainer p) {
         List<LanePropertyWriter> collect = lanes
-                .map(laneConverter::toElement)
+                .map(converterFactory.laneConverter()::toElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
                 .collect(Collectors.toList());
@@ -101,7 +86,7 @@ public class ProcessConverterDelegate {
                 });
 
         context.edges()
-                .map(e -> sequenceFlowConverter.toFlowElement(e, p))
+                .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
                 .forEach(p::addChildElement);
     }
 }

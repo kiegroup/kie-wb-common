@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.NodeMatch;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
@@ -32,20 +33,19 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class SubProcessConverter {
+public class SubProcessConverter extends AbstractProcessConverter {
 
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;
-    private final ProcessConverterDelegate delegate;
 
     public SubProcessConverter(
             DefinitionsBuildingContext context,
             PropertyWriterFactory propertyWriterFactory,
-            ProcessConverterDelegate delegate) {
+            ConverterFactory converterFactory) {
 
+        super(converterFactory);
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
-        this.delegate = delegate;
     }
 
     public PropertyWriter convertSubProcess(Node<View<BaseSubprocess>, ?> node) {
@@ -57,8 +57,8 @@ public class SubProcessConverter {
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
 
-        delegate.convertChildNodes(processRoot, subContext.nodes(), subContext.lanes());
-        delegate.convertEdges(processRoot, subContext);
+        super.convertChildNodes(processRoot, subContext.nodes(), subContext.lanes());
+        super.convertEdges(processRoot, subContext);
 
         return processRoot;
     }

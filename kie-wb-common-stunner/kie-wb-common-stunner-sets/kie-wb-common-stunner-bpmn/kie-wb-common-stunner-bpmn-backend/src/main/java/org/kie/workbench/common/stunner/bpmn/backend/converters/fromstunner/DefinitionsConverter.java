@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
 import org.eclipse.bpmn2.Definitions;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.RootProcessConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.DefinitionsPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
@@ -28,16 +27,20 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class DefinitionsConverter {
 
-    private final ProcessConverter processConverter;
+    private final ConverterFactory converterFactory;
     private final PropertyWriterFactory propertyWriterFactory;
+    private final RootProcessConverter processConverter;
 
-    public DefinitionsConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory) {
-        this.processConverter = new ProcessConverter(context, propertyWriterFactory);
+    public DefinitionsConverter(ConverterFactory converterFactory, PropertyWriterFactory propertyWriterFactory) {
         this.propertyWriterFactory = propertyWriterFactory;
+        this.converterFactory = converterFactory;
+        this.processConverter = converterFactory.processConverter();
     }
 
     public DefinitionsConverter(Graph graph) {
-        this(new DefinitionsBuildingContext(graph), new PropertyWriterFactory());
+        this.propertyWriterFactory = new PropertyWriterFactory();
+        this.converterFactory = new ConverterFactory(new DefinitionsBuildingContext(graph), propertyWriterFactory);
+        this.processConverter = this.converterFactory.processConverter();
     }
 
     public Definitions toDefinitions() {
