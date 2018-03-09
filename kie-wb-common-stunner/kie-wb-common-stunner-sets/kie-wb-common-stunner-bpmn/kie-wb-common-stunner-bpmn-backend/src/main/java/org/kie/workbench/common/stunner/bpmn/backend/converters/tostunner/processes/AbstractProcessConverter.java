@@ -25,10 +25,8 @@ import org.eclipse.bpmn2.LaneSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.EdgeConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.FlowElementConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.lanes.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 
 /**
@@ -39,40 +37,23 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
  * ProcessConverterFactory returns instances of ProcessConverters
  * and SubprocessConverters.
  */
-public class ProcessConverterDelegate {
+class AbstractProcessConverter {
 
-    private final TypedFactoryManager factoryManager;
-    private final PropertyReaderFactory propertyReaderFactory;
-    private final FlowElementConverter flowElementConverter;
-    private final LaneConverter laneConverter;
-    private final EdgeConverter edgeConverter;
-    private final DefinitionResolver definitionResolver;
+    protected final TypedFactoryManager factoryManager;
+    protected final PropertyReaderFactory propertyReaderFactory;
+    protected final DefinitionResolver definitionResolver;
+    private final ConverterFactory converterFactory;
 
-    public ProcessConverterDelegate(
+    public AbstractProcessConverter(
             TypedFactoryManager typedFactoryManager,
             DefinitionResolver definitionResolver,
-            ProcessConverter factory) {
+            ConverterFactory factory) {
 
         this.factoryManager = typedFactoryManager;
         this.definitionResolver = definitionResolver;
         this.propertyReaderFactory =
                 new PropertyReaderFactory(definitionResolver);
-
-        this.flowElementConverter =
-                new FlowElementConverter(
-                        factoryManager,
-                        propertyReaderFactory,
-                        factory);
-
-        this.laneConverter =
-                new LaneConverter(
-                        typedFactoryManager,
-                        propertyReaderFactory);
-
-        this.edgeConverter =
-                new EdgeConverter(
-                        factoryManager,
-                        propertyReaderFactory);
+        this.converterFactory = factory;
     }
 
     Map<String, BpmnNode> convertChildNodes(
@@ -93,7 +74,7 @@ public class ProcessConverterDelegate {
 
     void convertEdges(BpmnNode processRoot, List<FlowElement> flowElements, Map<String, BpmnNode> nodes) {
         flowElements.stream()
-                .map(e -> edgeConverter.convertEdge(e, nodes))
+                .map(e -> converterFactory.edgeConverter().convertEdge(e, nodes))
                 .filter(Result::isSuccess)
                 .map(Result::value)
                 .forEach(processRoot::addEdge);
@@ -104,7 +85,7 @@ public class ProcessConverterDelegate {
 
         flowElements
                 .stream()
-                .map(flowElementConverter::convertNode)
+                .map(converterFactory.flowElementConverter()::convertNode)
                 .filter(Result::isSuccess)
                 .map(Result::value)
                 .forEach(n -> result.put(n.value().getUUID(), n));
@@ -116,7 +97,7 @@ public class ProcessConverterDelegate {
         laneSets.stream()
                 .flatMap(laneSet -> laneSet.getLanes().stream())
                 .forEach(lane -> {
-                    BpmnNode laneNode = laneConverter.convert(lane);
+                    BpmnNode laneNode = converterFactory.laneConverter().convert(lane);
                     laneNode.setParent(firstDiagramNode);
 
                     lane.getFlowNodeRefs().forEach(node -> {

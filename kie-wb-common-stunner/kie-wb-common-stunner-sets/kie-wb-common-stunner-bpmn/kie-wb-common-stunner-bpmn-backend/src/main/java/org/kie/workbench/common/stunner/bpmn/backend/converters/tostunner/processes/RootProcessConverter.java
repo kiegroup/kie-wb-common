@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
@@ -43,24 +44,15 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 /**
  * Convert the root Process with all its children to a BPMNDiagram
  */
-public class RootProcessConverter {
-
-    protected final TypedFactoryManager factoryManager;
-    protected final PropertyReaderFactory propertyReaderFactory;
-    private final DefinitionResolver definitionResolver;
-
-    private final ProcessConverterDelegate delegate;
+public class RootProcessConverter extends AbstractProcessConverter {
 
     public RootProcessConverter(
             TypedFactoryManager typedFactoryManager,
             PropertyReaderFactory propertyReaderFactory,
             DefinitionResolver definitionResolver,
-            ProcessConverterDelegate delegate) {
+            ConverterFactory factory) {
 
-        this.factoryManager = typedFactoryManager;
-        this.propertyReaderFactory = propertyReaderFactory;
-        this.definitionResolver = definitionResolver;
-        this.delegate = delegate;
+        super(typedFactoryManager, definitionResolver, factory);
     }
 
     public BpmnNode convertProcess() {
@@ -69,12 +61,12 @@ public class RootProcessConverter {
         BpmnNode processRoot = convertProcessNode(definitionsId, process);
 
         Map<String, BpmnNode> nodes =
-                delegate.convertChildNodes(
+                super.convertChildNodes(
                         processRoot,
                         process.getFlowElements(),
                         process.getLaneSets());
 
-        delegate.convertEdges(
+        super.convertEdges(
                 processRoot,
                 process.getFlowElements(),
                 nodes);

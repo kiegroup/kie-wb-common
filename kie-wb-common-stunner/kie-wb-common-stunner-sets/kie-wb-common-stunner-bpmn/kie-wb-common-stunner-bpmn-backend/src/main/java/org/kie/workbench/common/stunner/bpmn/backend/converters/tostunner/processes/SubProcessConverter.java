@@ -21,7 +21,8 @@ import java.util.Map;
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SubProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
@@ -34,21 +35,14 @@ import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class SubProcessConverter {
-
-    protected final TypedFactoryManager factoryManager;
-    protected final PropertyReaderFactory propertyReaderFactory;
-
-    private final ProcessConverterDelegate delegate;
+public class SubProcessConverter extends AbstractProcessConverter {
 
     public SubProcessConverter(
             TypedFactoryManager typedFactoryManager,
-            PropertyReaderFactory propertyReaderFactory,
-            ProcessConverterDelegate delegate) {
+            DefinitionResolver definitionResolver,
+            ConverterFactory converterFactory) {
 
-        this.factoryManager = typedFactoryManager;
-        this.propertyReaderFactory = propertyReaderFactory;
-        this.delegate = delegate;
+        super(typedFactoryManager, definitionResolver, converterFactory);
     }
 
     public BpmnNode convertSubProcess(SubProcess subProcess) {
@@ -58,12 +52,12 @@ public class SubProcessConverter {
                         : convertEmbeddedSubprocessNode(subProcess);
 
         Map<String, BpmnNode> nodes =
-                delegate.convertChildNodes(
+                super.convertChildNodes(
                         subProcessRoot,
                         subProcess.getFlowElements(),
                         subProcess.getLaneSets());
 
-        delegate.convertEdges(
+        super.convertEdges(
                 subProcessRoot,
                 subProcess.getFlowElements(),
                 nodes);
