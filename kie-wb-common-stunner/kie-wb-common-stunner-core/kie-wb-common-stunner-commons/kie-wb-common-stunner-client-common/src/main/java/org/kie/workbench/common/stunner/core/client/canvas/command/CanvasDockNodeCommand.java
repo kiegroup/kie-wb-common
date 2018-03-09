@@ -16,12 +16,15 @@
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolationImpl;
 import org.kie.workbench.common.stunner.core.client.shape.MutationContext;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.rule.violations.DockingRuleViolation;
 
 /**
  * Docks a node shape into thee parent's one in the canvas context.
@@ -54,8 +57,12 @@ public class CanvasDockNodeCommand extends AbstractCanvasCommand {
                                      MutationContext.STATIC);
 
         // Dock the candidate shape into the parent one.
-        context.dock(parent,
-                     candidate);
+        if (!context.dock(parent, candidate)) {
+            return new CanvasCommandResultBuilder()
+                    .addViolation(CanvasViolationImpl.Builder
+                                          .build(new DockingRuleViolation(parent.getUUID(), candidate.getUUID())))
+                    .build();
+        }
         return buildResult();
     }
 

@@ -31,6 +31,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CanvasDockNodeCommandTest extends AbstractCanvasCommandTest {
@@ -45,6 +46,7 @@ public class CanvasDockNodeCommandTest extends AbstractCanvasCommandTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        when(canvasHandler.dock(parent, candidate)).thenReturn(true);
         this.tested = new CanvasDockNodeCommand(parent,
                                                 candidate);
     }
