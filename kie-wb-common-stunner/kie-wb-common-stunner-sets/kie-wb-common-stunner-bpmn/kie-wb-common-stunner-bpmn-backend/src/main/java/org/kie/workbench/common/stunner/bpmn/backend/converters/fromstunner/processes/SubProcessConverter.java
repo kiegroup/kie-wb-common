@@ -36,12 +36,16 @@ public class SubProcessConverter {
 
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;
-    private final ProcessConverterFactory processConverterFactory;
+    private final ProcessConverterDelegate delegate;
 
-    public SubProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory, ProcessConverterFactory processConverterFactory) {
+    public SubProcessConverter(
+            DefinitionsBuildingContext context,
+            PropertyWriterFactory propertyWriterFactory,
+            ProcessConverterDelegate delegate) {
+
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
-        this.processConverterFactory = processConverterFactory;
+        this.delegate = delegate;
     }
 
     public PropertyWriter convertSubProcess(Node<View<BaseSubprocess>, ?> node) {
@@ -53,8 +57,8 @@ public class SubProcessConverter {
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
 
-        processConverterFactory.convertChildNodes(processRoot, subContext.nodes(), subContext.lanes());
-        processConverterFactory.convertEdges(processRoot, subContext);
+        delegate.convertChildNodes(processRoot, subContext.nodes(), subContext.lanes());
+        delegate.convertEdges(processRoot, subContext);
 
         return processRoot;
     }

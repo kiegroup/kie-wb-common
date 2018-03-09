@@ -47,7 +47,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Defi
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.GraphBuilder;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceFactoryImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -140,14 +140,13 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         metadata.setTitle(definitionResolver.getProcess().getName());
 
         // perform actual conversion. Process is the root of the diagram
-        ProcessConverterFactory processConverterFactory =
-                new ProcessConverterFactory(
+        ProcessConverter processConverter =
+                new ProcessConverter(
                         typedFactoryManager,
                         definitionResolver);
 
         BpmnNode diagramRoot =
-                processConverterFactory
-                        .processConverter()
+                processConverter
                         .convertProcess();
 
         LOG.debug("Diagram unmarshalling completed successfully.");

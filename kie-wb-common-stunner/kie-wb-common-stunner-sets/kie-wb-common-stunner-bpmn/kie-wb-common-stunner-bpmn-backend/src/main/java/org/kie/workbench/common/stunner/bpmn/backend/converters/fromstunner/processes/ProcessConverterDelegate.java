@@ -35,35 +35,24 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
-public class ProcessConverterFactory {
-
-    private final DefinitionsBuildingContext context;
-
+public class ProcessConverterDelegate {
     private final ViewDefinitionConverter viewDefinitionConverter;
     private final LaneConverter laneConverter;
-
     private final SequenceFlowConverter sequenceFlowConverter;
-    private final PropertyWriterFactory propertyWriterFactory;
 
-    public ProcessConverterFactory(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory) {
-        this.context = context;
-        this.propertyWriterFactory = propertyWriterFactory;
-
+    public ProcessConverterDelegate(
+            PropertyWriterFactory propertyWriterFactory,
+            ProcessConverter factory) {
         this.viewDefinitionConverter =
                 new ViewDefinitionConverter(
-                        context,
                         propertyWriterFactory,
-                        this);
+                        factory);
 
         this.laneConverter =
                 new LaneConverter(propertyWriterFactory);
 
         this.sequenceFlowConverter =
                 new SequenceFlowConverter(propertyWriterFactory);
-    }
-
-    public SubProcessConverter subProcessConverter() {
-        return new SubProcessConverter(context, propertyWriterFactory, this);
     }
 
     public void convertChildNodes(

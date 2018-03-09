@@ -39,16 +39,16 @@ public class SubProcessConverter {
     protected final TypedFactoryManager factoryManager;
     protected final PropertyReaderFactory propertyReaderFactory;
 
-    private final ProcessConverterFactory processConverterFactory;
+    private final ProcessConverterDelegate delegate;
 
     public SubProcessConverter(
             TypedFactoryManager typedFactoryManager,
             PropertyReaderFactory propertyReaderFactory,
-            ProcessConverterFactory processConverterFactory) {
+            ProcessConverterDelegate delegate) {
 
         this.factoryManager = typedFactoryManager;
         this.propertyReaderFactory = propertyReaderFactory;
-        this.processConverterFactory = processConverterFactory;
+        this.delegate = delegate;
     }
 
     public BpmnNode convertSubProcess(SubProcess subProcess) {
@@ -58,12 +58,12 @@ public class SubProcessConverter {
                         : convertEmbeddedSubprocessNode(subProcess);
 
         Map<String, BpmnNode> nodes =
-                processConverterFactory.convertChildNodes(
+                delegate.convertChildNodes(
                         subProcessRoot,
                         subProcess.getFlowElements(),
                         subProcess.getLaneSets());
 
-        processConverterFactory.convertEdges(
+        delegate.convertEdges(
                 subProcessRoot,
                 subProcess.getFlowElements(),
                 nodes);

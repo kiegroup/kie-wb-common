@@ -16,100 +16,53 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes;
 
-import java.util.Map;
-
-import org.eclipse.bpmn2.Process;
+import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.ProcessPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.AdHoc;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Executable;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Package;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.ProcessInstanceDescription;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Version;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
-import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
-import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 /**
- * Convert the root Process with all its children to a BPMNDiagram
+ * Creates converters for Processes and SubProcesses
+ * <p>
+ * Processes and SubProcesses are alike, but are not exactly compatible
+ * type-wise. However, they may contain the same type of nodes.
+ * ProcessConverterFactory returns instances of ProcessConverters
+ * and SubprocessConverters.
  */
 public class ProcessConverter {
 
-    protected final TypedFactoryManager factoryManager;
-    protected final PropertyReaderFactory propertyReaderFactory;
+    private final TypedFactoryManager factoryManager;
+    private final PropertyReaderFactory propertyReaderFactory;
     private final DefinitionResolver definitionResolver;
-
-    private final ProcessConverterFactory processConverterFactory;
+    private final ProcessConverterDelegate processConverterDelegate;
 
     public ProcessConverter(
             TypedFactoryManager typedFactoryManager,
-            PropertyReaderFactory propertyReaderFactory,
-            DefinitionResolver definitionResolver,
-            ProcessConverterFactory processConverterFactory) {
+            DefinitionResolver definitionResolver) {
 
         this.factoryManager = typedFactoryManager;
-        this.propertyReaderFactory = propertyReaderFactory;
         this.definitionResolver = definitionResolver;
-        this.processConverterFactory = processConverterFactory;
+        this.propertyReaderFactory =
+                new PropertyReaderFactory(definitionResolver);
+        this.processConverterDelegate =
+                new ProcessConverterDelegate(factoryManager, definitionResolver, this);
+    }
+
+    public BpmnNode convertSubProcess(SubProcess subProcess) {
+        SubProcessConverter subProcessConverter = new SubProcessConverter(
+                factoryManager,
+                propertyReaderFactory,
+                processConverterDelegate);
+        return subProcessConverter.convertSubProcess(subProcess);
     }
 
     public BpmnNode convertProcess() {
-        Process process = definitionResolver.getProcess();
-        BpmnNode processRoot = convertProcessNode(
-                definitionResolver.getDefinitions().getId(),
-                process);
-
-        Map<String, BpmnNode> nodes =
-                processConverterFactory.convertChildNodes(
-                        processRoot,
-                        process.getFlowElements(),
-                        process.getLaneSets());
-
-        processConverterFactory.convertEdges(
-                processRoot,
-                process.getFlowElements(),
-                nodes);
-
-        return processRoot;
-    }
-
-    private BpmnNode convertProcessNode(String id, Process process) {
-        Node<View<BPMNDiagramImpl>, Edge> diagramNode =
-                factoryManager.newNode(id, BPMNDiagramImpl.class);
-        BPMNDiagramImpl definition = diagramNode.getContent().getDefinition();
-
-        ProcessPropertyReader e = propertyReaderFactory.of(process);
-
-        definition.setDiagramSet(new DiagramSet(
-                new Name(process.getName()),
-                new Documentation(e.getDocumentation()),
-                new Id(process.getId()),
-                new Package(e.getPackage()),
-                new Version(e.getVersion()),
-                new AdHoc(e.isAdHoc()),
-                new ProcessInstanceDescription(e.getDescription()),
-                new Executable(process.isIsExecutable())
-        ));
-
-        definition.setProcessData(new ProcessData(
-                new ProcessVariables(e.getProcessVariables())
-        ));
-
-        diagramNode.getContent().setBounds(e.getBounds());
-
-        definition.setFontSet(e.getFontSet());
-        definition.setBackgroundSet(e.getBackgroundSet());
-
-        return BpmnNode.of(diagramNode);
+        RootProcessConverter rootProcessConverter = new RootProcessConverter(
+                factoryManager,
+                propertyReaderFactory,
+                definitionResolver,
+                processConverterDelegate);
+        return rootProcessConverter.convertProcess();
     }
 }

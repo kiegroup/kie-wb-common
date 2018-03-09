@@ -16,60 +16,39 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
-import org.eclipse.bpmn2.Process;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
-import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public class ProcessConverter {
 
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;
-    private final ProcessConverterFactory processConverterFactory;
+    private final ProcessConverterDelegate processConverterDelegate;
 
-    public ProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory, ProcessConverterFactory processConverterFactory) {
+    public ProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory) {
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
-        this.processConverterFactory = processConverterFactory;
+        this.processConverterDelegate = new ProcessConverterDelegate(propertyWriterFactory, this);
+    }
+
+    public PropertyWriter convertSubProcess(Node<View<BaseSubprocess>, ?> node) {
+        SubProcessConverter subProcessConverter = new SubProcessConverter(
+                context,
+                propertyWriterFactory,
+                processConverterDelegate);
+        return subProcessConverter.convertSubProcess(node);
     }
 
     public ProcessPropertyWriter convertProcess() {
-        ProcessPropertyWriter processRoot = convertProcessNode(context.firstNode());
-
-        processConverterFactory.convertChildNodes(processRoot, context.nodes(), context.lanes());
-        processConverterFactory.convertEdges(processRoot, context);
-
-        return processRoot;
-    }
-
-    private ProcessPropertyWriter convertProcessNode(Node<Definition<BPMNDiagramImpl>, ?> node) {
-        Process process = bpmn2.createProcess();
-
-        ProcessPropertyWriter p = propertyWriterFactory.of(process);
-        BPMNDiagramImpl definition = node.getContent().getDefinition();
-
-        DiagramSet diagramSet = definition.getDiagramSet();
-
-        p.setName(diagramSet.getName().getValue());
-        p.setDocumentation(diagramSet.getDocumentation().getValue());
-
-        process.setId(diagramSet.getId().getValue());
-        p.setPackage(diagramSet.getPackageProperty().getValue());
-        p.setVersion(diagramSet.getVersion().getValue());
-        p.setAdHoc(diagramSet.getAdHoc().getValue());
-        p.setDescription(diagramSet.getProcessInstanceDescription().getValue());
-        p.setExecutable(diagramSet.getExecutable().getValue());
-
-        ProcessData processData = definition.getProcessData();
-        p.setProcessVariables(processData.getProcessVariables());
-
-        return p;
+        RootProcessConverter rootProcessConverter = new RootProcessConverter(
+                context,
+                propertyWriterFactory,
+                processConverterDelegate);
+        return rootProcessConverter.convertProcess();
     }
 }

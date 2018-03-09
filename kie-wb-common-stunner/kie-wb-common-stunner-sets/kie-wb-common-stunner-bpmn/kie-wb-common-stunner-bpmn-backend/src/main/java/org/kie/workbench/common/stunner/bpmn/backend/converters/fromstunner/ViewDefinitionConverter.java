@@ -24,7 +24,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.even
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.IntermediateThrowEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.events.StartEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.gateways.GatewayConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.ProcessConverterFactory;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes.SubProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
@@ -50,13 +50,12 @@ public class ViewDefinitionConverter {
     private final IntermediateCatchEventConverter intermediateCatchEventConverter;
     private final IntermediateThrowEventConverter intermediateThrowEventConverter;
     private final ReusableSubprocessConverter reusableSubprocessConverter;
-    private final SubProcessConverter subProcessConverter;
     private final GatewayConverter gatewayConverter;
+    private final ProcessConverter processConverter;
 
     public ViewDefinitionConverter(
-            DefinitionsBuildingContext context,
             PropertyWriterFactory propertyWriterFactory,
-            ProcessConverterFactory processConverterFactory) {
+            ProcessConverter processConverter) {
 
         this.startEventConverter = new StartEventConverter(propertyWriterFactory);
         this.endEventConverter = new EndEventConverter(propertyWriterFactory);
@@ -64,7 +63,7 @@ public class ViewDefinitionConverter {
         this.intermediateThrowEventConverter = new IntermediateThrowEventConverter(propertyWriterFactory);
         this.gatewayConverter = new GatewayConverter(propertyWriterFactory);
         this.taskConverter = new TaskConverter(propertyWriterFactory);
-        this.subProcessConverter = processConverterFactory.subProcessConverter();
+        this.processConverter = processConverter;
         this.reusableSubprocessConverter = new ReusableSubprocessConverter(propertyWriterFactory);
     }
 
@@ -77,7 +76,7 @@ public class ViewDefinitionConverter {
                 .when(BaseTask.class, taskConverter::toFlowElement)
                 .when(BaseGateway.class, gatewayConverter::toFlowElement)
                 .when(ReusableSubprocess.class, reusableSubprocessConverter::toFlowElement)
-                .when(BaseSubprocess.class, subProcessConverter::convertSubProcess)
+                .when(BaseSubprocess.class, processConverter::convertSubProcess)
                 .ignore(Lane.class)
                 .apply(node);
     }

@@ -39,7 +39,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
  * ProcessConverterFactory returns instances of ProcessConverters
  * and SubprocessConverters.
  */
-public class ProcessConverterFactory {
+public class ProcessConverterDelegate {
 
     private final TypedFactoryManager factoryManager;
     private final PropertyReaderFactory propertyReaderFactory;
@@ -48,9 +48,10 @@ public class ProcessConverterFactory {
     private final EdgeConverter edgeConverter;
     private final DefinitionResolver definitionResolver;
 
-    public ProcessConverterFactory(
+    public ProcessConverterDelegate(
             TypedFactoryManager typedFactoryManager,
-            DefinitionResolver definitionResolver) {
+            DefinitionResolver definitionResolver,
+            ProcessConverter factory) {
 
         this.factoryManager = typedFactoryManager;
         this.definitionResolver = definitionResolver;
@@ -61,7 +62,7 @@ public class ProcessConverterFactory {
                 new FlowElementConverter(
                         factoryManager,
                         propertyReaderFactory,
-                        this);
+                        factory);
 
         this.laneConverter =
                 new LaneConverter(
@@ -72,21 +73,6 @@ public class ProcessConverterFactory {
                 new EdgeConverter(
                         factoryManager,
                         propertyReaderFactory);
-    }
-
-    public SubProcessConverter subProcessConverter() {
-        return new SubProcessConverter(
-                factoryManager,
-                propertyReaderFactory,
-                this);
-    }
-
-    public ProcessConverter processConverter() {
-        return new ProcessConverter(
-                factoryManager,
-                propertyReaderFactory,
-                definitionResolver,
-                this);
     }
 
     Map<String, BpmnNode> convertChildNodes(

@@ -36,8 +36,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events.IntermediateThrowEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events.StartEventConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.gateways.GatewayConverter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverterFactory;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.SubProcessConverter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.processes.ProcessConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks.TaskConverter;
 
@@ -51,12 +50,12 @@ public class FlowElementConverter {
     private final IntermediateThrowEventConverter intermediateThrowEventConverter;
     private final IntermediateCatchEventConverter intermediateCatchEventConverter;
     private final CallActivityConverter callActivityConverter;
-    private final SubProcessConverter subProcessConverter;
+    private final ProcessConverter processConverter;
 
     public FlowElementConverter(
             TypedFactoryManager factoryManager,
             PropertyReaderFactory propertyReaderFactory,
-            ProcessConverterFactory processConverterFactory) {
+            ProcessConverter processConverter) {
 
         this.factoryManager = factoryManager;
         this.startEventConverter = new StartEventConverter(factoryManager, propertyReaderFactory);
@@ -66,7 +65,7 @@ public class FlowElementConverter {
         this.taskConverter = new TaskConverter(factoryManager, propertyReaderFactory);
         this.gatewayConverter = new GatewayConverter(factoryManager, propertyReaderFactory);
         this.callActivityConverter = new CallActivityConverter(factoryManager, propertyReaderFactory);
-        this.subProcessConverter = processConverterFactory.subProcessConverter();
+        this.processConverter = processConverter;
     }
 
     public Result<BpmnNode> convertNode(FlowElement flowElement) {
@@ -78,7 +77,7 @@ public class FlowElementConverter {
                 .when(IntermediateThrowEvent.class, intermediateThrowEventConverter::convert)
                 .when(Task.class, taskConverter::convert)
                 .when(Gateway.class, gatewayConverter::convert)
-                .when(SubProcess.class, subProcessConverter::convertSubProcess)
+                .when(SubProcess.class, processConverter::convertSubProcess)
                 .when(CallActivity.class, callActivityConverter::convert)
                 .ignore(SequenceFlow.class)
                 .apply(flowElement);
