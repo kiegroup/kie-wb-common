@@ -92,11 +92,12 @@ public class SubProcessConverter {
 
         definition.setSimulationSet(p.getSimulationSet());
 
+        node.getContent().setBounds(p.getBounds());
+
         definition.setDimensionsSet(p.getRectangleDimensionsSet());
         definition.setFontSet(p.getFontSet());
         definition.setBackgroundSet(p.getBackgroundSet());
 
-        node.getContent().setBounds(p.getBounds());
         return BpmnNode.of(node);
     }
 

@@ -33,7 +33,7 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner
 
 public class SequenceFlowConverter {
 
-    final PropertyWriterFactory propertyWriterFactory;
+    private final PropertyWriterFactory propertyWriterFactory;
 
     public SequenceFlowConverter(PropertyWriterFactory propertyWriterFactory) {
         this.propertyWriterFactory = propertyWriterFactory;

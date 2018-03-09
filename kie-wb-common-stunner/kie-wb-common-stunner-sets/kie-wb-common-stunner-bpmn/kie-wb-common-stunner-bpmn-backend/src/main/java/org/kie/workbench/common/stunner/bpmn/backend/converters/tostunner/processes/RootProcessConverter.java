@@ -65,9 +65,8 @@ public class RootProcessConverter {
 
     public BpmnNode convertProcess() {
         Process process = definitionResolver.getProcess();
-        BpmnNode processRoot = convertProcessNode(
-                definitionResolver.getDefinitions().getId(),
-                process);
+        String definitionsId = definitionResolver.getDefinitions().getId();
+        BpmnNode processRoot = convertProcessNode(definitionsId, process);
 
         Map<String, BpmnNode> nodes =
                 delegate.convertChildNodes(

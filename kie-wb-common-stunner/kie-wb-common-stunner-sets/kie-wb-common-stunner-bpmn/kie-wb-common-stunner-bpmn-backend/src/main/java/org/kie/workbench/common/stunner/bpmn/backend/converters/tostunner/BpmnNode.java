@@ -23,6 +23,8 @@ import java.util.List;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The result of a Converter (to Stunner) is always a BpmnNode.
@@ -34,6 +36,8 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
  * that may be contained inside the node (e.g. in the case of a (Sub)Process)
  */
 public class BpmnNode {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BpmnNode.class);
 
     private final Node<? extends View<? extends BPMNViewDefinition>, ?> value;
     private final List<BpmnNode> children = new ArrayList<>();
@@ -53,7 +57,7 @@ public class BpmnNode {
     }
 
     public void setParent(BpmnNode parent) {
-        System.out.println(parent.value().getUUID() + " -> " + this.value.getUUID());
+        LOG.trace(parent.value().getUUID() + " -> " + this.value.getUUID());
         if (this.parent != null) {
             this.parent.removeChild(this);
         }

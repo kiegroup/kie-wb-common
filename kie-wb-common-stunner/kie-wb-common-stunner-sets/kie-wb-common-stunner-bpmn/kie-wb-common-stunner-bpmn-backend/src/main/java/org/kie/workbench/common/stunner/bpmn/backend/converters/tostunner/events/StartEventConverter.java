@@ -65,13 +65,9 @@ public class StartEventConverter {
         this.propertyReaderFactory = propertyReaderFactory;
     }
 
-    public BpmnNode convert(StartEvent startEvent) {
-        CatchEventPropertyReader p = propertyReaderFactory.of(startEvent);
+    public BpmnNode convert(StartEvent event) {
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
         List<EventDefinition> eventDefinitions = p.getEventDefinitions();
-        return convertStartEvent(startEvent, eventDefinitions);
-    }
-
-    private BpmnNode convertStartEvent(StartEvent event, List<EventDefinition> eventDefinitions) {
         switch (eventDefinitions.size()) {
             case 0:
                 return noneEvent(event);
