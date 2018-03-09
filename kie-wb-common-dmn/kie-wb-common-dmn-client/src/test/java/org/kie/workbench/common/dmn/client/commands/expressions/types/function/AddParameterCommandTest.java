@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -39,9 +38,6 @@ import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddParameterCommandTest {
-
-    @Mock
-    private ExpressionEditorColumn uiModelColumn;
 
     @Mock
     private org.uberfire.mvp.Command canvasOperation;
@@ -69,7 +65,6 @@ public class AddParameterCommandTest {
                                                parameter,
                                                canvasOperation);
         doReturn(ruleManager).when(handler).getRuleManager();
-        doReturn(0).when(uiModelColumn).getIndex();
     }
 
     @Test
@@ -147,7 +142,7 @@ public class AddParameterCommandTest {
 
     @Test
     public void testCanvasCommandAllow() {
-        //There are no Canvas mutations by the
+        //There are no Canvas mutations by the command
         final Command<AbstractCanvasHandler, CanvasViolation> c = command.newCanvasCommand(handler);
 
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
@@ -156,6 +151,7 @@ public class AddParameterCommandTest {
 
     @Test
     public void testCanvasCommandExecute() {
+        //There are no Canvas mutations by the command
         final Command<AbstractCanvasHandler, CanvasViolation> c = command.newCanvasCommand(handler);
 
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
@@ -166,6 +162,7 @@ public class AddParameterCommandTest {
 
     @Test
     public void testCanvasCommandUndo() {
+        //There are no Canvas mutations by the command
         final Command<AbstractCanvasHandler, CanvasViolation> c = command.newCanvasCommand(handler);
 
         assertEquals(CanvasCommandResultBuilder.SUCCESS,

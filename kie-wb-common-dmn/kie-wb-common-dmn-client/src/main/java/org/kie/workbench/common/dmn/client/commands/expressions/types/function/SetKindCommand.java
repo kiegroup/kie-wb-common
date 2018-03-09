@@ -16,15 +16,13 @@
 
 package org.kie.workbench.common.dmn.client.commands.expressions.types.function;
 
-import java.util.Map;
 import java.util.Optional;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
-import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.function.KindUtilities;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellValueTuple;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
@@ -66,7 +64,7 @@ public class SetKindCommand extends AbstractCanvasGraphCommand implements VetoEx
         this.expression = expression;
         this.canvasOperation = canvasOperation;
 
-        this.oldKind = getKind();
+        this.oldKind = KindUtilities.getKind(function);
         this.oldExpression = Optional.ofNullable(function.getExpression());
         this.oldCellValue = extractGridCellValue(cellTuple);
     }
@@ -81,7 +79,7 @@ public class SetKindCommand extends AbstractCanvasGraphCommand implements VetoEx
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                setKind(kind);
+                KindUtilities.setKind(function, kind);
                 function.setExpression(expression.orElse(null));
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -89,24 +87,12 @@ public class SetKindCommand extends AbstractCanvasGraphCommand implements VetoEx
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                setKind(oldKind);
+                KindUtilities.setKind(function, oldKind);
                 function.setExpression(oldExpression.orElse(null));
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
         };
-    }
-
-    private FunctionDefinition.Kind getKind() {
-        final Map<QName, String> attributes = function.getAdditionalAttributes();
-        return FunctionDefinition.Kind.determineFromString(attributes.get(FunctionDefinition.KIND_QNAME));
-    }
-
-    private void setKind(final FunctionDefinition.Kind kind) {
-        final Map<String, String> nsContext = function.getNsContext();
-        nsContext.put("drools", DMNModelInstrumentedBase.URI_KIE);
-        final Map<QName, String> attributes = function.getAdditionalAttributes();
-        attributes.put(FunctionDefinition.KIND_QNAME, kind.code());
     }
 
     @Override
