@@ -22,7 +22,7 @@ import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNSimpleGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.uberfire.client.callbacks.Callback;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
@@ -34,7 +34,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRende
 import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.dom.single.HasSingletonDOMElementResource;
 
-public class RelationColumn extends DMNGridColumn<RelationGrid, String> implements HasSingletonDOMElementResource {
+public class RelationColumn extends DMNSimpleGridColumn<RelationGrid, String> implements HasSingletonDOMElementResource {
 
     private final TextAreaSingletonDOMElementFactory factory;
 

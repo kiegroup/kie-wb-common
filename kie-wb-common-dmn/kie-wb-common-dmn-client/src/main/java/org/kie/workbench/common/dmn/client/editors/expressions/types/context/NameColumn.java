@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
+import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNSimpleGridColumn;
 import org.uberfire.client.callbacks.Callback;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
@@ -31,7 +31,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRende
 import org.uberfire.ext.wires.core.grids.client.widget.dom.HasDOMElementResources;
 import org.uberfire.ext.wires.core.grids.client.widget.dom.single.HasSingletonDOMElementResource;
 
-public class NameColumn extends DMNGridColumn<ContextGrid, String> implements HasSingletonDOMElementResource {
+public class NameColumn extends DMNSimpleGridColumn<ContextGrid, String> implements HasSingletonDOMElementResource {
 
     private final TextBoxSingletonDOMElementFactory factory;
 

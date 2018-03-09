@@ -127,6 +127,18 @@ public abstract class BaseDOMElementSingletonColumnTest<F extends BaseSingletonD
         assertCellEdit(DEFAULT_VALUE);
     }
 
+    @Test
+    @SuppressWarnings("unchecked")
+    public void checkEditNullCellValueValue() {
+        final GridCell<String> cell = new BaseGridCell<>(new BaseGridCellValue<>(null));
+
+        column.edit(cell,
+                    context,
+                    result -> {/*Nothing*/});
+
+        assertCellEdit(DEFAULT_VALUE);
+    }
+
     @SuppressWarnings("unchecked")
     private void assertCellEdit(final String value) {
         verify(factory).attachDomElement(eq(context),
