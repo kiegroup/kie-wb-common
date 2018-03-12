@@ -134,8 +134,8 @@ public class ShapeStateAttributeAnimationHandler<V extends LienzoShapeView>
                 duration,
                 new AnimationCallback() {
                     @Override
-                    public void onClose(IAnimation animation,
-                                        IAnimationHandle handle) {
+                    public void onClose(final IAnimation animation,
+                                        final IAnimationHandle handle) {
                         super.onClose(animation, handle);
                         if (!animationHandle.isRunning()) {
                             setAnimationHandle(null);

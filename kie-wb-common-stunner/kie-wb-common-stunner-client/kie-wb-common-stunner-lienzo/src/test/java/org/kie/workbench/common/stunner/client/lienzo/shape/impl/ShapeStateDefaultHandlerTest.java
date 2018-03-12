@@ -128,8 +128,7 @@ public class ShapeStateDefaultHandlerTest {
     @Test
     @SuppressWarnings("unchecked")
     public void testSetShapes() {
-        tested
-                .setBorderShape(() -> borderShape)
+        tested.setBorderShape(() -> borderShape)
                 .setBackgroundShape(() -> backgroundShape);
         ArgumentCaptor<Supplier> viewCaptor = ArgumentCaptor.forClass(Supplier.class);
         verify(delegateHandler, times(1)).setView(viewCaptor.capture());
