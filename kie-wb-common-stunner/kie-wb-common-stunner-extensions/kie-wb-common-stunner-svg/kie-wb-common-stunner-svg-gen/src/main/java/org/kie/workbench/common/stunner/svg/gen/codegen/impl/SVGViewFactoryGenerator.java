@@ -63,7 +63,7 @@ public class SVGViewFactoryGenerator
         // Generate template context.
         final List<String> viewsContent = new LinkedList<>();
         viewBuffers.forEach(b -> viewsContent.add(b.toString()));
-        Map<String, Object> root = new HashMap<String, Object>();
+        Map<String, Object> root = new HashMap<>();
         root.put("genClassName",
                  this.getClass().getName());
         root.put("name",
@@ -78,7 +78,7 @@ public class SVGViewFactoryGenerator
                  generateStaticFields(staticFields));
 
         // Generate the code using the given template.
-        StringBuffer result = null;
+        StringBuffer result;
         try {
             result = writeTemplate(root);
         } catch (final GenerationException e) {
@@ -94,7 +94,7 @@ public class SVGViewFactoryGenerator
                                                                viewDefinition);
     }
 
-    private List<String> generateStaticFields(final Map<String, String> values) throws GeneratorException {
+    private List<String> generateStaticFields(final Map<String, String> values) {
         return values.entrySet().stream()
                 .map(entry -> "public static final String " +
                         getStaticFieldValidId(entry.getKey()) +

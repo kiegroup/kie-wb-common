@@ -51,7 +51,7 @@ public class SVGViewDefinitionGeneratorTest {
     private SVGViewDefinitionGenerator tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         tested = new SVGViewDefinitionGenerator();
     }
 

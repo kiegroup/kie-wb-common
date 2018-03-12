@@ -20,11 +20,11 @@ import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,10 +48,9 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
         final IntermediateTimerEvent bean =
                 new IntermediateTimerEvent.IntermediateTimerEventBuilder().build();
         bean.getExecutionSet().getCancelActivity().setValue(false);
-        tested.handle(bean,
-                      view);
-        verify(prim1, times(1)).setAlpha(eq(0d));
-        verify(prim2, times(1)).setAlpha(eq(1d));
+        tested.handle(bean, view);
+        verify(prim1).setAlpha(eq(0d));
+        verify(prim2).setAlpha(eq(1d));
     }
 
     @Test
@@ -59,11 +58,12 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
     public void testHandleTimerIsCancel() {
         final IntermediateTimerEvent bean =
                 new IntermediateTimerEvent.IntermediateTimerEventBuilder().build();
+
         bean.getExecutionSet().getCancelActivity().setValue(true);
-        tested.handle(bean,
-                      view);
-        verify(prim1, times(1)).setAlpha(eq(1d));
-        verify(prim2, times(1)).setAlpha(eq(0d));
+        tested.handle(bean, view);
+
+        verify(prim1).setAlpha(eq(1d));
+        verify(prim2).setAlpha(eq(0d));
     }
 
     @Test
@@ -71,11 +71,12 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
     public void testHandleSignalIsNotCancel() {
         final IntermediateSignalEventCatching bean =
                 new IntermediateSignalEventCatching.IntermediateSignalEventCatchingBuilder().build();
+
         bean.getExecutionSet().getCancelActivity().setValue(false);
-        tested.handle(bean,
-                      view);
-        verify(prim1, times(1)).setAlpha(eq(0d));
-        verify(prim2, times(1)).setAlpha(eq(1d));
+        tested.handle(bean, view);
+
+        verify(prim1).setAlpha(eq(0d));
+        verify(prim2).setAlpha(eq(1d));
     }
 
     @Test
@@ -83,10 +84,37 @@ public class EventCancelActivityViewHandlerTest extends EventViewHandlerTestBase
     public void testHandleSignalIsCancel() {
         final IntermediateSignalEventCatching bean =
                 new IntermediateSignalEventCatching.IntermediateSignalEventCatchingBuilder().build();
+
         bean.getExecutionSet().getCancelActivity().setValue(true);
-        tested.handle(bean,
-                      view);
-        verify(prim1, times(1)).setAlpha(eq(1d));
-        verify(prim2, times(1)).setAlpha(eq(0d));
+        tested.handle(bean, view);
+
+        verify(prim1).setAlpha(eq(1d));
+        verify(prim2).setAlpha(eq(0d));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHandleMessageIsNotCancel() {
+        final IntermediateMessageEventCatching bean =
+                new IntermediateMessageEventCatching.IntermediateMessageEventCatchingBuilder().build();
+
+        bean.getExecutionSet().getCancelActivity().setValue(false);
+        tested.handle(bean, view);
+
+        verify(prim1).setAlpha(eq(0d));
+        verify(prim2).setAlpha(eq(1d));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testHandleMessageIsCancel() {
+        final IntermediateMessageEventCatching bean =
+                new IntermediateMessageEventCatching.IntermediateMessageEventCatchingBuilder().build();
+
+        bean.getExecutionSet().getCancelActivity().setValue(true);
+        tested.handle(bean, view);
+
+        verify(prim1).setAlpha(eq(1d));
+        verify(prim2).setAlpha(eq(0d));
     }
 }

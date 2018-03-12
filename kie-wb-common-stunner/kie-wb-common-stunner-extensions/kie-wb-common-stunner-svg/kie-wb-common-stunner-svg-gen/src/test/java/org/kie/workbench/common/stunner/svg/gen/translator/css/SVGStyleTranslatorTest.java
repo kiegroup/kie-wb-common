@@ -67,7 +67,7 @@ public class SVGStyleTranslatorTest {
     }
 
     @Test
-    public void testGetParentsTree() throws Exception {
+    public void testGetParentsTree() {
         List<Element> tree = SVGStyleTranslator.getElementsTree(element);
         assertNotNull(tree);
         assertEquals(3, tree.size());
@@ -77,7 +77,7 @@ public class SVGStyleTranslatorTest {
     }
 
     @Test
-    public void testParseElementSelectorsForElement() throws Exception {
+    public void testParseElementSelectorsForElement() {
         Collection<String> selectors = SVGStyleTranslator.parseElementSelectors(element);
         assertNotNull(selectors);
         assertEquals(3, selectors.size());
@@ -87,7 +87,7 @@ public class SVGStyleTranslatorTest {
     }
 
     @Test
-    public void testParseElementSelectorsForParent() throws Exception {
+    public void testParseElementSelectorsForParent() {
         Collection<String> selectors = SVGStyleTranslator.parseElementSelectors(parent);
         assertNotNull(selectors);
         assertEquals(3, selectors.size());
@@ -97,7 +97,7 @@ public class SVGStyleTranslatorTest {
     }
 
     @Test
-    public void testParseElementSelectorsForRoot() throws Exception {
+    public void testParseElementSelectorsForRoot() {
         Collection<String> selectors = SVGStyleTranslator.parseElementSelectors(root);
         assertNotNull(selectors);
         assertEquals(3, selectors.size());
@@ -107,7 +107,7 @@ public class SVGStyleTranslatorTest {
     }
 
     @Test
-    public void testParseAllSelectors() throws Exception {
+    public void testParseAllSelectors() {
         Collection<String> selectors = SVGStyleTranslator.parseAllSelectors(element);
         assertNotNull(selectors);
         assertEquals(48, selectors.size());

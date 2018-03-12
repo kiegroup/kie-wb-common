@@ -34,11 +34,11 @@ public abstract class AbstractSVGShapeTranslator<E extends Element, O extends Ab
                                                 SVGTranslatorContext context) throws TranslatorException {
         super.translatePrimitiveDefinition(element, def, context);
         if (!def.isMain()) {
-            final String shapeStateeRaw = getShapeStateAttributeValue(element);
-            if (isEmpty(shapeStateeRaw)) {
+            final String shapeStateRaw = getShapeStateAttributeValue(element);
+            if (isEmpty(shapeStateRaw)) {
                 def.setStateDefinition(Optional.empty());
             } else {
-                def.setStateDefinition(Optional.of(ShapeDefinition.ShapeStateDefinition.valueOf(shapeStateeRaw.toUpperCase())));
+                def.setStateDefinition(Optional.of(ShapeDefinition.ShapeStateDefinition.valueOf(shapeStateRaw.toUpperCase())));
             }
         }
     }

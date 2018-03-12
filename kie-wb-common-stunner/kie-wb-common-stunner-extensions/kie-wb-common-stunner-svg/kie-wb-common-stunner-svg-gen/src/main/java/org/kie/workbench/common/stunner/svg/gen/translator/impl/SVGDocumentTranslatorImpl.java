@@ -63,8 +63,7 @@ public class SVGDocumentTranslatorImpl implements SVGDocumentTranslator {
 
     @Override
     @SuppressWarnings("unchecked")
-    public ViewDefinition<SVGShapeView> translate(final SVGTranslatorContext c) throws TranslatorException {
-        final SVGTranslatorContext context = (SVGTranslatorContext) c;
+    public ViewDefinition<SVGShapeView> translate(final SVGTranslatorContext context) throws TranslatorException {
         final Document root = context.getRoot();
         final StyleSheetDefinition styleSheetDefinition = context.getGlobalStyleSheet().orElse(null);
 
@@ -169,7 +168,7 @@ public class SVGDocumentTranslatorImpl implements SVGDocumentTranslator {
                                        svgSize[1],
                                        styleSheetDefinition,
                                        viewBox[0],
-                                       (ShapeDefinition) main,
+                                       main,
                                        result.toArray(new PrimitiveDefinition<?>[result.size()]));
         viewDefinition.getSVGViewRefs().addAll(context.getViewRefDefinitions());
         return viewDefinition;

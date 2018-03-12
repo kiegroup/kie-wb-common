@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.client.shape.view.handler;
 import java.util.Arrays;
 
 import com.ait.lienzo.client.core.shape.IPrimitive;
-import com.ait.lienzo.client.core.shape.Shape;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitive;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 import org.mockito.Mock;
@@ -42,9 +41,6 @@ public abstract class EventViewHandlerTestBase {
 
     @Mock
     protected IPrimitive<?> prim2;
-
-    @Mock
-    protected Shape shape;
 
     public void init() {
         when(view.getChildren()).thenReturn(Arrays.asList(child1, child2));

@@ -136,7 +136,6 @@ public class SVGGeneratorImpl implements SVGGenerator {
         } else {
             throw new RuntimeException("No SVG file found at [" + svgPath + "]");
         }
-        ;
     }
 
     private InputStream loadResource(final String path) {

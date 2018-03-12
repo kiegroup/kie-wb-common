@@ -16,89 +16,49 @@
 
 package org.kie.workbench.common.stunner.core.client.shape.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttribute;
 import org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttributes;
 
 public class ShapeStateAttributesFactory {
 
-    private static final Map<ShapeState, Supplier<ShapeStateAttributes>> STATE_STROKE_ATTRIBUTES =
-            new HashMap<ShapeState, Supplier<ShapeStateAttributes>>() {{
-                put(ShapeState.NONE,
-                    ShapeStateAttributesFactory::buildAttributes);
-                put(ShapeState.SELECTED,
-                    () -> buildStrokeAttributes((ShapeState.SELECTED)));
-                put(ShapeState.INVALID,
-                    () -> buildStrokeAttributes((ShapeState.INVALID)));
-                put(ShapeState.HIGHLIGHT,
-                    () -> buildStrokeAttributes((ShapeState.HIGHLIGHT)));
-            }};
-
-    private static final Map<ShapeState, Supplier<ShapeStateAttributes>> STATE_FILL_ATTRIBUTES =
-            new HashMap<ShapeState, Supplier<ShapeStateAttributes>>() {{
-                put(ShapeState.NONE,
-                    ShapeStateAttributesFactory::buildAttributes);
-                put(ShapeState.SELECTED,
-                    () -> buildFillAttributes(ShapeState.SELECTED));
-                put(ShapeState.INVALID,
-                    () -> buildFillAttributes(ShapeState.INVALID));
-                put(ShapeState.HIGHLIGHT,
-                    () -> buildFillAttributes(ShapeState.HIGHLIGHT));
-            }};
-
-    public static final String COLOR_SELECTED = "#0000FF";
-    public static final String COLOR_HIGHLIGHT = "#3366CC";
-    public static final String COLOR_INVALID = "#FF0000";
-
-    public final static Function<ShapeState, ShapeStateAttributes> STATE_STROKE_ATTRIBUTES_PROVIDER =
-            state -> STATE_STROKE_ATTRIBUTES.get(state).get();
-
-    public final static Function<ShapeState, ShapeStateAttributes> STATE_FILL_ATTRIBUTES_PROVIDER =
-            state -> STATE_FILL_ATTRIBUTES.get(state).get();
+    static final String COLOR_SELECTED = "#0000FF";
+    static final String COLOR_HIGHLIGHT = "#3366CC";
+    static final String COLOR_INVALID = "#FF0000";
 
     public static ShapeStateAttributes buildStrokeAttributes(final ShapeState state) {
-        switch (state) {
-            case SELECTED:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.STROKE_ALPHA, 1d)
-                        .set(ShapeStateAttribute.STROKE_WIDTH, 1d)
-                        .set(ShapeStateAttribute.STROKE_COLOR, COLOR_SELECTED);
-            case HIGHLIGHT:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.STROKE_ALPHA, 1d)
-                        .set(ShapeStateAttribute.STROKE_WIDTH, 1d)
-                        .set(ShapeStateAttribute.STROKE_COLOR, COLOR_HIGHLIGHT);
-            case INVALID:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.STROKE_ALPHA, 1d)
-                        .set(ShapeStateAttribute.STROKE_WIDTH, 1d)
-                        .set(ShapeStateAttribute.STROKE_COLOR, COLOR_INVALID);
-            default:
-                return buildAttributes();
+        final String COLOR = getAttributeColorByState(state);
+        if (null == COLOR) {
+            return buildAttributes();
         }
+
+        return buildAttributes()
+                        .set(ShapeStateAttribute.STROKE_ALPHA, 1d)
+                        .set(ShapeStateAttribute.STROKE_WIDTH, 1d)
+                        .set(ShapeStateAttribute.STROKE_COLOR, COLOR);
     }
 
     public static ShapeStateAttributes buildFillAttributes(final ShapeState state) {
+        final String COLOR = getAttributeColorByState(state);
+        if (null == COLOR) {
+            return buildAttributes();
+        }
+
+        return buildAttributes()
+                        .set(ShapeStateAttribute.FILL_COLOR, COLOR)
+                        .set(ShapeStateAttribute.FILL_ALPHA, 1d);
+    }
+
+    private static String getAttributeColorByState(final ShapeState state) {
         switch (state) {
             case SELECTED:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.FILL_COLOR, COLOR_SELECTED)
-                        .set(ShapeStateAttribute.FILL_ALPHA, 1d);
+                return COLOR_SELECTED;
             case HIGHLIGHT:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.FILL_COLOR, COLOR_HIGHLIGHT)
-                        .set(ShapeStateAttribute.FILL_ALPHA, 1d);
+                return COLOR_HIGHLIGHT;
             case INVALID:
-                return buildAttributes()
-                        .set(ShapeStateAttribute.FILL_COLOR, COLOR_INVALID)
-                        .set(ShapeStateAttribute.FILL_ALPHA, 1d);
+                return COLOR_INVALID;
             default:
-                return buildAttributes();
+                return null;
         }
     }
 

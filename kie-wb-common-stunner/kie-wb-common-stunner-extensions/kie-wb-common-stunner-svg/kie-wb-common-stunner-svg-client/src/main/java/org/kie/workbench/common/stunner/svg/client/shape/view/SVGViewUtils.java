@@ -29,14 +29,10 @@ public class SVGViewUtils {
                                         final String nonVisibleId) {
         getPrimitive(view,
                      visibleId)
-                .ifPresent(prim -> {
-                    prim.setAlpha(1);
-                });
+                .ifPresent(prim -> prim.setAlpha(1));
         getPrimitive(view,
                      nonVisibleId)
-                .ifPresent(prim -> {
-                    prim.setAlpha(0);
-                });
+                .ifPresent(prim -> prim.setAlpha(0));
     }
 
     @SuppressWarnings("unchecked")

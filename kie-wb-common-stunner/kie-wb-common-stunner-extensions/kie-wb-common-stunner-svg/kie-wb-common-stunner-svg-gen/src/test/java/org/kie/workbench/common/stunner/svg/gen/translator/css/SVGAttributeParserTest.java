@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 public class SVGAttributeParserTest {
 
     @Test
-    public void testPixelValues() throws Exception {
+    public void testPixelValues() {
         assertEquals(0d,
                      SVGAttributeParser.toPixelValue("0"),
                      0d);
@@ -57,7 +57,7 @@ public class SVGAttributeParserTest {
     }
 
     @Test
-    public void testToHexColorString() throws Exception {
+    public void testToHexColorString() {
         assertEquals("#000000",
                      SVGAttributeParser.toHexColorString("#000000"));
         assertEquals("#123456",
@@ -77,7 +77,7 @@ public class SVGAttributeParserTest {
     }
 
     @Test
-    public void testRGBToHexString() throws Exception {
+    public void testRGBToHexString() {
         assertEquals("#000000",
                      SVGAttributeParser.rgbToHexString(0,
                                                        0,
@@ -101,7 +101,7 @@ public class SVGAttributeParserTest {
     }
 
     @Test
-    public void testToRGB() throws Exception {
+    public void testToRGB() {
         assertEquals(16777216,
                      SVGAttributeParser.toRGB(0,
                                               0,

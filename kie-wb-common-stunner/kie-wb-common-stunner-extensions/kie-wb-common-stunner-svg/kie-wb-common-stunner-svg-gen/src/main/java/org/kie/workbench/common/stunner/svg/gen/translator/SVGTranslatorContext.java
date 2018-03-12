@@ -95,9 +95,9 @@ public class SVGTranslatorContext {
         return viewRefDefinitions;
     }
 
-    public String addStaticStringMember(final String name,
+    public void addStaticStringMember(final String name,
                                         final String value) {
-        return staticStringMembers.put(name, value);
+        staticStringMembers.put(name, value);
     }
 
     public Map<String, String> getStaticStringMembers() {

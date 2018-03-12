@@ -50,7 +50,7 @@ public class SVGViewBoxTranslator {
     private static ViewDefinition.ViewBoxDefinition build(final String x,
                                                           final String y,
                                                           final String width,
-                                                          final String height) throws TranslatorException {
+                                                          final String height) {
         return new ViewBoxDefinitionImpl(SVGAttributeParser.toPixelValue(x,
                                                                          0d),
                                          SVGAttributeParser.toPixelValue(y,

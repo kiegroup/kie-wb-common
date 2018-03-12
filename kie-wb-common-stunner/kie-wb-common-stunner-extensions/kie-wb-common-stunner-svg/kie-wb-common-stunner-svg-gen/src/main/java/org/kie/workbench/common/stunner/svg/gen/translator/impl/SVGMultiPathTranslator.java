@@ -47,7 +47,7 @@ public class SVGMultiPathTranslator extends AbstractSVGShapeTranslator<Element, 
     @Override
     protected void translatePosition(final Element element,
                                      final MultiPathDefinition def,
-                                     final SVGTranslatorContext context) throws TranslatorException {
+                                     final SVGTranslatorContext context) {
         def.setX(0d);
         def.setY(0d);
     }

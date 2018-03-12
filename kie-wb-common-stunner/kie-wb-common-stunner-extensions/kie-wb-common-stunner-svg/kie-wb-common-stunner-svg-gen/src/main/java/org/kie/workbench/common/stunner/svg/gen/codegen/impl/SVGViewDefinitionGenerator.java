@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.kie.workbench.common.stunner.client.lienzo.shape.impl.ShapeStateDefaultHandler;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
@@ -55,20 +54,14 @@ public class SVGViewDefinitionGenerator
         final String factoryName = viewFactory.getSimpleName();
         final String viewId = viewDefinition.getId();
         final String methodName = viewDefinition.getFactoryMethodName();
-        final double x = viewDefinition.getX();
-        final double y = viewDefinition.getY();
-        final double width = viewDefinition.getWidth();
-        final double height = viewDefinition.getHeight();
         final ShapeDefinition main = viewDefinition.getMain();
-        final ViewDefinition.ViewBoxDefinition viewBox = viewDefinition.getViewBox();
         if (null != main) {
-            final Map<String, Object> root = new HashMap<String, Object>();
+            final Map<String, Object> root = new HashMap<>();
 
             // Generate the children primitives.
             final List<String> childrenRaw = new LinkedList<>();
             final List<PrimitiveDefinition> children = viewDefinition.getChildren();
-            for (int i = 0; i < children.size(); i++) {
-                final PrimitiveDefinition child = children.get(i);
+            for (final PrimitiveDefinition child : children) {
                 final String childId = SVGGeneratorFormatUtils.getValidInstanceId(child);
                 String childRaw =
                         SVGPrimitiveGeneratorUtils
@@ -171,19 +164,10 @@ public class SVGViewDefinitionGenerator
         return result;
     }
 
-    private static int getChildrenIndex(final ViewDefinition<SVGShapeView> viewDefinition,
-                                        final String id) {
-        final List<PrimitiveDefinition> children = viewDefinition.getChildren();
-        return IntStream.range(0, children.size())
-                .filter(i -> id.equals(children.get(i).getId()))
-                .findFirst()
-                .orElse(-1);
-    }
-
     @SuppressWarnings("unchecked")
     private static PrimitiveDefinitionGenerator<PrimitiveDefinition<?>> getGenerator(final PrimitiveDefinition main) {
         final PrimitiveDefinitionGenerator<?>[] array = ViewGenerators.newPrimitiveDefinitionGenerators();
-        final List<PrimitiveDefinitionGenerator<?>> list = new LinkedList<PrimitiveDefinitionGenerator<?>>();
+        final List<PrimitiveDefinitionGenerator<?>> list = new LinkedList<>();
         Collections.addAll(list,
                            array);
         return (PrimitiveDefinitionGenerator<PrimitiveDefinition<?>>) list.stream()

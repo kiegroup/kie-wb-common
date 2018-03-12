@@ -64,7 +64,7 @@ public class SVGDocumentTranslatorTest {
     }
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         translator = ViewGenerators.newTranslator();
     }
 

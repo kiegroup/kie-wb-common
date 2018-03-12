@@ -51,12 +51,12 @@ public class MultiPathDefinitionGeneratorTest {
     private MultiPathDefinitionGenerator tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         tested = new MultiPathDefinitionGenerator();
     }
 
     @Test
-    public void testGetters() throws Exception {
+    public void testGetters() {
         assertEquals(MultiPathDefinition.class,
                      tested.getDefinitionType());
         assertEquals("MultiPath",

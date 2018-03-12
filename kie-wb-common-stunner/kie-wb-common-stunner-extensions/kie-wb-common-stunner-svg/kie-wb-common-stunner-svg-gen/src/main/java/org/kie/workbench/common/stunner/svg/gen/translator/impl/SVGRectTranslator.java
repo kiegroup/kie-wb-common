@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.svg.gen.translator.impl;
 
-import org.kie.workbench.common.stunner.svg.gen.exception.TranslatorException;
 import org.kie.workbench.common.stunner.svg.gen.model.impl.RectDefinition;
 import org.kie.workbench.common.stunner.svg.gen.translator.SVGTranslatorContext;
 import org.kie.workbench.common.stunner.svg.gen.translator.css.SVGAttributeParser;
@@ -36,7 +35,7 @@ public class SVGRectTranslator extends AbstractSVGShapeTranslator<Element, RectD
 
     @Override
     public RectDefinition doTranslate(final Element rectElement,
-                                      final SVGTranslatorContext context) throws TranslatorException {
+                                      final SVGTranslatorContext context) {
         final String rx = rectElement.getAttribute(RX);
         final String ry = rectElement.getAttribute(RY);
         final String width = rectElement.getAttribute(WIDTH);

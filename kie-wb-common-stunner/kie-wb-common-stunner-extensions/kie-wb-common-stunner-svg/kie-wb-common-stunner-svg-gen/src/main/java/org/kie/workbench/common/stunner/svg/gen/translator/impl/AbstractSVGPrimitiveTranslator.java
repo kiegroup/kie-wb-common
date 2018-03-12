@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.svg.gen.translator.impl;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -62,26 +61,20 @@ public abstract class AbstractSVGPrimitiveTranslator<E extends Element, O extend
                                          def,
                                          context);
             // Parse the stunner's specific transform attributes.
-            translateTransformDefinition(element,
-                                         def,
-                                         context);
+            translateTransformDefinition(element, def);
             // Parse the stunner's child layout, if any.
-            translateLayout(element,
-                            def,
-                            context);
+            translateLayout(element, def);
             // Parse and populate the definition with styles.
             translateStyles(element,
                             def,
                             context);
             // Same for transforms.
-            translateTransforms(element,
-                                def,
-                                context);
+            translateTransforms(element, def);
         }
         return def;
     }
 
-    protected boolean translatePrimitiveExcluded(final E element) throws TranslatorException {
+    protected boolean translatePrimitiveExcluded(final E element) {
 
         final String shapeAttributeValue = getShapeAttributeValue(element);
         return !isEmpty(shapeAttributeValue) &&
@@ -95,13 +88,6 @@ public abstract class AbstractSVGPrimitiveTranslator<E extends Element, O extend
         translatePosition(element,
                           def,
                           context);
-        // Check if this primitive is the main shape for the view.
-        // It can be set by using same classname as the svg id or
-        // by setting the shape attribute value to "main-shape".
-        final String[] classNames = SVGStyleTranslator.getClassNames(element);
-        boolean isMainShape = null != classNames &&
-                Arrays.stream(classNames)
-                        .anyMatch(c -> context.getSVGId().equals(c));
     }
 
     String getShapeAttributeValue(final E element) {
@@ -114,9 +100,7 @@ public abstract class AbstractSVGPrimitiveTranslator<E extends Element, O extend
                                       SVGDocumentTranslator.STUNNER_ATTR_NS_STATE);
     }
 
-    protected void translateTransformDefinition(final E element,
-                                                final O def,
-                                                final SVGTranslatorContext context) throws TranslatorException {
+    protected void translateTransformDefinition(final E element, final O def) {
         boolean result = true;
         Node candidate = element;
         while (null != candidate) {
@@ -168,9 +152,7 @@ public abstract class AbstractSVGPrimitiveTranslator<E extends Element, O extend
         return Y;
     }
 
-    protected LayoutDefinition translateLayout(final E element,
-                                               final O def,
-                                               final SVGTranslatorContext context) throws TranslatorException {
+    protected LayoutDefinition translateLayout(final E element, final O def) {
         final String layoutRaw = element.getAttributeNS(SVGDocumentTranslator.STUNNER_URI,
                                                         SVGDocumentTranslator.STUNNER_ATTR_NS_LAYOUT);
         final LayoutDefinition l = isEmpty(layoutRaw) ? LayoutDefinition.NONE : LayoutDefinition.valueOf(layoutRaw);
@@ -178,9 +160,7 @@ public abstract class AbstractSVGPrimitiveTranslator<E extends Element, O extend
         return l;
     }
 
-    protected TransformDefinition translateTransforms(final E element,
-                                                      final O def,
-                                                      final SVGTranslatorContext context) throws TranslatorException {
+    protected TransformDefinition translateTransforms(final E element, final O def) throws TranslatorException {
         final TransformDefinition transformDefinition = SVGStyleTranslator.parseTransformDefinition(element);
         def.setTransformDefinition(transformDefinition);
         return transformDefinition;

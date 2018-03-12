@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.svg.gen.translator.impl;
 
-import org.kie.workbench.common.stunner.svg.gen.exception.TranslatorException;
 import org.kie.workbench.common.stunner.svg.gen.model.impl.CircleDefinition;
 import org.kie.workbench.common.stunner.svg.gen.translator.SVGTranslatorContext;
 import org.kie.workbench.common.stunner.svg.gen.translator.css.SVGAttributeParser;
@@ -35,7 +34,7 @@ public class SVGCircleTranslator extends AbstractSVGShapeTranslator<Element, Cir
 
     @Override
     public CircleDefinition doTranslate(final Element rectElement,
-                                        final SVGTranslatorContext context) throws TranslatorException {
+                                        final SVGTranslatorContext context) {
         final String radius = rectElement.getAttribute(RADIUS);
         return new CircleDefinition(getId(rectElement),
                                     SVGAttributeParser.toPixelValue(radius));

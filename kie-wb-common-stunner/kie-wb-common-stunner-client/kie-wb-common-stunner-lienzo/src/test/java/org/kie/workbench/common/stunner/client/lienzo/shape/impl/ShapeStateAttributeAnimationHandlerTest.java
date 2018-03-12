@@ -67,7 +67,7 @@ public class ShapeStateAttributeAnimationHandlerTest {
                            any(AnimationCallback.class)))
                 .thenReturn(animationHandle);
         tested = new ShapeStateAttributeAnimationHandler<>();
-        tested.getAttributesHandler().useAttributes(ShapeStateAttributesFactory.STATE_STROKE_ATTRIBUTES_PROVIDER);
+        tested.getAttributesHandler().useAttributes(ShapeStateAttributesFactory::buildStrokeAttributes);
         tested.getAttributesHandler().setView(() -> view);
         tested.onComplete(completeCallback);
     }

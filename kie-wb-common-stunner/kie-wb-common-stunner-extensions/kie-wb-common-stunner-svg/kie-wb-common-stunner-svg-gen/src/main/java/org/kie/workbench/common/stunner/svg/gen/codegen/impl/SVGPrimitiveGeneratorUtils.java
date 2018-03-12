@@ -63,10 +63,7 @@ public class SVGPrimitiveGeneratorUtils {
                 } else if (child instanceof GroupDefinition) {
                     final GroupDefinition groupDefinition = (GroupDefinition) child;
                     final List<PrimitiveDefinition> children = groupDefinition.getChildren();
-                    if (children.stream()
-                            .filter(generationFilter::test)
-                            .findAny()
-                            .isPresent()) {
+                    if (children.stream().anyMatch(generationFilter)) {
                         // Generate the group primitive.
                         childRaw = AbstractGenerator.formatString(NEW_SVG_CONTAINER_TEMPLATE,
                                                                   instanceId,
@@ -75,8 +72,7 @@ public class SVGPrimitiveGeneratorUtils {
                                                                   scalableRaw,
                                                                   childLayoutRaw);
                         // Generate the group children ones.
-                        for (int j = 0; j < children.size(); j++) {
-                            final PrimitiveDefinition childDef = children.get(j);
+                        for (final PrimitiveDefinition childDef : children) {
                             final String childDefInstanceId = SVGGeneratorFormatUtils.getValidInstanceId(childDef);
                             final String childDefRaw = generateSvgPrimitive(childDefInstanceId,
                                                                             generatorProvider,

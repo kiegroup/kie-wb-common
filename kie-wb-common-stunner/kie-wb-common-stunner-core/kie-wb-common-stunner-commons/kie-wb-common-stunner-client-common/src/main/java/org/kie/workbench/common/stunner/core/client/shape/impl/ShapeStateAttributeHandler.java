@@ -17,11 +17,11 @@
 package org.kie.workbench.common.stunner.core.client.shape.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.core.client.shape.ShapeState;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
@@ -162,21 +162,15 @@ public class ShapeStateAttributeHandler<V extends ShapeView>
         }
 
         private ShapeStateAttributes store(final ShapeView<?> view) {
-            values.keySet().stream()
-                    .collect(Collectors.toSet())
-                    .stream()
-                    .forEach(attr -> {
-                        values.put(attr, attr.valueProvider.apply(view));
-                    });
+            new HashSet<>(values.keySet())
+                    .forEach(attr -> values.put(attr, attr.valueProvider.apply(view)));
             return this;
         }
 
         public ShapeStateAttributes consume(final BiConsumer<ShapeStateAttribute, Object> attribute) {
-            values
-                    .entrySet()
-                    .forEach(entry -> {
-                        if (null != entry.getValue()) {
-                            attribute.accept(entry.getKey(), entry.getValue());
+            values.forEach((key, value) -> {
+                        if (null != value) {
+                            attribute.accept(key, value);
                         }
                     });
             return this;

@@ -35,8 +35,8 @@ public class ShapeStateDefaultHandler
         implements ShapeStateHandler {
 
     public enum RenderType {
-        FILL(ShapeStateAttributesFactory.STATE_FILL_ATTRIBUTES_PROVIDER),
-        STROKE(ShapeStateAttributesFactory.STATE_STROKE_ATTRIBUTES_PROVIDER);
+        FILL(ShapeStateAttributesFactory::buildFillAttributes),
+        STROKE(ShapeStateAttributesFactory::buildStrokeAttributes);
 
         private final Function<ShapeState, ShapeStateAttributes> stateAttributesProvider;
 
@@ -151,9 +151,5 @@ public class ShapeStateDefaultHandler
 
     private static boolean isStateHighlight(ShapeState state) {
         return ShapeState.HIGHLIGHT.equals(state);
-    }
-
-    private static boolean isStateInvalid(ShapeState state) {
-        return ShapeState.INVALID.equals(state);
     }
 }

@@ -119,8 +119,7 @@ public class SVGStyleTranslator {
         } else {
             // Parse styles from element attributes.
             StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < ATTR_NAMES.length; i++) {
-                final String key = ATTR_NAMES[i];
+            for (final String key : ATTR_NAMES) {
                 final String value = element.getAttribute(key);
                 if (!isEmpty(value)) {
                     builder.append(key).append(": ").append(value).append("; ");
@@ -187,7 +186,6 @@ public class SVGStyleTranslator {
             final CSSRule item = cssRules.item(i);
             if (CSSRule.STYLE_RULE == item.getType()) {
                 final CSSStyleRuleImpl rule = (CSSStyleRuleImpl) item;
-                String selectorText = rule.getSelectorText();
                 final CSSStyleDeclaration declaration = rule.getStyle();
                 return parseStyleDefinition(declaration);
             }
