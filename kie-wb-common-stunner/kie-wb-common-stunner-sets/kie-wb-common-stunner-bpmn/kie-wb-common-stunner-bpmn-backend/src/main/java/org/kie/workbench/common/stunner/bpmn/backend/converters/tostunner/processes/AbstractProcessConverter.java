@@ -44,7 +44,7 @@ class AbstractProcessConverter {
     protected final DefinitionResolver definitionResolver;
     private final ConverterFactory converterFactory;
 
-    public AbstractProcessConverter(
+    AbstractProcessConverter(
             TypedFactoryManager typedFactoryManager,
             DefinitionResolver definitionResolver,
             ConverterFactory factory) {

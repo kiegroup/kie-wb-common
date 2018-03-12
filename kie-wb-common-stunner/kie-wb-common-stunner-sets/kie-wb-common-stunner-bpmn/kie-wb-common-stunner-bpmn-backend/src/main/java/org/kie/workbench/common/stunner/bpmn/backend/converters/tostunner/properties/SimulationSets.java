@@ -132,7 +132,6 @@ public class SimulationSets {
             simulationSet.getUnitCost().setValue(extractDouble(costParams.getUnitCost()));
         }
 
-        //todo? controlParams(eleType, simulationSet);
         ResourceParameters resourceParams = eleType.getResourceParameters();
 
         if (resourceParams != null) {

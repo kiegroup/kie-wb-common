@@ -116,9 +116,7 @@ public class StartEventConverter {
         event.setIsInterrupting(executionSet.getIsInterrupting().getValue());
 
         p.addTimer(executionSet.getTimerSettings());
-
-        //p(e).setTimerSettings FIXME
-        //p.setSimulationSet
+        p.setSimulationSet(definition.getSimulationSet());
 
         p.setBounds(n.getContent().getBounds());
         return p;
