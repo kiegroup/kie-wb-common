@@ -53,8 +53,8 @@ public class ShapeStateDefaultHandler
         }
     }
 
-    private static final Shadow SHADOW_HIGHLIGHT = new Shadow(ColorName.BLACK.getColor().setA(0.70), 15, 0, 0);
-    private static final Shadow SHADOW_SELECTED = new Shadow(ColorName.BLACK.getColor().setA(0.70), 5, 2, 2);
+    private static final Shadow SHADOW_HIGHLIGHT = new Shadow(ColorName.BLACK.getColor().setA(0.40), 10, 0, 0);
+    private static final Shadow SHADOW_SELECTED = new Shadow(ColorName.BLACK.getColor().setA(0.40), 5, 2, 2);
 
     private final ShapeStateAttributeAnimationHandler<LienzoShapeView<?>> handler;
     private Supplier<LienzoShapeView<?>> backgroundShapeSupplier;
