@@ -120,6 +120,10 @@ public class SafeDeleteNodeProcessor {
                 .filter(e -> e.getContent() instanceof Child)
                 .forEach(e -> callback.removeChild(e.getSourceNode(),
                                                    node));
+
+        GraphUtils.getDockParent(node)
+                .ifPresent(dockParent-> callback.removeDock(dockParent, node));
+
         if (candidate) {
             callback.deleteCandidateNode(node);
         } else {

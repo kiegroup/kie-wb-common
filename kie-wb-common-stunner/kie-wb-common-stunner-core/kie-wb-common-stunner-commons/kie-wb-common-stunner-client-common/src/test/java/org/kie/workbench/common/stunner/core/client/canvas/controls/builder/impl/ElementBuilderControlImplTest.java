@@ -171,7 +171,7 @@ public class ElementBuilderControlImplTest {
         when(canvasHandler.getDiagram()).thenReturn(diagram);
         when(diagram.getMetadata()).thenReturn(metadata);
         when(metadata.getShapeSetId()).thenReturn(SHAPE_SET_ID);
-        when(canvasCommandFactory.updateDockNode(parent, node)).thenReturn(dockCommand);
+        when(canvasCommandFactory.updateDockNode(parent, node, true)).thenReturn(dockCommand);
         when(canvasCommandFactory.updatePosition(eq(node), any())).thenReturn(updateDockPositionCommand);
         when(canvasCommandFactory.addChildNode(any(), eq(node), eq(SHAPE_SET_ID))).thenReturn(addChildCommand);
         when(canvasCommandFactory.addNode(eq(node), eq(SHAPE_SET_ID))).thenReturn(addNodeCommand);

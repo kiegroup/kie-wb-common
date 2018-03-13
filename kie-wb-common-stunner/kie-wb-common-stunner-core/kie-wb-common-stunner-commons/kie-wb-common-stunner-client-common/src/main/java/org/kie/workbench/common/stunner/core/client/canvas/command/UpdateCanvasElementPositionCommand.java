@@ -23,7 +23,6 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
 public class UpdateCanvasElementPositionCommand extends AbstractCanvasCommand {
 
@@ -35,11 +34,6 @@ public class UpdateCanvasElementPositionCommand extends AbstractCanvasCommand {
 
     @Override
     public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-        if (element instanceof Node && GraphUtils.isDockedNode((Node<?, ? extends Edge>) element)) {
-            //if node is docked the position is handled by the dock command
-            return buildResult();
-        }
-
         context.updateElementPosition(element, MutationContext.STATIC);
         moveConnectorsToTop(context);
         return buildResult();

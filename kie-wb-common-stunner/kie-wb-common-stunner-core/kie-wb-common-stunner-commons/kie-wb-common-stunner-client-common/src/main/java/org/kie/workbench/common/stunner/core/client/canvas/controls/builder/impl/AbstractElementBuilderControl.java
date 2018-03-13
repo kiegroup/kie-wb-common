@@ -308,7 +308,7 @@ public abstract class AbstractElementBuilderControl extends AbstractCanvasHandle
                 Node<View<?>, Edge> grandParent = (Node<View<?>, Edge>) GraphUtils.getParent(parent);
                 commandList.add(canvasCommandFactory.addChildNode(grandParent, node, getShapeSetId()));
                 commandList.add(canvasCommandFactory.updatePosition(node, getChildCoordinates(grandParent, x, y)));
-                commandList.add(canvasCommandFactory.updateDockNode(parent, node));
+                commandList.add(canvasCommandFactory.updateDockNode(parent, node, true));
                 return commandList;
             }
             case CONTAINMENT: {

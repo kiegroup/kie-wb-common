@@ -34,11 +34,18 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
 
     private final Node parent;
     private final Node candidate;
+    private boolean adjustPosition;
 
     public UpdateDockNodeCommand(final Node parent,
                                  final Node candidate) {
+        this(parent, candidate, false);
+    }
+
+    public UpdateDockNodeCommand(final Node parent,
+                                 final Node candidate, boolean adjustPosition) {
         this.parent = parent;
         this.candidate = candidate;
+        this.adjustPosition = adjustPosition;
     }
 
     @Override
@@ -72,8 +79,7 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
         }
 
         // Finally, dock the candidate into the parent.
-        addCommand(new DockNodeCommand(parent,
-                                       candidate));
+        addCommand(new DockNodeCommand(parent, candidate, adjustPosition));
         return this;
     }
 
