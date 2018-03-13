@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.datamodeller.client;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -27,11 +28,11 @@ import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.workbench.common.screens.datamodeller.client.pdescriptor.ClassRow;
 import org.kie.workbench.common.screens.datamodeller.client.pdescriptor.ClassRowImpl;
-import org.kie.workbench.common.screens.datamodeller.client.widgets.datasourceselector.DataSourceInfo;
-import org.kie.workbench.common.screens.datamodeller.client.widgets.datasourceselector.DataSourceSelector;
 import org.kie.workbench.common.screens.datamodeller.client.pdescriptor.PropertyRow;
 import org.kie.workbench.common.screens.datamodeller.client.resources.i18n.Constants;
 import org.kie.workbench.common.screens.datamodeller.client.type.PersistenceDescriptorType;
+import org.kie.workbench.common.screens.datamodeller.client.widgets.datasourceselector.DataSourceInfo;
+import org.kie.workbench.common.screens.datamodeller.client.widgets.datasourceselector.DataSourceSelector;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceDescriptorEditorContent;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceDescriptorModel;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.PersistenceUnitModel;
@@ -365,21 +366,16 @@ public class PersistenceDescriptorEditorPresenter
     }
 
     @Override
-    protected Command onValidate() {
-        return new Command() {
-            @Override
-            public void execute() {
-                onValidateDescriptor();
-            }
-        };
+    protected void onValidate(Command finished) {
+        onValidateDescriptor(finished);
     }
 
-    protected void onValidateDescriptor( ) {
+    protected void onValidateDescriptor(Command finished) {
         updateContent( );
-        descriptorService.call( getValidationSuccessCallback(), new DefaultErrorCallback( ) ).validate( versionRecordManager.getCurrentPath( ), content.getDescriptorModel( ) );
+        descriptorService.call( getValidationSuccessCallback(finished), new DefaultErrorCallback( ) ).validate( versionRecordManager.getCurrentPath( ), content.getDescriptorModel( ) );
     }
 
-    private RemoteCallback<List<ValidationMessage>> getValidationSuccessCallback() {
+    private RemoteCallback<List<ValidationMessage>> getValidationSuccessCallback(Command finished) {
         return new RemoteCallback<List<ValidationMessage>>() {
             @Override
             public void callback( List<ValidationMessage> messages ) {
@@ -390,6 +386,7 @@ public class PersistenceDescriptorEditorPresenter
                 } else {
                     validationPopup.showTranslatedMessages( messages );
                 }
+                finished.execute();
             }
         };
     }
