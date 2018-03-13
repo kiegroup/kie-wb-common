@@ -28,6 +28,7 @@ import org.drools.core.rule.TypeMetaInfo;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
@@ -71,6 +72,12 @@ public class KieMetadataTest {
         }
     }
 
+    @Ignore
+    /**
+     * Temporarily ignoring this test
+     * There is a ungoing issue on Drools compiler (processing of pmml) that breaks this test.
+     * Tracked by https://issues.jboss.org/browse/AF-1085
+     */
     @Test
     public void compileAndLoadKieJarMetadataAllResourcesPackagedJar() throws Exception {
         /**
