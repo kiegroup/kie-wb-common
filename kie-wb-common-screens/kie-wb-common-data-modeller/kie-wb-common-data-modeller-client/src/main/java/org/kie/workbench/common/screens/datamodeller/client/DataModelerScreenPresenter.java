@@ -66,7 +66,6 @@ import org.kie.workbench.common.services.datamodeller.core.DataObject;
 import org.kie.workbench.common.services.datamodeller.core.JavaTypeInfo;
 import org.kie.workbench.common.services.datamodeller.core.ObjectProperty;
 import org.kie.workbench.common.services.datamodeller.core.impl.JavaTypeInfoImpl;
-import org.kie.workbench.common.widgets.client.callbacks.CommandDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.popups.validation.ValidationPopup;
 import org.kie.workbench.common.widgets.metadata.client.KieEditor;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorView;
@@ -89,7 +88,6 @@ import org.uberfire.ext.editor.commons.client.file.RenamePopup;
 import org.uberfire.ext.editor.commons.client.file.RenamePopupView;
 import org.uberfire.ext.editor.commons.client.file.SaveOperationService;
 import org.uberfire.ext.widgets.common.client.callbacks.CommandErrorCallback;
-import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 import org.uberfire.lifecycle.OnClose;
 import org.uberfire.lifecycle.OnFocus;
@@ -465,6 +463,7 @@ public class DataModelerScreenPresenter
         }
     }
 
+    @Override
     protected void onValidate(final Command callFinished) {
 
         //at validation time we must do the same calculation as if we were about to save.
