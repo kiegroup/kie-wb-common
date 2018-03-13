@@ -18,16 +18,10 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.custompropertie
 
 import java.util.Objects;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-@Portable
 public class VariableDeclaration {
 
     private String identifier;
     private String type;
-
-    public VariableDeclaration() {
-    }
 
     public VariableDeclaration(String identifier, String type) {
         this.identifier = identifier;

@@ -22,9 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
-
-@Portable
 public class AssociationList {
 
     private final List<AssociationDeclaration> inputs;
