@@ -63,7 +63,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
-import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DDExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNShape;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNStyle;
@@ -874,17 +873,9 @@ public class DMNMarshallerTest {
                 .map(n -> (Decision) n.getDefinition())
                 .findFirst();
 
-        // When writing the WB DMN model to XML the FunctionDefinition contains an attribute with
-        // Key '{http://www.drools.org/kie/dmn/1.1}kind' and Value 'J'. This becomes 'drools:kind' and 'J' respectively.
         wbDecision.ifPresent(d -> {
             assertTrue(d.getExpression() instanceof FunctionDefinition);
             final FunctionDefinition wbFunction = (FunctionDefinition) d.getExpression();
-
-            //This is wrong and breaks the WB
-            final QName wbQName = new QName("drools:kind");
-            assertTrue(wbFunction.getAdditionalAttributes().containsKey(wbQName));
-            assertEquals("J",
-                         wbFunction.getAdditionalAttributes().get(wbQName));
 
             //This is what the WB expects
             assertTrue(wbFunction.getAdditionalAttributes().containsKey(FunctionDefinition.KIND_QNAME));
