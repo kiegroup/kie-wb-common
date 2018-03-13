@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
+import java.util.Collections;
+
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
 import org.jboss.errai.databinding.client.BindableProxyProvider;
@@ -27,6 +29,7 @@ import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormMode
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
+import org.kie.workbench.common.stunner.forms.client.formFilters.StunnerFilterProviderManager;
 import org.kie.workbench.common.stunner.forms.context.PathAwareFormContext;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -72,6 +75,9 @@ public class FormDisplayerTest {
     @Mock
     private DynamicFormModelGenerator dynamicFormModelGenerator;
 
+    @Mock
+    private StunnerFilterProviderManager filterProviderManager;
+
     private FormDisplayer displayer;
 
     @Before
@@ -93,7 +99,9 @@ public class FormDisplayerTest {
         BindableProxyFactory.addBindableProxy(SecondDefinition.class,
                                               proxyProvider);
 
-        displayer = new FormDisplayer(view, formRenderer, dynamicFormModelGenerator);
+        when(filterProviderManager.getFilterForDefinition(any(), any(), any())).thenReturn(Collections.emptyList());
+
+        displayer = new FormDisplayer(view, formRenderer, dynamicFormModelGenerator, filterProviderManager);
 
         verify(view, times(1)).init(displayer);
     }
@@ -167,6 +175,7 @@ public class FormDisplayerTest {
         verify(formRenderer, times(initializedTimes)).isInitialized();
         verify(formRenderer, times(boundTimes)).unBind();
         verify(dynamicFormModelGenerator, times(newContextTimes)).getContextForModel(elementDefinition);
+        verify(filterProviderManager, times(newContextTimes)).getFilterForDefinition(any(), any(), any());
         verify(formRenderer, times(renderingTimes)).render(any(PathAwareFormContext.class));
         verify(formRenderer, times(renderingTimes)).addFieldChangeHandler(fieldChangeHandler);
 
