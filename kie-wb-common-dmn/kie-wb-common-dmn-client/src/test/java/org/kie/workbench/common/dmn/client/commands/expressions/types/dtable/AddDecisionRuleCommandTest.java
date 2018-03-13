@@ -29,6 +29,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.Deci
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DescriptionColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.InputClauseColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.OutputClauseColumn;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -78,6 +79,9 @@ public class AddDecisionRuleCommandTest {
     private DescriptionColumn uiDescriptionColumn;
 
     @Mock
+    private ListSelectorView.Presenter listSelector;
+
+    @Mock
     private AbstractCanvasHandler canvasHandler;
 
     @Mock
@@ -94,9 +98,8 @@ public class AddDecisionRuleCommandTest {
         this.uiModel.appendColumn(uiRowNumberColumn);
         this.uiModelRow = new DMNGridRow();
         this.uiModelMapper = new DecisionTableUIModelMapper(() -> uiModel,
-                                                            () -> Optional.of(dtable));
-
-        this.command = new AddDecisionRuleCommand(dtable, rule, uiModel, uiModelRow, uiModelMapper, canvasOperation);
+                                                            () -> Optional.of(dtable),
+                                                            listSelector);
 
         doReturn(0).when(uiRowNumberColumn).getIndex();
         doReturn(1).when(uiInputClauseColumn).getIndex();
@@ -104,8 +107,20 @@ public class AddDecisionRuleCommandTest {
         doReturn(3).when(uiDescriptionColumn).getIndex();
     }
 
+    private void makeCommand(final int index) {
+        this.command = new AddDecisionRuleCommand(dtable,
+                                                  rule,
+                                                  uiModel,
+                                                  uiModelRow,
+                                                  index,
+                                                  uiModelMapper,
+                                                  canvasOperation);
+    }
+
     @Test
     public void testGraphCommandAllow() throws Exception {
+        makeCommand(0);
+
         final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
@@ -114,6 +129,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testGraphCommandCheck() throws Exception {
+        makeCommand(0);
+
         final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
 
         assertEquals(GraphCommandResultBuilder.SUCCESS,
@@ -122,6 +139,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testGraphCommandExecuteConstructedDescription() {
+        makeCommand(0);
+
         assertEquals(0, dtable.getRule().size());
 
         final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
@@ -137,6 +156,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testGraphCommandExecuteConstructedRuleInputs() {
+        makeCommand(0);
+
         assertEquals(0, dtable.getRule().size());
         final int inputsCount = 2;
 
@@ -162,6 +183,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testGraphCommandExecuteConstructedRuleOutputs() {
+        makeCommand(0);
+
         assertEquals(0, dtable.getRule().size());
         final int outputsCount = 2;
 
@@ -187,6 +210,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testGraphCommandUndo() {
+        makeCommand(0);
+
         assertEquals(0, dtable.getRule().size());
 
         final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
@@ -201,7 +226,44 @@ public class AddDecisionRuleCommandTest {
     }
 
     @Test
+    public void testGraphCommandExecuteInsertBelow() {
+        //The default behaviour of tests in this class is to "insert above"
+        final DecisionRule existingRule = new DecisionRule();
+        dtable.getRule().add(existingRule);
+        makeCommand(1);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
+        graphCommand.execute(graphCommandExecutionContext);
+
+        assertEquals(2,
+                     dtable.getRule().size());
+        assertEquals(existingRule,
+                     dtable.getRule().get(0));
+        assertEquals(rule,
+                     dtable.getRule().get(1));
+    }
+
+    @Test
+    public void testGraphCommandExecuteInsertBelowThenUndo() {
+        //The default behaviour of tests in this class is to "insert above"
+        final DecisionRule existingRule = new DecisionRule();
+        dtable.getRule().add(existingRule);
+        makeCommand(1);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
+        graphCommand.execute(graphCommandExecutionContext);
+        graphCommand.undo(graphCommandExecutionContext);
+
+        assertEquals(1,
+                     dtable.getRule().size());
+        assertEquals(existingRule,
+                     dtable.getRule().get(0));
+    }
+
+    @Test
     public void testCanvasCommandAllow() throws Exception {
+        makeCommand(0);
+
         final Command<AbstractCanvasHandler, CanvasViolation> canvasCommand = command.newCanvasCommand(canvasHandler);
 
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
@@ -210,6 +272,8 @@ public class AddDecisionRuleCommandTest {
 
     @Test
     public void testCanvasCommandAddRuleAndThenUndo() throws Exception {
+        makeCommand(0);
+
         dtable.getInput().add(new InputClause());
         dtable.getOutput().add(new OutputClause());
 
@@ -234,5 +298,56 @@ public class AddDecisionRuleCommandTest {
 
         // one time in execute(), one time in undo()
         verify(canvasOperation, times(2)).execute();
+    }
+
+    @Test
+    public void testCanvasCommandExecuteInsertBelow() {
+        //The default behaviour of tests in this class is to "insert above"
+        final DecisionRule existingRule = new DecisionRule();
+        final DMNGridRow existingUiRow = new DMNGridRow();
+        dtable.getRule().add(existingRule);
+        uiModel.appendRow(existingUiRow);
+        makeCommand(1);
+
+        uiModel.appendColumn(uiInputClauseColumn);
+        uiModel.appendColumn(uiOutputClauseColumn);
+        uiModel.appendColumn(uiDescriptionColumn);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
+        final Command<AbstractCanvasHandler, CanvasViolation> canvasCommand = command.newCanvasCommand(canvasHandler);
+        graphCommand.execute(graphCommandExecutionContext);
+        canvasCommand.execute(canvasHandler);
+
+        assertEquals(2,
+                     uiModel.getRowCount());
+        assertEquals(existingUiRow,
+                     uiModel.getRow(0));
+        assertEquals(uiModelRow,
+                     uiModel.getRow(1));
+    }
+
+    @Test
+    public void testCanvasCommandExecuteInsertBelowThenUndo() {
+        //The default behaviour of tests in this class is to "insert above"
+        final DecisionRule existingRule = new DecisionRule();
+        final DMNGridRow existingUiRow = new DMNGridRow();
+        dtable.getRule().add(existingRule);
+        uiModel.appendRow(existingUiRow);
+        makeCommand(1);
+
+        uiModel.appendColumn(uiInputClauseColumn);
+        uiModel.appendColumn(uiOutputClauseColumn);
+        uiModel.appendColumn(uiDescriptionColumn);
+
+        final Command<GraphCommandExecutionContext, RuleViolation> graphCommand = command.newGraphCommand(canvasHandler);
+        final Command<AbstractCanvasHandler, CanvasViolation> canvasCommand = command.newCanvasCommand(canvasHandler);
+        graphCommand.execute(graphCommandExecutionContext);
+        canvasCommand.execute(canvasHandler);
+        canvasCommand.undo(canvasHandler);
+
+        assertEquals(1,
+                     uiModel.getRowCount());
+        assertEquals(existingUiRow,
+                     uiModel.getRow(0));
     }
 }

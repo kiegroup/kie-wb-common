@@ -46,6 +46,7 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
     private final OutputClause outputClause;
     private final GridData uiModel;
     private final OutputClauseColumn uiModelColumn;
+    private final int uiColumnIndex;
     private final DecisionTableUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
@@ -53,12 +54,14 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
                                   final OutputClause outputClause,
                                   final GridData uiModel,
                                   final OutputClauseColumn uiModelColumn,
+                                  final int uiColumnIndex,
                                   final DecisionTableUIModelMapper uiModelMapper,
                                   final org.uberfire.mvp.Command canvasOperation) {
         this.dtable = dtable;
         this.outputClause = outputClause;
         this.uiModel = uiModel;
         this.uiModelColumn = uiModelColumn;
+        this.uiColumnIndex = uiColumnIndex;
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
     }
@@ -73,12 +76,13 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
-                dtable.getOutput().add(outputClause);
+                final int ocIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT - dtable.getInput().size();
+                dtable.getOutput().add(ocIndex, outputClause);
 
                 dtable.getRule().forEach(rule -> {
                     final LiteralExpression le = new LiteralExpression();
                     le.setText(OUTPUT_CLAUSE_DEFAULT_VALUE);
-                    rule.getOutputEntry().add(le);
+                    rule.getOutputEntry().add(ocIndex, le);
                 });
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -100,15 +104,12 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-                final int columnIndex = DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT
-                        + dtable.getInput().size()
-                        + dtable.getOutput().indexOf(outputClause);
-                uiModel.insertColumn(columnIndex,
+                uiModel.insertColumn(uiColumnIndex,
                                      uiModelColumn);
 
                 for (int rowIndex = 0; rowIndex < dtable.getRule().size(); rowIndex++) {
                     uiModelMapper.fromDMNModel(rowIndex,
-                                               columnIndex);
+                                               uiColumnIndex);
                 }
 
                 canvasOperation.execute();

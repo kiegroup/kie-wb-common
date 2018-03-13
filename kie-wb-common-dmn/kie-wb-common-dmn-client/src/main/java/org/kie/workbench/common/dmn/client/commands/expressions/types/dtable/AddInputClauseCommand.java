@@ -46,6 +46,7 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
     private final InputClause inputClause;
     private final GridData uiModel;
     private final InputClauseColumn uiModelColumn;
+    private final int uiColumnIndex;
     private final DecisionTableUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
@@ -53,12 +54,14 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
                                  final InputClause inputClause,
                                  final GridData uiModel,
                                  final InputClauseColumn uiModelColumn,
+                                 final int uiColumnIndex,
                                  final DecisionTableUIModelMapper uiModelMapper,
                                  final org.uberfire.mvp.Command canvasOperation) {
         this.dtable = dtable;
         this.inputClause = inputClause;
         this.uiModel = uiModel;
         this.uiModelColumn = uiModelColumn;
+        this.uiColumnIndex = uiColumnIndex;
         this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
     }
@@ -73,12 +76,12 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
-                dtable.getInput().add(inputClause);
-
+                final int icIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT;
+                dtable.getInput().add(icIndex, inputClause);
                 dtable.getRule().forEach(rule -> {
                     final UnaryTests ut = new UnaryTests();
                     ut.setText(INPUT_CLAUSE_DEFAULT_VALUE);
-                    rule.getInputEntry().add(ut);
+                    rule.getInputEntry().add(icIndex, ut);
                 });
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -100,13 +103,12 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
         return new AbstractCanvasCommand() {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
-                final int columnIndex = DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT + dtable.getInput().indexOf(inputClause);
-                uiModel.insertColumn(columnIndex,
+                uiModel.insertColumn(uiColumnIndex,
                                      uiModelColumn);
 
                 for (int rowIndex = 0; rowIndex < dtable.getRule().size(); rowIndex++) {
                     uiModelMapper.fromDMNModel(rowIndex,
-                                               columnIndex);
+                                               uiColumnIndex);
                 }
 
                 canvasOperation.execute();
