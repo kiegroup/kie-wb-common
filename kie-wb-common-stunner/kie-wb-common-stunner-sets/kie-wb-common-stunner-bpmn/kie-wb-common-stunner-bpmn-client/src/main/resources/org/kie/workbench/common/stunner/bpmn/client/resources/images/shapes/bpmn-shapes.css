@@ -446,7 +446,7 @@
 
 
 #reusableSubProcess .subProcess {
-    stroke-width: 1.5px; /* this is the whole outline */
+    stroke-width: 3px; /* this is the whole outline */
     stroke: #393f44;
 }
 

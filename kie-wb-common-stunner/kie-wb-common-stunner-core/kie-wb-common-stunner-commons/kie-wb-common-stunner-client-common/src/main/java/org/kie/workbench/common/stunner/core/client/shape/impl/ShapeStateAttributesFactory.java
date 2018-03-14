@@ -34,7 +34,6 @@ public class ShapeStateAttributesFactory {
 
         return buildAttributes()
                         .set(ShapeStateAttribute.STROKE_ALPHA, 1d)
-                        .set(ShapeStateAttribute.STROKE_WIDTH, 1d)
                         .set(ShapeStateAttribute.STROKE_COLOR, COLOR);
     }
 

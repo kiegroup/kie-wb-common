@@ -30,7 +30,6 @@ import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeState
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttribute.FILL_COLOR;
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttribute.STROKE_ALPHA;
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttribute.STROKE_COLOR;
-import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributeHandler.ShapeStateAttribute.STROKE_WIDTH;
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributesFactory.COLOR_HIGHLIGHT;
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributesFactory.COLOR_INVALID;
 import static org.kie.workbench.common.stunner.core.client.shape.impl.ShapeStateAttributesFactory.COLOR_SELECTED;
@@ -54,7 +53,6 @@ public class ShapeStateAttributesFactoryTest {
 
     private void assertStrokeAttributes(ShapeStateAttributeHandler.ShapeStateAttributes attributes, String color) {
         assertEquals(1d, attributes.getValues().get(STROKE_ALPHA));
-        assertEquals(1d, attributes.getValues().get(STROKE_WIDTH));
         assertEquals(color, attributes.getValues().get(STROKE_COLOR));
     }
 
