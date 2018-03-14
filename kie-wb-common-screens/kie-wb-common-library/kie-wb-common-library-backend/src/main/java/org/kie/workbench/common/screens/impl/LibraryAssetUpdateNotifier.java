@@ -28,6 +28,9 @@ import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.api.Remote;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.ext.metadata.event.BatchIndexEvent;
+import org.uberfire.ext.metadata.event.IndexEvent.DeletedEvent;
+import org.uberfire.ext.metadata.event.IndexEvent.NewlyIndexedEvent;
+import org.uberfire.ext.metadata.event.IndexEvent.RenamedEvent;
 
 @ApplicationScoped
 public class LibraryAssetUpdateNotifier {
@@ -52,9 +55,20 @@ public class LibraryAssetUpdateNotifier {
 
     public void notifyOnUpdatedAssets(@Observes BatchIndexEvent event) {
         // Assume that all indexed items are from the same project.
-        event.getIndexed()
+        event.getIndexEvents()
              .stream()
-             .map(kobject -> kobject.getKey())
+             .flatMap(evt -> {
+                 switch (evt.getKind()) {
+                    case Deleted:
+                        return Stream.of(((DeletedEvent) evt).getDeleted().getKey());
+                    case NewlyIndexed:
+                        return Stream.of(((NewlyIndexedEvent) evt).getKObject().getKey());
+                    case Renamed:
+                        return Stream.of(((RenamedEvent) evt).getTarget().getKey());
+                    default:
+                        return Stream.empty();
+                 }
+             })
              .map(path -> org.uberfire.java.nio.file.Paths.get(path))
              .filter(path -> libraryIndexer.supportsPath(path))
              .flatMap(path -> {
