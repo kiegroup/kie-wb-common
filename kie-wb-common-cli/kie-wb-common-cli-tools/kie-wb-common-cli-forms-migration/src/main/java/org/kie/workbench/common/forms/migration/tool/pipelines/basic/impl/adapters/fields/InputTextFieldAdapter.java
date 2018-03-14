@@ -17,11 +17,13 @@
 package org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields;
 
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.type.TextBoxFieldType;
 import org.kie.workbench.common.forms.migration.legacy.model.Field;
 import org.kie.workbench.common.forms.migration.legacy.services.impl.FieldTypeBuilder;
+import org.kie.workbench.common.forms.migration.tool.pipelines.basic.UnSupportedFieldAdapter;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-public class InputTextFieldAdapter extends AbstractFieldAdapter {
+public class InputTextFieldAdapter extends AbstractFieldAdapter implements UnSupportedFieldAdapter {
 
     @Override
     protected FieldDefinition getFieldDefinition(Field originalField) {
@@ -35,5 +37,15 @@ public class InputTextFieldAdapter extends AbstractFieldAdapter {
     @Override
     public String[] getLegacyFieldTypeCodes() {
         return new String[]{FieldTypeBuilder.INPUT_TEXT, FieldTypeBuilder.INPUT_TEXT_CHARACTER, FieldTypeBuilder.INPUT_TEXT_CHAR};
+    }
+
+    @Override
+    public String[] getLegacySupportedFieldTypeCodes() {
+        return new String[]{FieldTypeBuilder.INPUT_TEXT_EMAIL};
+    }
+
+    @Override
+    public String getNewFieldType() {
+        return TextBoxFieldType.NAME;
     }
 }

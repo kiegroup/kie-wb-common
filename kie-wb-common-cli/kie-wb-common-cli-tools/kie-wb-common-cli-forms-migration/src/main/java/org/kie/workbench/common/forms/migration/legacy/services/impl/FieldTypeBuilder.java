@@ -62,6 +62,9 @@ public class FieldTypeBuilder {
     public static final String HTML_LABEL = "HTMLLabel";
     public static final String SEPARATOR = "Separator";
 
+    // Unsupported types
+    public static final String INPUT_TEXT_EMAIL = "InputTextEmail";
+
     public static List<FieldType> getSimpleFieldTypes() {
 
         List<FieldType> result = new ArrayList<>();
@@ -216,7 +219,7 @@ public class FieldTypeBuilder {
         result.add(ft);
 
         ft = new FieldType();
-        ft.setCode("InputTextEmail");
+        ft.setCode(INPUT_TEXT_EMAIL);
         ft.setFieldClass("java.lang.String");
         ft.setManagerClass("org.jbpm.formModeler.core.processing.fieldHandlers.InputTextFieldHandler");
         ft.setPattern("[a-zA-Z0-9.!#$%&'*+-/=?\\^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*");

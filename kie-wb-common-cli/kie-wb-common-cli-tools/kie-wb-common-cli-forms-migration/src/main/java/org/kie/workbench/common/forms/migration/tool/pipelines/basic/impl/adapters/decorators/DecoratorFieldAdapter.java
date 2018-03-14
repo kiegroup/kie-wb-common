@@ -22,13 +22,11 @@ import org.kie.workbench.common.forms.migration.legacy.model.Field;
 import org.kie.workbench.common.forms.migration.legacy.services.impl.FieldTypeBuilder;
 import org.kie.workbench.common.forms.migration.tool.FormMigrationSummary;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.FieldAdapter;
+import org.kie.workbench.common.forms.migration.tool.util.FormsMigrationConstants;
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 
 public class DecoratorFieldAdapter implements FieldAdapter {
-
-    private static final String HTML_COMPONENT = "org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent";
-    private static final String HTML_CODE_PARAMETER = "HTML_CODE";
 
     @Override
     public String[] getLegacyFieldTypeCodes() {
@@ -49,8 +47,8 @@ public class DecoratorFieldAdapter implements FieldAdapter {
                 break;
         }
 
-        LayoutComponent component = new LayoutComponent(HTML_COMPONENT);
-        component.addProperty(HTML_CODE_PARAMETER, htmlContent);
+        LayoutComponent component = new LayoutComponent(FormsMigrationConstants.HTML_COMPONENT);
+        component.addProperty(FormsMigrationConstants.HTML_CODE_PARAMETER, htmlContent);
 
         layoutElementConsumer.accept(component);
     }

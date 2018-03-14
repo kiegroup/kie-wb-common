@@ -176,7 +176,6 @@ public abstract class AbstractFormDefinitionGeneratorTest {
         Assertions.assertThat(layoutComponent.getProperties())
                 .hasEntrySatisfying(FormLayoutComponent.FORM_ID, new Condition<>(formId -> formDefinition.getId().equals(formId), "Invalid formId"))
                 .hasEntrySatisfying(FormLayoutComponent.FIELD_ID, new Condition<>(fieldId -> fieldDefinition.getId().equals(fieldId), "Invalid formId"));
-        ;
     }
 
     protected void checkFieldDefinition(FieldDefinition fieldDefinition, String name, String label, String binding, Class<? extends FieldDefinition> expectedClass, FormDefinition formDefinition, Field field) {

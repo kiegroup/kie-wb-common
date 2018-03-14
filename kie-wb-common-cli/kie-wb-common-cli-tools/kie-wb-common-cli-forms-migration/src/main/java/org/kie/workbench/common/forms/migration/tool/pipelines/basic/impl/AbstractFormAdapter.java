@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl;
 
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.kie.workbench.common.forms.migration.tool.Result;
 import org.kie.workbench.common.forms.migration.tool.pipelines.MigrationContext;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.FieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.FormAdapter;
+import org.kie.workbench.common.forms.migration.tool.pipelines.basic.UnSupportedFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.decorators.DecoratorFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.CheckBoxFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.DatesFieldAdapter;
@@ -51,11 +53,13 @@ import org.kie.workbench.common.forms.migration.tool.util.FormsMigrationConstant
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
 import org.uberfire.backend.server.util.Paths;
+import org.uberfire.ext.layout.editor.api.editor.LayoutComponent;
 import org.uberfire.java.nio.file.Path;
 
 public abstract class AbstractFormAdapter implements FormAdapter {
 
     protected Map<String, FieldAdapter> adaptersRegistry = new HashMap<>();
+    protected Map<String, UnSupportedFieldAdapter> unSupportedAdapters = new HashMap<>();
 
     protected MigrationContext migrationContext;
 
@@ -78,6 +82,11 @@ public abstract class AbstractFormAdapter implements FormAdapter {
 
     protected void registerAdapter(final FieldAdapter adapter) {
         Stream.of(adapter.getLegacyFieldTypeCodes()).forEach(code -> adaptersRegistry.put(code, adapter));
+
+        if(adapter instanceof UnSupportedFieldAdapter) {
+            UnSupportedFieldAdapter unSupportedFieldAdapter = (UnSupportedFieldAdapter) adapter;
+            Stream.of(unSupportedFieldAdapter.getLegacySupportedFieldTypeCodes()).forEach(code -> unSupportedAdapters.put(code, unSupportedFieldAdapter));
+        }
     }
 
     @Override
@@ -143,9 +152,26 @@ public abstract class AbstractFormAdapter implements FormAdapter {
                 helper.newRow();
             }
 
-            FieldAdapter adapter = adaptersRegistry.get(originalField.getFieldType().getCode());
+            String originalTypeCode = originalField.getFieldType().getCode();
+            FieldAdapter adapter = adaptersRegistry.get(originalTypeCode);
             if (adapter == null) {
-                warn("Cannot migrate field '" + originalField.getFieldName() + "': Unsupported field type '" + originalField.getFieldType().getCode() + "'");
+                // trying a backup adapter
+                UnSupportedFieldAdapter unSupportedFieldAdapter = unSupportedAdapters.get(originalTypeCode);
+                if(unSupportedFieldAdapter != null) {
+                    warn("Problems migrating field '" + originalField.getFieldName() + "': the original field has an unsupported field type '" + originalTypeCode + "'. It will be added on the new Form as a '" + unSupportedFieldAdapter.getNewFieldType() + "'");
+                    unSupportedFieldAdapter.parseField(originalField, formSummary, newForm, helper::add);
+                } else {
+                    warn("Cannot migrate field '" + originalField.getFieldName() + "': Unsupported field type '" + originalTypeCode + "'");
+
+                    Formatter formatter = new Formatter();
+                    formatter.format(FormsMigrationConstants.UNSUPORTED_FIELD_HTML_TEMPLATE, originalField.getFieldName(), originalTypeCode);
+
+                    LayoutComponent component = new LayoutComponent(FormsMigrationConstants.HTML_COMPONENT);
+                    component.addProperty(FormsMigrationConstants.HTML_CODE_PARAMETER, formatter.toString());
+                    formatter.close();
+
+                    helper.add(component);
+                }
             } else {
                 try {
                     adapter.parseField(originalField, formSummary, newForm, helper::add);

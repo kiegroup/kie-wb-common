@@ -20,10 +20,6 @@ public interface FormsMigrationConstants {
 
     String DEFAULT_LANG = "en";
 
-    String DATA_HOLDER_TYPE_CLASSNAME = "className";
-
-    String DATA_HOLDER_TYPE_DATAOBJECT = "dataModelerEntry";
-
     String DATA_HOLDER_TYPE_BASIC = "basicType";
 
     String INFO = "[INFO] ";
@@ -43,4 +39,12 @@ public interface FormsMigrationConstants {
     String BPMN2_EXTENSION = "bpmn2";
 
     String TASK_FORM_VARIABLE = "TaskName";
+
+    String HTML_COMPONENT = "org.uberfire.ext.plugin.client.perspective.editor.layout.editor.HTMLLayoutDragComponent";
+
+    String HTML_CODE_PARAMETER = "HTML_CODE";
+    
+    String UNSUPORTED_FIELD_HTML_TEMPLATE = "<div class='alert'><span class='pficon pficon-warning-triangle-o'></span>" +
+            "Impossible to migrate field <strong>%s</strong> from the old jBPM Form: It has an unsupported type <strong>%s</strong>. " +
+            "Please try to add it back again to the form using the right Form Control</div>";
 }
