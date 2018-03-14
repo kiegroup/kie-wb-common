@@ -1,7 +1,14 @@
-Project Migration Tool
-======================
+KIE Workbench Migration Tool
+============================
 
-This project contains a command-line tool for migrating KIE projects from the old project layout (7.4.x and previous) to the new project-oriented structure. This document briefly explains how to build and use the tool.
+This project contains a command-line tool to run different KIE Workbench migrations. This document briefly explains how to build and use the tool.
+
+Included Migration Tools
+------------------------
+
+* **Project Migration Tool:** migrates KIE projects from the old project layout (7.4.x and previous) to the new project-oriented structure.
+
+* **Forms Migration Tool:** migrates old jBPM Form Modeler forms into the new Forms format. Requires **Project Migration Tool** to be executed first
 
 Maven Build
 -----------
@@ -12,7 +19,7 @@ To build the project, simply run
 
 This will generate a zip file in the target directory:
 
-    kie-wb-common-project-migration-$VERSION-dist.zip
+    kie-wb-common-cli-migration-tool-$VERSION-dist.zip
 
 The zip file is a standalone artifact that contains all the necessary dependencies to run the CLI tool.
 
@@ -23,9 +30,9 @@ Installing the Tool
 
 To install the tool, simply unzip it into the desired location, like so:
 
-    unzip -d $INSTALL_DIR kie-wb-common-project-migration-$VERSION-dist.zip
+    unzip -d $INSTALL_DIR kie-wb-common-cli-migration-tool-$VERSION-dist.zip
 
-This should create a directory (`kie-wb-common-project-migration-$VERSION`) in the `$INSTALL_DIR`.
+This should create a directory (`kie-wb-common-cli-migration-tool-$VERSION`) in the `$INSTALL_DIR`.
 
 Using the Tool
 --------------
@@ -35,7 +42,7 @@ The tool is meant to operate on the `.niogit` directory of a workbench distribut
 For the instructions below, these variables are assumed:
 
 * `$NIOGIT` is the path of your `.niogit` directory being migrated.
-* `$TOOL_DIR` is the path to the directory installed in the previous section (i.e. `$INSTALL_DIR/kie-wb-common-project-migration-$VERSION/`).
+* `$TOOL_DIR` is the path to the directory installed in the previous section (i.e. `$INSTALL_DIR/kie-wb-common-cli-migration-tool-$VERSION/`).
 
 Simple Usage
 ------------
@@ -50,7 +57,13 @@ Windows -
     $TOOL_DIR\bin\migration-tool.bat -t $NIOGIT
 
 
-The tool will migrate projects in-place: when the tool finishes a successful run, the `$NIOGIT` directory will be ready for use with the new workbench.
+The tool will show a Wizard to choose between:
+
+* Run one of the available migration tools (Project or Forms Migration)
+* Run all the available migration tools sequentially.
+* Exit the migration tool. 
+
+The tool will do the migration in-place: when the tool finishes a successful run, the `$NIOGIT` directory will be ready for use with the new workbench.
 
 *IMPORTANT*: Because the tool migrates in-place, it's important to make backups before use.
 

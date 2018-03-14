@@ -38,5 +38,5 @@ case $JAVAVER in
  ;;
 esac
 
-exec "$JAVACMD" -cp "$CLASSPATH" org.kie.workbench.common.project.MigrationTool $@
+exec "$JAVACMD" -cp "$CLASSPATH" ${mainClass} $@
 
