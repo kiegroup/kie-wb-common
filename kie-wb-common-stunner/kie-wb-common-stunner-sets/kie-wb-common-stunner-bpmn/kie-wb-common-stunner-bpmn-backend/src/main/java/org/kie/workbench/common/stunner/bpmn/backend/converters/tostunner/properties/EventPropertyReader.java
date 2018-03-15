@@ -89,7 +89,7 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     }
 
     public String getSignalRef() {
-        Objects.requireNonNull(signalRefId);
+        if (signalRefId == null) return "";
         return definitionResolver.resolveSignalName(signalRefId);
     }
 
@@ -99,8 +99,4 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
                 .orElse(new SimulationAttributeSet());
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Events;
-//    }
 }
