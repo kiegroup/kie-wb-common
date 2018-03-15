@@ -45,18 +45,18 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String signalName = "Signal Start Event with Name";
-        final String signalDocumentation = "Non empty\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String eventName = "Signal Start Event with Name";
+        final String eventDocumentation = "Non empty\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
         final String signalRef = "Signal1";
-        final String signalDataOutput = "||event:String||[dout]event->processVar";
+        final String eventDataOutput = "||event:String||[dout]event->processVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartSignalEvent.class);
-        assertGeneralSet(filledTop.getGeneral(), signalName, signalDocumentation);
+        assertGeneralSet(filledTop.getGeneral(), eventName, eventDocumentation);
         assertSignalEventExecutionSet(filledTop.getExecutionSet(), signalRef, INTERRUPTING);
-        assertDataIOSet(filledTop.getDataIOSet(), signalDataOutput);
+        assertDataIOSet(filledTop.getDataIOSet(), eventDataOutput);
     }
 
     @Test
@@ -74,18 +74,18 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String signalName = "Signal inside of Event sub-process";
-        final String signalDocumentation = "Non empty Signal Event\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String eventName = "Signal inside of Event sub-process";
+        final String eventDocumentation = "Non empty Signal Event\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
         final String signalRef = "AnotherSignal";
-        final String signalDataOutput = "||hello:String||[dout]hello->processVar";
+        final String eventDataOutput = "||hello:String||[dout]hello->processVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartSignalEvent.class);
-        assertGeneralSet(filledSubprocess.getGeneral(), signalName, signalDocumentation);
+        assertGeneralSet(filledSubprocess.getGeneral(), eventName, eventDocumentation);
         assertSignalEventExecutionSet(filledSubprocess.getExecutionSet(), signalRef, INTERRUPTING);
-        assertDataIOSet(filledSubprocess.getDataIOSet(), signalDataOutput);
+        assertDataIOSet(filledSubprocess.getDataIOSet(), eventDataOutput);
     }
 
     @Test
@@ -148,10 +148,10 @@ public class StartSignalEventTest extends StartEvent {
         assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartSignalEvent.class);
     }
 
-    private void assertSignalEventExecutionSet(InterruptingSignalEventExecutionSet executionSet, String signalName, boolean isInterrupting) {
+    private void assertSignalEventExecutionSet(InterruptingSignalEventExecutionSet executionSet, String eventName, boolean isInterrupting) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getSignalRef());
-        assertEquals(signalName, executionSet.getSignalRef().getValue());
+        assertEquals(eventName, executionSet.getSignalRef().getValue());
         assertEquals(isInterrupting, executionSet.getIsInterrupting().getValue());
     }
 }
