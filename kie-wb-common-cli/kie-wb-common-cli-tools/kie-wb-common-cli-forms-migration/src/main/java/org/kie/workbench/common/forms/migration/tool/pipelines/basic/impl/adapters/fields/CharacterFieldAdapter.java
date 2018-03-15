@@ -16,36 +16,20 @@
 
 package org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields;
 
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.TextBoxFieldDefinition;
-import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.type.TextBoxFieldType;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textBox.definition.CharacterBoxFieldDefinition;
 import org.kie.workbench.common.forms.migration.legacy.model.Field;
 import org.kie.workbench.common.forms.migration.legacy.services.impl.FieldTypeBuilder;
-import org.kie.workbench.common.forms.migration.tool.pipelines.basic.UnSupportedFieldAdapter;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-public class InputTextFieldAdapter extends AbstractFieldAdapter implements UnSupportedFieldAdapter {
+public class CharacterFieldAdapter extends AbstractFieldAdapter {
 
     @Override
     protected FieldDefinition getFieldDefinition(Field originalField) {
-        TextBoxFieldDefinition fieldDefinition = new TextBoxFieldDefinition();
-        if (originalField.getMaxlength() != null) {
-            fieldDefinition.setMaxLength(originalField.getMaxlength().intValue());
-        }
-        return fieldDefinition;
+        return new CharacterBoxFieldDefinition();
     }
 
     @Override
     public String[] getLegacyFieldTypeCodes() {
-        return new String[]{FieldTypeBuilder.INPUT_TEXT};
-    }
-
-    @Override
-    public String[] getLegacySupportedFieldTypeCodes() {
-        return new String[]{FieldTypeBuilder.INPUT_TEXT_EMAIL};
-    }
-
-    @Override
-    public String getNewFieldType() {
-        return TextBoxFieldType.NAME;
+        return new String[]{FieldTypeBuilder.INPUT_TEXT_CHARACTER, FieldTypeBuilder.INPUT_TEXT_CHAR};
     }
 }

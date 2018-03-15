@@ -62,6 +62,8 @@ public class FieldTypeBuilder {
     public static final String HTML_LABEL = "HTMLLabel";
     public static final String SEPARATOR = "Separator";
 
+    public static final String DOCUMENT = "Document";
+
     // Unsupported types
     public static final String INPUT_TEXT_EMAIL = "InputTextEmail";
 
@@ -309,6 +311,12 @@ public class FieldTypeBuilder {
         ft.setFieldClass("java.lang.String");
         ft.setManagerClass("org.jbpm.formModeler.core.processing.fieldHandlers.radio.RadioGroupFieldHandler");
         ft.setMaxlength(new Long(5));
+        result.add(ft);
+
+        ft = new FieldType();
+        ft.setCode(DOCUMENT);
+        ft.setFieldClass("org.jbpm.document.Document");
+        ft.setManagerClass("org.jbpm.formModeler.fieldTypes.document.handling.JBPMDocumentFieldTypeHandler");
         result.add(ft);
 
         return result;

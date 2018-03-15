@@ -39,9 +39,11 @@ import org.kie.workbench.common.forms.migration.tool.pipelines.basic.FieldAdapte
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.FormAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.UnSupportedFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.decorators.DecoratorFieldAdapter;
+import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.CharacterFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.CheckBoxFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.DatesFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.DecimalTextFieldAdapter;
+import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.DocumentFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.InputTextFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.IntegerTextFieldAdapter;
 import org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapters.fields.MultipleSubformFieldAdapter;
@@ -67,6 +69,7 @@ public abstract class AbstractFormAdapter implements FormAdapter {
         this.migrationContext = migrationContext;
 
         registerAdapter(new InputTextFieldAdapter());
+        registerAdapter(new CharacterFieldAdapter());
         registerAdapter(new TextAreaFieldAdapter());
         registerAdapter(new IntegerTextFieldAdapter());
         registerAdapter(new DecimalTextFieldAdapter());
@@ -78,6 +81,7 @@ public abstract class AbstractFormAdapter implements FormAdapter {
         registerAdapter(new MultipleSubformFieldAdapter());
         registerAdapter(new DecoratorFieldAdapter());
         registerAdapter(new MultipleSubformFieldAdapter());
+        registerAdapter(new DocumentFieldAdapter());
     }
 
     protected void registerAdapter(final FieldAdapter adapter) {

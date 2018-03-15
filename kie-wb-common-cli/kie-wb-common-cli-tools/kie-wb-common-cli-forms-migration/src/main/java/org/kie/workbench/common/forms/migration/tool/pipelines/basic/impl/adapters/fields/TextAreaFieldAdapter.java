@@ -18,11 +18,13 @@ package org.kie.workbench.common.forms.migration.tool.pipelines.basic.impl.adapt
 
 import org.apache.commons.lang3.StringUtils;
 import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.definition.TextAreaFieldDefinition;
+import org.kie.workbench.common.forms.fields.shared.fieldTypes.basic.textArea.type.TextAreaFieldType;
 import org.kie.workbench.common.forms.migration.legacy.model.Field;
 import org.kie.workbench.common.forms.migration.legacy.services.impl.FieldTypeBuilder;
+import org.kie.workbench.common.forms.migration.tool.pipelines.basic.UnSupportedFieldAdapter;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-public class TextAreaFieldAdapter extends AbstractFieldAdapter {
+public class TextAreaFieldAdapter extends AbstractFieldAdapter implements UnSupportedFieldAdapter {
 
     @Override
     protected FieldDefinition getFieldDefinition(Field originalField) {
@@ -35,6 +37,16 @@ public class TextAreaFieldAdapter extends AbstractFieldAdapter {
 
     @Override
     public String[] getLegacyFieldTypeCodes() {
-        return new String[]{FieldTypeBuilder.INPUT_TEXT_AREA, FieldTypeBuilder.HTML_EDITOR};
+        return new String[]{FieldTypeBuilder.INPUT_TEXT_AREA};
+    }
+
+    @Override
+    public String[] getLegacySupportedFieldTypeCodes() {
+        return new String[]{FieldTypeBuilder.HTML_EDITOR};
+    }
+
+    @Override
+    public String getNewFieldType() {
+        return TextAreaFieldType.NAME;
     }
 }

@@ -79,11 +79,15 @@ public class DataHolder implements Comparable {
     }
 
     protected boolean containsBinding(String bindingString, String id) {
-        if (StringUtils.isEmpty(bindingString) || StringUtils.isEmpty(id)) return false;
+        if (StringUtils.isEmpty(bindingString) || StringUtils.isEmpty(id)) {
+            return false;
+        }
 
         String[] parts = bindingString.split("/");
 
-        if (parts == null || parts.length != 2 || StringUtils.isEmpty(parts[0])) return false;
+        if (parts == null || parts.length != 2 || StringUtils.isEmpty(parts[0])) {
+            return false;
+        }
 
         return id.equals(parts[0]);
     }
