@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.events;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.eclipse.bpmn2.CompensateEventDefinition;
 import org.eclipse.bpmn2.ConditionalEventDefinition;
@@ -106,7 +107,7 @@ public class StartEventConverter {
 
         definition.setExecutionSet(new InterruptingErrorEventExecutionSet(
                 new IsInterrupting(event.isIsInterrupting()),
-                new ErrorRef(e.getErrorRef().getErrorCode())
+                new ErrorRef(Optional.ofNullable(e.getErrorRef().getErrorCode()).orElse(""))
         ));
 
         definition.setSimulationSet(p.getSimulationSet());
