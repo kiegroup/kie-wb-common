@@ -127,7 +127,7 @@ public abstract class BPMNDiagramMarshallerBase {
     protected BPMNDiagramMarshaller oldMarshaller;
     protected BPMNDirectDiagramMarshaller newMarshaller;
 
-    public BPMNDiagramMarshallerBase() {
+    protected void init() {
         initMocks(this);
         definitionManager = mock(DefinitionManager.class);
         adapterManager = mock(AdapterManager.class);
