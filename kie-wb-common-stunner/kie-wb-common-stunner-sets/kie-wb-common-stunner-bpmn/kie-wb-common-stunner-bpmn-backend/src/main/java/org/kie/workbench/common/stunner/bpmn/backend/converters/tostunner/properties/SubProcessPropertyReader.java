@@ -16,8 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.eclipse.bpmn2.ItemDefinition;
+import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
@@ -47,18 +50,21 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
     public String getProcessVariables() {
         return process.getProperties()
                 .stream()
-                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
+                .map(this::toProcessVariableString)
                 .collect(Collectors.joining(","));
+    }
+
+    private String toProcessVariableString(Property p) {
+        String type = Optional.ofNullable(p.getItemSubjectRef())
+                .map(ItemDefinition::getStructureRef)
+                .orElse("java.lang.Object");
+
+        return p.getId() + ":" + type;
     }
 
     public boolean isAsync() {
         return CustomElement.async.of(element).get();
     }
-
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Activities;
-//    }
 
     public SimulationSet getSimulationSet() {
         return definitionResolver.resolveSimulationParameters(element.getId())
