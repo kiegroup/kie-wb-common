@@ -82,6 +82,8 @@ public class Scripts {
                 return "http://www.mvel.org/2.0";
             case "javascript":
                 return "http://www.javascript.com/javascript";
+            case "drools":
+                return "http://www.jboss.org/drools/rule";
             default:
                 return "http://www.java.com/java";
         }
@@ -98,6 +100,8 @@ public class Scripts {
                 return "mvel";
             case "http://www.javascript.com/javascript":
                 return "javascript";
+            case "http://www.jboss.org/drools/rule":
+                return "drools";
             default:
                 return null;
         }

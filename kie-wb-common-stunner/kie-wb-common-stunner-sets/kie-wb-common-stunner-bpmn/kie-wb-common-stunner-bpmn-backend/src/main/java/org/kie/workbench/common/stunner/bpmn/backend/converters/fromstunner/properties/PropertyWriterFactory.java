@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.CallActivity;
@@ -66,6 +67,10 @@ public class PropertyWriterFactory {
 
     public DefinitionsPropertyWriter of(Definitions e) {
         return new DefinitionsPropertyWriter(e);
+    }
+
+    public AdHocSubProcessPropertyWriter of(AdHocSubProcess e) {
+        return new AdHocSubProcessPropertyWriter(e, variableScope);
     }
 
     public SubProcessPropertyWriter of(SubProcess e) {

@@ -20,13 +20,16 @@ import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.NodeMatch;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AdHocSubProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -53,6 +56,7 @@ public class SubProcessConverter extends AbstractProcessConverter {
                 NodeMatch.fromNode(BaseSubprocess.class, SubProcessPropertyWriter.class)
                         .when(EmbeddedSubprocess.class, this::convertEmbeddedSubprocessNode)
                         .when(EventSubprocess.class, this::convertEventSubprocessNode)
+                        .when(AdHocSubprocess.class, this::convertAdHocSubprocessNode)
                         .apply(node).value();
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
@@ -61,6 +65,34 @@ public class SubProcessConverter extends AbstractProcessConverter {
         super.convertEdges(processRoot, subContext);
 
         return processRoot;
+    }
+
+    private SubProcessPropertyWriter convertAdHocSubprocessNode(Node<View<AdHocSubprocess>, ?> n) {
+        org.eclipse.bpmn2.AdHocSubProcess process = bpmn2.createAdHocSubProcess();
+        process.setId(n.getUUID());
+
+        AdHocSubProcessPropertyWriter p = propertyWriterFactory.of(process);
+        AdHocSubprocess definition = n.getContent().getDefinition();
+
+        BPMNGeneralSet general = definition.getGeneral();
+
+        p.setName(general.getName().getValue());
+        p.setDocumentation(general.getDocumentation().getValue());
+
+        ProcessData processData = definition.getProcessData();
+        p.setProcessVariables(processData.getProcessVariables());
+
+        AdHocSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();
+        p.setAdHocCompletionCondition(executionSet.getAdHocCompletionCondition());
+        p.setAdHocOrdering(executionSet.getAdHocOrdering());
+        p.setOnEntryAction(executionSet.getOnEntryAction());
+        p.setOnExitAction(executionSet.getOnExitAction());
+
+        p.setSimulationSet(definition.getSimulationSet());
+
+        p.setBounds(n.getContent().getBounds());
+
+        return p;
     }
 
     private SubProcessPropertyWriter convertEventSubprocessNode(Node<View<EventSubprocess>, ?> n) {
@@ -73,7 +105,6 @@ public class SubProcessConverter extends AbstractProcessConverter {
         process.setTriggeredByEvent(true);
 
         BPMNGeneralSet general = definition.getGeneral();
-
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
 
@@ -96,9 +127,12 @@ public class SubProcessConverter extends AbstractProcessConverter {
         EmbeddedSubprocess definition = n.getContent().getDefinition();
 
         BPMNGeneralSet general = definition.getGeneral();
-
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());
+
+        p.setOnEntryAction(definition.getOnEntryAction());
+        p.setOnExitAction(definition.getOnExitAction());
+        p.setAsync(definition.getIsAsync().getValue());
 
         ProcessData processData = definition.getProcessData();
         p.setProcessVariables(processData.getProcessVariables());

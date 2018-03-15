@@ -18,17 +18,28 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proce
 
 import java.util.Map;
 
+import org.eclipse.bpmn2.Expression;
+import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AdHocSubProcessPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SubProcessPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Documentation;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocOrdering;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -46,10 +57,15 @@ public class SubProcessConverter extends AbstractProcessConverter {
     }
 
     public BpmnNode convertSubProcess(SubProcess subProcess) {
-        BpmnNode subProcessRoot =
-                subProcess.isTriggeredByEvent() ?
-                        convertEventSubprocessNode(subProcess)
-                        : convertEmbeddedSubprocessNode(subProcess);
+        BpmnNode subProcessRoot;
+        if (subProcess instanceof org.eclipse.bpmn2.AdHocSubProcess) {
+            subProcessRoot = convertAdHocSubProcess((org.eclipse.bpmn2.AdHocSubProcess) subProcess);
+        } else {
+            subProcessRoot =
+                    subProcess.isTriggeredByEvent() ?
+                            convertEventSubprocessNode(subProcess)
+                            : convertEmbeddedSubprocessNode(subProcess);
+        }
 
         Map<String, BpmnNode> nodes =
                 super.convertChildNodes(
@@ -63,6 +79,38 @@ public class SubProcessConverter extends AbstractProcessConverter {
                 nodes);
 
         return subProcessRoot;
+    }
+
+    private BpmnNode convertAdHocSubProcess(org.eclipse.bpmn2.AdHocSubProcess subProcess) {
+        Node<View<AdHocSubprocess>, Edge> node =
+                factoryManager.newNode(subProcess.getId(), AdHocSubprocess.class);
+        AdHocSubprocess definition = node.getContent().getDefinition();
+        AdHocSubProcessPropertyReader p = propertyReaderFactory.of(subProcess);
+
+        definition.setGeneral(new BPMNGeneralSet(
+                new Name(subProcess.getName()),
+                new Documentation(p.getDocumentation())
+        ));
+
+        definition.setProcessData(new ProcessData(
+                new ProcessVariables(p.getProcessVariables())));
+
+        definition.setExecutionSet(new AdHocSubprocessTaskExecutionSet(
+                new AdHocCompletionCondition(p.getAdHocCompletionCondition()),
+                new AdHocOrdering(p.getAdHocOrdering()),
+                new OnEntryAction(p.getOnEntryAction()),
+                new OnExitAction(p.getOnExitAction())
+        ));
+
+        definition.setSimulationSet(p.getSimulationSet());
+
+        node.getContent().setBounds(p.getBounds());
+
+        definition.setDimensionsSet(p.getRectangleDimensionsSet());
+        definition.setFontSet(p.getFontSet());
+        definition.setBackgroundSet(p.getBackgroundSet());
+
+        return BpmnNode.of(node);
     }
 
     private BpmnNode convertEmbeddedSubprocessNode(SubProcess subProcess) {

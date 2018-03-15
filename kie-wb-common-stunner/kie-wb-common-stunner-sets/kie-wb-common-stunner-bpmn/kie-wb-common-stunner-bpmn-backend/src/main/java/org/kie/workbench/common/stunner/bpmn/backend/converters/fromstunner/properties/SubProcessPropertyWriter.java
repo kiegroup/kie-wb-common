@@ -31,8 +31,12 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
@@ -111,5 +115,17 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         lanes.forEach(l -> {
             this.childElements.put(l.getElement().getId(), l);
         });
+    }
+
+    public void setOnEntryAction(OnEntryAction onEntryAction) {
+        Scripts.setOnEntryAction(process, onEntryAction);
+    }
+
+    public void setOnExitAction(OnExitAction onExitAction) {
+        Scripts.setOnExitAction(process, onExitAction);
+    }
+
+    public void setAsync(boolean isAsync) {
+        CustomElement.async.of(flowElement).set(isAsync);
     }
 }

@@ -692,7 +692,6 @@ public class BPMNDirectDiagramMarshallerTest {
     }
 
     @Test
-    @Ignore
     public void testUnmarshallIsInterruptingStartErrorEvent() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTERROREVENT);
         assertDiagram(diagram,7);
@@ -1293,7 +1292,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      reusableSubprocess.getExecutionSet().getIsAsync().getValue().toString());
     }
 
-    @Ignore
+    @Test
     public void testUnmarshallAddHocSubprocess() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ADHOC_SUBPROCESS);
         AdHocSubprocess adHocSubprocess = null;
@@ -2154,6 +2153,7 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:subProcess id=\"_DF031493-5F1C-4D2B-9916-2FEABB1FADFF\""));
     }
 
+    @Test
     public void testMarshallAdHocSubprocess() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ADHOC_SUBPROCESS);
         assertDiagram(diagram,

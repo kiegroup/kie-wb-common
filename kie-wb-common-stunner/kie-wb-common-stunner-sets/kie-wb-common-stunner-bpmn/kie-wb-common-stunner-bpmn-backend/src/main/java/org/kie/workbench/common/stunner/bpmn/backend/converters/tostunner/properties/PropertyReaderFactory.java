@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.AdHocSubProcess;
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.BusinessRuleTask;
 import org.eclipse.bpmn2.CatchEvent;
@@ -93,6 +94,10 @@ public class PropertyReaderFactory {
 
     public SubProcessPropertyReader of(SubProcess el) {
         return new SubProcessPropertyReader(el, plane, definitionResolver);
+    }
+
+    public AdHocSubProcessPropertyReader of(AdHocSubProcess el) {
+        return new AdHocSubProcessPropertyReader(el, plane, definitionResolver);
     }
 
     public ProcessPropertyReader of(Process el) {
