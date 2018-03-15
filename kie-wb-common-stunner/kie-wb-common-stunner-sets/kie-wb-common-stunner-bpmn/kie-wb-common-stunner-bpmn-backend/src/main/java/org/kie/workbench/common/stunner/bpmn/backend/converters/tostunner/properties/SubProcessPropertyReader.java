@@ -16,11 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.eclipse.bpmn2.ItemDefinition;
-import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
@@ -47,21 +42,6 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
         return Scripts.onExit(element.getExtensionValues());
     }
 
-    public String getProcessVariables() {
-        return process.getProperties()
-                .stream()
-                .map(this::toProcessVariableString)
-                .collect(Collectors.joining(","));
-    }
-
-    private String toProcessVariableString(Property p) {
-        String type = Optional.ofNullable(p.getItemSubjectRef())
-                .map(ItemDefinition::getStructureRef)
-                .orElse("java.lang.Object");
-
-        return p.getId() + ":" + type;
-    }
-
     public boolean isAsync() {
         return CustomElement.async.of(element).get();
     }
@@ -70,5 +50,9 @@ public class SubProcessPropertyReader extends FlowElementPropertyReader {
         return definitionResolver.resolveSimulationParameters(element.getId())
                 .map(SimulationSets::of)
                 .orElse(new SimulationSet());
+    }
+
+    public String getProcessVariables() {
+        return ProcessVariableReader.getProcessVariables(process.getProperties());
     }
 }

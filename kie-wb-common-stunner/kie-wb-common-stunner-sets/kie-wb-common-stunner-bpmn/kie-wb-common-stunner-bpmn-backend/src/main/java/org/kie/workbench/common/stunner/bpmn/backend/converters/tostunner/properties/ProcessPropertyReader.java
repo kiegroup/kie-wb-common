@@ -62,10 +62,7 @@ public class ProcessPropertyReader extends BasePropertyReader {
     }
 
     public String getProcessVariables() {
-        return process.getProperties()
-                .stream()
-                .map(p -> p.getId() + ":" + p.getItemSubjectRef().getStructureRef())
-                .collect(Collectors.joining(","));
+        return ProcessVariableReader.getProcessVariables(process.getProperties());
     }
 
     public FlowElement getFlowElement(String id) {
