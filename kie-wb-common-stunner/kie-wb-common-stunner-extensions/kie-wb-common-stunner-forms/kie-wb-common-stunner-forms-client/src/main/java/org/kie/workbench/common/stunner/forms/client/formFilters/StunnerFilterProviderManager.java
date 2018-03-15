@@ -17,53 +17,14 @@
 package org.kie.workbench.common.stunner.forms.client.formFilters;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
-
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.forms.adf.engine.shared.FormElementFilter;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
-@ApplicationScoped
-public class StunnerFilterProviderManager {
+public interface StunnerFilterProviderManager {
 
-    private Map<Class<?>, StunnerFormElementFilterProvider> filters = new HashMap<>();
+    void init();
 
-    private ManagedInstance<StunnerFormElementFilterProvider> instance;
-
-    protected StunnerFilterProviderManager() {
-        this(null);
-    }
-
-    @Inject
-    public StunnerFilterProviderManager(ManagedInstance<StunnerFormElementFilterProvider> instance) {
-        this.instance = instance;
-    }
-
-    @PostConstruct
-    public void init() {
-        instance.forEach(provider -> filters.put(provider.getDefinitionType(), provider));
-    }
-
-    public Collection<FormElementFilter> getFilterForDefinition(String elementUUID, Element<? extends Definition<?>> element, Object definition) {
-        StunnerFormElementFilterProvider provider = filters.get(definition.getClass());
-
-        if (provider != null) {
-            return provider.provideFilters(elementUUID, element, definition);
-        }
-
-        return Collections.emptyList();
-    }
-
-    @PreDestroy
-    public void destroy() {
-        instance.destroyAll();
-    }
+    Collection<FormElementFilter> getFilterForDefinition(String elementUUID, Element<? extends Definition<?>> element, Object definition);
 }

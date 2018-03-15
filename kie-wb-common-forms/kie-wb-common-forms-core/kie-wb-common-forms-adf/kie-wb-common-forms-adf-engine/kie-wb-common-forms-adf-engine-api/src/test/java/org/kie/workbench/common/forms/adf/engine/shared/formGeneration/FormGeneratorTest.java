@@ -25,7 +25,7 @@ import org.kie.workbench.common.forms.adf.engine.shared.test.AbstractFormGenerat
 import org.kie.workbench.common.forms.model.FormDefinition;
 import org.mockito.runners.MockitoJUnitRunner;
 
-;import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -87,7 +87,7 @@ public class FormGeneratorTest extends AbstractFormGenerationTest {
         FormElementFilter nameFilter = new FormElementFilter("name", o -> false);
         FormElementFilter lastNameFilter = new FormElementFilter("lastName", o -> false);
 
-        return new FormElementFilter[] {nameFilter, lastNameFilter};
+        return new FormElementFilter[]{nameFilter, lastNameFilter};
     }
 
     protected void checkFormGeneratedWithFilters(FormDefinition formDefinition) {

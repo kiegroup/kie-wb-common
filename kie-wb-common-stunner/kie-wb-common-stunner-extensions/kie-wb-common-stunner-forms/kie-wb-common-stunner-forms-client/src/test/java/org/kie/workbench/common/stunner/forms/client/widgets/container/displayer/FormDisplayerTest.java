@@ -21,6 +21,7 @@ import java.util.Collections;
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
 import org.jboss.errai.databinding.client.BindableProxyProvider;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -76,6 +77,9 @@ public class FormDisplayerTest {
     private DynamicFormModelGenerator dynamicFormModelGenerator;
 
     @Mock
+    private ManagedInstance<StunnerFilterProviderManager> managedInstanceFilterProviderManager;
+
+    @Mock
     private StunnerFilterProviderManager filterProviderManager;
 
     private FormDisplayer displayer;
@@ -98,10 +102,10 @@ public class FormDisplayerTest {
 
         BindableProxyFactory.addBindableProxy(SecondDefinition.class,
                                               proxyProvider);
-
+        when(managedInstanceFilterProviderManager.get()).thenReturn(filterProviderManager);
         when(filterProviderManager.getFilterForDefinition(any(), any(), any())).thenReturn(Collections.emptyList());
 
-        displayer = new FormDisplayer(view, formRenderer, dynamicFormModelGenerator, filterProviderManager);
+        displayer = new FormDisplayer(view, formRenderer, dynamicFormModelGenerator, managedInstanceFilterProviderManager);
 
         verify(view, times(1)).init(displayer);
     }
@@ -141,7 +145,7 @@ public class FormDisplayerTest {
         when(formRenderer.isValid()).thenReturn(true);
 
         // Rendering for second time, checks are the same but the view.show() that must be called twice
-        testRender(1, 1, 1, 0, 2);
+        testRender(2, 2, 2, 1, 2);
     }
 
     @Test

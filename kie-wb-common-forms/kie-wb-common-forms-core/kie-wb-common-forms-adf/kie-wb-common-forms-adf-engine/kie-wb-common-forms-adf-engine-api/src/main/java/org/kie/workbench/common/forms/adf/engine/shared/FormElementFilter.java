@@ -33,7 +33,7 @@ public class FormElementFilter<T> {
 
     /**
      * @param elementName String containing the name of the form element. It does support nested filtering by adding
-     * expresions like "element.childElement" so the filter will apply to the child element.
+     * expressions like "element.childElement" so the filter will apply to the child element.
      * @param predicate Predicate to validate if the {@link FormElement} must be added to the form or not.
      */
     public FormElementFilter(String elementName, Predicate<T> predicate) {

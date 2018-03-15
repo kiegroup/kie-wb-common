@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
@@ -27,13 +28,13 @@ import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.common.client.dom.HTMLElement;
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.forms.adf.engine.shared.FormElementFilter;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.StaticModelFormRenderingContext;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
-import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.formFilters.StunnerFilterProviderManager;
@@ -49,12 +50,10 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
     private final FormDisplayerView view;
     private final DynamicFormRenderer renderer;
     private final DynamicFormModelGenerator modelGenerator;
-    private final StunnerFilterProviderManager filterProviderManager;
-
-    private String currentDefinitionId;
+    private final ManagedInstance<StunnerFilterProviderManager> filterProviderManager;
 
     @Inject
-    public FormDisplayer(FormDisplayerView view, DynamicFormRenderer renderer, DynamicFormModelGenerator modelGenerator, StunnerFilterProviderManager filterProviderManager) {
+    public FormDisplayer(FormDisplayerView view, DynamicFormRenderer renderer, DynamicFormModelGenerator modelGenerator, ManagedInstance<StunnerFilterProviderManager> filterProviderManager) {
         this.view = view;
         this.renderer = renderer;
         this.modelGenerator = modelGenerator;
@@ -67,44 +66,35 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
 
         final Object definition = element.getContent().getDefinition();
 
-        String definitionId = getDefinitionId(definition);
-
         LOGGER.fine("Rendering form for element: " + element.getUUID());
 
-        // If currentDefinitionId is empty or definitionId is different we must render the form.
-        // if currentDefinitionId & definitionId are the same means that the form is already rendered so no need to render again
-        if (null == currentDefinitionId || !definitionId.equals(currentDefinitionId)) {
-            doRender(definitionId, element, definition, diagramPath, changeHandler);
-        } else if (!renderer.isValid()) {
-            doRender(definitionId, element, definition, diagramPath, changeHandler);
-        }
+        doRender(element, definition, diagramPath, changeHandler);
 
         show();
     }
 
-    private void doRender(String definitionId, Element<? extends Definition<?>> element, Object definition, Path diagramPath, FieldChangeHandler changeHandler) {
+    private void doRender(Element<? extends Definition<?>> element, Object definition, Path diagramPath, FieldChangeHandler changeHandler) {
         if (renderer.isInitialized()) {
             LOGGER.fine("Clearing previous form");
             renderer.unBind();
         }
 
         LOGGER.fine("Rendering a new form for element");
+        Collection<FormElementFilter> filters;
 
-        Collection<FormElementFilter> filters = filterProviderManager.getFilterForDefinition(element.getUUID(), element, definition);
+        if (filterProviderManager.isUnsatisfied()) {
+            filters = Collections.EMPTY_LIST;
+        } else {
+            filters = filterProviderManager.get().getFilterForDefinition(element.getUUID(), element, definition);
+        }
 
         final BindableProxy<?> proxy = (BindableProxy<?>) BindableProxyFactory.getBindableProxy(definition);
         final StaticModelFormRenderingContext generatedCtx = modelGenerator.getContextForModel(proxy.deepUnwrap(), filters.stream().toArray(FormElementFilter[]::new));
         final FormRenderingContext<?> pathAwareCtx = new PathAwareFormContext<>(generatedCtx, diagramPath);
 
-        currentDefinitionId = definitionId;
-
         renderer.render(pathAwareCtx);
 
         renderer.addFieldChangeHandler(changeHandler);
-    }
-
-    protected String getDefinitionId(Object definition) {
-        return BindableAdapterUtils.getDefinitionId(definition.getClass());
     }
 
     public void show() {
