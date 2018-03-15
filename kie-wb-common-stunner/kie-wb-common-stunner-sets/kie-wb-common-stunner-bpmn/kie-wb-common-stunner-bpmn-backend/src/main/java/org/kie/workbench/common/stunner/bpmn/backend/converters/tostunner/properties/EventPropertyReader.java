@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.Event;
@@ -89,7 +88,9 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
     }
 
     public String getSignalRef() {
-        if (signalRefId == null) return "";
+        if (signalRefId == null) {
+            return "";
+        }
         return definitionResolver.resolveSignalName(signalRefId);
     }
 
@@ -98,5 +99,4 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
                 .map(SimulationAttributeSets::of)
                 .orElse(new SimulationAttributeSet());
     }
-
 }
