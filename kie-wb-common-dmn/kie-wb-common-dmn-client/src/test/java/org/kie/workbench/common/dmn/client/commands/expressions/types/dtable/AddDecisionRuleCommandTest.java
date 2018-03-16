@@ -42,6 +42,7 @@ import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
 
 import static org.junit.Assert.assertEquals;
@@ -289,10 +290,7 @@ public class AddDecisionRuleCommandTest {
         canvasAddRuleCommand.execute(canvasHandler);
 
         assertEquals(1, uiModel.getRowCount());
-        assertEquals(1, uiModel.getRow(0).getCells().get(0).getValue().getValue());
-        assertEquals(AddInputClauseCommand.INPUT_CLAUSE_DEFAULT_VALUE, uiModel.getRow(0).getCells().get(1).getValue().getValue());
-        assertEquals(AddOutputClauseCommand.OUTPUT_CLAUSE_DEFAULT_VALUE, uiModel.getRow(0).getCells().get(2).getValue().getValue());
-        assertEquals(AddDecisionRuleCommand.DESCRIPTION_DEFAULT_VALUE, uiModel.getRow(0).getCells().get(3).getValue().getValue());
+        assertDefaultUiRowValues(0);
 
         canvasAddRuleCommand.undo(canvasHandler);
         assertEquals(0, uiModel.getRowCount());
@@ -310,6 +308,10 @@ public class AddDecisionRuleCommandTest {
         final DMNGridRow existingUiRow = new DMNGridRow();
         dtable.getRule().add(existingRule);
         uiModel.appendRow(existingUiRow);
+
+        dtable.getInput().add(new InputClause());
+        dtable.getOutput().add(new OutputClause());
+
         makeCommand(1);
 
         uiModel.appendColumn(uiInputClauseColumn);
@@ -327,6 +329,7 @@ public class AddDecisionRuleCommandTest {
                      uiModel.getRow(0));
         assertEquals(uiModelRow,
                      uiModel.getRow(1));
+        assertDefaultUiRowValues(1);
 
         verify(command).updateRowNumbers();
         verify(command).updateParentInformation();
@@ -360,5 +363,13 @@ public class AddDecisionRuleCommandTest {
         verify(canvasOperation, times(2)).execute();
         verify(command, times(2)).updateRowNumbers();
         verify(command, times(2)).updateParentInformation();
+    }
+
+    private void assertDefaultUiRowValues(final int uiRowIndex) {
+        final GridRow uiGridRow = uiModel.getRow(uiRowIndex);
+        assertEquals(uiRowIndex + 1, uiGridRow.getCells().get(0).getValue().getValue());
+        assertEquals(AddInputClauseCommand.INPUT_CLAUSE_DEFAULT_VALUE, uiGridRow.getCells().get(1).getValue().getValue());
+        assertEquals(AddOutputClauseCommand.OUTPUT_CLAUSE_DEFAULT_VALUE, uiGridRow.getCells().get(2).getValue().getValue());
+        assertEquals(AddDecisionRuleCommand.DESCRIPTION_DEFAULT_VALUE, uiGridRow.getCells().get(3).getValue().getValue());
     }
 }
