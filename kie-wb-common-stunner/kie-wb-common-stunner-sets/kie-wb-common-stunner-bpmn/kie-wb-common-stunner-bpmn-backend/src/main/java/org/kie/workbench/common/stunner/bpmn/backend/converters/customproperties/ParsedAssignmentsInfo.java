@@ -176,8 +176,16 @@ public class ParsedAssignmentsInfo {
         return associations;
     }
 
+    public boolean isEmpty() {
+        return inputs.getDeclarations().isEmpty() && outputs.getDeclarations().isEmpty() &&
+                associations.getInputs().isEmpty() && associations.getOutputs().isEmpty();
+    }
+
     @Override
     public String toString() {
+        if (isEmpty()) {
+            return "";
+        }
         return encodeStringRepresentation(
                 inputs,
                 outputs,

@@ -42,7 +42,7 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
         Optional<InputOutputSpecification> ioSpecification =
                 Optional.ofNullable(task.getIoSpecification());
 
-        return AssignmentsInfos.of(
+        AssignmentsInfo info = AssignmentsInfos.of(
                 ioSpecification.map(InputOutputSpecification::getDataInputs)
                         .orElse(Collections.emptyList()),
                 task.getDataInputAssociations(),
@@ -51,6 +51,13 @@ public class BusinessRuleTaskPropertyReader extends TaskPropertyReader {
                 task.getDataOutputAssociations(),
                 ioSpecification.isPresent()
         );
+
+        // do not break compatibility with old marshallers: return
+        // empty delimited fields instead of empty string
+        if (info.getValue().isEmpty()) {
+            info.setValue("||||");
+        }
+        return info;
     }
 
     public ScriptTypeListValue getOnEntryAction() {
