@@ -21,11 +21,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.kie.workbench.common.screens.library.api.ProjectAssetListUpdated;
 import org.kie.workbench.common.screens.library.api.Remote;
+import org.kie.workbench.common.screens.library.api.index.Constants;
+import org.slf4j.Logger;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.ext.metadata.event.BatchIndexEvent;
 import org.uberfire.ext.metadata.event.IndexEvent.DeletedEvent;
@@ -38,22 +41,25 @@ public class LibraryAssetUpdateNotifier {
     private final WorkspaceProjectService projectService;
     private final Event<ProjectAssetListUpdated> assetListUpdateEvent;
     private final LibraryIndexer libraryIndexer;
+    private final Logger logger;
 
     // For proxying
     public LibraryAssetUpdateNotifier() {
-        this(null, null, null);
+        this(null, null, null, null);
     }
 
     @Inject
     public LibraryAssetUpdateNotifier(final WorkspaceProjectService projectService,
                                       final LibraryIndexer libraryIndexer,
-                                      final @Remote Event<ProjectAssetListUpdated> assetListUpdateEvent) {
+                                      final @Remote Event<ProjectAssetListUpdated> assetListUpdateEvent,
+                                      final Logger logger) {
         this.projectService = projectService;
         this.libraryIndexer = libraryIndexer;
         this.assetListUpdateEvent = assetListUpdateEvent;
+        this.logger = logger;
     }
 
-    public void notifyOnUpdatedAssets(@Observes BatchIndexEvent event) {
+    public void notifyOnUpdatedAssets(@Observes @Named(Constants.INDEXER_ID) BatchIndexEvent event) {
         // Assume that all indexed items are from the same project.
         event.getIndexEvents()
              .stream()
@@ -81,7 +87,10 @@ public class LibraryAssetUpdateNotifier {
              })
              .map(project -> new ProjectAssetListUpdated(project))
              .findFirst()
-             .ifPresent(clientEvent -> assetListUpdateEvent.fire(clientEvent));
+             .ifPresent(clientEvent -> {
+                 logger.info("Sending indexing notification for project [{}].", clientEvent.getProject().getRepository().getIdentifier());
+                 assetListUpdateEvent.fire(clientEvent);
+              });
     }
 
 }
