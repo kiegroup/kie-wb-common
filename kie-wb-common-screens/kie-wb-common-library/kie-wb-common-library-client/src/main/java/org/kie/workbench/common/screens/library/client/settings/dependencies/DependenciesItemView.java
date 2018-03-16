@@ -29,6 +29,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.screens.library.client.settings.util.HTMLElementUtil;
 import org.uberfire.commons.uuid.UUID;
 
 @Templated("#root")
@@ -117,7 +118,7 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     public void setTransitiveDependency(final boolean disabled) {
         if (disabled) {
             removeButton.remove();
-            whiteListedPackagesIndicator.innerHTML = "";
+            HTMLElementUtil.removeAllChildren(whiteListedPackagesIndicator);
             whiteListedPackagesIndicator.textContent = translationService.format(whiteListedPackagesState.name());
             getElement().classList.add("transitive");
         }

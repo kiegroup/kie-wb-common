@@ -55,7 +55,7 @@ public class KieSelectElement {
                       final String initialValue,
                       final Consumer<String> onChange) {
 
-        element.innerHTML = "";
+        HTMLElementUtil.removeAllChildren(element);
         element.appendChild(view.getElement());
 
         optionsListPresenter.setup(

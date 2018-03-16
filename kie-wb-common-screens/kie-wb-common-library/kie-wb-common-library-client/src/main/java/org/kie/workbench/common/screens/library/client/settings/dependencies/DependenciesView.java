@@ -30,6 +30,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.screens.library.client.settings.util.HTMLElementUtil;
 
 @Templated
 public class DependenciesView implements DependenciesPresenter.View,
@@ -80,7 +81,7 @@ public class DependenciesView implements DependenciesPresenter.View,
 
     @Override
     public void setItems(final List<DependenciesItemPresenter.View> itemViews) {
-        table.innerHTML = "";
+        HTMLElementUtil.removeAllChildren(table);
         itemViews.forEach(this::add);
     }
 

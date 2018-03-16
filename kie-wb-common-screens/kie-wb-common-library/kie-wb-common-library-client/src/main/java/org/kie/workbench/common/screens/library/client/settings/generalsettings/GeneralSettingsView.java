@@ -30,6 +30,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.settings.util.HTMLElementUtil;
 
 @Templated
 public class GeneralSettingsView implements GeneralSettingsPresenter.View {
@@ -227,7 +228,7 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
 
     @Override
     public void hideError() {
-        this.errorMessage.innerHTML = "";
+        HTMLElementUtil.removeAllChildren(errorMessage);
         this.error.hidden = true;
     }
 

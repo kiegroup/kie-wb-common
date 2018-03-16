@@ -47,7 +47,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
-        this.listElement.innerHTML = "";
+        HTMLElementUtil.removeAllChildren(this.listElement);
         this.objects.forEach(this::addToListElement);
     }
 
@@ -60,7 +60,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
-        this.listElement.innerHTML = "";
+        HTMLElementUtil.removeAllChildren(this.listElement);
         presenters.forEach(this::addPresenter);
     }
 
