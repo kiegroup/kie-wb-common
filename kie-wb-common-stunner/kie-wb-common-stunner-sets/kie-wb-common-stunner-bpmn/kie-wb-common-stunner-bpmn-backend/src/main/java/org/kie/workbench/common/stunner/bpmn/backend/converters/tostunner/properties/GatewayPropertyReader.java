@@ -31,13 +31,4 @@ public class GatewayPropertyReader extends FlowElementPropertyReader {
         return CustomAttribute.dg.of(element).get();
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Gateways;
-//    }
-//
-//    @Override
-//    protected String colorsDefaultBr() {
-//        return Colors.defaultBrColor_Gateways;
-//    }
 }

@@ -177,7 +177,7 @@ public class Scripts {
         eav.getValue().add(value);
     }
 
-    // eww
+    // apparently the only way to wrap into CDATA is to do it with string concatenation
     public static String asCData(String original) {
         return "<![CDATA[" + original + "]]>";
     }

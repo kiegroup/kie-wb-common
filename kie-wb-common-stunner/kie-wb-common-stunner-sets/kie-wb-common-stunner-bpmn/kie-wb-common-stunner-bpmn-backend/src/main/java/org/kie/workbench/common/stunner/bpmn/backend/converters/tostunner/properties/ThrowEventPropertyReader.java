@@ -53,13 +53,4 @@ public class ThrowEventPropertyReader extends EventPropertyReader {
         return result;
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return throwEvent instanceof EndEvent ? Colors.defaultBgColor_EndEvents : Colors.defaultBgColor_ThrowingEvents;
-//    }
-//
-//    @Override
-//    protected String colorsDefaultBr() {
-//        return Colors.defaultBgColor_ThrowingEvents;
-//    }
 }

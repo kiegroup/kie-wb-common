@@ -74,12 +74,6 @@ public class SimulationSets {
         costParameters.setUnitCost(toParameter(unitCost));
         elementParameters.setCostParameters(costParameters);
 
-        // ControlParameters controlParameters = bpsim.createControlParameters();
-        // elementParameters.setControlParameters(controlParameters);
-
-        // PriorityParameters priorityParameters = bpsim.createPriorityParameters();
-        // elementParameters.setPriorityParameters(priorityParameters);
-
         ResourceParameters resourceParameters = bpsim.createResourceParameters();
         resourceParameters.setQuantity(toParameter(quantity));
         resourceParameters.setAvailability(toParameter(workingHours));

@@ -132,15 +132,4 @@ public abstract class BasePropertyReader {
         return new RectangleDimensionsSet((double) bounds.getWidth(), (double) bounds.getHeight());
     }
 
-//    protected String attribute(String... attributeId) {
-//        return optionalAttribute(attributeId).orElse("");
-//    }
-
-//    protected String metaData(String name) {
-//        return optionalMetadata(name).orElse("");
-//    }
-//
-//    protected Optional<String> optionalMetadata(String name) {
-//        return Optional.ofNullable(Utils.getMetaDataValue(element.getExtensionValues(), name));
-//    }
 }

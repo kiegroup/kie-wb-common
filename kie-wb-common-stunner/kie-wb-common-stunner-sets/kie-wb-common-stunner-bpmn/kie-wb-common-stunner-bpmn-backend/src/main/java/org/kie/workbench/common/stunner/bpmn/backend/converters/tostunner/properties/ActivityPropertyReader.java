@@ -66,11 +66,6 @@ public class ActivityPropertyReader extends FlowElementPropertyReader {
         );
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Activities;
-//    }
-
     public SimulationSet getSimulationSet() {
         return definitionResolver.resolveSimulationParameters(element.getId())
                 .map(SimulationSets::of)

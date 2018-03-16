@@ -26,8 +26,4 @@ public class LanePropertyReader extends BasePropertyReader {
         super(el, plane, shape);
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return Colors.defaultBgColor_Swimlanes;
-//    }
 }

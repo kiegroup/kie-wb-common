@@ -54,12 +54,4 @@ public class CatchEventPropertyReader extends EventPropertyReader {
         return result;
     }
 
-//    @Override
-//    protected String colorsDefaultBg() {
-//        return catchEvent instanceof StartEvent ? "#9acd32" : Colors.defaultBgColor_CatchingEvents;
-//    }
-
-//    protected String colorsDefaultBr() {
-//        return Colors.defaultBrColor_CatchingEvents;
-//    }
 }
