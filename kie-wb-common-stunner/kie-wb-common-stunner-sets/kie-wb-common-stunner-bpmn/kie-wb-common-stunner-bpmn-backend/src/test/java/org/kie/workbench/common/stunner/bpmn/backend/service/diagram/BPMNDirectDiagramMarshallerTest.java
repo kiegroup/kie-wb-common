@@ -796,6 +796,7 @@ public class BPMNDirectDiagramMarshallerTest {
                      assignmentsInfo.getValue());
     }
 
+    @Test
     public void testUnmarshallEndErrorEvent() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_ENDERROR_EVENT);
         assertDiagram(diagram,
