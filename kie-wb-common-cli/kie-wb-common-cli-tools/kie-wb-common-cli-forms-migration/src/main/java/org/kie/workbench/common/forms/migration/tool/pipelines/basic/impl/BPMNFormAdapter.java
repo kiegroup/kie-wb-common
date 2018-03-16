@@ -70,9 +70,15 @@ public class BPMNFormAdapter extends AbstractFormAdapter {
 
                 if (file.isFile()) {
                     if (fileName.endsWith("." + FormsMigrationConstants.BPMN_EXTENSION) || fileName.endsWith("." + FormsMigrationConstants.BPMN2_EXTENSION)) {
-                        BPMNProcess process = analyzer.read(migrationContext.getCDIWrapper().getIOService().newInputStream(visitedPath));
-                        if (process != null) {
-                            workspaceBPMNFormModels.addAll(process.getFormModels());
+                        try {
+                            BPMNProcess process = analyzer.read(migrationContext.getCDIWrapper().getIOService().newInputStream(visitedPath));
+                            if (process != null) {
+                                workspaceBPMNFormModels.addAll(process.getFormModels());
+                            } else {
+                                migrationContext.getSystem().console().format(FormsMigrationConstants.BPMN_PARSING_ERROR, FormsMigrationConstants.WARNING, fileName);
+                            }
+                        } catch (Exception ex) {
+                            migrationContext.getSystem().console().format(FormsMigrationConstants.BPMN_PARSING_ERROR, FormsMigrationConstants.WARNING, fileName);
                         }
                     }
                 }
