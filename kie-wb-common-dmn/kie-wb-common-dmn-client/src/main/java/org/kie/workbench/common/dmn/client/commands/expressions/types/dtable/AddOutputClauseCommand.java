@@ -21,6 +21,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapperHelper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.OutputClauseColumn;
@@ -76,13 +77,13 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
-                final int ocIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT - dtable.getInput().size();
-                dtable.getOutput().add(ocIndex, outputClause);
+                final int clauseIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT - dtable.getInput().size();
+                dtable.getOutput().add(clauseIndex, outputClause);
 
                 dtable.getRule().forEach(rule -> {
                     final LiteralExpression le = new LiteralExpression();
                     le.setText(OUTPUT_CLAUSE_DEFAULT_VALUE);
-                    rule.getOutputEntry().add(ocIndex, le);
+                    rule.getOutputEntry().add(clauseIndex, le);
                 });
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -112,6 +113,8 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
                                                uiColumnIndex);
                 }
 
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
@@ -121,10 +124,17 @@ public class AddOutputClauseCommand extends AbstractCanvasGraphCommand implement
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler context) {
                 uiModel.deleteColumn(uiModelColumn);
 
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
             }
         };
     }
+
+    public void updateParentInformation() {
+        CommandUtils.updateParentInformation(uiModel);
+    }
+
 }

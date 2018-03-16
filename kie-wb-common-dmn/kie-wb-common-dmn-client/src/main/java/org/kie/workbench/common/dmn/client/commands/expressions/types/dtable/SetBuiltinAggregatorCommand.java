@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBui
 import org.kie.workbench.common.stunner.core.graph.command.impl.AbstractGraphCommand;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 
-public class SetBuiltInAggregatorCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
+public class SetBuiltinAggregatorCommand extends AbstractCanvasGraphCommand implements VetoExecutionCommand,
                                                                                        VetoUndoCommand {
 
     private final DecisionTable dtable;
@@ -43,7 +43,7 @@ public class SetBuiltInAggregatorCommand extends AbstractCanvasGraphCommand impl
 
     private final Optional<BuiltinAggregator> oldAggregator;
 
-    public SetBuiltInAggregatorCommand(final DecisionTable dtable,
+    public SetBuiltinAggregatorCommand(final DecisionTable dtable,
                                        final BuiltinAggregator aggregator,
                                        final org.uberfire.mvp.Command canvasOperation) {
         this.dtable = dtable;

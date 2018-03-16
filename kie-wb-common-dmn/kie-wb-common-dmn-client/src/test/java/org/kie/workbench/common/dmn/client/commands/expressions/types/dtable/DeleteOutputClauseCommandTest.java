@@ -45,6 +45,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -96,11 +97,11 @@ public class DeleteOutputClauseCommandTest {
                                                             () -> Optional.of(dtable),
                                                             listSelector);
 
-        this.command = new DeleteOutputClauseCommand(dtable,
-                                                     uiModel,
-                                                     DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT + dtable.getInput().size(),
-                                                     uiModelMapper,
-                                                     canvasOperation);
+        this.command = spy(new DeleteOutputClauseCommand(dtable,
+                                                         uiModel,
+                                                         DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT + dtable.getInput().size(),
+                                                         uiModelMapper,
+                                                         canvasOperation));
 
         doReturn(0).when(uiRowNumberColumn).getIndex();
         doReturn(1).when(uiOutputClauseColumn).getIndex();
@@ -168,6 +169,7 @@ public class DeleteOutputClauseCommandTest {
                                                       uiDescriptionColumn);
 
         verify(canvasOperation).execute();
+        verify(command).updateParentInformation();
     }
 
     @Test
@@ -179,7 +181,7 @@ public class DeleteOutputClauseCommandTest {
         assertThat(uiModel.getColumns()).containsOnly(uiRowNumberColumn,
                                                       uiDescriptionColumn);
 
-        reset(canvasOperation);
+        reset(canvasOperation, command);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      canvasAddRuleCommand.undo(canvasHandler));
 
@@ -188,5 +190,6 @@ public class DeleteOutputClauseCommandTest {
                                                       uiDescriptionColumn);
 
         verify(canvasOperation).execute();
+        verify(command).updateParentInformation();
     }
 }

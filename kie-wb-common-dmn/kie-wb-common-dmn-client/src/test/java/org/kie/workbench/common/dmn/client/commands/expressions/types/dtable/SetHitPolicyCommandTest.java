@@ -45,8 +45,6 @@ public class SetHitPolicyCommandTest {
 
     private static final HitPolicy NEW_HIT_POLICY = HitPolicy.UNIQUE;
 
-    private static final HitPolicy NEW_HIT_POLICY_COLLECT = HitPolicy.COLLECT;
-
     @Mock
     private org.uberfire.mvp.Command canvasOperation;
 

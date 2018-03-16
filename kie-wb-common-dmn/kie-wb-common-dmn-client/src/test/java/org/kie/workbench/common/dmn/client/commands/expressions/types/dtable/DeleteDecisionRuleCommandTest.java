@@ -36,6 +36,7 @@ import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -72,10 +73,10 @@ public class DeleteDecisionRuleCommandTest {
     }
 
     private void makeCommand(final int index) {
-        this.command = new DeleteDecisionRuleCommand(dtable,
-                                                     uiModel,
-                                                     index,
-                                                     canvasOperation);
+        this.command = spy(new DeleteDecisionRuleCommand(dtable,
+                                                         uiModel,
+                                                         index,
+                                                         canvasOperation));
     }
 
     @Test
@@ -151,6 +152,8 @@ public class DeleteDecisionRuleCommandTest {
                      uiModel.getRowCount());
 
         verify(canvasOperation).execute();
+        verify(command).updateRowNumbers();
+        verify(command).updateParentInformation();
     }
 
     @Test
@@ -164,7 +167,7 @@ public class DeleteDecisionRuleCommandTest {
         assertEquals(0,
                      uiModel.getRowCount());
 
-        reset(canvasOperation);
+        reset(canvasOperation, command);
         assertEquals(CanvasCommandResultBuilder.SUCCESS,
                      canvasAddRuleCommand.undo(canvasHandler));
         assertEquals(1,
@@ -173,5 +176,7 @@ public class DeleteDecisionRuleCommandTest {
                      uiModel.getRow(0));
 
         verify(canvasOperation).execute();
+        verify(command).updateRowNumbers();
+        verify(command).updateParentInformation();
     }
 }

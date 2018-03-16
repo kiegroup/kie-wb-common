@@ -40,7 +40,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SetBuiltInAggregatorCommandTest {
+public class SetBuiltinAggregatorCommandTest {
 
     private static final BuiltinAggregator OLD_AGGREGATOR = BuiltinAggregator.MIN;
 
@@ -60,7 +60,7 @@ public class SetBuiltInAggregatorCommandTest {
 
     private DecisionTable dtable;
 
-    private SetBuiltInAggregatorCommand command;
+    private SetBuiltinAggregatorCommand command;
 
     @Before
     public void setup() {
@@ -70,7 +70,7 @@ public class SetBuiltInAggregatorCommandTest {
     private void makeCommand(final BuiltinAggregator aggregator) {
         this.dtable = new DecisionTable();
         this.dtable.setAggregation(aggregator);
-        this.command = new SetBuiltInAggregatorCommand(dtable,
+        this.command = new SetBuiltinAggregatorCommand(dtable,
                                                        NEW_AGGREGATOR,
                                                        canvasOperation);
     }

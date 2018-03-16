@@ -48,6 +48,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -108,13 +109,13 @@ public class AddDecisionRuleCommandTest {
     }
 
     private void makeCommand(final int index) {
-        this.command = new AddDecisionRuleCommand(dtable,
-                                                  rule,
-                                                  uiModel,
-                                                  uiModelRow,
-                                                  index,
-                                                  uiModelMapper,
-                                                  canvasOperation);
+        this.command = spy(new AddDecisionRuleCommand(dtable,
+                                                      rule,
+                                                      uiModel,
+                                                      uiModelRow,
+                                                      index,
+                                                      uiModelMapper,
+                                                      canvasOperation));
     }
 
     @Test
@@ -298,6 +299,8 @@ public class AddDecisionRuleCommandTest {
 
         // one time in execute(), one time in undo()
         verify(canvasOperation, times(2)).execute();
+        verify(command, times(2)).updateRowNumbers();
+        verify(command, times(2)).updateParentInformation();
     }
 
     @Test
@@ -324,6 +327,9 @@ public class AddDecisionRuleCommandTest {
                      uiModel.getRow(0));
         assertEquals(uiModelRow,
                      uiModel.getRow(1));
+
+        verify(command).updateRowNumbers();
+        verify(command).updateParentInformation();
     }
 
     @Test
@@ -349,5 +355,10 @@ public class AddDecisionRuleCommandTest {
                      uiModel.getRowCount());
         assertEquals(existingUiRow,
                      uiModel.getRow(0));
+
+        // one time in execute(), one time in undo()
+        verify(canvasOperation, times(2)).execute();
+        verify(command, times(2)).updateRowNumbers();
+        verify(command, times(2)).updateParentInformation();
     }
 }

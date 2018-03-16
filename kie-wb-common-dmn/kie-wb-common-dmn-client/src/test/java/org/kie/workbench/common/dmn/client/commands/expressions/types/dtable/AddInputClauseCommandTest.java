@@ -46,6 +46,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberCol
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -95,13 +96,13 @@ public class AddInputClauseCommandTest {
     }
 
     private void makeCommand(final int index) {
-        this.command = new AddInputClauseCommand(dtable,
-                                                 inputClause,
-                                                 uiModel,
-                                                 uiInputClauseColumn,
-                                                 index,
-                                                 uiModelMapper,
-                                                 canvasOperation);
+        this.command = spy(new AddInputClauseCommand(dtable,
+                                                     inputClause,
+                                                     uiModel,
+                                                     uiInputClauseColumn,
+                                                     index,
+                                                     uiModelMapper,
+                                                     canvasOperation));
     }
 
     @Test
@@ -261,6 +262,7 @@ public class AddInputClauseCommandTest {
 
         // one time in execute(), one time in undo()
         verify(canvasOperation, times(2)).execute();
+        verify(command, times(2)).updateParentInformation();
     }
 
     @Test
@@ -274,6 +276,7 @@ public class AddInputClauseCommandTest {
         assertEquals(1, uiModel.getColumnCount());
 
         verify(canvasOperation).execute();
+        verify(command).updateParentInformation();
     }
 
     private void addRuleWithInputClauseValues(String... inputClauseValues) {

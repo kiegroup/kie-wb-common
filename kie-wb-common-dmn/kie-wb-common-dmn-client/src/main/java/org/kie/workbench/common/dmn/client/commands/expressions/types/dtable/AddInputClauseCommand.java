@@ -21,6 +21,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.InputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
+import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.DecisionTableUIModelMapperHelper;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.InputClauseColumn;
@@ -76,12 +77,12 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
-                final int icIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT;
-                dtable.getInput().add(icIndex, inputClause);
+                final int clauseIndex = uiColumnIndex - DecisionTableUIModelMapperHelper.ROW_INDEX_COLUMN_COUNT;
+                dtable.getInput().add(clauseIndex, inputClause);
                 dtable.getRule().forEach(rule -> {
                     final UnaryTests ut = new UnaryTests();
                     ut.setText(INPUT_CLAUSE_DEFAULT_VALUE);
-                    rule.getInputEntry().add(icIndex, ut);
+                    rule.getInputEntry().add(clauseIndex, ut);
                 });
 
                 return GraphCommandResultBuilder.SUCCESS;
@@ -111,6 +112,8 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
                                                uiColumnIndex);
                 }
 
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
@@ -120,10 +123,17 @@ public class AddInputClauseCommand extends AbstractCanvasGraphCommand implements
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler context) {
                 uiModel.deleteColumn(uiModelColumn);
 
+                updateParentInformation();
+
                 canvasOperation.execute();
 
                 return CanvasCommandResultBuilder.SUCCESS;
             }
         };
     }
+
+    public void updateParentInformation() {
+        CommandUtils.updateParentInformation(uiModel);
+    }
+
 }

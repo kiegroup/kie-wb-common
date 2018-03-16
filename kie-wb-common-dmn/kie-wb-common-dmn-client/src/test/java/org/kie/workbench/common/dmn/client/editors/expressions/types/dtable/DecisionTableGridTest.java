@@ -39,7 +39,7 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.Add
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteDecisionRuleCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteInputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteOutputClauseCommand;
-import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltInAggregatorCommand;
+import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltinAggregatorCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetHitPolicyCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetOrientationCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
@@ -99,12 +99,6 @@ public class DecisionTableGridTest {
     private final static int DELETE_COLUMN = 2;
 
     private final static int DIVIDER = 3;
-
-    private final static int SUPPLEMENTARY_INSERT_RULE_ABOVE = 4;
-
-    private final static int SUPPLEMENTARY_INSERT_RULE_BELOW = 5;
-
-    private final static int SUPPLEMENTARY_DELETE_RULE = 6;
 
     private static final String HASNAME_NAME = "name";
 
@@ -181,7 +175,7 @@ public class DecisionTableGridTest {
     private ArgumentCaptor<CompositeCommand<AbstractCanvasHandler, CanvasViolation>> setHitPolicyCommandCaptor;
 
     @Captor
-    private ArgumentCaptor<SetBuiltInAggregatorCommand> setBuiltInAggregatorCommandCaptor;
+    private ArgumentCaptor<SetBuiltinAggregatorCommand> setBuiltInAggregatorCommandCaptor;
 
     @Captor
     private ArgumentCaptor<SetOrientationCommand> setOrientationCommandCaptor;
@@ -612,7 +606,7 @@ public class DecisionTableGridTest {
         final CompositeCommand<AbstractCanvasHandler, CanvasViolation> setHitPolicyCommand = setHitPolicyCommandCaptor.getValue();
         assertEquals(2,
                      setHitPolicyCommand.getCommands().size());
-        assertTrue(setHitPolicyCommand.getCommands().get(0) instanceof SetBuiltInAggregatorCommand);
+        assertTrue(setHitPolicyCommand.getCommands().get(0) instanceof SetBuiltinAggregatorCommand);
         assertTrue(setHitPolicyCommand.getCommands().get(1) instanceof SetHitPolicyCommand);
 
         setHitPolicyCommand.execute(canvasHandler);
@@ -638,7 +632,7 @@ public class DecisionTableGridTest {
         final CompositeCommand<AbstractCanvasHandler, CanvasViolation> setHitPolicyCommand = setHitPolicyCommandCaptor.getValue();
         assertEquals(2,
                      setHitPolicyCommand.getCommands().size());
-        assertTrue(setHitPolicyCommand.getCommands().get(0) instanceof SetBuiltInAggregatorCommand);
+        assertTrue(setHitPolicyCommand.getCommands().get(0) instanceof SetBuiltinAggregatorCommand);
         assertTrue(setHitPolicyCommand.getCommands().get(1) instanceof SetHitPolicyCommand);
 
         setHitPolicyCommand.execute(canvasHandler);
@@ -660,8 +654,8 @@ public class DecisionTableGridTest {
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               setBuiltInAggregatorCommandCaptor.capture());
 
-        final SetBuiltInAggregatorCommand setBuiltInAggregatorCommand = setBuiltInAggregatorCommandCaptor.getValue();
-        setBuiltInAggregatorCommand.execute(canvasHandler);
+        final SetBuiltinAggregatorCommand setBuiltinAggregatorCommand = setBuiltInAggregatorCommandCaptor.getValue();
+        setBuiltinAggregatorCommand.execute(canvasHandler);
 
         verify(gridLayer).batch();
     }

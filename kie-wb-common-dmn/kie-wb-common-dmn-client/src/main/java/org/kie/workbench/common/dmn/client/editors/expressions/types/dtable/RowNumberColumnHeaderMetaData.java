@@ -61,19 +61,7 @@ class RowNumberColumnHeaderMetaData extends EditablePopupHeaderMetaData<HasHitPo
         final StringBuilder sb = new StringBuilder(hitPolicy.value().substring(0, 1).toUpperCase());
         if (HitPolicy.COLLECT == hitPolicy) {
             if (builtinAggregator != null) {
-                switch (builtinAggregator) {
-                    case COUNT:
-                        sb.append("#");
-                        break;
-                    case MAX:
-                        sb.append(">");
-                        break;
-                    case MIN:
-                        sb.append("<");
-                        break;
-                    case SUM:
-                        sb.append("+");
-                }
+                sb.append(builtinAggregator.getCode());
             }
         }
         return sb.toString();

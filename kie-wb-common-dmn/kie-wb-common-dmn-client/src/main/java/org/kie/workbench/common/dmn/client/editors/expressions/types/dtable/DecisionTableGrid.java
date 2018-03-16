@@ -43,7 +43,7 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.Add
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteDecisionRuleCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteInputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteOutputClauseCommand;
-import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltInAggregatorCommand;
+import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetBuiltinAggregatorCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetHitPolicyCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.SetOrientationCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HasHitPolicyControl;
@@ -464,7 +464,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         expression.ifPresent(dtable -> {
             final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
             if (requiresDefaultAggregation(hitPolicy)) {
-                commandBuilder.addCommand(new SetBuiltInAggregatorCommand(dtable,
+                commandBuilder.addCommand(new SetBuiltinAggregatorCommand(dtable,
                                                                           getDefaultAggregation(dtable, hitPolicy),
                                                                           gridLayer::batch));
             }
@@ -500,7 +500,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     public void setBuiltinAggregator(final BuiltinAggregator aggregator) {
         expression.ifPresent(dtable -> {
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          new SetBuiltInAggregatorCommand(dtable,
+                                          new SetBuiltinAggregatorCommand(dtable,
                                                                           aggregator,
                                                                           gridLayer::batch));
         });

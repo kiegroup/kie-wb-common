@@ -72,10 +72,10 @@ public class DeleteOutputClauseCommand extends AbstractCanvasGraphCommand implem
     }
 
     private List<LiteralExpression> extractColumnData() {
-        final int icIndex = getOutputClauseIndex();
+        final int clauseIndex = getOutputClauseIndex();
         return dtable.getRule()
                 .stream()
-                .map(row -> row.getOutputEntry().get(icIndex))
+                .map(row -> row.getOutputEntry().get(clauseIndex))
                 .collect(Collectors.toList());
     }
 
@@ -93,22 +93,22 @@ public class DeleteOutputClauseCommand extends AbstractCanvasGraphCommand implem
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                final int ocIndex = getOutputClauseIndex();
-                dtable.getRule().forEach(row -> row.getOutputEntry().remove(ocIndex));
-                dtable.getOutput().remove(ocIndex);
+                final int clauseIndex = getOutputClauseIndex();
+                dtable.getRule().forEach(row -> row.getOutputEntry().remove(clauseIndex));
+                dtable.getOutput().remove(clauseIndex);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                final int ocIndex = getOutputClauseIndex();
-                dtable.getOutput().add(ocIndex,
+                final int clauseIndex = getOutputClauseIndex();
+                dtable.getOutput().add(clauseIndex,
                                        oldOutputClause);
                 IntStream.range(0, dtable.getRule().size())
                         .forEach(rowIndex -> {
                             final LiteralExpression value = oldColumnData.get(rowIndex);
-                            dtable.getRule().get(rowIndex).getOutputEntry().add(ocIndex, value);
+                            dtable.getRule().get(rowIndex).getOutputEntry().add(clauseIndex, value);
                         });
 
                 return GraphCommandResultBuilder.SUCCESS;

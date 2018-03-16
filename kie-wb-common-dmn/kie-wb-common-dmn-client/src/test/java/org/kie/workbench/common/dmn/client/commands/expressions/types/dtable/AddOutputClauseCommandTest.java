@@ -49,6 +49,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberCol
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -101,13 +102,13 @@ public class AddOutputClauseCommandTest {
     }
 
     private void makeCommand(final int index) {
-        this.command = new AddOutputClauseCommand(dtable,
-                                                  outputClause,
-                                                  uiModel,
-                                                  uiOutputClauseColumn,
-                                                  index,
-                                                  uiModelMapper,
-                                                  canvasOperation);
+        this.command = spy(new AddOutputClauseCommand(dtable,
+                                                      outputClause,
+                                                      uiModel,
+                                                      uiOutputClauseColumn,
+                                                      index,
+                                                      uiModelMapper,
+                                                      canvasOperation));
     }
 
     @Test
@@ -285,6 +286,7 @@ public class AddOutputClauseCommandTest {
 
         // one time in execute(), one time in undo()
         verify(canvasOperation, times(2)).execute();
+        verify(command, times(2)).updateParentInformation();
     }
 
     @Test
@@ -321,6 +323,7 @@ public class AddOutputClauseCommandTest {
 
         // one time in execute(), one time in undo()
         verify(canvasOperation, times(2)).execute();
+        verify(command, times(2)).updateParentInformation();
     }
 
     @Test
@@ -334,6 +337,7 @@ public class AddOutputClauseCommandTest {
         assertEquals(1, uiModel.getColumnCount());
 
         verify(canvasOperation).execute();
+        verify(command).updateParentInformation();
     }
 
     private void addRuleWithOutputClauseValues(String... outputClauseValues) {

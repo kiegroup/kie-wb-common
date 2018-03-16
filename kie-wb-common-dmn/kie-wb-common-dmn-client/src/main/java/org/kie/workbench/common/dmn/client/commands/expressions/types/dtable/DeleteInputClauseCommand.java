@@ -72,10 +72,10 @@ public class DeleteInputClauseCommand extends AbstractCanvasGraphCommand impleme
     }
 
     private List<UnaryTests> extractColumnData() {
-        final int icIndex = getInputClauseIndex();
+        final int clauseIndex = getInputClauseIndex();
         return dtable.getRule()
                 .stream()
-                .map(row -> row.getInputEntry().get(icIndex))
+                .map(row -> row.getInputEntry().get(clauseIndex))
                 .collect(Collectors.toList());
     }
 
@@ -93,22 +93,22 @@ public class DeleteInputClauseCommand extends AbstractCanvasGraphCommand impleme
 
             @Override
             public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext gce) {
-                final int icIndex = getInputClauseIndex();
-                dtable.getRule().forEach(row -> row.getInputEntry().remove(icIndex));
-                dtable.getInput().remove(icIndex);
+                final int clauseIndex = getInputClauseIndex();
+                dtable.getRule().forEach(row -> row.getInputEntry().remove(clauseIndex));
+                dtable.getInput().remove(clauseIndex);
 
                 return GraphCommandResultBuilder.SUCCESS;
             }
 
             @Override
             public CommandResult<RuleViolation> undo(final GraphCommandExecutionContext gce) {
-                final int icIndex = getInputClauseIndex();
-                dtable.getInput().add(icIndex,
+                final int clauseIndex = getInputClauseIndex();
+                dtable.getInput().add(clauseIndex,
                                       oldInputClause);
                 IntStream.range(0, dtable.getRule().size())
                         .forEach(rowIndex -> {
                             final UnaryTests value = oldColumnData.get(rowIndex);
-                            dtable.getRule().get(rowIndex).getInputEntry().add(icIndex, value);
+                            dtable.getRule().get(rowIndex).getInputEntry().add(clauseIndex, value);
                         });
 
                 return GraphCommandResultBuilder.SUCCESS;
