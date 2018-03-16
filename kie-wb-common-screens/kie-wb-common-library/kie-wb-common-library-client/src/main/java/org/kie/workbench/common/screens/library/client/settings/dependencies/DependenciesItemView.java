@@ -24,12 +24,12 @@ import elemental2.dom.HTMLAnchorElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
+import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.settings.util.HTMLElementUtil;
 import org.uberfire.commons.uuid.UUID;
 
 @Templated("#root")
@@ -37,6 +37,9 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
                                              IsElement {
 
     private DependenciesItemPresenter presenter;
+
+    @Inject
+    private Elemental2DomUtil elemental2DomUtil;
 
     @Inject
     private TranslationService translationService;
@@ -118,7 +121,7 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     public void setTransitiveDependency(final boolean disabled) {
         if (disabled) {
             removeButton.remove();
-            HTMLElementUtil.removeAllChildren(whiteListedPackagesIndicator);
+            elemental2DomUtil.removeAllElementChildren(whiteListedPackagesIndicator);
             whiteListedPackagesIndicator.textContent = translationService.format(whiteListedPackagesState.name());
             getElement().classList.add("transitive");
         }

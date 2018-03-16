@@ -25,12 +25,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
+import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.settings.util.HTMLElementUtil;
 
 @Templated
 public class DependenciesView implements DependenciesPresenter.View,
@@ -40,6 +40,9 @@ public class DependenciesView implements DependenciesPresenter.View,
 
     @Inject
     private TranslationService translationService;
+
+    @Inject
+    private Elemental2DomUtil elemental2DomUtil;
 
     @Inject
     @Named("tbody")
@@ -81,7 +84,7 @@ public class DependenciesView implements DependenciesPresenter.View,
 
     @Override
     public void setItems(final List<DependenciesItemPresenter.View> itemViews) {
-        HTMLElementUtil.removeAllChildren(table);
+        elemental2DomUtil.removeAllElementChildren(table);
         itemViews.forEach(this::add);
     }
 
