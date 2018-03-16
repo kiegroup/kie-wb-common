@@ -63,21 +63,21 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
         }
     }
 
-    abstract void testUnmarshallTopLevelEventFilledProperties() throws Exception;
+    public abstract void testUnmarshallTopLevelEventFilledProperties() throws Exception;
 
-    abstract void testUnmarshallTopLevelEmptyEventProperties() throws Exception;
+    public abstract void testUnmarshallTopLevelEmptyEventProperties() throws Exception;
 
-    abstract void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception;
+    public abstract void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception;
 
-    abstract void testUnmarshallSubprocessLevelEventEmptyProperties() throws Exception;
+    public abstract void testUnmarshallSubprocessLevelEventEmptyProperties() throws Exception;
 
-    abstract void testMarshallTopLevelEventFilledProperties() throws Exception;
+    public abstract void testMarshallTopLevelEventFilledProperties() throws Exception;
 
-    abstract void testMarshallTopLevelEmptyEventProperties() throws Exception;
+    public abstract void testMarshallTopLevelEmptyEventProperties() throws Exception;
 
-    abstract void testMarshallSubprocessLevelEventFilledProperties() throws Exception;
+    public abstract void testMarshallSubprocessLevelEventFilledProperties() throws Exception;
 
-    abstract void testMarshallSubprocessLevelEventEmptyProperties() throws Exception;
+    public abstract void testMarshallSubprocessLevelEventEmptyProperties() throws Exception;
 
     protected <T extends BaseStartEvent> void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
         T nodeBeforeMarshalling = getStartNodeById(before, nodeId, startType);

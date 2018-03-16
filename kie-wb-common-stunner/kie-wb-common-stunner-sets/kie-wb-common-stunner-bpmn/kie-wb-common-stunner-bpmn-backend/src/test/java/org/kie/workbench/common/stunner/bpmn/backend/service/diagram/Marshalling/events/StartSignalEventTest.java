@@ -29,7 +29,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class StartSignalEventTest extends StartEvent {
 
-    private static final String BPMN_START_SIGNAL_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/signalStartEvents.bpmn";
+    private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/signalStartEvents.bpmn";
 
     private static final String FILLED_TOP_LEVEL_EVENT_ID = "40270ECD-79FB-4211-BBF5-B1B6DF39CC24";
     private static final String EMPTY_TOP_LEVEL_EVENT_ID = "6DF9C3AB-7A3B-44D0-AAE1-C0E09D60ACC6";
@@ -50,7 +50,7 @@ public class StartSignalEventTest extends StartEvent {
         final String signalRef = "Signal1";
         final String eventDataOutput = "||event:String||[dout]event->processVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartSignalEvent.class);
@@ -62,7 +62,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEmptyEventProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartSignalEvent.class);
@@ -79,7 +79,7 @@ public class StartSignalEventTest extends StartEvent {
         final String signalRef = "AnotherSignal";
         final String eventDataOutput = "||hello:String||[dout]hello->processVar";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartSignalEvent.class);
@@ -91,7 +91,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartSignalEvent.class);
@@ -103,7 +103,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         String resultXml = marshaller.marshall(initialDiagram);
 
         Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller,  getStream(resultXml));
@@ -115,7 +115,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         String resultXml = marshaller.marshall(initialDiagram);
 
         Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller,  getStream(resultXml));
@@ -127,7 +127,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         String resultXml = marshaller.marshall(initialDiagram);
 
         Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller,  getStream(resultXml));
@@ -139,7 +139,7 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_SIGNAL_EVENT);
+        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         String resultXml = marshaller.marshall(initialDiagram);
 
         Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller,  getStream(resultXml));
