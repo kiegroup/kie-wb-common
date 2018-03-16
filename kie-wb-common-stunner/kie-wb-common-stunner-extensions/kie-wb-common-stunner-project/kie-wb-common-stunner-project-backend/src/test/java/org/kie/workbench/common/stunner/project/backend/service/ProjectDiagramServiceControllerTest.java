@@ -91,7 +91,7 @@ public class ProjectDiagramServiceControllerTest
     }
 
     @Test
-    public void testSaveOrUpdate() throws IOException {
+    public void testSaveOrUpdate() {
         Path path = mock(Path.class);
         when(path.toURI()).thenReturn(FILE_URI);
         when(metadata.getPath()).thenReturn(path);
@@ -105,7 +105,7 @@ public class ProjectDiagramServiceControllerTest
     }
 
     @Test
-    public void testDelete() throws IOException {
+    public void testDelete() {
         Path path = mock(Path.class);
         when(path.toURI()).thenReturn(FILE_URI);
         when(metadata.getPath()).thenReturn(path);

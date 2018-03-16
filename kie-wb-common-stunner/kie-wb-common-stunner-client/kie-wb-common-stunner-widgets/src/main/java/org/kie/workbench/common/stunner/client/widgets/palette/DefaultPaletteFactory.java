@@ -83,17 +83,17 @@ public class DefaultPaletteFactory<H extends AbstractCanvasHandler>
     private DefaultPaletteWidget getPaletteWidget(final H canvasHandler) {
         final DefaultPaletteWidget palette = palettes.get();
         palette.onItemDrop(event -> buildCanvasShapeEvent.fire(new BuildCanvasShapeEvent(canvasHandler,
-                                                                                         event.getDefintion(),
+                                                                                         event.getDefinition(),
                                                                                          event.getFactory(),
                                                                                          event.getX(),
                                                                                          event.getY())));
         palette.onItemDragStart(event -> canvasShapeDragStartEvent.fire(new CanvasShapeDragStartEvent(canvasHandler,
-                                                                                                      event.getDefintion(),
+                                                                                                      event.getDefinition(),
                                                                                                       event.getFactory(),
                                                                                                       event.getX(),
                                                                                                       event.getY())));
         palette.onItemDragUpdate(event -> canvasShapeDragUpdateEvent.fire(new CanvasShapeDragUpdateEvent(canvasHandler,
-                                                                                                         event.getDefintion(),
+                                                                                                         event.getDefinition(),
                                                                                                          event.getFactory(),
                                                                                                          event.getX(),
                                                                                                          event.getY())));

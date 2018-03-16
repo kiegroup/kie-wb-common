@@ -41,7 +41,7 @@ public interface StunnerTranslationService {
     /**
      * Retrieves the name for the given Property Set ID
      */
-    String getPropertySetName(String proepSetId);
+    String getPropertySetName(String propertySetId);
 
     /**
      * Retrieves the title for the given Definition ID

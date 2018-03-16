@@ -86,8 +86,6 @@ public class WorkItemDefinitionClientRegistryTest {
     private Consumer<WorkItemDefinitionCacheRegistry> registryInstanceDestroyer;
 
     private WorkItemDefinitionClientRegistry tested;
-    private CallerMock<WorkItemDefinitionService> serviceCaller;
-    private WorkItemDefinitionMetadataRegistry metadataRegistry;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -101,8 +99,8 @@ public class WorkItemDefinitionClientRegistryTest {
         when(service.search(eq(root))).thenReturn(Collections.singleton(DEF));
         when(registry.items()).thenReturn(Collections.singleton(DEF));
         when(registry.get(eq(WID_ID))).thenReturn(DEF);
-        this.serviceCaller = new CallerMock<>(service);
-        this.metadataRegistry = new WorkItemDefinitionMetadataRegistry();
+        CallerMock<WorkItemDefinitionService> serviceCaller = new CallerMock<>(service);
+        WorkItemDefinitionMetadataRegistry metadataRegistry = new WorkItemDefinitionMetadataRegistry();
         this.tested = new WorkItemDefinitionClientRegistry(sessionManager,
                                                            serviceCaller,
                                                            () -> registry,

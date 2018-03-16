@@ -32,8 +32,6 @@ import org.kie.workbench.common.stunner.core.diagram.Metadata;
 @ApplicationScoped
 public class ClientReadOnlySessionFactory implements ClientSessionFactory<ClientReadOnlySession> {
 
-    private static Logger LOGGER = Logger.getLogger(ClientReadOnlySessionFactory.class.getName());
-
     private final ManagedInstance<ClientReadOnlySessionImpl> readOnlySessionInstances;
 
     protected ClientReadOnlySessionFactory() {

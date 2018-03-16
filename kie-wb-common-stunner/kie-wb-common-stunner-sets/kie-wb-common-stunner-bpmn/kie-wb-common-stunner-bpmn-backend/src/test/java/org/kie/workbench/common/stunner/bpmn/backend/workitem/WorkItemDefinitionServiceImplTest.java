@@ -72,7 +72,7 @@ public class WorkItemDefinitionServiceImplTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void init() throws Exception {
+    public void init() {
         when(path.toURI()).thenReturn(PATH_URI);
         when(resources.resolvePath(eq(path))).thenReturn(nioPath);
         when(resources.resolveSearchPath(eq(path))).thenReturn(nioPath);

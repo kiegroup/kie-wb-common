@@ -161,7 +161,7 @@ public class BS3PaletteWidgetImpl
 
     @Override
     public void onScreenMaximized(final ScreenMaximizedEvent event) {
-        setVisible(event.isDiagramScreen() ? true : false);
+        setVisible(event.isDiagramScreen());
     }
 
     @Override

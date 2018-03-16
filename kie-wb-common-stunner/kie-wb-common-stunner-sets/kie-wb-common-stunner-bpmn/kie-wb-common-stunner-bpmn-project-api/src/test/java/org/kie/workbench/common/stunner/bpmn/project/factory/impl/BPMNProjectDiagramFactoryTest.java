@@ -61,24 +61,23 @@ public class BPMNProjectDiagramFactoryTest {
                                                                  "");
 
     @Mock
-    ProjectMetadata metadata;
+    private ProjectMetadata metadata;
     @Mock
-    Graph graph;
+    private Graph graph;
     @Mock
-    Node diagramNode;
+    private Node diagramNode;
     @Mock
-    Bounds bounds;
-    BPMNDiagramImpl diagram;
-    private View<BPMNDiagram> diagramNodeContent;
+    private Bounds bounds;
+    private BPMNDiagramImpl diagram;
     private final List<Node> graphNodes = new ArrayList<>(1);
 
     private BPMNProjectDiagramFactoryImpl tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         diagram = new BPMNDiagramImpl.BPMNDiagramBuilder().build();
-        diagramNodeContent = new ViewImpl<BPMNDiagram>(diagram,
-                                                       bounds);
+        View<BPMNDiagram> diagramNodeContent = new ViewImpl<>(diagram,
+                                                                         bounds);
         graphNodes.add(diagramNode);
         when(diagramNode.getUUID()).thenReturn(DIAGRAM_NODE_UUID);
         when(diagramNode.getContent()).thenReturn(diagramNodeContent);
@@ -104,9 +103,7 @@ public class BPMNProjectDiagramFactoryTest {
     @SuppressWarnings("unchecked")
     public void testBuildNoPackageSpecified() {
         when(metadata.getProjectPackage()).thenReturn(null);
-        ProjectDiagram pdiagram = tested.build(NAME,
-                                               metadata,
-                                               graph);
+        ProjectDiagram pdiagram = tested.build(NAME, metadata, graph);
         assertNotNull(pdiagram);
         assertEquals(graph,
                      pdiagram.getGraph());
@@ -124,9 +121,8 @@ public class BPMNProjectDiagramFactoryTest {
         final String pName = "p1";
         when(metadata.getProjectPackage()).thenReturn(PKG);
         when(metadata.getModuleName()).thenReturn(pName);
-        ProjectDiagram pdiagram = tested.build(NAME,
-                                               metadata,
-                                               graph);
+        ProjectDiagram pdiagram = tested.build(NAME, metadata, graph);
+
         assertNotNull(pdiagram);
         assertEquals(graph,
                      pdiagram.getGraph());

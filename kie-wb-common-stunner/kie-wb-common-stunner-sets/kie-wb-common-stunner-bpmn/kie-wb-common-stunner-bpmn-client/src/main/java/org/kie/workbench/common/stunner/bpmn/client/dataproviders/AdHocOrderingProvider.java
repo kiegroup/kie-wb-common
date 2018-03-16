@@ -16,6 +16,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.dataproviders;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -86,7 +87,7 @@ public class AdHocOrderingProvider
     @Override
     @SuppressWarnings("unchecked")
     public SelectorData getSelectorData(final FormRenderingContext context) {
-        Map<Object, String> values = new TreeMap<>((o1, o2) -> valuePosition.get(o1).compareTo(valuePosition.get(o2)));
+        Map<Object, String> values = new TreeMap<>(Comparator.comparing(o -> valuePosition.get(o)));
         Arrays.stream(ORDERING.values())
                 .forEach(scope -> values.put(scope.value(),
                                              translationService.getValue(scope.i18nKey())));

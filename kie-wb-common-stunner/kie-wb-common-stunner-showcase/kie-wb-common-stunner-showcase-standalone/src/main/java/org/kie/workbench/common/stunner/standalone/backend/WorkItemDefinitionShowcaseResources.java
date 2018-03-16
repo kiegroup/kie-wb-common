@@ -26,7 +26,6 @@ import javax.inject.Named;
 
 import org.kie.workbench.common.stunner.backend.service.BackendFileSystemManagerImpl;
 import org.kie.workbench.common.stunner.bpmn.backend.workitem.WorkItemDefinitionResources;
-import org.kie.workbench.common.stunner.core.backend.service.BackendFileSystemManager;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Path;

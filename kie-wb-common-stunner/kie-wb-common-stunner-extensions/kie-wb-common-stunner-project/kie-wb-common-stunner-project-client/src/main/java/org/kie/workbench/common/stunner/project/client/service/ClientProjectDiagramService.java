@@ -60,12 +60,7 @@ public class ClientProjectDiagramService extends AbstractClientDiagramService<Pr
                        final String projName,
                        final Package projPkg,
                        final ServiceCallback<Path> callback) {
-        diagramServiceCaller.call(new RemoteCallback<Path>() {
-                                      @Override
-                                      public void callback(final Path path) {
-                                          callback.onSuccess(path);
-                                      }
-                                  },
+        diagramServiceCaller.call((RemoteCallback<Path>) callback::onSuccess,
                                   (message, throwable) -> {
                                       callback.onError(new ClientRuntimeError(throwable));
                                       return false;

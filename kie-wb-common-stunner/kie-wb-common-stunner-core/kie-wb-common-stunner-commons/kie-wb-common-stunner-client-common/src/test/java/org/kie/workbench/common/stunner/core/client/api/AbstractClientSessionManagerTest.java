@@ -53,14 +53,6 @@ public class AbstractClientSessionManagerTest {
     private Graph graph;
     @Mock
     private AbstractClientSession session1;
-    @Mock
-    private AbstractCanvasHandler canvasHandler1;
-    @Mock
-    private Diagram diagram1;
-    @Mock
-    private Metadata metadata1;
-    @Mock
-    private Graph graph1;
 
     private AbstractClientSessionManager tested;
 

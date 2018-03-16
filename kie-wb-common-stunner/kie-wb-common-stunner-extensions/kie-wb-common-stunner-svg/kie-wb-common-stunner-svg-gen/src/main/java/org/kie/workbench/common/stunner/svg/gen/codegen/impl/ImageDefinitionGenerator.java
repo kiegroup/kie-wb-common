@@ -32,7 +32,7 @@ public class ImageDefinitionGenerator
     @Override
     public StringBuffer doGenerate(final ImageDefinition input) throws GeneratorException {
         final String href = input.getHref();
-        final Map<String, Object> root = new HashMap<String, Object>();
+        final Map<String, Object> root = new HashMap<>();
         root.put("className",
                  Picture.class.getName());
         root.put("href",

@@ -108,7 +108,6 @@ public class BPMNPaletteDefinitionBuilderTest {
     private ServiceTask serviceTask;
 
     private BPMNPaletteDefinitionBuilder tested;
-    private ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -121,9 +120,9 @@ public class BPMNPaletteDefinitionBuilderTest {
         when(widAdapter.getCategory(eq(serviceTask))).thenReturn(WID_CAT);
         when(widAdapter.getTitle(eq(serviceTask))).thenReturn(WID_DISPLAY_NAME);
         when(widAdapter.getDescription(eq(serviceTask))).thenReturn(WID_DESC);
-        paletteDefinitionBuilder = spy(new ExpandedPaletteDefinitionBuilder(definitionUtils,
-                                                                            clientFactoryServices,
-                                                                            translationService));
+        ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder = spy(new ExpandedPaletteDefinitionBuilder(definitionUtils,
+                                                                                                             clientFactoryServices,
+                                                                                                             translationService));
         doAnswer(invocationOnMock -> {
             Consumer<DefaultPaletteDefinition> definitionConsumer = (Consumer<DefaultPaletteDefinition>) invocationOnMock.getArguments()[1];
             definitionConsumer.accept(PALETTE_DEFINITION);

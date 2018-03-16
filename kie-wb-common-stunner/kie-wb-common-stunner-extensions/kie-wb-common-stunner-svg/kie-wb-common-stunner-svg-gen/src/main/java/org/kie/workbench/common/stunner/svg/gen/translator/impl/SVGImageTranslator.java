@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.svg.gen.translator.impl;
 
-import org.kie.workbench.common.stunner.svg.gen.exception.TranslatorException;
 import org.kie.workbench.common.stunner.svg.gen.model.impl.ImageDefinition;
 import org.kie.workbench.common.stunner.svg.gen.translator.SVGTranslatorContext;
 import org.w3c.dom.Element;
@@ -32,7 +31,7 @@ public class SVGImageTranslator extends AbstractSVGShapeTranslator<Element, Imag
 
     @Override
     public ImageDefinition doTranslate(final Element rectElement,
-                                       final SVGTranslatorContext context) throws TranslatorException {
+                                       final SVGTranslatorContext context) {
         final String href = rectElement.getAttribute(HREF);
         return new ImageDefinition(getId(rectElement),
                                    href);

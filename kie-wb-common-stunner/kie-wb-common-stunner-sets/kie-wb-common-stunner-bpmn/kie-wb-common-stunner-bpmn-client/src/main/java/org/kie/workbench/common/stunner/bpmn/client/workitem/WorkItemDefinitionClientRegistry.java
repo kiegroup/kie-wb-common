@@ -17,11 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.client.workitem;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -99,12 +99,7 @@ public class WorkItemDefinitionClientRegistry
         metadataRegistry
                 .setRegistrySupplier(this::getCurrentSessionRegistry)
                 .setWorkItemsByPathSupplier((path, collectionConsumer) ->
-                                                    service.call(new RemoteCallback<Collection<WorkItemDefinition>>() {
-                                                        @Override
-                                                        public void callback(Collection<WorkItemDefinition> response) {
-                                                            collectionConsumer.accept(response);
-                                                        }
-                                                    }).search(path));
+                                                    service.call((RemoteCallback<Collection<WorkItemDefinition>>) collectionConsumer::accept).search(path));
     }
 
     public void load(final ClientSession session,
@@ -137,8 +132,7 @@ public class WorkItemDefinitionClientRegistry
 
     @PreDestroy
     public void destroy() {
-        sessionRegistries.keySet().stream()
-                .collect(Collectors.toSet())
+        new HashSet<>(sessionRegistries.keySet())
                 .forEach(this::removeRegistry);
     }
 

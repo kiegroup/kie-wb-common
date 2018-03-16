@@ -29,7 +29,6 @@ import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.AbstractVFSDiagramService;
-import org.kie.workbench.common.stunner.core.backend.service.BackendFileSystemManager;
 import org.kie.workbench.common.stunner.core.definition.service.DefinitionSetService;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;

@@ -36,7 +36,7 @@ public class XMLEncoderDiagramMetadataMarshallerTest {
     private XMLEncoderDiagramMetadataMarshaller tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         tested = new XMLEncoderDiagramMetadataMarshaller();
     }
 

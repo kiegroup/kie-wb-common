@@ -22,25 +22,25 @@ import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
 
 public class PaletteIDefinitionItemEvent extends PaletteItemEvent {
 
-    private final Object defintion;
+    private final Object definition;
     private final ShapeFactory<?, ? extends Shape> factory;
     private final double x;
     private final double y;
 
     public PaletteIDefinitionItemEvent(final String id,
-                                       final Object defintion,
+                                       final Object definition,
                                        final ShapeFactory<?, ? extends Shape> factory,
                                        final double x,
                                        final double y) {
         super(id);
-        this.defintion = defintion;
+        this.definition = definition;
         this.factory = factory;
         this.x = x;
         this.y = y;
     }
 
-    public Object getDefintion() {
-        return defintion;
+    public Object getDefinition() {
+        return definition;
     }
 
     public ShapeFactory<?, ? extends Shape> getFactory() {

@@ -31,8 +31,6 @@ import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.diagram.ProjectMetadata;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramLookupService;
 import org.kie.workbench.common.stunner.project.service.ProjectDiagramService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
 
@@ -41,9 +39,6 @@ import org.uberfire.io.IOService;
 public class ProjectDiagramLookupServiceImpl
         extends AbstractDiagramLookupService<ProjectMetadata, ProjectDiagram>
         implements ProjectDiagramLookupService {
-
-    private static final Logger LOG =
-            LoggerFactory.getLogger(ProjectDiagramLookupServiceImpl.class.getName());
 
     private final IOService ioService;
     private final ProjectDiagramService diagramService;

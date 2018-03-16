@@ -32,21 +32,17 @@ import org.kie.workbench.common.stunner.core.definition.adapter.PropertyAdapter;
 import org.kie.workbench.common.stunner.core.definition.adapter.PropertySetAdapter;
 import org.kie.workbench.common.stunner.core.definition.clone.CloneManager;
 import org.kie.workbench.common.stunner.core.registry.RegistryFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class BackendDefinitionManager extends AbstractDefinitionManager {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BackendDefinitionManager.class);
-
-    Instance<DefinitionSetProxy<?>> definitionSetsInstances;
-    Instance<DefinitionSetAdapter<?>> definitionSetAdapterInstances;
-    Instance<DefinitionSetRuleAdapter<?>> definitionSetRuleAdapterInstances;
-    Instance<DefinitionAdapter<?>> definitionAdapterInstances;
-    Instance<PropertySetAdapter<?>> propertySetAdapterInstances;
-    Instance<PropertyAdapter<?, ?>> propertyAdapterInstances;
-    Instance<MorphAdapter<?>> morphAdapterInstances;
+    private Instance<DefinitionSetProxy<?>> definitionSetsInstances;
+    private Instance<DefinitionSetAdapter<?>> definitionSetAdapterInstances;
+    private Instance<DefinitionSetRuleAdapter<?>> definitionSetRuleAdapterInstances;
+    private Instance<DefinitionAdapter<?>> definitionAdapterInstances;
+    private Instance<PropertySetAdapter<?>> propertySetAdapterInstances;
+    private Instance<PropertyAdapter<?, ?>> propertyAdapterInstances;
+    private Instance<MorphAdapter<?>> morphAdapterInstances;
 
     protected BackendDefinitionManager() {
         super();

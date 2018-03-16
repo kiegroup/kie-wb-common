@@ -51,39 +51,39 @@ public class ProjectDiagramNewResourceHandlerTest {
     private static final String MODULE_NAME = "moduleName";
 
     @Mock
-    DefinitionManager definitionManager;
+    private DefinitionManager definitionManager;
     @Mock
-    ClientProjectDiagramService projectDiagramServices;
+    private ClientProjectDiagramService projectDiagramServices;
     @Mock
-    BusyIndicatorView indicatorView;
+    private BusyIndicatorView indicatorView;
     @Mock
-    ClientResourceType projectDiagramResourceType;
+    private ClientResourceType projectDiagramResourceType;
     @Mock
-    TypeDefinitionSetRegistry definitionSetRegistry;
+    private TypeDefinitionSetRegistry definitionSetRegistry;
     @Mock
-    AdapterManager adapterManager;
+    private AdapterManager adapterManager;
     @Mock
-    DefinitionSetAdapter definitionSetAdapter;
+    private DefinitionSetAdapter definitionSetAdapter;
     @Mock
-    Object definitionSet;
+    private Object definitionSet;
     @Mock
-    Package aPackage;
+    private Package aPackage;
     @Mock
-    NewResourcePresenter presenter;
+    private NewResourcePresenter presenter;
     @Mock
-    WorkspaceProjectContext context;
+    private WorkspaceProjectContext context;
     @Mock
-    Path path;
+    private Path path;
     @Mock
-    Path moduleRootPath;
+    private Path moduleRootPath;
     @Mock
-    Module module;
+    private Module module;
 
     private ProjectDiagramNewResourceHandlerStub tested;
 
     @Before
     @SuppressWarnings("unchecked")
-    public void setup() throws Exception {
+    public void setup() {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.forDefinitionSet()).thenReturn(definitionSetAdapter);
         when(definitionManager.definitionSets()).thenReturn(definitionSetRegistry);

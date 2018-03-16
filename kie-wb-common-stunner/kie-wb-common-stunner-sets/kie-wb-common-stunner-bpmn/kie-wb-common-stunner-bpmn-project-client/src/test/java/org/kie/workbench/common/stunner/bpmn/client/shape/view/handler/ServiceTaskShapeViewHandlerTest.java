@@ -65,7 +65,7 @@ public class ServiceTaskShapeViewHandlerTest {
 
     @Before
     @SuppressWarnings("unchecked")
-    public void init() throws Exception {
+    public void init() {
         this.task = new ServiceTask();
         this.task.setName(WID_ID);
         when(registry.items()).thenReturn(Collections.singleton(DEF));

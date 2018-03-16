@@ -92,7 +92,6 @@ public class SessionDiagramEditorScreen {
     private final ShowcaseDiagramService diagramService;
     private final SessionManager sessionManager;
     private final SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory;
-    private final PlaceManager placeManager;
     private final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
     private final MenuDevCommandsBuilder menuDevCommandsBuilder;
     private final ScreenPanelView screenPanelView;
@@ -119,7 +118,7 @@ public class SessionDiagramEditorScreen {
         this.diagramService = diagramService;
         this.sessionManager = sessionManager;
         this.sessionPresenterFactory = sessionPresenterFactory;
-        this.placeManager = placeManager;
+        PlaceManager placeManager1 = placeManager;
         this.changeTitleNotificationEvent = changeTitleNotificationEvent;
         this.menuDevCommandsBuilder = menuDevCommandsBuilder;
         this.screenPanelView = screenPanelView;

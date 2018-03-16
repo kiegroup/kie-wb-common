@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
@@ -74,9 +74,7 @@ class WorkItemDefinitionMockRegistry implements WorkItemDefinitionRegistry {
 
     @Override
     public Collection<WorkItemDefinition> items() {
-        return MOCK_DEFINITIONS.values()
-                .stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(MOCK_DEFINITIONS.values());
     }
 
     @Override

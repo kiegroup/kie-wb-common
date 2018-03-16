@@ -50,12 +50,12 @@ public class ImageDefinitionGeneratorTest {
     private ImageDefinitionGenerator tested;
 
     @Before
-    public void setup() throws Exception {
+    public void setup() {
         tested = new ImageDefinitionGenerator();
     }
 
     @Test
-    public void testGetters() throws Exception {
+    public void testGetters() {
         assertEquals(ImageDefinition.class,
                      tested.getDefinitionType());
         assertEquals("Image",

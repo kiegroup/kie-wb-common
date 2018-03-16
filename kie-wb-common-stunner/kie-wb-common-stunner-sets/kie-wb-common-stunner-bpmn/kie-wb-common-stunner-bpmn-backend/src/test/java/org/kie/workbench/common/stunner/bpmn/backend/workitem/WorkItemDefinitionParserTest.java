@@ -69,10 +69,8 @@ public class WorkItemDefinitionParserTest {
     @Mock
     private Function<String, String> dataUriProvider;
 
-    private Set<ParameterDefinition> parameters;
-
     @Before
-    public void init() throws Exception {
+    public void init() {
         when(jbpmWorkDefinition.getName()).thenReturn(NAME);
         when(jbpmWorkDefinition.getCategory()).thenReturn(CATWGORY);
         when(jbpmWorkDefinition.getDescription()).thenReturn(DESC);
@@ -86,7 +84,7 @@ public class WorkItemDefinitionParserTest {
         when(param1.getType()).thenReturn(new StringDataType());
         when(param2.getName()).thenReturn("param2");
         when(param2.getType()).thenReturn(new StringDataType());
-        parameters = new HashSet<ParameterDefinition>(2) {{
+        Set<ParameterDefinition> parameters = new HashSet<ParameterDefinition>(2) {{
             add(param1);
             add(param2);
         }};
@@ -164,15 +162,13 @@ public class WorkItemDefinitionParserTest {
         return writer.toString();
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         WorkItemDefinitionParserTest.testServiceRepository();
     }
 
-    private static final String LOCAL_REPO = "http://localhost/repository/";
-
     private static final String JBOSS_REPO = "https://docs.jboss.org/jbpm/v6.0/repository";
 
-    private static void testServiceRepository() throws Exception {
+    private static void testServiceRepository() {
         System.out.println("Starting...");
         Collection<WorkItemDefinition> workItems =
                 WorkItemDefinitionParser.parse(JBOSS_REPO,

@@ -16,10 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.workitem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Typed;
@@ -36,10 +36,7 @@ public class WorkItemDefinitionCacheRegistry implements WorkItemDefinitionRegist
 
     @Override
     public Collection<WorkItemDefinition> items() {
-        return definitions
-                .values()
-                .stream()
-                .collect(Collectors.toList());
+        return new ArrayList<>(definitions.values());
     }
 
     @Override

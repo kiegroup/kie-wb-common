@@ -22,15 +22,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.kie.workbench.common.stunner.core.lookup.AbstractLookupManager;
 import org.kie.workbench.common.stunner.core.lookup.LookupManager;
 
 public abstract class AbstractCriteriaLookupManager<I, T, R extends LookupManager.LookupRequest>
         extends AbstractLookupManager<I, T, R> {
-
-    private static Logger LOGGER = Logger.getLogger(AbstractCriteriaLookupManager.class.getName());
 
     protected static final String CRITERIA_SEPARATOR = ";";
     protected static final String VALUE_SEPARATOR = "=";

@@ -53,8 +53,8 @@ public class BPMNClientSessionFactoryTest {
     @SuppressWarnings("unchecked")
     public void init() {
         doAnswer(invocationOnMock -> {
-            Command callbaqck = (Command) invocationOnMock.getArguments()[2];
-            callbaqck.execute();
+            Command callback = (Command) invocationOnMock.getArguments()[2];
+            callback.execute();
             return null;
         }).when(registry).load(eq(session),
                                eq(metadata),

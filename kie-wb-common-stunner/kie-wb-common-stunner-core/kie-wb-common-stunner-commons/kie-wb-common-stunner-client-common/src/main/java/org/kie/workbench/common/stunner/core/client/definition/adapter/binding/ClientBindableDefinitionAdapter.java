@@ -105,12 +105,4 @@ class ClientBindableDefinitionAdapter extends AbstractBindableDefinitionAdapter<
         return ClientBindingUtils.getProxiedSet(pojo,
                                                 fieldNames);
     }
-
-    private <T, V> void setProxiedValue(final T pojo,
-                                        final String fieldName,
-                                        final V value) {
-        ClientBindingUtils.setProxiedValue(pojo,
-                                           fieldName,
-                                           value);
-    }
 }

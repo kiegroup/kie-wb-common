@@ -201,7 +201,6 @@ public class DefaultPaletteDefinitionProviders {
 
         public CategoryDefinition useGlyph(final Glyph glyph) {
             this.glyph = Optional.of(glyph);
-            ;
             return this;
         }
     }

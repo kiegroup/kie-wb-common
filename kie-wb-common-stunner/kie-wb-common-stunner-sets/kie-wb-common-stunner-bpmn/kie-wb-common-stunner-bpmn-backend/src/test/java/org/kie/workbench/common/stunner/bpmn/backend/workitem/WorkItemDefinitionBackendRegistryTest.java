@@ -53,13 +53,11 @@ public class WorkItemDefinitionBackendRegistryTest {
     private Metadata metadata;
 
     private WorkItemDefinitionBackendRegistry tested;
-    private WorkItemDefinitionCacheRegistry registry;
-    private WorkItemDefinitionMetadataRegistry metadataRegistry;
 
     @Before
-    public void init() throws Exception {
-        this.registry = new WorkItemDefinitionCacheRegistry();
-        this.metadataRegistry = new WorkItemDefinitionMetadataRegistry();
+    public void init() {
+        WorkItemDefinitionCacheRegistry registry = new WorkItemDefinitionCacheRegistry();
+        WorkItemDefinitionMetadataRegistry metadataRegistry = new WorkItemDefinitionMetadataRegistry();
         when(metadata.getRoot()).thenReturn(root);
         when(service.search(eq(root))).thenReturn(Arrays.asList(DEF1, DEF2));
         this.tested = new WorkItemDefinitionBackendRegistry(registry,

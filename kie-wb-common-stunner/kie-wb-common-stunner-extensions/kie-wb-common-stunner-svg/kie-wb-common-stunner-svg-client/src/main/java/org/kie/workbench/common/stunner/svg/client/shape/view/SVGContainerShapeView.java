@@ -51,7 +51,7 @@ public interface SVGContainerShapeView<T extends SVGContainerShapeView>
     IContainer<?, IPrimitive<?>> getContainer();
 
     /**
-     * Refresh childrens layout for the shape.
+     * Refresh children layout for the shape.
      */
     void refresh();
 }

@@ -37,7 +37,7 @@ public class BackendFileSystemManager {
 
     private static final Logger LOG = LoggerFactory.getLogger(BackendFileSystemManager.class.getName());
 
-    public static final FilenameFilter FILTER_NONE = (dir, name) -> true;
+    private static final FilenameFilter FILTER_NONE = (dir, name) -> true;
     private static final String WEBINF_PATH = "WEB-INF";
 
     private final IOService ioService;
