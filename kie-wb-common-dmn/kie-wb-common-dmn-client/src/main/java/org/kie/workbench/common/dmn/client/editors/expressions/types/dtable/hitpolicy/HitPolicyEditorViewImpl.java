@@ -146,31 +146,27 @@ public class HitPolicyEditorViewImpl implements HitPolicyEditorView {
         Scheduler.get().scheduleDeferred(() -> select.refresh(s -> s.setValue(value)));
     }
 
+    private void enableSelect(final Select select, final boolean enabled) {
+        if (enabled) {
+            select.enable();
+        } else {
+            select.disable();
+        }
+    }
+
     @Override
     public void enableHitPolicies(final boolean enabled) {
-        if (enabled) {
-            lstHitPolicies.enable();
-        } else {
-            lstHitPolicies.disable();
-        }
+        enableSelect(lstHitPolicies, enabled);
     }
 
     @Override
     public void enableBuiltinAggregators(final boolean enabled) {
-        if (enabled) {
-            lstBuiltinAggregator.enable();
-        } else {
-            lstBuiltinAggregator.disable();
-        }
+        enableSelect(lstBuiltinAggregator, enabled);
     }
 
     @Override
     public void enableDecisionTableOrientation(final boolean enabled) {
-        if (enabled) {
-            lstDecisionTableOrientation.enable();
-        } else {
-            lstDecisionTableOrientation.disable();
-        }
+        enableSelect(lstDecisionTableOrientation, enabled);
     }
 
     @Override
