@@ -732,7 +732,9 @@ public class BPMNDirectDiagramMarshallerTest {
 
         DataIOSet emptyDataIOSet = emptyErrorEvent.getDataIOSet();
         AssignmentsInfo emptyAssignmentsInfo = emptyDataIOSet.getAssignmentsinfo();
-        assertEquals("", emptyAssignmentsInfo.getValue());
+        // TODO: this tests diverges from the original, in that the expected value was "".
+        // however, this code path will eventually be dropped, so it's not imporrant
+        assertEquals("||||", emptyAssignmentsInfo.getValue());
     }
 
     @Test

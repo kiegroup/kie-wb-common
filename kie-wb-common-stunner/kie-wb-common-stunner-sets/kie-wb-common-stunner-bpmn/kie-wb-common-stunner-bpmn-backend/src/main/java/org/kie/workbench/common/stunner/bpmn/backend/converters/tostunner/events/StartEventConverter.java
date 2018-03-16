@@ -107,6 +107,8 @@ public class StartEventConverter {
 
         definition.setExecutionSet(new InterruptingErrorEventExecutionSet(
                 new IsInterrupting(event.isIsInterrupting()),
+                // FIXME this special case should be moved to ErrorRef constructor!
+                // avoids an ErrorRef(null) -- tests expect ""
                 new ErrorRef(Optional.ofNullable(e.getErrorRef().getErrorCode()).orElse(""))
         ));
 
