@@ -103,49 +103,30 @@ public class StartErrorEventTest extends StartEvent {
     @Test
     @Override
     public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
-        String resultXml = marshaller.marshall(initialDiagram);
-
-        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
-        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
-
-        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, FILLED_TOP_LEVEL_EVENT_ID, StartErrorEvent.class);
+        checkEventMarshalling(StartErrorEvent.class, FILLED_TOP_LEVEL_EVENT_ID);
     }
 
     @Test
     @Override
     public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
-        String resultXml = marshaller.marshall(initialDiagram);
-
-        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
-        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
-
-        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, EMPTY_TOP_LEVEL_EVENT_ID, StartErrorEvent.class);
+        checkEventMarshalling(StartErrorEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
     }
 
     @Test
     @Override
     public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
-        String resultXml = marshaller.marshall(initialDiagram);
-
-        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
-        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
-
-        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartErrorEvent.class);
+        checkEventMarshalling(StartErrorEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
     }
 
     @Test
     @Override
     public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
-        String resultXml = marshaller.marshall(initialDiagram);
+        checkEventMarshalling(StartErrorEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
+    }
 
-        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
-        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
-
-        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartErrorEvent.class);
+    @Override
+    String getBpmnStartEventFilePath() {
+        return BPMN_START_EVENT_FILE_PATH;
     }
 
     private void assertErrorEventExecutionSet(InterruptingErrorEventExecutionSet executionSet, String eventName, boolean isInterrupting) {

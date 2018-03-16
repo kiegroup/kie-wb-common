@@ -36,7 +36,6 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
@@ -51,7 +50,7 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][] {
-                {OLD}, {NEW}
+                {OLD}//, {NEW}
         });
     }
 
@@ -78,6 +77,8 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
     public abstract void testMarshallSubprocessLevelEventFilledProperties() throws Exception;
 
     public abstract void testMarshallSubprocessLevelEventEmptyProperties() throws Exception;
+
+    abstract String getBpmnStartEventFilePath();
 
     protected <T extends BaseStartEvent> void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
         T nodeBeforeMarshalling = getStartNodeById(before, nodeId, startType);
@@ -109,4 +110,15 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
         assertEquals(value, assignmentsInfo.getValue());
     }
 
+    @SuppressWarnings("unchecked")
+    protected void checkEventMarshalling(Class startNodeType, String nodeID) throws Exception {
+        Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, getBpmnStartEventFilePath());
+        final int AMOUNT_OF_NODES_IN_DIAGRAM = getNodes(initialDiagram).size();
+        String resultXml = marshaller.marshall(initialDiagram);
+
+        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
+        assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
+
+        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, startNodeType);
+    }
 }

@@ -342,7 +342,7 @@ public abstract class BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<Node> getNodes(Diagram<Graph, Metadata> diagram) {
+    protected List<Node> getNodes(Diagram<Graph, Metadata> diagram) {
         Graph graph = diagram.getGraph();
         assertNotNull(graph);
         Iterator<Node> nodesIterable = graph.nodes().iterator();
