@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.core.client.components.palette;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -114,7 +114,8 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
             // and let the consumer do its job.
             final Command checkConsumedAndComplete = () -> {
                 if (consumed.isEmpty()) {
-                    paletteDefinitionConsumer.accept(new DefaultPaletteDefinition(new ArrayList<>(items.values()),
+                    paletteDefinitionConsumer.accept(new DefaultPaletteDefinition(items.values().stream()
+                                                                                          .collect(Collectors.toList()),
                                                                                   definitionSetId));
                 }
             };

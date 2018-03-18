@@ -30,17 +30,7 @@ public class TaskPropertyType implements PropertyType {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof TaskPropertyType)) {
-            return false;
-        }
-        TaskPropertyType that = (TaskPropertyType) o;
-        if (!name.equals(that.name)) {
-            return false;
-        }
-        return true;
+        return this == o || o instanceof TaskPropertyType;
     }
 
     @Override

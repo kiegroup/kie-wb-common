@@ -36,16 +36,23 @@ import org.kie.workbench.common.stunner.core.registry.RegistryFactory;
 @ApplicationScoped
 public class BackendDefinitionManager extends AbstractDefinitionManager {
 
-    private Instance<DefinitionSetProxy<?>> definitionSetsInstances;
-    private Instance<DefinitionSetAdapter<?>> definitionSetAdapterInstances;
-    private Instance<DefinitionSetRuleAdapter<?>> definitionSetRuleAdapterInstances;
-    private Instance<DefinitionAdapter<?>> definitionAdapterInstances;
-    private Instance<PropertySetAdapter<?>> propertySetAdapterInstances;
-    private Instance<PropertyAdapter<?, ?>> propertyAdapterInstances;
-    private Instance<MorphAdapter<?>> morphAdapterInstances;
+    private final Instance<DefinitionSetProxy<?>> definitionSetsInstances;
+    private final Instance<DefinitionSetAdapter<?>> definitionSetAdapterInstances;
+    private final Instance<DefinitionSetRuleAdapter<?>> definitionSetRuleAdapterInstances;
+    private final Instance<DefinitionAdapter<?>> definitionAdapterInstances;
+    private final Instance<PropertySetAdapter<?>> propertySetAdapterInstances;
+    private final Instance<PropertyAdapter<?, ?>> propertyAdapterInstances;
+    private final Instance<MorphAdapter<?>> morphAdapterInstances;
 
     protected BackendDefinitionManager() {
         super();
+        this.definitionSetsInstances = null;
+        this.definitionSetAdapterInstances = null;
+        this.definitionSetRuleAdapterInstances = null;
+        this.definitionAdapterInstances = null;
+        this.propertySetAdapterInstances = null;
+        this.propertyAdapterInstances = null;
+        this.morphAdapterInstances = null;
     }
 
     @Inject

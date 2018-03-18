@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.workitem;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -132,7 +131,7 @@ public class WorkItemDefinitionClientRegistry
 
     @PreDestroy
     public void destroy() {
-        new HashSet<>(sessionRegistries.keySet())
+        sessionRegistries.keySet().stream()
                 .forEach(this::removeRegistry);
     }
 
