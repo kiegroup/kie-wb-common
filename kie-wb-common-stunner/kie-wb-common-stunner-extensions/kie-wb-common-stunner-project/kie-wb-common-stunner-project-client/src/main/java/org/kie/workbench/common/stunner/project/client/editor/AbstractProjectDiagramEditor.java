@@ -125,7 +125,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
     private Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
-    private SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
+    protected SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
     private final DiagramClientErrorHandler diagramClientErrorHandler;
     private final ClientTranslationService translationService;
 

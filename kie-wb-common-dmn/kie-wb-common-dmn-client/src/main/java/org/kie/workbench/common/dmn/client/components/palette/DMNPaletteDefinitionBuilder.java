@@ -58,7 +58,6 @@ public class DMNPaletteDefinitionBuilder
     @PostConstruct
     public void init() {
         paletteDefinitionBuilder
-                .itemFilter(defId -> true)
                 .categoryFilter(category -> !EXCLUDED_CATEGORIES.contains(category));
     }
 

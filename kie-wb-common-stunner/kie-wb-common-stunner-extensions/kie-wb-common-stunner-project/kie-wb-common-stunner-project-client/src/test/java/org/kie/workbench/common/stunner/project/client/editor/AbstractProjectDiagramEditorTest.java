@@ -18,8 +18,6 @@ package org.kie.workbench.common.stunner.project.client.editor;
 
 import java.util.Optional;
 
-import javax.enterprise.event.Event;
-
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
@@ -49,9 +47,6 @@ import org.kie.workbench.common.stunner.core.client.session.command.impl.SwitchG
 import org.kie.workbench.common.stunner.core.client.session.command.impl.UndoSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.ValidateSessionCommand;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.VisitGraphSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
-import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
@@ -86,77 +81,73 @@ import static org.mockito.Mockito.when;
 public class AbstractProjectDiagramEditorTest {
 
     @Mock
-    private AbstractProjectDiagramEditor.View view;
+    protected AbstractProjectDiagramEditor.View view;
 
     @Mock
-    private PlaceManager placeManager;
+    protected PlaceManager placeManager;
 
     @Mock
-    private ErrorPopupPresenter errorPopupPresenter;
+    protected ErrorPopupPresenter errorPopupPresenter;
 
     @Mock
-    private EventSourceMock<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
+    protected EventSourceMock<ChangeTitleWidgetEvent> changeTitleNotificationEvent;
 
     @Mock
-    private SavePopUpPresenter savePopUpPresenter;
+    protected SavePopUpPresenter savePopUpPresenter;
 
     @Mock
-    private ClientProjectDiagramService clientProjectDiagramService;
+    protected ClientProjectDiagramService clientProjectDiagramService;
 
     @Mock
-    private SessionManager sessionManager;
+    protected SessionManager sessionManager;
 
     @Mock
-    private SessionPresenterFactory sessionPresenterFactory;
+    protected SessionPresenterFactory sessionPresenterFactory;
 
     @Mock
-    private EventSourceMock<OnDiagramFocusEvent> onDiagramFocusEvent;
+    protected EventSourceMock<OnDiagramFocusEvent> onDiagramFocusEvent;
 
     @Mock
-    private EventSourceMock<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
+    protected EventSourceMock<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
 
     @Mock
-    private BasicFileMenuBuilder menuBuilder;
+    protected BasicFileMenuBuilder menuBuilder;
 
     @Mock
-    private VersionRecordManager versionRecordManager;
+    protected VersionRecordManager versionRecordManager;
 
     @Spy
     @InjectMocks
-    private FileMenuBuilderImpl fileMenuBuilder;
+    protected FileMenuBuilderImpl fileMenuBuilder;
 
     @Mock
-    private ProjectDiagramEditorMenuItemsBuilder projectMenuItemsBuilder;
+    protected ProjectDiagramEditorMenuItemsBuilder projectMenuItemsBuilder;
 
     @Mock
-    private ProjectController projectController;
+    protected ProjectController projectController;
 
     @Mock
-    private WorkspaceProjectContext workbenchContext;
+    protected WorkspaceProjectContext workbenchContext;
 
     @Mock
-    private SessionCommandFactory sessionCommandFactory;
+    protected SessionCommandFactory sessionCommandFactory;
 
     @Mock
-    private ProjectMessagesListener projectMessagesListener;
+    protected ProjectMessagesListener projectMessagesListener;
+
+    protected ClientResourceType resourceType;
 
     @Mock
-    private ClientResourceTypeMock resourceType;
+    protected DiagramClientErrorHandler diagramClientErrorHandler;
 
     @Mock
-    private DiagramClientErrorHandler diagramClientErrorHandler;
+    protected ClientTranslationService translationService;
 
     @Mock
-    private ClientTranslationService translationService;
+    protected AlertsButtonMenuItemBuilder alertsButtonMenuItemBuilder;
 
     @Mock
-    private AlertsButtonMenuItemBuilder alertsButtonMenuItemBuilder;
-
-    @Mock
-    private MenuItem alertsButtonMenuItem;
-
-    @Mock
-    private SessionPresenter<AbstractClientFullSession, ?, Diagram> sessionPresenter;
+    protected MenuItem alertsButtonMenuItem;
 
     @Mock
     private ClearStatesSessionCommand clearStatesSessionCommand;
@@ -207,10 +198,11 @@ public class AbstractProjectDiagramEditorTest {
 
     }
 
-    private TestProjectDiagramEditor presenter;
+    protected AbstractProjectDiagramEditor<ClientResourceTypeMock> presenter;
 
     @Before
-    public void setup() {
+    @SuppressWarnings("unchecked")
+    public void setUp() {
         doReturn(clearStatesSessionCommand).when(sessionCommandFactory).newClearStatesCommand();
         doReturn(switchGridSessionCommand).when(sessionCommandFactory).newSwitchGridCommand();
         doReturn(visitGraphSessionCommand).when(sessionCommandFactory).newVisitGraphCommand();
@@ -241,24 +233,37 @@ public class AbstractProjectDiagramEditorTest {
 
         when(alertsButtonMenuItemBuilder.build()).thenReturn(alertsButtonMenuItem);
 
-        resourceType = mock(ClientResourceTypeMock.class);
+        resourceType = mockResourceType();
+        presenter = createDiagramEditor();
+        presenter.init();
+    }
 
-        presenter = new TestProjectDiagramEditor(mock(AbstractProjectDiagramEditor.View.class),
-                                                 mock(PlaceManager.class),
-                                                 mock(ErrorPopupPresenter.class),
-                                                 mock(EventSourceMock.class),
-                                                 mock(SavePopUpPresenter.class),
-                                                 resourceType,
-                                                 mock(ClientProjectDiagramService.class),
-                                                 mock(SessionManager.class),
-                                                 mock(SessionPresenterFactory.class),
-                                                 sessionCommandFactory,
-                                                 projectMenuItemsBuilder,
-                                                 new EventSourceMock<>(),
-                                                 new EventSourceMock<>(),
-                                                 projectMessagesListener,
-                                                 diagramClientErrorHandler,
-                                                 translationService) {
+    protected ClientResourceType mockResourceType() {
+        return mock(ClientResourceTypeMock.class);
+    }
+
+    protected ClientResourceType getResourceType() {
+        return resourceType;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected AbstractProjectDiagramEditor createDiagramEditor() {
+        return new AbstractProjectDiagramEditor<ClientResourceTypeMock>(view,
+                                                                        placeManager,
+                                                                        errorPopupPresenter,
+                                                                        changeTitleNotificationEvent,
+                                                                        savePopUpPresenter,
+                                                                        (ClientResourceTypeMock) getResourceType(),
+                                                                        clientProjectDiagramService,
+                                                                        sessionManager,
+                                                                        sessionPresenterFactory,
+                                                                        sessionCommandFactory,
+                                                                        projectMenuItemsBuilder,
+                                                                        onDiagramFocusEvent,
+                                                                        onDiagramLostFocusEvent,
+                                                                        projectMessagesListener,
+                                                                        diagramClientErrorHandler,
+                                                                        translationService) {
             {
                 fileMenuBuilder = AbstractProjectDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = AbstractProjectDiagramEditorTest.this.workbenchContext;
@@ -266,8 +271,22 @@ public class AbstractProjectDiagramEditorTest {
                 versionRecordManager = AbstractProjectDiagramEditorTest.this.versionRecordManager;
                 alertsButtonMenuItemBuilder = AbstractProjectDiagramEditorTest.this.alertsButtonMenuItemBuilder;
             }
+
+            @Override
+            protected int getCanvasWidth() {
+                return 0;
+            }
+
+            @Override
+            protected int getCanvasHeight() {
+                return 0;
+            }
+
+            @Override
+            protected String getEditorIdentifier() {
+                return null;
+            }
         };
-        presenter.init();
     }
 
     @Test
@@ -320,9 +339,11 @@ public class AbstractProjectDiagramEditorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testCloseEditor() {
+        SessionPresenter sessionPresenter = mock(SessionPresenter.class);
         presenter.setSessionPresenter(sessionPresenter);
-        presenter.onClose();
+        presenter.doClose();
         verify(clearStatesSessionCommand, times(1)).unbind();
         verify(switchGridSessionCommand, times(1)).unbind();
         verify(visitGraphSessionCommand, times(1)).unbind();
@@ -339,61 +360,5 @@ public class AbstractProjectDiagramEditorTest {
         verify(cutSelectionSessionCommand, times(1)).unbind();
         verify(sessionPresenter, never()).clear();
         verify(sessionPresenter, times(1)).destroy();
-    }
-
-    private static class TestProjectDiagramEditor extends AbstractProjectDiagramEditor<ClientResourceTypeMock> {
-
-        public TestProjectDiagramEditor(final View view,
-                                        final PlaceManager placeManager,
-                                        final ErrorPopupPresenter errorPopupPresenter,
-                                        final Event<ChangeTitleWidgetEvent> changeTitleNotificationEvent,
-                                        final SavePopUpPresenter savePopUpPresenter,
-                                        final ClientResourceTypeMock resourceType,
-                                        final ClientProjectDiagramService projectDiagramServices,
-                                        final SessionManager sessionManager,
-                                        final SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory,
-                                        final SessionCommandFactory sessionCommandFactory,
-                                        final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder,
-                                        final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
-                                        final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
-                                        final ProjectMessagesListener projectMessagesListener,
-                                        final DiagramClientErrorHandler diagramClientErrorHandler,
-                                        final ClientTranslationService translationService) {
-            super(view,
-                  placeManager,
-                  errorPopupPresenter,
-                  changeTitleNotificationEvent,
-                  savePopUpPresenter,
-                  resourceType,
-                  projectDiagramServices,
-                  sessionManager,
-                  sessionPresenterFactory,
-                  sessionCommandFactory,
-                  menuItemsBuilder,
-                  onDiagramFocusEvent,
-                  onDiagramLostFocusEvent,
-                  projectMessagesListener,
-                  diagramClientErrorHandler,
-                  translationService);
-        }
-
-        @Override
-        protected int getCanvasWidth() {
-            return 0;
-        }
-
-        @Override
-        protected int getCanvasHeight() {
-            return 0;
-        }
-
-        public void onClose() {
-            doClose();
-        }
-
-        @Override
-        protected String getEditorIdentifier() {
-            return null;
-        }
     }
 }

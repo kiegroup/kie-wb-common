@@ -54,6 +54,10 @@ public class BackendFactoryManager extends AbstractFactoryManager implements Fac
              null);
     }
 
+    protected BackendFactoryManager(final DefinitionManager definitionManager) {
+        super(definitionManager);
+    }
+
     @Inject
     public BackendFactoryManager(final RegistryFactory registryFactory,
                                  final DefinitionManager definitionManager,

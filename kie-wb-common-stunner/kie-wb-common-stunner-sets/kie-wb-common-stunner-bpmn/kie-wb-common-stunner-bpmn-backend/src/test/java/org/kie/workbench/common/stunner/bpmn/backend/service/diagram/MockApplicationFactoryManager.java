@@ -49,7 +49,7 @@ public class MockApplicationFactoryManager extends BackendFactoryManager {
                                          final TestScopeModelFactory testScopeModelFactory,
                                          final EdgeFactory<Object> connectionEdgeFactory,
                                          final NodeFactory<Object> viewNodeFactory) {
-        super();
+        super(definitionManager);
         this.bpmnGraphFactory = bpmnGraphFactory;
         this.testScopeModelFactory = testScopeModelFactory;
         this.connectionEdgeFactory = connectionEdgeFactory;
