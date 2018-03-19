@@ -125,7 +125,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
     private Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent;
-    protected SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
+    private SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter;
     private final DiagramClientErrorHandler diagramClientErrorHandler;
     private final ClientTranslationService translationService;
 
@@ -512,7 +512,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     void onSessionErrorEvent(final @Observes OnSessionErrorEvent errorEvent) {
         if (isSameSession(errorEvent.getSession())) {
             executeWithConfirm(translationService.getValue(StunnerProjectClientConstants.ON_ERROR_CONFIRM_UNDO_LAST_ACTION,
-                                                              errorEvent.getError()),
+                                                           errorEvent.getError()),
                                this::menu_undo);
         }
     }
@@ -565,7 +565,6 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     private void destroySession() {
         unbindCommands();
         if (Objects.nonNull(presenter)) {
-            presenter.clear();
             presenter.destroy();
         }
     }
@@ -733,5 +732,13 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         commands.put(CopySelectionSessionCommand.class, sessionCommandFactory.newCopySelectionCommand());
         commands.put(PasteSelectionSessionCommand.class, sessionCommandFactory.newPasteSelectionCommand());
         commands.put(CutSelectionSessionCommand.class, sessionCommandFactory.newCutSelectionCommand());
+    }
+
+    public SessionPresenter<AbstractClientFullSession, ?, Diagram> getSessionPresenter() {
+        return presenter;
+    }
+
+    void setSessionPresenter(final SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter) {
+        this.presenter = presenter;
     }
 }

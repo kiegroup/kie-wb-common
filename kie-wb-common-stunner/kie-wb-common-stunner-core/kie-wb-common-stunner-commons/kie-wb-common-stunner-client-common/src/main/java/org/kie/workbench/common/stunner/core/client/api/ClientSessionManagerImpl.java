@@ -35,6 +35,7 @@ import org.kie.workbench.common.stunner.core.client.session.event.SessionOpenedE
 import org.kie.workbench.common.stunner.core.client.session.event.SessionPausedEvent;
 import org.kie.workbench.common.stunner.core.client.session.event.SessionResumedEvent;
 import org.kie.workbench.common.stunner.core.command.exception.CommandException;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
@@ -110,9 +111,10 @@ public class ClientSessionManagerImpl extends AbstractClientSessionManager {
         SessionDestroyedEvent destroyedEvent = null;
         if (null != current) {
             final String uuid = current.getSessionUUID();
-            final String name = current.getCanvasHandler().getDiagram().getName();
-            final String graphUuid = current.getCanvasHandler().getDiagram().getGraph().getUUID();
-            final Metadata metadata = current.getCanvasHandler().getDiagram().getMetadata();
+            final Diagram diagram = current.getCanvasHandler().getDiagram();
+            final String name = null != diagram ? diagram.getName() : null;
+            final String graphUuid = null != diagram ? diagram.getGraph().getUUID() : null;
+            final Metadata metadata = null != diagram ? diagram.getMetadata() : null;
             destroyedEvent = new SessionDestroyedEvent(uuid,
                                                        name,
                                                        graphUuid,

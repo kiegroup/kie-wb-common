@@ -40,6 +40,7 @@ import org.mockito.Mock;
 import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -192,6 +193,31 @@ public class ClientSessionManagerImplTest {
         assertEquals("diagramName", event.getDiagramName());
         assertEquals("graphUUID", event.getGraphUuid());
         assertEquals(metadata, event.getMetadata());
+    }
+
+    @Test
+    public void testPostDestroyButNoDiagram() {
+        when(session.getSessionUUID()).thenReturn("sessionUUID");
+        when(handler.getDiagram()).thenReturn(null);
+        tested.current = session;
+        tested.destroy();
+        verify(sessionOpenedEventMock,
+               times(0)).fire(any(SessionOpenedEvent.class));
+        verify(sessionPausedEventMock,
+               times(0)).fire(any(SessionPausedEvent.class));
+        verify(sessionResumedEventMock,
+               times(0)).fire(any(SessionResumedEvent.class));
+        verify(sessionErrorEventMock,
+               times(0)).fire(any(OnSessionErrorEvent.class));
+        ArgumentCaptor<SessionDestroyedEvent> destroyedEventArgumentCaptor =
+                ArgumentCaptor.forClass(SessionDestroyedEvent.class);
+        verify(sessionDestroyedEventMock,
+               times(1)).fire(destroyedEventArgumentCaptor.capture());
+        SessionDestroyedEvent event = destroyedEventArgumentCaptor.getValue();
+        assertEquals("sessionUUID", event.getSessionUUID());
+        assertNull(event.getDiagramName());
+        assertNull(event.getGraphUuid());
+        assertNull(event.getMetadata());
     }
 
     @Test
