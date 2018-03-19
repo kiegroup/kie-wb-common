@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -70,7 +69,6 @@ public abstract class StartEvent<T extends BaseStartEvent> extends BPMNDiagramMa
         }
     }
 
-    @Ignore
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnStartEventFilePath());
