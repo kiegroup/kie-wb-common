@@ -207,7 +207,7 @@ public class DecisionTableGridTest {
                                                                  hasExpression,
                                                                  expression,
                                                                  hasName,
-                                                                 false).get());
+                                                                 0).get());
     }
 
     private Optional<HasName> makeHasNameForDecision() {
@@ -477,7 +477,7 @@ public class DecisionTableGridTest {
         final AddInputClauseCommand addInputClauseCommand = addInputClauseCommandCaptor.getValue();
         addInputClauseCommand.execute(canvasHandler);
 
-        verify(parent).assertWidth(eq(grid.getWidth() + grid.getPadding() * 2));
+        verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
         verifyGridPanelRefresh();
     }
 
@@ -493,7 +493,7 @@ public class DecisionTableGridTest {
         final DeleteInputClauseCommand deleteInputClauseCommand = deleteInputClauseCommandCaptor.getValue();
         deleteInputClauseCommand.execute(canvasHandler);
 
-        verify(parent).assertWidth(eq(grid.getWidth() + grid.getPadding() * 2));
+        verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
         verifyGridPanelRefresh();
     }
 
@@ -509,7 +509,7 @@ public class DecisionTableGridTest {
         final AddOutputClauseCommand addOutputClauseCommand = addOutputClauseCommandCaptor.getValue();
         addOutputClauseCommand.execute(canvasHandler);
 
-        verify(parent).assertWidth(eq(grid.getWidth() + grid.getPadding() * 2));
+        verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
         verifyGridPanelRefresh();
     }
 
@@ -525,7 +525,7 @@ public class DecisionTableGridTest {
         final DeleteOutputClauseCommand deleteOutputClauseCommand = deleteOutputClauseCommandCaptor.getValue();
         deleteOutputClauseCommand.execute(canvasHandler);
 
-        verify(parent).assertWidth(eq(grid.getWidth() + grid.getPadding() * 2));
+        verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
         verifyGridPanelRefresh();
     }
 

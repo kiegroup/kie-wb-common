@@ -61,7 +61,6 @@ import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -75,7 +74,7 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class UndefinedExpressionGridTest {
 
-    private static final boolean NESTED = false;
+    private static final int NESTING = 0;
 
     @Mock
     private DMNGridPanel gridPanel;
@@ -159,7 +158,7 @@ public class UndefinedExpressionGridTest {
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(0).when(parent).getRowIndex();
         doReturn(0).when(parent).getColumnIndex();
@@ -173,7 +172,7 @@ public class UndefinedExpressionGridTest {
                                                                        hasExpression,
                                                                        expression,
                                                                        hasName,
-                                                                       NESTED).get());
+                                                                       NESTING).get());
     }
 
     @Test
@@ -307,7 +306,7 @@ public class UndefinedExpressionGridTest {
                                                             eq(hasExpression),
                                                             eq(Optional.of(literalExpression)),
                                                             eq(hasName),
-                                                            eq(NESTED));
+                                                            eq(NESTING));
 
         verify(sessionCommandManager).execute(eq(handler),
                                               setCellValueCommandArgumentCaptor.capture());
@@ -318,7 +317,6 @@ public class UndefinedExpressionGridTest {
         verify(parent).onResize();
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
-        verify(literalExpressionEditor).selectFirstCell();
 
         verify(gridLayer).batch(redrawCommandArgumentCaptor.capture());
 

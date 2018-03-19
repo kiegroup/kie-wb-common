@@ -70,7 +70,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -188,7 +188,7 @@ public class InvocationGridTest {
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(parent).when(undefinedExpressionEditor).getParentInformation();
         doReturn(Optional.empty()).when(undefinedExpressionEditorDefinition).getModelClass();
@@ -196,7 +196,7 @@ public class InvocationGridTest {
                                                                                                              any(HasExpression.class),
                                                                                                              any(Optional.class),
                                                                                                              any(Optional.class),
-                                                                                                             anyBoolean());
+                                                                                                             anyInt());
 
         doReturn(session).when(sessionManager).getCurrentSession();
         doReturn(handler).when(session).getCanvasHandler();
@@ -210,7 +210,7 @@ public class InvocationGridTest {
                                                               hasExpression,
                                                               expression,
                                                               hasName,
-                                                              false).get());
+                                                              0).get());
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
     }

@@ -71,7 +71,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -205,14 +205,14 @@ public class FunctionGridTest {
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(Optional.of(supplementaryLiteralExpression)).when(supplementaryLiteralExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(supplementaryLiteralExpressionEditor)).when(supplementaryLiteralExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
                                                                                                                                    any(HasExpression.class),
                                                                                                                                    any(Optional.class),
                                                                                                                                    any(Optional.class),
-                                                                                                                                   anyBoolean());
+                                                                                                                                   anyInt());
         final GridData uiLiteralExpressionModel = new BaseGridData();
         doReturn(uiLiteralExpressionModel).when(literalExpressionEditor).getModel();
 
@@ -223,7 +223,7 @@ public class FunctionGridTest {
                                                             hasExpression,
                                                             expression,
                                                             hasName,
-                                                            false).get());
+                                                            0).get());
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
     }
@@ -455,7 +455,7 @@ public class FunctionGridTest {
 
     @Test
     public void testSynchroniseViewWhenExpressionEditorChanged() {
-        grid.synchroniseViewWhenExpressionEditorChanged(Optional.of(literalExpressionEditor));
+        grid.synchroniseViewWhenExpressionEditorChanged(literalExpressionEditor);
 
         verify(parent).onResize();
         verify(gridPanel).refreshScrollPosition();
@@ -467,6 +467,5 @@ public class FunctionGridTest {
 
         verify(gridLayer).draw();
         verify(gridLayer).select(eq(literalExpressionEditor));
-        verify(literalExpressionEditor).selectFirstCell();
     }
 }

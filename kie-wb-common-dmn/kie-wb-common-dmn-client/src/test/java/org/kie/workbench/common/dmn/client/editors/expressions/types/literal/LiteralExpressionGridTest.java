@@ -123,7 +123,7 @@ public class LiteralExpressionGridTest {
                                                                      hasExpression,
                                                                      expression,
                                                                      hasName,
-                                                                     false).get());
+                                                                     0).get());
     }
 
     @Test

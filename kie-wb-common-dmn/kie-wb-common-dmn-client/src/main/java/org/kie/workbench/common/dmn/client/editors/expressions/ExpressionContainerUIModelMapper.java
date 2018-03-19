@@ -72,7 +72,7 @@ public class ExpressionContainerUIModelMapper extends BaseUIModelMapper<Expressi
                                                                               hasExpression,
                                                                               expression,
                                                                               hasName,
-                                                                              false);
+                                                                              0);
             uiModel.setCell(0,
                             0,
                             () -> new ContextGridCell<>(new ExpressionCellValue(oEditor),

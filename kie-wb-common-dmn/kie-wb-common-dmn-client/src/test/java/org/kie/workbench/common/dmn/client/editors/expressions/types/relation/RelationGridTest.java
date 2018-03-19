@@ -166,7 +166,8 @@ public class RelationGridTest {
                                             sessionCommandManager,
                                             cellEditorControls,
                                             translationService,
-                                            listSelector));
+                                            listSelector,
+                                            0));
         doReturn(parentGridData).when(parentGridWidget).getModel();
         doReturn(Collections.singletonList(parentGridColumn)).when(parentGridData).getColumns();
     }
@@ -411,7 +412,7 @@ public class RelationGridTest {
         verify(sessionCommandManager).execute(eq(abstractCanvasHandler), addColumnCommand.capture());
 
         addColumnCommand.getValue().execute(abstractCanvasHandler);
-        verify(parent).assertWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
+        verify(parent).proposeContainingColumnWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
         verify(parentGridColumn).setWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
         verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
         verify(gridPanel).refreshScrollPosition();
@@ -429,7 +430,7 @@ public class RelationGridTest {
         verify(sessionCommandManager).execute(eq(abstractCanvasHandler), deleteColumnCommand.capture());
 
         deleteColumnCommand.getValue().execute(abstractCanvasHandler);
-        verify(parent).assertWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
+        verify(parent).proposeContainingColumnWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
         verify(parentGridColumn).setWidth(relationGrid.getWidth() + relationGrid.getPadding() * 2);
         verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
         verify(gridPanel).refreshScrollPosition();
