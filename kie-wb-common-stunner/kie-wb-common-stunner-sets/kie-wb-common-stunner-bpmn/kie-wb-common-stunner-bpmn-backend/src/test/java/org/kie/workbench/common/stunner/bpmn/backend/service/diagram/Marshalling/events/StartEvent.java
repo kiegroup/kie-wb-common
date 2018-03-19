@@ -19,10 +19,12 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshallin
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.BPMNDiagramMarshallerBase;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -36,30 +38,43 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
 public abstract class StartEvent extends BPMNDiagramMarshallerBase {
 
-    protected static final String EMPTY_VALUE = "";
-    protected static final boolean NON_INTERRUPTING = false;
-    protected static final boolean INTERRUPTING = true;
+    static final String EMPTY_VALUE = "";
+    static final boolean NON_INTERRUPTING = false;
+    static final boolean INTERRUPTING = true;
 
     protected DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller = null;
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][] {
-                {OLD}//, {NEW}
+                {OLD}, {NEW}
         });
     }
 
-    public StartEvent(Marshaller marshallerType) {
+    StartEvent(Marshaller marshallerType) {
         super.init();
         switch(marshallerType) {
             case OLD: marshaller = oldMarshaller; break;
             case NEW: marshaller = newMarshaller; break;
         }
+    }
+
+    @Test
+    public void testMigration() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnStartEventFilePath());
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, getBpmnStartEventFilePath());
+
+        // Doesn't work, due to old Marshaller and new Marshaller have different BPMNDefinitionSet uuids
+        // assertEquals(oldDiagram.getGraph(), newDiagram.getGraph());
+
+        // Let's check nodes only.
+        assertDiagramEquals(oldDiagram, newDiagram, getBpmnStartEventFilePath());
     }
 
     public abstract void testUnmarshallTopLevelEventFilledProperties() throws Exception;
@@ -80,21 +95,21 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
 
     abstract String getBpmnStartEventFilePath();
 
-    protected <T extends BaseStartEvent> void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
+    private <T extends BaseStartEvent> void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
         T nodeBeforeMarshalling = getStartNodeById(before, nodeId, startType);
         T nodeAfterMarshalling = getStartNodeById(after, nodeId, startType);
         assertEquals(nodeBeforeMarshalling, nodeAfterMarshalling);
     }
 
     @SuppressWarnings("unchecked")
-    protected  <T extends BaseStartEvent> T getStartNodeById(Diagram<Graph, Metadata> diagram, String id, Class<T> type) {
+    <T extends BaseStartEvent> T getStartNodeById(Diagram<Graph, Metadata> diagram, String id, Class<T> type) {
         Node<? extends Definition, ?> node = diagram.getGraph().getNode(id);
         assertNotNull(node);
         assertEquals(1, node.getOutEdges().size());
         return type.cast(node.getContent().getDefinition());
     }
 
-    protected void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
+    void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
         assertNotNull(generalSet);
         assertNotNull(generalSet.getName());
         assertNotNull(generalSet.getDocumentation());
@@ -103,7 +118,7 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
     }
 
 
-    protected void assertDataIOSet(DataIOSet dataIOSet, String value) {
+    void assertDataIOSet(DataIOSet dataIOSet, String value) {
         assertNotNull(dataIOSet);
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertNotNull(assignmentsInfo);
@@ -111,7 +126,7 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
     }
 
     @SuppressWarnings("unchecked")
-    protected void checkEventMarshalling(Class startNodeType, String nodeID) throws Exception {
+    void checkEventMarshalling(Class startNodeType, String nodeID) throws Exception {
         Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, getBpmnStartEventFilePath());
         final int AMOUNT_OF_NODES_IN_DIAGRAM = getNodes(initialDiagram).size();
         String resultXml = marshaller.marshall(initialDiagram);

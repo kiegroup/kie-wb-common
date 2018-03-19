@@ -21,9 +21,16 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
@@ -76,11 +83,18 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.factory.impl.EdgeFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.GraphFactoryImpl;
 import org.kie.workbench.common.stunner.core.factory.impl.NodeFactoryImpl;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
+import org.kie.workbench.common.stunner.core.graph.content.relationship.Parent;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
 import org.kie.workbench.common.stunner.core.graph.processing.index.map.MapIndexBuilder;
 import org.kie.workbench.common.stunner.core.registry.definition.AdapterRegistry;
@@ -127,6 +141,7 @@ public abstract class BPMNDiagramMarshallerBase {
     protected BPMNDiagramMarshaller oldMarshaller;
     protected BPMNDirectDiagramMarshaller newMarshaller;
 
+    @SuppressWarnings("unchecked")
     protected void init() {
         initMocks(this);
         definitionManager = mock(DefinitionManager.class);
@@ -325,18 +340,6 @@ public abstract class BPMNDiagramMarshallerBase {
         when(adapterManager.forProperty()).thenReturn(propertyAdapter);
     }
 
-    protected void assertDiagram(String result,
-                               int diagramCount,
-                               int nodeCount,
-                               int edgeCount) {
-        int d = count(result, "<bpmndi:BPMNDiagram");
-        int n = count(result, "<bpmndi:BPMNShape");
-        int e = count(result, "<bpmndi:BPMNEdge");
-        assertEquals(diagramCount, d);
-        assertEquals(nodeCount, n);
-        assertEquals(edgeCount, e);
-    }
-
     protected void assertDiagram(Diagram<Graph, Metadata> diagram, int nodesSize) {
         assertEquals(nodesSize, getNodes(diagram).size());
     }
@@ -363,14 +366,126 @@ public abstract class BPMNDiagramMarshallerBase {
         return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
     }
 
-    private static int count(final String string, final String substring) {
-        int count = 0;
-        int idx = 0;
-        while ((idx = string.indexOf(substring,
-                                     idx)) != -1) {
-            idx++;
-            count++;
+    private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+        Map<String, Node<View, ?>> oldNodes = asNodeMap(oldDiagram.getGraph().nodes());
+        Map<String, Node<View, ?>> newNodes = asNodeMap(newDiagram.getGraph().nodes());
+
+        assertEquals(fileName + ": Number of nodes should match", oldNodes.size(), newNodes.size());
+
+        for (Node<View, ?> o : oldNodes.values()) {
+            Node<View, ?> n = newNodes.get(o.getUUID());
+
+            View oldContent = o.getContent();
+            View newContent = n.getContent();
+
+            Bounds oldBounds = oldContent.getBounds();
+            Bounds newBounds = newContent.getBounds();
+
+            assertEquals(
+                    fileName + ": Bounds should match for " + o.getUUID(),
+                    oldBounds,
+                    newBounds
+            );
+
+            Object oldDefinition = oldContent.getDefinition();
+            Object newDefinition = newContent.getDefinition();
+
+            assertEquals(
+                    fileName + ": Definitions should match for " + o.getUUID(),
+                    oldDefinition,
+                    newDefinition
+            );
         }
-        return count;
     }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Node<View, ?>> asNodeMap(Iterable nodes) {
+        Map<String, Node<View, ?>> oldNodes = new HashMap<>();
+        nodes.forEach(n -> {
+            Node n1 = (Node) n;
+            oldNodes.put(n1.getUUID(), n1);
+        });
+        return oldNodes;
+    }
+
+    protected void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+        assertNodeEquals(oldDiagram, newDiagram, fileName);
+        assertEdgeEquals(oldDiagram, newDiagram, fileName);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
+        Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
+        Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
+
+        assertEquals(fileName + ": Number of edges should match", oldEdges.size(), newEdges.size());
+
+        {
+            Map<String, Edge> nonRelOldEdges = oldEdges.stream()
+                    .filter(BPMNDiagramMarshallerBase::nonRelationshipConnector)
+                    .collect(Collectors.toMap(Edge::getUUID, Function.identity()));
+
+            Map<String, Edge> nonRelNewEdges = newEdges.stream()
+                    .filter(BPMNDiagramMarshallerBase::nonRelationshipConnector)
+                    .collect(Collectors.toMap(Edge::getUUID, Function.identity()));
+
+            assertEquals(nonRelOldEdges, nonRelOldEdges);
+
+            for (Edge<ViewConnector, ?> oldEdge : nonRelOldEdges.values()) {
+                Edge<ViewConnector, ?> newEdge = nonRelNewEdges.get(oldEdge.getUUID());
+
+                // (relationship) edges are equal iff <source, target> match respectively
+                assertEquals(fileName + ": Source Connection should match for " + oldEdge.getUUID(),
+                             oldEdge.getContent().getSourceConnection(), newEdge.getContent().getSourceConnection());
+                assertEquals(fileName + ": Target Connection should match for " + oldEdge.getUUID(),
+                             oldEdge.getContent().getTargetConnection(), newEdge.getContent().getTargetConnection());
+            }
+        }
+
+        {
+
+            List<Edge> relOldEdges = oldEdges.stream()
+                    .filter(BPMNDiagramMarshallerBase::isRelationshipConnector)
+                    .collect(Collectors.toList());
+            List<Edge> relNewEdges = newEdges.stream()
+                    .filter(BPMNDiagramMarshallerBase::isRelationshipConnector)
+                    .collect(Collectors.toList());
+
+            // sort lexicografically by source + target IDs
+            relOldEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID() + e.getTargetNode().getUUID()));
+            relNewEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID() + e.getTargetNode().getUUID()));
+
+            Iterator<Edge> oldIt = relOldEdges.iterator();
+            Iterator<Edge> newIt = relNewEdges.iterator();
+
+            for (int i = 0; i < relOldEdges.size(); i++) {
+                Edge<ViewConnector, ?> oldEdge = oldIt.next();
+                Edge<ViewConnector, ?> newEdge = newIt.next();
+
+                assertEquals(fileName + ": target node did not match", oldEdge.getTargetNode(), newEdge.getTargetNode());
+                assertEquals(fileName + ": source node did not match", oldEdge.getSourceNode(), newEdge.getSourceNode());
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Set<Edge> asEdgeSet(Iterable nodes) {
+        Set<Edge> oldEdges = new HashSet<>();
+        nodes.forEach(n -> {
+            oldEdges.addAll(((Node<?, Edge>) n).getOutEdges());
+            oldEdges.addAll(((Node<?, Edge>) n).getInEdges());
+        });
+        return oldEdges;
+    }
+
+    private static boolean nonRelationshipConnector(Edge e) {
+        return !isRelationshipConnector(e);
+    }
+
+    private static boolean isRelationshipConnector(Edge e) {
+        return e.getContent() instanceof Parent
+                || e.getContent() instanceof Child
+                || e.getContent() instanceof Dock;
+    }
+
 }
