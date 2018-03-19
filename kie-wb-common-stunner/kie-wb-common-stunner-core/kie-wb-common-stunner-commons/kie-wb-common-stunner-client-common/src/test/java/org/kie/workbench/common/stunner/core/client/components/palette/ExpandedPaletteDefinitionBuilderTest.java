@@ -21,9 +21,11 @@ import java.util.function.Function;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.components.palette.AbstractPaletteDefinitionBuilder.ItemMessageProvider;
 import org.kie.workbench.common.stunner.core.client.components.palette.DefaultPaletteDefinitionBuilders.CategoryBuilder;
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
+import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
@@ -79,6 +81,12 @@ public class ExpandedPaletteDefinitionBuilderTest {
     private DefinitionUtils definitionUtils;
 
     @Mock
+    private DefinitionManager definitionManager;
+
+    @Mock
+    private AdapterManager adapterManager;
+
+    @Mock
     private ClientFactoryService clientFactoryServices;
 
     @Mock
@@ -96,12 +104,13 @@ public class ExpandedPaletteDefinitionBuilderTest {
     @Mock
     private DefinitionAdapter<Object> definitionAdapter1;
 
-    private ItemMessageProvider groupMessageProvider;
-
     private ExpandedPaletteDefinitionBuilder tested;
 
     @Before
     public void setup() {
+        when(definitionUtils.getDefinitionManager()).thenReturn(definitionManager);
+        when(definitionManager.adapters()).thenReturn(adapterManager);
+        when(adapterManager.forDefinition()).thenReturn(definitionAdapter1);
         when(definitionAdapter1.getId(eq(definition1))).thenReturn(DEF1_ID);
         when(definitionAdapter1.getCategory(eq(definition1))).thenReturn(DEF1_CATEGORY);
         when(definitionAdapter1.getTitle(eq(definition1))).thenReturn(DEF1_TITLE);
@@ -115,7 +124,7 @@ public class ExpandedPaletteDefinitionBuilderTest {
     public void testCrateItemAndAppendIntoCategory() {
         when(itemSupplier.apply(eq(CAT_ID))).thenReturn(SOME_CATEGORY);
         DefaultPaletteItem category = tested.createItem(definition1,
-                                                        definitionAdapter1,
+                                                        CAT_ID,
                                                         metadata,
                                                         itemSupplier);
         assertNull(category);
@@ -138,7 +147,7 @@ public class ExpandedPaletteDefinitionBuilderTest {
                         .categoryGlyphProvider(CAT_GLYPH_PROVIDER)
                         .categoryMessages(CAT_MSG_PROVIDER)
                         .createItem(definition1,
-                                    definitionAdapter1,
+                                    CAT_ID,
                                     metadata,
                                     itemSupplier);
         assertNotNull(_category);

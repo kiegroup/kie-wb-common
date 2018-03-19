@@ -33,11 +33,16 @@ import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.client.widgets.components.glyph.BS3IconTypeGlyph;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
+import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.components.palette.DefaultPaletteDefinition;
 import org.kie.workbench.common.stunner.core.client.components.palette.ExpandedPaletteDefinitionBuilder;
@@ -62,7 +67,7 @@ public class CaseManagementPaletteDefinitionBuilder
             ACTIVITIES);
     }};
 
-    private static final Map<String, Class<?>> CAT_DEFAULTS = new HashMap<String, Class<?>>(5) {{
+    private static final Map<String, Class<?>> CAT_DEFAULTS = new HashMap<String, Class<?>>(2) {{
         put(STAGES,
             AdHocSubprocess.class);
         put(ACTIVITIES,
@@ -77,23 +82,41 @@ public class CaseManagementPaletteDefinitionBuilder
             BS3IconTypeGlyph.create(IconType.TASKS));
     }};
 
+    private static final Map<String, String> DEFINITION_CATEGORY_MAPPINGS = new HashMap<String, String>(5) {{
+        put(AdHocSubprocess.class.getName(),
+            STAGES);
+        put(UserTask.class.getName(),
+            ACTIVITIES);
+        put(ScriptTask.class.getName(),
+            ACTIVITIES);
+        put(BusinessRuleTask.class.getName(),
+            ACTIVITIES);
+        put(ReusableSubprocess.class.getName(),
+            ACTIVITIES);
+    }};
+
     private final ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder;
+    private final DefinitionManager definitionManager;
 
     // CDI proxy.
     protected CaseManagementPaletteDefinitionBuilder() {
-        this(null);
+        this(null, null);
     }
 
     @Inject
-    public CaseManagementPaletteDefinitionBuilder(final ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder) {
+    public CaseManagementPaletteDefinitionBuilder(final ExpandedPaletteDefinitionBuilder paletteDefinitionBuilder,
+                                                  final DefinitionManager definitionManager) {
         this.paletteDefinitionBuilder = paletteDefinitionBuilder;
+        this.definitionManager = definitionManager;
     }
 
     @PostConstruct
     public void init() {
         paletteDefinitionBuilder
                 .itemFilter(isDefinitionAllowed())
+                .morphDefinitionProvider(def -> null)
                 .categoryFilter(isCategoryAllowed())
+                .categoryProvider(this::getCategoryFor)
                 .categoryDefinitionIdProvider(category -> getId(CAT_DEFAULTS.get(category)))
                 .categoryGlyphProvider(CATEGORY_GLYPHS::get)
                 .categoryMessages(new ExpandedPaletteDefinitionBuilder.ItemMessageProvider() {
@@ -109,6 +132,14 @@ public class CaseManagementPaletteDefinitionBuilder
                 });
     }
 
+    private String getCategoryFor(final Object definition) {
+        final String fqcn = definition.getClass().getName();
+        final String categoryId = DEFINITION_CATEGORY_MAPPINGS.get(fqcn);
+        return null != categoryId ?
+                categoryId :
+                definitionManager.adapters().forDefinition().getCategory(definition);
+    }
+
     private Predicate<String> isCategoryAllowed() {
         return CAT_TITLES::containsKey;
     }
@@ -116,6 +147,7 @@ public class CaseManagementPaletteDefinitionBuilder
     private Predicate<String> isDefinitionAllowed() {
         return isType(CaseManagementDiagram.class)
                 .or(isType(NoneTask.class))
+                .or(isType(ServiceTask.class))
                 .or(isType(Lane.class))
                 .or(isType(StartNoneEvent.class))
                 .or(isType(EndNoneEvent.class))
@@ -130,5 +162,9 @@ public class CaseManagementPaletteDefinitionBuilder
                       final Consumer<DefaultPaletteDefinition> paletteDefinition) {
         paletteDefinitionBuilder.build(canvasHandler,
                                        paletteDefinition);
+    }
+
+    ExpandedPaletteDefinitionBuilder getPaletteDefinitionBuilder() {
+        return paletteDefinitionBuilder;
     }
 }

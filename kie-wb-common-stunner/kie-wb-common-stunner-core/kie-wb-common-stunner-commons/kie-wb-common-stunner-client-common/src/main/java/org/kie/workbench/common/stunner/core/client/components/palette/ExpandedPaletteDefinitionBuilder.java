@@ -53,6 +53,7 @@ import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 public class ExpandedPaletteDefinitionBuilder
         extends AbstractPaletteDefinitionBuilder<ExpandedPaletteDefinitionBuilder> {
 
+    private Function<Object, MorphDefinition> morphDefinitionProvider;
     private Predicate<String> groupFilter;
     private Function<String, String> categoryDefinitionIdProvider;
     private Function<String, Glyph> categoryGlyphProvider;
@@ -61,6 +62,11 @@ public class ExpandedPaletteDefinitionBuilder
 
     public ExpandedPaletteDefinitionBuilder categoryDefinitionIdProvider(final Function<String, String> categoryDefinitionIdProvider) {
         this.categoryDefinitionIdProvider = categoryDefinitionIdProvider;
+        return this;
+    }
+
+    public ExpandedPaletteDefinitionBuilder morphDefinitionProvider(final Function<Object, MorphDefinition> morphDefinitionProvider) {
+        this.morphDefinitionProvider = morphDefinitionProvider;
         return this;
     }
 
@@ -94,11 +100,11 @@ public class ExpandedPaletteDefinitionBuilder
 
     @Override
     protected DefaultPaletteItem createItem(final Object definition,
-                                            final DefinitionAdapter<Object> definitionAdapter,
+                                            final String categoryId,
                                             final Metadata metadata,
                                             final Function<String, DefaultPaletteItem> itemSupplier) {
+        final DefinitionAdapter<Object> definitionAdapter = getDefinitionManager().adapters().forDefinition();
         final String id = definitionAdapter.getId(definition);
-        final String categoryId = definitionAdapter.getCategory(definition);
         DefaultPaletteCategory result = null;
         DefaultPaletteCategory category = (DefaultPaletteCategory) itemSupplier.apply(categoryId);
         if (null == category) {
@@ -116,7 +122,7 @@ public class ExpandedPaletteDefinitionBuilder
                     .build();
             result = category;
         }
-        final MorphDefinition morphDefinition = definitionUtils.getMorphDefinition(definition);
+        final MorphDefinition morphDefinition = morphDefinitionProvider.apply(definition);
         final boolean hasMorphBase = null != morphDefinition;
         String morphDefault = null;
         DefaultPaletteGroup group = null;
@@ -167,11 +173,16 @@ public class ExpandedPaletteDefinitionBuilder
 
     private void initDefaults() {
         this
+                .morphDefinitionProvider(definitionUtils::getMorphDefinition)
                 .groupFilter(id -> true)
                 .categoryDefinitionIdProvider(id -> null)
                 .categoryGlyphProvider(DefaultPaletteDefinitionProviders.DEFAULT_CATEGORY_GLYPH_PROVIDER)
                 .groupMessages(new DefaultMorphGroupMessageProvider(translationService))
                 .categoryMessages(new DefaultMessageProvider());
+    }
+
+    public Function<Object, MorphDefinition> getMorphDefinitionProvider() {
+        return morphDefinitionProvider;
     }
 
     public Predicate<String> getGroupFilter() {

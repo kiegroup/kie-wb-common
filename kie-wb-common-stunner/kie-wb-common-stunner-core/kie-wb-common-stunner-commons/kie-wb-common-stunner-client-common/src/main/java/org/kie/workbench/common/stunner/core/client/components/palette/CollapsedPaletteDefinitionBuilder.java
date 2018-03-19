@@ -49,9 +49,10 @@ public class CollapsedPaletteDefinitionBuilder
 
     @Override
     protected DefaultPaletteItem createItem(final Object definition,
-                                            final DefinitionAdapter<Object> definitionAdapter,
+                                            final String categoryId,
                                             final Metadata metadata,
                                             final Function<String, DefaultPaletteItem> itemSupplier) {
+        final DefinitionAdapter<Object> definitionAdapter = getDefinitionManager().adapters().forDefinition();
         final String id = definitionAdapter.getId(definition);
         final String title = definitionAdapter.getTitle(definition);
         final String description = definitionAdapter.getDescription(definition);

@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.core.client.components.palette.DefaultPa
 import org.kie.workbench.common.stunner.core.client.service.ClientFactoryService;
 import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.service.ServiceCallback;
-import org.kie.workbench.common.stunner.core.definition.adapter.DefinitionAdapter;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.i18n.StunnerTranslationService;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -55,6 +54,7 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
     protected final StunnerTranslationService translationService;
 
     protected Predicate<String> itemFilter;
+    protected Function<Object, String> categoryProvider;
     protected Predicate<String> categoryFilter;
     protected ItemMessageProvider itemMessageProvider;
 
@@ -69,6 +69,11 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
 
     public T itemFilter(final Predicate<String> definitionItemFilter) {
         this.itemFilter = definitionItemFilter;
+        return cast();
+    }
+
+    public T categoryProvider(final Function<Object, String> categoryProvider) {
+        this.categoryProvider = categoryProvider;
         return cast();
     }
 
@@ -97,8 +102,16 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
         return categoryFilter;
     }
 
+    public Function<Object, String> getCategoryProvider() {
+        return categoryProvider;
+    }
+
+    public ItemMessageProvider getItemMessageProvider() {
+        return itemMessageProvider;
+    }
+
     protected abstract DefaultPaletteItem createItem(Object definition,
-                                                     DefinitionAdapter<Object> definitionAdapter,
+                                                     String categoryId,
                                                      Metadata metadata,
                                                      Function<String, DefaultPaletteItem> itemSupplier);
 
@@ -150,12 +163,11 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
     protected void buildItem(final Object definition,
                              final Metadata metadata,
                              final Map<String, DefaultPaletteItem> items) {
-        final DefinitionAdapter<Object> definitionAdapter = getDefinitionManager().adapters().forDefinition();
-        final String categoryId = definitionAdapter.getCategory(definition);
+        final String categoryId = categoryProvider.apply(definition);
         // Check if this concrete category excluded from the palette model.
         if (categoryFilter.test(categoryId)) {
             final DefaultPaletteItem item = createItem(definition,
-                                                       definitionAdapter,
+                                                       categoryId,
                                                        metadata,
                                                        items::get);
             if (null != item) {
@@ -167,6 +179,7 @@ public abstract class AbstractPaletteDefinitionBuilder<T extends AbstractPalette
     private void initDefaults() {
         this
                 .itemFilter(id -> true)
+                .categoryProvider(def -> getDefinitionManager().adapters().forDefinition().getCategory(def))
                 .categoryFilter(id -> true)
                 .itemMessages(new DefaultItemMessageProvider(translationService));
     }
