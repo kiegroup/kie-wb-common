@@ -38,7 +38,9 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 
@@ -46,33 +48,37 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
 
     public static final double PADDING = 0.0;
 
-    private final ListSelectorView.Presenter listSelector;
-
     public LiteralExpressionGrid(final GridCellTuple parent,
+                                 final Optional<String> nodeUUID,
                                  final HasExpression hasExpression,
                                  final Optional<LiteralExpression> expression,
                                  final Optional<HasName> hasName,
                                  final DMNGridPanel gridPanel,
                                  final DMNGridLayer gridLayer,
+                                 final DefinitionUtils definitionUtils,
                                  final SessionManager sessionManager,
                                  final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                                 final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                  final CellEditorControlsView.Presenter cellEditorControls,
-                                 final TranslationService translationService,
                                  final ListSelectorView.Presenter listSelector,
+                                 final TranslationService translationService,
                                  final int nesting) {
         super(parent,
+              nodeUUID,
               hasExpression,
               expression,
               hasName,
               gridPanel,
               gridLayer,
               new LiteralExpressionGridRenderer(nesting > 0),
+              definitionUtils,
               sessionManager,
               sessionCommandManager,
+              canvasCommandFactory,
               cellEditorControls,
+              listSelector,
               translationService,
               nesting);
-        this.listSelector = listSelector;
 
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
@@ -94,27 +100,33 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
 
     @Override
     protected void initialiseUiColumns() {
-        final TextAreaSingletonDOMElementFactory factory = new TextAreaSingletonDOMElementFactory(gridPanel,
-                                                                                                  gridLayer,
-                                                                                                  this,
-                                                                                                  sessionManager,
-                                                                                                  sessionCommandManager,
-                                                                                                  newCellHasNoValueCommand(),
-                                                                                                  newCellHasValueCommand());
-        final TextBoxSingletonDOMElementFactory headerFactory = new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                                                                      gridLayer,
-                                                                                                      this,
-                                                                                                      sessionManager,
-                                                                                                      sessionCommandManager,
-                                                                                                      newHeaderHasNoValueCommand(),
-                                                                                                      newHeaderHasValueCommand());
         final GridColumn literalExpressionColumn = new LiteralExpressionColumn(new LiteralExpressionColumnHeaderMetaData(() -> hasName.orElse(HasName.NOP).getName().getValue(),
                                                                                                                          (s) -> hasName.orElse(HasName.NOP).getName().setValue(s),
-                                                                                                                         headerFactory),
-                                                                               factory,
+                                                                                                                         getHeaderFactory()),
+                                                                               getBodyFactory(),
                                                                                this);
 
         model.appendColumn(literalExpressionColumn);
+    }
+
+    TextAreaSingletonDOMElementFactory getBodyFactory() {
+        return new TextAreaSingletonDOMElementFactory(gridPanel,
+                                                      gridLayer,
+                                                      this,
+                                                      sessionManager,
+                                                      sessionCommandManager,
+                                                      newCellHasNoValueCommand(),
+                                                      newCellHasValueCommand());
+    }
+
+    TextBoxSingletonDOMElementFactory getHeaderFactory() {
+        return new TextBoxSingletonDOMElementFactory(gridPanel,
+                                                     gridLayer,
+                                                     this,
+                                                     sessionManager,
+                                                     sessionCommandManager,
+                                                     newHeaderHasNameHasNoValueCommand(),
+                                                     newHeaderHasNameHasValueCommand());
     }
 
     @Override

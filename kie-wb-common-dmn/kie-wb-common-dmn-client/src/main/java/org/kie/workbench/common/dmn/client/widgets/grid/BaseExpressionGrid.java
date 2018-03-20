@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueComman
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderGridWidgetMouseDoubleClickHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -47,7 +48,14 @@ import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
+import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.command.Command;
+import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
+import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.commons.data.Pair;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -64,6 +72,7 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
     public static final double DEFAULT_PADDING = 10.0;
 
     protected final GridCellTuple parent;
+    protected final Optional<String> nodeUUID;
 
     protected final HasExpression hasExpression;
     protected final Optional<E> expression;
@@ -71,9 +80,15 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
     protected final DMNGridPanel gridPanel;
     protected final DMNGridLayer gridLayer;
+
+    protected final DefinitionUtils definitionUtils;
     protected final SessionManager sessionManager;
     protected final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
+    protected final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
+
     protected final CellEditorControlsView.Presenter cellEditorControls;
+    protected final ListSelectorView.Presenter listSelector;
+
     protected final TranslationService translationService;
 
     protected M uiModelMapper;
@@ -81,18 +96,23 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
     protected final int nesting;
 
     public BaseExpressionGrid(final GridCellTuple parent,
+                              final Optional<String> nodeUUID,
                               final HasExpression hasExpression,
                               final Optional<E> expression,
                               final Optional<HasName> hasName,
                               final DMNGridPanel gridPanel,
                               final DMNGridLayer gridLayer,
                               final GridRenderer gridRenderer,
+                              final DefinitionUtils definitionUtils,
                               final SessionManager sessionManager,
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                              final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                               final CellEditorControlsView.Presenter cellEditorControls,
+                              final ListSelectorView.Presenter listSelector,
                               final TranslationService translationService,
                               final int nesting) {
         this(parent,
+             nodeUUID,
              hasExpression,
              expression,
              hasName,
@@ -100,14 +120,18 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
              gridLayer,
              new DMNGridData(),
              gridRenderer,
+             definitionUtils,
              sessionManager,
              sessionCommandManager,
+             canvasCommandFactory,
              cellEditorControls,
+             listSelector,
              translationService,
              nesting);
     }
 
     public BaseExpressionGrid(final GridCellTuple parent,
+                              final Optional<String> nodeUUID,
                               final HasExpression hasExpression,
                               final Optional<E> expression,
                               final Optional<HasName> hasName,
@@ -115,21 +139,28 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
                               final DMNGridLayer gridLayer,
                               final GridData gridData,
                               final GridRenderer gridRenderer,
+                              final DefinitionUtils definitionUtils,
                               final SessionManager sessionManager,
                               final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
+                              final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                               final CellEditorControlsView.Presenter cellEditorControls,
+                              final ListSelectorView.Presenter listSelector,
                               final TranslationService translationService,
                               final int nesting) {
         super(gridData,
               gridLayer,
               gridLayer,
               gridRenderer);
+        this.parent = parent;
+        this.nodeUUID = nodeUUID;
         this.gridPanel = gridPanel;
         this.gridLayer = gridLayer;
-        this.parent = parent;
+        this.definitionUtils = definitionUtils;
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
+        this.canvasCommandFactory = canvasCommandFactory;
         this.cellEditorControls = cellEditorControls;
+        this.listSelector = listSelector;
         this.translationService = translationService;
 
         this.hasExpression = hasExpression;
@@ -153,24 +184,24 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
     protected abstract void initialiseUiModel();
 
-    protected Function<GridCellTuple, AbstractCanvasGraphCommand> newCellHasNoValueCommand() {
+    protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {
         return (gc) -> new DeleteCellValueCommand(gc,
                                                   () -> uiModelMapper,
                                                   gridLayer::batch);
     }
 
-    protected Function<GridCellValueTuple, AbstractCanvasGraphCommand> newCellHasValueCommand() {
+    protected Function<GridCellValueTuple, Command> newCellHasValueCommand() {
         return (gcv) -> new SetCellValueCommand(gcv,
                                                 () -> uiModelMapper,
                                                 gridLayer::batch);
     }
 
-    protected Function<GridCellTuple, AbstractCanvasGraphCommand> newHeaderHasNoValueCommand() {
+    protected Function<GridCellTuple, Command> newHeaderHasNoValueCommand() {
         return (gc) -> new DeleteHeaderValueCommand(extractEditableHeaderMetaData(gc),
                                                     gridLayer::batch);
     }
 
-    protected Function<GridCellValueTuple, AbstractCanvasGraphCommand> newHeaderHasValueCommand() {
+    protected Function<GridCellValueTuple, Command> newHeaderHasValueCommand() {
         return (gcv) -> {
             final String title = gcv.getValue().getValue().toString();
             return new SetHeaderValueCommand(title,
@@ -179,8 +210,45 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
         };
     }
 
-    public double getPadding() {
-        return DEFAULT_PADDING;
+    protected Function<GridCellTuple, Command> newHeaderHasNameHasNoValueCommand() {
+        return (gcv) -> {
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
+            commandBuilder.addCommand(new DeleteHeaderValueCommand(extractEditableHeaderMetaData(gcv),
+                                                                   gridLayer::batch));
+            getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
+            return commandBuilder.build();
+        };
+    }
+
+    protected Function<GridCellValueTuple, Command> newHeaderHasNameHasValueCommand() {
+        return (gcv) -> {
+            final String title = gcv.getValue().getValue().toString();
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
+            commandBuilder.addCommand(new SetHeaderValueCommand(title,
+                                                                extractEditableHeaderMetaData(gcv),
+                                                                gridLayer::batch));
+            getUpdateStunnerTitleCommand(title).ifPresent(commandBuilder::addCommand);
+            return commandBuilder.build();
+        };
+    }
+
+    protected Optional<AbstractCanvasGraphCommand> getUpdateStunnerTitleCommand(final String value) {
+        AbstractCanvasGraphCommand command = null;
+        if (nodeUUID.isPresent()) {
+            final String uuid = nodeUUID.get();
+            final AbstractCanvasHandler canvasHandler = (AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler();
+            final Element<?> element = canvasHandler.getGraphIndex().get(uuid);
+            if (element.getContent() instanceof Definition) {
+                final Definition definition = (Definition) element.getContent();
+                final String nameId = definitionUtils.getNameIdentifier(definition.getDefinition());
+                if (nameId != null) {
+                    command = (AbstractCanvasGraphCommand) canvasCommandFactory.updatePropertyValue(element,
+                                                                                                    nameId,
+                                                                                                    value);
+                }
+            }
+        }
+        return Optional.ofNullable(command);
     }
 
     protected EditableHeaderMetaData extractEditableHeaderMetaData(final GridCellTuple gc) {
@@ -284,12 +352,16 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
 
     protected abstract boolean isHeaderHidden();
 
-    public GridCellTuple getParentInformation() {
-        return parent;
-    }
-
     public Optional<E> getExpression() {
         return expression;
+    }
+
+    public double getPadding() {
+        return DEFAULT_PADDING;
+    }
+
+    public GridCellTuple getParentInformation() {
+        return parent;
     }
 
     public double getMinimumWidth() {
