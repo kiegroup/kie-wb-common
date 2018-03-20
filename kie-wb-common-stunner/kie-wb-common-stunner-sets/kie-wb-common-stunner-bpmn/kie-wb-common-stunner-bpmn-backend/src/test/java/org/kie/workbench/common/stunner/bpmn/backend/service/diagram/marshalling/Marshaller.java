@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling;
 
 public enum Marshaller {
     OLD, NEW

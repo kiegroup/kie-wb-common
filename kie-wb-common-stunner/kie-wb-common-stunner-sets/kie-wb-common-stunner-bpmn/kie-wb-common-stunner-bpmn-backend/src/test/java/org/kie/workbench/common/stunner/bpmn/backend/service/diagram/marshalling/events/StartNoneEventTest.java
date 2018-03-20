@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 
-public class StartNoneEventTest extends StartEvent {
+public class StartNoneEventTest extends StartEvent<StartNoneEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/startNoneEvents.bpmn";
 
@@ -41,14 +41,14 @@ public class StartNoneEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String eventName = "Hello none start event name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentation = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\nDocumentation";
+        final String EVENT_NAME = "Hello none start event name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\nDocumentation";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartNoneEvent.class);
-        assertGeneralSet(filledTop.getGeneral(), eventName, eventDocumentation);
+        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
     }
 
     @Test
@@ -64,14 +64,14 @@ public class StartNoneEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String eventName = "It is also not empty ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentation = "Some documentation as well\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
+        final String EVENT_NAME = "It is also not empty ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION = "Some documentation as well\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartNoneEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartNoneEvent.class);
-        assertGeneralSet(filledSubprocess.getGeneral(), eventName, eventDocumentation);
+        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
     }
 
     @Test
@@ -84,32 +84,33 @@ public class StartNoneEventTest extends StartEvent {
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
     }
 
-    @Test
-    @Override
-    public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartNoneEvent.class, FILLED_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        checkEventMarshalling(StartNoneEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartNoneEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(StartNoneEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
     @Override
     String getBpmnStartEventFilePath() {
         return BPMN_START_EVENT_FILE_PATH;
+    }
+
+    @Override
+    String getFilledTopLevelEventId() {
+        return FILLED_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptyTopLevelEventId() {
+        return EMPTY_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getFilledSubprocessLevelEventId() {
+        return FILLED_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptySubprocessLevelEventId() {
+        return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    Class<StartNoneEvent> getStartEventType() {
+        return StartNoneEvent.class;
     }
 }

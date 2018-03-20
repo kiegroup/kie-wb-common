@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.BPMNDiagramMarshallerBase;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBase;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
@@ -38,11 +39,10 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.NEW;
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller.OLD;
+import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
-public abstract class StartEvent extends BPMNDiagramMarshallerBase {
+public abstract class StartEvent<T extends BaseStartEvent> extends BPMNDiagramMarshallerBase {
 
     static final String EMPTY_VALUE = "";
     static final boolean NON_INTERRUPTING = false;
@@ -52,19 +52,25 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
-        return Arrays.asList(new Object[][] {
-                {OLD}, {NEW}
+        return Arrays.asList(new Object[][]{
+                // New (un)marshaller is disabled for now due to found incompleteness
+                {OLD}//, {NEW}
         });
     }
 
     StartEvent(Marshaller marshallerType) {
         super.init();
-        switch(marshallerType) {
-            case OLD: marshaller = oldMarshaller; break;
-            case NEW: marshaller = newMarshaller; break;
+        switch (marshallerType) {
+            case OLD:
+                marshaller = oldMarshaller;
+                break;
+            case NEW:
+                marshaller = newMarshaller;
+                break;
         }
     }
 
+    @Ignore
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnStartEventFilePath());
@@ -77,6 +83,26 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
         assertDiagramEquals(oldDiagram, newDiagram, getBpmnStartEventFilePath());
     }
 
+    @Test
+    public void testMarshallTopLevelEventFilledProperties() throws Exception {
+        checkEventMarshalling(getStartEventType(), getFilledTopLevelEventId());
+    }
+
+    @Test
+    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
+        checkEventMarshalling(getStartEventType(), getEmptyTopLevelEventId());
+    }
+
+    @Test
+    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
+        checkEventMarshalling(getStartEventType(), getFilledSubprocessLevelEventId());
+    }
+
+    @Test
+    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
+        checkEventMarshalling(getStartEventType(), getEmptySubprocessLevelEventId());
+    }
+
     public abstract void testUnmarshallTopLevelEventFilledProperties() throws Exception;
 
     public abstract void testUnmarshallTopLevelEmptyEventProperties() throws Exception;
@@ -85,24 +111,26 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
 
     public abstract void testUnmarshallSubprocessLevelEventEmptyProperties() throws Exception;
 
-    public abstract void testMarshallTopLevelEventFilledProperties() throws Exception;
-
-    public abstract void testMarshallTopLevelEmptyEventProperties() throws Exception;
-
-    public abstract void testMarshallSubprocessLevelEventFilledProperties() throws Exception;
-
-    public abstract void testMarshallSubprocessLevelEventEmptyProperties() throws Exception;
+    abstract Class<T> getStartEventType();
 
     abstract String getBpmnStartEventFilePath();
 
-    private <T extends BaseStartEvent> void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
+    abstract String getFilledTopLevelEventId();
+
+    abstract String getEmptyTopLevelEventId();
+
+    abstract String getFilledSubprocessLevelEventId();
+
+    abstract String getEmptySubprocessLevelEventId();
+
+    private void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> startType) {
         T nodeBeforeMarshalling = getStartNodeById(before, nodeId, startType);
         T nodeAfterMarshalling = getStartNodeById(after, nodeId, startType);
         assertEquals(nodeBeforeMarshalling, nodeAfterMarshalling);
     }
 
     @SuppressWarnings("unchecked")
-    <T extends BaseStartEvent> T getStartNodeById(Diagram<Graph, Metadata> diagram, String id, Class<T> type) {
+    T getStartNodeById(Diagram<Graph, Metadata> diagram, String id, Class<T> type) {
         Node<? extends Definition, ?> node = diagram.getGraph().getNode(id);
         assertNotNull(node);
         assertEquals(1, node.getOutEdges().size());
@@ -116,7 +144,6 @@ public abstract class StartEvent extends BPMNDiagramMarshallerBase {
         assertEquals(nodeName, generalSet.getName().getValue());
         assertEquals(documentation, generalSet.getDocumentation().getValue());
     }
-
 
     void assertDataIOSet(DataIOSet dataIOSet, String value) {
         assertNotNull(dataIOSet);

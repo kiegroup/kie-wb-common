@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StartMessageEventTest extends StartEvent {
+public class StartMessageEventTest extends StartEvent<StartMessageEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/messageStartEvents.bpmn";
 
@@ -45,18 +45,18 @@ public class StartMessageEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String eventName = "Message message name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentation = "Message documentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
-        final String eventRef = "Message1";
-        final String eventDataOutput = "||messageReceived:String||[dout]messageReceived->helloProcess";
+        final String EVENT_NAME = "Message message name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION = "Message documentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
+        final String EVENT_REF = "Message1";
+        final String EVENT_DATA_OUTPUT = "||messageReceived:String||[dout]messageReceived->helloProcess";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartMessageEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartMessageEvent.class);
-        assertGeneralSet(filledTop.getGeneral(), eventName, eventDocumentation);
-        assertMessageEventExecutionSet(filledTop.getExecutionSet(), eventRef, INTERRUPTING);
-        assertDataIOSet(filledTop.getDataIOSet(), eventDataOutput);
+        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertMessageEventExecutionSet(filledTop.getExecutionSet(), EVENT_REF, INTERRUPTING);
+        assertDataIOSet(filledTop.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -74,18 +74,18 @@ public class StartMessageEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String eventName = "Message name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentation = "Doc is here\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
-        final String eventRef = "Message2";
-        final String eventDataOutput = "||messageR:String||[dout]messageR->helloProcess";
+        final String EVENT_NAME = "Message name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION = "Doc is here\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
+        final String EVENT_REF = "Message2";
+        final String EVENT_DATA_OUTPUT = "||messageR:String||[dout]messageR->helloProcess";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartMessageEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartMessageEvent.class);
-        assertGeneralSet(filledSubprocess.getGeneral(), eventName, eventDocumentation);
-        assertMessageEventExecutionSet(filledSubprocess.getExecutionSet(), eventRef, INTERRUPTING);
-        assertDataIOSet(filledSubprocess.getDataIOSet(), eventDataOutput);
+        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertMessageEventExecutionSet(filledSubprocess.getExecutionSet(), EVENT_REF, INTERRUPTING);
+        assertDataIOSet(filledSubprocess.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -100,33 +100,34 @@ public class StartMessageEventTest extends StartEvent {
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 
-    @Test
-    @Override
-    public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartMessageEvent.class, FILLED_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        checkEventMarshalling(StartMessageEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartMessageEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(StartMessageEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
     @Override
     String getBpmnStartEventFilePath() {
         return BPMN_START_EVENT_FILE_PATH;
+    }
+
+    @Override
+    String getFilledTopLevelEventId() {
+        return FILLED_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptyTopLevelEventId() {
+        return EMPTY_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getFilledSubprocessLevelEventId() {
+        return FILLED_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptySubprocessLevelEventId() {
+        return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    Class<StartMessageEvent> getStartEventType() {
+        return StartMessageEvent.class;
     }
 
     private void assertMessageEventExecutionSet(InterruptingMessageEventExecutionSet executionSet, String eventName, boolean isInterrupting) {

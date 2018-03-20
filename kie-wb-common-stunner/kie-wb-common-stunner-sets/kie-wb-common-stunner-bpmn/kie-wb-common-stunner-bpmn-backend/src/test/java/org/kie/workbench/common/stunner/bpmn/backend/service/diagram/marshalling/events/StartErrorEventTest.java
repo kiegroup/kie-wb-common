@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StartErrorEventTest extends StartEvent {
+public class StartErrorEventTest extends StartEvent<StartErrorEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/startErrorEvents.bpmn";
 
@@ -45,18 +45,18 @@ public class StartErrorEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String eventName = "Filled Top-Level Error start event";
-        final String eventDocumentation = "Some documentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
-        final String errorRef = "Error1";
-        final String eventDataOutput = "||someVar:String||[dout]someVar->prVar";
+        final String EVENT_NAME = "Filled Top-Level Error start event";
+        final String EVENT_DOCUMENTATION = "Some documentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n";
+        final String ERROR_REF = "Error1";
+        final String EVENT_DATA_OUTPUT = "||someVar:String||[dout]someVar->prVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        StartErrorEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartErrorEvent.class);
-        assertGeneralSet(filledTop.getGeneral(), eventName, eventDocumentation);
-        assertErrorEventExecutionSet(filledTop.getExecutionSet(), errorRef, INTERRUPTING);
-        assertDataIOSet(filledTop.getDataIOSet(), eventDataOutput);
+        StartErrorEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, getStartEventType());
+        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertErrorEventExecutionSet(filledTop.getExecutionSet(), ERROR_REF, INTERRUPTING);
+        assertDataIOSet(filledTop.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class StartErrorEventTest extends StartEvent {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        StartErrorEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, StartErrorEvent.class);
+        StartErrorEvent emptyTop = getStartNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(emptyTop.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertErrorEventExecutionSet(emptyTop.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING);
         assertDataIOSet(emptyTop.getDataIOSet(), EMPTY_VALUE);
@@ -74,18 +74,18 @@ public class StartErrorEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String eventName = "Event subprocess filled error event";
-        final String eventDocumentation = "Some documentation as well\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventRef = "Error2";
-        final String eventDataOutput = "||newVar:String||[dout]newVar->prVar";
+        final String EVENT_NAME = "Event subprocess filled error event";
+        final String EVENT_DOCUMENTATION = "Some documentation as well\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_REF = "Error2";
+        final String EVENT_DATA_OUTPUT = "||newVar:String||[dout]newVar->prVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        StartErrorEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartErrorEvent.class);
-        assertGeneralSet(filledSubprocess.getGeneral(), eventName, eventDocumentation);
-        assertErrorEventExecutionSet(filledSubprocess.getExecutionSet(), eventRef, INTERRUPTING);
-        assertDataIOSet(filledSubprocess.getDataIOSet(), eventDataOutput);
+        StartErrorEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, getStartEventType());
+        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertErrorEventExecutionSet(filledSubprocess.getExecutionSet(), EVENT_REF, INTERRUPTING);
+        assertDataIOSet(filledSubprocess.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -94,39 +94,40 @@ public class StartErrorEventTest extends StartEvent {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        StartErrorEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, StartErrorEvent.class);
+        StartErrorEvent emptySubprocess = getStartNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID, getStartEventType());
         assertGeneralSet(emptySubprocess.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertErrorEventExecutionSet(emptySubprocess.getExecutionSet(), EMPTY_VALUE, NON_INTERRUPTING);
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 
-    @Test
     @Override
-    public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartErrorEvent.class, FILLED_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        checkEventMarshalling(StartErrorEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartErrorEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(StartErrorEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
+    public Class<StartErrorEvent> getStartEventType() {
+        return StartErrorEvent.class;
     }
 
     @Override
     String getBpmnStartEventFilePath() {
         return BPMN_START_EVENT_FILE_PATH;
+    }
+
+    @Override
+    String getFilledTopLevelEventId() {
+        return FILLED_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptyTopLevelEventId() {
+        return EMPTY_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getFilledSubprocessLevelEventId() {
+        return FILLED_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptySubprocessLevelEventId() {
+        return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
     }
 
     private void assertErrorEventExecutionSet(InterruptingErrorEventExecutionSet executionSet, String eventName, boolean isInterrupting) {

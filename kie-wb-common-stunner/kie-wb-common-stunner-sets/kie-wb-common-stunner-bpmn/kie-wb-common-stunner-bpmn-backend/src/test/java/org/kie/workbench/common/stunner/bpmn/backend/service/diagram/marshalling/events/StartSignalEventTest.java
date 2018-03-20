@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -27,7 +27,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class StartSignalEventTest extends StartEvent {
+public class StartSignalEventTest extends StartEvent<StartSignalEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/signalStartEvents.bpmn";
 
@@ -45,18 +45,18 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String eventName = "Signal Start Event with Name";
-        final String eventDocumentation = "Non empty\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String signalRef = "Signal1";
-        final String eventDataOutput = "||event:String||[dout]event->processVar";
+        final String EVENT_NAME = "Signal Start Event with Name";
+        final String EVENT_DOCUMENTATION = "Non empty\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String SIGNAL_REF = "Signal1";
+        final String EVENT_DATA_OUTPUT = "||event:String||[dout]event->processVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledTop = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID, StartSignalEvent.class);
-        assertGeneralSet(filledTop.getGeneral(), eventName, eventDocumentation);
-        assertSignalEventExecutionSet(filledTop.getExecutionSet(), signalRef, INTERRUPTING);
-        assertDataIOSet(filledTop.getDataIOSet(), eventDataOutput);
+        assertGeneralSet(filledTop.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertSignalEventExecutionSet(filledTop.getExecutionSet(), SIGNAL_REF, INTERRUPTING);
+        assertDataIOSet(filledTop.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -74,18 +74,18 @@ public class StartSignalEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String eventName = "Signal inside of Event sub-process";
-        final String eventDocumentation = "Non empty Signal Event\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String signalRef = "AnotherSignal";
-        final String eventDataOutput = "||hello:String||[dout]hello->processVar";
+        final String EVENT_NAME = "Signal inside of Event sub-process";
+        final String EVENT_DOCUMENTATION = "Non empty Signal Event\nDocumentation\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String SIGNAL_REF = "AnotherSignal";
+        final String EVENT_DATA_OUTPUT = "||hello:String||[dout]hello->processVar";
 
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_START_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartSignalEvent filledSubprocess = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID, StartSignalEvent.class);
-        assertGeneralSet(filledSubprocess.getGeneral(), eventName, eventDocumentation);
-        assertSignalEventExecutionSet(filledSubprocess.getExecutionSet(), signalRef, INTERRUPTING);
-        assertDataIOSet(filledSubprocess.getDataIOSet(), eventDataOutput);
+        assertGeneralSet(filledSubprocess.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
+        assertSignalEventExecutionSet(filledSubprocess.getExecutionSet(), SIGNAL_REF, INTERRUPTING);
+        assertDataIOSet(filledSubprocess.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
     @Test
@@ -100,33 +100,34 @@ public class StartSignalEventTest extends StartEvent {
         assertDataIOSet(emptySubprocess.getDataIOSet(), EMPTY_VALUE);
     }
 
-    @Test
-    @Override
-    public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartSignalEvent.class, FILLED_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        checkEventMarshalling(StartSignalEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(StartSignalEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(StartSignalEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
     @Override
     String getBpmnStartEventFilePath() {
         return BPMN_START_EVENT_FILE_PATH;
+    }
+
+    @Override
+    String getFilledTopLevelEventId() {
+        return FILLED_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptyTopLevelEventId() {
+        return EMPTY_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getFilledSubprocessLevelEventId() {
+        return FILLED_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getEmptySubprocessLevelEventId() {
+        return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    Class<StartSignalEvent> getStartEventType() {
+        return StartSignalEvent.class;
     }
 
     private void assertSignalEventExecutionSet(InterruptingSignalEventExecutionSet executionSet, String eventName, boolean isInterrupting) {

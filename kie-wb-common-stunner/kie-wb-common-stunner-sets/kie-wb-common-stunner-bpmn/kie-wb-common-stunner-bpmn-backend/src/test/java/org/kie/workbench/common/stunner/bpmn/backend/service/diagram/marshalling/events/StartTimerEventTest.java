@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.events;
+package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events;
 
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class StartTimerEventTest extends StartEvent {
+public class StartTimerEventTest extends StartEvent<StartTimerEvent> {
 
     private static final String BPMN_START_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/timerStartEvents.bpmn";
 
@@ -50,22 +50,22 @@ public class StartTimerEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallTopLevelEventFilledProperties() throws Exception {
-        final String eventNameMultiple = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentationMultiple = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String timerValueMultiple = "5m3s";
-        final String timerValueLanguageMultiple = "cron";
+        final String EVENT_NAME_MULTIPLE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION_MULTIPLE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String TIMER_VALUE_MULTIPLE = "5m3s";
+        final String TIMER_VALUE_LANGUAGE_MULTIPLE = "cron";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
-        final String eventNameSpecificDate = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String eventDocumentationSpecificDate = "Why not\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\nhere\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String timerValueSpecificDate = "2018-03-16T13:50:59+02:00";
+        final String EVENT_NAME_SPECIFIC_DATE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String EVENT_DOCUMENTATION_SPECIFIC_DATE = "Why not\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\nhere\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String TIMER_VALUE_SPECIFIC_DATE = "2018-03-16T13:50:59+02:00";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
-        final String eventNameAfterDuration = "'Some name'";
-        final String eventDocumentationAfterDuration = "And some documentation\n\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String timerValueAfterDuration = "PT1H17M";
+        final String EVENT_NAME_AFTER_DURATION = "'Some name'";
+        final String EVENT_DOCUMENTATION_AFTER_DURATION = "And some documentation\n\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String TIMER_VALUE_AFTER_DURATION = "PT1H17M";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
@@ -73,20 +73,20 @@ public class StartTimerEventTest extends StartEvent {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent filledTopMultiple = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopMultiple.getGeneral(), eventNameMultiple, eventDocumentationMultiple);
-        assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), timerValueMultiple, timerValueLanguageMultiple, INTERRUPTING);
+        assertGeneralSet(filledTopMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), TIMER_VALUE_MULTIPLE, TIMER_VALUE_LANGUAGE_MULTIPLE, INTERRUPTING);
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
         StartTimerEvent filledTopSpecificDate = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopSpecificDate.getGeneral(), eventNameSpecificDate, eventDocumentationSpecificDate);
-        assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), timerValueSpecificDate, INTERRUPTING);
+        assertGeneralSet(filledTopSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), TIMER_VALUE_SPECIFIC_DATE, INTERRUPTING);
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputSpecificDate = "||hello:String||[dout]hello->processVar";
 
         StartTimerEvent filledTopAfterDuration = getStartNodeById(diagram, FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopAfterDuration.getGeneral(), eventNameAfterDuration, eventDocumentationAfterDuration);
-        assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), timerValueAfterDuration, INTERRUPTING);
+        assertGeneralSet(filledTopAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), TIMER_VALUE_AFTER_DURATION, INTERRUPTING);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputDuration);
     }
@@ -107,23 +107,23 @@ public class StartTimerEventTest extends StartEvent {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventFilledProperties() throws Exception {
-        final String eventNameMultiple = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./ name";
-        final String eventDocumentationMultiple = "Some documentation for this event\n\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String timerValueMultiple = "R3/PT8M3S";
+        final String EVENT_NAME_MULTIPLE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./ name";
+        final String EVENT_DOCUMENTATION_MULTIPLE = "Some documentation for this event\n\n~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String TIMER_VALUE_MULTIPLE = "R3/PT8M3S";
         //  "none" is a "not a cron" for engine and looks like ISO in GUI
-        final String timerValueLanguageMultiple = "none";
+        final String TIMER_VALUE_LANGUAGE_MULTIPLE = "none";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputMultiple = "||hello:String||[dout]hello->processVar";
 
-        final String eventNameSpecificDate = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./ hello how are you?";
-        final String eventDocumentationSpecificDate = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\ndocumentaion";
-        final String timerValueSpecificDate = "2018-03-16T13:50:59+01:00";
+        final String EVENT_NAME_SPECIFIC_DATE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./ hello how are you?";
+        final String EVENT_DOCUMENTATION_SPECIFIC_DATE = "~`!@#$%^&*()_+=-{}|\\][:\";'?><,./\ndocumentaion";
+        final String TIMER_VALUE_SPECIFIC_DATE = "2018-03-16T13:50:59+01:00";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputSpecificDate = "||hello:String||[dout]hello->processVar";
 
-        final String eventNameAfterDuration = "\"non empty name\"";
-        final String eventDocumentationAfterDuration = "Time is here: ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
-        final String timerValueAfterDuration = "PT1H15M";
+        final String EVENT_NAME_AFTER_DURATION = "\"non empty name\"";
+        final String EVENT_DOCUMENTATION_AFTER_DURATION = "Time is here: ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
+        final String TIMER_VALUE_AFTER_DURATION = "PT1H15M";
         // Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //final String timerDataOutputDuration = "||hello:String||[dout]hello->processVar";
 
@@ -131,20 +131,20 @@ public class StartTimerEventTest extends StartEvent {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         StartTimerEvent filledTopMultiple = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopMultiple.getGeneral(), eventNameMultiple, eventDocumentationMultiple);
-        assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), timerValueMultiple, timerValueLanguageMultiple, INTERRUPTING);
+        assertGeneralSet(filledTopMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
+        assertTimerEventMultiple(filledTopMultiple.getExecutionSet(), TIMER_VALUE_MULTIPLE, TIMER_VALUE_LANGUAGE_MULTIPLE, INTERRUPTING);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopMultiple.getDataIOSet(), timerDataOutputMultiple);
 
         StartTimerEvent filledTopSpecificDate = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopSpecificDate.getGeneral(), eventNameSpecificDate, eventDocumentationSpecificDate);
-        assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), timerValueSpecificDate, INTERRUPTING);
+        assertGeneralSet(filledTopSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
+        assertTimerEventSpecificDate(filledTopSpecificDate.getExecutionSet(), TIMER_VALUE_SPECIFIC_DATE, INTERRUPTING);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputSpecificDate);
 
         StartTimerEvent filledTopAfterDuration = getStartNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID, StartTimerEvent.class);
-        assertGeneralSet(filledTopAfterDuration.getGeneral(), eventNameAfterDuration, eventDocumentationAfterDuration);
-        assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), timerValueAfterDuration, INTERRUPTING);
+        assertGeneralSet(filledTopAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
+        assertTimerEventAfterDuration(filledTopAfterDuration.getExecutionSet(), TIMER_VALUE_AFTER_DURATION, INTERRUPTING);
         // Know issue. Should be uncommented after https://issues.jboss.org/browse/JBPM-7038 will be fixed
         //assertDataIOSet(filledTopSpecificDate.getDataIOSet(), timerDataOutputDuration);
     }
@@ -172,27 +172,42 @@ public class StartTimerEventTest extends StartEvent {
 
     @Test
     @Override
-    public void testMarshallTopLevelEmptyEventProperties() throws Exception {
-        checkEventMarshalling(StartTimerEvent.class, EMPTY_TOP_LEVEL_EVENT_ID);
-    }
-
-    @Test
-    @Override
     public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
         checkEventMarshalling(StartTimerEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID);
         checkEventMarshalling(StartTimerEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID);
         checkEventMarshalling(StartTimerEvent.class, FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID);
     }
 
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(StartTimerEvent.class, EMPTY_SUBPROCESS_LEVEL_EVENT_ID);
-    }
-
     @Override
     String getBpmnStartEventFilePath() {
         return BPMN_START_EVENT_FILE_PATH;
+    }
+
+    @Override
+    String getFilledTopLevelEventId() {
+        // There are several Filled events, test method is overwritten
+        return null;
+    }
+
+    @Override
+    String getEmptyTopLevelEventId() {
+        return EMPTY_TOP_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    String getFilledSubprocessLevelEventId() {
+        // There are several Filled events, test method is overwritten
+        return null;
+    }
+
+    @Override
+    String getEmptySubprocessLevelEventId() {
+        return EMPTY_SUBPROCESS_LEVEL_EVENT_ID;
+    }
+
+    @Override
+    Class<StartTimerEvent> getStartEventType() {
+        return StartTimerEvent.class;
     }
 
     private void assertTimerEventMultiple(InterruptingTimerEventExecutionSet executionSet, String timerValue, String timeCycleLanguage, boolean isInterrupting) {
