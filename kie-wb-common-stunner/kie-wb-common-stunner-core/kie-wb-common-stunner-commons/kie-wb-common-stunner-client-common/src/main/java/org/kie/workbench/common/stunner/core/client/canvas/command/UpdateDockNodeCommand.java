@@ -67,15 +67,15 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
                         .filter(e -> !parentParent.equals(e.getSourceNode()))
                         .isPresent();
 
-        // UnDock any existing source node from the candidate.
-        dockEdge.ifPresent(e -> addCommand(new UnDockNodeCommand(e.getSourceNode(),
-                                                                 candidate)));
-
         // Dock the candidate into the parent node, and update candidate's parent, if necessary,
         // to match the parent for 'target'.
         if (mustUpdateParent) {
-            addCommand(new UpdateChildNodeCommand((Node) parentParent,
-                                                  candidate));
+            addCommand(new UpdateChildNodeCommand((Node) parentParent, candidate));
+        } else {
+            // UnDock any existing source node from the candidate.
+            // The UpdateChildNodeCommand already peforms the UnDockNodeCommand
+            dockEdge.ifPresent(e -> addCommand(new UnDockNodeCommand(e.getSourceNode(),
+                                                                     candidate)));
         }
 
         // Finally, dock the candidate into the parent.
