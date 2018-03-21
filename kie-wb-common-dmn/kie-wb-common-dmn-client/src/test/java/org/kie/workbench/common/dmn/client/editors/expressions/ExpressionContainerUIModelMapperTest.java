@@ -47,9 +47,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpressionContainerUIModelMapperTest {
+
+    private static final double MINIMUM_COLUMN_WIDTH = 200.0;
 
     @Mock
     private ExpressionEditorColumn uiExpressionColumn;
@@ -98,6 +101,7 @@ public class ExpressionContainerUIModelMapperTest {
         uiModel.appendRow(new DMNGridRow());
         uiModel.appendColumn(uiExpressionColumn);
         doReturn(0).when(uiExpressionColumn).getIndex();
+        doReturn(MINIMUM_COLUMN_WIDTH).when(uiExpressionColumn).getMinimumWidth();
 
         parent = new GridCellTuple(0, 0, expressionContainerGrid);
 
@@ -148,6 +152,7 @@ public class ExpressionContainerUIModelMapperTest {
 
         assertUiModel();
         assertEditorType(literalExpressionEditor.getClass());
+        verify(uiExpressionColumn).setWidth(MINIMUM_COLUMN_WIDTH);
     }
 
     @Test(expected = UnsupportedOperationException.class)

@@ -92,16 +92,20 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
 
     private LiteralExpression literalExpression = new LiteralExpression();
 
+    private Optional<Context> expression = Optional.empty();
+
     private Optional<HasName> hasName = Optional.empty();
+
+    private D definition;
 
     private FunctionSupplementaryGrid grid;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
-        final D definition = getEditorDefinition();
+        definition = getEditorDefinition();
 
-        final Optional<Context> expression = definition.getModelClass();
+        expression = definition.getModelClass();
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
         expressionEditorDefinitions.add(literalExpressionEditorDefinition);
@@ -113,12 +117,14 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
                                                                                                          anyInt());
+    }
 
+    private void setupGrid(final int nesting) {
         this.grid = (FunctionSupplementaryGrid) definition.getEditor(parent,
                                                                      hasExpression,
                                                                      expression,
                                                                      hasName,
-                                                                     0).get();
+                                                                     nesting).get();
     }
 
     protected abstract D getEditorDefinition();
@@ -127,6 +133,8 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
 
     @Test
     public void testInitialSetupFromDefinition() {
+        setupGrid(0);
+
         final GridData uiModel = grid.getModel();
         assertTrue(uiModel instanceof FunctionSupplementaryGridData);
 
@@ -150,5 +158,19 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
             assertEquals(literalExpressionEditor,
                          dcv.getValue().get());
         }
+    }
+
+    @Test
+    public void testHeaderVisibilityWhenNested() {
+        setupGrid(1);
+
+        assertTrue(grid.isHeaderHidden());
+    }
+
+    @Test
+    public void testHeaderVisibilityWhenNotNested() {
+        setupGrid(0);
+
+        assertTrue(grid.isHeaderHidden());
     }
 }

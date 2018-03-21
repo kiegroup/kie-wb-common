@@ -302,22 +302,6 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         verify(gridLayer).select(eq(editor));
     }
 
-//    @Test
-//    public void synchroniseViewWhenExpressionEditorChangedWithoutEditor() {
-//        grid.synchroniseViewWhenExpressionEditorChanged(Optional.empty());
-//
-//        verify(gridPanel).refreshScrollPosition();
-//        verify(gridPanel).updatePanelSize();
-//        verify(parentCell).onResize();
-//        verify(gridLayer).batch(redrawCommandCaptor.capture());
-//
-//        final GridLayerRedrawManager.PrioritizedCommand redrawCommand = redrawCommandCaptor.getValue();
-//        redrawCommand.execute();
-//
-//        verify(gridLayer).draw();
-//        verify(gridLayer, never()).select(any(GridWidget.class));
-//    }
-
     @Test
     public void synchroniseView() {
         grid.synchroniseView();
