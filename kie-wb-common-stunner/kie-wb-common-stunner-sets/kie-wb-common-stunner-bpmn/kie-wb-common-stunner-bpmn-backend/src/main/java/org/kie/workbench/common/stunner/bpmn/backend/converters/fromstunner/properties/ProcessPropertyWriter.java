@@ -102,8 +102,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         addChildShape(p.getShape());
         addChildEdge(p.getEdge());
         this.itemDefinitions.addAll(p.itemDefinitions);
-        //this.dataInputs.addAll(p.dataInputs);
-        //this.dataOutputs.addAll(p.dataOutputs);
         this.rootElements.addAll(p.rootElements);
     }
 
