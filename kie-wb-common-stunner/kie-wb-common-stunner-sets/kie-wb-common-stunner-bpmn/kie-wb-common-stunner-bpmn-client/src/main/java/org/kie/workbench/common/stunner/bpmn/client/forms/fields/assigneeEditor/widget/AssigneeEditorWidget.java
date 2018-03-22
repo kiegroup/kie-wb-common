@@ -148,12 +148,12 @@ public class AssigneeEditorWidget implements IsWidget,
 
     @Override
     public void addAssignee() {
-        if (max != -1 && assigneeRows.size() >= max) {
-            view.disableAddButton();
-            notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Max_assignees_added(),
-                                                    NotificationEvent.NotificationType.INFO));
-        } else {
+        if(max == -1 || assigneeRows.size() < max) {
             addAssignee(new Assignee());
+            if (max != -1 && assigneeRows.size() == max) {
+                view.disableAddButton();
+                notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Max_assignees_added(), NotificationEvent.NotificationType.INFO));
+            }
         }
     }
 
@@ -186,16 +186,6 @@ public class AssigneeEditorWidget implements IsWidget,
         return view.asWidget().addHandler(handler, ValueChangeEvent.getType());
     }
 
-    public void setMax(int max) {
-        this.max = max;
-    }
-
-    @PreDestroy
-    public void destroy() {
-        view.clearList();
-        listItems.destroyAll();
-    }
-
     @Override
     public String getNameHeader() {
         return translationService.getTranslation(StunnerBPMNConstants.ASSIGNEE_LABEL);
@@ -204,5 +194,11 @@ public class AssigneeEditorWidget implements IsWidget,
     @Override
     public String getAddLabel() {
         return translationService.getTranslation(StunnerBPMNConstants.ASSIGNEE_NEW);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        view.clearList();
+        listItems.destroyAll();
     }
 }
