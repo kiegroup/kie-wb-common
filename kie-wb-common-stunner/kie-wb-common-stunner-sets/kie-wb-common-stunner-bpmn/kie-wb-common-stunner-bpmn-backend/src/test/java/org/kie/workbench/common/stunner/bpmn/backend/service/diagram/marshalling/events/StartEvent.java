@@ -53,7 +53,7 @@ public abstract class StartEvent<T extends BaseStartEvent> extends BPMNDiagramMa
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
                 // New (un)marshaller is disabled for now due to found incompleteness
-                {OLD}//, {NEW}
+                {OLD}, {NEW}
         });
     }
 
