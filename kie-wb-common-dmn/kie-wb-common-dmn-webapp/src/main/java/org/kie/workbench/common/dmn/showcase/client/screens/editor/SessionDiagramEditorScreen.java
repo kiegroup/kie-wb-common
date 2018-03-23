@@ -294,7 +294,7 @@ public class SessionDiagramEditorScreen {
                 .displayNotifications(type -> true)
                 .open(diagram,
                       session,
-                      new ScreenPresenterCallback(callback));
+                      new ScreenPresenterCallback(callback));        ;
         expressionEditor.init(presenter);
     }
 

@@ -32,8 +32,9 @@ import com.ait.lienzo.client.core.types.Transform;
 import com.ait.tooling.nativetools.client.collection.NFastDoubleArrayJSO;
 import com.google.gwt.dom.client.Element;
 import elemental2.dom.HTMLCanvasElement;
-import org.kie.workbench.common.stunner.client.lienzo.util.NativeClassConverter;
 import org.uberfire.ext.editor.commons.client.file.exports.svg.IContext2D;
+
+import static org.kie.workbench.common.stunner.client.lienzo.util.NativeClassConverter.convert;
 
 public class DelegateNativeContext2D implements INativeContext2D {
 
@@ -181,15 +182,15 @@ public class DelegateNativeContext2D implements INativeContext2D {
     }
 
     public void setFillGradient(LinearGradient.LinearGradientJSO grad) {
-        throwException();
+        setFillColor(null);
     }
 
     public void setFillGradient(PatternGradient.PatternGradientJSO grad) {
-        throwException();
+        setFillColor(null);
     }
 
     public void setFillGradient(RadialGradient.RadialGradientJSO grad) {
-        throwException();
+        setFillColor(null);
     }
 
     public void transform(Transform.TransformJSO jso) {
@@ -260,41 +261,39 @@ public class DelegateNativeContext2D implements INativeContext2D {
 
     public ImageData getImageData(double x, double y, double width, double height) {
         elemental2.dom.ImageData nativeImageData = context.getImageData(x, y, width, height);
-        return NativeClassConverter.convert(nativeImageData, ImageData.class);
+        return convert(nativeImageData, ImageData.class);
     }
 
     public ImageData createImageData(double width, double height) {
-        context.createImageData(width, height);
-        return null;
+        return convert(context.createImageData(width, height), ImageData.class);
     }
 
     public ImageData createImageData(ImageData data) {
-        context.createImageData(NativeClassConverter.convert(data, elemental2.dom.ImageData.class));
-        return null;
+        return convert(context.createImageData(convert(data, elemental2.dom.ImageData.class)), ImageData.class);
     }
 
     public void putImageData(ImageData image, double x, double y) {
-        context.putImageData(NativeClassConverter.convert(image, elemental2.dom.ImageData.class), x, y);
+        context.putImageData(convert(image, elemental2.dom.ImageData.class), x, y);
     }
 
     public void putImageData(ImageData image, double x, double y, double dx, double dy, double dw, double dh) {
-        context.putImageData(NativeClassConverter.convert(image, elemental2.dom.ImageData.class), x, y, dx, dy, dw, dh);
+        context.putImageData(convert(image, elemental2.dom.ImageData.class), x, y, dx, dy, dw, dh);
     }
 
     public TextMetrics measureText(String text) {
-        return NativeClassConverter.convert(context.measureText(text), TextMetrics.class);
+        return convert(context.measureText(text), TextMetrics.class);
     }
 
     public void drawImage(Element image, double x, double y) {
-        context.drawImage(NativeClassConverter.convert(image, HTMLCanvasElement.class), x, y);
+        context.drawImage(convert(image, HTMLCanvasElement.class), x, y);
     }
 
     public void drawImage(Element image, double x, double y, double w, double h) {
-        context.drawImage(NativeClassConverter.convert(image, HTMLCanvasElement.class), x, y, w, h);
+        context.drawImage(convert(image, HTMLCanvasElement.class), x, y, w, h);
     }
 
     public void drawImage(Element image, double sx, double sy, double sw, double sh, double x, double y, double w, double h) {
-        context.drawImage(NativeClassConverter.convert(image, HTMLCanvasElement.class), sx, sy, sw, sh, x, y, w, h);
+        context.drawImage(convert(image, HTMLCanvasElement.class), sx, sy, sw, sh, x, y, w, h);
     }
 
     public void resetClip() {

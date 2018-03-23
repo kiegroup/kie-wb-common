@@ -189,7 +189,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             enableToolbarCommand(toolbar.getExportToJpgToolbarCommand(),
                                  exportToJpgToolbarCommandEnabled);
             enableToolbarCommand(toolbar.getExportToSvgToolbarCommand(),
-                                 exportToJpgToolbarCommandEnabled);
+                                 exportToSvgToolbarCommandEnabled);
             enableToolbarCommand(toolbar.getExportToPdfToolbarCommand(),
                                  exportToPdfToolbarCommandEnabled);
             enableToolbarCommand(toolbar.getCopyToolbarCommand(),
