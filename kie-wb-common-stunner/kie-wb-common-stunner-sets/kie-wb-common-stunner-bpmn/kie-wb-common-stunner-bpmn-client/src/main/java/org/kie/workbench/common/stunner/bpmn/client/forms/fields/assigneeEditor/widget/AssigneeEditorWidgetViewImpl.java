@@ -121,12 +121,12 @@ public class AssigneeEditorWidgetViewImpl extends Composite implements AssigneeE
 
     @Override
     public void enableAddButton() {
-        addAnchor.setHidden(true);
+        addAnchor.setHidden(false);
     }
 
     @Override
     public void disableAddButton() {
-        addAnchor.setHidden(false);
+        addAnchor.setHidden(true);
     }
 
     @EventHandler("addAnchor")

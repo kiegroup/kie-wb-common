@@ -42,7 +42,7 @@ public class AssigneeListItem {
     private ParameterizedCommand<AssigneeListItem> removeCommand;
 
     @Inject
-    public AssigneeListItem(LiveSearchDropDown<String> liveSearchDropDown, AssigneeLiveSearchService liveSearchService) {
+    public AssigneeListItem(LiveSearchDropDown liveSearchDropDown, AssigneeLiveSearchService liveSearchService) {
         this.liveSearchDropDown = liveSearchDropDown;
         this.liveSearchService = liveSearchService;
     }
