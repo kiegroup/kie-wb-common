@@ -33,7 +33,6 @@ import org.uberfire.ext.editor.commons.client.file.exports.svg.IContext2D;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,6 +44,12 @@ public class DelegateNativeContext2DTest {
 
     @Mock
     private IContext2D context;
+
+    private LinearGradient.LinearGradientJSO linearGradientJSO;
+
+    private PatternGradient.PatternGradientJSO patternGradientJSO;
+
+    private RadialGradient.RadialGradientJSO radialGradientJSO;
 
     @Before
     public void setUp() throws Exception {
@@ -200,7 +205,7 @@ public class DelegateNativeContext2DTest {
         verify(context, times(1)).fillText("text", 1, 1);
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void fillTextWithGradient() {
         delegateNativeContext2D.fillTextWithGradient("text", 1, 1, 1, 1, 1, 1, "black");
     }
@@ -253,19 +258,22 @@ public class DelegateNativeContext2DTest {
         verify(context, times(1)).setImageSmoothingEnabled(true);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void setFillGradient() {
-        delegateNativeContext2D.setFillGradient(mock(LinearGradient.LinearGradientJSO.class));
+    @Test
+    public void setFillGradientLinear() {
+        delegateNativeContext2D.setFillGradient(linearGradientJSO);
+        verify(context, times(1)).setFillStyle(null);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void setFillGradient1() {
-        delegateNativeContext2D.setFillGradient(mock(RadialGradient.RadialGradientJSO.class));
+    @Test
+    public void setFillGradientRadial() {
+        delegateNativeContext2D.setFillGradient(radialGradientJSO);
+        verify(context, times(1)).setFillStyle(null);
     }
 
-    @Test(expected = RuntimeException.class)
-    public void setFillGradient2() {
-        delegateNativeContext2D.setFillGradient(mock(PatternGradient.PatternGradientJSO.class));
+    @Test
+    public void setFillGradientPattern() {
+        delegateNativeContext2D.setFillGradient(patternGradientJSO);
+        verify(context, times(1)).setFillStyle(null);
     }
 
     @Test
@@ -343,7 +351,7 @@ public class DelegateNativeContext2DTest {
         verify(context).setShadowBlur(Mockito.anyInt());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void isSupported() {
         delegateNativeContext2D.isSupported("feature");
     }
