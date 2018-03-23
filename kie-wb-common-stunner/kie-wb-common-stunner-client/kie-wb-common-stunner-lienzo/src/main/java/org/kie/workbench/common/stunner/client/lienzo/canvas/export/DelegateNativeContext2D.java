@@ -252,6 +252,7 @@ public class DelegateNativeContext2D implements INativeContext2D {
     }
 
     public boolean isSupported(String feature) {
+        throwException();
         return true;
     }
 
@@ -423,7 +424,7 @@ public class DelegateNativeContext2D implements INativeContext2D {
     }
 
     private Path2D.NativePath2D throwException() {
-        throw new RuntimeException("Not implemented");
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     public IContext2D getDelegate() {

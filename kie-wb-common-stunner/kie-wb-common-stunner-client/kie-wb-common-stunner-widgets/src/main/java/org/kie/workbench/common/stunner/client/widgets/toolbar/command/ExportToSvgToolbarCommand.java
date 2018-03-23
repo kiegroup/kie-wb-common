@@ -46,11 +46,11 @@ public class ExportToSvgToolbarCommand extends AbstractToolbarCommand<AbstractCl
 
     @Override
     public String getCaption() {
-        return translationService.getKeyValue(CoreTranslationMessages.EXPORT_SVG);
+        return translationService.getValue(CoreTranslationMessages.EXPORT_SVG);
     }
 
     @Override
     public String getTooltip() {
-        return translationService.getKeyValue(CoreTranslationMessages.EXPORT_SVG);
+        return translationService.getValue(CoreTranslationMessages.EXPORT_SVG);
     }
 }

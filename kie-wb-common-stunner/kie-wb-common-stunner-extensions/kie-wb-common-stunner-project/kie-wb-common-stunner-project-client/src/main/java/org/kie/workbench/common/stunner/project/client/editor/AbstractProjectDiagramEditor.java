@@ -64,6 +64,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientF
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.rule.RuleViolation;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
@@ -175,7 +176,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     @SuppressWarnings("unchecked")
     public void init() {
         initializeCommands(commands);
-        title = translationService.getKeyValue(StunnerProjectClientConstants.DIAGRAM_EDITOR_DEFAULT_TITLE);
+        title = translationService.getValue(StunnerProjectClientConstants.DIAGRAM_EDITOR_DEFAULT_TITLE);
         getView().init(this);
         projectMessagesListener.enable();
     }
@@ -203,47 +204,49 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                          });
     }
 
+    @SuppressWarnings("unchecked")
     protected void open(final ProjectDiagram diagram) {
         showLoadingViews();
-        final AbstractClientFullSession session = newSession(diagram);
-        presenter = sessionPresenterFactory.newPresenterEditor();
-        getView().setWidget(presenter.getView());
-        presenter
-                .withToolbar(false)
-                .withPalette(true)
-                .displayNotifications(type -> true)
-                .open(diagram,
-                      session,
-                      new SessionPresenter.SessionPresenterCallback<AbstractClientFullSession, Diagram>() {
-                          @Override
-                          public void afterSessionOpened() {
-
-                          }
-
-                          @Override
-                          public void afterCanvasInitialized() {
-
-                          }
-
-                          @Override
-                          public void onSuccess() {
-                              bindCommands();
-                              updateTitle(diagram.getMetadata().getTitle());
-                              hideLoadingViews();
-                              setOriginalHash(getCurrentDiagramHash());
-                          }
-
-                          @Override
-                          public void onError(final ClientRuntimeError error) {
-                              onLoadError(error);
-                          }
-                      });
-    }
-
-    private AbstractClientFullSession newSession(final Diagram diagram) {
         setOriginalHash(diagram.hashCode());
-        return (AbstractClientFullSession) sessionManager.getSessionFactory(diagram,
-                                                                            ClientFullSession.class).newSession();
+        final Metadata metadata = diagram.getMetadata();
+        sessionManager.getSessionFactory(metadata,
+                                         ClientFullSession.class)
+                .newSession(metadata,
+                            s -> {
+                                final AbstractClientFullSession session = (AbstractClientFullSession) s;
+                                presenter = sessionPresenterFactory.newPresenterEditor();
+                                getView().setWidget(presenter.getView());
+                                presenter
+                                        .withToolbar(false)
+                                        .withPalette(true)
+                                        .displayNotifications(type -> true)
+                                        .open(diagram,
+                                              session,
+                                              new SessionPresenter.SessionPresenterCallback<AbstractClientFullSession, Diagram>() {
+                                                  @Override
+                                                  public void afterSessionOpened() {
+
+                                                  }
+
+                                                  @Override
+                                                  public void afterCanvasInitialized() {
+
+                                                  }
+
+                                                  @Override
+                                                  public void onSuccess() {
+                                                      bindCommands();
+                                                      updateTitle(diagram.getMetadata().getTitle());
+                                                      hideLoadingViews();
+                                                      setOriginalHash(getCurrentDiagramHash());
+                                                  }
+
+                                                  @Override
+                                                  public void onError(final ClientRuntimeError error) {
+                                                      onLoadError(error);
+                                                  }
+                                              });
+                            });
     }
 
     @Override
@@ -515,8 +518,8 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     void onSessionErrorEvent(final @Observes OnSessionErrorEvent errorEvent) {
         if (isSameSession(errorEvent.getSession())) {
-            executeWithConfirm(translationService.getKeyValue(StunnerProjectClientConstants.ON_ERROR_CONFIRM_UNDO_LAST_ACTION,
-                                                              errorEvent.getError()),
+            executeWithConfirm(translationService.getValue(StunnerProjectClientConstants.ON_ERROR_CONFIRM_UNDO_LAST_ACTION,
+                                                           errorEvent.getError()),
                                this::menu_undo);
         }
     }
@@ -569,7 +572,6 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     private void destroySession() {
         unbindCommands();
         if (Objects.nonNull(presenter)) {
-            presenter.clear();
             presenter.destroy();
         }
     }
@@ -655,7 +657,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     }
 
     protected void onSaveSuccess() {
-        final String message = translationService.getKeyValue(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL);
+        final String message = translationService.getValue(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL);
         log(Level.INFO,
             message);
         presenter.getView().showMessage(message);
@@ -738,5 +740,13 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         commands.put(CopySelectionSessionCommand.class, sessionCommandFactory.newCopySelectionCommand());
         commands.put(PasteSelectionSessionCommand.class, sessionCommandFactory.newPasteSelectionCommand());
         commands.put(CutSelectionSessionCommand.class, sessionCommandFactory.newCutSelectionCommand());
+    }
+
+    public SessionPresenter<AbstractClientFullSession, ?, Diagram> getSessionPresenter() {
+        return presenter;
+    }
+
+    void setSessionPresenter(final SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter) {
+        this.presenter = presenter;
     }
 }

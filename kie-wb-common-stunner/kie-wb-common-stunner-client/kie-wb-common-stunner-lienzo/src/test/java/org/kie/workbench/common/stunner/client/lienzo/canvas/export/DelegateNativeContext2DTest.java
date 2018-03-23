@@ -343,9 +343,9 @@ public class DelegateNativeContext2DTest {
         verify(context).setShadowBlur(Mockito.anyInt());
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void isSupported() {
-        assertTrue(delegateNativeContext2D.isSupported("feature"));
+        delegateNativeContext2D.isSupported("feature");
     }
 
     @Test

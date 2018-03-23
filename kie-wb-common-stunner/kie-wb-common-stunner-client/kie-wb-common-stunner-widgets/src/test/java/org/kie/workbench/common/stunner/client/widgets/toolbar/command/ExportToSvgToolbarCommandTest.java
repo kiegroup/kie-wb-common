@@ -45,7 +45,7 @@ public class ExportToSvgToolbarCommandTest extends AbstractToolbarCommandTest {
     public void setUp() throws Exception {
         when(sessionCommandFactory.newExportToSvgSessionCommand()).thenReturn(sessionCommand);
 
-        when(translationService.getKeyValue(CoreTranslationMessages.EXPORT_SVG)).thenReturn(TEXT);
+        when(translationService.getValue(CoreTranslationMessages.EXPORT_SVG)).thenReturn(TEXT);
         command = new ExportToSvgToolbarCommand(sessionCommandFactory, translationService);
     }
 
