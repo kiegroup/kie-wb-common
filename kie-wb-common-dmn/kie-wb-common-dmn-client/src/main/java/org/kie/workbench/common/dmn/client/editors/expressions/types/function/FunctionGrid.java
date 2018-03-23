@@ -45,7 +45,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.function.pa
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -135,7 +134,7 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, Functio
         final GridColumn expressionColumn = new ExpressionEditorColumn(gridLayer,
                                                                        Arrays.asList(new FunctionColumnNameHeaderMetaData(() -> hasName.orElse(HasName.NOP).getName().getValue(),
                                                                                                                           (s) -> hasName.orElse(HasName.NOP).getName().setValue(s),
-                                                                                                                          getHeaderFactory()),
+                                                                                                                          getHeaderHasNameTextBoxFactory()),
                                                                                      new FunctionColumnParametersHeaderMetaData(expression::get,
                                                                                                                                 cellEditorControls,
                                                                                                                                 parametersEditor,
@@ -145,16 +144,6 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, Functio
         model.appendColumn(expressionColumn);
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> !isSelectionLayer || gridColumn.equals(expressionColumn));
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNameHasNoValueCommand(),
-                                                     newHeaderHasNameHasValueCommand());
     }
 
     @Override

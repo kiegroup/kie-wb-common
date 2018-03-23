@@ -127,7 +127,7 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationUIM
 
     @Override
     protected void initialiseUiColumns() {
-        final TextBoxSingletonDOMElementFactory headerFactory = getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory headerFactory = getHeaderHasNameTextBoxFactory();
         final InvocationColumnExpressionHeaderMetaData expressionHeaderMetaData = new InvocationColumnExpressionHeaderMetaData(this::getExpressionText,
                                                                                                                                this::setExpressionText,
                                                                                                                                headerFactory);
@@ -135,7 +135,7 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationUIM
                                                                                                 (s) -> hasName.orElse(HasName.NOP).getName().setValue(s),
                                                                                                 headerFactory),
                                                                    expressionHeaderMetaData),
-                                                     getBodyFactory(),
+                                                     getBodyTextBoxFactory(),
                                                      this);
         final ExpressionEditorColumn expressionColumn = new ExpressionEditorColumn(gridLayer,
                                                                                    Arrays.asList(new BaseHeaderMetaData("",
@@ -148,26 +148,6 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationUIM
         model.appendColumn(expressionColumn);
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> !isSelectionLayer || gridColumn.equals(expressionColumn));
-    }
-
-    TextBoxSingletonDOMElementFactory getBodyFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newCellHasNoValueCommand(),
-                                                     newCellHasValueCommand());
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNameHasNoValueCommand(),
-                                                     newHeaderHasNameHasValueCommand());
     }
 
     private String getExpressionText() {

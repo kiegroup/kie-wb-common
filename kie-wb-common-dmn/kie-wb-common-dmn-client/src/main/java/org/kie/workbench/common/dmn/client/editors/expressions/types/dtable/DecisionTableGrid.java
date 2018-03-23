@@ -142,56 +142,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         super.doInitialisation();
     }
 
-    TextBoxSingletonDOMElementFactory getBodyTextBoxFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newCellHasNoValueCommand(),
-                                                     newCellHasValueCommand());
-    }
-
-    TextAreaSingletonDOMElementFactory getBodyTextAreaFactory() {
-        return new TextAreaSingletonDOMElementFactory(gridPanel,
-                                                      gridLayer,
-                                                      this,
-                                                      sessionManager,
-                                                      sessionCommandManager,
-                                                      newCellHasNoValueCommand(),
-                                                      newCellHasValueCommand());
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderTextBoxFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNoValueCommand(),
-                                                     newHeaderHasValueCommand());
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderHasNameTextBoxFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNameHasNoValueCommand(),
-                                                     newHeaderHasNameHasValueCommand());
-    }
-
-    TextAreaSingletonDOMElementFactory getHeaderTextAreaFactory() {
-        return new TextAreaSingletonDOMElementFactory(gridPanel,
-                                                      gridLayer,
-                                                      this,
-                                                      sessionManager,
-                                                      sessionCommandManager,
-                                                      newHeaderHasNoValueCommand(),
-                                                      newHeaderHasValueCommand());
-    }
-
     @Override
     protected void doInitialisation() {
         // Defer initialisation until after the constructor completes as

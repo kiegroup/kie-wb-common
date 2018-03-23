@@ -586,7 +586,7 @@ public class FunctionGridTest {
     public void testHeaderFactoryWhenNested() {
         setupGrid(1);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderHasNameTextBoxFactory();
         assertCommands(factory.getHasNoValueCommand().apply(tupleWithoutValue),
                        DeleteHeaderValueCommand.class);
         assertCommands(factory.getHasValueCommand().apply(tupleWithValue),
@@ -597,7 +597,7 @@ public class FunctionGridTest {
     public void testHeaderFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderHasNameTextBoxFactory();
         assertCommands(factory.getHasNoValueCommand().apply(tupleWithoutValue),
                        DeleteHeaderValueCommand.class, UpdateElementPropertyCommand.class);
         assertCommands(factory.getHasValueCommand().apply(tupleWithValue),

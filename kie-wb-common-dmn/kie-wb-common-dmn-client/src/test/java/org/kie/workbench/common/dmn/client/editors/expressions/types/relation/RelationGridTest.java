@@ -560,7 +560,7 @@ public class RelationGridTest {
     public void testBodyFactoryWhenNested() {
         setupGrid(1);
 
-        final TextAreaSingletonDOMElementFactory factory = grid.getBodyFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
@@ -569,7 +569,7 @@ public class RelationGridTest {
     public void testBodyFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextAreaSingletonDOMElementFactory factory = grid.getBodyFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
@@ -578,7 +578,7 @@ public class RelationGridTest {
     public void testHeaderFactoryWhenNested() {
         setupGrid(1);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderTextBoxFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteHeaderValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetHeaderValueCommand.class);
     }
@@ -587,7 +587,7 @@ public class RelationGridTest {
     public void testHeaderFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderTextBoxFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteHeaderValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetHeaderValueCommand.class);
     }

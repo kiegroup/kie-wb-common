@@ -37,6 +37,8 @@ import org.kie.workbench.common.dmn.client.commands.general.SetCellValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderGridWidgetMouseDoubleClickHandler;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableHeaderMetaData;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
@@ -249,6 +251,56 @@ public abstract class BaseExpressionGrid<E extends Expression, M extends BaseUIM
             }
         }
         return Optional.ofNullable(command);
+    }
+
+    public TextAreaSingletonDOMElementFactory getBodyTextAreaFactory() {
+        return new TextAreaSingletonDOMElementFactory(gridPanel,
+                                                      gridLayer,
+                                                      this,
+                                                      sessionManager,
+                                                      sessionCommandManager,
+                                                      newCellHasNoValueCommand(),
+                                                      newCellHasValueCommand());
+    }
+
+    public TextBoxSingletonDOMElementFactory getBodyTextBoxFactory() {
+        return new TextBoxSingletonDOMElementFactory(gridPanel,
+                                                     gridLayer,
+                                                     this,
+                                                     sessionManager,
+                                                     sessionCommandManager,
+                                                     newCellHasNoValueCommand(),
+                                                     newCellHasValueCommand());
+    }
+
+    public TextBoxSingletonDOMElementFactory getHeaderTextBoxFactory() {
+        return new TextBoxSingletonDOMElementFactory(gridPanel,
+                                                     gridLayer,
+                                                     this,
+                                                     sessionManager,
+                                                     sessionCommandManager,
+                                                     newHeaderHasNoValueCommand(),
+                                                     newHeaderHasValueCommand());
+    }
+
+    public TextBoxSingletonDOMElementFactory getHeaderHasNameTextBoxFactory() {
+        return new TextBoxSingletonDOMElementFactory(gridPanel,
+                                                     gridLayer,
+                                                     this,
+                                                     sessionManager,
+                                                     sessionCommandManager,
+                                                     newHeaderHasNameHasNoValueCommand(),
+                                                     newHeaderHasNameHasValueCommand());
+    }
+
+    public TextAreaSingletonDOMElementFactory getHeaderTextAreaFactory() {
+        return new TextAreaSingletonDOMElementFactory(gridPanel,
+                                                      gridLayer,
+                                                      this,
+                                                      sessionManager,
+                                                      sessionCommandManager,
+                                                      newHeaderHasNoValueCommand(),
+                                                      newHeaderHasValueCommand());
     }
 
     protected EditableHeaderMetaData extractEditableHeaderMetaData(final GridCellTuple gc) {

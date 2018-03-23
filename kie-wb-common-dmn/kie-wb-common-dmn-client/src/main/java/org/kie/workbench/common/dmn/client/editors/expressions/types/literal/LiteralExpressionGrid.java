@@ -26,8 +26,6 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
@@ -102,31 +100,11 @@ public class LiteralExpressionGrid extends BaseExpressionGrid<LiteralExpression,
     protected void initialiseUiColumns() {
         final GridColumn literalExpressionColumn = new LiteralExpressionColumn(new LiteralExpressionColumnHeaderMetaData(() -> hasName.orElse(HasName.NOP).getName().getValue(),
                                                                                                                          (s) -> hasName.orElse(HasName.NOP).getName().setValue(s),
-                                                                                                                         getHeaderFactory()),
-                                                                               getBodyFactory(),
+                                                                                                                         getHeaderHasNameTextBoxFactory()),
+                                                                               getBodyTextAreaFactory(),
                                                                                this);
 
         model.appendColumn(literalExpressionColumn);
-    }
-
-    TextAreaSingletonDOMElementFactory getBodyFactory() {
-        return new TextAreaSingletonDOMElementFactory(gridPanel,
-                                                      gridLayer,
-                                                      this,
-                                                      sessionManager,
-                                                      sessionCommandManager,
-                                                      newCellHasNoValueCommand(),
-                                                      newCellHasValueCommand());
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNameHasNoValueCommand(),
-                                                     newHeaderHasNameHasValueCommand());
     }
 
     @Override

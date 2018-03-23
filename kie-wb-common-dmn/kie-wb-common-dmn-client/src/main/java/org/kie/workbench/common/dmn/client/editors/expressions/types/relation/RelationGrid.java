@@ -53,8 +53,8 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberCol
 
 public class RelationGrid extends BaseExpressionGrid<Relation, RelationUIModelMapper> implements HasListSelectorControl {
 
-    private final TextAreaSingletonDOMElementFactory factory = getBodyFactory();
-    private final TextBoxSingletonDOMElementFactory headerFactory = getHeaderFactory();
+    private final TextAreaSingletonDOMElementFactory factory = getBodyTextAreaFactory();
+    private final TextBoxSingletonDOMElementFactory headerFactory = getHeaderTextBoxFactory();
 
     public RelationGrid(final GridCellTuple parent,
                         final Optional<String> nodeUUID,
@@ -96,26 +96,6 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationUIModelMa
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
         super.doInitialisation();
-    }
-
-    TextAreaSingletonDOMElementFactory getBodyFactory() {
-        return new TextAreaSingletonDOMElementFactory(gridPanel,
-                                                      gridLayer,
-                                                      this,
-                                                      sessionManager,
-                                                      sessionCommandManager,
-                                                      newCellHasNoValueCommand(),
-                                                      newCellHasValueCommand());
-    }
-
-    TextBoxSingletonDOMElementFactory getHeaderFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNoValueCommand(),
-                                                     newHeaderHasValueCommand());
     }
 
     @Override

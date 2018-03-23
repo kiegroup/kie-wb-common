@@ -321,7 +321,7 @@ public class LiteralExpressionGridTest {
     public void testBodyFactoryWhenNested() {
         setupGrid(1);
 
-        final TextAreaSingletonDOMElementFactory factory = grid.getBodyFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
@@ -330,7 +330,7 @@ public class LiteralExpressionGridTest {
     public void testBodyFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextAreaSingletonDOMElementFactory factory = grid.getBodyFactory();
+        final TextAreaSingletonDOMElementFactory factory = grid.getBodyTextAreaFactory();
         assertThat(factory.getHasNoValueCommand().apply(tupleWithoutValue)).isInstanceOf(DeleteCellValueCommand.class);
         assertThat(factory.getHasValueCommand().apply(tupleWithValue)).isInstanceOf(SetCellValueCommand.class);
     }
@@ -339,7 +339,7 @@ public class LiteralExpressionGridTest {
     public void testHeaderFactoryWhenNested() {
         setupGrid(1);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderHasNameTextBoxFactory();
         assertCommands(factory.getHasNoValueCommand().apply(tupleWithoutValue),
                        DeleteHeaderValueCommand.class);
         assertCommands(factory.getHasValueCommand().apply(tupleWithValue),
@@ -350,7 +350,7 @@ public class LiteralExpressionGridTest {
     public void testHeaderFactoryWhenNotNested() {
         setupGrid(0);
 
-        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderFactory();
+        final TextBoxSingletonDOMElementFactory factory = grid.getHeaderHasNameTextBoxFactory();
         assertCommands(factory.getHasNoValueCommand().apply(tupleWithoutValue),
                        DeleteHeaderValueCommand.class, UpdateElementPropertyCommand.class);
         assertCommands(factory.getHasValueCommand().apply(tupleWithValue),

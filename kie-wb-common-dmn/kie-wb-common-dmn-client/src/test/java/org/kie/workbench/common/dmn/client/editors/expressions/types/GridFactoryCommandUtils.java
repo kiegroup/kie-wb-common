@@ -26,7 +26,7 @@ public class GridFactoryCommandUtils {
                                       final Class... commands) {
         assertThat(command).isInstanceOf(CompositeCommand.class);
         final CompositeCommand compositeCommand = (CompositeCommand) command;
-        assertThat(compositeCommand.getCommands().size()).isEqualTo(commands.length);
+        assertThat(compositeCommand.getCommands()).hasSize(commands.length);
 
         for (int i = 0; i < commands.length; i++) {
             assertThat(compositeCommand.getCommands().get(i)).isInstanceOf(commands[i]);
