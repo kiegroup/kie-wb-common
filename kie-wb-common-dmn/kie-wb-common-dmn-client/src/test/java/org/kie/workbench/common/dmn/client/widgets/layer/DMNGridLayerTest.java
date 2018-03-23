@@ -233,7 +233,12 @@ public class DMNGridLayerTest {
 
     @Test
     public void testSelectGridWidget() {
+        when(expressionGrid.getModel()).thenReturn(new BaseGridData(false));
+        when(expressionGrid.asNode()).thenReturn(mock(Node.class));
+
         assertThat(gridLayer.getSelectedGridWidget().isPresent()).isFalse();
+
+        gridLayer.add(expressionGrid);
 
         gridLayer.select(expressionGrid);
 
@@ -251,6 +256,7 @@ public class DMNGridLayerTest {
         gridData.setCellValue(0, 0, new ExpressionCellValue(Optional.of(expressionGrid)));
 
         gridLayer.register(gridWidget);
+        gridLayer.register(expressionGrid);
 
         assertThat(gridLayer.getSelectedGridWidget().isPresent()).isFalse();
 
@@ -262,20 +268,18 @@ public class DMNGridLayerTest {
         assertThat(gridLayer.getSelectedGridWidget().isPresent()).isTrue();
         assertThat(gridLayer.getSelectedGridWidget().get()).isEqualTo(expressionGrid);
 
-        verify(gridWidget).deselect();
-        verify(expressionGrid).deselect();
         verify(expressionGrid).select();
 
-        //Select outer grid
+        //Select outer grid, deselecting nested grid
         reset(gridWidget, expressionGrid);
         when(gridWidget.getModel()).thenReturn(gridData);
         when(expressionGrid.getModel()).thenReturn(new BaseGridData(false));
+        when(expressionGrid.isSelected()).thenReturn(true);
         gridLayer.select(gridWidget);
 
         assertThat(gridLayer.getSelectedGridWidget().isPresent()).isTrue();
         assertThat(gridLayer.getSelectedGridWidget().get()).isEqualTo(gridWidget);
 
-        verify(gridWidget).deselect();
         verify(gridWidget).select();
         verify(expressionGrid).deselect();
     }

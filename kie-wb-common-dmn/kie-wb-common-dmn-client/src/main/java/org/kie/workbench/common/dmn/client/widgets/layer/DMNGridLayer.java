@@ -144,9 +144,19 @@ public class DMNGridLayer extends DefaultGridLayer {
     @Override
     public void select(final GridWidget selectedGridWidget) {
         this.selectedGridWidget = Optional.of(selectedGridWidget);
-        getAllGridWidgets().stream().forEach(GridWidget::deselect);
-        selectedGridWidget.select();
-        batch();
+        boolean selectionChanged = false;
+        for (GridWidget gridWidget : getAllGridWidgets()) {
+            if (!gridWidget.equals(selectedGridWidget)) {
+                selectionChanged = true;
+                gridWidget.deselect();
+            } else if (gridWidget.equals(selectedGridWidget)) {
+                selectionChanged = true;
+                gridWidget.select();
+            }
+        }
+        if (selectionChanged) {
+            batch();
+        }
     }
 
     private Set<GridWidget> getAllGridWidgets() {
