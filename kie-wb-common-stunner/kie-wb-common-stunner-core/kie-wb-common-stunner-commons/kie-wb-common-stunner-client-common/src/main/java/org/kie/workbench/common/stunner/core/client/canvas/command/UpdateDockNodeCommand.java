@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 
 public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
@@ -59,7 +60,8 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
         final Optional<Edge<?, Node>> childEdge = getEdge(candidate.getInEdges(),
                                                           e -> e.getContent() instanceof Child);
         // Obtain the parent for the target node for docking (the 'target' one).
-        final Element<?> parentParent = GraphUtils.getParent(parent);
+        final Element<?> parentParent = getParentOfParent(context, parent);
+
         // Let's check if the current candidate has some parent, because
         // the docking operation implies adding the 'candidate' in the same parent node for 'target'.
         final boolean mustUpdateParent = null != parentParent &&
@@ -81,6 +83,13 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
         // Finally, dock the candidate into the parent.
         addCommand(new DockNodeCommand(parent, candidate, adjustPosition));
         return this;
+    }
+
+    private Element<?> getParentOfParent(AbstractCanvasHandler context, Node parent) {
+        final Element parentOfParent = GraphUtils.getParent(parent);
+        return (GraphUtils.isRootNode((Element<? extends View<?>>) parentOfParent, context.getGraphIndex().getGraph()) ?
+                context.getGraphIndex().getNode(context.getDiagram().getMetadata().getCanvasRootUUID()) :
+                parentOfParent);
     }
 
     protected Optional<Edge<?, Node>> getEdge(final List<Edge<?, Node>> edges,

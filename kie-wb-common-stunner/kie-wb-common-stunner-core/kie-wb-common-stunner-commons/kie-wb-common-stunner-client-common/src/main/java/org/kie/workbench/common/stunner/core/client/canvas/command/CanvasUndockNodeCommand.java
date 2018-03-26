@@ -45,7 +45,7 @@ public class CanvasUndockNodeCommand extends AbstractCanvasCommand {
             throw new IllegalArgumentException("Parent and child should not be null");
         }
         context.undock(parent, child);
-        // on canvas side undock removes the parent that was in which it was docked
+        // on canvas side dock removes the parent that was in which it was docked
         // so, it is necessary to add the current parent
         getChild().getInEdges().stream()
                 .filter(e -> e.getContent() instanceof Child)
