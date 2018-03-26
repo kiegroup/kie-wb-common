@@ -402,11 +402,6 @@
       <artifactId>uberfire-message-console-backend</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-organizationalunit-manager</artifactId>
-    </dependency>
-
     <!-- Common -->
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
@@ -620,11 +615,6 @@
 
     <dependency>
       <groupId>org.kie.workbench.stunner</groupId>
-      <artifactId>kie-wb-common-stunner-backend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-client-common</artifactId>
       <scope>provided</scope>
     </dependency>
@@ -695,6 +685,11 @@
       <groupId>org.kie.workbench.stunner</groupId>
       <artifactId>kie-wb-common-stunner-bpmn-project-client</artifactId>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-bpmn-project-backend</artifactId>
     </dependency>
 
     <dependency>
@@ -851,6 +846,11 @@
     <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-bpmn-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.workbench.forms</groupId>
+      <artifactId>kie-wb-common-forms-backend-services</artifactId>
     </dependency>
 
     <dependency>
@@ -1177,7 +1177,6 @@
             <compileSourcesArtifact>org.uberfire:uberfire-project-client</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-message-console-api</compileSourcesArtifact>
             <compileSourcesArtifact>org.uberfire:uberfire-message-console-client</compileSourcesArtifact>
-            <compileSourcesArtifact>org.uberfire:uberfire-organizationalunit-manager</compileSourcesArtifact>
 
             <!-- Common dependencies -->
             <compileSourcesArtifact>org.kie.workbench.screens:kie-wb-common-library-client</compileSourcesArtifact>

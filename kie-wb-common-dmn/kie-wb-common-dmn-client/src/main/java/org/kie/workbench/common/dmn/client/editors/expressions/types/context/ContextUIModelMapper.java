@@ -23,7 +23,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
-import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
@@ -47,16 +46,20 @@ public class ContextUIModelMapper extends BaseUIModelMapper<Context> {
 
     private final ListSelectorView.Presenter listSelector;
 
+    private final int nesting;
+
     public ContextUIModelMapper(final GridWidget gridWidget,
                                 final Supplier<GridData> uiModel,
                                 final Supplier<Optional<Context>> dmnModel,
                                 final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
-                                final ListSelectorView.Presenter listSelector) {
+                                final ListSelectorView.Presenter listSelector,
+                                final int nesting) {
         super(uiModel,
               dmnModel);
         this.gridWidget = gridWidget;
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
         this.listSelector = listSelector;
+        this.nesting = nesting;
     }
 
     @Override
@@ -81,17 +84,16 @@ public class ContextUIModelMapper extends BaseUIModelMapper<Context> {
                                           columnIndex).setSelectionStrategy(RowSelectionStrategy.INSTANCE);
                     break;
                 case NAME:
-                    final InformationItem variable = context.getContextEntry().get(rowIndex).getVariable();
-                    final String name = variable == null ? DEFAULT_ROW_CAPTION : variable.getName().getValue();
                     if (!isLastRow) {
+                        final InformationItem variable = context.getContextEntry().get(rowIndex).getVariable();
                         uiModel.get().setCell(rowIndex,
                                               columnIndex,
-                                              () -> new ContextGridCell<>(new BaseGridCellValue<>(name),
-                                                                          listSelector));
+                                              () -> new InformationItemNameCell(() -> variable,
+                                                                                listSelector));
                     } else {
                         uiModel.get().setCell(rowIndex,
                                               columnIndex,
-                                              () -> new DMNGridCell<>(new BaseGridCellValue<>(name)));
+                                              () -> new DMNGridCell<>(new BaseGridCellValue<>(DEFAULT_ROW_CAPTION)));
                     }
                     break;
                 case EXPRESSION:
@@ -103,10 +105,11 @@ public class ContextUIModelMapper extends BaseUIModelMapper<Context> {
                         final Optional<BaseExpressionGrid> editor = ed.getEditor(new GridCellTuple(rowIndex,
                                                                                                    columnIndex,
                                                                                                    gridWidget),
+                                                                                 Optional.empty(),
                                                                                  ce,
                                                                                  expression,
                                                                                  Optional.ofNullable(ce.getVariable()),
-                                                                                 true);
+                                                                                 nesting + 1);
                         if (!isLastRow) {
                             uiModel.get().setCell(rowIndex,
                                                   columnIndex,
@@ -144,7 +147,8 @@ public class ContextUIModelMapper extends BaseUIModelMapper<Context> {
                     context.getContextEntry()
                             .get(rowIndex)
                             .getVariable()
-                            .setName(new Name(cell.get().orElse(new BaseGridCellValue<>("")).getValue().toString()));
+                            .getName()
+                            .setValue(cell.get().orElse(new BaseGridCellValue<>("")).getValue().toString());
                     break;
                 case EXPRESSION:
                     cell.get().ifPresent(v -> {

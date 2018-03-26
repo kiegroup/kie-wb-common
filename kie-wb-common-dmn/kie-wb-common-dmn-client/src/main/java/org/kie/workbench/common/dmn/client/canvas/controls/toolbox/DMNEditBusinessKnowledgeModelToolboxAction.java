@@ -66,7 +66,7 @@ public class DMNEditBusinessKnowledgeModelToolboxAction implements ToolboxAction
     @Override
     public String getTitle(final AbstractCanvasHandler canvasHandler,
                            final String uuid) {
-        return translationService.getKeyValue(CoreTranslationMessages.EDIT);
+        return translationService.getValue(CoreTranslationMessages.EDIT);
     }
 
     @Override
@@ -82,8 +82,9 @@ public class DMNEditBusinessKnowledgeModelToolboxAction implements ToolboxAction
                 .asNode();
         final BusinessKnowledgeModel bkm = bkmNode.getContent().getDefinition();
         editExpressionEvent.fire(new EditExpressionEvent(sessionManager.getCurrentSession(),
-                                                         Optional.of(bkm),
-                                                         bkm.getEncapsulatedLogic()));
+                                                         uuid,
+                                                         bkm.getEncapsulatedLogic(),
+                                                         Optional.of(bkm)));
 
         return this;
     }

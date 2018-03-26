@@ -29,6 +29,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.general.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
@@ -36,7 +37,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Exp
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -58,33 +58,35 @@ import org.uberfire.ext.wires.core.grids.client.model.Bounds;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
-import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class ExpressionContainerGridTest {
 
+    private static final String NODE_UUID = "uuid";
+
+    private static final String NAME = "name";
+
     @Mock
     private DMNGridPanel gridPanel;
 
     @Mock
     private DMNGridLayer gridLayer;
-
-    @Mock
-    private EventSourceMock<ExpressionEditorSelectedEvent> editorSelectedEvent;
 
     @Mock
     private CellEditorControlsView.Presenter cellEditorControls;
@@ -129,13 +131,28 @@ public class ExpressionContainerGridTest {
     private GridCellTuple parent;
 
     @Mock
-    private HasName hasName;
-
-    @Mock
     private HasExpression hasExpression;
 
+    @Mock
+    private ParameterizedCommand<Optional<HasName>> onHasNameChanged;
+
     @Captor
-    private ArgumentCaptor<ExpressionEditorSelectedEvent> expressionEditorSelectedEventCaptor;
+    private ArgumentCaptor<Optional<HasName>> hasNameCaptor;
+
+    private HasName hasName = new HasName() {
+
+        private Name name = new Name(NAME);
+
+        @Override
+        public Name getName() {
+            return name;
+        }
+
+        @Override
+        public void setName(final Name name) {
+            this.name = name;
+        }
+    };
 
     private LiteralExpression literalExpression = new LiteralExpression();
 
@@ -146,13 +163,13 @@ public class ExpressionContainerGridTest {
     public void setup() {
         this.grid = new ExpressionContainerGrid(gridPanel,
                                                 gridLayer,
-                                                editorSelectedEvent,
                                                 cellEditorControls,
                                                 translationService,
                                                 listSelector,
                                                 sessionManager,
                                                 sessionCommandManager,
-                                                expressionEditorDefinitionsSupplier);
+                                                expressionEditorDefinitionsSupplier,
+                                                onHasNameChanged);
 
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add(undefinedExpressionEditorDefinition);
@@ -163,19 +180,21 @@ public class ExpressionContainerGridTest {
         doReturn(new BaseGridData()).when(literalExpressionEditor).getModel();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                         any(Optional.class),
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(parent).when(undefinedExpressionEditor).getParentInformation();
         doReturn(new BaseGridData()).when(undefinedExpressionEditor).getModel();
         doReturn(Optional.empty()).when(undefinedExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(undefinedExpressionEditor)).when(undefinedExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                             any(Optional.class),
                                                                                                              any(HasExpression.class),
                                                                                                              any(Optional.class),
                                                                                                              any(Optional.class),
-                                                                                                             anyBoolean());
+                                                                                                             anyInt());
 
         doReturn(session).when(sessionManager).getCurrentSession();
         doReturn(canvasHandler).when(session).getCanvasHandler();
@@ -202,13 +221,6 @@ public class ExpressionContainerGridTest {
     }
 
     @Test
-    public void testSelect() {
-        grid.select();
-
-        verify(editorSelectedEvent).fire(any(ExpressionEditorSelectedEvent.class));
-    }
-
-    @Test
     public void testDeselect() {
         grid.getModel().selectCell(0, 0);
         assertFalse(grid.getModel().getSelectedCells().isEmpty());
@@ -220,7 +232,9 @@ public class ExpressionContainerGridTest {
 
     @Test
     public void testSetUndefinedExpression() {
-        grid.setExpression(Optional.of(hasName), hasExpression);
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
 
         final GridCellValue<?> gridCellValue = grid.getModel().getCell(0, 0).getValue();
         assertThat(gridCellValue).isInstanceOf(ExpressionCellValue.class);
@@ -233,7 +247,9 @@ public class ExpressionContainerGridTest {
     public void testSetDefinedExpression() {
         when(hasExpression.getExpression()).thenReturn(literalExpression);
 
-        grid.setExpression(Optional.of(hasName), hasExpression);
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
 
         final GridCellValue<?> gridCellValue = grid.getModel().getCell(0, 0).getValue();
         assertThat(gridCellValue).isInstanceOf(ExpressionCellValue.class);
@@ -244,7 +260,9 @@ public class ExpressionContainerGridTest {
 
     @Test
     public void testGetItems() {
-        grid.setExpression(Optional.of(hasName), hasExpression);
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
         final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 0);
 
         assertThat(items.size()).isEqualTo(1);
@@ -269,5 +287,105 @@ public class ExpressionContainerGridTest {
         grid.onItemSelected(listSelectorItem);
 
         verify(command).execute();
+    }
+
+    @Test
+    public void testSpyHasNameWithHasNameGet() {
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        assertThat(spy.get().getName().getValue()).isEqualTo(NAME);
+    }
+
+    @Test
+    public void testSpyHasNameWithHasNameSetNameValue() {
+        final String NEW_NAME = "new-name";
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        spy.get().getName().setValue(NEW_NAME);
+
+        assertThat(hasName.getName().getValue()).isEqualTo(NEW_NAME);
+        verify(onHasNameChanged).execute(hasNameCaptor.capture());
+        assertThat(hasNameCaptor.getValue().get().getName().getValue()).isEqualTo(NEW_NAME);
+    }
+
+    @Test
+    public void testSpyHasNameWithHasNameSetNameObject() {
+        final String NEW_NAME = "new-name";
+
+        final Name newName = new Name(NEW_NAME);
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.of(hasName));
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        spy.get().setName(newName);
+
+        assertThat(hasName.getName().getValue()).isEqualTo(NEW_NAME);
+        verify(onHasNameChanged).execute(hasNameCaptor.capture());
+        assertThat(hasNameCaptor.getValue().get().getName().getValue()).isEqualTo(NEW_NAME);
+    }
+
+    @Test
+    public void testSpyHasNameWithoutHasNameGet() {
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.empty());
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        assertThat(spy.get().getName().getValue()).isEqualTo(HasName.NOP.getName().getValue());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSpyHasNameWithoutHasNameSetNameValue() {
+        final String NEW_NAME = "new-name";
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.empty());
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        spy.get().getName().setValue(NEW_NAME);
+
+        assertThat(hasName.getName().getValue()).isEqualTo(NAME);
+        verify(onHasNameChanged, never()).execute(any(Optional.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testSpyHasNameWithoutHasNameSetNameObject() {
+        final String NEW_NAME = "new-name";
+
+        final Name newName = new Name(NEW_NAME);
+
+        grid.setExpression(NODE_UUID,
+                           hasExpression,
+                           Optional.empty());
+
+        final Optional<HasName> spy = grid.spyHasName(onHasNameChanged);
+
+        assertThat(spy.isPresent()).isTrue();
+        spy.get().setName(newName);
+
+        assertThat(hasName.getName().getValue()).isEqualTo(NAME);
+        verify(onHasNameChanged, never()).execute(any(Optional.class));
     }
 }

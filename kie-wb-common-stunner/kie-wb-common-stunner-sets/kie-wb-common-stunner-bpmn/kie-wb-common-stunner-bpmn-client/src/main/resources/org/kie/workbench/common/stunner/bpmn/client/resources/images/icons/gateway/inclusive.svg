@@ -1,10 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+~ Copyright 2018 Red Hat, Inc. and/or its affiliates.
+~
+~ Licensed under the Apache License, Version 2.0 (the "License");
+~ you may not use this file except in compliance with the License.
+~ You may obtain a copy of the License at
+~
+~     http://www.apache.org/licenses/LICENSE-2.0
+~
+~ Unless required by applicable law or agreed to in writing, software
+~ distributed under the License is distributed on an "AS IS" BASIS,
+~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+~ See the License for the specific language governing permissions and
+~ limitations under the License.
+-->
+
 <svg version="1.1" id="gwInclusive" xmlns="http://www.w3.org/2000/svg"  x="0px" y="0px"
 	 width="448px" height="448px" viewBox="0 0 448 448" style="enable-background:new 0 0 448 448;" xml:space="preserve">
 <style type="text/css">
 	.st0{display:none;}
 	.st1{display:inline;}
 	.st2{fill:none;}
+	.inclusive-svg-css { fill: #ec7a08; }
 </style>
 <g id="Grid" class="st0">
 	<g id="icomoon-ignore" class="st1">
@@ -64,7 +81,7 @@
 		<line class="st2" x1="0" y1="432" x2="448" y2="432"/>
 	</g>
 </g>
-<path id="Icon" d="M224,31.9c51.3,0,99.5,20,135.8,56.2C396,124.4,416,172.6,416,223.9s-20,99.5-56.2,135.8
+<path id="Icon" class="inclusive-svg-css" d="M224,31.9c51.3,0,99.5,20,135.8,56.2C396,124.4,416,172.6,416,223.9s-20,99.5-56.2,135.8
 	c-36.3,36.3-84.5,56.2-135.8,56.2s-99.5-20-135.8-56.2C52,323.4,32,275.2,32,223.9s20-99.5,56.2-135.8
 	C124.5,51.9,172.7,31.9,224,31.9 M224-0.1C100.3-0.1,0,100.2,0,223.9s100.3,224,224,224s224-100.3,224-224S347.7-0.1,224-0.1
 	L224-0.1z"/>

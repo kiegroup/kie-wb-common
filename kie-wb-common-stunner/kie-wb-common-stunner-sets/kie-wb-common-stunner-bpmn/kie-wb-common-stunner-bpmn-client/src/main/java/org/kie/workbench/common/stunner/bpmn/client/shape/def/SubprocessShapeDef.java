@@ -26,6 +26,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.core.client.shape.SvgDataUriGlyph;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
@@ -43,18 +44,20 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
                     .put(ReusableSubprocess.class, BPMNSVGViewFactory::reusableSubProcess)
                     .put(EmbeddedSubprocess.class, BPMNSVGViewFactory::embeddedSubProcess)
                     .put(EventSubprocess.class, BPMNSVGViewFactory::eventSubProcess)
-                    .put(AdHocSubprocess.class, BPMNSVGViewFactory::adHocSubProcess);
+                    .put(AdHocSubprocess.class, BPMNSVGViewFactory::adHocSubProcess)
+                    .put(MultipleInstanceSubprocess.class, BPMNSVGViewFactory::multipleInstanceSubProcess);
 
     public static final Map<Class<? extends BaseSubprocess>, SvgDataUriGlyph> GLYPHS =
             new HashMap<Class<? extends BaseSubprocess>, SvgDataUriGlyph>() {{
                 put(ReusableSubprocess.class, BPMNSVGGlyphFactory.REUSABLE_SUBPROCESS_GLYPH);
-                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
+                put(EmbeddedSubprocess.class, BPMNSVGGlyphFactory.EMBEDDED_SUBPROCESS_GLYPH);
                 put(EventSubprocess.class, BPMNSVGGlyphFactory.EVENT_SUBPROCESS_GLYPH);
                 put(AdHocSubprocess.class, BPMNSVGGlyphFactory.ADHOC_SUBPROCESS_GLYPH);
+                put(MultipleInstanceSubprocess.class, BPMNSVGGlyphFactory.MULTIPLE_INSTANCE_SUBPROCESS_GLYPH);
             }};
 
     private static HasTitle.Position getSubprocessTextPosition(final BaseSubprocess bean) {
-        if ((bean instanceof EmbeddedSubprocess) || (bean instanceof EventSubprocess) || (bean instanceof AdHocSubprocess)) {
+        if ((bean instanceof EmbeddedSubprocess) || (bean instanceof MultipleInstanceSubprocess) || (bean instanceof EventSubprocess) || (bean instanceof AdHocSubprocess)) {
             return HasTitle.Position.TOP;
         } else {
             return HasTitle.Position.CENTER;
@@ -73,9 +76,9 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
         return newSizeHandlerBuilder()
                 .width(task -> task.getDimensionsSet().getWidth().getValue())
                 .height(task -> task.getDimensionsSet().getHeight().getValue())
-                .minWidth(task -> 25d)
+                .minWidth(task -> 50d)
                 .maxWidth(task -> 1200d)
-                .minHeight(task -> 25d)
+                .minHeight(task -> 50d)
                 .maxHeight(task -> 1200d)
                 .build();
     }
@@ -90,7 +93,8 @@ public class SubprocessShapeDef extends BaseDimensionedShapeDef
     }
 
     @Override
-    public Glyph getGlyph(final Class<? extends BaseSubprocess> type) {
+    public Glyph getGlyph(final Class<? extends BaseSubprocess> type,
+                          final String defId) {
         return GLYPHS.get(type);
     }
 }

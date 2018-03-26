@@ -26,13 +26,14 @@ public class PMMLFunctionSupplementaryGridTest extends BaseFunctionSupplementary
     protected PMMLFunctionEditorDefinition getEditorDefinition() {
         return new PMMLFunctionEditorDefinition(gridPanel,
                                                 gridLayer,
+                                                definitionUtils,
                                                 sessionManager,
                                                 sessionCommandManager,
-                                                expressionEditorDefinitionsSupplier,
-                                                editorSelectedEvent,
+                                                canvasCommandFactory,
                                                 cellEditorControls,
+                                                listSelector,
                                                 translationService,
-                                                listSelector);
+                                                expressionEditorDefinitionsSupplier);
     }
 
     protected String[] getExpectedNames() {

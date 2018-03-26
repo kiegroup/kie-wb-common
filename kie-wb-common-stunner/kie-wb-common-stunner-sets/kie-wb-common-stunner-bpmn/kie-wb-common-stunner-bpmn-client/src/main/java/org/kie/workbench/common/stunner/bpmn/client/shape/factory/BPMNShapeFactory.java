@@ -16,16 +16,20 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.shape.factory;
 
+import java.util.function.Supplier;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNDiagramShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.CatchingIntermediateEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.EndEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.GatewayShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.LaneShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SequenceFlowConnectorDef;
+import org.kie.workbench.common.stunner.bpmn.client.shape.def.ServiceTaskShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.StartEventShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.SubprocessShapeDef;
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
@@ -50,6 +54,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventC
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
@@ -61,6 +66,8 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.DelegateShapeFactory;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
@@ -75,24 +82,39 @@ public class BPMNShapeFactory
     private final BasicShapesFactory basicShapesFactory;
     private final SVGShapeFactory svgShapeFactory;
     private final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory;
+    private final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry;
 
+    // CDI proxy.
     protected BPMNShapeFactory() {
-        this(null,
-             null,
-             null);
+        this.basicShapesFactory = null;
+        this.svgShapeFactory = null;
+        this.delegateShapeFactory = null;
+        this.workItemDefinitionRegistry = null;
     }
 
     @Inject
     public BPMNShapeFactory(final BasicShapesFactory basicShapesFactory,
                             final SVGShapeFactory svgShapeFactory,
-                            final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory) {
+                            final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory,
+                            final ManagedInstance<WorkItemDefinitionRegistry> workItemDefinitionRegistry) {
         this.basicShapesFactory = basicShapesFactory;
         this.svgShapeFactory = svgShapeFactory;
         this.delegateShapeFactory = delegateShapeFactory;
+        this.workItemDefinitionRegistry = workItemDefinitionRegistry::get;
+    }
+
+    BPMNShapeFactory(final BasicShapesFactory basicShapesFactory,
+                     final SVGShapeFactory svgShapeFactory,
+                     final DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory,
+                     final Supplier<WorkItemDefinitionRegistry> workItemDefinitionRegistry) {
+        this.basicShapesFactory = basicShapesFactory;
+        this.svgShapeFactory = svgShapeFactory;
+        this.delegateShapeFactory = delegateShapeFactory;
+        this.workItemDefinitionRegistry = workItemDefinitionRegistry;
     }
 
     @PostConstruct
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     public void registerDelegates() {
         delegateShapeFactory
                 .delegate(BPMNDiagramImpl.class,
@@ -109,6 +131,9 @@ public class BPMNShapeFactory
                           () -> svgShapeFactory)
                 .delegate(BusinessRuleTask.class,
                           new TaskShapeDef(),
+                          () -> svgShapeFactory)
+                .delegate(ServiceTask.class,
+                          new ServiceTaskShapeDef(workItemDefinitionRegistry::get),
                           () -> svgShapeFactory)
                 .delegate(StartNoneEvent.class,
                           new StartEventShapeDef(),
@@ -147,6 +172,9 @@ public class BPMNShapeFactory
                           new SubprocessShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(AdHocSubprocess.class,
+                          new SubprocessShapeDef(),
+                          () -> svgShapeFactory)
+                .delegate(MultipleInstanceSubprocess.class,
                           new SubprocessShapeDef(),
                           () -> svgShapeFactory)
                 .delegate(EndNoneEvent.class,
@@ -188,11 +216,13 @@ public class BPMNShapeFactory
     }
 
     @Override
+    @SuppressWarnings("all")
     public Shape newShape(final BPMNDefinition definition) {
         return delegateShapeFactory.newShape(definition);
     }
 
     @Override
+    @SuppressWarnings("all")
     public Glyph getGlyph(final String definitionId) {
         return delegateShapeFactory.getGlyph(definitionId);
     }

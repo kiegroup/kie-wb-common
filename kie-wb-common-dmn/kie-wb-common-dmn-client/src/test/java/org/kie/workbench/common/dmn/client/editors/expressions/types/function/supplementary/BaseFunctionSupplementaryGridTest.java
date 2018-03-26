@@ -32,7 +32,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -41,16 +40,17 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberColumn;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doReturn;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -63,25 +63,28 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
     protected DMNGridLayer gridLayer;
 
     @Mock
+    protected DefinitionUtils definitionUtils;
+
+    @Mock
     protected SessionManager sessionManager;
 
     @Mock
     protected SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    protected Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-
-    @Mock
-    protected EventSourceMock<ExpressionEditorSelectedEvent> editorSelectedEvent;
+    protected CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
 
     @Mock
     protected CellEditorControlsView.Presenter cellEditorControls;
 
     @Mock
+    protected ListSelectorView.Presenter listSelector;
+
+    @Mock
     protected TranslationService translationService;
 
     @Mock
-    protected ListSelectorView.Presenter listSelector;
+    protected Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
 
     @Mock
     private GridCellTuple parent;
@@ -97,16 +100,20 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
 
     private LiteralExpression literalExpression = new LiteralExpression();
 
+    private Optional<Context> expression = Optional.empty();
+
     private Optional<HasName> hasName = Optional.empty();
+
+    private D definition;
 
     private FunctionSupplementaryGrid grid;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
-        final D definition = getEditorDefinition();
+        definition = getEditorDefinition();
 
-        final Optional<Context> expression = definition.getModelClass();
+        expression = definition.getModelClass();
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
         expressionEditorDefinitions.add(literalExpressionEditorDefinition);
@@ -114,16 +121,20 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
         doReturn(expressionEditorDefinitions).when(expressionEditorDefinitionsSupplier).get();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                         any(Optional.class),
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
+    }
 
+    private void setupGrid(final int nesting) {
         this.grid = (FunctionSupplementaryGrid) definition.getEditor(parent,
+                                                                     Optional.empty(),
                                                                      hasExpression,
                                                                      expression,
                                                                      hasName,
-                                                                     false).get();
+                                                                     nesting).get();
     }
 
     protected abstract D getEditorDefinition();
@@ -132,6 +143,8 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
 
     @Test
     public void testInitialSetupFromDefinition() {
+        setupGrid(0);
+
         final GridData uiModel = grid.getModel();
         assertTrue(uiModel instanceof FunctionSupplementaryGridData);
 
@@ -155,5 +168,19 @@ public abstract class BaseFunctionSupplementaryGridTest<D extends ExpressionEdit
             assertEquals(literalExpressionEditor,
                          dcv.getValue().get());
         }
+    }
+
+    @Test
+    public void testHeaderVisibilityWhenNested() {
+        setupGrid(1);
+
+        assertTrue(grid.isHeaderHidden());
+    }
+
+    @Test
+    public void testHeaderVisibilityWhenNotNested() {
+        setupGrid(0);
+
+        assertTrue(grid.isHeaderHidden());
     }
 }

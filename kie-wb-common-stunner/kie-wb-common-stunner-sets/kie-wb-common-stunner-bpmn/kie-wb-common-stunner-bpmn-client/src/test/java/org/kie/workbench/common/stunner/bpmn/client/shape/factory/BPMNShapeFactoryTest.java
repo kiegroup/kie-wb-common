@@ -38,26 +38,33 @@ import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndErrorEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EndMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EndSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EndTerminateEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.EventSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
+import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.Lane;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartSignalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.DelegateShapeFactory;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
@@ -86,6 +93,9 @@ public class BPMNShapeFactoryTest {
     private SVGShapeFactory svgShapeFactory;
 
     @Mock
+    private WorkItemDefinitionRegistry workItemDefinitionRegistry;
+
+    @Mock
     private DelegateShapeFactory<BPMNDefinition, Shape> delegateShapeFactory;
 
     private BPMNShapeFactory tested;
@@ -99,7 +109,8 @@ public class BPMNShapeFactoryTest {
                 .thenReturn(delegateShapeFactory);
         this.tested = new BPMNShapeFactory(basicShapesFactory,
                                            svgShapeFactory,
-                                           delegateShapeFactory);
+                                           delegateShapeFactory,
+                                           () -> workItemDefinitionRegistry);
     }
 
     @Test
@@ -141,6 +152,11 @@ public class BPMNShapeFactoryTest {
                                   any(StartEventShapeDef.class),
                                   factoryArgumentCaptor.capture());
         verify(delegateShapeFactory,
+               times(1)).delegate(eq(StartMessageEvent.class),
+                                  any(SubprocessShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+
+        verify(delegateShapeFactory,
                times(1)).delegate(eq(StartErrorEvent.class),
                                   any(TaskShapeDef.class),
                                   factoryArgumentCaptor.capture());
@@ -177,6 +193,10 @@ public class BPMNShapeFactoryTest {
                                   any(SubprocessShapeDef.class),
                                   factoryArgumentCaptor.capture());
         verify(delegateShapeFactory,
+               times(1)).delegate(eq(MultipleInstanceSubprocess.class),
+                                  any(SubprocessShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
                times(1)).delegate(eq(EndNoneEvent.class),
                                   any(EndEventShapeDef.class),
                                   factoryArgumentCaptor.capture());
@@ -187,6 +207,14 @@ public class BPMNShapeFactoryTest {
         verify(delegateShapeFactory,
                times(1)).delegate(eq(EndErrorEvent.class),
                                   any(EndEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(EndSignalEvent.class),
+                                  any(SubprocessShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(EndMessageEvent.class),
+                                  any(SubprocessShapeDef.class),
                                   factoryArgumentCaptor.capture());
         verify(delegateShapeFactory,
                times(1)).delegate(eq(IntermediateTimerEvent.class),
@@ -201,7 +229,15 @@ public class BPMNShapeFactoryTest {
                                   any(CatchingIntermediateEventShapeDef.class),
                                   factoryArgumentCaptor.capture());
         verify(delegateShapeFactory,
+               times(1)).delegate(eq(IntermediateMessageEventCatching.class),
+                                  any(CatchingIntermediateEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
                times(1)).delegate(eq(IntermediateSignalEventThrowing.class),
+                                  any(ThrowingIntermediateEventShapeDef.class),
+                                  factoryArgumentCaptor.capture());
+        verify(delegateShapeFactory,
+               times(1)).delegate(eq(IntermediateMessageEventThrowing.class),
                                   any(ThrowingIntermediateEventShapeDef.class),
                                   factoryArgumentCaptor.capture());
         verify(delegateShapeFactory,
@@ -214,7 +250,7 @@ public class BPMNShapeFactoryTest {
         final long basicFactoryCallCount = factoryArgumentCaptor.getAllValues().stream()
                 .filter(this::isBasicShapeFactory)
                 .count();
-        assertEquals(24,
+        assertEquals(30,
                      svgFactoryCallCount,
                      0);
         assertEquals(1,

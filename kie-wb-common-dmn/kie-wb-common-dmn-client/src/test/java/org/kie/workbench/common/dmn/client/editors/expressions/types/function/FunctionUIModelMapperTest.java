@@ -36,6 +36,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
@@ -45,8 +47,10 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FunctionUIModelMapperTest {
@@ -80,6 +84,9 @@ public class FunctionUIModelMapperTest {
     @Mock
     private ListSelectorView.Presenter listSelector;
 
+    @Captor
+    private ArgumentCaptor<GridCellTuple> parentCaptor;
+
     private Context context = new Context();
 
     private BaseGridData uiModel;
@@ -108,10 +115,11 @@ public class FunctionUIModelMapperTest {
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditor).getExpression();
         doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                         any(Optional.class),
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         //Supplementary Editor definitions
         final ExpressionEditorDefinitions supplementaryEditorDefinitions = new ExpressionEditorDefinitions();
@@ -121,10 +129,11 @@ public class FunctionUIModelMapperTest {
         doReturn(Optional.of(context)).when(supplementaryEditorDefinition).getModelClass();
         doReturn(Optional.of(context)).when(supplementaryEditor).getExpression();
         doReturn(Optional.of(supplementaryEditor)).when(supplementaryEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                 any(Optional.class),
                                                                                                  any(HasExpression.class),
                                                                                                  any(Optional.class),
                                                                                                  any(Optional.class),
-                                                                                                 anyBoolean());
+                                                                                                 anyInt());
 
         this.function = new FunctionDefinition();
 
@@ -133,7 +142,8 @@ public class FunctionUIModelMapperTest {
                                                 () -> Optional.of(function),
                                                 expressionEditorDefinitionsSupplier,
                                                 supplementaryEditorDefinitionsSupplier,
-                                                listSelector);
+                                                listSelector,
+                                                0);
         this.cellValueSupplier = Optional::empty;
     }
 
@@ -145,7 +155,8 @@ public class FunctionUIModelMapperTest {
 
         mapper.fromDMNModel(0, 0);
 
-        assertFromDMNModelEditor(literalExpressionEditor);
+        assertFromDMNModelEditor(literalExpressionEditor,
+                                 literalExpressionEditorDefinition);
     }
 
     @Test
@@ -156,7 +167,8 @@ public class FunctionUIModelMapperTest {
 
         mapper.fromDMNModel(0, 0);
 
-        assertFromDMNModelEditor(supplementaryEditor);
+        assertFromDMNModelEditor(supplementaryEditor,
+                                 supplementaryEditorDefinition);
     }
 
     @Test
@@ -167,14 +179,28 @@ public class FunctionUIModelMapperTest {
 
         mapper.fromDMNModel(0, 0);
 
-        assertFromDMNModelEditor(supplementaryEditor);
+        assertFromDMNModelEditor(supplementaryEditor,
+                                 supplementaryEditorDefinition);
     }
 
-    private void assertFromDMNModelEditor(final BaseExpressionGrid editor) {
+    @SuppressWarnings("unchecked")
+    private void assertFromDMNModelEditor(final BaseExpressionGrid editor,
+                                          final ExpressionEditorDefinition definition) {
         assertTrue(uiModel.getCell(0, 0).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv = (ExpressionCellValue) uiModel.getCell(0, 0).getValue();
         assertEquals(editor,
                      dcv.getValue().get());
+
+        verify(definition).getEditor(parentCaptor.capture(),
+                                     eq(Optional.empty()),
+                                     eq(function),
+                                     eq(Optional.ofNullable(function.getExpression())),
+                                     eq(Optional.empty()),
+                                     eq(1));
+        final GridCellTuple parent = parentCaptor.getValue();
+        assertEquals(0, parent.getRowIndex());
+        assertEquals(0, parent.getColumnIndex());
+        assertEquals(gridWidget, parent.getGridWidget());
     }
 
     @Test

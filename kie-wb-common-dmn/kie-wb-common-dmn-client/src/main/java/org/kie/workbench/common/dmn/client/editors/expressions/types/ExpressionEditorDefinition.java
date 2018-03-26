@@ -33,8 +33,9 @@ public interface ExpressionEditorDefinition<T extends Expression> {
     Optional<T> getModelClass();
 
     Optional<BaseExpressionGrid> getEditor(final GridCellTuple parent,
+                                           final Optional<String> nodeUUID,
                                            final HasExpression hasExpression,
                                            final Optional<T> expression,
                                            final Optional<HasName> hasName,
-                                           final boolean isNested);
+                                           final int nesting);
 }

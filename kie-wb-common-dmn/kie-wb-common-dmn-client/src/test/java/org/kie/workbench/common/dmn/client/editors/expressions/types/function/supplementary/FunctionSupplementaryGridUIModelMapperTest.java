@@ -35,7 +35,8 @@ public class FunctionSupplementaryGridUIModelMapperTest extends BaseContextUIMod
                                                           () -> uiModel,
                                                           () -> Optional.of(context),
                                                           expressionEditorDefinitionsSupplier,
-                                                          listSelector);
+                                                          listSelector,
+                                                          0);
     }
 
     @Test
@@ -52,5 +53,13 @@ public class FunctionSupplementaryGridUIModelMapperTest extends BaseContextUIMod
                      uiModel.getCell(1, 0).getValue().getValue());
         assertEquals(RowSelectionStrategy.INSTANCE,
                      uiModel.getCell(1, 0).getSelectionStrategy());
+    }
+
+    @Test
+    public void testFromDMNModelName() {
+        mapper.fromDMNModel(0, 1);
+
+        assertEquals("ii1",
+                     uiModel.getCell(0, 1).getValue().getValue());
     }
 }

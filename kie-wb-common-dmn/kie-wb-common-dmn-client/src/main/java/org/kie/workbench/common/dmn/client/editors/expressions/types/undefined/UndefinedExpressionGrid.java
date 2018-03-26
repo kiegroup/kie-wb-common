@@ -21,10 +21,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.enterprise.event.Event;
-
+import com.ait.lienzo.client.core.event.NodeMouseClickHandler;
 import com.ait.lienzo.shared.core.types.EventPropagationMode;
-import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
@@ -34,7 +32,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.HasCellEditorControls;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -47,10 +44,13 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
+import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 
 public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, UndefinedExpressionUIModelMapper> implements HasListSelectorControl {
 
@@ -59,37 +59,40 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
     private static final String EXPRESSION_COLUMN_GROUP = "UndefinedExpressionGrid$ExpressionColumn";
 
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-    private final ListSelectorView.Presenter listSelector;
 
     public UndefinedExpressionGrid(final GridCellTuple parent,
+                                   final Optional<String> nodeUUID,
                                    final HasExpression hasExpression,
                                    final Optional<Expression> expression,
                                    final Optional<HasName> hasName,
                                    final DMNGridPanel gridPanel,
                                    final DMNGridLayer gridLayer,
+                                   final DefinitionUtils definitionUtils,
                                    final SessionManager sessionManager,
                                    final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                   final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
-                                   final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
+                                   final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                    final CellEditorControlsView.Presenter cellEditorControls,
-                                   final TranslationService translationService,
                                    final ListSelectorView.Presenter listSelector,
-                                   final boolean isNested) {
+                                   final TranslationService translationService,
+                                   final int nesting,
+                                   final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
         super(parent,
+              nodeUUID,
               hasExpression,
               expression,
               hasName,
               gridPanel,
               gridLayer,
               new UndefinedExpressionGridRenderer(),
+              definitionUtils,
               sessionManager,
               sessionCommandManager,
-              editorSelectedEvent,
+              canvasCommandFactory,
               cellEditorControls,
+              listSelector,
               translationService,
-              isNested);
+              nesting);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
-        this.listSelector = listSelector;
 
         //Render the cell content to Lienzo's SelectionLayer so we can handle Events on child elements
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> true);
@@ -97,6 +100,17 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
         super.doInitialisation();
+    }
+
+    @Override
+    protected NodeMouseClickHandler getGridMouseClickHandler(final GridSelectionManager selectionManager) {
+        return (event) -> gridLayer.select(parent.getGridWidget());
+    }
+
+    @Override
+    public void selectFirstCell() {
+        parent.getGridWidget().getModel().selectCell(parent.getRowIndex(),
+                                                     parent.getColumnIndex());
     }
 
     @Override
@@ -110,7 +124,8 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
         return new UndefinedExpressionUIModelMapper(this::getModel,
                                                     () -> expression,
                                                     listSelector,
-                                                    hasExpression);
+                                                    hasExpression,
+                                                    parent);
     }
 
     @Override
@@ -134,8 +149,8 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
     }
 
     @Override
-    public Optional<IsElement> getEditorControls() {
-        return Optional.empty();
+    protected boolean isHeaderHidden() {
+        return true;
     }
 
     @Override
@@ -188,10 +203,11 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
         final Optional<ExpressionEditorDefinition<Expression>> expressionEditorDefinition = expressionEditorDefinitionsSupplier.get().getExpressionEditorDefinition(expression);
         expressionEditorDefinition.ifPresent(ed -> {
             final Optional<BaseExpressionGrid> editor = ed.getEditor(parent,
+                                                                     nodeUUID,
                                                                      hasExpression,
                                                                      expression,
                                                                      hasName,
-                                                                     isNested.get());
+                                                                     nesting);
             final GridCellValueTuple gcv = new GridCellValueTuple<>(parent.getRowIndex(),
                                                                     parent.getColumnIndex(),
                                                                     parent.getGridWidget(),
@@ -200,7 +216,10 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, Unde
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new SetCellValueCommand(gcv,
                                                                   () -> uiModelMapper,
-                                                                  () -> synchroniseViewWhenExpressionEditorChanged(editor)));
+                                                                  () -> editor.ifPresent(e -> {
+                                                                      e.selectFirstCell();
+                                                                      synchroniseViewWhenExpressionEditorChanged(e);
+                                                                  })));
         });
     }
 }

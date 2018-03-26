@@ -285,17 +285,23 @@ public class SessionDiagramEditorScreen {
 
     private void openDiagram(final Diagram diagram,
                              final Command callback) {
-        final AbstractClientFullSession session = newSession(diagram);
-        presenter = sessionPresenterFactory.newPresenterEditor();
-        screenPanelView.setWidget(presenter.getView());
-        presenter
-                .withToolbar(true)
-                .withPalette(true)
-                .displayNotifications(type -> true)
-                .open(diagram,
-                      session,
-                      new ScreenPresenterCallback(callback));
-        expressionEditor.init(presenter);
+
+        sessionManager.getSessionFactory(diagram.getMetadata(),
+                                         ClientFullSession.class)
+                .newSession(diagram.getMetadata(),
+                            s -> {
+                                final AbstractClientFullSession session = (AbstractClientFullSession) s;
+                                presenter = sessionPresenterFactory.newPresenterEditor();
+                                screenPanelView.setWidget(presenter.getView());
+                                presenter
+                                        .withToolbar(true)
+                                        .withPalette(true)
+                                        .displayNotifications(type -> true)
+                                        .open(diagram,
+                                              session,
+                                              new ScreenPresenterCallback(callback));
+                                expressionEditor.init(presenter);
+                            });
     }
 
     @OnOpen
@@ -390,11 +396,6 @@ public class SessionDiagramEditorScreen {
                                                                      this.title));
     }
 
-    private AbstractClientFullSession newSession(final Diagram diagram) {
-        return (AbstractClientFullSession) sessionManager.getSessionFactory(diagram,
-                                                                            ClientFullSession.class).newSession();
-    }
-
     private AbstractClientFullSession getSession() {
         return null != presenter ? presenter.getInstance() : null;
     }
@@ -428,8 +429,9 @@ public class SessionDiagramEditorScreen {
                                                                                 presenter,
                                                                                 sessionManager,
                                                                                 sessionCommandManager,
-                                                                                event.getHasName(),
-                                                                                event.getHasExpression()));
+                                                                                event.getNodeUUID(),
+                                                                                event.getHasExpression(),
+                                                                                event.getHasName()));
         }
     }
 

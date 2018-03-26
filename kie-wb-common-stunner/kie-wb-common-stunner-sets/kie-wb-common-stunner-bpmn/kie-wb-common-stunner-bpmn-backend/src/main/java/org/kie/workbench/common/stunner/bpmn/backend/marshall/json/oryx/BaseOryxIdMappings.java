@@ -42,6 +42,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEvent
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
@@ -77,6 +78,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.CalledElem
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.CreatedBy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.Description;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MITrigger;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCollectionOutput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceCompletionCondition;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataInput;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.MultipleInstanceDataOutput;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
@@ -86,6 +93,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskName;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskType;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.WaitForCompletion;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 
@@ -123,10 +131,16 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
         for (final Class<?> defClass : definitions) {
             String customMapping = customMappings.get(defClass);
             customMapping = customMapping != null ? customMapping : globalMappings.get(defClass);
-            final String orxId = customMapping != null ? customMapping : getDefaultOryxDefinitionId(defClass);
-            defMappings.put(defClass,
-                            orxId);
+            final String oryxId = customMapping != null ? customMapping : getDefaultOryxDefinitionId(defClass);
+            addOryxDefinitionId(defClass,
+                                oryxId);
         }
+    }
+
+    public void addOryxDefinitionId(final Class<?> type,
+                                    final String oryxId) {
+        defMappings.put(type,
+                        oryxId);
     }
 
     @Override
@@ -204,6 +218,21 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
             put(AdHocCompletionCondition.class,
                 "adhoccompletioncondition");
 
+            put(MITrigger.class,
+                "mitrigger");
+
+            put(MultipleInstanceCollectionInput.class,
+                "multipleinstancecollectioninput");
+            put(MultipleInstanceCollectionOutput.class,
+                "multipleinstancecollectionoutput");
+            put(MultipleInstanceDataInput.class,
+                "multipleinstancedatainput");
+            put(MultipleInstanceDataOutput.class,
+                "multipleinstancedataoutput");
+
+            put(MultipleInstanceCompletionCondition.class,
+                "multipleinstancecompletioncondition");
+
             // Simulation properties
             put(TimeUnit.class,
                 "timeunit");
@@ -266,6 +295,14 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
                 businesRuleTaskPropertiesMap);
             businesRuleTaskPropertiesMap.put(AssignmentsInfo.class,
                                              "assignmentsinfo");
+
+            Map<Class<?>, String> serviceTaskPropertiesMap = new HashMap<Class<?>, String>();
+            put(ServiceTask.class,
+                serviceTaskPropertiesMap);
+            serviceTaskPropertiesMap.put(AssignmentsInfo.class,
+                                         "assignmentsinfo");
+            serviceTaskPropertiesMap.put(TaskName.class,
+                                         "taskname");
 
             Map<Class<?>, String> startNoneEventPropertiesMap = new HashMap<Class<?>, String>();
             put(StartNoneEvent.class,
@@ -389,14 +426,19 @@ public abstract class BaseOryxIdMappings implements OryxIdMappings {
                 inclusiveGatewayPropertiesMap);
             inclusiveGatewayPropertiesMap.put(DefaultRoute.class,
                                               "defaultgate");
+            Map<Class<?>, String> multipleInstanceSubprocessPropertiesMap = new HashMap<Class<?>, String>();
+            put(MultipleInstanceSubprocess.class,
+                multipleInstanceSubprocessPropertiesMap);
+            multipleInstanceSubprocessPropertiesMap.put(ProcessVariables.class,
+                                                        "vardefs");
         }};
 
         return definitionMappings;
     }
 
     @Override
-    public String getOryxDefinitionId(final Class<?> clazz) {
-        return defMappings.get(clazz);
+    public String getOryxDefinitionId(final Object def) {
+        return defMappings.get(def.getClass());
     }
 
     @Override

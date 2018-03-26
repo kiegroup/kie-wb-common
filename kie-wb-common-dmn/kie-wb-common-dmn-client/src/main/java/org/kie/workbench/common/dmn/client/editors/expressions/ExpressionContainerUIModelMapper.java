@@ -31,13 +31,15 @@ import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelect
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
+import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 
 public class ExpressionContainerUIModelMapper extends BaseUIModelMapper<Expression> {
 
     private final GridCellTuple parent;
-    private final Supplier<Optional<HasName>> hasName;
+    private final Supplier<String> nodeUUID;
     private final Supplier<HasExpression> hasExpression;
+    private final Supplier<Optional<HasName>> hasName;
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitions;
 
     private final ListSelectorView.Presenter listSelector;
@@ -45,15 +47,17 @@ public class ExpressionContainerUIModelMapper extends BaseUIModelMapper<Expressi
     public ExpressionContainerUIModelMapper(final GridCellTuple parent,
                                             final Supplier<GridData> uiModel,
                                             final Supplier<Optional<Expression>> dmnModel,
-                                            final Supplier<Optional<HasName>> hasName,
+                                            final Supplier<String> nodeUUID,
                                             final Supplier<HasExpression> hasExpression,
+                                            final Supplier<Optional<HasName>> hasName,
                                             final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitions,
                                             final ListSelectorView.Presenter listSelector) {
         super(uiModel,
               dmnModel);
         this.parent = parent;
-        this.hasName = hasName;
+        this.nodeUUID = nodeUUID;
         this.hasExpression = hasExpression;
+        this.hasName = hasName;
         this.expressionEditorDefinitions = expressionEditorDefinitions;
         this.listSelector = listSelector;
     }
@@ -69,14 +73,18 @@ public class ExpressionContainerUIModelMapper extends BaseUIModelMapper<Expressi
         final Optional<ExpressionEditorDefinition<Expression>> expressionEditorDefinition = expressionEditorDefinitions.get().getExpressionEditorDefinition(expression);
         expressionEditorDefinition.ifPresent(definition -> {
             final Optional<BaseExpressionGrid> oEditor = definition.getEditor(parent,
+                                                                              Optional.of(nodeUUID.get()),
                                                                               hasExpression,
                                                                               expression,
                                                                               hasName,
-                                                                              false);
+                                                                              0);
             uiModel.setCell(0,
                             0,
                             () -> new ContextGridCell<>(new ExpressionCellValue(oEditor),
                                                         listSelector));
+
+            final GridColumn<?> uiColumn = uiModel.getColumns().get(columnIndex);
+            uiColumn.setWidth(uiColumn.getMinimumWidth());
         });
     }
 

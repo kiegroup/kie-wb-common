@@ -19,7 +19,6 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.literal;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -29,7 +28,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -39,13 +37,13 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 @ApplicationScoped
 public class LiteralExpressionEditorDefinition extends BaseEditorDefinition<LiteralExpression> {
-
-    private ListSelectorView.Presenter listSelector;
 
     public LiteralExpressionEditorDefinition() {
         //CDI proxy
@@ -54,20 +52,22 @@ public class LiteralExpressionEditorDefinition extends BaseEditorDefinition<Lite
     @Inject
     public LiteralExpressionEditorDefinition(final @DMNEditor DMNGridPanel gridPanel,
                                              final @DMNEditor DMNGridLayer gridLayer,
+                                             final DefinitionUtils definitionUtils,
                                              final SessionManager sessionManager,
                                              final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                             final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
+                                             final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                              final CellEditorControlsView.Presenter cellEditorControls,
-                                             final TranslationService translationService,
-                                             final ListSelectorView.Presenter listSelector) {
+                                             final ListSelectorView.Presenter listSelector,
+                                             final TranslationService translationService) {
         super(gridPanel,
               gridLayer,
+              definitionUtils,
               sessionManager,
               sessionCommandManager,
-              editorSelectedEvent,
+              canvasCommandFactory,
               cellEditorControls,
+              listSelector,
               translationService);
-        this.listSelector = listSelector;
     }
 
     @Override
@@ -87,22 +87,25 @@ public class LiteralExpressionEditorDefinition extends BaseEditorDefinition<Lite
 
     @Override
     public Optional<BaseExpressionGrid> getEditor(final GridCellTuple parent,
+                                                  final Optional<String> nodeUUID,
                                                   final HasExpression hasExpression,
                                                   final Optional<LiteralExpression> expression,
                                                   final Optional<HasName> hasName,
-                                                  final boolean isNested) {
+                                                  final int nesting) {
         return Optional.of(new LiteralExpressionGrid(parent,
+                                                     nodeUUID,
                                                      hasExpression,
                                                      expression,
                                                      hasName,
                                                      gridPanel,
                                                      gridLayer,
+                                                     definitionUtils,
                                                      sessionManager,
                                                      sessionCommandManager,
-                                                     editorSelectedEvent,
+                                                     canvasCommandFactory,
                                                      cellEditorControls,
-                                                     translationService,
                                                      listSelector,
-                                                     isNested));
+                                                     translationService,
+                                                     nesting));
     }
 }

@@ -36,6 +36,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
@@ -47,8 +49,10 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.columns.RowNumberCol
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class BaseContextUIModelMapperTest<M extends ContextUIModelMapper> {
@@ -87,6 +91,12 @@ public abstract class BaseContextUIModelMapperTest<M extends ContextUIModelMappe
     @Mock
     protected GridWidget gridWidget;
 
+    @Captor
+    private ArgumentCaptor<GridCellTuple> parentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Optional<String>> nodeUUIDCaptor;
+
     protected BaseGridData uiModel;
 
     protected Context context;
@@ -114,17 +124,19 @@ public abstract class BaseContextUIModelMapperTest<M extends ContextUIModelMappe
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditor).getExpression();
         doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                         any(Optional.class),
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(Optional.empty()).when(undefinedExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(undefinedExpressionEditor)).when(undefinedExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                             any(Optional.class),
                                                                                                              any(HasExpression.class),
                                                                                                              any(Optional.class),
                                                                                                              any(Optional.class),
-                                                                                                             anyBoolean());
+                                                                                                             anyInt());
 
         this.context = new Context();
         this.context.getContextEntry().add(new ContextEntry() {{
@@ -143,30 +155,46 @@ public abstract class BaseContextUIModelMapperTest<M extends ContextUIModelMappe
     protected abstract M getMapper();
 
     @Test
-    public void testFromDMNModelName() {
-        mapper.fromDMNModel(0, 1);
-        mapper.fromDMNModel(1, 1);
-
-        assertEquals("ii1",
-                     uiModel.getCell(0, 1).getValue().getValue());
-        assertEquals(ContextUIModelMapper.DEFAULT_ROW_CAPTION,
-                     uiModel.getCell(1, 1).getValue().getValue());
-    }
-
-    @Test
-    public void testFromDMNModelExpression() {
+    public void testFromDMNModelUndefinedExpression() {
         mapper.fromDMNModel(0, 2);
-        mapper.fromDMNModel(1, 2);
 
         assertTrue(uiModel.getCell(0, 2).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv0 = (ExpressionCellValue) uiModel.getCell(0, 2).getValue();
         assertEquals(undefinedExpressionEditor,
                      dcv0.getValue().get());
 
+        verify(undefinedExpressionEditorDefinition).getEditor(parentCaptor.capture(),
+                                                              eq(Optional.empty()),
+                                                              eq(context.getContextEntry().get(0)),
+                                                              eq(Optional.empty()),
+                                                              eq(Optional.of(context.getContextEntry().get(0).getVariable())),
+                                                              eq(1));
+        final GridCellTuple parent = parentCaptor.getValue();
+        assertEquals(0, parent.getRowIndex());
+        assertEquals(2, parent.getColumnIndex());
+        assertEquals(gridWidget, parent.getGridWidget());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testFromDMNModelLiteralExpression() {
+        mapper.fromDMNModel(1, 2);
+
         assertTrue(uiModel.getCell(1, 2).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv1 = (ExpressionCellValue) uiModel.getCell(1, 2).getValue();
         assertEquals(literalExpressionEditor,
                      dcv1.getValue().get());
+
+        verify(literalExpressionEditorDefinition).getEditor(parentCaptor.capture(),
+                                                            eq(Optional.empty()),
+                                                            eq(context.getContextEntry().get(1)),
+                                                            eq(Optional.of(context.getContextEntry().get(1).getExpression())),
+                                                            eq(Optional.empty()),
+                                                            eq(1));
+        final GridCellTuple parent = parentCaptor.getValue();
+        assertEquals(1, parent.getRowIndex());
+        assertEquals(2, parent.getColumnIndex());
+        assertEquals(gridWidget, parent.getGridWidget());
     }
 
     @Test

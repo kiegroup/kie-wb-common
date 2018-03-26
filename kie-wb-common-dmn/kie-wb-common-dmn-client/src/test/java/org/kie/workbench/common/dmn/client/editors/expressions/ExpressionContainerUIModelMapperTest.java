@@ -37,6 +37,8 @@ import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
@@ -45,11 +47,17 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpressionContainerUIModelMapperTest {
+
+    private static final double MINIMUM_COLUMN_WIDTH = 200.0;
+
+    private static final String NODE_UUID = "uuid";
 
     @Mock
     private ExpressionEditorColumn uiExpressionColumn;
@@ -81,6 +89,9 @@ public class ExpressionContainerUIModelMapperTest {
     @Mock
     private BaseExpressionGrid undefinedExpressionEditor;
 
+    @Captor
+    private ArgumentCaptor<Optional<String>> nodeUUIDCaptor;
+
     private LiteralExpression literalExpression = new LiteralExpression();
 
     private GridCellTuple parent;
@@ -98,6 +109,7 @@ public class ExpressionContainerUIModelMapperTest {
         uiModel.appendRow(new DMNGridRow());
         uiModel.appendColumn(uiExpressionColumn);
         doReturn(0).when(uiExpressionColumn).getIndex();
+        doReturn(MINIMUM_COLUMN_WIDTH).when(uiExpressionColumn).getMinimumWidth();
 
         parent = new GridCellTuple(0, 0, expressionContainerGrid);
 
@@ -109,23 +121,26 @@ public class ExpressionContainerUIModelMapperTest {
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(literalExpression)).when(literalExpressionEditor).getExpression();
         doReturn(Optional.of(literalExpressionEditor)).when(literalExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                         any(Optional.class),
                                                                                                          any(HasExpression.class),
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
-                                                                                                         anyBoolean());
+                                                                                                         anyInt());
 
         doReturn(Optional.empty()).when(undefinedExpressionEditorDefinition).getModelClass();
         doReturn(Optional.of(undefinedExpressionEditor)).when(undefinedExpressionEditorDefinition).getEditor(any(GridCellTuple.class),
+                                                                                                             any(Optional.class),
                                                                                                              any(HasExpression.class),
                                                                                                              any(Optional.class),
                                                                                                              any(Optional.class),
-                                                                                                             anyBoolean());
+                                                                                                             anyInt());
 
         mapper = new ExpressionContainerUIModelMapper(parent,
                                                       () -> uiModel,
                                                       () -> Optional.ofNullable(expression),
-                                                      () -> Optional.of(hasName),
+                                                      () -> NODE_UUID,
                                                       () -> hasExpression,
+                                                      () -> Optional.of(hasName),
                                                       expressionEditorDefinitionsSupplier,
                                                       listSelector);
     }
@@ -138,9 +153,20 @@ public class ExpressionContainerUIModelMapperTest {
 
         assertUiModel();
         assertEditorType(undefinedExpressionEditor.getClass());
+
+        verify(undefinedExpressionEditorDefinition).getEditor(eq(parent),
+                                                              nodeUUIDCaptor.capture(),
+                                                              eq(hasExpression),
+                                                              eq(Optional.ofNullable(expression)),
+                                                              eq(Optional.of(hasName)),
+                                                              eq(0));
+        final Optional<String> nodeUUID = nodeUUIDCaptor.getValue();
+        assertThat(nodeUUID.isPresent()).isTrue();
+        assertThat(nodeUUID.get()).isEqualTo(NODE_UUID);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testFromDMNModelLiteralExpressionType() {
         expression = new LiteralExpression();
 
@@ -148,6 +174,17 @@ public class ExpressionContainerUIModelMapperTest {
 
         assertUiModel();
         assertEditorType(literalExpressionEditor.getClass());
+        verify(uiExpressionColumn).setWidth(MINIMUM_COLUMN_WIDTH);
+
+        verify(literalExpressionEditorDefinition).getEditor(eq(parent),
+                                                            nodeUUIDCaptor.capture(),
+                                                            eq(hasExpression),
+                                                            eq(Optional.of(expression)),
+                                                            eq(Optional.of(hasName)),
+                                                            eq(0));
+        final Optional<String> nodeUUID = nodeUUIDCaptor.getValue();
+        assertThat(nodeUUID.isPresent()).isTrue();
+        assertThat(nodeUUID.get()).isEqualTo(NODE_UUID);
     }
 
     @Test(expected = UnsupportedOperationException.class)

@@ -23,7 +23,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.client.commands.VetoExecutionCommand;
 import org.kie.workbench.common.dmn.client.commands.VetoUndoCommand;
 import org.kie.workbench.common.dmn.client.commands.util.CommandUtils;
-import org.kie.workbench.common.dmn.client.editors.expressions.types.relation.RelationUIModelMapper;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
@@ -44,7 +43,6 @@ public class DeleteRelationRowCommand extends AbstractCanvasGraphCommand impleme
     private final Relation relation;
     private final GridData uiModel;
     private final int uiRowIndex;
-    private final RelationUIModelMapper uiModelMapper;
     private final org.uberfire.mvp.Command canvasOperation;
 
     private final List oldRow;
@@ -53,12 +51,10 @@ public class DeleteRelationRowCommand extends AbstractCanvasGraphCommand impleme
     public DeleteRelationRowCommand(final Relation relation,
                                     final GridData uiModel,
                                     final int uiRowIndex,
-                                    final RelationUIModelMapper uiModelMapper,
                                     final org.uberfire.mvp.Command canvasOperation) {
         this.relation = relation;
         this.uiModel = uiModel;
         this.uiRowIndex = uiRowIndex;
-        this.uiModelMapper = uiModelMapper;
         this.canvasOperation = canvasOperation;
 
         this.oldRow = relation.getRow().get(uiRowIndex);
@@ -106,15 +102,7 @@ public class DeleteRelationRowCommand extends AbstractCanvasGraphCommand impleme
 
             @Override
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler handler) {
-                int columnIndex = 0;
-                uiModel.insertRow(uiRowIndex,
-                                  oldUiModelRow);
-                uiModelMapper.fromDMNModel(uiRowIndex,
-                                           columnIndex++);
-                for (int ii = 0; ii < relation.getColumn().size(); ii++) {
-                    uiModelMapper.fromDMNModel(uiRowIndex,
-                                               columnIndex++);
-                }
+                uiModel.insertRow(uiRowIndex, oldUiModelRow);
 
                 updateRowNumbers();
                 updateParentInformation();

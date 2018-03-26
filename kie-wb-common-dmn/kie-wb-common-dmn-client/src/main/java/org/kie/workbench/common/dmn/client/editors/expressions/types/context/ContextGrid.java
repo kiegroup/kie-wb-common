@@ -21,10 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.enterprise.event.Event;
-
 import com.ait.lienzo.shared.core.types.EventPropagationMode;
-import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
@@ -36,10 +33,8 @@ import org.kie.workbench.common.dmn.client.commands.expressions.types.context.De
 import org.kie.workbench.common.dmn.client.commands.general.ClearExpressionTypeCommand;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -51,7 +46,9 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
@@ -65,23 +62,25 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
     private static final String EXPRESSION_COLUMN_GROUP = "ContextGrid$ExpressionColumn1";
 
     private final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-    private final ListSelectorView.Presenter listSelector;
 
     public ContextGrid(final GridCellTuple parent,
+                       final Optional<String> nodeUUID,
                        final HasExpression hasExpression,
                        final Optional<Context> expression,
                        final Optional<HasName> hasName,
                        final DMNGridPanel gridPanel,
                        final DMNGridLayer gridLayer,
+                       final DefinitionUtils definitionUtils,
                        final SessionManager sessionManager,
                        final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                       final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier,
-                       final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
+                       final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                        final CellEditorControlsView.Presenter cellEditorControls,
-                       final TranslationService translationService,
                        final ListSelectorView.Presenter listSelector,
-                       final boolean isNested) {
+                       final TranslationService translationService,
+                       final int nesting,
+                       final Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier) {
         super(parent,
+              nodeUUID,
               hasExpression,
               expression,
               hasName,
@@ -92,15 +91,16 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
                                   sessionCommandManager,
                                   expression,
                                   gridLayer::batch),
-              new ContextGridRenderer(isNested),
+              new ContextGridRenderer(nesting > 0),
+              definitionUtils,
               sessionManager,
               sessionCommandManager,
-              editorSelectedEvent,
+              canvasCommandFactory,
               cellEditorControls,
+              listSelector,
               translationService,
-              isNested);
+              nesting);
         this.expressionEditorDefinitionsSupplier = expressionEditorDefinitionsSupplier;
-        this.listSelector = listSelector;
 
         setEventPropagationMode(EventPropagationMode.NO_ANCESTORS);
 
@@ -119,30 +119,16 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
                                         this::getModel,
                                         () -> expression,
                                         expressionEditorDefinitionsSupplier,
-                                        listSelector);
+                                        listSelector,
+                                        nesting);
     }
 
     @Override
     public void initialiseUiColumns() {
-        final TextBoxSingletonDOMElementFactory factory = new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                                                                gridLayer,
-                                                                                                this,
-                                                                                                sessionManager,
-                                                                                                sessionCommandManager,
-                                                                                                newCellHasNoValueCommand(),
-                                                                                                newCellHasValueCommand());
-        final TextBoxSingletonDOMElementFactory headerFactory = new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                                                                      gridLayer,
-                                                                                                      this,
-                                                                                                      sessionManager,
-                                                                                                      sessionCommandManager,
-                                                                                                      newHeaderHasNoValueCommand(),
-                                                                                                      newHeaderHasValueCommand());
-
         final NameColumn nameColumn = new NameColumn(new NameColumnHeaderMetaData(() -> hasName.orElse(HasName.NOP).getName().getValue(),
                                                                                   (s) -> hasName.orElse(HasName.NOP).getName().setValue(s),
-                                                                                  headerFactory),
-                                                     factory,
+                                                                                  getHeaderHasNameTextBoxFactory()),
+                                                     getBodyTextBoxFactory(),
                                                      this);
         final ExpressionEditorColumn expressionColumn = new ExpressionEditorColumn(gridLayer,
                                                                                    new BaseHeaderMetaData("",
@@ -172,8 +158,8 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
     }
 
     @Override
-    public Optional<IsElement> getEditorControls() {
-        return Optional.empty();
+    protected boolean isHeaderHidden() {
+        return nesting > 0;
     }
 
     @Override
@@ -259,7 +245,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
                                                                      new DMNGridRow(),
                                                                      index,
                                                                      uiModelMapper,
-                                                                     () -> synchroniseViewWhenExpressionEditorChanged(Optional.empty())));
+                                                                     this::synchroniseView));
         });
     }
 
@@ -269,7 +255,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
                                           new DeleteContextEntryCommand(c,
                                                                         model,
                                                                         index,
-                                                                        () -> synchroniseViewWhenExpressionEditorChanged(Optional.empty())));
+                                                                        this::synchroniseView));
         });
     }
 
@@ -282,6 +268,6 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextUIModelMappe
                                       new ClearExpressionTypeCommand(gc,
                                                                      hasExpression,
                                                                      uiModelMapper,
-                                                                     () -> synchroniseViewWhenExpressionEditorChanged(Optional.empty())));
+                                                                     () -> synchroniseViewWhenExpressionEditorChanged(this)));
     }
 }

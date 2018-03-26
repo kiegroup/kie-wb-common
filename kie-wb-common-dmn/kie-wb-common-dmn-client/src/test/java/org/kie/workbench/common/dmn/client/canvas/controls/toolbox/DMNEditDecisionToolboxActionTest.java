@@ -102,7 +102,7 @@ public class DMNEditDecisionToolboxActionTest {
         tested.getTitle(canvasHandler,
                         E_UUID);
         verify(translationService,
-               times(1)).getKeyValue(eq(CoreTranslationMessages.EDIT));
+               times(1)).getValue(eq(CoreTranslationMessages.EDIT));
     }
 
     @Test
@@ -119,6 +119,8 @@ public class DMNEditDecisionToolboxActionTest {
                times(1)).fire(eventCaptor.capture());
 
         final EditExpressionEvent editExprEvent = eventCaptor.getValue();
+        assertEquals(E_UUID,
+                     editExprEvent.getNodeUUID());
         assertEquals(decision,
                      editExprEvent.getHasExpression());
         assertEquals(decision,

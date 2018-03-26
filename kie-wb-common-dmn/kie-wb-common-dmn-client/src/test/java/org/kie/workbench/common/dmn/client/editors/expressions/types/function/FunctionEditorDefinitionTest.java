@@ -33,7 +33,6 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters.ParametersEditorView;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -43,10 +42,11 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.GridWidget;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -64,28 +64,31 @@ public class FunctionEditorDefinitionTest {
     private DMNGridLayer gridLayer;
 
     @Mock
+    private DefinitionUtils definitionUtils;
+
+    @Mock
     private SessionManager sessionManager;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
-
-    @Mock
-    private Supplier<ExpressionEditorDefinitions> supplementaryEditorDefinitionsSupplier;
-
-    @Mock
-    private EventSourceMock<ExpressionEditorSelectedEvent> editorSelectedEvent;
+    private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
 
     @Mock
     private CellEditorControlsView.Presenter cellEditorControls;
 
     @Mock
+    private ListSelectorView.Presenter listSelector;
+
+    @Mock
     private TranslationService translationService;
 
     @Mock
-    private ListSelectorView.Presenter listSelector;
+    private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
+    private Supplier<ExpressionEditorDefinitions> supplementaryEditorDefinitionsSupplier;
 
     @Mock
     private ParametersEditorView.Presenter parametersEditor;
@@ -105,14 +108,15 @@ public class FunctionEditorDefinitionTest {
     public void setup() {
         this.definition = new FunctionEditorDefinition(gridPanel,
                                                        gridLayer,
+                                                       definitionUtils,
                                                        sessionManager,
                                                        sessionCommandManager,
+                                                       canvasCommandFactory,
+                                                       cellEditorControls,
+                                                       listSelector,
+                                                       translationService,
                                                        expressionEditorDefinitionsSupplier,
                                                        supplementaryEditorDefinitionsSupplier,
-                                                       editorSelectedEvent,
-                                                       cellEditorControls,
-                                                       translationService,
-                                                       listSelector,
                                                        parametersEditor);
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add((ExpressionEditorDefinition) definition);
@@ -141,7 +145,7 @@ public class FunctionEditorDefinitionTest {
 
         final FunctionDefinition model = oModel.get();
         assertEquals(DMNModelInstrumentedBase.URI_KIE,
-                     model.getNsContext().get(KindUtilities.DROOLS_QNAME_PREFIX));
+                     model.getNsContext().get(FunctionDefinition.DROOLS_PREFIX));
         assertEquals(FunctionDefinition.Kind.FEEL.code(),
                      model.getAdditionalAttributes().get(FunctionDefinition.KIND_QNAME));
         assertTrue(model.getExpression() instanceof LiteralExpression);
@@ -151,10 +155,11 @@ public class FunctionEditorDefinitionTest {
     public void testEditor() {
         final Optional<FunctionDefinition> expression = definition.getModelClass();
         final Optional<BaseExpressionGrid> oEditor = definition.getEditor(parent,
+                                                                          Optional.empty(),
                                                                           hasExpression,
                                                                           expression,
                                                                           hasName,
-                                                                          false);
+                                                                          0);
 
         assertTrue(oEditor.isPresent());
 

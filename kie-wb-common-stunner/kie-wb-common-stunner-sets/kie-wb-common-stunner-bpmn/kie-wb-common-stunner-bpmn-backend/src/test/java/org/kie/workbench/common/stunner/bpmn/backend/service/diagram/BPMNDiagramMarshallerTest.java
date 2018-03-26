@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,9 +50,7 @@ import org.jboss.drools.MetaDataType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
-import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.resource.JBPMBpmn2ResourceImpl;
@@ -69,8 +68,10 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeListTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.StringTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TaskTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TimerSettingsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.VariablesTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.workitem.WorkItemDefinitionBackendRegistry;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
@@ -91,6 +92,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEvent
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventThrowing;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.MultipleInstanceSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
@@ -105,8 +107,12 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.IsInterrupting;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.error.InterruptingErrorEventExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.InterruptingMessageEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.message.MessageRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.InterruptingSignalEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.event.signal.SignalRef;
+import org.kie.workbench.common.stunner.bpmn.definition.property.event.timer.InterruptingTimerEventExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.AdHocSubprocessTaskExecutionSet;
@@ -115,12 +121,16 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.TaskTypes;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.UserTaskExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.bind.BackendBindableMorphAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertyAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertySetAdapter;
+import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.clone.CloneManager;
@@ -167,11 +177,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -207,7 +219,12 @@ public class BPMNDiagramMarshallerTest {
     private static final String BPMN_REUSABLE_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/reusableSubprocessCalledElement.bpmn";
     private static final String BPMN_EMBEDDED_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/embeddedSubprocess.bpmn";
     private static final String BPMN_EVENT_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/eventSubprocess.bpmn";
+    private static final String BPMN_EVENT_SUBPROCESS_STARTERROREVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/isInterruptingStartErrorEvent.bpmn";
+    private static final String BPMN_EVENT_SUBPROCESS_STARTMESSAGEEVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/isInterruptingStartMessageEvent.bpmn";
+    private static final String BPMN_EVENT_SUBPROCESS_STARTTIMEREVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/isInterruptingStartTimerEvent.bpmn";
+    private static final String BPMN_EVENT_SUBPROCESS_STARTSIGNALEVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/isInterruptingStartSignalEvent.bpmn";
     private static final String BPMN_ADHOC_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/adHocSubProcess.bpmn";
+    private static final String BPMN_MULTIPLE_INSTANCE_SUBPROCESS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/multipleInstanceSubprocess.bpmn";
     private static final String BPMN_SCRIPTTASK = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/scriptTask.bpmn";
     private static final String BPMN_USERTASKASSIGNEES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/userTaskAssignees.bpmn";
     private static final String BPMN_USERTASKPROPERTIES = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/userTaskProperties.bpmn";
@@ -219,6 +236,7 @@ public class BPMNDiagramMarshallerTest {
     private static final String BPMN_MAGNETDOCKERS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetDockers.bpmn";
     private static final String BPMN_MAGNETSINLANE = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/magnetsInLane.bpmn";
     private static final String BPMN_ENDERROR_EVENT = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endErrorEvent.bpmn";
+    private static final String BPMN_SERVICE_TASKS = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/serviceTasks.bpmn";
 
     private static final String NEW_LINE = System.lineSeparator();
 
@@ -241,7 +259,7 @@ public class BPMNDiagramMarshallerTest {
     CloneManager cloneManager;
 
     @Mock
-    ApplicationFactoryManager applicationFactoryManager;
+    BackendFactoryManager applicationFactoryManager;
 
     EdgeFactory<Object> connectionEdgeFactory;
     NodeFactory<Object> viewNodeFactory;
@@ -254,6 +272,7 @@ public class BPMNDiagramMarshallerTest {
 
     Bpmn2OryxIdMappings oryxIdMappings;
     Bpmn2OryxPropertyManager oryxPropertyManager;
+    WorkItemDefinitionRegistry workItemDefinitionMockRegistry;
     Bpmn2OryxManager oryxManager;
 
     TestScopeModelFactory testScopeModelFactory;
@@ -278,12 +297,15 @@ public class BPMNDiagramMarshallerTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() throws Exception {
+        // Work Items.
+        workItemDefinitionMockRegistry = new WorkItemDefinitionMockRegistry();
         // Graph utils.
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
         definitionUtils = new DefinitionUtils(definitionManager,
                                               applicationFactoryManager);
-        testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
+        testScopeModelFactory = new BPMNTestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build(),
+                                                              workItemDefinitionMockRegistry);
         // Definition manager.
         final BackendDefinitionAdapter definitionAdapter = new BackendDefinitionAdapter(definitionUtils);
         final BackendDefinitionSetAdapter definitionSetAdapter = new BackendDefinitionSetAdapter(definitionAdapter);
@@ -370,7 +392,8 @@ public class BPMNDiagramMarshallerTest {
                                                       anyString(),
                                                       any(Metadata.class));
         // Bpmn 2 oryx stuff.
-        oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager);
+        oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager,
+                                                 () -> workItemDefinitionMockRegistry);
         StringTypeSerializer stringTypeSerializer = new StringTypeSerializer();
         BooleanTypeSerializer booleanTypeSerializer = new BooleanTypeSerializer();
         ColorTypeSerializer colorTypeSerializer = new ColorTypeSerializer();
@@ -382,6 +405,8 @@ public class BPMNDiagramMarshallerTest {
         TimerSettingsTypeSerializer timerSettingsTypeSerializer = new TimerSettingsTypeSerializer();
         ScriptTypeTypeSerializer scriptTypeTypeSerializer = new ScriptTypeTypeSerializer();
         ScriptTypeListTypeSerializer scriptTypeListTypeSerializer = new ScriptTypeListTypeSerializer();
+        TaskTypeSerializer taskTypeSerializer = new TaskTypeSerializer(definitionUtils,
+                                                                       enumTypeSerializer);
         List<Bpmn2OryxPropertySerializer<?>> propertySerializers = new LinkedList<>();
         propertySerializers.add(stringTypeSerializer);
         propertySerializers.add(booleanTypeSerializer);
@@ -394,13 +419,15 @@ public class BPMNDiagramMarshallerTest {
         propertySerializers.add(timerSettingsTypeSerializer);
         propertySerializers.add(scriptTypeTypeSerializer);
         propertySerializers.add(scriptTypeListTypeSerializer);
+        propertySerializers.add(taskTypeSerializer);
         oryxPropertyManager = new Bpmn2OryxPropertyManager(propertySerializers);
         oryxManager = new Bpmn2OryxManager(oryxIdMappings,
                                            oryxPropertyManager);
         oryxManager.init();
         // Marshalling factories.
         objectBuilderFactory = new BPMNGraphObjectBuilderFactory(definitionManager,
-                                                                 oryxManager);
+                                                                 oryxManager,
+                                                                 () -> workItemDefinitionMockRegistry);
         taskMorphDefinition = new TaskTypeMorphDefinition();
         Collection<MorphDefinition> morphDefinitions = new ArrayList<MorphDefinition>() {{
             add(taskMorphDefinition);
@@ -417,6 +444,13 @@ public class BPMNDiagramMarshallerTest {
         GraphIndexBuilder<?> indexBuilder = new MapIndexBuilder();
         when(rulesManager.evaluate(any(RuleSet.class),
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
+        // The work item definition registry.
+        WorkItemDefinitionBackendRegistry widRegistry = mock(WorkItemDefinitionBackendRegistry.class);
+        when(widRegistry.getRegistry()).thenReturn(workItemDefinitionMockRegistry);
+        when(widRegistry.items()).thenReturn(workItemDefinitionMockRegistry.items());
+        when(widRegistry.load(any(Metadata.class))).thenReturn(widRegistry);
+        doAnswer(invocationOnMock -> workItemDefinitionMockRegistry.get((String) invocationOnMock.getArguments()[0]))
+                .when(widRegistry).get(anyString());
         // The tested BPMN marshaller.
         tested = new BPMNDiagramMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                            objectBuilderFactory,
@@ -426,7 +460,8 @@ public class BPMNDiagramMarshallerTest {
                                            applicationFactoryManager,
                                            rulesManager,
                                            commandManager,
-                                           commandFactory);
+                                           commandFactory,
+                                           widRegistry);
     }
 
     // 4 nodes expected: BPMNDiagram, StartNode, Task and EndNode
@@ -651,11 +686,188 @@ public class BPMNDiagramMarshallerTest {
         assertNotNull(startErrorEvent.getExecutionSet().getErrorRef());
         assertEquals("MyError",
                      startErrorEvent.getExecutionSet().getErrorRef().getValue());
-
+        assertEquals(true, startErrorEvent.getExecutionSet().getIsInterrupting().getValue());
         DataIOSet dataIOSet = startErrorEvent.getDataIOSet();
         AssignmentsInfo assignmentsInfo = dataIOSet.getAssignmentsinfo();
         assertEquals("||errorOutput_:String||[dout]errorOutput_->var1",
                      assignmentsInfo.getValue());
+    }
+
+    @Test
+    public void testUnmarshallIsInterruptingStartErrorEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTERROREVENT);
+        assertDiagram(diagram, 7);
+        assertEquals("EventSubprocessStartErrorEvent", diagram.getMetadata().getTitle());
+
+        // Check first start event with all FILLED properties
+        Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("9ABD5C04-C6E2-4DF3-829F-ADB283330AD6");
+        StartErrorEvent startErrorEvent = (StartErrorEvent) startEventNode.getContent().getDefinition();
+        BPMNGeneralSet eventGeneralSet = startErrorEvent.getGeneral();
+        assertNotNull(eventGeneralSet);
+        assertEquals("StartErrorEvent", eventGeneralSet.getName().getValue());
+        assertEquals("Some not empty\nDocumentation\n~`!@#$%^&*()_+=-{}|[]\\:\";'<>/?.,",
+                     eventGeneralSet.getDocumentation().getValue());
+
+        InterruptingErrorEventExecutionSet eventExecutionSet = startErrorEvent.getExecutionSet();
+        assertNotNull(eventExecutionSet);
+        assertNotNull(eventExecutionSet.getErrorRef());
+        assertEquals("Error1", eventExecutionSet.getErrorRef().getValue());
+        assertEquals(true, eventExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet eventDataIOSet = startErrorEvent.getDataIOSet();
+        AssignmentsInfo assignmentsInfo = eventDataIOSet.getAssignmentsinfo();
+        assertEquals("||Var1:String||[dout]Var1->Var1", assignmentsInfo.getValue());
+
+        // Check second start event with all EMPTY properties
+        Node<? extends Definition, ?> emptyEventNode = diagram.getGraph().getNode("50B93E5E-C05D-40DD-BF48-2B6AE919763E");
+        StartErrorEvent emptyErrorEvent = (StartErrorEvent) emptyEventNode.getContent().getDefinition();
+        BPMNGeneralSet emptyEventGeneralSet = emptyErrorEvent.getGeneral();
+        assertNotNull(emptyEventGeneralSet);
+        assertEquals("", emptyEventGeneralSet.getName().getValue());
+        assertEquals("", emptyEventGeneralSet.getDocumentation().getValue());
+
+        InterruptingErrorEventExecutionSet emptyExecutionSet = emptyErrorEvent.getExecutionSet();
+        assertNotNull(emptyExecutionSet);
+        assertNotNull(emptyExecutionSet.getErrorRef());
+        assertEquals("", emptyExecutionSet.getErrorRef().getValue());
+        assertEquals(false, emptyExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet emptyDataIOSet = emptyErrorEvent.getDataIOSet();
+        AssignmentsInfo emptyAssignmentsInfo = emptyDataIOSet.getAssignmentsinfo();
+        assertEquals("", emptyAssignmentsInfo.getValue());
+    }
+
+    @Test
+    public void testUnmarshallIsInterruptingStartMessageEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTMESSAGEEVENT);
+        assertDiagram(diagram, 7);
+        assertEquals("EventSubprocessStartMessageEvent", diagram.getMetadata().getTitle());
+
+        // Check first start event with all FILLED properties
+        Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("_77E79714-F32A-4BE7-B0D2-15178F5244F0");
+        StartMessageEvent startMessageEvent = (StartMessageEvent) startEventNode.getContent().getDefinition();
+        BPMNGeneralSet eventGeneralSet = startMessageEvent.getGeneral();
+        assertNotNull(eventGeneralSet);
+        assertEquals("StartMessageEvent", eventGeneralSet.getName().getValue());
+        assertEquals("Some not empty\nDocumentation\n~`!@#$%^&*()_+=-{}|[]\\:\";'<>/?.,",
+                     eventGeneralSet.getDocumentation().getValue());
+
+        InterruptingMessageEventExecutionSet eventExecutionSet = startMessageEvent.getExecutionSet();
+        assertNotNull(eventExecutionSet);
+        assertNotNull(eventExecutionSet.getMessageRef());
+        assertEquals("Message1", eventExecutionSet.getMessageRef().getValue());
+        assertEquals(true, eventExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet eventDataIOSet = startMessageEvent.getDataIOSet();
+        AssignmentsInfo assignmentsInfo = eventDataIOSet.getAssignmentsinfo();
+        assertEquals("||Var1:String||[dout]Var1->Var1", assignmentsInfo.getValue());
+
+        // Check second start event with all EMPTY properties
+        Node<? extends Definition, ?> emptyEventNode = diagram.getGraph().getNode("_E4563AE4-5F70-4283-A5AC-C9AB14F15EBA");
+        StartMessageEvent emptyMessageEvent = (StartMessageEvent) emptyEventNode.getContent().getDefinition();
+        BPMNGeneralSet emptyEventGeneralSet = emptyMessageEvent.getGeneral();
+        assertNotNull(emptyEventGeneralSet);
+        assertEquals("", emptyEventGeneralSet.getName().getValue());
+        assertEquals("", emptyEventGeneralSet.getDocumentation().getValue());
+
+        InterruptingMessageEventExecutionSet emptyExecutionSet = emptyMessageEvent.getExecutionSet();
+        assertNotNull(emptyExecutionSet);
+        assertNotNull(emptyExecutionSet.getMessageRef());
+        assertEquals("", emptyExecutionSet.getMessageRef().getValue());
+        assertEquals(false, emptyExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet emptyDataIOSet = emptyMessageEvent.getDataIOSet();
+        AssignmentsInfo emptyAssignmentsInfo = emptyDataIOSet.getAssignmentsinfo();
+        assertEquals("", emptyAssignmentsInfo.getValue());
+    }
+
+    @Test
+    public void testUnmarshallIsInterruptingStartSignalEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTSIGNALEVENT);
+        assertDiagram(diagram, 7);
+        assertEquals("EventSubprocessStartSignalEvent", diagram.getMetadata().getTitle());
+
+        // Check first start event with all FILLED properties
+        Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("_B6B3A062-F04A-4E45-A08B-C1F0971C3DF9");
+        StartSignalEvent startSignalEvent = (StartSignalEvent) startEventNode.getContent().getDefinition();
+        BPMNGeneralSet eventGeneralSet = startSignalEvent.getGeneral();
+        assertNotNull(eventGeneralSet);
+        assertEquals("StartSignalEvent", eventGeneralSet.getName().getValue());
+        assertEquals("Some not empty\nDocumentation\n~`!@#$%^&*()_+=-{}|[]\\:\";'<>/?.,",
+                     eventGeneralSet.getDocumentation().getValue());
+
+        InterruptingSignalEventExecutionSet eventExecutionSet = startSignalEvent.getExecutionSet();
+        assertNotNull(eventExecutionSet);
+        assertNotNull(eventExecutionSet.getSignalRef());
+        assertEquals("Signal1", eventExecutionSet.getSignalRef().getValue());
+        assertEquals(true, eventExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet eventDataIOSet = startSignalEvent.getDataIOSet();
+        AssignmentsInfo assignmentsInfo = eventDataIOSet.getAssignmentsinfo();
+        assertEquals("||Var1:String||[dout]Var1->Var1", assignmentsInfo.getValue());
+
+        // Check second start event with all EMPTY properties
+        Node<? extends Definition, ?> emptyEventNode = diagram.getGraph().getNode("_A8B9513C-D237-4BDA-B7BC-7C79F7D12BB5");
+        StartSignalEvent emptySignalEvent = (StartSignalEvent) emptyEventNode.getContent().getDefinition();
+        BPMNGeneralSet emptyEventGeneralSet = emptySignalEvent.getGeneral();
+        assertNotNull(emptyEventGeneralSet);
+        assertEquals("", emptyEventGeneralSet.getName().getValue());
+        assertEquals("", emptyEventGeneralSet.getDocumentation().getValue());
+
+        InterruptingSignalEventExecutionSet emptyExecutionSet = emptySignalEvent.getExecutionSet();
+        assertNotNull(emptyExecutionSet);
+        assertNotNull(emptyExecutionSet.getSignalRef());
+        assertEquals("", emptyExecutionSet.getSignalRef().getValue());
+        assertEquals(false, emptyExecutionSet.getIsInterrupting().getValue());
+
+        DataIOSet emptyDataIOSet = emptySignalEvent.getDataIOSet();
+        AssignmentsInfo emptyAssignmentsInfo = emptyDataIOSet.getAssignmentsinfo();
+        assertEquals("", emptyAssignmentsInfo.getValue());
+    }
+
+    @Test
+    public void testUnmarshallIsInterruptingStartTimerEvent() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS_STARTTIMEREVENT);
+        assertDiagram(diagram, 7);
+        assertEquals("EventSubprocessStartTimerEvent", diagram.getMetadata().getTitle());
+
+        // Check first start event with all FILLED properties
+        Node<? extends Definition, ?> startEventNode = diagram.getGraph().getNode("_4A4F40C5-C9F1-4761-BD95-C61DDBDC9C19");
+        StartTimerEvent startTimerEvent = (StartTimerEvent) startEventNode.getContent().getDefinition();
+        BPMNGeneralSet eventGeneralSet = startTimerEvent.getGeneral();
+        assertNotNull(eventGeneralSet);
+        assertEquals("StartTimerEvent", eventGeneralSet.getName().getValue());
+        assertEquals("Some not empty\nDocumentation\n~`!@#$%^&*()_+=-{}|[]\\:\";'<>/?.,",
+                     eventGeneralSet.getDocumentation().getValue());
+
+        InterruptingTimerEventExecutionSet eventExecutionSet = startTimerEvent.getExecutionSet();
+        assertNotNull(eventExecutionSet);
+        assertNotNull(eventExecutionSet.getTimerSettings());
+
+        assertEquals("*/2 * * * *", eventExecutionSet.getTimerSettings().getValue().getTimeCycle());
+        assertEquals("cron", eventExecutionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+        assertEquals("201702081535", eventExecutionSet.getTimerSettings().getValue().getTimeDate());
+        assertEquals("P4H", eventExecutionSet.getTimerSettings().getValue().getTimeDuration());
+
+        assertEquals(true, eventExecutionSet.getIsInterrupting().getValue());
+
+        // Check second start event with all EMPTY properties
+        Node<? extends Definition, ?> emptyEventNode = diagram.getGraph().getNode("_BF94EA1F-519D-4E52-AB2A-C7687E11ABDC");
+        StartTimerEvent emptyTimerEvent = (StartTimerEvent) emptyEventNode.getContent().getDefinition();
+        BPMNGeneralSet emptyEventGeneralSet = emptyTimerEvent.getGeneral();
+        assertNotNull(emptyEventGeneralSet);
+        assertEquals("", emptyEventGeneralSet.getName().getValue());
+        assertEquals("", emptyEventGeneralSet.getDocumentation().getValue());
+
+        InterruptingTimerEventExecutionSet emptyExecutionSet = emptyTimerEvent.getExecutionSet();
+        assertNotNull(emptyExecutionSet);
+        assertNotNull(emptyExecutionSet.getTimerSettings());
+        assertNull(emptyExecutionSet.getTimerSettings().getValue().getTimeCycle());
+        assertNull(emptyExecutionSet.getTimerSettings().getValue().getTimeCycleLanguage());
+        assertNull(emptyExecutionSet.getTimerSettings().getValue().getTimeDate());
+        assertNull(emptyExecutionSet.getTimerSettings().getValue().getTimeDuration());
+
+        assertEquals(false, emptyExecutionSet.getIsInterrupting().getValue());
     }
 
     @Test
@@ -1787,6 +1999,33 @@ public class BPMNDiagramMarshallerTest {
     }
 
     @Test
+    public void testUnmarshallMultipleInstanceSubprocess() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_MULTIPLE_INSTANCE_SUBPROCESS);
+        assertDiagram(diagram,
+                      2);
+        assertEquals("MultipleInstanceSubprocess",
+                     diagram.getMetadata().getTitle());
+        Node<? extends Definition, ?> multipleInstanceSubprocessNode = diagram.getGraph().getNode("_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571");
+        MultipleInstanceSubprocess multipleInstanceSubprocess = (MultipleInstanceSubprocess) multipleInstanceSubprocessNode.getContent().getDefinition();
+
+        assertEquals("var1", multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceCollectionInput().getValue());
+        assertEquals("var2", multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceCollectionOutput().getValue());
+        assertEquals("dataInput", multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceDataInput().getValue());
+        assertEquals("dataOutput", multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceDataOutput().getValue());
+        assertEquals("a=b", multipleInstanceSubprocess.getExecutionSet().getMultipleInstanceCompletionCondition().getValue());
+        assertEquals("onEntryAction",
+                     multipleInstanceSubprocess.getExecutionSet().getOnEntryAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     multipleInstanceSubprocess.getExecutionSet().getOnEntryAction().getValue().getValues().get(0).getLanguage());
+        assertEquals("onExitAction",
+                     multipleInstanceSubprocess.getExecutionSet().getOnExitAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     multipleInstanceSubprocess.getExecutionSet().getOnExitAction().getValue().getValues().get(0).getLanguage());
+        assertTrue(multipleInstanceSubprocess.getExecutionSet().getIsAsync().getValue());
+        assertEquals("mi-var1:String", multipleInstanceSubprocess.getProcessData().getProcessVariables().getValue());
+    }
+
+    @Test
     @SuppressWarnings("unchecked")
     public void testUnmarshallEventSubprocess() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(BPMN_EVENT_SUBPROCESS);
@@ -1797,8 +2036,7 @@ public class BPMNDiagramMarshallerTest {
         Node<? extends Definition, ?> eventSubprocessNode = diagram.getGraph().getNode("_DF031493-5F1C-4D2B-9916-2FEABB1FADFF");
         EventSubprocess eventSubprocess = (EventSubprocess) eventSubprocessNode.getContent().getDefinition();
         assertTrue(eventSubprocess.getIsAsync().getValue());
-        assertEquals(eventSubprocess.getProcessData().getProcessVariables().getValue(),
-                     "Var1:String");
+        assertEquals("Var1:String", eventSubprocess.getProcessData().getProcessVariables().getValue());
     }
 
     @Test
@@ -2067,6 +2305,99 @@ public class BPMNDiagramMarshallerTest {
         assertTrue(result.contains("<bpmn2:error"));
         assertTrue(result.contains("id=\"MyError\""));
         assertTrue(result.contains("errorCode=\"MyError\""));
+        assertFalse(result.contains("isInterrupting"));
+    }
+
+    @Test
+    public void testMarshallIsInterruptingStartMessageEvent() throws Exception {
+        Diagram<Graph, Metadata> testIt = unmarshall(BPMN_EVENT_SUBPROCESS_STARTMESSAGEEVENT);
+        String result = tested.marshall(testIt);
+
+        assertDiagram(result,
+                      1,
+                      6,
+                      2);
+
+        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(getStream(result));
+        assertDiagram(marshalledDiagram, 7);
+        assertEquals("EventSubprocessStartMessageEvent", marshalledDiagram.getMetadata().getTitle());
+
+        Node<? extends Definition, ?> filledEventNode = testIt.getGraph().getNode("_77E79714-F32A-4BE7-B0D2-15178F5244F0");
+        Node<? extends Definition, ?> marshalledFilledEventNode = marshalledDiagram.getGraph().getNode("_77E79714-F32A-4BE7-B0D2-15178F5244F0");
+        assertEquals(filledEventNode, marshalledFilledEventNode);
+
+        Node<? extends Definition, ?> emptyEventNode = marshalledDiagram.getGraph().getNode("_E4563AE4-5F70-4283-A5AC-C9AB14F15EBA");
+        Node<? extends Definition, ?> marshalledEmptyEventNode = marshalledDiagram.getGraph().getNode("_E4563AE4-5F70-4283-A5AC-C9AB14F15EBA");
+        assertEquals(emptyEventNode, marshalledEmptyEventNode);
+    }
+
+    @Test
+    public void testMarshallIsInterruptingStartTimerEvent() throws Exception {
+        Diagram<Graph, Metadata> testIt = unmarshall(BPMN_EVENT_SUBPROCESS_STARTTIMEREVENT);
+        String result = tested.marshall(testIt);
+
+        assertDiagram(result,
+                      1,
+                      6,
+                      2);
+
+        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(getStream(result));
+        assertDiagram(marshalledDiagram, 7);
+        assertEquals("EventSubprocessStartTimerEvent", marshalledDiagram.getMetadata().getTitle());
+
+        Node<? extends Definition, ?> filledEventNode = testIt.getGraph().getNode("_4A4F40C5-C9F1-4761-BD95-C61DDBDC9C19");
+        Node<? extends Definition, ?> marshalledFilledEventNode = marshalledDiagram.getGraph().getNode("_4A4F40C5-C9F1-4761-BD95-C61DDBDC9C19");
+        assertEquals(filledEventNode, marshalledFilledEventNode);
+
+        Node<? extends Definition, ?> emptyEventNode = marshalledDiagram.getGraph().getNode("_BF94EA1F-519D-4E52-AB2A-C7687E11ABDC");
+        Node<? extends Definition, ?> marshalledEmptyEventNode = marshalledDiagram.getGraph().getNode("_BF94EA1F-519D-4E52-AB2A-C7687E11ABDC");
+        assertEquals(emptyEventNode, marshalledEmptyEventNode);
+    }
+
+    @Test
+    public void testMarshallIsInterruptingStartSignalEvent() throws Exception {
+        Diagram<Graph, Metadata> testIt = unmarshall(BPMN_EVENT_SUBPROCESS_STARTSIGNALEVENT);
+        String result = tested.marshall(testIt);
+
+        assertDiagram(result,
+                      1,
+                      6,
+                      2);
+
+        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(getStream(result));
+        assertDiagram(marshalledDiagram, 7);
+        assertEquals("EventSubprocessStartSignalEvent", marshalledDiagram.getMetadata().getTitle());
+
+        Node<? extends Definition, ?> filledEventNode = testIt.getGraph().getNode("_B6B3A062-F04A-4E45-A08B-C1F0971C3DF9");
+        Node<? extends Definition, ?> marshalledFilledEventNode = marshalledDiagram.getGraph().getNode("_B6B3A062-F04A-4E45-A08B-C1F0971C3DF9");
+        assertEquals(filledEventNode, marshalledFilledEventNode);
+
+        Node<? extends Definition, ?> emptyEventNode = marshalledDiagram.getGraph().getNode("_A8B9513C-D237-4BDA-B7BC-7C79F7D12BB5");
+        Node<? extends Definition, ?> marshalledEmptyEventNode = marshalledDiagram.getGraph().getNode("_A8B9513C-D237-4BDA-B7BC-7C79F7D12BB5");
+        assertEquals(emptyEventNode, marshalledEmptyEventNode);
+    }
+
+    @Test
+    public void testMarshallIsInterruptingStartErrorEvent() throws Exception {
+        Diagram<Graph, Metadata> testIt = unmarshall(BPMN_EVENT_SUBPROCESS_STARTERROREVENT);
+        String result = tested.marshall(testIt);
+
+        assertDiagram(result,
+                      1,
+                      6,
+                      2);
+
+        Diagram<Graph, Metadata> marshalledDiagram = unmarshall(getStream(result));
+        assertDiagram(marshalledDiagram, 7);
+        assertEquals("EventSubprocessStartErrorEvent", marshalledDiagram.getMetadata().getTitle());
+
+        Node<? extends Definition, ?> filledEventNode = testIt.getGraph().getNode("9ABD5C04-C6E2-4DF3-829F-ADB283330AD6");
+        Node<? extends Definition, ?> marshalledFilledEventNode = marshalledDiagram.getGraph().getNode("9ABD5C04-C6E2-4DF3-829F-ADB283330AD6");
+        assertEquals(filledEventNode, marshalledFilledEventNode);
+
+        Node<? extends Definition, ?> emptyEventNode = marshalledDiagram.getGraph().getNode("50B93E5E-C05D-40DD-BF48-2B6AE919763E");
+        Node<? extends Definition, ?> marshalledEmptyEventNode = marshalledDiagram.getGraph().getNode("50B93E5E-C05D-40DD-BF48-2B6AE919763E");
+        assertEquals(emptyEventNode, marshalledEmptyEventNode);
     }
 
     @Test
@@ -2312,6 +2643,39 @@ public class BPMNDiagramMarshallerTest {
                       7);
 
         assertTrue(result.contains("<bpmn2:subProcess id=\"_C3EBE7F1-8E57-4BB1-B380-40BB02E9464E\" "));
+    }
+
+    @Test
+    public void testMarshallMultipleInstanceSubprocess() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_MULTIPLE_INSTANCE_SUBPROCESS);
+        assertDiagram(diagram,
+                      2);
+
+        String result = tested.marshall(diagram);
+        assertDiagram(result,
+                      1,
+                      1,
+                      0);
+
+        assertTrue(result.contains("<bpmn2:subProcess id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571\""));
+        assertTrue(result.contains("name=\"MultipleInstanceSubprocess\""));
+        assertTrue(result.contains("<drools:onEntry-script scriptFormat=\"http://www.java.com/java\">"));
+        assertTrue(result.contains("<drools:script><![CDATA[onEntryAction]]></drools:script>"));
+        assertTrue(result.contains("</drools:onEntry-script>"));
+        assertTrue(result.contains("<drools:onExit-script scriptFormat=\"http://www.java.com/java\">"));
+        assertTrue(result.contains("<drools:script><![CDATA[onExitAction]]></drools:script>"));
+        assertTrue(result.contains("</drools:onExit-script>"));
+        assertTrue(result.contains("<drools:metaData name=\"customAsync\">"));
+        assertTrue(result.contains("<drools:metaValue><![CDATA[true]]></drools:metaValue>"));
+        assertTrue(result.contains("</drools:metaData>"));
+        assertTrue(result.contains("<bpmn2:multiInstanceLoopCharacteristics"));
+        assertTrue(result.contains("<bpmn2:loopDataInputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_input</bpmn2:loopDataInputRef>"));
+        assertTrue(result.contains("<bpmn2:loopDataOutputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_output</bpmn2:loopDataOutputRef>"));
+        assertTrue(result.contains("<bpmn2:inputDataItem xsi:type=\"bpmn2:tDataInput\" id=\"dataInput\"/>"));
+        assertTrue(result.contains("<bpmn2:outputDataItem xsi:type=\"bpmn2:tDataOutput\" id=\"dataOutput\" itemSubjectRef=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_multiInstanceItemType\"/>"));
+        assertTrue(result.contains("<bpmn2:completionCondition xsi:type=\"bpmn2:tFormalExpression\""));
+        assertTrue(result.contains("a=b</bpmn2:completionCondition>"));
+        assertTrue(result.contains("</bpmn2:multiInstanceLoopCharacteristics>"));
     }
 
     @Test
@@ -2677,12 +3041,16 @@ public class BPMNDiagramMarshallerTest {
         return result;
     }
 
+    private InputStream getStream(String data) {
+        return new ByteArrayInputStream(data.getBytes(StandardCharsets.UTF_8));
+    }
+
     @SuppressWarnings("unchecked")
     private Iterator<Element> nodesIterator(Diagram<Graph, Metadata> diagram) {
         return (Iterator<Element>) diagram.getGraph().nodes().iterator();
     }
 
-    private InputStream loadStream(String path) {
+    private static InputStream loadStream(String path) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(path);
     }
 
@@ -2875,5 +3243,58 @@ public class BPMNDiagramMarshallerTest {
             }
         }
         return null;
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testUnmarshallWorkItems() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SERVICE_TASKS);
+        assertDiagram(diagram,
+                      5);
+        // Email service task assertions.
+        Node<? extends Definition, ?> emailNode = diagram.getGraph().getNode("_277CE006-5E6E-4960-A68C-CC8A5347C33F");
+        assertTrue(emailNode.getContent().getDefinition() instanceof ServiceTask);
+        ServiceTask email = (ServiceTask) emailNode.getContent().getDefinition();
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getName(),
+                     email.getName());
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getCategory(),
+                     email.getCategory());
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDefaultHandler(),
+                     email.getDefaultHandler());
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDescription(),
+                     email.getDescription());
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDisplayName(),
+                     email.getGeneral().getName().getValue());
+        assertEquals(WorkItemDefinitionMockRegistry.EMAIL.getDocumentation(),
+                     email.getGeneral().getDocumentation().getValue());
+        // Log service task assertions.
+        Node<? extends Definition, ?> logNode = diagram.getGraph().getNode("_A940748F-A658-4FB8-84FD-B69F4B7A9205");
+        assertTrue(logNode.getContent().getDefinition() instanceof ServiceTask);
+        ServiceTask log = (ServiceTask) logNode.getContent().getDefinition();
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getName(),
+                     log.getName());
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getCategory(),
+                     log.getCategory());
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getDefaultHandler(),
+                     log.getDefaultHandler());
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getDescription(),
+                     log.getDescription());
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getDisplayName(),
+                     log.getGeneral().getName().getValue());
+        assertEquals(WorkItemDefinitionMockRegistry.LOG.getDocumentation(),
+                     log.getGeneral().getDocumentation().getValue());
+    }
+
+    @Test
+    public void testMarshallWorkItems() throws Exception {
+        Diagram<Graph, Metadata> diagram = unmarshall(BPMN_SERVICE_TASKS);
+        String result = tested.marshall(diagram);
+        System.out.println(result);
+        assertDiagram(result,
+                      1,
+                      4,
+                      3);
+        assertTrue(result.contains("drools:taskName=\"Email\""));
+        assertTrue(result.contains("drools:taskName=\"Log\""));
     }
 }

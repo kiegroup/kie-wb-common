@@ -32,9 +32,7 @@ import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.backend.ApplicationFactoryManager;
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
-import org.kie.workbench.common.stunner.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.BPMNDirectDiagramMarshaller;
@@ -52,18 +50,23 @@ import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeListTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.ScriptTypeTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.StringTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TaskTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.TimerSettingsTypeSerializer;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.property.VariablesTypeSerializer;
+import org.kie.workbench.common.stunner.bpmn.backend.workitem.WorkItemDefinitionBackendRegistry;
 import org.kie.workbench.common.stunner.bpmn.definition.BusinessRuleTask;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ScriptTask;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
+import org.kie.workbench.common.stunner.core.api.FactoryManager;
+import org.kie.workbench.common.stunner.core.backend.BackendFactoryManager;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.bind.BackendBindableMorphAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendDefinitionSetAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertyAdapter;
 import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.BackendPropertySetAdapter;
+import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.definition.clone.CloneManager;
@@ -164,7 +167,7 @@ public class MigrationDiagramMarshallerTest {
     @Mock
     private CloneManager cloneManager;
     @Mock
-    private ApplicationFactoryManager applicationFactoryManager;
+    private BackendFactoryManager applicationFactoryManager;
 
     private EdgeFactory<Object> connectionEdgeFactory;
     private NodeFactory<Object> viewNodeFactory;
@@ -174,6 +177,7 @@ public class MigrationDiagramMarshallerTest {
 
     private BPMNDiagramMarshaller oldMarshaller;
     private BPMNDirectDiagramMarshaller newMarshaller;
+    private WorkItemDefinitionMockRegistry workItemDefinitionMockRegistry;
 
     @Before
     @SuppressWarnings("unchecked")
@@ -263,8 +267,12 @@ public class MigrationDiagramMarshallerTest {
         }).when(applicationFactoryManager).newDiagram(anyString(),
                                                       anyString(),
                                                       any(Metadata.class));
+        // Work items stuff.
+        workItemDefinitionMockRegistry = new WorkItemDefinitionMockRegistry();
+
         // Bpmn 2 oryx stuff.
-        Bpmn2OryxIdMappings oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager);
+        Bpmn2OryxIdMappings oryxIdMappings = new Bpmn2OryxIdMappings(definitionManager,
+                                                                     () -> workItemDefinitionMockRegistry);
         StringTypeSerializer stringTypeSerializer = new StringTypeSerializer();
         BooleanTypeSerializer booleanTypeSerializer = new BooleanTypeSerializer();
         ColorTypeSerializer colorTypeSerializer = new ColorTypeSerializer();
@@ -276,6 +284,8 @@ public class MigrationDiagramMarshallerTest {
         TimerSettingsTypeSerializer timerSettingsTypeSerializer = new TimerSettingsTypeSerializer();
         ScriptTypeTypeSerializer scriptTypeTypeSerializer = new ScriptTypeTypeSerializer();
         ScriptTypeListTypeSerializer scriptTypeListTypeSerializer = new ScriptTypeListTypeSerializer();
+        TaskTypeSerializer taskTypeSerializer = new TaskTypeSerializer(definitionUtils1,
+                                                                       enumTypeSerializer);
         List<Bpmn2OryxPropertySerializer<?>> propertySerializers = new LinkedList<>();
         propertySerializers.add(stringTypeSerializer);
         propertySerializers.add(booleanTypeSerializer);
@@ -288,13 +298,15 @@ public class MigrationDiagramMarshallerTest {
         propertySerializers.add(timerSettingsTypeSerializer);
         propertySerializers.add(scriptTypeTypeSerializer);
         propertySerializers.add(scriptTypeListTypeSerializer);
+        propertySerializers.add(taskTypeSerializer);
         Bpmn2OryxPropertyManager oryxPropertyManager = new Bpmn2OryxPropertyManager(propertySerializers);
         Bpmn2OryxManager oryxManager = new Bpmn2OryxManager(oryxIdMappings,
                                                             oryxPropertyManager);
         oryxManager.init();
         // Marshalling factories.
         BPMNGraphObjectBuilderFactory objectBuilderFactory = new BPMNGraphObjectBuilderFactory(definitionManager,
-                                                                                               oryxManager);
+                                                                                               oryxManager,
+                                                                                               () -> workItemDefinitionMockRegistry);
         taskMorphDefinition = new TaskTypeMorphDefinition();
         Collection<MorphDefinition> morphDefinitions = new ArrayList<MorphDefinition>() {{
             add(taskMorphDefinition);
@@ -311,6 +323,14 @@ public class MigrationDiagramMarshallerTest {
         GraphIndexBuilder<?> indexBuilder = new MapIndexBuilder();
         when(rulesManager.evaluate(any(RuleSet.class),
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
+        // The work item definition registry.
+        WorkItemDefinitionBackendRegistry widRegistry = mock(WorkItemDefinitionBackendRegistry.class);
+        when(widRegistry.getRegistry()).thenReturn(workItemDefinitionMockRegistry);
+        when(widRegistry.items()).thenReturn(workItemDefinitionMockRegistry.items());
+        when(widRegistry.load(any(Metadata.class))).thenReturn(widRegistry);
+        doAnswer(invocationOnMock -> workItemDefinitionMockRegistry.get((String) invocationOnMock.getArguments()[0]))
+                .when(widRegistry).get(anyString());
+
         // The tested BPMN marshaller.
         oldMarshaller = new BPMNDiagramMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
                                                   objectBuilderFactory,
@@ -320,7 +340,8 @@ public class MigrationDiagramMarshallerTest {
                                                   applicationFactoryManager,
                                                   rulesManager,
                                                   commandManager1,
-                                                  commandFactory1);
+                                                  commandFactory1,
+                                                  widRegistry);
 
         // Graph utils.
         when(definitionManager.adapters()).thenReturn(adapterManager);
@@ -336,6 +357,7 @@ public class MigrationDiagramMarshallerTest {
         mockAdapterManager(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         mockAdapterRegistry(definitionAdapter, definitionSetAdapter, propertySetAdapter, propertyAdapter);
         applicationFactoryManager = new MockApplicationFactoryManager(
+                definitionManager,
                 new GraphFactoryImpl(definitionManager),
                 testScopeModelFactory,
                 new EdgeFactoryImpl(definitionManager),
@@ -348,7 +370,13 @@ public class MigrationDiagramMarshallerTest {
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The tested BPMN marshaller.
-        newMarshaller = new BPMNDirectDiagramMarshaller(definitionManager, rulesManager, applicationFactoryManager, commandFactory, commandManager);
+        newMarshaller = new BPMNDirectDiagramMarshaller(
+                new XMLEncoderDiagramMetadataMarshaller(),
+                definitionManager,
+                rulesManager,
+                applicationFactoryManager,
+                commandFactory,
+                commandManager);
     }
 
     private void mockAdapterRegistry(BackendDefinitionAdapter definitionAdapter, BackendDefinitionSetAdapter definitionSetAdapter, BackendPropertySetAdapter propertySetAdapter, BackendPropertyAdapter propertyAdapter) {
@@ -445,7 +473,6 @@ public class MigrationDiagramMarshallerTest {
         assertDiagramEquals(oldDiagram, newDiagram, BPMN_USERTASKASSIGNEES);
     }
 
-
     @Test
     public void testUnmarshallUserMagnetDockers() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_MAGNETDOCKERS);
@@ -457,7 +484,6 @@ public class MigrationDiagramMarshallerTest {
         // Let's check nodes only.
         assertDiagramEquals(oldDiagram, newDiagram, BPMN_MAGNETDOCKERS);
     }
-
 
     @Test
     public void testUnmarshallEmbeddedSubprocess() throws Exception {
@@ -495,16 +521,13 @@ public class MigrationDiagramMarshallerTest {
         assertDiagramEquals(oldDiagram, newDiagram, BPMN_EVALUATION);
     }
 
-
-
-
     private void assertNodeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
-        Map<String, Node<View,?>> oldNodes = asNodeMap(oldDiagram.getGraph().nodes());
-        Map<String, Node<View,?>> newNodes = asNodeMap(newDiagram.getGraph().nodes());
+        Map<String, Node<View, ?>> oldNodes = asNodeMap(oldDiagram.getGraph().nodes());
+        Map<String, Node<View, ?>> newNodes = asNodeMap(newDiagram.getGraph().nodes());
 
         assertEquals(fileName + ": Number of nodes should match", oldNodes.size(), newNodes.size());
 
-        for (Node<View, ?> o: oldNodes.values()) {
+        for (Node<View, ?> o : oldNodes.values()) {
             Node<View, ?> n = newNodes.get(o.getUUID());
 
             View oldContent = o.getContent();
@@ -527,14 +550,11 @@ public class MigrationDiagramMarshallerTest {
                     oldDefinition,
                     newDefinition
             );
-
-
         }
-
     }
 
-    private Map<String, Node<View,?>> asNodeMap(Iterable nodes) {
-        Map<String, Node<View,?>> oldNodes = new HashMap<>();
+    private Map<String, Node<View, ?>> asNodeMap(Iterable nodes) {
+        Map<String, Node<View, ?>> oldNodes = new HashMap<>();
         nodes.forEach(n -> {
             Node n1 = (Node) n;
             oldNodes.put(n1.getUUID(), n1);
@@ -544,14 +564,14 @@ public class MigrationDiagramMarshallerTest {
 
     private void assertDiagramEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         assertNodeEquals(oldDiagram, newDiagram, fileName);
-        assertEdgeEquals(oldDiagram, newDiagram);
+        assertEdgeEquals(oldDiagram, newDiagram, fileName);
     }
 
-    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram) {
+    private void assertEdgeEquals(Diagram<Graph, Metadata> oldDiagram, Diagram<Graph, Metadata> newDiagram, String fileName) {
         Set<Edge> oldEdges = asEdgeSet(oldDiagram.getGraph().nodes());
         Set<Edge> newEdges = asEdgeSet(newDiagram.getGraph().nodes());
 
-        assertEquals("Number of edges should match", oldEdges.size(), newEdges.size());
+        assertEquals(fileName + ": Number of edges should match", oldEdges.size(), newEdges.size());
 
         {
             Map<String, Edge> nonRelOldEdges = oldEdges.stream()
@@ -568,12 +588,11 @@ public class MigrationDiagramMarshallerTest {
                 Edge<ViewConnector, ?> newEdge = nonRelNewEdges.get(oldEdge.getUUID());
 
                 // (relationship) edges are equal iff <source, target> match respectively
-                assertEquals("Source Connection should match for " + oldEdge.getUUID(),
+                assertEquals(fileName + ": Source Connection should match for " + oldEdge.getUUID(),
                              oldEdge.getContent().getSourceConnection(), newEdge.getContent().getSourceConnection());
-                assertEquals("Target Connection should match for " + oldEdge.getUUID(),
+                assertEquals(fileName + ": Target Connection should match for " + oldEdge.getUUID(),
                              oldEdge.getContent().getTargetConnection(), newEdge.getContent().getTargetConnection());
             }
-
         }
 
         {
@@ -586,8 +605,8 @@ public class MigrationDiagramMarshallerTest {
                     .collect(Collectors.toList());
 
             // sort lexicografically by source + target IDs
-            relOldEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID()+e.getTargetNode().getUUID()));
-            relNewEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID()+e.getTargetNode().getUUID()));
+            relOldEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID() + e.getTargetNode().getUUID()));
+            relNewEdges.sort(Comparator.comparing(e -> e.getSourceNode().getUUID() + e.getTargetNode().getUUID()));
 
             Iterator<Edge> oldIt = relOldEdges.iterator();
             Iterator<Edge> newIt = relNewEdges.iterator();
@@ -596,12 +615,10 @@ public class MigrationDiagramMarshallerTest {
                 Edge<ViewConnector, ?> oldEdge = oldIt.next();
                 Edge<ViewConnector, ?> newEdge = newIt.next();
 
-                assertEquals(oldEdge.getTargetNode(), newEdge.getTargetNode());
-                assertEquals(oldEdge.getSourceNode(), newEdge.getSourceNode());
+                assertEquals(fileName + ": target node did not match", oldEdge.getTargetNode(), newEdge.getTargetNode());
+                assertEquals(fileName + ": source node did not match", oldEdge.getSourceNode(), newEdge.getSourceNode());
             }
         }
-
-
     }
 
     private Set<Edge> asEdgeSet(Iterable nodes) {

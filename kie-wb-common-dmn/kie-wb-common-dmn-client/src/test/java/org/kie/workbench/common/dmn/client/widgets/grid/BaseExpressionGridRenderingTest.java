@@ -23,7 +23,6 @@ import java.util.Optional;
 import com.ait.lienzo.client.core.Context2D;
 import com.ait.lienzo.client.core.types.BoundingBox;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.jboss.errai.common.client.api.IsElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,7 +97,7 @@ public class BaseExpressionGridRenderingTest extends BaseExpressionGridTest {
     @Mock
     private RenderGridBoundaryCommand renderGridBoundaryCommand;
 
-    private boolean isHeaderHidden = false;
+    private boolean isHeaderHidden;
 
     @Before
     @Override
@@ -153,18 +152,21 @@ public class BaseExpressionGridRenderingTest extends BaseExpressionGridTest {
         final Optional<HasName> hasName = Optional.of(mock(HasName.class));
 
         return new BaseExpressionGrid(parent,
+                                      Optional.empty(),
                                       hasExpression,
                                       expression,
                                       hasName,
                                       gridPanel,
                                       gridLayer,
                                       renderer,
+                                      definitionUtils,
                                       sessionManager,
                                       sessionCommandManager,
-                                      editorSelectedEvent,
+                                      canvasCommandFactory,
                                       cellEditorControls,
+                                      listSelector,
                                       translationService,
-                                      () -> isHeaderHidden) {
+                                      0) {
             @Override
             protected BaseUIModelMapper makeUiModelMapper() {
                 return mapper;
@@ -181,8 +183,8 @@ public class BaseExpressionGridRenderingTest extends BaseExpressionGridTest {
             }
 
             @Override
-            public Optional<IsElement> getEditorControls() {
-                return Optional.empty();
+            protected boolean isHeaderHidden() {
+                return isHeaderHidden;
             }
         };
     }

@@ -25,13 +25,11 @@ import java.util.stream.IntStream;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.assertj.core.api.Assertions;
-import org.jboss.errai.common.client.api.IsElement;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
@@ -52,6 +50,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
@@ -68,18 +67,21 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         final Optional<HasName> hasName = Optional.of(mock(HasName.class));
 
         return new BaseExpressionGrid(parentCell,
+                                      Optional.empty(),
                                       hasExpression,
                                       expression,
                                       hasName,
                                       gridPanel,
                                       gridLayer,
                                       renderer,
+                                      definitionUtils,
                                       sessionManager,
                                       sessionCommandManager,
-                                      editorSelectedEvent,
+                                      canvasCommandFactory,
                                       cellEditorControls,
+                                      listSelector,
                                       translationService,
-                                      false) {
+                                      0) {
             @Override
             protected BaseUIModelMapper makeUiModelMapper() {
                 return mapper;
@@ -96,8 +98,8 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
             }
 
             @Override
-            public Optional<IsElement> getEditorControls() {
-                return Optional.empty();
+            protected boolean isHeaderHidden() {
+                return false;
             }
         };
     }
@@ -167,15 +169,6 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     public void testGetLayerGridNotAttachedToLayer() {
         assertEquals(gridLayer,
                      grid.getLayer());
-    }
-
-    @Test
-    public void testSelect() {
-        grid.select();
-
-        verify(editorSelectedEvent).fire(any(ExpressionEditorSelectedEvent.class));
-
-        verify(grid).selectFirstCell();
     }
 
     @Test
@@ -292,12 +285,11 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     public void synchroniseViewWhenExpressionEditorChangedWithEditor() {
         final BaseExpressionGrid editor = mock(BaseExpressionGrid.class);
 
-        grid.synchroniseViewWhenExpressionEditorChanged(Optional.of(editor));
+        grid.synchroniseViewWhenExpressionEditorChanged(editor);
 
-        verify(parentCell).onResize();
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
-        verify(editor).selectFirstCell();
+        verify(parentCell).onResize();
         verify(gridLayer).batch(redrawCommandCaptor.capture());
 
         final GridLayerRedrawManager.PrioritizedCommand redrawCommand = redrawCommandCaptor.getValue();
@@ -308,18 +300,19 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
-    public void synchroniseViewWhenExpressionEditorChangedWithoutEditor() {
-        grid.synchroniseViewWhenExpressionEditorChanged(Optional.empty());
+    public void synchroniseView() {
+        grid.synchroniseView();
 
-        verify(parentCell).onResize();
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
+        verify(parentCell).onResize();
         verify(gridLayer).batch(redrawCommandCaptor.capture());
 
         final GridLayerRedrawManager.PrioritizedCommand redrawCommand = redrawCommandCaptor.getValue();
         redrawCommand.execute();
 
         verify(gridLayer).draw();
+        verify(gridLayer, never()).select(any(GridWidget.class));
     }
 
     /*

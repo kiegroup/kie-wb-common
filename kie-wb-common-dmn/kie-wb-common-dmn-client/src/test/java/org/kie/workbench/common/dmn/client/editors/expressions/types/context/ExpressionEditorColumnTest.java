@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.assertj.core.api.Assertions;
-import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,9 +28,9 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.mocks.MockHasDOMElementResourcesHeaderMetaData;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
@@ -40,7 +39,9 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
@@ -51,7 +52,6 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.Gr
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.GridSelectionManager;
 import org.uberfire.ext.wires.core.grids.client.widget.layer.pinning.GridPinnedModeManager;
-import org.uberfire.mocks.EventSourceMock;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -79,16 +79,22 @@ public class ExpressionEditorColumnTest {
     private DMNGridLayer gridLayer;
 
     @Mock
+    private DefinitionUtils definitionUtils;
+
+    @Mock
     private SessionManager sessionManager;
 
     @Mock
     private SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
 
     @Mock
-    private EventSourceMock<ExpressionEditorSelectedEvent> editorSelectedEvent;
+    private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
 
     @Mock
     private CellEditorControlsView.Presenter cellEditorControls;
+
+    @Mock
+    private ListSelectorView.Presenter listSelector;
 
     @Mock
     private TranslationService translationService;
@@ -373,18 +379,21 @@ public class ExpressionEditorColumnTest {
         final Optional<HasName> hasName = Optional.of(mock(HasName.class));
 
         return new BaseExpressionGrid(parent,
+                                      Optional.empty(),
                                       hasExpression,
                                       expression,
                                       hasName,
                                       gridPanel,
                                       gridLayer,
                                       renderer,
+                                      definitionUtils,
                                       sessionManager,
                                       sessionCommandManager,
-                                      editorSelectedEvent,
+                                      canvasCommandFactory,
                                       cellEditorControls,
+                                      listSelector,
                                       translationService,
-                                      false) {
+                                      0) {
             @Override
             protected BaseUIModelMapper makeUiModelMapper() {
                 return null;
@@ -402,12 +411,12 @@ public class ExpressionEditorColumnTest {
 
             @Override
             protected void initialiseUiModel() {
-
+                //Nothing for this test
             }
 
             @Override
-            public Optional<IsElement> getEditorControls() {
-                return Optional.empty();
+            protected boolean isHeaderHidden() {
+                return false;
             }
 
             @Override

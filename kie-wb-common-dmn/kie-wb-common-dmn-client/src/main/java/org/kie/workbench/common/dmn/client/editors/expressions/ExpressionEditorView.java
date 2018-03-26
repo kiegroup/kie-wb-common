@@ -18,12 +18,10 @@ package org.kie.workbench.common.dmn.client.editors.expressions;
 import java.util.Optional;
 
 import com.google.gwt.user.client.ui.ProvidesResize;
+import com.google.gwt.user.client.ui.RequiresResize;
 import org.jboss.errai.common.client.api.IsElement;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
-import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.RequiresResize;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -39,10 +37,9 @@ public interface ExpressionEditorView extends org.jboss.errai.ui.client.local.ap
 
         void init(final SessionPresenter<AbstractClientFullSession, ?, Diagram> presenter);
 
-        void setExpression(final Optional<HasName> hasName,
-                           final HasExpression hasExpression);
-
-        void onExpressionEditorSelected(final ExpressionEditorSelectedEvent event);
+        void setExpression(final String nodeUUID,
+                           final HasExpression hasExpression,
+                           final Optional<HasName> hasName);
 
         void setExitCommand(final Command exitCommand);
 
@@ -51,8 +48,7 @@ public interface ExpressionEditorView extends org.jboss.errai.ui.client.local.ap
         void exit();
     }
 
-    void setExpression(final Optional<HasName> hasName,
-                       final HasExpression hasExpression);
-
-    void onExpressionEditorSelected(final Optional<BaseExpressionGrid> oEditor);
+    void setExpression(final String nodeUUID,
+                       final HasExpression hasExpression,
+                       final Optional<HasName> hasName);
 }

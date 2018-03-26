@@ -28,7 +28,6 @@ import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.bpmn.definition.property.background.BackgroundSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOModel;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dimensions.RectangleDimensionsSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.font.FontSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
@@ -56,7 +55,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
         policy = FieldPolicy.ONLY_MARKED
 )
 
-public class EventSubprocess extends BaseSubprocess implements DataIOModel {
+public class EventSubprocess extends BaseSubprocess {
 
     @Property
     @FormField(
@@ -91,26 +90,6 @@ public class EventSubprocess extends BaseSubprocess implements DataIOModel {
 
         this.isAsync = isAsync;
         this.processData = processData;
-    }
-
-    @Override
-    public boolean hasInputVars() {
-        return true;
-    }
-
-    @Override
-    public boolean isSingleInputVar() {
-        return false;
-    }
-
-    @Override
-    public boolean hasOutputVars() {
-        return true;
-    }
-
-    @Override
-    public boolean isSingleOutputVar() {
-        return false;
     }
 
     @Override

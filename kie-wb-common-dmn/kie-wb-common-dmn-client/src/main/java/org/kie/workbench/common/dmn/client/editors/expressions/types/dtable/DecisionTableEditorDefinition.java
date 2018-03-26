@@ -19,10 +19,8 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 import java.util.Optional;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
@@ -38,17 +36,20 @@ import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.BaseEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionType;
-import org.kie.workbench.common.dmn.client.events.ExpressionEditorSelectedEvent;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.dtable.hitpolicy.HitPolicyEditorView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
+import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
 import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.client.session.Session;
+import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
 @ApplicationScoped
 public class DecisionTableEditorDefinition extends BaseEditorDefinition<DecisionTable> {
@@ -63,7 +64,7 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
 
     static final String RULE_DESCRIPTION = "A rule";
 
-    private ManagedInstance<DecisionTableGridControls> controlsProvider;
+    private HitPolicyEditorView.Presenter hitPolicyEditor;
 
     public DecisionTableEditorDefinition() {
         //CDI proxy
@@ -72,20 +73,24 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
     @Inject
     public DecisionTableEditorDefinition(final @DMNEditor DMNGridPanel gridPanel,
                                          final @DMNEditor DMNGridLayer gridLayer,
+                                         final DefinitionUtils definitionUtils,
                                          final SessionManager sessionManager,
                                          final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                         final Event<ExpressionEditorSelectedEvent> editorSelectedEvent,
+                                         final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                          final CellEditorControlsView.Presenter cellEditorControls,
+                                         final ListSelectorView.Presenter listSelector,
                                          final TranslationService translationService,
-                                         final ManagedInstance<DecisionTableGridControls> controlsProvider) {
+                                         final HitPolicyEditorView.Presenter hitPolicyEditor) {
         super(gridPanel,
               gridLayer,
+              definitionUtils,
               sessionManager,
               sessionCommandManager,
-              editorSelectedEvent,
+              canvasCommandFactory,
               cellEditorControls,
+              listSelector,
               translationService);
-        this.controlsProvider = controlsProvider;
+        this.hitPolicyEditor = hitPolicyEditor;
     }
 
     @Override
@@ -135,21 +140,26 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
     @Override
     @SuppressWarnings("unused")
     public Optional<BaseExpressionGrid> getEditor(final GridCellTuple parent,
+                                                  final Optional<String> nodeUUID,
                                                   final HasExpression hasExpression,
                                                   final Optional<DecisionTable> expression,
                                                   final Optional<HasName> hasName,
-                                                  final boolean isNested) {
+                                                  final int nesting) {
         return Optional.of(new DecisionTableGrid(parent,
+                                                 nodeUUID,
                                                  hasExpression,
                                                  expression,
                                                  hasName,
                                                  gridPanel,
                                                  gridLayer,
+                                                 definitionUtils,
                                                  sessionManager,
                                                  sessionCommandManager,
-                                                 editorSelectedEvent,
+                                                 canvasCommandFactory,
                                                  cellEditorControls,
+                                                 listSelector,
                                                  translationService,
-                                                 controlsProvider.get()));
+                                                 nesting,
+                                                 hitPolicyEditor));
     }
 }
