@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.widgets.layer;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -146,10 +147,10 @@ public class DMNGridLayer extends DefaultGridLayer {
         this.selectedGridWidget = Optional.of(selectedGridWidget);
         boolean selectionChanged = false;
         for (GridWidget gridWidget : getAllGridWidgets()) {
-            if (!gridWidget.equals(selectedGridWidget)) {
+            if (!Objects.equals(gridWidget, selectedGridWidget)) {
                 selectionChanged = true;
                 gridWidget.deselect();
-            } else if (gridWidget.equals(selectedGridWidget)) {
+            } else if (Objects.equals(gridWidget, selectedGridWidget)) {
                 selectionChanged = true;
                 gridWidget.select();
             }
