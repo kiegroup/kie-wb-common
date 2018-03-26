@@ -27,7 +27,6 @@ import org.jboss.errai.databinding.client.BindableProxyProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
@@ -125,7 +124,7 @@ public class FormPropertiesWidgetTest {
         when(proxy.deepUnwrap()).thenReturn(unmockedDef);
         this.tested = new FormPropertiesWidget(view,
                                                definitionUtils,
-                                               commandFactory,
+                                               null, // TODO
                                                propertiesOpenedEvent,
                                                formsContainer);
     }
@@ -179,7 +178,7 @@ public class FormPropertiesWidgetTest {
         when(metadata.getPath()).thenReturn(path);
         when(nodeContent.getDefinition()).thenReturn(unmockedDef);
 
-        tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
+        // TODO tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
 
         verify(formsContainer).render(anyString(), any(), any(), any());
         verify(propertiesOpenedEvent).fire(any());
@@ -190,16 +189,14 @@ public class FormPropertiesWidgetTest {
         when(metadata.getPath()).thenReturn(path);
         when(nodeContent.getDefinition()).thenReturn(unmockedDef);
 
-        tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
+        // TODO tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
 
         verify(formsContainer, times(1)).render(anyString(), any(), any(), any());
         verify(propertiesOpenedEvent, times(1)).fire(any());
 
-        tested.showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
+        // TODO tested.showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
 
         verify(formsContainer, times(2)).render(anyString(), any(), any(), any());
         verify(propertiesOpenedEvent, times(2)).fire(any());
-
-
     }
 }
