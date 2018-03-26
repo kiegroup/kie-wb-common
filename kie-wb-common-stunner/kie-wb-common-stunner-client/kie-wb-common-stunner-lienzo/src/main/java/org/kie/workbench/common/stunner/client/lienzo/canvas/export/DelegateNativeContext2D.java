@@ -253,7 +253,7 @@ public class DelegateNativeContext2D implements INativeContext2D {
 
     public boolean isSupported(String feature) {
         throwException();
-        return true;
+        return false;
     }
 
     public boolean isPointInPath(double x, double y) {
@@ -423,7 +423,7 @@ public class DelegateNativeContext2D implements INativeContext2D {
         throwException();
     }
 
-    private Path2D.NativePath2D throwException() {
+    private Path2D.NativePath2D throwException() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

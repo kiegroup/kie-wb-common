@@ -63,7 +63,7 @@ public class CanvasFileExport {
     }
 
     @Inject
-    public CanvasFileExport(final @Default CanvasExport<AbstractCanvasHandler> canvasExport,
+    public CanvasFileExport(final CanvasExport<AbstractCanvasHandler> canvasExport,
                             final FileExport<ImageDataUriContent> imageFileExport,
                             final FileExport<PdfDocument> pdfFileExport,
                             final FileExportsPreferences preferences,
