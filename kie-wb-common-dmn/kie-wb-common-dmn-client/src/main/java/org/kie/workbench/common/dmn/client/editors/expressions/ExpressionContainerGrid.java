@@ -58,7 +58,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
 
     private final SessionManager sessionManager;
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
-    private final GridCellTuple parent = new GridCellTuple(0, 0, this);
+    private final GridCellTuple parent;
 
     private String nodeUUID;
     private HasExpression hasExpression;
@@ -85,6 +85,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
         this.translationService = translationService;
         this.sessionManager = sessionManager;
         this.sessionCommandManager = sessionCommandManager;
+        this.parent = new GridCellTuple(0, 0, this);
 
         this.uiModelMapper = new ExpressionContainerUIModelMapper(parent,
                                                                   this::getModel,

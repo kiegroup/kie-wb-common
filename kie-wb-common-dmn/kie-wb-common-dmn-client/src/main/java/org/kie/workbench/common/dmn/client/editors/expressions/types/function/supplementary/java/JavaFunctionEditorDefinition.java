@@ -19,7 +19,7 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.function.s
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.spi.TranslationService;
@@ -52,7 +52,7 @@ import org.kie.workbench.common.stunner.core.client.command.SessionCommandManage
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
-@Dependent
+@ApplicationScoped
 @FunctionGridSupplementaryEditor
 public class JavaFunctionEditorDefinition extends BaseEditorDefinition<Context, FunctionSupplementaryGridData> {
 
