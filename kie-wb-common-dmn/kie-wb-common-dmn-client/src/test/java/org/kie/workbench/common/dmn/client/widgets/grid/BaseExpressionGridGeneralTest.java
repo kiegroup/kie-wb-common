@@ -34,7 +34,6 @@ import org.kie.workbench.common.dmn.client.widgets.grid.model.BaseUIModelMapper;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridData;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
-import org.kie.workbench.common.dmn.client.widgets.grid.model.GridDataCache;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
@@ -75,7 +74,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
                                       hasName,
                                       gridPanel,
                                       gridLayer,
-                                      new GridDataCache.CacheResult(new DMNGridData(), false),
+                                      new DMNGridData(),
                                       renderer,
                                       definitionUtils,
                                       sessionManager,
@@ -285,10 +284,8 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
     }
 
     @Test
-    public void synchroniseViewWhenExpressionEditorChangedWithEditor() {
-        final BaseExpressionGrid editor = mock(BaseExpressionGrid.class);
-
-        grid.synchroniseViewWhenExpressionEditorChanged(editor);
+    public void testResizeWhenExpressionEditorChanged() {
+        grid.resizeWhenExpressionEditorChanged();
 
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
@@ -299,12 +296,12 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         redrawCommand.execute();
 
         verify(gridLayer).draw();
-        verify(gridLayer).select(eq(editor));
+        verify(gridLayer).select(eq(grid));
     }
 
     @Test
-    public void synchroniseView() {
-        grid.synchroniseView();
+    public void testResize() {
+        grid.resize();
 
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();

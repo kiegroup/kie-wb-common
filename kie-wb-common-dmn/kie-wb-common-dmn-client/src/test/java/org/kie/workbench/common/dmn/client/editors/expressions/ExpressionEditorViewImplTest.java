@@ -38,6 +38,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorDefinitions;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -66,6 +67,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class ExpressionEditorViewImplTest {
@@ -101,6 +103,9 @@ public class ExpressionEditorViewImplTest {
 
     @Mock
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
+    private ExpressionGridCache expressionGridCache;
 
     @Mock
     private UndefinedExpressionEditorDefinition undefinedExpressionEditorDefinition;
@@ -160,7 +165,8 @@ public class ExpressionEditorViewImplTest {
                                                      listSelector,
                                                      sessionManager,
                                                      sessionCommandManager,
-                                                     expressionEditorDefinitionsSupplier));
+                                                     expressionEditorDefinitionsSupplier,
+                                                     expressionGridCache));
 
         final ExpressionEditorDefinitions expressionEditorDefinitions = new ExpressionEditorDefinitions();
         expressionEditorDefinitions.add(undefinedExpressionEditorDefinition);
@@ -174,6 +180,8 @@ public class ExpressionEditorViewImplTest {
                                                                                                              any(Optional.class),
                                                                                                              any(Optional.class),
                                                                                                              anyInt());
+
+        when(expressionGridCache.getExpressionGrid(anyString())).thenReturn(Optional.empty());
 
         doAnswer((i) -> i.getArguments()[1]).when(translationService).format(anyString(), anyObject());
     }

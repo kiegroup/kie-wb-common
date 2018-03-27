@@ -34,6 +34,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Exp
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionGrid;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
+import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.DMNGridRow;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -48,9 +49,11 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExpressionContainerUIModelMapperTest {
@@ -73,6 +76,9 @@ public class ExpressionContainerUIModelMapperTest {
 
     @Mock
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
+
+    @Mock
+    private ExpressionGridCache expressionGridCache;
 
     @Mock
     private ListSelectorView.Presenter listSelector;
@@ -135,6 +141,8 @@ public class ExpressionContainerUIModelMapperTest {
                                                                                                              any(Optional.class),
                                                                                                              anyInt());
 
+        when(expressionGridCache.getExpressionGrid(anyString())).thenReturn(Optional.empty());
+
         mapper = new ExpressionContainerUIModelMapper(parent,
                                                       () -> uiModel,
                                                       () -> Optional.ofNullable(expression),
@@ -142,6 +150,7 @@ public class ExpressionContainerUIModelMapperTest {
                                                       () -> hasExpression,
                                                       () -> Optional.of(hasName),
                                                       expressionEditorDefinitionsSupplier,
+                                                      expressionGridCache,
                                                       listSelector);
     }
 
@@ -174,7 +183,6 @@ public class ExpressionContainerUIModelMapperTest {
 
         assertUiModel();
         assertEditorType(literalExpressionEditor.getClass());
-        verify(uiExpressionColumn).setWidth(MINIMUM_COLUMN_WIDTH);
 
         verify(literalExpressionEditorDefinition).getEditor(eq(parent),
                                                             nodeUUIDCaptor.capture(),

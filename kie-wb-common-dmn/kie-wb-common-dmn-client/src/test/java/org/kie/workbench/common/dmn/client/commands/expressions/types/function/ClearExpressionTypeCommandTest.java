@@ -48,6 +48,8 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class ClearExpressionTypeCommandTest {
 
+    private static final String NODE_UUID = "uuid";
+
     private static final int ROW_INDEX = 0;
 
     private static final int COLUMN_INDEX = 1;
