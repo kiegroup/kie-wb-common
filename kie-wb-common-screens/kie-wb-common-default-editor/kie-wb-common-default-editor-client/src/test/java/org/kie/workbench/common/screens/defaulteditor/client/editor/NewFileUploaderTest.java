@@ -150,6 +150,7 @@ public class NewFileUploaderTest {
     public void testCreateSuccess() {
         final ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
         final ArgumentCaptor<Path> pathArgumentCaptor = ArgumentCaptor.forClass(Path.class);
+        final ArgumentCaptor<NewResourceSuccessEvent> newResourceSuccessEventArgumentCaptor = ArgumentCaptor.forClass(NewResourceSuccessEvent.class);
 
         uploader.create(pkg,
                         "file",
@@ -174,7 +175,7 @@ public class NewFileUploaderTest {
         verify(presenter,
                times(1)).complete();
         verify(newResourceSuccessEventMock,
-               times(1)).fire(any(NewResourceSuccessEvent.class));
+               times(1)).fire(newResourceSuccessEventArgumentCaptor.capture());
         verify(placeManager,
                times(1)).goTo(pathArgumentCaptor.capture());
 
@@ -182,6 +183,9 @@ public class NewFileUploaderTest {
         final Path routedPath = pathArgumentCaptor.getValue();
         assertEquals("default://p0/src/main/resources/file.txt",
                      routedPath.toURI());
+        final NewResourceSuccessEvent newResourceSuccessEvent = newResourceSuccessEventArgumentCaptor.getValue();
+        assertEquals("default://p0/src/main/resources/file.txt",
+                     newResourceSuccessEvent.getPath().toURI());
     }
 
     @Test
