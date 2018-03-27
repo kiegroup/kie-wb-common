@@ -27,6 +27,7 @@ import org.jboss.errai.databinding.client.BindableProxyProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
@@ -65,6 +66,8 @@ public class FormPropertiesWidgetTest {
     private FormPropertiesWidgetView view;
     @Mock
     private DefinitionUtils definitionUtils;
+    @Mock
+    private FormsCanvasSessionHandler formsCanvasSessionHandler;
     @Mock
     private CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
     @Mock
@@ -124,7 +127,7 @@ public class FormPropertiesWidgetTest {
         when(proxy.deepUnwrap()).thenReturn(unmockedDef);
         this.tested = new FormPropertiesWidget(view,
                                                definitionUtils,
-                                               null, // TODO
+                                               formsCanvasSessionHandler,
                                                propertiesOpenedEvent,
                                                formsContainer);
     }
@@ -135,6 +138,8 @@ public class FormPropertiesWidgetTest {
         final Command callback = mock(Command.class);
 
         tested.bind(session).show(callback);
+        verify(formsCanvasSessionHandler).bind(session);
+        verify(formsCanvasSessionHandler).show(callback);
 
         verify(formsContainer, never()).render(anyString(), any(), any(), any());
     }
@@ -154,10 +159,13 @@ public class FormPropertiesWidgetTest {
             add("item3");
         }};
         when(selectionControl.getSelectedItems()).thenReturn(selectedItems);
+
         final Command callback = mock(Command.class);
-        tested
-                .bind(session)
-                .show(callback);
+
+        tested.bind(session).show(callback);
+
+        verify(formsCanvasSessionHandler).bind(session);
+        verify(formsCanvasSessionHandler).show(callback);
     }
 
     /**
@@ -167,36 +175,12 @@ public class FormPropertiesWidgetTest {
     public void testShowCanvasRoot() {
         when(selectionControl.getSelectedItems()).thenReturn(null);
         when(metadata.getCanvasRootUUID()).thenReturn(ROOT_UUID);
+
         final Command callback = mock(Command.class);
-        tested
-                .bind(session)
-                .show(callback);
-    }
 
-    @Test
-    public void testRenderElementForm() throws Exception {
-        when(metadata.getPath()).thenReturn(path);
-        when(nodeContent.getDefinition()).thenReturn(unmockedDef);
+        tested.bind(session).show(callback);
 
-        // TODO tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
-
-        verify(formsContainer).render(anyString(), any(), any(), any());
-        verify(propertiesOpenedEvent).fire(any());
-    }
-
-    @Test
-    public void testClickOnSameElement() {
-        when(metadata.getPath()).thenReturn(path);
-        when(nodeContent.getDefinition()).thenReturn(unmockedDef);
-
-        // TODO tested.bind(session).showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
-
-        verify(formsContainer, times(1)).render(anyString(), any(), any(), any());
-        verify(propertiesOpenedEvent, times(1)).fire(any());
-
-        // TODO tested.showByUUID(ROOT_UUID, RenderMode.EDIT_MODE);
-
-        verify(formsContainer, times(2)).render(anyString(), any(), any(), any());
-        verify(propertiesOpenedEvent, times(2)).fire(any());
+        verify(formsCanvasSessionHandler).bind(session);
+        verify(formsCanvasSessionHandler).show(callback);
     }
 }

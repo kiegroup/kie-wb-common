@@ -46,8 +46,6 @@ public class AssigneeEditorWidget implements IsWidget,
 
     private AssigneeEditorWidgetView view;
 
-    private Event<NotificationEvent> notification;
-
     private ManagedInstance<AssigneeListItem> listItems;
 
     private TranslationService translationService;
@@ -62,11 +60,9 @@ public class AssigneeEditorWidget implements IsWidget,
 
     @Inject
     public AssigneeEditorWidget(AssigneeEditorWidgetView view,
-                                Event<NotificationEvent> notification,
                                 ManagedInstance<AssigneeListItem> listItems,
                                 TranslationService translationService) {
         this.view = view;
-        this.notification = notification;
         this.listItems = listItems;
         this.translationService = translationService;
 
@@ -140,6 +136,9 @@ public class AssigneeEditorWidget implements IsWidget,
         listItem.init(type, assignee, this::doSave, this::removeAssignee);
         assigneeRows.add(listItem);
         view.add(listItem);
+        if (max != -1 && assigneeRows.size() == max) {
+            view.disableAddButton();
+        }
     }
 
     public String serializeAssignees(List<Assignee> assigneeRows) {
@@ -150,10 +149,6 @@ public class AssigneeEditorWidget implements IsWidget,
     public void addAssignee() {
         if(max == -1 || assigneeRows.size() < max) {
             addAssignee(new Assignee());
-            if (max != -1 && assigneeRows.size() == max) {
-                view.disableAddButton();
-                notification.fire(new NotificationEvent(StunnerFormsClientFieldsConstants.INSTANCE.Max_assignees_added(), NotificationEvent.NotificationType.INFO));
-            }
         }
     }
 

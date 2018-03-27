@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.forms.client.widgets;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,6 +42,7 @@ import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.uberfire.mvp.Command;
 
@@ -56,9 +56,10 @@ public class FormsCanvasSessionHandler {
     private final DefinitionManager definitionManager;
     private final CanvasCommandFactory<AbstractCanvasHandler> commandFactory;
     private final FormsCanvasListener canvasListener;
-    private BiConsumer<Element<? extends Definition<?>>, Command> renderer;
     private ClientSession session;
     private FormFeaturesSessionProvider featuresSessionProvider;
+
+    private FormRenderer renderer;
 
     @Inject
     public FormsCanvasSessionHandler(final DefinitionManager definitionManager,
@@ -68,7 +69,7 @@ public class FormsCanvasSessionHandler {
         this.canvasListener = new FormsCanvasListener();
     }
 
-    public FormsCanvasSessionHandler setRenderer(final BiConsumer<Element<? extends Definition<?>>, Command> renderer) {
+    public FormsCanvasSessionHandler setRenderer(FormRenderer renderer) {
         this.renderer = renderer;
         return this;
     }
@@ -208,8 +209,9 @@ public class FormsCanvasSessionHandler {
 
     private void render(final String uuid,
                         final Command callback) {
-        renderer.accept(getElement(uuid),
-                        callback);
+        if(null != renderer) {
+            renderer.render(getDiagram().getGraph().getUUID(), getElement(uuid), callback);
+        }
     }
 
     /**
@@ -256,13 +258,17 @@ public class FormsCanvasSessionHandler {
         }
 
         @Override
-        public void deregister(final Element item) {
-            // TODO: Do something on the forms widget renderer instance?
+        public void deregister(final Element element) {
+            if(null != renderer) {
+                renderer.clear(getDiagram().getGraph().getUUID(), element);
+            }
         }
 
         @Override
         public void clear() {
-            // TODO: Do something on the forms widget renderer instance?
+            if(null != renderer) {
+                renderer.clearAll(getDiagram().getGraph().getUUID());
+            }
         }
 
         private Optional<AbstractCanvasHandler> getCanvasHandler() {
@@ -277,6 +283,33 @@ public class FormsCanvasSessionHandler {
             }
         }
         return null;
+    }
+
+    /**
+     * Provides form features to the {@link FormsCanvasSessionHandler}
+     */
+    public interface FormRenderer {
+
+        /**
+         * Renders the form properties panel for the given {@link Element}
+         * @param graphUuid the current {@link Graph} UUID
+         * @param element the {@link Element} to render properties form
+         * @param callback a {@link Command} to execute after a property value change
+         */
+        void render(String graphUuid, Element element, Command callback);
+
+        /**
+         * Clears the properties form for the given {@link Element}
+         * @param graphUuid the current {@link Graph} UUID
+         * @param element the {@link Element} to clear its properties form
+         */
+        void clear(String graphUuid, Element element);
+
+        /**
+         * Clears all properties forms for the current {@link Graph}
+         * @param graphUuid the current {@link Graph} UUID
+         */
+        void clearAll(String graphUuid);
     }
 
     /**

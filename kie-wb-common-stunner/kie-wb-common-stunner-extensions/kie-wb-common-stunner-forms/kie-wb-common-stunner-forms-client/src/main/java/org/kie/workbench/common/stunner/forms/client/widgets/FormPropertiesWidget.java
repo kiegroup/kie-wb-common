@@ -60,7 +60,7 @@ public class FormPropertiesWidget implements IsElement,
     @Inject
     public FormPropertiesWidget(final FormPropertiesWidgetView view,
                                 final DefinitionUtils definitionUtils,
-                                FormsCanvasSessionHandler formSessionHandler,
+                                final FormsCanvasSessionHandler formSessionHandler,
                                 final Event<FormPropertiesOpened> propertiesOpenedEvent,
                                 final FormsContainer formsContainer) {
         this.view = view;
@@ -73,7 +73,22 @@ public class FormPropertiesWidget implements IsElement,
     @PostConstruct
     public void init() {
         log(Level.INFO, "FormPropertiesWidget instance build.");
-        formSessionHandler.setRenderer(this::show);
+        formSessionHandler.setRenderer(new FormsCanvasSessionHandler.FormRenderer() {
+            @Override
+            public void render(String graphUuid, Element element, Command callback) {
+                show(graphUuid, element, callback);
+            }
+
+            @Override
+            public void clear(String graphUuid, Element element) {
+                formsContainer.clearFormDisplayer(graphUuid, element.getUUID());
+            }
+
+            @Override
+            public void clearAll(String graphUuid) {
+                formsContainer.clearDiagramDisplayers(graphUuid);
+            }
+        });
         view.init(this);
     }
 
@@ -129,12 +144,13 @@ public class FormPropertiesWidget implements IsElement,
         unbind();
     }
 
-    private void show(final Element<? extends Definition<?>> element,
+    private void show(final String graphUuid,
+                      final Element<? extends Definition<?>> element,
                       final Command callback) {
         final String uuid = element.getUUID();
         final Diagram<?, ?> diagram = formSessionHandler.getDiagram();
         final Object definition = element.getContent().getDefinition();
-        formsContainer.render(diagram.getGraph().getUUID(), element, diagram.getMetadata().getPath(), (fieldName, newValue) -> {
+        formsContainer.render(graphUuid, element, diagram.getMetadata().getPath(), (fieldName, newValue) -> {
             try {
                 formSessionHandler.executeUpdateProperty(element, fieldName, newValue);
             } catch (final Exception ex) {

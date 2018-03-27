@@ -53,9 +53,6 @@ public class AssigneeEditorWidgetTest {
     private AssigneeEditorWidgetView view;
 
     @Mock
-    private EventSourceMock<NotificationEvent> notification;
-
-    @Mock
     private ManagedInstance<AssigneeListItem> listItems;
 
     @Mock
@@ -69,7 +66,7 @@ public class AssigneeEditorWidgetTest {
 
         when(listItems.get()).then((Answer<AssigneeListItem>) invocationOnMock -> new AssigneeListItem(mock(LiveSearchDropDown.class), mock(AssigneeLiveSearchService.class)));
 
-        widget = new AssigneeEditorWidget(view, notification, listItems, translationService);
+        widget = new AssigneeEditorWidget(view, listItems, translationService);
     }
 
     @Test
@@ -131,7 +128,6 @@ public class AssigneeEditorWidgetTest {
 
         verify(view, times(5)).add(itemsArgumentCaptor.capture());
 
-        verify(notification).fire(any());
         verify(view).disableAddButton();
 
         List<AssigneeListItem> items = itemsArgumentCaptor.getAllValues();
