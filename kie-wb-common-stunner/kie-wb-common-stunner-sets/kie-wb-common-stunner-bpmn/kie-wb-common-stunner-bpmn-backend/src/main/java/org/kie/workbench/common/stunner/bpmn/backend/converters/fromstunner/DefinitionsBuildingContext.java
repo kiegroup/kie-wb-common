@@ -16,8 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -86,6 +87,7 @@ abstract class DefinitionsContextHelper<
         > {
 
     private final Map<String, ? extends NodeT> nodes;
+    private final Set<String> processed = new HashSet<>();
 
     private final Node firstNode;
 
@@ -107,8 +109,27 @@ abstract class DefinitionsContextHelper<
         this.nodes = (Map<String, ? extends NodeT>) nodes;
     }
 
+    public void markNodeProcessed(String id) {
+        processed.add(id);
+    }
+
+    private boolean unprocessed(Node n) {
+        return !processed.contains(n.getUUID());
+    }
+
     public Stream<? extends NodeT> nodes() {
         return nodes.values().stream();
+    }
+
+    public Stream<? extends NodeT> outbound(Node<?, ?> node) {
+        return childEdgesOf(node)
+                .map(Edge::getTargetNode)
+                .map(n -> (NodeT) n);
+    }
+
+    public Stream<EdgeT> childEdgesOf(Node<?, ?> node) {
+        return childEdges()
+                .filter(e -> e.getSourceNode().getUUID().equals(node.getUUID()));
     }
 
     public NodeT getNode(String id) {
@@ -120,40 +141,57 @@ abstract class DefinitionsContextHelper<
     }
 
     public Stream<EdgeT> edges() {
-        return nodes()
-                .flatMap(e -> Stream.concat(
-                        e.getInEdges().stream(),
-                        e.getOutEdges().stream()))
-                .distinct()
+        return allEdges()
                 .filter(e -> (isViewConnector(e)));
     }
 
-    public Stream<EdgeT> dockEdges() {
+    public Stream<EdgeT> allEdgesOf(Node<?, ?> node) {
+        return allEdges()
+                .filter(e -> e.getSourceNode().getUUID().equals(node.getUUID()));
+    }
+
+    public Stream<EdgeT> outgoingEdges(Node<?, ?> node) {
+        return allEdges()
+                .filter(e -> (isViewConnector(e)))
+                .filter(e -> e.getSourceNode().getUUID().equals(node.getUUID()));
+    }
+
+    private Stream<EdgeT> allEdges() {
         return nodes()
                 .flatMap(e -> Stream.concat(
                         e.getInEdges().stream(),
                         e.getOutEdges().stream()))
-                .distinct()
+                .distinct();
+    }
+
+    public Stream<EdgeT> dockEdges() {
+        return allEdges()
                 .filter(e -> (isDock(e)));
     }
 
     public Stream<EdgeT> childEdges() {
-        return nodes()
-                .flatMap(e -> Stream.concat(
-                        e.getInEdges().stream(),
-                        e.getOutEdges().stream()))
-                .distinct()
+        return allEdges()
                 .filter(e -> (isChild(e)));
     }
 
-    public DefinitionsBuildingContext withRootNode(Node<?, ?> node) {
-        Map<String, Node> nodes = new HashMap<>();
-
-        childEdges()
-                .filter(e -> e.getSourceNode().getUUID().equals(node.getUUID()))
+    public Stream<NodeT> containedNodes(Node<?, ?> node) {
+        return childEdgesOf(node)
                 .map(Edge::getTargetNode)
-                .forEach(n -> nodes.put(n.getUUID(), n)); // use forEach instead of collect to avoid issues with type inference
+                .map(n -> (NodeT) n); // use forEach instead of collect to avoid issues with type inference
+    }
 
+    public Stream<EdgeT> containedEdges(Node<?, ?> node) {
+        return containedNodes(node)
+                .flatMap(e -> Stream.concat(
+                        e.getInEdges().stream(),
+                        e.getOutEdges().stream()))
+                .filter(this::isViewConnector)
+                .distinct();
+    }
+
+    public DefinitionsBuildingContext withRootNode(Node<?, ?> node) {
+        Map<String, Node> nodes =
+                containedNodes(node).collect(Collectors.toMap(Node::getUUID, Function.identity()));
         return new DefinitionsBuildingContext(node, nodes);
     }
 

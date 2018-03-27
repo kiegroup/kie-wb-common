@@ -16,11 +16,14 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
+import java.util.List;
+
 import org.eclipse.bpmn2.SubProcess;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.NodeMatch;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AdHocSubProcessPropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
@@ -61,7 +64,9 @@ public class SubProcessConverter extends AbstractProcessConverter {
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
 
-        super.convertChildNodes(processRoot, subContext.nodes(), subContext.lanes());
+        super.convertChildNodes(processRoot, context, subContext.nodes());
+        super.convertLanes(processRoot, subContext.lanes());
+
         super.convertEdges(processRoot, subContext);
 
         return processRoot;
