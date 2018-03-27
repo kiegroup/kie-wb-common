@@ -158,6 +158,11 @@ public class HitPolicyEditorImplTest {
         assertHitPolicyAggregationConfiguration(HitPolicy.COLLECT, null);
     }
 
+    @Test
+    public void testBindNonNullControlHitPolicyNotRequiringAggregation() {
+        assertHitPolicyAggregationConfiguration(HitPolicy.ANY, null);
+    }
+
     private void assertHitPolicyAggregationConfiguration(final HitPolicy hitPolicy,
                                                          final BuiltinAggregator builtinAggregator) {
         reset(view);
@@ -171,7 +176,7 @@ public class HitPolicyEditorImplTest {
 
         verify(view).enableHitPolicies(eq(true));
         verify(view).initSelectedHitPolicy(eq(hitPolicy));
-        verify(view).enableBuiltinAggregators(eq(true));
+        verify(view).enableBuiltinAggregators(eq(HitPolicy.COLLECT.equals(hitPolicy)));
         verify(view).initSelectedBuiltinAggregator(eq(builtinAggregator));
         verify(view).enableDecisionTableOrientation(eq(false));
     }

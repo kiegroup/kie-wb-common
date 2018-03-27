@@ -69,12 +69,8 @@ public class HitPolicyEditorImpl implements HitPolicyEditorView.Presenter {
             } else {
                 view.enableHitPolicies(true);
                 view.initSelectedHitPolicy(b.getHitPolicy());
-                if (!HitPolicy.COLLECT.equals(b.getHitPolicy())) {
-                    view.enableBuiltinAggregators(false);
-                } else {
-                    view.enableBuiltinAggregators(true);
-                    view.initSelectedBuiltinAggregator(b.getBuiltinAggregator());
-                }
+                view.enableBuiltinAggregators(HitPolicy.COLLECT.equals(b.getHitPolicy()));
+                view.initSelectedBuiltinAggregator(b.getBuiltinAggregator());
             }
 
             if (b.getDecisionTableOrientation() == null) {
