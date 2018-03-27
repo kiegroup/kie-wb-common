@@ -42,19 +42,18 @@ public class AbstractProcessConverter {
 
     public void convertChildNodes(
             ElementContainer p,
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> nodes,
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes) {
+            DefinitionsBuildingContext context,
+            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> nodes) {
         nodes.map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
                 .forEach(p::addChildElement);
 
-        convertLanes(lanes, p);
     }
 
-    private void convertLanes(
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes,
-            ElementContainer p) {
+    public void convertLanes(
+            ElementContainer p,
+            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes) {
         List<LanePropertyWriter> collect = lanes
                 .map(converterFactory.laneConverter()::toElement)
                 .filter(Result::notIgnored)
@@ -65,7 +64,7 @@ public class AbstractProcessConverter {
     }
 
     public void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {
-        context.childEdges()
+        context.childEdgesOf(context.firstNode())
                 .forEach(e -> {
                     BasePropertyWriter pSrc = p.getChildElement(e.getSourceNode().getUUID());
                     // if it's null, then it's a root: skip it

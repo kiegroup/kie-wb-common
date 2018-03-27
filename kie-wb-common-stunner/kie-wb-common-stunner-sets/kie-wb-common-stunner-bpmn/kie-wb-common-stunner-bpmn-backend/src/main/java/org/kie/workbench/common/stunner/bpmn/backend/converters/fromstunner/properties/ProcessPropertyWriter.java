@@ -86,6 +86,17 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         }
     }
 
+    @Override
+    public List<BPMNEdge> getChildEdges() {
+        return null;
+    }
+
+    @Override
+    public List<BPMNShape> getChildShapes() {
+        return null;
+    }
+
+
     public BPMNDiagram getBpmnDiagram() {
         return bpmnDiagram;
     }
@@ -100,6 +111,13 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         }
         addChildShape(p.getShape());
         addChildEdge(p.getEdge());
+
+        if (p instanceof SubProcessPropertyWriter) {
+            SubProcessPropertyWriter sp = (SubProcessPropertyWriter)p;
+            sp.getChildShapes().forEach(this::addChildShape);
+            sp.getChildEdges().forEach(this::addChildEdge);
+        }
+
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.dataInputs.addAll(p.dataInputs);
         this.dataOutputs.addAll(p.dataOutputs);

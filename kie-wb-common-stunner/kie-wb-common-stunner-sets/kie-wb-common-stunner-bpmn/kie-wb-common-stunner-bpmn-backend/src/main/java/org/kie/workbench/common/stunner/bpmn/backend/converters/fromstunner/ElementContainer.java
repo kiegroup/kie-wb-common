@@ -16,9 +16,11 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.bpmn2.di.BPMNEdge;
+import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
@@ -30,6 +32,10 @@ public interface ElementContainer {
     void addChildElement(PropertyWriter p);
 
     void addChildEdge(BPMNEdge edge);
+    Collection<BPMNEdge> getChildEdges();
+
+    void addChildShape(BPMNShape shape);
+    Collection<BPMNShape> getChildShapes();
 
     void addLaneSet(List<LanePropertyWriter> lanes);
 }

@@ -22,6 +22,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Defi
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagramImpl;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessData;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -43,8 +44,13 @@ public class RootProcessConverter extends AbstractProcessConverter {
     public ProcessPropertyWriter convertProcess() {
         ProcessPropertyWriter processRoot = convertProcessNode(context.firstNode());
 
-        super.convertChildNodes(processRoot, context.nodes(), context.lanes());
-        super.convertEdges(processRoot, context);
+        super.convertChildNodes(
+                processRoot,
+                context,
+                context.outbound(context.firstNode()));
+
+        super.convertLanes(processRoot, context.lanes());
+        super.convertEdges(processRoot, context.withRootNode(context.firstNode()));
 
         return processRoot;
     }

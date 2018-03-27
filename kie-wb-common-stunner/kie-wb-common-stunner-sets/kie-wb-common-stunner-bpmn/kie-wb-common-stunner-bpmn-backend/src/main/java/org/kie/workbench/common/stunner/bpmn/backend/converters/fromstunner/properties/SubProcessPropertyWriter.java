@@ -28,13 +28,13 @@ import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNEdge;
+import org.eclipse.bpmn2.di.BPMNShape;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -46,6 +46,8 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
     private final SubProcess process;
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
     private Map<String, BasePropertyWriter> childElements = new HashMap<>();
+    private List<BPMNEdge> childEdges = new ArrayList<>();
+    private List<BPMNShape> childShapes = new ArrayList<>();
 
     public SubProcessPropertyWriter(SubProcess process, VariableScope variableScope) {
         super(process, variableScope);
@@ -60,6 +62,8 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         if (simulationParameters != null) {
             this.simulationParameters.add(simulationParameters);
         }
+        addChildShape(p.getShape());
+        addChildEdge(p.getEdge());
 
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.dataInputs.addAll(p.dataInputs);
@@ -73,7 +77,26 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
 
     @Override
     public void addChildEdge(BPMNEdge edge) {
+        if (edge != null) {
+            this.childEdges.add(edge);
+        }
+    }
 
+    @Override
+    public List<BPMNEdge> getChildEdges() {
+        return childEdges;
+    }
+
+    @Override
+    public void addChildShape(BPMNShape shape) {
+        if (shape != null) {
+            this.childShapes.add(shape);
+        }
+    }
+
+    @Override
+    public List<BPMNShape> getChildShapes() {
+        return childShapes;
     }
 
     public void setDocumentation(String documentation) {
