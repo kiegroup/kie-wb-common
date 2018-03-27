@@ -123,7 +123,7 @@ public class NewFileUploader
                                                                final NewResourcePresenter presenter) {
         return path -> {
             final Path newPath = PathFactory.newPathBasedOn(targetFileName,
-                                                            encode(path.toURI() + "/" + targetFileName),
+                                                            path.toURI() + "/" + targetFileName,
                                                             path);
 
             options.setFolderPath(path);
@@ -133,7 +133,7 @@ public class NewFileUploader
                                busyIndicatorView.hideBusyIndicator();
                                presenter.complete();
                                notifySuccess();
-                               newResourceSuccessEvent.fire(new NewResourceSuccessEvent(path));
+                               newResourceSuccessEvent.fire(new NewResourceSuccessEvent(newPath));
                                placeManager.goTo(newPath);
                            },
                            () -> busyIndicatorView.hideBusyIndicator());
