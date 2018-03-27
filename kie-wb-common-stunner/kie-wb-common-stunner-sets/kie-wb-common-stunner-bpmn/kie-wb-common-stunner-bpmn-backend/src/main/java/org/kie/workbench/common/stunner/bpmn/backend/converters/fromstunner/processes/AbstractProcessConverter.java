@@ -84,7 +84,7 @@ public class AbstractProcessConverter {
                     pTgt.setParentActivity(pSrc);
                 });
 
-        context.edges()
+        context.containedEdges(context.firstNode())
                 .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
                 .forEach(p::addChildElement);
     }

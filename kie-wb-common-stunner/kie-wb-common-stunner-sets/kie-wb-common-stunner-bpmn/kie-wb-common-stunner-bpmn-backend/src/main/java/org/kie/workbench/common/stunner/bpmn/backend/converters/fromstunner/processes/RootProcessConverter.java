@@ -50,7 +50,7 @@ public class RootProcessConverter extends AbstractProcessConverter {
                 context.outbound(context.firstNode()));
 
         super.convertLanes(processRoot, context.lanes());
-        super.convertEdges(processRoot, context.withRootNode(context.firstNode()));
+        super.convertEdges(processRoot, context);
 
         return processRoot;
     }

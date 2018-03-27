@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -151,7 +150,6 @@ abstract class DefinitionsContextHelper<
                 .filter(e -> e.getSourceNode().getUUID().equals(node.getUUID()));
     }
 
-
     public Stream<EdgeT> outgoingEdges(Node<?, ?> node) {
         return allEdges()
                 .filter(e -> (isViewConnector(e)))
@@ -176,12 +174,24 @@ abstract class DefinitionsContextHelper<
                 .filter(e -> (isChild(e)));
     }
 
-    public DefinitionsBuildingContext withRootNode(Node<?, ?> node) {
-        Map<String, Node> nodes = new HashMap<>();
-        childEdgesOf(node)
+    public Stream<NodeT> containedNodes(Node<?, ?> node) {
+        return childEdgesOf(node)
                 .map(Edge::getTargetNode)
-                .forEach(n -> nodes.put(n.getUUID(), n)); // use forEach instead of collect to avoid issues with type inference
+                .map(n -> (NodeT) n); // use forEach instead of collect to avoid issues with type inference
+    }
 
+    public Stream<EdgeT> containedEdges(Node<?, ?> node) {
+        return containedNodes(node)
+                .flatMap(e -> Stream.concat(
+                        e.getInEdges().stream(),
+                        e.getOutEdges().stream()))
+                .filter(this::isViewConnector)
+                .distinct();
+    }
+
+    public DefinitionsBuildingContext withRootNode(Node<?, ?> node) {
+        Map<String, Node> nodes =
+                containedNodes(node).collect(Collectors.toMap(Node::getUUID, Function.identity()));
         return new DefinitionsBuildingContext(node, nodes);
     }
 
