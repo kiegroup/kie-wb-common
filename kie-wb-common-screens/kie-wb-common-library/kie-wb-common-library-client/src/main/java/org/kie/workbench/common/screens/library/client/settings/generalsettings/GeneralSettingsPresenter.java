@@ -88,13 +88,13 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         String getInvalidVersionMessage();
     }
 
-    @Inject //FIXME: Inject in constructor
-    private GitUrlsPresenter gitUrlsPresenter;
+
 
     private final View view;
     private final Caller<ValidationService> validationService;
     private final GAVPreferences gavPreferences;
     private final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier;
+    private final GitUrlsPresenter gitUrlsPresenter;
 
     POM pom;
 
@@ -105,13 +105,15 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
                                     final Caller<ValidationService> validationService,
                                     final Event<SettingsSectionChange> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
-                                    final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier) {
+                                    final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier,
+                                    final GitUrlsPresenter gitUrlsPresenter) {
 
         super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
         this.validationService = validationService;
         this.gavPreferences = gavPreferences;
         this.projectScopedResolutionStrategySupplier = projectScopedResolutionStrategySupplier;
+        this.gitUrlsPresenter = gitUrlsPresenter;
     }
 
     // Save
