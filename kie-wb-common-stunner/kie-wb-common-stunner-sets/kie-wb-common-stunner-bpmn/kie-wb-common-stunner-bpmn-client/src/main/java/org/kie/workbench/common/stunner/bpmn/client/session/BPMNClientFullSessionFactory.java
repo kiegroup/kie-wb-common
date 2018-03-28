@@ -29,7 +29,7 @@ import org.kie.workbench.common.stunner.core.client.session.impl.ClientFullSessi
 @BPMN
 public class BPMNClientFullSessionFactory extends AbstractBPMNClientSessionFactory<ClientFullSession> {
 
-    private final WorkItemDefinitionClientRegistry workItemDefinitionRegistry;
+    private final WorkItemDefinitionClientRegistry workItemDefinitionClientService;
     private final ManagedInstance<ClientFullSessionImpl> fullSessionInstances;
 
     protected BPMNClientFullSessionFactory() {
@@ -37,15 +37,15 @@ public class BPMNClientFullSessionFactory extends AbstractBPMNClientSessionFacto
     }
 
     @Inject
-    public BPMNClientFullSessionFactory(final WorkItemDefinitionClientRegistry workItemDefinitionRegistry,
+    public BPMNClientFullSessionFactory(final WorkItemDefinitionClientRegistry workItemDefinitionClientService,
                                         final ManagedInstance<ClientFullSessionImpl> fullSessionInstances) {
-        this.workItemDefinitionRegistry = workItemDefinitionRegistry;
+        this.workItemDefinitionClientService = workItemDefinitionClientService;
         this.fullSessionInstances = fullSessionInstances;
     }
 
     @Override
-    protected WorkItemDefinitionClientRegistry getWorkItemDefinitionRegistry() {
-        return workItemDefinitionRegistry;
+    protected WorkItemDefinitionClientRegistry getWorkItemDefinitionService() {
+        return workItemDefinitionClientService;
     }
 
     @Override
