@@ -25,6 +25,7 @@ import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.commons.uuid.UUID;
 
 @Templated
 public class SingleRadioElementView implements IsElement {
@@ -44,9 +45,13 @@ public class SingleRadioElementView implements IsElement {
                       final String label,
                       final String value) {
 
+        final String radioInputId = UUID.uuid();
+
         this.group = group;
         this.label.textContent = label;
+        this.label.htmlFor = radioInputId;
 
+        radioInput.id = radioInputId;
         radioInput.name = name;
         radioInput.value = value;
         return this;
