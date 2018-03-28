@@ -24,6 +24,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel.GitUrl;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -31,6 +32,8 @@ import org.uberfire.workbench.events.NotificationEvent;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.GitUrlFailedToBeCopiedToClipboard;
+import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.GitUrlSuccessfullyCopiedToClipboard;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
@@ -38,16 +41,19 @@ public class GitUrlsPresenter {
 
     private final View view;
     private final Event<NotificationEvent> notificationEventEvent;
+    private final TranslationService translationService;
 
     private Map<String, GitUrl> gitUrlsByProtocol;
     private String selectedProtocol;
 
     @Inject
     public GitUrlsPresenter(final View view,
-                            final Event<NotificationEvent> notificationEventEvent) {
+                            final Event<NotificationEvent> notificationEventEvent,
+                            final TranslationService translationService) {
 
         this.view = view;
         this.notificationEventEvent = notificationEventEvent;
+        this.translationService = translationService;
     }
 
     @PostConstruct
@@ -74,23 +80,23 @@ public class GitUrlsPresenter {
         view.setUrl(gitUrlsByProtocol.get(selectedProtocol).getUrl());
     }
 
-    public View getView() {
-        return view;
-    }
-
     public void copyToClipboard() {
         if (copy()) {
             notificationEventEvent.fire(new NotificationEvent(
-                    "Git URL copied to clipboard!", SUCCESS));
+                    translationService.format(GitUrlSuccessfullyCopiedToClipboard), SUCCESS));
         } else {
             notificationEventEvent.fire(new NotificationEvent(
-                    "Git URL couldn't be copied to the clipboard because this browser does not support it", WARNING));
+                    translationService.format(GitUrlFailedToBeCopiedToClipboard), WARNING));
         }
     }
 
     private native boolean copy() /*-{
         return $doc.execCommand("Copy");
     }-*/;
+
+    public View getView() {
+        return view;
+    }
 
     public interface View extends UberElemental<GitUrlsPresenter>,
                                   IsElement {
