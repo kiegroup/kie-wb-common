@@ -43,8 +43,8 @@ public class GitUrlsPresenter {
     private final Event<NotificationEvent> notificationEventEvent;
     private final TranslationService translationService;
 
-    private Map<String, GitUrl> gitUrlsByProtocol;
-    private String selectedProtocol;
+    Map<String, GitUrl> gitUrlsByProtocol;
+    String selectedProtocol;
 
     @Inject
     public GitUrlsPresenter(final View view,
@@ -76,7 +76,7 @@ public class GitUrlsPresenter {
         update();
     }
 
-    private void update() {
+    void update() {
         view.setUrl(gitUrlsByProtocol.get(selectedProtocol).getUrl());
     }
 
@@ -90,7 +90,11 @@ public class GitUrlsPresenter {
         }
     }
 
-    private native boolean copy() /*-{
+    boolean copy() {
+        return copyNative();
+    }
+
+    private native boolean copyNative() /*-{
         return $doc.execCommand("Copy");
     }-*/;
 
