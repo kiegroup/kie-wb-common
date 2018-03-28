@@ -44,8 +44,6 @@ public class ProjectScreenModelLoader {
     private ProjectImportsService importsService;
     private ModuleRepositoriesService repositoriesService;
     private PackageNameWhiteListService whiteListService;
-
-    @Inject //FIXME: Make constructor injection
     private WorkspaceProjectService workspaceProjectService;
 
     public ProjectScreenModelLoader() {
@@ -58,7 +56,9 @@ public class ProjectScreenModelLoader {
                                     final KModuleService kModuleService,
                                     final ProjectImportsService importsService,
                                     final ModuleRepositoriesService repositoriesService,
-                                    final PackageNameWhiteListService whiteListService) {
+                                    final PackageNameWhiteListService whiteListService,
+                                    final WorkspaceProjectService workspaceProjectService) {
+
         this.moduleService = moduleService;
         this.pomService = pomService;
         this.metadataService = metadataService;
@@ -66,6 +66,7 @@ public class ProjectScreenModelLoader {
         this.importsService = importsService;
         this.repositoriesService = repositoriesService;
         this.whiteListService = whiteListService;
+        this.workspaceProjectService = workspaceProjectService;
     }
 
     public ProjectScreenModel load(final Path pathToPom) {
