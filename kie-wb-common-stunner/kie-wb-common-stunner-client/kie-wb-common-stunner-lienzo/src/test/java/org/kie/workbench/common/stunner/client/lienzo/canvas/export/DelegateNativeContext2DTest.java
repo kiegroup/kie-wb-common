@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.export;
 
+import com.ait.lienzo.client.core.Path2D;
 import com.ait.lienzo.client.core.types.LinearGradient;
 import com.ait.lienzo.client.core.types.PathPartEntryJSO;
 import com.ait.lienzo.client.core.types.PathPartList;
@@ -24,18 +25,26 @@ import com.ait.lienzo.client.core.types.RadialGradient;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.ait.tooling.nativetools.client.collection.NFastDoubleArrayJSO;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
+import elemental2.dom.HTMLCanvasElement;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.stunner.client.lienzo.util.NativeClassConverter;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.uberfire.ext.editor.commons.client.file.exports.svg.IContext2D;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class DelegateNativeContext2DTest {
@@ -45,15 +54,25 @@ public class DelegateNativeContext2DTest {
     @Mock
     private IContext2D context;
 
+    @Mock
+    private DelegateNativeContext2D.Converter nativeClassConverter;
+
     private LinearGradient.LinearGradientJSO linearGradientJSO;
 
     private PatternGradient.PatternGradientJSO patternGradientJSO;
 
     private RadialGradient.RadialGradientJSO radialGradientJSO;
 
+    private HTMLCanvasElement htmlElement;
+
+    private Element element;
+
     @Before
     public void setUp() throws Exception {
-        delegateNativeContext2D = new DelegateNativeContext2D(context);
+        htmlElement = new HTMLCanvasElement();
+        element = GWT.create(Element.class);
+        when(nativeClassConverter.convert(any(Element.class), eq(HTMLCanvasElement.class))).thenReturn(htmlElement);
+        delegateNativeContext2D = new DelegateNativeContext2D(context, nativeClassConverter);
     }
 
     @Test
@@ -182,6 +201,25 @@ public class DelegateNativeContext2DTest {
     }
 
     @Test
+    public void clip1() {
+        assertTrue(delegateNativeContext2D.clip(buildPathPartList()));
+
+        verify(context, times(1)).lineTo(1, 1);
+        verify(context, times(1)).moveTo(2, 2);
+        verify(context, times(1)).bezierCurveTo(1, 2, 3, 4, 5, 6);
+        verify(context, times(1)).quadraticCurveTo(1, 2, 3, 4);
+        verify(context, times(1)).ellipse(1, 2, 3, 4, 7, 5, 5 + 6, false);
+        verify(context, never()).closePath();
+        verify(context, never()).arcTo(1, 2, 3, 4, 5);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void clip2() {
+        final Path2D.NativePath2D path = null;
+        delegateNativeContext2D.clip(path);
+    }
+
+    @Test
     public void fill() {
         delegateNativeContext2D.fill();
         verify(context, times(1)).fill();
@@ -195,8 +233,8 @@ public class DelegateNativeContext2DTest {
 
     @Test
     public void fillRect() {
-        delegateNativeContext2D.rect(1, 1, 1, 1);
-        verify(context, times(1)).rect(1, 1, 1, 1);
+        delegateNativeContext2D.fillRect(1, 1, 1, 1);
+        verify(context, times(1)).fillRect(1, 1, 1, 1);
     }
 
     @Test
@@ -349,6 +387,9 @@ public class DelegateNativeContext2DTest {
         verify(context).setShadowOffsetX(Mockito.anyInt());
         verify(context).setShadowOffsetY(Mockito.anyInt());
         verify(context).setShadowBlur(Mockito.anyInt());
+
+        delegateNativeContext2D.setShadow(null);
+
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -453,20 +494,25 @@ public class DelegateNativeContext2DTest {
     }
 
     @Test
-    public void clip1() {
-        assertTrue(delegateNativeContext2D.clip(buildPathPartList()));
-
-        verify(context, times(1)).lineTo(1, 1);
-        verify(context, times(1)).moveTo(2, 2);
-        verify(context, times(1)).bezierCurveTo(1, 2, 3, 4, 5, 6);
-        verify(context, times(1)).quadraticCurveTo(1, 2, 3, 4);
-        verify(context, times(1)).ellipse(1, 2, 3, 4, 7, 5, 5 + 6, false);
-        verify(context, never()).closePath();
-        verify(context, never()).arcTo(1, 2, 3, 4, 5);
+    public void getDelegate() {
+        assertEquals(context, delegateNativeContext2D.getDelegate());
     }
 
     @Test
-    public void getDelegate() {
-        assertEquals(context, delegateNativeContext2D.getDelegate());
+    public void drawImage() {
+        delegateNativeContext2D.drawImage(element, 1, 1);
+        verify(context, times(1)).drawImage(htmlElement, 1, 1);
+    }
+
+    @Test
+    public void drawImage2() {
+        delegateNativeContext2D.drawImage(element, 1, 1, 1, 1);
+        verify(context, times(1)).drawImage(htmlElement, 1, 1, 1 ,1);
+    }
+
+    @Test
+    public void drawImage3() {
+        delegateNativeContext2D.drawImage(element, 1, 1, 1, 1, 1, 1, 1, 1);
+        verify(context, times(1)).drawImage(htmlElement, 1, 1, 1 ,1, 1, 1, 1, 1);
     }
 }

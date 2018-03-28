@@ -32,16 +32,25 @@ import com.ait.lienzo.client.core.types.Transform;
 import com.ait.tooling.nativetools.client.collection.NFastDoubleArrayJSO;
 import com.google.gwt.dom.client.Element;
 import elemental2.dom.HTMLCanvasElement;
+import org.kie.workbench.common.stunner.client.lienzo.util.NativeClassConverter;
 import org.uberfire.ext.editor.commons.client.file.exports.svg.IContext2D;
-
-import static org.kie.workbench.common.stunner.client.lienzo.util.NativeClassConverter.convert;
 
 public class DelegateNativeContext2D implements INativeContext2D {
 
+    interface Converter {
+        <I,O> O convert(I input, Class<O> outputType);
+    }
+
     private final IContext2D context;
+    private final Converter nativeClassConverter;
 
     public DelegateNativeContext2D(IContext2D context) {
+        this(context, NativeClassConverter::convert);
+    }
+
+    DelegateNativeContext2D(IContext2D context, Converter converter) {
         this.context = context;
+        this.nativeClassConverter = converter;
     }
 
     public void initDeviceRatio() {
@@ -262,39 +271,39 @@ public class DelegateNativeContext2D implements INativeContext2D {
 
     public ImageData getImageData(double x, double y, double width, double height) {
         elemental2.dom.ImageData nativeImageData = context.getImageData(x, y, width, height);
-        return convert(nativeImageData, ImageData.class);
+        return nativeClassConverter.convert(nativeImageData, ImageData.class);
     }
 
     public ImageData createImageData(double width, double height) {
-        return convert(context.createImageData(width, height), ImageData.class);
+        return nativeClassConverter.convert(context.createImageData(width, height), ImageData.class);
     }
 
     public ImageData createImageData(ImageData data) {
-        return convert(context.createImageData(convert(data, elemental2.dom.ImageData.class)), ImageData.class);
+        return nativeClassConverter.convert(context.createImageData(nativeClassConverter.convert(data, elemental2.dom.ImageData.class)), ImageData.class);
     }
 
     public void putImageData(ImageData image, double x, double y) {
-        context.putImageData(convert(image, elemental2.dom.ImageData.class), x, y);
+        context.putImageData(nativeClassConverter.convert(image, elemental2.dom.ImageData.class), x, y);
     }
 
     public void putImageData(ImageData image, double x, double y, double dx, double dy, double dw, double dh) {
-        context.putImageData(convert(image, elemental2.dom.ImageData.class), x, y, dx, dy, dw, dh);
+        context.putImageData(nativeClassConverter.convert(image, elemental2.dom.ImageData.class), x, y, dx, dy, dw, dh);
     }
 
     public TextMetrics measureText(String text) {
-        return convert(context.measureText(text), TextMetrics.class);
+        return nativeClassConverter.convert(context.measureText(text), TextMetrics.class);
     }
 
     public void drawImage(Element image, double x, double y) {
-        context.drawImage(convert(image, HTMLCanvasElement.class), x, y);
+        context.drawImage(nativeClassConverter.convert(image, HTMLCanvasElement.class), x, y);
     }
 
     public void drawImage(Element image, double x, double y, double w, double h) {
-        context.drawImage(convert(image, HTMLCanvasElement.class), x, y, w, h);
+        context.drawImage(nativeClassConverter.convert(image, HTMLCanvasElement.class), x, y, w, h);
     }
 
     public void drawImage(Element image, double sx, double sy, double sw, double sh, double x, double y, double w, double h) {
-        context.drawImage(convert(image, HTMLCanvasElement.class), sx, sy, sw, sh, x, y, w, h);
+        context.drawImage(nativeClassConverter.convert(image, HTMLCanvasElement.class), sx, sy, sw, sh, x, y, w, h);
     }
 
     public void resetClip() {
@@ -423,7 +432,7 @@ public class DelegateNativeContext2D implements INativeContext2D {
         throwException();
     }
 
-    private Path2D.NativePath2D throwException() throws UnsupportedOperationException {
+    private Path2D.NativePath2D throwException() {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

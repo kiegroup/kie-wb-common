@@ -364,6 +364,7 @@ public class AbstractProjectDiagramEditorTest {
         verify(exportToPngSessionCommand, times(1)).unbind();
         verify(exportToJpgSessionCommand, times(1)).unbind();
         verify(exportToPdfSessionCommand, times(1)).unbind();
+        verify(exportToSvgSessionCommand, times(1)).unbind();
         verify(copySelectionSessionCommand, times(1)).unbind();
         verify(pasteSelectionSessionCommand, times(1)).unbind();
         verify(cutSelectionSessionCommand, times(1)).unbind();

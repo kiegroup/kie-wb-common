@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.client.lienzo.util;
 
 public class NativeClassConverter {
 
+    @SuppressWarnings("unchecked")
     public static <I, O> O convert(I input, Class<O> outputClass) {
         return (O) input;
     }
