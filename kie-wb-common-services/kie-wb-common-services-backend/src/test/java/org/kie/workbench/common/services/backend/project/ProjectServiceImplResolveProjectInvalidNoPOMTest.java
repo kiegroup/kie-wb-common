@@ -60,7 +60,7 @@ public class ProjectServiceImplResolveProjectInvalidNoPOMTest extends ProjectTes
         final Project result = projectService.resolveProject( testPath );
 
         //The current `logic` to resolve to parent, end up resolving the project itself
-        assertEquals( result.getProjectName(), "kie-wb-common-services-backend" );
+        assertEquals( result.getProjectName(), "Kie Workbench - Common - Services Backend" );
         assertEquals( result.getPom().getGav().getArtifactId(), "kie-wb-common-services-backend" );
         assertEquals( result.getPom().getGav().getGroupId(), "org.kie.workbench.services" );
     }
@@ -82,7 +82,7 @@ public class ProjectServiceImplResolveProjectInvalidNoPOMTest extends ProjectTes
         final Project result = projectService.resolveProject( rootPath );
 
         //The current `logic` to resolve to parent, end up resolving the project itself
-        assertEquals( result.getProjectName(), "kie-wb-common-services-backend" );
+        assertEquals( result.getProjectName(), "Kie Workbench - Common - Services Backend" );
         assertEquals( result.getPom().getGav().getArtifactId(), "kie-wb-common-services-backend" );
         assertEquals( result.getPom().getGav().getGroupId(), "org.kie.workbench.services" );
     }
