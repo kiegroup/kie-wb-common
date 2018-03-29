@@ -18,8 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
@@ -64,7 +62,7 @@ public class AbstractProcessConverter {
         subprocesses.forEach(p::addChildElement);
 
         context.nodes()
-                .filter(e->!processed.contains(e.getUUID()))
+                .filter(e -> !processed.contains(e.getUUID()))
                 .map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
@@ -92,8 +90,9 @@ public class AbstractProcessConverter {
                     // if it's null, then it's a root: skip it
                     if (pSrc != null) {
                         BasePropertyWriter pTgt = p.getChildElement(e.getTargetNode().getUUID());
-                        if (pTgt!=null)
+                        if (pTgt != null) {
                             pTgt.setParent(pSrc);
+                        }
                     }
                 });
 
@@ -110,6 +109,8 @@ public class AbstractProcessConverter {
         context.edges()
                 // fixme p.childelements is empty when p is sub !!!
                 .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
+                .filter(Result::isSuccess)
+                .map(Result::value)
                 .forEach(p::addChildElement);
     }
 }
