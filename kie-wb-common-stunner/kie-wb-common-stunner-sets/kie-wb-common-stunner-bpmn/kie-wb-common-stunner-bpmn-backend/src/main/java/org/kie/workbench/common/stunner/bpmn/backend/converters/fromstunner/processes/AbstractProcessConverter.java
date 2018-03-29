@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
@@ -56,18 +57,17 @@ public class AbstractProcessConverter {
                         .map(Result::value)
                         .collect(toList());
 
-        Predicate<PropertyWriter> processed =
-                pw -> subprocesses.stream()
-                        .flatMap(sub -> sub.getChildElements().stream())
-                        .anyMatch(el -> el.getId().equals(pw.getId()));
-
+        Set<String> processed = subprocesses.stream()
+                .flatMap(sub -> sub.getChildElements().stream().map(PropertyWriter::getId))
+                .collect(toSet());
 
         subprocesses.forEach(p::addChildElement);
 
-        context.nodes().map(converterFactory.viewDefinitionConverter()::toFlowElement)
+        context.nodes()
+                .filter(e->!processed.contains(e.getUUID()))
+                .map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
-                .filter(processed)
                 .forEach(p::addChildElement);
 
         convertLanes(context.lanes(), p);
@@ -92,7 +92,8 @@ public class AbstractProcessConverter {
                     // if it's null, then it's a root: skip it
                     if (pSrc != null) {
                         BasePropertyWriter pTgt = p.getChildElement(e.getTargetNode().getUUID());
-                        pTgt.setParent(pSrc);
+                        if (pTgt!=null)
+                            pTgt.setParent(pSrc);
                     }
                 });
 
