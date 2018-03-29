@@ -42,14 +42,18 @@ public class AbstractProcessConverter {
 
     public void convertChildNodes(
             ElementContainer p,
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> nodes,
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes) {
-        nodes.map(converterFactory.viewDefinitionConverter()::toFlowElement)
+            DefinitionsBuildingContext context) {
+        context.nodes().map(converterFactory.subProcessConverter()::convertSubProcess)
+                .filter(Result::notIgnored)
+                .map(Result::value)
+                .forEach(p::addChildElement);
+        context.nodes().map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
                 .forEach(p::addChildElement);
 
-        convertLanes(lanes, p);
+
+        convertLanes(context.lanes(), p);
     }
 
     private void convertLanes(
