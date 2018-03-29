@@ -104,6 +104,21 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         addChildEdge(p.getEdge());
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.rootElements.addAll(p.rootElements);
+        this.itemDefinitions.addAll(p.itemDefinitions);
+
+        addChildShape(p.getShape());
+        addChildEdge(p.getEdge());
+
+        if (p instanceof SubProcessPropertyWriter) {
+            Collection<PropertyWriter> childElements =
+                    ((SubProcessPropertyWriter) p).getChildElements();
+
+            childElements.forEach(el -> {
+                addChildShape(el.getShape());
+                addChildEdge(el.getEdge());
+            });
+        }
+
     }
 
     @Override
