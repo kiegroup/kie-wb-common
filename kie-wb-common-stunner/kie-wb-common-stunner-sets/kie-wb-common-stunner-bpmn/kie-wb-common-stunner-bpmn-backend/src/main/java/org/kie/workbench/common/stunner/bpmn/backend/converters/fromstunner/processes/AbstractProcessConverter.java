@@ -17,7 +17,8 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
@@ -28,9 +29,14 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public class AbstractProcessConverter {
 
@@ -43,15 +49,26 @@ public class AbstractProcessConverter {
     public void convertChildNodes(
             ElementContainer p,
             DefinitionsBuildingContext context) {
-        context.nodes().map(converterFactory.subProcessConverter()::convertSubProcess)
-                .filter(Result::notIgnored)
-                .map(Result::value)
-                .forEach(p::addChildElement);
+
+        List<SubProcessPropertyWriter> subprocesses =
+                context.nodes().map(converterFactory.subProcessConverter()::convertSubProcess)
+                        .filter(Result::notIgnored)
+                        .map(Result::value)
+                        .collect(toList());
+
+        Predicate<PropertyWriter> processed =
+                pw -> subprocesses.stream()
+                        .flatMap(sub -> sub.getChildElements().stream())
+                        .anyMatch(el -> el.getId().equals(pw.getId()));
+
+
+        subprocesses.forEach(p::addChildElement);
+
         context.nodes().map(converterFactory.viewDefinitionConverter()::toFlowElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
+                .filter(processed)
                 .forEach(p::addChildElement);
-
 
         convertLanes(context.lanes(), p);
     }
@@ -63,7 +80,7 @@ public class AbstractProcessConverter {
                 .map(converterFactory.laneConverter()::toElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         p.addLaneSet(collect);
     }
@@ -90,6 +107,7 @@ public class AbstractProcessConverter {
                 });
 
         context.edges()
+                // fixme p.childelements is empty when p is sub !!!
                 .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
                 .forEach(p::addChildElement);
     }

@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -45,7 +46,8 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
 
     private final SubProcess process;
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
-    private Map<String, BasePropertyWriter> childElements = new HashMap<>();
+    private Map<String, PropertyWriter> childElements = new HashMap<>();
+    private Map<String, LanePropertyWriter> lanes = new HashMap<>();
 
     public SubProcessPropertyWriter(SubProcess process, VariableScope variableScope) {
         super(process, variableScope);
@@ -63,6 +65,11 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
 
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.rootElements.addAll(p.rootElements);
+    }
+
+    @Override
+    public Collection<PropertyWriter> getChildElements() {
+        return childElements.values();
     }
 
     public BasePropertyWriter getChildElement(String id) {
@@ -111,7 +118,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
         lanes.forEach(l -> {
-            this.childElements.put(l.getElement().getId(), l);
+            this.lanes.put(l.getElement().getId(), l);
         });
     }
 

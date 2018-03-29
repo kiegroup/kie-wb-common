@@ -56,7 +56,8 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     private static final String defaultRelationshipType = "BPSimData";
     private final Process process;
     private final BPMNDiagram bpmnDiagram;
-    private Map<String, BasePropertyWriter> childElements = new HashMap<>();
+    private Map<String, PropertyWriter> childElements = new HashMap<>();
+    private Map<String, LanePropertyWriter> lanes = new HashMap<>();
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
 
     public ProcessPropertyWriter(Process process, VariableScope variableScope) {
@@ -103,6 +104,11 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         addChildEdge(p.getEdge());
         this.itemDefinitions.addAll(p.itemDefinitions);
         this.rootElements.addAll(p.rootElements);
+    }
+
+    @Override
+    public Collection<PropertyWriter> getChildElements() {
+        return this.childElements.values();
     }
 
     public BasePropertyWriter getChildElement(String id) {
@@ -161,7 +167,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
         lanes.forEach(l -> {
-            this.childElements.put(l.getElement().getId(), l);
+            this.lanes.put(l.getElement().getId(), l);
             addChildShape(l.getShape());
         });
     }

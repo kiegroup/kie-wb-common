@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.bpmn2.di.BPMNEdge;
@@ -28,6 +29,8 @@ public interface ElementContainer {
     BasePropertyWriter getChildElement(String uuid);
 
     void addChildElement(PropertyWriter p);
+
+    Collection<PropertyWriter> getChildElements();
 
     void addChildEdge(BPMNEdge edge);
 
