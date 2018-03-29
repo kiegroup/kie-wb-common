@@ -31,11 +31,12 @@ public class ExclusiveGatewayTest extends GatewayNode<ExclusiveGateway> {
     private static final String EMPTY_TOP_LEVEL_GATEWAY_ID = "162CA3E2-47D1-40D9-B4AF-D6FB26F02A38";
     private static final String FILLED_SUBPROCESS_LEVEL_GATEWAY_ID = "66BF84BC-D7DB-485B-8AF7-4B6B3D219531";
     private static final String EMPTY_SUBPROCESS_LEVEL_GATEWAY_ID = "3AA557EF-C3F8-4D73-98BB-7F96D3B97DDF";
+    private static final String DEFAULT_ROUTE_TOP_LEVEL_ID = "07474121-F19B-4620-BB97-C7688E63938B";
+    private static final String DEFAULT_ROUTE_SUBPROCESS_LEVEL_ID = "A79B4FF1-3C2E-405C-83E0-32037B0D9D6D";
 
     private static final String DOCUMENTATION = "Some documentation as well ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
     private static final String NAME = "Some name ~`!@#$%^&*()_+=-{}|\\][:\";'?><,./";
     private static final String EMPTY = "";
-    private static final String EXCLUSIVE = "Exclusive";
 
     public ExclusiveGatewayTest(Marshaller marshallerType) {
         super(marshallerType);
@@ -49,7 +50,7 @@ public class ExclusiveGatewayTest extends GatewayNode<ExclusiveGateway> {
 
         ExclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, FILLED_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
         assertGeneralSet(filledTopLevelGateway.getGeneral(), NAME, DOCUMENTATION);
-        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), EXCLUSIVE);
+        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), DEFAULT_ROUTE_TOP_LEVEL_ID);
     }
 
     @Test
@@ -60,7 +61,7 @@ public class ExclusiveGatewayTest extends GatewayNode<ExclusiveGateway> {
 
         ExclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, EMPTY_TOP_LEVEL_GATEWAY_ID, getGatewayNodeType());
         assertGeneralSet(filledTopLevelGateway.getGeneral(), EMPTY, EMPTY);
-        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), EMPTY);
+        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), null);
     }
 
     @Test
@@ -71,7 +72,7 @@ public class ExclusiveGatewayTest extends GatewayNode<ExclusiveGateway> {
 
         ExclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, FILLED_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
         assertGeneralSet(filledTopLevelGateway.getGeneral(), NAME, DOCUMENTATION);
-        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), EXCLUSIVE);
+        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), DEFAULT_ROUTE_SUBPROCESS_LEVEL_ID);
     }
 
     @Test
@@ -82,7 +83,7 @@ public class ExclusiveGatewayTest extends GatewayNode<ExclusiveGateway> {
 
         ExclusiveGateway filledTopLevelGateway = getGatewayNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_GATEWAY_ID, getGatewayNodeType());
         assertGeneralSet(filledTopLevelGateway.getGeneral(), EMPTY, EMPTY);
-        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), EMPTY);
+        assertGatewayExecutionSet(filledTopLevelGateway.getExecutionSet(), null);
     }
 
     @Override
