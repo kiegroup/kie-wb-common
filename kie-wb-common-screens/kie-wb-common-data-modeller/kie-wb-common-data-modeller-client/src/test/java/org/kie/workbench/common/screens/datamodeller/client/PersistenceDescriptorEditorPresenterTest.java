@@ -282,7 +282,7 @@ public class PersistenceDescriptorEditorPresenterTest {
         loadContent();
         List<ValidationMessage> messages = new ArrayList<>(  );
         when( descriptorService.validate( path, presenter.getContent().getDescriptorModel() ) ).thenReturn( messages );
-        presenter.onValidate().execute();
+        presenter.getValidateCommand().execute();
         verify( validationPopup, never() ).showTranslatedMessages( anyList() );
         verify( notificationEvent, times( 1 ) ).fire( new NotificationEvent(
                 CommonConstants.INSTANCE.ItemValidatedSuccessfully( ),
@@ -297,7 +297,7 @@ public class PersistenceDescriptorEditorPresenterTest {
         messages.add( mock( ValidationMessage.class ) );
 
         when( descriptorService.validate( path, presenter.getContent().getDescriptorModel() ) ).thenReturn( messages );
-        presenter.onValidate().execute();
+        presenter.getValidateCommand().execute();
         verify( validationPopup, times( 1 ) ).showTranslatedMessages( messages );
     }
 
