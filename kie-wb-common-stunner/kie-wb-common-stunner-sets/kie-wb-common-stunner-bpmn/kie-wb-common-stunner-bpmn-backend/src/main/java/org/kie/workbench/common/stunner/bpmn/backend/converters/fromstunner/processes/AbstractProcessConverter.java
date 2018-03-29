@@ -17,7 +17,9 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
@@ -35,6 +37,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 public class AbstractProcessConverter {
@@ -74,13 +77,13 @@ public class AbstractProcessConverter {
     private void convertLanes(
             Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes,
             ElementContainer p) {
-        List<LanePropertyWriter> collect = lanes
+        Map<String, LanePropertyWriter> collect = lanes
                 .map(converterFactory.laneConverter()::toElement)
                 .filter(Result::notIgnored)
                 .map(Result::value)
-                .collect(toList());
+                .collect(toMap(LanePropertyWriter::getId, Function.identity()));
 
-        p.addLaneSet(collect);
+        p.addLaneSet(collect.values());
     }
 
     public void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {

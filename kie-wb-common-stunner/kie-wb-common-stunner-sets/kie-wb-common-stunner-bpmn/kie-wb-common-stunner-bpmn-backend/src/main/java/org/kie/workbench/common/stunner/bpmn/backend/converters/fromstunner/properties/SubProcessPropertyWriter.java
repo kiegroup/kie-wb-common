@@ -109,7 +109,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         });
     }
 
-    public void addLaneSet(List<LanePropertyWriter> lanes) {
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
         if (lanes.isEmpty()) {
             return;
         }

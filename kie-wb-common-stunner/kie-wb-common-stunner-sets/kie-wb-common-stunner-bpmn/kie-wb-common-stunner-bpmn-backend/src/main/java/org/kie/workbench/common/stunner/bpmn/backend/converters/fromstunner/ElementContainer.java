@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
@@ -34,5 +33,5 @@ public interface ElementContainer {
 
     void addChildEdge(BPMNEdge edge);
 
-    void addLaneSet(List<LanePropertyWriter> lanes);
+    void addLaneSet(Collection<LanePropertyWriter> lanes);
 }

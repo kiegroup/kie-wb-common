@@ -127,7 +127,11 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public BasePropertyWriter getChildElement(String id) {
-        return this.childElements.get(id);
+        PropertyWriter propertyWriter = this.childElements.get(id);
+        if (propertyWriter == null) {
+            return this.lanes.get(id);
+        }
+        return propertyWriter;
     }
 
     public void setName(String value) {
@@ -173,7 +177,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         });
     }
 
-    public void addLaneSet(List<LanePropertyWriter> lanes) {
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
         if (lanes.isEmpty()) {
             return;
         }
