@@ -35,6 +35,7 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
 public class SequenceFlowConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(SequenceFlowConverter.class);
 
     private final PropertyWriterFactory propertyWriterFactory;

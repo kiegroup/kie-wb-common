@@ -22,7 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.AdHocSubProcessPropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
@@ -62,7 +61,9 @@ public class SubProcessConverter extends AbstractProcessConverter {
                         .ignore(BPMNViewDefinition.class)
                         .apply(node);
 
-        if (processRootResult.isIgnored()) return processRootResult;
+        if (processRootResult.isIgnored()) {
+            return processRootResult;
+        }
 
         DefinitionsBuildingContext subContext = context.withRootNode(node);
         SubProcessPropertyWriter processRoot = processRootResult.value();

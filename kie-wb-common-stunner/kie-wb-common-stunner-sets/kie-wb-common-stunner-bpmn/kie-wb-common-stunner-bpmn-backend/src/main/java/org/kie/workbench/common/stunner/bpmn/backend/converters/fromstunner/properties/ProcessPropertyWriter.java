@@ -117,7 +117,6 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
                 addChildEdge(el.getEdge());
             });
         }
-
     }
 
     @Override
