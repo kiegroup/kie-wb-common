@@ -30,7 +30,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.PropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -59,7 +58,7 @@ public class AbstractProcessConverter {
                         .collect(toList());
 
         Set<String> processed = subprocesses.stream()
-                .flatMap(sub -> sub.getChildElements().stream().map(PropertyWriter::getId))
+                .flatMap(sub -> sub.getChildElements().stream().map(BasePropertyWriter::getId))
                 .collect(toSet());
 
         subprocesses.forEach(p::addChildElement);
@@ -93,6 +92,7 @@ public class AbstractProcessConverter {
                     // if it's null, then it's a root: skip it
                     if (pSrc != null) {
                         BasePropertyWriter pTgt = p.getChildElement(e.getTargetNode().getUUID());
+                        // if it's null, then this edge is not related to this process. ignore.
                         if (pTgt != null) {
                             pTgt.setParent(pSrc);
                         }
@@ -110,7 +110,6 @@ public class AbstractProcessConverter {
                 });
 
         context.edges()
-                // fixme p.childelements is empty when p is sub !!!
                 .map(e -> converterFactory.sequenceFlowConverter().toFlowElement(e, p))
                 .filter(Result::isSuccess)
                 .map(Result::value)

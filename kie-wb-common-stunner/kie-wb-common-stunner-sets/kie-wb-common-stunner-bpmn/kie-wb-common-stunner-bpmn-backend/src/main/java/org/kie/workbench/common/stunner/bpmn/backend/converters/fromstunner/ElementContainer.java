@@ -29,7 +29,7 @@ public interface ElementContainer {
 
     void addChildElement(PropertyWriter p);
 
-    Collection<PropertyWriter> getChildElements();
+    Collection<BasePropertyWriter> getChildElements();
 
     void addChildEdge(BPMNEdge edge);
 

@@ -56,8 +56,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     private static final String defaultRelationshipType = "BPSimData";
     private final Process process;
     private final BPMNDiagram bpmnDiagram;
-    private Map<String, PropertyWriter> childElements = new HashMap<>();
-    private Map<String, LanePropertyWriter> lanes = new HashMap<>();
+    private Map<String, BasePropertyWriter> childElements = new HashMap<>();
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
 
     public ProcessPropertyWriter(Process process, VariableScope variableScope) {
@@ -110,7 +109,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         addChildEdge(p.getEdge());
 
         if (p instanceof SubProcessPropertyWriter) {
-            Collection<PropertyWriter> childElements =
+            Collection<BasePropertyWriter> childElements =
                     ((SubProcessPropertyWriter) p).getChildElements();
 
             childElements.forEach(el -> {
@@ -122,15 +121,12 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     @Override
-    public Collection<PropertyWriter> getChildElements() {
+    public Collection<BasePropertyWriter> getChildElements() {
         return this.childElements.values();
     }
 
     public BasePropertyWriter getChildElement(String id) {
-        PropertyWriter propertyWriter = this.childElements.get(id);
-        if (propertyWriter == null) {
-            return this.lanes.get(id);
-        }
+        BasePropertyWriter propertyWriter = this.childElements.get(id);
         return propertyWriter;
     }
 
@@ -186,7 +182,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
         lanes.forEach(l -> {
-            this.lanes.put(l.getElement().getId(), l);
+            this.childElements.put(l.getElement().getId(), l);
             addChildShape(l.getShape());
         });
     }

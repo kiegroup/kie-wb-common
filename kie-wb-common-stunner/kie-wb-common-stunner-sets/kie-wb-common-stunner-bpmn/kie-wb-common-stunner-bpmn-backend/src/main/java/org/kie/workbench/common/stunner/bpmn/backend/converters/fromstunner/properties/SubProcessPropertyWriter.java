@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Elem
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -46,8 +44,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
 
     private final SubProcess process;
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
-    private Map<String, PropertyWriter> childElements = new HashMap<>();
-    private Map<String, LanePropertyWriter> lanes = new HashMap<>();
+    private Map<String, BasePropertyWriter> childElements = new HashMap<>();
 
     public SubProcessPropertyWriter(SubProcess process, VariableScope variableScope) {
         super(process, variableScope);
@@ -68,7 +65,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
     }
 
     @Override
-    public Collection<PropertyWriter> getChildElements() {
+    public Collection<BasePropertyWriter> getChildElements() {
         return childElements.values();
     }
 
@@ -118,7 +115,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         lanes.forEach(l -> laneList.add(l.getElement()));
         process.getLaneSets().add(laneSet);
         lanes.forEach(l -> {
-            this.lanes.put(l.getElement().getId(), l);
+            this.childElements.put(l.getElement().getId(), l);
         });
     }
 
