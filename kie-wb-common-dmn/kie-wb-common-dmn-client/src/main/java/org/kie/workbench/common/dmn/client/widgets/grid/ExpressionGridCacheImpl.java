@@ -43,7 +43,12 @@ public class ExpressionGridCacheImpl implements ExpressionGridCache {
     }
 
     @Override
-    public void remove(final String nodeUUID) {
+    public void removeExpressionGrid(final String nodeUUID) {
         cache.remove(nodeUUID);
+    }
+
+    //Package-protected for Unit Tests
+    Map<String, Optional<BaseExpressionGrid>> getContent() {
+        return cache;
     }
 }

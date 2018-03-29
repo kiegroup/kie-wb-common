@@ -58,7 +58,7 @@ public class ClearExpressionTypeCommand extends BaseClearExpressionCommand {
             @Override
             public CommandResult<CanvasViolation> execute(final AbstractCanvasHandler context) {
                 //Clear cache first as its content is used by the UIModelMapper to retrieve existing BaseExpressionGrid
-                expressionGridCache.remove(nodeUUID);
+                expressionGridCache.removeExpressionGrid(nodeUUID);
 
                 //Use UIModelMapper to get cell value for null Expressions
                 uiModelMapper.fromDMNModel(cellTuple.getRowIndex(),

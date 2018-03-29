@@ -40,6 +40,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.U
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
+import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCacheImpl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.ListSelectorView;
@@ -104,9 +105,6 @@ public class ExpressionContainerGridTest {
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
 
     @Mock
-    private ExpressionGridCache expressionGridCache;
-
-    @Mock
     private ClientSession session;
 
     @Mock
@@ -156,11 +154,14 @@ public class ExpressionContainerGridTest {
 
     private LiteralExpression literalExpression = new LiteralExpression();
 
+    private ExpressionGridCache expressionGridCache;
+
     private ExpressionContainerGrid grid;
 
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        this.expressionGridCache = new ExpressionGridCacheImpl();
         this.grid = new ExpressionContainerGrid(gridLayer,
                                                 cellEditorControls,
                                                 translationService,
@@ -200,8 +201,6 @@ public class ExpressionContainerGridTest {
         doReturn(canvasHandler).when(session).getCanvasHandler();
         doReturn(graphExecutionContext).when(canvasHandler).getGraphExecutionContext();
         doReturn(mock(Bounds.class)).when(gridLayer).getVisibleBounds();
-
-        when(expressionGridCache.getExpressionGrid(anyString())).thenReturn(Optional.empty());
 
         doAnswer((i) -> i.getArguments()[0].toString()).when(translationService).format(anyString());
     }

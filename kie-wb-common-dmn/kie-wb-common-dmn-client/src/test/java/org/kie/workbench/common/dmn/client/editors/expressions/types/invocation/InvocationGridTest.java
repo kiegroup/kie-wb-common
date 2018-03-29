@@ -319,6 +319,13 @@ public class InvocationGridTest {
     }
 
     @Test
+    public void testCacheable() {
+        setupGrid(0);
+
+        assertTrue(grid.isCacheable());
+    }
+
+    @Test
     public void testNameColumnMetaData() {
         setupGrid(0);
 

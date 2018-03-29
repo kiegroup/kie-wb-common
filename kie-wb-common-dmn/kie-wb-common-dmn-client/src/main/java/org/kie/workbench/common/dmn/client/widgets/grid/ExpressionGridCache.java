@@ -25,7 +25,7 @@ public interface ExpressionGridCache {
     void putExpressionGrid(final String nodeUUID,
                            final Optional<BaseExpressionGrid> gridWidget);
 
-    void remove(final String nodeUUID);
+    void removeExpressionGrid(final String nodeUUID);
 
     interface IsCacheable {
 

@@ -322,6 +322,13 @@ public class ContextGridTest {
     }
 
     @Test
+    public void testCacheable() {
+        setupGrid(0);
+
+        assertTrue(grid.isCacheable());
+    }
+
+    @Test
     public void testRowDragPermittedNotPendingRowMove() {
         setupGrid(0);
 

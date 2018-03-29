@@ -315,6 +315,13 @@ public class FunctionGridTest {
     }
 
     @Test
+    public void testCacheable() {
+        setupGrid(0);
+
+        assertTrue(grid.isCacheable());
+    }
+
+    @Test
     public void testColumnMetaData() {
         setupGrid(0);
 

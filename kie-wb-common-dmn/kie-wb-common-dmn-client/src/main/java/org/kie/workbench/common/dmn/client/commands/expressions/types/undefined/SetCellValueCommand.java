@@ -111,7 +111,7 @@ public class SetCellValueCommand extends AbstractCanvasGraphCommand implements V
 
             @Override
             public CommandResult<CanvasViolation> undo(final AbstractCanvasHandler context) {
-                nodeUUID.ifPresent(expressionGridCache::remove);
+                nodeUUID.ifPresent(expressionGridCache::removeExpressionGrid);
 
                 if (oldCellValue.isPresent()) {
                     cellTuple.getGridWidget().getModel().setCellValue(cellTuple.getRowIndex(),

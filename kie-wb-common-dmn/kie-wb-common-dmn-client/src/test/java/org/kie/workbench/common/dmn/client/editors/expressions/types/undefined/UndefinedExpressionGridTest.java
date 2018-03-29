@@ -41,6 +41,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Exp
 import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionCell;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCache;
+import org.kie.workbench.common.dmn.client.widgets.grid.ExpressionGridCacheImpl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.list.HasListSelectorControl.ListSelectorDividerItem;
@@ -68,10 +69,10 @@ import org.uberfire.ext.wires.core.grids.client.widget.layer.impl.GridLayerRedra
 import org.uberfire.mvp.Command;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -123,9 +124,6 @@ public class UndefinedExpressionGridTest {
     private Supplier<ExpressionEditorDefinitions> expressionEditorDefinitionsSupplier;
 
     @Mock
-    private ExpressionGridCache expressionGridCache;
-
-    @Mock
     private GridCellTuple parent;
 
     @Mock
@@ -161,6 +159,8 @@ public class UndefinedExpressionGridTest {
 
     private Optional<HasName> hasName = Optional.empty();
 
+    private ExpressionGridCache expressionGridCache;
+
     private UndefinedExpressionEditorDefinition definition;
 
     private UndefinedExpressionGrid grid;
@@ -168,6 +168,7 @@ public class UndefinedExpressionGridTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
+        expressionGridCache = new ExpressionGridCacheImpl();
         definition = new UndefinedExpressionEditorDefinition(gridPanel,
                                                              gridLayer,
                                                              definitionUtils,
@@ -267,6 +268,13 @@ public class UndefinedExpressionGridTest {
         setupGrid(0);
 
         assertTrue(grid.isHeaderHidden());
+    }
+
+    @Test
+    public void testCacheable() {
+        setupGrid(0);
+
+        assertFalse(grid.isCacheable());
     }
 
     @Test
@@ -413,7 +421,6 @@ public class UndefinedExpressionGridTest {
         final GridCell parentCell = mock(GridCell.class);
         final ExpressionCellValue parentCellValue = mock(ExpressionCellValue.class);
         final BaseExpressionGrid parentGridEditor = mock(BaseExpressionGrid.class);
-        when(expressionGridCache.getExpressionGrid(anyString())).thenReturn(Optional.empty());
         when(parentGridUiModel.getCell(anyInt(), anyInt())).thenReturn(parentCell);
         when(parentCell.getValue()).thenReturn(parentCellValue);
         when(parentCellValue.getValue()).thenReturn(Optional.of(parentGridEditor));
