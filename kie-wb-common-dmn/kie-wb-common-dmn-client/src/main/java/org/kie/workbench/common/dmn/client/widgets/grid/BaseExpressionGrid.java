@@ -426,8 +426,8 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
         gridLayer.batch(command);
     }
 
-    protected void resizeBasedOnCellExpressionEditor(final int uiRowIndex,
-                                                     final int uiColumnIndex) {
+    public void resizeBasedOnCellExpressionEditor(final int uiRowIndex,
+                                                  final int uiColumnIndex) {
         final GridCellValue<?> value = model.getCell(uiRowIndex, uiColumnIndex).getValue();
         if (value instanceof ExpressionCellValue) {
             final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();

@@ -182,7 +182,25 @@ public class FunctionGridTest {
     @Mock
     private FunctionSupplementaryGrid supplementaryLiteralExpressionEditor;
 
+    @Mock
+    private Command onSuccess;
+
     private Context supplementaryLiteralExpression = new Context();
+
+    @Captor
+    private ArgumentCaptor<AddParameterCommand> addParameterCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<RemoveParameterCommand> removeParameterCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<UpdateParameterNameCommand> updateParameterNameCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<SetKindCommand> setKindCommandCaptor;
+
+    @Captor
+    private ArgumentCaptor<ClearExpressionTypeCommand> clearExpressionTypeCommandCaptor;
 
     @Captor
     private ArgumentCaptor<Optional<Expression>> expressionCaptor;
@@ -467,10 +485,16 @@ public class FunctionGridTest {
     public void testAddParameter() {
         setupGrid(0);
 
-        grid.addParameter(() -> {/*Nothing*/});
+        grid.addParameter(onSuccess);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              any(AddParameterCommand.class));
+                                              addParameterCommandCaptor.capture());
+
+        final AddParameterCommand addParameterCommand = addParameterCommandCaptor.getValue();
+        addParameterCommand.execute(canvasHandler);
+
+        verify(gridLayer).batch();
+        verify(onSuccess).execute();
     }
 
     @Test
@@ -478,10 +502,16 @@ public class FunctionGridTest {
         setupGrid(0);
 
         grid.removeParameter(parameter,
-                             () -> {/*Nothing*/});
+                             onSuccess);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              any(RemoveParameterCommand.class));
+                                              removeParameterCommandCaptor.capture());
+
+        final RemoveParameterCommand removeParameterCommand = removeParameterCommandCaptor.getValue();
+        removeParameterCommand.execute(canvasHandler);
+
+        verify(gridLayer).batch();
+        verify(onSuccess).execute();
     }
 
     @Test
@@ -492,7 +522,12 @@ public class FunctionGridTest {
                                  "name");
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              any(UpdateParameterNameCommand.class));
+                                              updateParameterNameCommandCaptor.capture());
+
+        final UpdateParameterNameCommand updateParameterNameCommand = updateParameterNameCommandCaptor.getValue();
+        updateParameterNameCommand.execute(canvasHandler);
+
+        verify(gridLayer).batch();
     }
 
     @Test
@@ -543,7 +578,12 @@ public class FunctionGridTest {
         assertTrue(expectedEditorType.isAssignableFrom(gridWidgetCaptor.getValue().get().getClass()));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              any(SetKindCommand.class));
+                                              setKindCommandCaptor.capture());
+
+        final SetKindCommand setKindCommand = setKindCommandCaptor.getValue();
+        setKindCommand.execute(canvasHandler);
+
+        verify(grid).resizeWhenExpressionEditorChanged();
     }
 
     @Test
@@ -553,7 +593,13 @@ public class FunctionGridTest {
         grid.clearExpressionType();
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              any(ClearExpressionTypeCommand.class));
+                                              clearExpressionTypeCommandCaptor.capture());
+
+        final ClearExpressionTypeCommand clearExpressionTypeCommand = clearExpressionTypeCommandCaptor.getValue();
+        clearExpressionTypeCommand.execute(canvasHandler);
+
+        verify(grid).resizeBasedOnCellExpressionEditor(eq(0),
+                                                       eq(0));
     }
 
     @Test
