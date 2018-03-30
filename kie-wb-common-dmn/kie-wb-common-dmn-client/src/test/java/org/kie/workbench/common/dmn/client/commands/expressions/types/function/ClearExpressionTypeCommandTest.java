@@ -30,6 +30,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
+import org.kie.workbench.common.stunner.core.rule.RuleManager;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
@@ -47,8 +48,6 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClearExpressionTypeCommandTest {
-
-    private static final String NODE_UUID = "uuid";
 
     private static final int ROW_INDEX = 0;
 
@@ -68,6 +67,9 @@ public class ClearExpressionTypeCommandTest {
 
     @Mock
     private GridCellValue gridCellValue;
+
+    @Mock
+    private RuleManager ruleManager;
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
@@ -90,6 +92,7 @@ public class ClearExpressionTypeCommandTest {
         when(gridWidget.getModel()).thenReturn(gridData);
         when(gridData.getCell(eq(ROW_INDEX), eq(COLUMN_INDEX))).thenReturn(gridCell);
         when(gridCell.getValue()).thenReturn(gridCellValue);
+        when(graphCommandExecutionContext.getRuleManager()).thenReturn(ruleManager);
 
         this.command = new ClearExpressionTypeCommand(new GridCellTuple(ROW_INDEX,
                                                                         COLUMN_INDEX,
