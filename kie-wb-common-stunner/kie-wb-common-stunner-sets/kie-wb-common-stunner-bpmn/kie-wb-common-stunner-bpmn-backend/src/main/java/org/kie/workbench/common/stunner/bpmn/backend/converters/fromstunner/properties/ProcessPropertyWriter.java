@@ -87,6 +87,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public BPMNDiagram getBpmnDiagram() {
+        bpmnDiagram.getPlane().setBpmnElement(process);
         return bpmnDiagram;
     }
 
@@ -101,13 +102,31 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         addChildShape(p.getShape());
         addChildEdge(p.getEdge());
         this.itemDefinitions.addAll(p.itemDefinitions);
-        this.dataInputs.addAll(p.dataInputs);
-        this.dataOutputs.addAll(p.dataOutputs);
         this.rootElements.addAll(p.rootElements);
+        this.itemDefinitions.addAll(p.itemDefinitions);
+
+        addChildShape(p.getShape());
+        addChildEdge(p.getEdge());
+
+        if (p instanceof SubProcessPropertyWriter) {
+            Collection<BasePropertyWriter> childElements =
+                    ((SubProcessPropertyWriter) p).getChildElements();
+
+            childElements.forEach(el -> {
+                addChildShape(el.getShape());
+                addChildEdge(el.getEdge());
+            });
+        }
+    }
+
+    @Override
+    public Collection<BasePropertyWriter> getChildElements() {
+        return this.childElements.values();
     }
 
     public BasePropertyWriter getChildElement(String id) {
-        return this.childElements.get(id);
+        BasePropertyWriter propertyWriter = this.childElements.get(id);
+        return propertyWriter;
     }
 
     public void setName(String value) {
@@ -153,7 +172,7 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
         });
     }
 
-    public void addLaneSet(List<LanePropertyWriter> lanes) {
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
         if (lanes.isEmpty()) {
             return;
         }

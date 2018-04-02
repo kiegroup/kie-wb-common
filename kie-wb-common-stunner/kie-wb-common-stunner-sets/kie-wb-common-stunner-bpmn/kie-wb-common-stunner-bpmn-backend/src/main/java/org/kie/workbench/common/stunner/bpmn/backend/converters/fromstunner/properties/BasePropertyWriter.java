@@ -38,14 +38,16 @@ public abstract class BasePropertyWriter {
     protected final BaseElement baseElement;
     protected final VariableScope variableScope;
     protected final List<ItemDefinition> itemDefinitions = new ArrayList<>();
-    protected final List<DataInput> dataInputs = new ArrayList<>();
-    protected final List<DataOutput> dataOutputs = new ArrayList<>();
     protected final List<RootElement> rootElements = new ArrayList<>();
     protected BPMNShape shape;
 
     public BasePropertyWriter(BaseElement baseElement, VariableScope variableScope) {
         this.baseElement = baseElement;
         this.variableScope = variableScope;
+    }
+
+    public String getId() {
+        return this.baseElement.getId();
     }
 
     public void setBounds(Bounds rect) {
@@ -146,14 +148,6 @@ public abstract class BasePropertyWriter {
 
     protected void addItemDefinition(ItemDefinition itemDefinition) {
         this.itemDefinitions.add(itemDefinition);
-    }
-
-    protected void addDataInput(DataInput dataInput) {
-        this.dataInputs.add(dataInput);
-    }
-
-    protected void addDataOutput(DataOutput dataOutput) {
-        this.dataOutputs.add(dataOutput);
     }
 
     protected void addRootElement(RootElement rootElement) {

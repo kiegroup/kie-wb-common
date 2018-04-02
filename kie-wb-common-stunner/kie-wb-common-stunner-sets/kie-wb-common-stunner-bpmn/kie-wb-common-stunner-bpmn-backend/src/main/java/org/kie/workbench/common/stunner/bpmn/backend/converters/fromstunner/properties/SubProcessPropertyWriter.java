@@ -34,7 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Elem
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.IsAsync;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.variables.ProcessVariables;
@@ -62,9 +61,12 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         }
 
         this.itemDefinitions.addAll(p.itemDefinitions);
-        this.dataInputs.addAll(p.dataInputs);
-        this.dataOutputs.addAll(p.dataOutputs);
         this.rootElements.addAll(p.rootElements);
+    }
+
+    @Override
+    public Collection<BasePropertyWriter> getChildElements() {
+        return childElements.values();
     }
 
     public BasePropertyWriter getChildElement(String id) {
@@ -104,7 +106,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
         });
     }
 
-    public void addLaneSet(List<LanePropertyWriter> lanes) {
+    public void addLaneSet(Collection<LanePropertyWriter> lanes) {
         if (lanes.isEmpty()) {
             return;
         }
