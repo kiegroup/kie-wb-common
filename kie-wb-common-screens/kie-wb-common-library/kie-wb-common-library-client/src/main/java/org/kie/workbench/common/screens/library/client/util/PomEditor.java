@@ -16,28 +16,36 @@
 
 package org.kie.workbench.common.screens.library.client.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import elemental2.dom.DomGlobal;
+import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.client.type.POMResourceType;
+import org.guvnor.common.services.project.service.DeploymentMode;
+import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.KieTextEditorPresenter;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.KieTextEditorView;
-import org.kie.workbench.common.services.shared.validation.ValidationService;
+import org.kie.workbench.common.screens.projecteditor.service.PomEditorService;
+import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
+import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
+import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.uberfire.backend.vfs.ObservablePath;
-import org.uberfire.backend.vfs.Path;
 import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartTitleDecoration;
 import org.uberfire.client.annotations.WorkbenchPartView;
-import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.widgets.common.client.ace.AceEditorMode;
 import org.uberfire.lifecycle.OnStartup;
-import org.uberfire.mvp.Command;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.workbench.model.menu.Menus;
+
+import static org.guvnor.common.services.project.service.DeploymentMode.FORCED;
+import static org.guvnor.common.services.project.service.DeploymentMode.VALIDATED;
 
 @WorkbenchEditor(
         identifier = "PomEditor",
@@ -46,52 +54,38 @@ import org.uberfire.workbench.model.menu.Menus;
 
 public class PomEditor extends KieTextEditorPresenter {
 
-    private final Promises promises;
-
-    private final Caller<ValidationService> validationService;
+    private Caller<PomEditorService> pomEditorService;
+    private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
 
     @Inject
     public PomEditor(final KieTextEditorView baseView,
-                     final Promises promises,
-                     final Caller<ValidationService> validationService) {
-
+                     final Caller<PomEditorService> pomEditorService,
+                     final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
         super(baseView);
-        this.promises = promises;
-        this.validationService = validationService;
+        this.pomEditorService = pomEditorService;
+        this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
     }
 
     @OnStartup
     public void onStartup(final ObservablePath path,
                           final PlaceRequest place) {
-        super.onStartup(path, place);
+        super.onStartup(path,
+                        place);
     }
 
-    @Override
-    protected void save(final String commitMessage) {
-        promises.promisify(validationService, s -> {
-            Path path = getPathSupplier().get();Ω
-            String content = getContentSupplier().get();
-            return s.validateForSave(path, content);
-        }).then(errors -> {
-
-            if (errors.isEmpty()) {
-                super.save(commitMessage);
-            } else {
-                DomGlobal.console.info("Error!");
-            }
-
-            return promises.resolve();
-        });
-    }
-
-    @WorkbenchPartTitle
-    public String getTitleText() {
-        return super.getTitleText();
+    @WorkbenchMenu
+    public Menus getMenus() {
+        return super.getMenus();
     }
 
     @WorkbenchPartTitleDecoration
     public IsWidget getTitle() {
         return super.getTitle();
+    }
+
+    @WorkbenchPartTitle
+    public String getTitleText() {
+        return super.getTitleText();
     }
 
     @WorkbenchPartView
@@ -100,17 +94,42 @@ public class PomEditor extends KieTextEditorPresenter {
     }
 
     @Override
-    protected Command onValidate() {
-        return super.onValidate();
-    }
-
-    @WorkbenchMenu
-    public Menus getMenus() {
-        return menus;
+    public AceEditorMode getAceEditorMode() {
+        return AceEditorMode.XML;
     }
 
     @Override
-    public AceEditorMode getAceEditorMode() {
-        return AceEditorMode.XML;
+    protected void save(final String commitMessage) {
+        doSave(commitMessage, VALIDATED);
+    }
+
+    private void doSave(final String commitMessage,
+                        final DeploymentMode mode) {
+
+        //Instantiate a new instance on each "save" operation to pass in commit message
+        view.showBusyIndicator(CommonConstants.INSTANCE.Saving());
+
+        pomEditorService.call(getSaveSuccessCallback(view.getContent().hashCode()),
+                              new CommandWithThrowableDrivenErrorCallback(busyIndicatorView,
+                                                                          saveErrorCallbackConfig(commitMessage)))
+                .save(versionRecordManager.getCurrentPath(),
+                      view.getContent(),
+                      metadata,
+                      commitMessage,
+                      mode);
+    }
+
+    private Map<Class<? extends Throwable>, CommandWithThrowable> saveErrorCallbackConfig(final String commitMessage) {
+        return new HashMap<Class<? extends Throwable>, CommandWithThrowable>() {{
+            put(GAVAlreadyExistsException.class, t -> {
+                view.hideBusyIndicator();
+                final GAVAlreadyExistsException e = (GAVAlreadyExistsException) t;
+                conflictingRepositoriesPopup.setContent(e.getGAV(), e.getRepositories(), () -> {
+                    conflictingRepositoriesPopup.hide();
+                    doSave(commitMessage, FORCED);
+                });
+                conflictingRepositoriesPopup.show();
+            });
+        }};
     }
 }
