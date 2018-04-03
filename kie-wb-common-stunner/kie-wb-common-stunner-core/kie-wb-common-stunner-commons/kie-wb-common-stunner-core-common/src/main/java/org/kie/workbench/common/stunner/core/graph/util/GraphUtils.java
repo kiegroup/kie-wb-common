@@ -24,7 +24,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -38,6 +40,7 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Dock;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
@@ -292,13 +295,26 @@ public class GraphUtils {
                 false;
     }
 
+    public static boolean hasConnections(Node<? extends Definition<?>, ? extends Edge> node) {
+        return Stream.concat(node.getInEdges().stream(), node.getOutEdges().stream())
+                .anyMatch(hasConnectionFilter());
+    }
+
+    public static boolean hasTargetConnections(Node<? extends Definition<?>, ? extends Edge> node) {
+        return node.getInEdges().stream().anyMatch(hasConnectionFilter());
+    }
+
+    private static Predicate<Edge> hasConnectionFilter() {
+        return edge -> edge.getContent() instanceof ViewConnector;
+    }
+
     public static List<Node> getDockedNodes(final Node<?, ? extends Edge> element) {
         Objects.requireNonNull(element.getOutEdges());
         return element.getOutEdges()
-                        .stream()
-                        .filter(edge -> (edge.getContent() instanceof Dock))
-                        .map(Edge::getTargetNode)
-                        .collect(Collectors.toList());
+                .stream()
+                .filter(edge -> (edge.getContent() instanceof Dock))
+                .map(Edge::getTargetNode)
+                .collect(Collectors.toList());
     }
 
     public static boolean isDockedNode(final Node<?, ? extends Edge> element) {

@@ -119,19 +119,19 @@ public class UpdateChildNodeCommandTest {
         assertEquals(graphHolder.endNode,
                      c2.getCandidate());
 
-        final UnDockNodeCommand c3 = (UnDockNodeCommand) commands.get(2);
-        assertNotNull(c3);
-        assertEquals(graphHolder.endNode,
-                     c3.getParent());
-        assertEquals(dockNode,
-                     c3.getCandidate());
-
-        final RemoveChildCommand c4 = (RemoveChildCommand) commands.get(3);
+        final RemoveChildCommand c4 = (RemoveChildCommand) commands.get(2);
         assertNotNull(c4);
         assertEquals(graphHolder.parentNode,
                      c4.getParent());
         assertEquals(dockNode,
                      c4.getCandidate());
+
+        final UnDockNodeCommand c3 = (UnDockNodeCommand) commands.get(3);
+        assertNotNull(c3);
+        assertEquals(graphHolder.endNode,
+                     c3.getParent());
+        assertEquals(dockNode,
+                     c3.getCandidate());
 
         final SetChildNodeCommand c5 = (SetChildNodeCommand) commands.get(4);
         assertNotNull(c5);

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.canvas.command;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -64,10 +65,8 @@ public class UpdateDockNodeCommand extends AbstractCanvasCompositeCommand {
 
         // Let's check if the current candidate has some parent, because
         // the docking operation implies adding the 'candidate' in the same parent node for 'target'.
-        final boolean mustUpdateParent = null != parentParent &&
-                childEdge
-                        .filter(e -> !parentParent.equals(e.getSourceNode()))
-                        .isPresent();
+        final boolean mustUpdateParent = Objects.nonNull(parentParent) &&
+                childEdge.filter(e -> !parentParent.equals(e.getSourceNode())).isPresent();
 
         // Dock the candidate into the parent node, and update candidate's parent, if necessary,
         // to match the parent for 'target'.
