@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
@@ -27,8 +28,11 @@ import org.guvnor.common.services.project.client.type.POMResourceType;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.KieTextEditorPresenter;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.KieTextEditorView;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.projecteditor.model.InvalidPomException;
 import org.kie.workbench.common.screens.projecteditor.service.PomEditorService;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback;
 import org.kie.workbench.common.widgets.client.callbacks.CommandWithThrowableDrivenErrorCallback.CommandWithThrowable;
@@ -42,10 +46,12 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.ext.widgets.common.client.ace.AceEditorMode;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.menu.Menus;
 
 import static org.guvnor.common.services.project.service.DeploymentMode.FORCED;
 import static org.guvnor.common.services.project.service.DeploymentMode.VALIDATED;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 
 @WorkbenchEditor(
         identifier = "PomEditor",
@@ -56,6 +62,12 @@ public class PomEditor extends KieTextEditorPresenter {
 
     private Caller<PomEditorService> pomEditorService;
     private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
+
+    @Inject
+    public Event<NotificationEvent> notificationEvent;
+
+    @Inject
+    public TranslationService translationService;
 
     @Inject
     public PomEditor(final KieTextEditorView baseView,
@@ -129,6 +141,13 @@ public class PomEditor extends KieTextEditorPresenter {
                     doSave(commitMessage, FORCED);
                 });
                 conflictingRepositoriesPopup.show();
+            });
+            put(InvalidPomException.class, t -> {
+                view.hideBusyIndicator();
+
+                final InvalidPomException e = (InvalidPomException) t;
+                final String message = translationService.format(LibraryConstants.InvalidPom, e.getLineNumber(), e.getColumnNumber());
+                notificationEvent.fire(new NotificationEvent(message, ERROR));
             });
         }};
     }
