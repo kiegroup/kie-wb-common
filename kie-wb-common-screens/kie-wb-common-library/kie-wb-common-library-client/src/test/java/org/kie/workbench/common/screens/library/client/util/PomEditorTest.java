@@ -19,8 +19,6 @@ package org.kie.workbench.common.screens.library.client.util;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.enterprise.event.Event;
-
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
 import org.guvnor.common.services.project.model.GAV;
@@ -28,10 +26,12 @@ import org.guvnor.common.services.project.model.MavenRepositoryMetadata;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.defaulteditor.client.editor.KieTextEditorView;
+import org.kie.workbench.common.screens.projecteditor.model.InvalidPomException;
 import org.kie.workbench.common.screens.projecteditor.service.PomEditorService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.widget.OverviewWidgetPresenter;
@@ -82,12 +82,11 @@ public class PomEditorTest {
     @Mock
     private OverviewWidgetPresenter overviewWidgetPresenter;
 
-    private Event<NotificationEvent> mockNotificationEvent = new EventSourceMock<NotificationEvent>() {
-        @Override
-        public void fire(final NotificationEvent event) {
-            //Do nothing. Default implementation throws an Exception.
-        }
-    };
+    @Mock
+    private EventSourceMock<NotificationEvent> notificationEvent;
+
+    @Mock
+    private TranslationService translationService;
 
     private PomEditor presenter;
 
@@ -111,13 +110,14 @@ public class PomEditorTest {
     public void setup() {
         presenter = new PomEditor(view,
                                   new CallerMock<>(service),
-                                  conflictingRepositoriesPopup) {
+                                  conflictingRepositoriesPopup,
+                                  notificationEvent,
+                                  translationService) {
             {
-                //Yuck, yuck, yuck... the class hierarchy is really a mess
                 busyIndicatorView = mockBusyIndicatorView;
                 versionRecordManager = mockVersionRecordManager;
                 overviewWidget = overviewWidgetPresenter;
-                notification = mockNotificationEvent;
+                notification = notificationEvent;
             }
         };
         when(view.getContent()).thenReturn(pomXml);
@@ -137,6 +137,32 @@ public class PomEditorTest {
                times(1)).showBusyIndicator(eq(CommonConstants.INSTANCE.Saving()));
         verify(view,
                times(1)).hideBusyIndicator();
+    }
+
+    @Test
+    public void testSaveInvalid() {
+        doThrow(new InvalidPomException(10, 10))
+                .when(service).save(any(ObservablePath.class),
+                                    eq(pomXml),
+                                    any(Metadata.class),
+                                    eq(comment),
+                                    eq(DeploymentMode.VALIDATED));
+
+        presenter.save(comment);
+
+        verify(service,
+               times(1)).save(any(ObservablePath.class),
+                              eq(pomXml),
+                              any(Metadata.class),
+                              eq(comment),
+                              eq(DeploymentMode.VALIDATED));
+
+        verify(view,
+               times(1)).showBusyIndicator(eq(CommonConstants.INSTANCE.Saving()));
+        verify(view,
+               times(1)).hideBusyIndicator();
+        verify(notificationEvent,
+               times(1)).fire(any());
     }
 
     @Test
