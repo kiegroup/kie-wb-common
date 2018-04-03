@@ -57,25 +57,24 @@ import static org.uberfire.workbench.events.NotificationEvent.NotificationType.E
         identifier = "PomEditor",
         supportedTypes = {POMResourceType.class},
         priority = 2)
-
 public class PomEditor extends KieTextEditorPresenter {
 
-    private Caller<PomEditorService> pomEditorService;
-    private ConflictingRepositoriesPopup conflictingRepositoriesPopup;
-
-    @Inject
-    public Event<NotificationEvent> notificationEvent;
-
-    @Inject
-    public TranslationService translationService;
+    private final Caller<PomEditorService> pomEditorService;
+    private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
+    public final Event<NotificationEvent> notificationEvent;
+    public final TranslationService translationService;
 
     @Inject
     public PomEditor(final KieTextEditorView baseView,
                      final Caller<PomEditorService> pomEditorService,
-                     final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
+                     final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
+                     final Event<NotificationEvent> notificationEvent,
+                     final TranslationService translationService) {
         super(baseView);
         this.pomEditorService = pomEditorService;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
+        this.notificationEvent = notificationEvent;
+        this.translationService = translationService;
     }
 
     @OnStartup
