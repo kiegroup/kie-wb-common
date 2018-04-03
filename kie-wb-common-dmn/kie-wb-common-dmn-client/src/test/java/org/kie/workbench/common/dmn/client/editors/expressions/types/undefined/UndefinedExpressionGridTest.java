@@ -73,6 +73,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -168,7 +169,7 @@ public class UndefinedExpressionGridTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setup() {
-        expressionGridCache = new ExpressionGridCacheImpl();
+        expressionGridCache = spy(new ExpressionGridCacheImpl());
         definition = new UndefinedExpressionEditorDefinition(gridPanel,
                                                              gridLayer,
                                                              definitionUtils,
@@ -196,10 +197,6 @@ public class UndefinedExpressionGridTest {
                                                                                                          any(Optional.class),
                                                                                                          any(Optional.class),
                                                                                                          anyInt());
-
-        doReturn(0).when(parent).getRowIndex();
-        doReturn(0).when(parent).getColumnIndex();
-        doReturn(parentGridWidget).when(parent).getGridWidget();
 
         doReturn(session).when(sessionManager).getCurrentSession();
         doReturn(handler).when(session).getCanvasHandler();
@@ -236,7 +233,26 @@ public class UndefinedExpressionGridTest {
 
         grid.selectFirstCell();
 
+        verify(parentGridUiModel).clearSelections();
         verify(parentGridUiModel).selectCell(eq(0), eq(1));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testResizeBasedOnCellExpressionEditor() {
+        setupGrid(0);
+
+        final GridCell parentCell = mock(GridCell.class);
+        final ExpressionCellValue parentValue = mock(ExpressionCellValue.class);
+        final BaseExpressionGrid parentGrid = mock(BaseExpressionGrid.class);
+
+        when(parentGridUiModel.getCell(0, 1)).thenReturn(parentCell);
+        when(parentCell.getValue()).thenReturn(parentValue);
+        when(parentValue.getValue()).thenReturn(Optional.of(parentGrid));
+
+        grid.resizeBasedOnCellExpressionEditor(0, 1);
+
+        verify(parentGrid).resizeWhenExpressionEditorChanged();
     }
 
     @Test
@@ -406,12 +422,16 @@ public class UndefinedExpressionGridTest {
     @SuppressWarnings("unchecked")
     public void testOnExpressionTypeChangedWhenNested() {
         assertOnExpressionTypeChanged(1);
+
+        verify(expressionGridCache, never()).getExpressionGrid(anyString());
     }
 
     @Test
     @SuppressWarnings("unchecked")
     public void testOnExpressionTypeChangedWhenNotNested() {
         assertOnExpressionTypeChanged(0);
+
+        verify(expressionGridCache).getExpressionGrid(eq(NODE_UUID));
     }
 
     @SuppressWarnings("unchecked")

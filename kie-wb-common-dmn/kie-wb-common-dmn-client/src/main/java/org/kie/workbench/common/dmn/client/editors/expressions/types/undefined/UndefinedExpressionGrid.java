@@ -127,11 +127,14 @@ public class UndefinedExpressionGrid extends BaseExpressionGrid<Expression, DMNG
     @Override
     public void resizeBasedOnCellExpressionEditor(final int uiRowIndex,
                                                   final int uiColumnIndex) {
-        final GridCellValue<?> value = parent.getGridWidget().getModel().getCell(uiRowIndex, uiColumnIndex).getValue();
-        if (value instanceof ExpressionCellValue) {
-            final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
-            grid.ifPresent(BaseExpressionGrid::resizeWhenExpressionEditorChanged);
-        }
+        final Optional<GridCell<?>> parentCell = Optional.ofNullable(parent.getGridWidget().getModel().getCell(uiRowIndex, uiColumnIndex));
+        parentCell.ifPresent(cell -> {
+            final GridCellValue<?> value = cell.getValue();
+            if (value instanceof ExpressionCellValue) {
+                final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
+                grid.ifPresent(BaseExpressionGrid::resizeWhenExpressionEditorChanged);
+            }
+        });
     }
 
     @Override

@@ -59,6 +59,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.commons.data.Pair;
+import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
@@ -428,11 +429,14 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     public void resizeBasedOnCellExpressionEditor(final int uiRowIndex,
                                                   final int uiColumnIndex) {
-        final GridCellValue<?> value = model.getCell(uiRowIndex, uiColumnIndex).getValue();
-        if (value instanceof ExpressionCellValue) {
-            final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
-            grid.ifPresent(BaseExpressionGrid::resizeWhenExpressionEditorChanged);
-        }
+        final Optional<GridCell<?>> cell = Optional.ofNullable(model.getCell(uiRowIndex, uiColumnIndex));
+        cell.ifPresent(c -> {
+            final GridCellValue<?> value = c.getValue();
+            if (value instanceof ExpressionCellValue) {
+                final Optional<BaseExpressionGrid> grid = ((ExpressionCellValue) value).getValue();
+                grid.ifPresent(BaseExpressionGrid::resizeWhenExpressionEditorChanged);
+            }
+        });
     }
 
     public void selectFirstCell() {
