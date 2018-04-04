@@ -24,6 +24,7 @@ import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.rules.AcyclicDirectedGraphRule;
 import org.kie.workbench.common.dmn.api.rules.SingleConnectorPerTypeGraphRule;
 import org.kie.workbench.common.dmn.api.validation.NoValidation;
+import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -36,7 +37,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 @Portable
 @Bindable
 @Definition(graphFactory = EdgeFactory.class, builder = AuthorityRequirement.AuthorityRequirementBuilder.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED)
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, defaultFieldSettings = {@FieldParam(name = "nestedFormContainer", value = "COLLAPSIBLE")})
 @CanConnect(startRole = "knowledge-source", endRole = "decision")
 @CanConnect(startRole = "knowledge-source", endRole = "business-knowledge-model")
 @CanConnect(startRole = "knowledge-source", endRole = "knowledge-source")

@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
+import java.util.Arrays;
+
 import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
 import org.jboss.errai.databinding.client.BindableProxyProvider;
@@ -23,8 +25,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapseFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
+import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.impl.NodeImpl;
 import org.kie.workbench.common.stunner.forms.context.PathAwareFormContext;
@@ -34,6 +39,7 @@ import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,6 +48,9 @@ import static org.mockito.Mockito.when;
 public class FormDisplayerTest {
 
     private static final String ELEMENT_UID = "UID";
+
+    private static final String FIELD1 = "field1";
+    private static final String FIELD2 = "field2";
 
     @Mock
     private NodeImpl node;
@@ -72,6 +81,21 @@ public class FormDisplayerTest {
     @Mock
     private DynamicFormModelGenerator dynamicFormModelGenerator;
 
+    @Mock
+    private Form form;
+
+    @Mock
+    private FormField field1;
+
+    @Mock
+    private CollapseFormGroup containerField1;
+
+    @Mock
+    private FormField field2;
+
+    @Mock
+    private CollapseFormGroup containerField2;
+
     private FormDisplayer displayer;
 
     @Before
@@ -92,6 +116,16 @@ public class FormDisplayerTest {
 
         BindableProxyFactory.addBindableProxy(SecondDefinition.class,
                                               proxyProvider);
+
+        when(field1.getFieldName()).thenReturn(FIELD1);
+        when(field1.getContainer()).thenReturn(containerField1);
+
+        when(field2.getFieldName()).thenReturn(FIELD2);
+        when(field2.getContainer()).thenReturn(containerField2);
+
+        when(form.getFields()).thenReturn(Arrays.asList(field1, field2));
+
+        when(formRenderer.getCurrentForm()).thenReturn(form);
 
         displayer = new FormDisplayer(view, formRenderer, dynamicFormModelGenerator);
 
@@ -159,6 +193,25 @@ public class FormDisplayerTest {
 
         // Rendering for second time, checks are the same but the view.show() that must be called twice
         testRender(2, 2, 2, 1, 2);
+    }
+
+    @Test
+    public void testRenderAndCollapsableStatus() {
+        testRender(1, 1, 1, 0, 1);
+
+        verify(containerField1).expand();
+        verify(containerField2, never()).expand();
+
+        when(formRenderer.isInitialized()).thenReturn(true);
+        when(formRenderer.isValid()).thenReturn(true);
+
+        when(containerField1.isExpanded()).thenReturn(false);
+        when(containerField2.isExpanded()).thenReturn(true);
+
+        testRender(2, 2, 2, 1, 2);
+
+        verify(containerField1, times(1)).expand();
+        verify(containerField2, times(1)).expand();
     }
 
     private void testRender(int renderingTimes, int initializedTimes, int newContextTimes, int boundTimes, int viewTimes) {

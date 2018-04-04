@@ -17,6 +17,9 @@
 package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
@@ -29,10 +32,12 @@ import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
 import org.kie.workbench.common.forms.adf.engine.shared.FormElementFilter;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapseFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.StaticModelFormRenderingContext;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
+import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.forms.client.formFilters.FormFiltersProviderFactory;
@@ -48,6 +53,8 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
     private final FormDisplayerView view;
     private final DynamicFormRenderer renderer;
     private final DynamicFormModelGenerator modelGenerator;
+
+    private Map<String, CollapseFormGroup> collapses = new HashMap<>();
 
     @Inject
     public FormDisplayer(FormDisplayerView view, DynamicFormRenderer renderer, DynamicFormModelGenerator modelGenerator) {
@@ -85,7 +92,39 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
 
         renderer.render(pathAwareCtx);
 
+        synchCollapses();
+
         renderer.addFieldChangeHandler(changeHandler);
+    }
+
+    private void synchCollapses() {
+        Map<String, CollapseFormGroup> oldCollapses = collapses;
+
+        collapses = new HashMap<>();
+
+        Predicate<FormField> canExpand;
+
+        if (oldCollapses.isEmpty()) {
+            canExpand = formField -> collapses.isEmpty();
+        } else {
+            canExpand = formField -> {
+                CollapseFormGroup oldCollapse = oldCollapses.get(formField.getFieldName());
+                return oldCollapse != null && oldCollapse.isExpanded();
+            };
+        }
+
+        renderer.getCurrentForm().getFields().stream()
+                .filter(formField -> formField.getContainer() instanceof CollapseFormGroup)
+                .forEach(formField -> {
+                    CollapseFormGroup collapse = (CollapseFormGroup) formField.getContainer();
+
+                    if (canExpand.test(formField)) {
+                        collapse.expand();
+                    }
+                    collapses.put(formField.getFieldName(), collapse);
+                });
+
+        oldCollapses.clear();
     }
 
     public void show() {

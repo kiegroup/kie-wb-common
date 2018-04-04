@@ -26,6 +26,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.rules.AcyclicDirectedGraphRule;
 import org.kie.workbench.common.dmn.api.rules.SingleConnectorPerTypeGraphRule;
 import org.kie.workbench.common.dmn.api.validation.NoValidation;
+import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
@@ -38,7 +39,7 @@ import org.kie.workbench.common.stunner.core.rule.annotation.RuleExtension;
 @Portable
 @Bindable
 @Definition(graphFactory = EdgeFactory.class, builder = Association.AssociationBuilder.class)
-@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id")
+@FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = "nestedFormContainer", value = "COLLAPSIBLE")})
 @CanConnect(startRole = "business-knowledge-model", endRole = "text-annotation")
 @CanConnect(startRole = "decision", endRole = "text-annotation")
 @CanConnect(startRole = "input-data", endRole = "text-annotation")

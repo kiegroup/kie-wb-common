@@ -356,24 +356,26 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
 
         boolean checkInheritance = false;
 
-        FormDefinition defintion = formElement.getAnnotation(FormDefinition.class);
+        FormDefinition definition = formElement.getAnnotation(FormDefinition.class);
 
-        checkInheritance = defintion.allowInheritance();
+        checkInheritance = definition.allowInheritance();
+
+        Map<String, String> defaultFieldSettings = new HashMap<>();
+
+        for(FieldParam param : definition.defaultFieldSettings()) {
+            defaultFieldSettings.put(param.name(), param.value());
+        }
 
         List<Map<String, String>> formElements = new ArrayList<>();
 
         if (checkInheritance) {
             TypeElement parent = getParent(formElement);
-            formElements.addAll(extractParentFormFields(parent,
-                                                        defintion.policy(),
-                                                        defintion.i18n()));
+            formElements.addAll(extractParentFormFields(parent, definition.policy(), definition.i18n(), defaultFieldSettings));
         }
 
-        formElements.addAll(extracFormFields(formElement,
-                                             defintion.policy(),
-                                             defintion.i18n()));
+        formElements.addAll(extracFormFields(formElement, definition.policy(), definition.i18n(), defaultFieldSettings));
 
-        FormGenerationUtils.sort(defintion.startElement(),
+        FormGenerationUtils.sort(definition.startElement(),
                                  formElements);
 
         messager.printMessage(Diagnostic.Kind.NOTE,
@@ -388,12 +390,12 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
         templateContext.put("builderClassName",
                             builderClassName);
         templateContext.put("startElement",
-                            defintion.startElement());
+                            definition.startElement());
 
         templateContext.put("i18n_bundle",
-                            StringUtils.isEmpty(defintion.i18n().bundle()) ? formElement.asType().toString() : defintion.i18n().bundle());
+                            StringUtils.isEmpty(definition.i18n().bundle()) ? formElement.asType().toString() : definition.i18n().bundle());
 
-        Column[] columns = defintion.layout().value();
+        Column[] columns = definition.layout().value();
 
         List<String> layoutColumns = new ArrayList<>();
         if (columns.length == 0) {
@@ -427,9 +429,7 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
         context.getForms().add(form);
     }
 
-    private List<Map<String, String>> extractParentFormFields(TypeElement element,
-                                                              FieldPolicy policy,
-                                                              I18nSettings i18nSettings) throws Exception {
+    private List<Map<String, String>> extractParentFormFields(TypeElement element, FieldPolicy policy, I18nSettings i18nSettings, Map<String, String> defaultParams) throws Exception {
 
         if (element.toString().equals(Object.class.getName())) {
             return new ArrayList<>();
@@ -437,19 +437,14 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
 
         TypeElement parentElement = getParent(element);
 
-        List<Map<String, String>> result = extractParentFormFields(parentElement,
-                                                                   policy,
-                                                                   i18nSettings);
-        result.addAll(extracFormFields(element,
-                                       policy,
-                                       i18nSettings));
+        List<Map<String, String>> result = extractParentFormFields(parentElement, policy, i18nSettings, defaultParams);
+
+        result.addAll(extracFormFields(element, policy, i18nSettings, defaultParams));
 
         return result;
     }
 
-    private List<Map<String, String>> extracFormFields(TypeElement type,
-                                                       FieldPolicy policy,
-                                                       I18nSettings i18nSettings) throws Exception {
+    private List<Map<String, String>> extracFormFields(TypeElement type, FieldPolicy policy, I18nSettings i18nSettings, Map<String, String> defaultParams) throws Exception {
 
         final Elements elementUtils = processingEnv.getElementUtils();
 
@@ -612,9 +607,8 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
                 elementContext.put("fieldModifier",
                                    fieldModifier);
 
-                Map<String, String> params = new HashMap<>();
-                elementContext.put("params",
-                                   params);
+                Map<String, String> params = new HashMap<>(defaultParams);
+                elementContext.put("params", params);
 
                 String afterElement = "";
                 FormField settings = fieldInfo.fieldElement.getAnnotation(FormField.class);

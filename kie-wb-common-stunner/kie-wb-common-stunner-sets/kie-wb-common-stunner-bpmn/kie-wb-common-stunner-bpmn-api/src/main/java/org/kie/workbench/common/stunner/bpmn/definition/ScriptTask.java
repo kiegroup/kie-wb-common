@@ -22,6 +22,7 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
@@ -50,7 +51,8 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 @Morph(base = BaseTask.class)
 @FormDefinition(
         policy = FieldPolicy.ONLY_MARKED,
-        startElement = "general"
+        startElement = "general",
+        defaultFieldSettings = {@FieldParam(name = "nestedFormContainer", value = "COLLAPSIBLE")}
 )
 public class ScriptTask extends BaseTask {
 
