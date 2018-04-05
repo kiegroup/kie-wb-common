@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.command.Command;
-import org.kie.workbench.common.stunner.core.registry.exception.RegistrySizeExceededException;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -113,18 +112,13 @@ public class CommandRegistryImplTest {
         assertTrue(result2.isEmpty());
     }
 
-    @Test(expected = RegistrySizeExceededException.class)
+    @Test
     public void testAddCommandStackExceeded() {
         tested.setMaxSize(1);
         tested.register(command);
         tested.register(command1);
-    }
-
-    @Test(expected = RegistrySizeExceededException.class)
-    public void testAddCollectionStackExceeded() {
-        tested.setMaxSize(1);
-        tested.register(command);
-        tested.register(command1);
+        assertEquals(1, tested.getCommandHistory().size());
+        assertEquals(command1, tested.peek());
     }
 
     @Test
@@ -152,10 +146,11 @@ public class CommandRegistryImplTest {
                      r2);
     }
 
-    @Test(expected = RegistrySizeExceededException.class)
+    @Test
     public void testStackSize() {
         tested.setMaxSize(1);
         tested.register(command);
         tested.register(command);
+        assertEquals(1, tested.getCommandHistory().size());
     }
 }
