@@ -202,6 +202,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
         grid.deselect();
 
         assertTrue(grid.getModel().getSelectedCells().isEmpty());
+        verify(editorSelectedEvent).fire(any(ExpressionEditorChanged.class));
     }
 
     @Test

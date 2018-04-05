@@ -28,6 +28,7 @@ import org.kie.workbench.common.dmn.client.decision.factories.DecisionNavigatorI
 import org.kie.workbench.common.dmn.client.decision.tree.DecisionNavigatorTreePresenter;
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -40,6 +41,7 @@ import static org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConsta
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -194,7 +196,7 @@ public class DecisionNavigatorPresenterTest {
     @Test
     public void testAddOrUpdateElement() {
 
-        final Element element = mock(Element.class);
+        final Element element = mock(Node.class);
         final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
 
         doReturn(item).when(presenter).makeItem(element);
@@ -205,9 +207,20 @@ public class DecisionNavigatorPresenterTest {
     }
 
     @Test
+    public void testAddOrUpdateElementWhenElementIsNotNode() {
+
+        final Element element = mock(Edge.class);
+        final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+
+        presenter.addOrUpdateElement(element);
+
+        verify(treePresenter, never()).addOrUpdateItem(item);
+    }
+
+    @Test
     public void testUpdateElement() {
 
-        final Element element = mock(Element.class);
+        final Element element = mock(Node.class);
         final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
 
         doReturn(item).when(presenter).makeItem(element);
@@ -218,9 +231,20 @@ public class DecisionNavigatorPresenterTest {
     }
 
     @Test
+    public void testUpdateElementWhenElementIsNotNode() {
+
+        final Element element = mock(Edge.class);
+        final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+
+        presenter.updateElement(element);
+
+        verify(treePresenter, never()).addOrUpdateItem(item);
+    }
+
+    @Test
     public void testRemoveElement() {
 
-        final Element element = mock(Element.class);
+        final Element element = mock(Node.class);
         final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
 
         doReturn(item).when(presenter).makeItem(element);
@@ -228,6 +252,17 @@ public class DecisionNavigatorPresenterTest {
         presenter.removeElement(element);
 
         verify(treePresenter).remove(item);
+    }
+
+    @Test
+    public void testRemoveElementWhenElementIsNotNode() {
+
+        final Element element = mock(Edge.class);
+        final DecisionNavigatorItem item = mock(DecisionNavigatorItem.class);
+
+        presenter.removeElement(element);
+
+        verify(treePresenter, never()).addOrUpdateItem(item);
     }
 
     @Test

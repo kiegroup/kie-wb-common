@@ -339,6 +339,7 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     @Override
     public void deselect() {
+        fireExpressionEditorChanged();
         getModel().clearSelections();
         super.deselect();
     }

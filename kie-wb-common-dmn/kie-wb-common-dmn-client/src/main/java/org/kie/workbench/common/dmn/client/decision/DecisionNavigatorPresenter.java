@@ -113,14 +113,29 @@ public class DecisionNavigatorPresenter {
     }
 
     public void addOrUpdateElement(final Element<?> element) {
+
+        if (!isNode(element)) {
+            return;
+        }
+
         treePresenter.addOrUpdateItem(makeItem(element));
     }
 
     public void updateElement(final Element<?> element) {
+
+        if (!isNode(element)) {
+            return;
+        }
+
         treePresenter.updateItem(makeItem(element));
     }
 
     public void removeElement(final Element<?> element) {
+
+        if (!isNode(element)) {
+            return;
+        }
+
         treePresenter.remove(makeItem(element));
     }
 
@@ -156,6 +171,10 @@ public class DecisionNavigatorPresenter {
                 (Node<org.kie.workbench.common.stunner.core.graph.content.view.View, Edge>) element.asNode();
 
         return itemFactory.makeItem(node);
+    }
+
+    private boolean isNode(final Element<?> element) {
+        return element instanceof Node;
     }
 
     public void clearSelections() {
