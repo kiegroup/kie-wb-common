@@ -315,7 +315,12 @@ public class SettingsPresenter {
         return promises.resolve();
     }
 
-    public void onSettingsSectionChanged(@Observes final SettingsSectionChange settingsSectionChange) {
+    public void onSettingsSectionChanged(@Observes final SettingsSectionChange<ProjectScreenModel> settingsSectionChange) {
+
+        if (!sectionManager.getSections().contains(settingsSectionChange.getSection())) {
+            return;
+        }
+
         sectionManager.updateDirtyIndicator(settingsSectionChange.getSection());
     }
 
