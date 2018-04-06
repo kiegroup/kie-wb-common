@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
-import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.uberfire.client.promise.Promises;
@@ -44,16 +43,8 @@ public abstract class Section<T> {
 
     public abstract int currentHashCode();
 
-    public Promise<Void> save(final String comment, final Supplier<Promise<Void>> chain) {
-        return promises.resolve();
-    }
-
-    public Promise<Object> validate() {
-        return promises.resolve();
-    }
-
-    public Promise<Void> setup(final T model) {
-        return promises.resolve();
+    public void setDirty(final boolean dirty) {
+        menuItem.markAsDirty(dirty);
     }
 
     public void fireChangeEvent() {
@@ -64,7 +55,17 @@ public abstract class Section<T> {
         return menuItem;
     }
 
-    public void setDirty(final boolean dirty) {
-        menuItem.markAsDirty(dirty);
+    //Lifecycle
+
+    public Promise<Void> save(final String comment, final Supplier<Promise<Void>> chain) {
+        return promises.resolve();
+    }
+
+    public Promise<Object> validate() {
+        return promises.resolve();
+    }
+
+    public Promise<Void> setup(final T model) {
+        return promises.resolve();
     }
 }
