@@ -100,9 +100,4 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     public List<P> getPresenters() {
         return presenters;
     }
-
-    @Override
-    public int hashCode() {
-        return objects.hashCode();
-    }
 }

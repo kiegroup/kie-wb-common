@@ -20,12 +20,11 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.TransactionType;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorEditorService;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue.AddDoubleValueModal;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.backend.vfs.ObservablePath;
@@ -52,13 +51,13 @@ public class PersistencePresenterTest {
     private WorkspaceProjectContext projectContext;
 
     @Mock
-    private SettingsPresenter.MenuItem menuItem;
+    private MenuItem<ProjectScreenModel> menuItem;
 
     @Mock
     private Event<NotificationEvent> notificationEvent;
 
     @Mock
-    private Event<SettingsSectionChange> settingsSectionChangeEvent;
+    private Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent;
 
     @Mock
     private ManagedInstance<ObservablePath> observablePaths;

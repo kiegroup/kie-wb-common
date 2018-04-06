@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.sections;
 
-import java.util.List;
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
-import org.kie.workbench.common.screens.library.client.settings.sections.Section;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
+import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 
-public interface SettingsSections {
+@Dependent
+public class MenuItemsListPresenter<T> extends ListPresenter<Section<T>, MenuItem<T>> {
 
-    List<Section<ProjectScreenModel>> getList();
+    @Inject
+    public MenuItemsListPresenter(final ManagedInstance<MenuItem<T>> itemPresenters) {
+        super(itemPresenters);
+    }
 }

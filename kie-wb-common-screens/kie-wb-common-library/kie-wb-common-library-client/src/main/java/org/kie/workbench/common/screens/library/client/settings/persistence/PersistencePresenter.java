@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.settings.persistence;
 
 import java.util.HashMap;
 import java.util.function.Supplier;
+
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -33,10 +34,12 @@ import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.datamodeller.service.DataModelerService;
 import org.kie.workbench.common.screens.datamodeller.service.PersistenceDescriptorEditorService;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.persistence.persistabledataobjects.PersistableDataObjectsItemPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.properties.PropertiesItemPresenter;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.doublevalue.AddDoubleValueModal;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
@@ -48,7 +51,7 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
-public class PersistencePresenter extends SettingsPresenter.Section {
+public class PersistencePresenter extends Section<ProjectScreenModel> {
 
     private final View view;
     private final WorkspaceProjectContext projectContext;
@@ -66,7 +69,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     PersistenceDescriptorEditorContent persistenceDescriptorEditorContent;
     ObservablePath.OnConcurrentUpdateEvent concurrentPersistenceXmlUpdateInfo;
 
-    public interface View extends SettingsPresenter.View.Section<PersistencePresenter> {
+    public interface View extends SectionView<PersistencePresenter> {
 
         void setPersistenceUnit(String persistenceUnit);
 
@@ -85,9 +88,9 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     public PersistencePresenter(final View view,
                                 final WorkspaceProjectContext projectContext,
                                 final Promises promises,
-                                final SettingsPresenter.MenuItem menuItem,
+                                final MenuItem<ProjectScreenModel> menuItem,
                                 final Event<NotificationEvent> notificationEvent,
-                                final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent,
                                 final ManagedInstance<ObservablePath> observablePaths,
                                 final AddDoubleValueModal newPropertyModal,
                                 final AddSingleValueModal newPersistableDataObjectModal,
@@ -250,7 +253,7 @@ public class PersistencePresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 

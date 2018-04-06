@@ -26,6 +26,9 @@ import org.guvnor.common.services.project.model.ModuleRepositories;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.client.promise.Promises;
@@ -33,14 +36,14 @@ import org.uberfire.client.promise.Promises;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
 
-public class ValidationPresenter extends SettingsPresenter.Section {
+public class ValidationPresenter extends Section<ProjectScreenModel>  {
 
     private final View view;
     private final ValidationListPresenter validationItemPresenters;
 
     private ModuleRepositories repositories;
 
-    public interface View extends SettingsPresenter.View.Section<ValidationPresenter> {
+    public interface View extends SectionView<ValidationPresenter> {
 
         Element getRepositoriesTable();
     }
@@ -48,8 +51,8 @@ public class ValidationPresenter extends SettingsPresenter.Section {
     @Inject
     public ValidationPresenter(final ValidationPresenter.View view,
                                final Promises promises,
-                               final SettingsPresenter.MenuItem menuItem,
-                               final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                               final MenuItem<ProjectScreenModel> menuItem,
+                               final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent,
                                final ValidationListPresenter validationItemPresenters) {
 
         super(settingsSectionChangeEvent, menuItem, promises);
@@ -78,7 +81,7 @@ public class ValidationPresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 

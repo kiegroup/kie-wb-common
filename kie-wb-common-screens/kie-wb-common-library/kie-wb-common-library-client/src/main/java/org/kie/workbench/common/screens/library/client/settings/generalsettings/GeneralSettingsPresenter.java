@@ -29,13 +29,16 @@ import org.guvnor.common.services.project.preferences.GAVPreferences;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.uberfire.client.promise.Promises;
 
-public class GeneralSettingsPresenter extends SettingsPresenter.Section {
+public class GeneralSettingsPresenter extends Section<ProjectScreenModel> {
 
-    public interface View extends SettingsPresenter.View.Section<GeneralSettingsPresenter> {
+    public interface View extends SectionView<GeneralSettingsPresenter> {
 
         String getName();
 
@@ -101,9 +104,9 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     @Inject
     public GeneralSettingsPresenter(final View view,
                                     final Promises promises,
-                                    final SettingsPresenter.MenuItem menuItem,
+                                    final MenuItem<ProjectScreenModel> menuItem,
                                     final Caller<ValidationService> validationService,
-                                    final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                    final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent,
                                     final GAVPreferences gavPreferences,
                                     final ProjectScopedResolutionStrategySupplier projectScopedResolutionStrategySupplier,
                                     final GitUrlsPresenter gitUrlsPresenter) {
@@ -134,14 +137,12 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
         view.setGitUrlsView(gitUrlsPresenter.getView());
 
         return promises.create((resolve, reject) -> {
-            gavPreferences.load(projectScopedResolutionStrategySupplier.get(),
-                                gavPreferences -> {
-                                    view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
-                                    view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
+            gavPreferences.load(projectScopedResolutionStrategySupplier.get(), gavPreferences -> {
+                view.setConflictingGAVCheckDisabled(gavPreferences.isConflictingGAVCheckDisabled());
+                view.setChildGavEditEnabled(gavPreferences.isChildGAVEditEnabled());
 
-                                    resolve.onInvoke(promises.resolve());
-                                },
-                                reject::onInvoke);
+                resolve.onInvoke(promises.resolve());
+            }, reject::onInvoke);
         });
     }
 
@@ -257,7 +258,7 @@ public class GeneralSettingsPresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 }

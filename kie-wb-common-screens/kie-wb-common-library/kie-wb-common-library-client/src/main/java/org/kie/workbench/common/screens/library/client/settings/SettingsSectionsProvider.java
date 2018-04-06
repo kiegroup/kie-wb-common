@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -24,7 +25,7 @@ import javax.inject.Inject;
 import org.uberfire.annotations.Customizable;
 import org.uberfire.annotations.FallbackImplementation;
 
-@ApplicationScoped
+@Dependent
 public class SettingsSectionsProvider {
 
     @Inject

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.sections;
 
-import java.util.List;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.uberfire.client.mvp.UberElemental;
 
-import org.kie.workbench.common.screens.library.client.settings.sections.Section;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+public interface SectionView<T> extends UberElemental<T>,
+                                        IsElement {
 
-public interface SettingsSections {
-
-    List<Section<ProjectScreenModel>> getList();
+    String getTitle();
 }

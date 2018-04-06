@@ -27,6 +27,9 @@ import elemental2.dom.Element;
 import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
@@ -40,7 +43,7 @@ import org.kie.workbench.common.services.shared.kmodule.KModuleModel;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 
-public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
+public class KnowledgeBasesPresenter extends Section<ProjectScreenModel>  {
 
     private final AddSingleValueModal addKnowledgeBaseModal;
     private final KnowledgeBaseListPresenter knowledgeBaseListPresenter;
@@ -48,16 +51,16 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
 
     KModuleModel kModuleModel;
 
-    public interface View extends SettingsPresenter.View.Section<KnowledgeBasesPresenter> {
+    public interface View extends SectionView<KnowledgeBasesPresenter> {
 
         Element getKnowledgeBasesTable();
     }
 
     @Inject
     public KnowledgeBasesPresenter(final View view,
-                                   final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                   final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent,
                                    final Promises promises,
-                                   final SettingsPresenter.MenuItem menuItem,
+                                   final MenuItem<ProjectScreenModel> menuItem,
                                    final AddSingleValueModal addKnowledgeBaseModal,
                                    final KnowledgeBaseListPresenter knowledgeBaseListPresenter) {
 
@@ -111,13 +114,13 @@ public class KnowledgeBasesPresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 
     @Override
     public int currentHashCode() {
-        return knowledgeBaseListPresenter.hashCode();
+        return knowledgeBaseListPresenter.getObjectsList().hashCode();
     }
 
     @Dependent
