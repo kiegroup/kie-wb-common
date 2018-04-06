@@ -20,8 +20,8 @@ import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
 
+import elemental2.dom.DomGlobal;
 import elemental2.promise.Promise;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.uberfire.client.promise.Promises;
 

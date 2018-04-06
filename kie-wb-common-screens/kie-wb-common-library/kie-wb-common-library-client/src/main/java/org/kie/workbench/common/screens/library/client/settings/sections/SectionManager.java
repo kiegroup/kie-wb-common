@@ -24,6 +24,7 @@ import java.util.Optional;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
@@ -116,13 +117,13 @@ public class SectionManager<T> implements HasSections<T> {
     }
 
     public Promise<Void> resetAllDirtyIndicators() {
-        return promises.all(sections, this::resetDirtyIndicator);
+        sections.forEach(this::resetDirtyIndicator);
+        return promises.resolve();
     }
 
-    public Promise<Void> resetDirtyIndicator(final Section<T> section) {
+    public void resetDirtyIndicator(final Section<T> section) {
         originalHashCodes.put(section, section.currentHashCode());
         updateDirtyIndicator(section);
-        return promises.resolve();
     }
 
     public void updateDirtyIndicator(final Section<T> changedSection) {
