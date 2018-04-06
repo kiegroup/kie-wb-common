@@ -128,14 +128,13 @@ public class SettingsPresenter {
 
         view.hide();
 
-        setup(sectionManager.getCurrentSection()).then(i -> {
+        setupCurrentSection().then(i -> {
             view.show();
             return promises.resolve();
         });
     }
 
-    public Promise<Void> setup(final Section<ProjectScreenModel> activeSection) {
-        sectionManager.setCurrentSection(activeSection);
+    public Promise<Void> setupCurrentSection() {
 
         view.init(this);
         view.showBusyIndicator();
@@ -155,7 +154,6 @@ public class SettingsPresenter {
             return s.load(pathToPom);
         }).then(model -> {
             this.model = model;
-            sectionManager.setupMenuItems();
             return setupSections(model);
         }).then(i -> {
             view.hideBusyIndicator();
@@ -325,7 +323,7 @@ public class SettingsPresenter {
     }
 
     public void reset() {
-        setup(sectionManager.getCurrentSection());
+        setupCurrentSection();
     }
 
     public View getView() {

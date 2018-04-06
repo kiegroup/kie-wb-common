@@ -66,6 +66,7 @@ public class SectionManager<T> implements HasSections<T> {
         this.contentContainer = contentContainer;
         this.originalHashCodes = new HashMap<>();
         setActiveMenuItem(currentSection);
+        setupMenuItems();
     }
 
     @Override
@@ -76,7 +77,7 @@ public class SectionManager<T> implements HasSections<T> {
         return promises.resolve();
     }
 
-    public void setActiveMenuItem(final Section<T> section) {
+    private void setActiveMenuItem(final Section<T> section) {
         section.getMenuItem().getView().getElement().classList.add("active");
     }
 
@@ -92,7 +93,9 @@ public class SectionManager<T> implements HasSections<T> {
                 this::setupMenuItemPresenter);
     }
 
-    private MenuItem<T> setupMenuItemPresenter(Section<T> section, MenuItem<T> menuItem) {
+    private MenuItem<T> setupMenuItemPresenter(final Section<T> section,
+                                               final MenuItem<T> menuItem) {
+
         return menuItem.setup(section, this);
     }
 
@@ -102,10 +105,6 @@ public class SectionManager<T> implements HasSections<T> {
 
     public Section<T> getCurrentSection() {
         return currentSection;
-    }
-
-    public void setCurrentSection(final Section<T> currentSection) {
-        this.currentSection = currentSection;
     }
 
     public void remove(final Section<T> section) {

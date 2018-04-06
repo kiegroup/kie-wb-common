@@ -427,4 +427,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String InvalidPom = "InvalidPom";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddRemoteableClass = "AddRemoteableClass";
 }
