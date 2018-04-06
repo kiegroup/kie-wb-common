@@ -57,6 +57,7 @@ public class DependenciesView implements DependenciesPresenter.View,
     @DataField("add-from-repository")
     private HTMLButtonElement addFromRepository;
 
+
     @Inject
     @Named("h3")
     @DataField("title")

@@ -11,8 +11,8 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.DependencySelectorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.NewDependencyPopup;
@@ -41,13 +41,13 @@ public class DependenciesPresenterTest {
     private DependenciesPresenter.View view;
 
     @Mock
-    private SettingsPresenter.MenuItem menuItem;
+    private MenuItem<ProjectScreenModel> menuItem;
 
     @Mock
     private DependencySelectorPopup dependencySelectorPopup;
 
     @Mock
-    private Event<SettingsSectionChange> settingsSectionChangeEvent;
+    private Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent;
 
     @Mock
     private NewDependencyPopup newDependencyPopup;

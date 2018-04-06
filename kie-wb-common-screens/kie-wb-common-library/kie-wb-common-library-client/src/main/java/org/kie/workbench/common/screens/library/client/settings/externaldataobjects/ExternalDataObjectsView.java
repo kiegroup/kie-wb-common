@@ -32,6 +32,7 @@ import org.kie.workbench.common.screens.library.client.settings.externaldataobje
 @Templated
 public class ExternalDataObjectsView implements ExternalDataObjectsPresenter.View {
 
+
     @Inject
     @Named("tbody")
     @DataField("table")

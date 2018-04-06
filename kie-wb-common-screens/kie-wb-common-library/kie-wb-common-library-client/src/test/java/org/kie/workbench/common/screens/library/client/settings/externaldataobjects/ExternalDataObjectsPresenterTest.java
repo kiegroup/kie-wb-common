@@ -7,8 +7,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 import org.mockito.Mock;
@@ -32,7 +32,7 @@ public class ExternalDataObjectsPresenterTest {
     private ExternalDataObjectsPresenter.View view;
 
     @Mock
-    private SettingsPresenter.MenuItem menuItem;
+    private MenuItem<ProjectScreenModel> menuItem;
 
     @GwtMock
     private AddImportPopup addImportPopup;
@@ -41,7 +41,7 @@ public class ExternalDataObjectsPresenterTest {
     private ExternalDataObjectsPresenter.ImportsListPresenter itemPresenters;
 
     @Mock
-    private EventSourceMock<SettingsSectionChange> settingsSectionChangeEvent;
+    private EventSourceMock<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent;
 
     private final Promises promises = new SyncPromises();
 

@@ -44,9 +44,11 @@ public class PersistenceView implements PersistencePresenter.View {
     @DataField("persistence-provider")
     private HTMLInputElement persistenceProvider;
 
+
     @Inject
     @DataField("data-source")
     private HTMLInputElement dataSource;
+
 
     @Inject
     @DataField("add-property-button")

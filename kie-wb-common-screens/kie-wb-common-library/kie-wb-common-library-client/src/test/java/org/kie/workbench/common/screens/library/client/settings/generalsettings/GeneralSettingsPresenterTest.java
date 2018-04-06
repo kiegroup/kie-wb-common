@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.validation.ValidationService;
 import org.mockito.Mock;
@@ -38,13 +38,13 @@ public class GeneralSettingsPresenterTest {
     private GeneralSettingsView view;
 
     @Mock
-    private SettingsPresenter.MenuItem menuItem;
+    private MenuItem<ProjectScreenModel> menuItem;
 
     @Mock
     private ValidationService validationService;
 
     @Mock
-    private EventSourceMock<SettingsSectionChange> settingsSectionChangeEvent;
+    private EventSourceMock<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent;
 
     @Mock
     private GAVPreferences gavPreferences;

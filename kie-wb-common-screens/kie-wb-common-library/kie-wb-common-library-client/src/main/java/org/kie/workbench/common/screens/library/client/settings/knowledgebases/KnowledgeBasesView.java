@@ -40,10 +40,12 @@ public class KnowledgeBasesView implements KnowledgeBasesPresenter.View {
     @DataField("add-knowledge-base-button")
     private HTMLButtonElement addKnowledgeBaseButton;
 
+
     @Inject
     @Named("h3")
     @DataField("title")
     private HTMLHeadingElement title;
+
 
     private KnowledgeBasesPresenter presenter;
 

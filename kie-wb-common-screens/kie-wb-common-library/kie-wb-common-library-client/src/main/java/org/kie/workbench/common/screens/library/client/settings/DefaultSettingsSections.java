@@ -27,7 +27,9 @@ import org.kie.workbench.common.screens.library.client.settings.externaldataobje
 import org.kie.workbench.common.screens.library.client.settings.generalsettings.GeneralSettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.KnowledgeBasesPresenter;
 import org.kie.workbench.common.screens.library.client.settings.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
 import org.kie.workbench.common.screens.library.client.settings.validation.ValidationPresenter;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.uberfire.annotations.FallbackImplementation;
 
 @Dependent
@@ -58,7 +60,7 @@ public class DefaultSettingsSections implements SettingsSections {
     }
 
     @Override
-    public List<SettingsPresenter.Section> getList() {
+    public List<Section<ProjectScreenModel>> getList() {
         return Arrays.asList(
                 generalSettingsSection,
                 dependenciesSettingsSection,

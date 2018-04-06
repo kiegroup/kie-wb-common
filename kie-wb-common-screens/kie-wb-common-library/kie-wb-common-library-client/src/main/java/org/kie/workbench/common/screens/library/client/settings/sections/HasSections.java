@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.sections;
 
-import java.util.List;
+import elemental2.promise.Promise;
 
-import org.kie.workbench.common.screens.library.client.settings.sections.Section;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
+public interface HasSections<T> {
 
-public interface SettingsSections {
-
-    List<Section<ProjectScreenModel>> getList();
+    Promise<Void> goTo(final Section<T> section);
 }

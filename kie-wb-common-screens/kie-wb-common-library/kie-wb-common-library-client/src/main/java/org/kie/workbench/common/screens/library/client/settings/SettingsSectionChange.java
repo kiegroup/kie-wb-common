@@ -16,15 +16,18 @@
 
 package org.kie.workbench.common.screens.library.client.settings;
 
-public class SettingsSectionChange {
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 
-    private final SettingsPresenter.Section presenter;
+public class SettingsSectionChange<T> {
 
-    public SettingsSectionChange(final SettingsPresenter.Section presenter) {
+    private final Section<T> presenter;
+
+    public SettingsSectionChange(final Section<T> presenter) {
         this.presenter = presenter;
     }
 
-    public SettingsPresenter.Section getSection() {
+    public Section<T> getSection() {
         return presenter;
     }
 }

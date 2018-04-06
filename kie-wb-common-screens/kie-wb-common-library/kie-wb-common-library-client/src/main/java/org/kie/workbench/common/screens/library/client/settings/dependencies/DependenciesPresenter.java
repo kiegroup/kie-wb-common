@@ -27,6 +27,9 @@ import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.DependencySelectorPopup;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.EnhancedDependenciesManager;
 import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.NewDependencyPopup;
@@ -37,9 +40,9 @@ import org.uberfire.client.promise.Promises;
 
 import static java.util.stream.Collectors.toList;
 
-public class DependenciesPresenter extends SettingsPresenter.Section {
+public class DependenciesPresenter extends Section<ProjectScreenModel>  {
 
-    public interface View extends SettingsPresenter.View.Section<DependenciesPresenter> {
+    public interface View extends SectionView<DependenciesPresenter> {
 
         void add(DependenciesItemPresenter.View itemView);
 
@@ -59,9 +62,9 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
     @Inject
     public DependenciesPresenter(final View view,
                                  final Promises promises,
-                                 final SettingsPresenter.MenuItem menuItem,
+                                 final MenuItem<ProjectScreenModel> menuItem,
                                  final DependencySelectorPopup dependencySelectorPopup,
-                                 final Event<SettingsSectionChange> settingsSectionChangeEvent,
+                                 final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent,
                                  final NewDependencyPopup newDependencyPopup,
                                  final EnhancedDependenciesManager enhancedDependenciesManager,
                                  final ManagedInstance<DependenciesItemPresenter> presenters) {
@@ -142,7 +145,7 @@ public class DependenciesPresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 }

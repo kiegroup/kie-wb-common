@@ -9,8 +9,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
@@ -37,13 +37,13 @@ public class KnowledgeBasesPresenterTest {
     private KnowledgeBasesPresenter knowledgeBasesPresenter;
 
     @Mock
-    private Event<SettingsSectionChange> settingsSectionChangeEvent;
+    private Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent;
 
     @Mock
     private KnowledgeBasesPresenter.View view;
 
     @Mock
-    private SettingsPresenter.MenuItem menuItem;
+    private MenuItem<ProjectScreenModel> menuItem;
 
     @Mock
     private AddSingleValueModal addKnowledgeBaseModal;

@@ -25,6 +25,9 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
+import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
+import org.kie.workbench.common.screens.library.client.settings.sections.Section;
+import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.uberfire.client.promise.Promises;
 import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
@@ -32,7 +35,7 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListPresent
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
 
-public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
+public class ExternalDataObjectsPresenter extends Section<ProjectScreenModel>  {
 
     private final View view;
     private final ImportsListPresenter itemPresenters;
@@ -40,7 +43,7 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
 
     private Imports imports;
 
-    public interface View extends SettingsPresenter.View.Section<ExternalDataObjectsPresenter> {
+    public interface View extends SectionView<ExternalDataObjectsPresenter> {
 
         void remove(final ExternalDataObjectsItemPresenter.View view);
 
@@ -52,10 +55,10 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
     @Inject
     public ExternalDataObjectsPresenter(final View view,
                                         final Promises promises,
-                                        final SettingsPresenter.MenuItem menuItem,
+                                        final MenuItem<ProjectScreenModel> menuItem,
                                         final AddImportPopup addImportPopup,
                                         final ImportsListPresenter itemPresenters,
-                                        final Event<SettingsSectionChange> settingsSectionChangeEvent) {
+                                        final Event<SettingsSectionChange<ProjectScreenModel>> settingsSectionChangeEvent) {
 
         super(settingsSectionChangeEvent, menuItem, promises);
         this.view = view;
@@ -93,7 +96,7 @@ public class ExternalDataObjectsPresenter extends SettingsPresenter.Section {
     }
 
     @Override
-    public SettingsPresenter.View.Section getView() {
+    public SectionView getView() {
         return view;
     }
 

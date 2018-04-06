@@ -16,7 +16,10 @@
 
 package org.kie.workbench.common.screens.library.client.settings.util;
 
-public abstract class ListItemPresenter<T, ParentPresenter, View extends UberElementalListItem<? extends ListItemPresenter<T, ParentPresenter, View>>> {
+public abstract class ListItemPresenter<
+        T,
+        ParentPresenter,
+        View extends UberElementalListItem<? extends ListItemPresenter<T, ParentPresenter, View>>> {
 
     public final View view;
 

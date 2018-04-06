@@ -1,0 +1,136 @@
+/*
+ * Copyright (C) 2018 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.kie.workbench.common.screens.library.client.settings.sections;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
+
+import elemental2.dom.HTMLElement;
+import elemental2.promise.Promise;
+import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
+import org.uberfire.client.promise.Promises;
+
+import static java.util.stream.Collectors.toList;
+
+@Dependent
+public class SectionManager<T> implements HasSections<T> {
+
+    private final MenuItemsListPresenter<T> menuItemsListPresenter;
+    private final Promises promises;
+    private final Elemental2DomUtil elemental2DomUtil;
+
+    private List<Section<T>> sections;
+    private HTMLElement menuItemsContainer;
+    private HTMLElement contentContainer;
+    private Map<Section<T>, Integer> originalHashCodes;
+
+    private Section<T> currentSection;
+
+    @Inject
+    public SectionManager(final MenuItemsListPresenter menuItemsListPresenter,
+                          final Promises promises,
+                          final Elemental2DomUtil elemental2DomUtil) {
+
+        this.menuItemsListPresenter = menuItemsListPresenter;
+        this.promises = promises;
+        this.elemental2DomUtil = elemental2DomUtil;
+    }
+
+    public void init(final List<Section<T>> sections,
+                     final HTMLElement menuItemsContainer,
+                     final HTMLElement contentContainer) {
+
+        this.sections = sections;
+        this.currentSection = sections.get(0);
+        this.menuItemsContainer = menuItemsContainer;
+        this.contentContainer = contentContainer;
+        this.originalHashCodes = new HashMap<>();
+        setActiveMenuItem(currentSection);
+    }
+
+    @Override
+    public Promise<Void> goTo(final Section<T> section) {
+        currentSection = section;
+        elemental2DomUtil.removeAllElementChildren(contentContainer);
+        contentContainer.appendChild(section.getView().getElement());
+        return promises.resolve();
+    }
+
+    public void setActiveMenuItem(final Section<T> section) {
+        section.getMenuItem().getView().getElement().classList.add("active");
+    }
+
+    public void setupMenuItems() {
+
+        final List<MenuItem<T>> menuItems = sections.stream()
+                .peek(section -> setupMenuItemPresenter(section, section.getMenuItem()))
+                .map(Section::getMenuItem).collect(toList());
+
+        menuItemsListPresenter.setupWithPresenters(
+                menuItemsContainer,
+                menuItems,
+                this::setupMenuItemPresenter);
+    }
+
+    private MenuItem<T> setupMenuItemPresenter(Section<T> section, MenuItem<T> menuItem) {
+        return menuItem.setup(section, this);
+    }
+
+    public List<Section<T>> getSections() {
+        return sections;
+    }
+
+    public Section<T> getCurrentSection() {
+        return currentSection;
+    }
+
+    public void setCurrentSection(final Section<T> currentSection) {
+        this.currentSection = currentSection;
+    }
+
+    public void remove(final Section<T> section) {
+        sections.remove(section);
+    }
+
+    public Promise<Void> goToFirstAvailable() {
+        return goTo(sections.get(0));
+    }
+
+    public Promise<Void> resetAllDirtyIndicators() {
+        return promises.all(sections, this::resetDirtyIndicator);
+    }
+
+    public Promise<Void> resetDirtyIndicator(final Section<T> section) {
+        originalHashCodes.put(section, section.currentHashCode());
+        updateDirtyIndicator(section);
+        return promises.resolve();
+    }
+
+    public void updateDirtyIndicator(final Section<T> changedSection) {
+
+        final boolean isDirty = Optional.ofNullable(originalHashCodes.get(changedSection))
+                .map(originalHashCode -> !originalHashCode.equals(changedSection.currentHashCode()))
+                .orElse(false);
+
+        changedSection.setDirty(isDirty);
+    }
+}
