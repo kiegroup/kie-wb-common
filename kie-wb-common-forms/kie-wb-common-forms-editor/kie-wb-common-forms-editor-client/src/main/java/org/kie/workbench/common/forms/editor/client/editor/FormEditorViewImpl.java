@@ -18,14 +18,13 @@ package org.kie.workbench.common.forms.editor.client.editor;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.RequiresResize;
+import org.jboss.errai.common.client.dom.DOMUtil;
+import org.jboss.errai.common.client.dom.Div;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.forms.editor.client.editor.errorMessage.ErrorMessageDisplayer;
 import org.kie.workbench.common.forms.editor.client.resources.i18n.FormEditorConstants;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
 import org.kie.workbench.common.widgets.metadata.client.KieEditorViewImpl;
@@ -39,12 +38,17 @@ import org.uberfire.mvp.Command;
 public class FormEditorViewImpl extends KieEditorViewImpl implements FormEditorPresenter.FormEditorView,
                                                                      RequiresResize {
 
+    @Inject
     @DataField
-    private Element container = DOM.createDiv();
+    private ErrorMessageDisplayer errorDisplayer;
 
     @Inject
     @DataField
-    private FlowPanel editorContent;
+    private Div container;
+
+    @Inject
+    @DataField
+    private Div editorContent;
 
     private TranslationService translationService;
 
@@ -62,8 +66,19 @@ public class FormEditorViewImpl extends KieEditorViewImpl implements FormEditorP
 
     @Override
     public void setupLayoutEditor(LayoutEditor layoutEditor) {
-        editorContent.clear();
-        editorContent.add(layoutEditor.asWidget());
+        DOMUtil.removeAllChildren(editorContent);
+        editorContent.appendChild(errorDisplayer.getElement());
+        DOMUtil.appendWidgetToElement(editorContent, layoutEditor.asWidget());
+    }
+
+    @Override
+    public void showError(String message) {
+        errorDisplayer.show(message);
+    }
+
+    @Override
+    public void showError(String message, String fullMessage) {
+        errorDisplayer.show(message, fullMessage);
     }
 
     @Override
@@ -90,11 +105,9 @@ public class FormEditorViewImpl extends KieEditorViewImpl implements FormEditorP
         double height = getParent().getOffsetHeight() * 0.95;
         double width = getParent().getOffsetWidth();
 
-        editorContent.getElement().getStyle().setHeight(height, Style.Unit.PX);
+        editorContent.getStyle().setProperty("height", height + "px");
 
-        container.getStyle().setWidth(width,
-                Style.Unit.PX);
-        container.getStyle().setHeight(height,
-                Style.Unit.PX);
+        container.getStyle().setProperty("width", width + "px");
+        container.getStyle().setProperty("height", height + "px");
     }
 }
