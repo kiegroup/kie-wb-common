@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 import elemental2.dom.Element;
+import elemental2.dom.HTMLTableElement;
+import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 
@@ -50,8 +52,21 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
+        handleTable();
+
         elemental2DomUtil.removeAllElementChildren(this.listElement);
         this.objects.forEach(this::addToListElement);
+    }
+
+    private void handleTable() {
+        if (listElement instanceof HTMLTableSectionElement) {
+            final HTMLTableElement tableElement = (HTMLTableElement) listElement.parentNode;
+            if (objects.isEmpty()) {
+                tableElement.classList.add("hidden");
+            } else {
+                tableElement.classList.remove("hidden");
+            }
+        }
     }
 
     public void setupWithPresenters(final Element listElement,
@@ -63,6 +78,8 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.listElement = listElement;
         this.itemPresenterConfigurator = itemPresenterConfigurator;
 
+        handleTable();
+
         elemental2DomUtil.removeAllElementChildren(this.listElement);
         presenters.forEach(this::addPresenter);
     }
@@ -70,6 +87,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     public void add(final T o) {
         addToListElement(o);
         objects.add(o);
+        handleTable();
     }
 
     protected void addToListElement(final T o) {
@@ -91,6 +109,7 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
     public void remove(final ListItemPresenter<T, ?, ?> listItemPresenter) {
         objects.remove(listItemPresenter.getObject());
         listElement.removeChild(listItemPresenter.getView().getElement());
+        handleTable();
     }
 
     public List<T> getObjectsList() {

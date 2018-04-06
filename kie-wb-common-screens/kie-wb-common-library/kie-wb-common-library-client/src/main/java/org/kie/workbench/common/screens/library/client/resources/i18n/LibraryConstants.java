@@ -430,4 +430,13 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddRemoteableClass = "AddRemoteableClass";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddConfiguration = "AddConfiguration";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddEnvironmentEntry = "AddEnvironmentEntry";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddWorkItemHandler = "AddWorkItemHandler";
 }
