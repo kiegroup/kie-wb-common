@@ -60,8 +60,8 @@ public class ValidatorBuildService {
         this.projectService = projectService;
     }
 
-    public List<ValidationMessage> validate( final Path resourcePath,
-                                             final String content ) {
+    public synchronized List<ValidationMessage> validate( final Path resourcePath,
+                                                          final String content ) {
         InputStream inputStream = null;
         try {
             inputStream = new ByteArrayInputStream( content.getBytes( Charsets.UTF_8 ) );
@@ -86,7 +86,7 @@ public class ValidatorBuildService {
         }
     }
 
-    public List<ValidationMessage> validate( final Path resourcePath ) {
+    public synchronized List<ValidationMessage> validate( final Path resourcePath ) {
         InputStream inputStream = null;
         try {
             inputStream = ioService.newInputStream( Paths.convert( resourcePath ) );
