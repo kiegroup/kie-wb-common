@@ -24,7 +24,6 @@ import java.util.Optional;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
@@ -132,5 +131,17 @@ public class SectionManager<T> implements HasSections<T> {
                 .orElse(false);
 
         changedSection.setDirty(isDirty);
+    }
+
+    public Promise<Object> validateAll() {
+        return promises.reduceLazily(sections, Section::validate);
+    }
+
+    public boolean isEmpty() {
+        return sections.isEmpty();
+    }
+
+    public boolean manages(final Section<T> section) {
+        return sections.contains(section);
     }
 }

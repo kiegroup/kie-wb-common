@@ -253,7 +253,7 @@ public class PersistencePresenter extends Section<ProjectScreenModel> {
     }
 
     @Override
-    public SectionView getView() {
+    public SectionView<?> getView() {
         return view;
     }
 

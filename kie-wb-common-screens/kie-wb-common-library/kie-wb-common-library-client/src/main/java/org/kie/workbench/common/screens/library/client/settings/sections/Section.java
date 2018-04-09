@@ -39,7 +39,7 @@ public abstract class Section<T> {
         this.menuItem = menuItem;
     }
 
-    public abstract SectionView getView(); //FIXME: put T
+    public abstract SectionView<?> getView();
 
     public abstract int currentHashCode();
 

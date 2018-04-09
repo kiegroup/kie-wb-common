@@ -29,7 +29,6 @@ import org.kie.workbench.common.screens.library.client.settings.sections.MenuIte
 import org.kie.workbench.common.screens.library.client.settings.sections.Section;
 import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
 import org.uberfire.client.promise.Promises;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
@@ -96,7 +95,7 @@ public class ExternalDataObjectsPresenter extends Section<ProjectScreenModel>  {
     }
 
     @Override
-    public SectionView getView() {
+    public SectionView<?> getView() {
         return view;
     }
 
