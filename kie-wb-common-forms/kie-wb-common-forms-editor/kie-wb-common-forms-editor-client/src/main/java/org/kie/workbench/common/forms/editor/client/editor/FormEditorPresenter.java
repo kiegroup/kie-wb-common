@@ -150,12 +150,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
 
     @Override
     protected void loadContent() {
-        editorService.call(new RemoteCallback<FormModelerContent>() {
-                               @Override
-                               public void callback(FormModelerContent content) {
-                                   doLoadContent(content);
-                               }
-                           },
+        editorService.call((RemoteCallback<FormModelerContent>) content -> doLoadContent(content),
                            getNoSuchFileExceptionErrorCallback()).loadContent(versionRecordManager.getCurrentPath());
     }
 
@@ -183,22 +178,28 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
 
         editorHelper.initHelper(content);
 
-        if (content.getDefinition().getLayoutTemplate() == null) {
-            content.getDefinition().setLayoutTemplate(new LayoutTemplate());
-        }
-
         resetEditorPages(content.getOverview());
-
-        setOriginalHash(content.getDefinition().hashCode());
 
         view.init(this);
 
-        loadLayoutEditor();
+        if (content.getError() != null) {
+            view.showError(content.getError().getShortMessage(), content.getError().getFullMessage());
+        }
 
-        view.setupLayoutEditor(layoutEditor);
+        if(content.getDefinition() != null) {
+            if (content.getDefinition().getLayoutTemplate() == null) {
+                content.getDefinition().setLayoutTemplate(new LayoutTemplate());
+            }
 
-        changesNotificationDisplayer.show(content,
-                                          this::synchronizeLayoutEditor);
+            setOriginalHash(content.getDefinition().hashCode());
+
+            loadLayoutEditor();
+
+            view.setupLayoutEditor(layoutEditor);
+
+            changesNotificationDisplayer.show(content,
+                                              this::synchronizeLayoutEditor);
+        }
 
         if (setActiveOnLoad) {
             setActiveInstance();
@@ -471,9 +472,13 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
 
     public interface FormEditorView extends KieEditorView {
 
-        public void init(FormEditorPresenter presenter);
+        void init(FormEditorPresenter presenter);
 
-        public void setupLayoutEditor(LayoutEditor layoutEditor);
+        void setupLayoutEditor(LayoutEditor layoutEditor);
+
+        void showError(String message);
+
+        void showError(String message, String fullMessage);
 
         void showSavePopup(Path path,
                            Command saveCommand,
