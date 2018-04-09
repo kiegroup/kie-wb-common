@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CommandRegistryImplTest {
@@ -152,5 +153,22 @@ public class CommandRegistryImplTest {
         tested.register(command);
         tested.register(command);
         assertEquals(1, tested.getCommandHistory().size());
+    }
+
+    @Test
+    public void testStackSize2() {
+        final Command commandOne = mock(Command.class);
+        final Command commandTwo = mock(Command.class);
+        final Command commandThree = mock(Command.class);
+
+        tested.setMaxSize(2);
+
+        tested.register(commandOne);
+        tested.register(commandTwo);
+        tested.register(commandThree);
+
+        assertEquals(2, tested.getCommandHistory().size());
+        assertTrue(tested.getCommandHistory().contains(commandTwo));
+        assertTrue(tested.getCommandHistory().contains(commandThree));
     }
 }
