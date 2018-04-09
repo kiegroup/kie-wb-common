@@ -157,7 +157,7 @@ public class SettingsPresenter {
             return setupSections(model);
         }).then(i -> {
             view.hideBusyIndicator();
-            if (sectionManager.getSections().contains(sectionManager.getCurrentSection())) {
+            if (sectionManager.manages(sectionManager.getCurrentSection())) {
                 return sectionManager.goTo(sectionManager.getCurrentSection());
             } else {
                 return sectionManager.goToFirstAvailable();
@@ -177,7 +177,7 @@ public class SettingsPresenter {
 
         final Promise<Object> setupResult = promises.all(sections, (final Section<ProjectScreenModel> section) -> setupSection(model, section));
 
-        if (this.sectionManager.getSections().isEmpty()) {
+        if (this.sectionManager.isEmpty()) {
             return promises.reject("No sections available");
         }
 
@@ -203,7 +203,7 @@ public class SettingsPresenter {
     }
 
     public void showSaveModal() {
-        promises.reduceLazily(sectionManager.getSections(), Section::validate).then(i -> {
+        sectionManager.validateAll().then(i -> {
             savePopUpPresenter.show(this::save);
             return promises.resolve();
         }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, (final Section<ProjectScreenModel> section) -> {
@@ -315,7 +315,7 @@ public class SettingsPresenter {
 
     public void onSettingsSectionChanged(@Observes final SettingsSectionChange<ProjectScreenModel> settingsSectionChange) {
 
-        if (!sectionManager.getSections().contains(settingsSectionChange.getSection())) {
+        if (!sectionManager.manages(settingsSectionChange.getSection())) {
             return;
         }
 

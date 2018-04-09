@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.Dependency;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.sections.Section;
@@ -145,7 +144,7 @@ public class DependenciesPresenter extends Section<ProjectScreenModel>  {
     }
 
     @Override
-    public SectionView getView() {
+    public SectionView<?> getView() {
         return view;
     }
 }

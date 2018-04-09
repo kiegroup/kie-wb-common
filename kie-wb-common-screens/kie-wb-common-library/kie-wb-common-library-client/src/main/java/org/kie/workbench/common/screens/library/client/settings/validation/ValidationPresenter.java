@@ -24,7 +24,6 @@ import elemental2.dom.Element;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.model.ModuleRepositories;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.screens.library.client.settings.SettingsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.sections.Section;
@@ -81,7 +80,7 @@ public class ValidationPresenter extends Section<ProjectScreenModel>  {
     }
 
     @Override
-    public SectionView getView() {
+    public SectionView<?> getView() {
         return view;
     }
 
