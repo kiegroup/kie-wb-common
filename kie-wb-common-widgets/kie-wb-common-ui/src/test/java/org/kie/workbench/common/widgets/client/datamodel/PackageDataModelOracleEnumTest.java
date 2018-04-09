@@ -18,6 +18,7 @@ package org.kie.workbench.common.widgets.client.datamodel;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.enterprise.inject.Instance;
 
 import org.jboss.errai.common.client.api.Caller;
@@ -39,8 +40,12 @@ import org.kie.workbench.common.widgets.client.datamodel.testclasses.TestJavaEnu
 import org.mockito.Mock;
 import org.uberfire.backend.vfs.Path;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests for the ModuleDataModelOracle enums
@@ -156,7 +161,8 @@ public class PackageDataModelOracleEnumTest {
                                          FieldAccessorsAndMutators.BOTH,
                                          DataType.TYPE_STRING))
                 .end()
-                .addEnum("'Fact.field1' : ['val1', 'val2'], 'Fact.field2' : ['val3', 'val4'], 'Fact.field2[field1=val1]' : ['f1val1a', 'f1val1b'], 'Fact.field2[field1=val2]' : ['f1val2a', 'f1val2b']",
+                .addEnum("'Fact.field1' : ['val1', 'val2', '\"a, b, c\"'], 'Fact.field2' : ['val3', 'val4'], " +
+                                 "'Fact.field2[field1=val1]' : ['f1val1a', 'f1val1b'], 'Fact.field2[field1=val2]' : ['f1val2a', 'f1val2b']",
                          Thread.currentThread().getContextClassLoader())
                 .build();
 
@@ -186,12 +192,14 @@ public class PackageDataModelOracleEnumTest {
 
         String[] field1Enums = oracle.getEnumValues("Fact",
                                                     "field1");
-        assertEquals(2,
+        assertEquals(3,
                      field1Enums.length);
         assertEquals("val1",
                      field1Enums[0]);
         assertEquals("val2",
                      field1Enums[1]);
+        assertEquals("\"a, b, c\"",
+                     field1Enums[2]);
 
         String[] field2Enums = oracle.getEnumValues("Fact",
                                                     "field2");

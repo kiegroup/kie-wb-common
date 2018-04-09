@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.widgets.client.widget;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,6 +26,7 @@ import org.jboss.errai.bus.client.api.BusErrorCallback;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.RemoteCallback;
+import org.kie.soup.commons.util.ListSplitter;
 import org.kie.soup.project.datamodel.oracle.DropDownData;
 import org.kie.workbench.common.services.shared.enums.EnumDropdownService;
 import org.kie.workbench.common.widgets.client.resources.i18n.CommonConstants;
@@ -41,7 +41,6 @@ public class EnumDropDownUtilities {
 
     /**
      * Populate ListBox with values from DropDownData
-     *
      * @param value
      * @param dropData
      * @param isMultipleSelect
@@ -128,13 +127,12 @@ public class EnumDropDownUtilities {
         String currentValue = value;
         String trimmedCurrentValue = currentValue;
         if (isMultipleSelect && trimmedCurrentValue != null) {
-            trimmedCurrentValue = currentValue.replace("\"",
-                                                       "");
             trimmedCurrentValue = trimmedCurrentValue.replace("(",
                                                               "");
             trimmedCurrentValue = trimmedCurrentValue.replace(")",
                                                               "");
-            for (String val : Arrays.asList(trimmedCurrentValue.split(","))) {
+            trimmedCurrentValue = trimmedCurrentValue.trim();
+            for (String val : ListSplitter.split("\"", true, trimmedCurrentValue)) {
                 currentValues.add(val.trim());
             }
         } else {
