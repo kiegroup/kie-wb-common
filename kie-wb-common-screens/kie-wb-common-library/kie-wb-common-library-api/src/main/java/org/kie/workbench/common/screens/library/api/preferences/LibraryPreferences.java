@@ -31,7 +31,7 @@ public class LibraryPreferences implements BasePreference<LibraryPreferences> {
     @Property(bundleKey = "LibraryPreferences.ProjectPreferences")
     LibraryProjectPreferences projectPreferences;
 
-    @Property(bundleKey = "LibraryPreferences.AdvancedGavPreferences")
+    @Property(bundleKey = "LibraryPreferences.AdvancedGavPreferences", shared = true)
     GAVPreferences gavPreferences;
 
     @Override
