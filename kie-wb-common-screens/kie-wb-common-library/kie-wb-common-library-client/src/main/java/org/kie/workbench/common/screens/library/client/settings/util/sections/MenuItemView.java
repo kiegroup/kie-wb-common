@@ -26,7 +26,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-@Templated("../SettingsView.html#section-menu-item")
+@Templated
 public class MenuItemView<T> implements MenuItem.View<T> {
 
     @Inject
