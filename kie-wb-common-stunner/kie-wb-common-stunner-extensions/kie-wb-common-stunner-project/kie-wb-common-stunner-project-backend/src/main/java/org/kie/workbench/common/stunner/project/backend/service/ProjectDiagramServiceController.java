@@ -20,7 +20,10 @@ import java.util.Map;
 
 import javax.enterprise.inject.Instance;
 
+import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
+import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -42,24 +45,29 @@ import org.uberfire.java.nio.file.StandardDeleteOption;
 
 class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectMetadata, ProjectDiagram> {
 
-    private static final Logger LOG =
-            LoggerFactory.getLogger(ProjectDiagramServiceController.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectDiagramServiceController.class.getName());
 
     private final IOService ioService;
     private final KieModuleService moduleService;
+    private final MetadataServerSideService metadataService;
+    private final WorkspaceProjectService projectService;
 
     ProjectDiagramServiceController(final DefinitionManager definitionManager,
                                     final FactoryManager factoryManager,
                                     final Instance<DefinitionSetService> definitionSetServiceInstances,
                                     final IOService ioService,
                                     final BackendRegistryFactory registryFactory,
-                                    final KieModuleService moduleService) {
+                                    final KieModuleService moduleService,
+                                    final MetadataServerSideService metadataService,
+                                    final WorkspaceProjectService projectService) {
         super(definitionManager,
               factoryManager,
               definitionSetServiceInstances,
               registryFactory);
         this.ioService = ioService;
         this.moduleService = moduleService;
+        this.metadataService = metadataService;
+        this.projectService = projectService;
     }
 
     @Override
@@ -93,7 +101,8 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                                                       name,
                                                                       defSetId,
                                                                       moduleName,
-                                                                      projPkg);
+                                                                      projPkg,
+                                                                      loadOverview(path));
         return this.create(path,
                            name,
                            defSetId,
@@ -110,7 +119,18 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                             title,
                                             defSetId,
                                             kieModule.getModuleName(),
-                                            modulePackage);
+                                            modulePackage,
+                                            loadOverview(path));
+    }
+
+    private Overview loadOverview(final Path path) {
+        final Overview overview = new Overview();
+        overview.setMetadata(metadataService.getMetadata(path));
+
+        final KieModule module = moduleService.resolveModule(path);
+        overview.setProjectName(projectService.resolveProject(module.getRootPath()).getName());
+
+        return overview;
     }
 
     private KieModule getCurrentModule(final Path path) {
@@ -121,11 +141,13 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                                          final String name,
                                                          final String defSetId,
                                                          final String moduleName,
-                                                         final Package projPkg) {
+                                                         final Package projPkg,
+                                                         final Overview overview) {
         return new ProjectMetadataImpl.ProjectMetadataBuilder()
                 .forDefinitionSetId(defSetId)
                 .forModuleName(moduleName)
                 .forProjectPackage(projPkg)
+                .forOverview(overview)
                 .forTitle(name)
                 .forPath(path)
                 .build();

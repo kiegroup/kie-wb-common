@@ -23,8 +23,10 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.model.Package;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.bus.server.annotations.Service;
@@ -49,8 +51,7 @@ import org.uberfire.workbench.events.ResourceOpenedEvent;
 public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
         implements ProjectDiagramService {
 
-    private static final Logger LOG =
-            LoggerFactory.getLogger(ProjectDiagramServiceImpl.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(ProjectDiagramServiceImpl.class.getName());
 
     private final SessionInfo sessionInfo;
     private final Event<ResourceOpenedEvent> resourceOpenedEvent;
@@ -59,6 +60,8 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
 
     protected ProjectDiagramServiceImpl() {
         this(null,
+             null,
+             null,
              null,
              null,
              null,
@@ -78,7 +81,9 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                      final SessionInfo sessionInfo,
                                      final Event<ResourceOpenedEvent> resourceOpenedEvent,
                                      final CommentedOptionFactory commentedOptionFactory,
-                                     final KieModuleService moduleService) {
+                                     final KieModuleService moduleService,
+                                     final MetadataServerSideService metadataService,
+                                     final WorkspaceProjectService projectService) {
         this.ioService = ioService;
         this.sessionInfo = sessionInfo;
         this.resourceOpenedEvent = resourceOpenedEvent;
@@ -88,7 +93,9 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                           definitionSetServiceInstances,
                                           registryFactory,
                                           ioService,
-                                          moduleService);
+                                          moduleService,
+                                          metadataService,
+                                          projectService);
     }
 
     @PostConstruct
@@ -181,12 +188,16 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                                               final Instance<DefinitionSetService> definitionSetServiceInstances,
                                                               final BackendRegistryFactory registryFactory,
                                                               final IOService ioService,
-                                                              final KieModuleService moduleService) {
+                                                              final KieModuleService moduleService,
+                                                              final MetadataServerSideService metadataService,
+                                                              final WorkspaceProjectService projectService) {
         return new ProjectDiagramServiceController(definitionManager,
                                                    factoryManager,
                                                    definitionSetServiceInstances,
                                                    ioService,
                                                    registryFactory,
-                                                   moduleService);
+                                                   moduleService,
+                                                   metadataService,
+                                                   projectService);
     }
 }
