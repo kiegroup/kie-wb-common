@@ -41,8 +41,8 @@ public class SectionManager<T> {
     private List<Section<T>> sections;
     private HTMLElement menuItemsContainer;
     private HTMLElement contentContainer;
-    private Map<Section<T>, Integer> originalHashCodes;
 
+    private Map<Section<T>, Integer> originalHashCodes;
     private Section<T> currentSection;
 
     @Inject
@@ -142,5 +142,9 @@ public class SectionManager<T> {
 
     public boolean manages(final Section<T> section) {
         return sections.contains(section);
+    }
+
+    public Promise<Void> goToCurrentSection() {
+        return goTo(currentSection);
     }
 }
