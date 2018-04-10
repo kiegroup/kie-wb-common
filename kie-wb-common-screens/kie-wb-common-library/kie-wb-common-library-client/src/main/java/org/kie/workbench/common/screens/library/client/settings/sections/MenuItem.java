@@ -24,12 +24,12 @@ import org.kie.workbench.common.screens.library.client.settings.util.ListItemPre
 import org.kie.workbench.common.screens.library.client.settings.util.UberElementalListItem;
 
 @Dependent
-public class MenuItem<T> extends ListItemPresenter<Section<T>, HasSections<T>, MenuItem.View<T>> {
+public class MenuItem<T> extends ListItemPresenter<Section<T>, SectionManager<T>, MenuItem.View<T>> {
 
     private final View<T> view;
 
     private Section<T> section;
-    private HasSections<T> settingsPresenter;
+    private SectionManager<T> sectionManager;
 
     @Inject
     public MenuItem(final View<T> view) {
@@ -38,7 +38,7 @@ public class MenuItem<T> extends ListItemPresenter<Section<T>, HasSections<T>, M
     }
 
     public void showSection() {
-        settingsPresenter.goTo(section);
+        sectionManager.goTo(section);
     }
 
     public void markAsDirty(final boolean dirty) {
@@ -47,10 +47,10 @@ public class MenuItem<T> extends ListItemPresenter<Section<T>, HasSections<T>, M
 
     @Override
     public MenuItem<T> setup(final Section<T> section,
-                             final HasSections<T> settingsPresenter) {
+                             final SectionManager<T> settingsPresenter) {
 
         this.section = section;
-        this.settingsPresenter = settingsPresenter;
+        this.sectionManager = settingsPresenter;
 
         this.view.init(this);
         this.view.setLabel(section.getView().getTitle());
