@@ -58,17 +58,6 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
         this.objects.forEach(this::addToListElement);
     }
 
-    private void handleTable() {
-        if (listElement instanceof HTMLTableSectionElement) {
-            final HTMLTableElement tableElement = (HTMLTableElement) listElement.parentNode;
-            if (objects.isEmpty()) {
-                tableElement.classList.add("hidden");
-            } else {
-                tableElement.classList.remove("hidden");
-            }
-        }
-    }
-
     public void setupWithPresenters(final Element listElement,
                                     final List<P> presenters,
                                     final BiConsumer<T, P> itemPresenterConfigurator) {
@@ -82,6 +71,17 @@ public abstract class ListPresenter<T, P extends ListItemPresenter<T, ?, ?>> {
 
         elemental2DomUtil.removeAllElementChildren(this.listElement);
         presenters.forEach(this::addPresenter);
+    }
+
+    private void handleTable() {
+        if (listElement instanceof HTMLTableSectionElement) {
+            final HTMLTableElement tableElement = (HTMLTableElement) listElement.parentNode;
+            if (objects.isEmpty()) {
+                tableElement.classList.add("hidden");
+            } else {
+                tableElement.classList.remove("hidden");
+            }
+        }
     }
 
     public void add(final T o) {

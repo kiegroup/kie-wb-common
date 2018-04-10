@@ -32,7 +32,7 @@ import org.uberfire.client.promise.Promises;
 import static java.util.stream.Collectors.toList;
 
 @Dependent
-public class SectionManager<T> implements HasSections<T> {
+public class SectionManager<T> {
 
     private final MenuItemsListPresenter<T> menuItemsListPresenter;
     private final Promises promises;

@@ -40,7 +40,6 @@ public class GeneralSettingsView implements GeneralSettingsPresenter.View {
     @Inject
     private TranslationService translationService;
 
-
     @Inject
     private Elemental2DomUtil elemental2DomUtil;
 

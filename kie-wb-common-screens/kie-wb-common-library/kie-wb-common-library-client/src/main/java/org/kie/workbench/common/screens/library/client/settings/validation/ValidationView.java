@@ -24,8 +24,6 @@ import elemental2.dom.HTMLHeadingElement;
 import elemental2.dom.HTMLTableSectionElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 
 @Templated
 public class ValidationView implements ValidationPresenter.View {
