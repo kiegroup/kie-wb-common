@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright (C) 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.sections;
+
+import java.util.List;
 
 import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
+import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 
-public class SettingsSectionChange<T> {
+public interface SettingsSections {
 
-    private final Section<T> presenter;
-
-    public SettingsSectionChange(final Section<T> presenter) {
-        this.presenter = presenter;
-    }
-
-    public Section<T> getSection() {
-        return presenter;
-    }
+    List<Section<ProjectScreenModel>> getList();
 }

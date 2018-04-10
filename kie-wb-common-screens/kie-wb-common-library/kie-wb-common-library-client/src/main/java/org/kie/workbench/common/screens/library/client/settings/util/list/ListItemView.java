@@ -14,19 +14,10 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.util.list;
 
-import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
+import org.uberfire.client.mvp.UberElemental;
 
-public class SettingsSectionChange<T> {
+public interface ListItemView<P extends ListItemPresenter<?, ?, ? extends ListItemView<P>>> extends UberElemental<P> {
 
-    private final Section<T> presenter;
-
-    public SettingsSectionChange(final Section<T> presenter) {
-        this.presenter = presenter;
-    }
-
-    public Section<T> getSection() {
-        return presenter;
-    }
 }
