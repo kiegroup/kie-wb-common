@@ -29,6 +29,7 @@ import org.eclipse.bpmn2.Lane;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.ScriptTask;
 import org.eclipse.bpmn2.SequenceFlow;
+import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.eclipse.bpmn2.UserTask;
@@ -99,5 +100,9 @@ public class PropertyWriterFactory {
 
     public ScriptTaskPropertyWriter of(ScriptTask e) {
         return new ScriptTaskPropertyWriter(e, variableScope);
+    }
+
+    public ServiceTaskPropertyWriter of(ServiceTask e) {
+        return new ServiceTaskPropertyWriter(e, variableScope);
     }
 }
