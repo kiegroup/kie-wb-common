@@ -64,7 +64,7 @@ public class MenuItem<T> extends ListItemPresenter<Section<T>, SectionManager<T>
     }
 
     public interface View<T> extends UberElementalListItem<MenuItem<T>>,
-                                  IsElement {
+                                     IsElement {
 
         void setLabel(final String label);
 
