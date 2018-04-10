@@ -1,5 +1,9 @@
 package org.kie.workbench.common.screens.library.client.settings.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import elemental2.dom.HTMLElement;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.junit.Before;
@@ -8,11 +12,6 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.includedknowledgebases.IncludedKnowledgeBaseItemPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.kie.workbench.common.screens.library.client.settings.knowledgebases.item.KnowledgeBaseItemPresenter.IncludedKnowledgeBasesListPresenter;

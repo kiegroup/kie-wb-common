@@ -25,14 +25,14 @@ import elemental2.promise.Promise;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.soup.project.datamodel.imports.Import;
 import org.kie.soup.project.datamodel.imports.Imports;
+import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.sections.Section;
 import org.kie.workbench.common.screens.library.client.settings.sections.SectionView;
-import org.uberfire.client.promise.Promises;
-import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
 import org.kie.workbench.common.screens.library.client.settings.util.ListPresenter;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.widgets.configresource.client.widget.unbound.AddImportPopup;
+import org.uberfire.client.promise.Promises;
 
 public class ExternalDataObjectsPresenter extends Section<ProjectScreenModel>  {
 

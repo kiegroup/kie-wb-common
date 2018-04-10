@@ -17,7 +17,6 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
 import org.kie.workbench.common.screens.library.client.settings.sections.Section;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 
 public class SettingsSectionChange<T> {
 
