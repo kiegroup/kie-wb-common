@@ -240,7 +240,7 @@ public class DynamicFormRenderer implements IsWidget,
     }
 
     public Form getCurrentForm() {
-        if(isInitialized()) {
+        if (isInitialized()) {
             return formHandler.getForm();
         }
 

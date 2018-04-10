@@ -25,7 +25,7 @@ import javax.inject.Inject;
 import org.kie.workbench.common.forms.dynamic.client.rendering.FieldRenderer;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.AbstractNestedFormFormGroup;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapseFormGroup;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapsibleFormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.fieldSet.FieldSetFormGroup;
 import org.kie.workbench.common.forms.dynamic.client.rendering.renderers.relations.subform.widget.SubFormWidget;
 import org.kie.workbench.common.forms.dynamic.client.resources.i18n.FormRenderingConstants;
@@ -53,8 +53,8 @@ public class SubFormFieldRenderer extends FieldRenderer<SubFormFieldDefinition, 
 
         AbstractNestedFormFormGroup formGroup;
 
-        if(Container.COLLAPSIBLE.equals(field.getContainer())) {
-            formGroup = formGroupsInstance.select(CollapseFormGroup.class).get();
+        if (Container.COLLAPSIBLE.equals(field.getContainer())) {
+            formGroup = formGroupsInstance.select(CollapsibleFormGroup.class).get();
         } else {
             formGroup = formGroupsInstance.select(FieldSetFormGroup.class).get();
         }

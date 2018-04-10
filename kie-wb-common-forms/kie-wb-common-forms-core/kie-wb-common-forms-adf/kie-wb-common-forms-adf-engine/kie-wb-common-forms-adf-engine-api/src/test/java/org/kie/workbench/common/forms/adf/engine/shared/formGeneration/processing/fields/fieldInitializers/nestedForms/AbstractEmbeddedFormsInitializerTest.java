@@ -79,7 +79,7 @@ public abstract class AbstractEmbeddedFormsInitializerTest<FIELD extends FieldDe
 
     @Test
     public void testWithWrongContainer() {
-        fieldElementParams.put("nestedFormContainer", "wrong");
+        fieldElementParams.put(AbstractEmbeddedFormsInitializer.FIELD_CONTAINER_PARAM, "wrong");
 
         initializer.initialize(field, fieldElement, context);
 
@@ -92,7 +92,7 @@ public abstract class AbstractEmbeddedFormsInitializerTest<FIELD extends FieldDe
 
     @Test
     public void testWithFieldSetContainer() {
-        fieldElementParams.put("nestedFormContainer", Container.FIELD_SET.name());
+        fieldElementParams.put(AbstractEmbeddedFormsInitializer.FIELD_CONTAINER_PARAM, Container.FIELD_SET.name());
 
         initializer.initialize(field, fieldElement, context);
 
@@ -105,7 +105,7 @@ public abstract class AbstractEmbeddedFormsInitializerTest<FIELD extends FieldDe
 
     @Test
     public void testWithCollapsibleContainer() {
-        fieldElementParams.put("nestedFormContainer", Container.COLLAPSIBLE.name());
+        fieldElementParams.put(AbstractEmbeddedFormsInitializer.FIELD_CONTAINER_PARAM, Container.COLLAPSIBLE.name());
 
         initializer.initialize(field, fieldElement, context);
 

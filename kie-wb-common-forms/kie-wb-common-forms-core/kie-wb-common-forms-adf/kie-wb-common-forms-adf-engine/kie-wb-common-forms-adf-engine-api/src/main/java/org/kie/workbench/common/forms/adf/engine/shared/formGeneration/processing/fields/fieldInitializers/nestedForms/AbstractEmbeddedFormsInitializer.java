@@ -24,16 +24,20 @@ import org.kie.workbench.common.forms.model.FieldDefinition;
 
 public abstract class AbstractEmbeddedFormsInitializer<FIELD extends FieldDefinition & EmbedsForm> implements FieldInitializer<FIELD> {
 
+    public static final String FIELD_CONTAINER_PARAM = "nestedFormContainer";
+
+    public static final String COLLAPSIBLE_CONTAINER = "COLLAPSIBLE";
+
     protected void initializeContainer(FIELD field, FieldElement fieldElement) {
-        String containerSetting = fieldElement.getParams().get("nestedFormContainer");
+        String containerSetting = fieldElement.getParams().get(FIELD_CONTAINER_PARAM);
 
-        if(containerSetting != null) {
+        if (containerSetting != null) {
             try {
-
                 Container container = Container.valueOf(containerSetting);
                 field.setContainer(container);
-
-            } catch (Exception ex){}
+            } catch (Exception ex) {
+                // Swallow
+            }
         }
     }
 }

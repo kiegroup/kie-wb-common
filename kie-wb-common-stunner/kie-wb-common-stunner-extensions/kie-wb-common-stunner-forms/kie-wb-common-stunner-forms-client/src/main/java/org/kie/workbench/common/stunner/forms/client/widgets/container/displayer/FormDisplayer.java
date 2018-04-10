@@ -16,11 +16,11 @@
 
 package org.kie.workbench.common.stunner.forms.client.widgets.container.displayer;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Predicate;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
@@ -32,11 +32,12 @@ import org.jboss.errai.databinding.client.BindableProxy;
 import org.jboss.errai.databinding.client.BindableProxyFactory;
 import org.kie.workbench.common.forms.adf.engine.shared.FormElementFilter;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapseFormGroup;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapsibleFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.StaticModelFormRenderingContext;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
+import org.kie.workbench.common.forms.processing.engine.handling.Form;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -53,8 +54,6 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
     private final FormDisplayerView view;
     private final DynamicFormRenderer renderer;
     private final DynamicFormModelGenerator modelGenerator;
-
-    private Map<String, CollapseFormGroup> collapses = new HashMap<>();
 
     @Inject
     public FormDisplayer(FormDisplayerView view, DynamicFormRenderer renderer, DynamicFormModelGenerator modelGenerator) {
@@ -77,7 +76,17 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
     }
 
     private void doRender(Element<? extends Definition<?>> element, Object definition, Path diagramPath, FieldChangeHandler changeHandler) {
+
+        final List<String> previousExpandedCollapses = new ArrayList<>();
+
         if (renderer.isInitialized()) {
+            // Collecting expanded collapses from current form to synchronize the new form collapses
+            renderer.getCurrentForm().getFields()
+                    .stream()
+                    .filter(formField -> formField.getContainer() instanceof CollapsibleFormGroup && ((CollapsibleFormGroup) formField.getContainer()).isExpanded())
+                    .map(FormField::getFieldName)
+                    .collect(Collectors.toCollection(() -> previousExpandedCollapses));
+
             LOGGER.fine("Clearing previous form");
             renderer.unBind();
         }
@@ -92,39 +101,31 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
 
         renderer.render(pathAwareCtx);
 
-        synchCollapses();
+        syncCollapses(previousExpandedCollapses);
 
         renderer.addFieldChangeHandler(changeHandler);
     }
 
-    private void synchCollapses() {
-        Map<String, CollapseFormGroup> oldCollapses = collapses;
+    private void syncCollapses(final List<String> expandedCollapses) {
 
-        collapses = new HashMap<>();
+        final Form currentForm = renderer.getCurrentForm();
 
-        Predicate<FormField> canExpand;
-
-        if (oldCollapses.isEmpty()) {
-            canExpand = formField -> collapses.isEmpty();
+        if (!expandedCollapses.isEmpty()) {
+            // There are expanded collapses from a previous form -> Synchronize collapses
+            currentForm.getFields()
+                    .stream()
+                    .filter(formField -> expandedCollapses.contains(formField.getFieldName()) && formField.getContainer() instanceof CollapsibleFormGroup)
+                    .map(formField -> (CollapsibleFormGroup) formField.getContainer())
+                    .forEach(CollapsibleFormGroup::expand);
         } else {
-            canExpand = formField -> {
-                CollapseFormGroup oldCollapse = oldCollapses.get(formField.getFieldName());
-                return oldCollapse != null && oldCollapse.isExpanded();
-            };
+            // There's no collapses from a previous form -> expanding first collapse group
+            currentForm.getFields()
+                    .stream()
+                    .filter(formField -> formField.getContainer() instanceof CollapsibleFormGroup)
+                    .findFirst()
+                    .map(formField -> (CollapsibleFormGroup)formField.getContainer())
+                    .ifPresent(CollapsibleFormGroup::expand);
         }
-
-        renderer.getCurrentForm().getFields().stream()
-                .filter(formField -> formField.getContainer() instanceof CollapseFormGroup)
-                .forEach(formField -> {
-                    CollapseFormGroup collapse = (CollapseFormGroup) formField.getContainer();
-
-                    if (canExpand.test(formField)) {
-                        collapse.expand();
-                    }
-                    collapses.put(formField.getFieldName(), collapse);
-                });
-
-        oldCollapses.clear();
     }
 
     public void show() {

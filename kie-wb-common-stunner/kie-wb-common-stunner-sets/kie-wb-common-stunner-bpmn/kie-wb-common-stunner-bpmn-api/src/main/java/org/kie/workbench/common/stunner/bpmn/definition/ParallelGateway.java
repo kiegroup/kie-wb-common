@@ -33,6 +33,9 @@ import org.kie.workbench.common.stunner.core.definition.annotation.morph.Morph;
 import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 
+import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.COLLAPSIBLE_CONTAINER;
+import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.processing.fields.fieldInitializers.nestedForms.SubFormFieldInitializer.FIELD_CONTAINER_PARAM;
+
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class, builder = ParallelGateway.ParallelGatewayBuilder.class)
@@ -40,7 +43,7 @@ import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 @FormDefinition(
         startElement = "general",
         policy = FieldPolicy.ONLY_MARKED,
-        defaultFieldSettings = {@FieldParam(name = "nestedFormContainer", value = "COLLAPSIBLE")}
+        defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)}
 )
 public class ParallelGateway extends BaseGateway {
 

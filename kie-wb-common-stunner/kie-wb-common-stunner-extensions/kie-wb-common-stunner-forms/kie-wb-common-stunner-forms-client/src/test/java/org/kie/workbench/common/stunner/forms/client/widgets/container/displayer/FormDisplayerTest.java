@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.forms.dynamic.client.DynamicFormRenderer;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapseFormGroup;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse.CollapsibleFormGroup;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
 import org.kie.workbench.common.forms.processing.engine.handling.Form;
@@ -39,6 +39,7 @@ import org.uberfire.backend.vfs.Path;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -88,13 +89,15 @@ public class FormDisplayerTest {
     private FormField field1;
 
     @Mock
-    private CollapseFormGroup containerField1;
+    private CollapsibleFormGroup containerField1;
 
     @Mock
     private FormField field2;
 
     @Mock
-    private CollapseFormGroup containerField2;
+    private CollapsibleFormGroup containerField2;
+
+    private int renderedCount = 0;
 
     private FormDisplayer displayer;
 
@@ -124,6 +127,10 @@ public class FormDisplayerTest {
         when(field2.getContainer()).thenReturn(containerField2);
 
         when(form.getFields()).thenReturn(Arrays.asList(field1, field2));
+
+        doAnswer(invocationOnMock -> renderedCount++)
+                .when(formRenderer)
+                .render(any());
 
         when(formRenderer.getCurrentForm()).thenReturn(form);
 
@@ -197,6 +204,14 @@ public class FormDisplayerTest {
 
     @Test
     public void testRenderAndCollapsableStatus() {
+
+        when(formRenderer.getCurrentForm()).thenAnswer(invocationOnMock -> {
+            if (renderedCount > 0) {
+                return form;
+            }
+            return null;
+        });
+
         testRender(1, 1, 1, 0, 1);
 
         verify(containerField1).expand();

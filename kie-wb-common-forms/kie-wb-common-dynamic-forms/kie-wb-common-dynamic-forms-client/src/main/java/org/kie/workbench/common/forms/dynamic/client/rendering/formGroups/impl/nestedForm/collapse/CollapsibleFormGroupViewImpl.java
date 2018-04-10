@@ -35,8 +35,8 @@ import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.labels
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
 @Templated
-public class CollapseFormGroupViewImpl implements IsElement,
-                                                  CollapseFormGroupView {
+public class CollapsibleFormGroupViewImpl implements IsElement,
+                                                     CollapsibleFormGroupView {
 
     @Inject
     private FieldRequired fieldRequired;

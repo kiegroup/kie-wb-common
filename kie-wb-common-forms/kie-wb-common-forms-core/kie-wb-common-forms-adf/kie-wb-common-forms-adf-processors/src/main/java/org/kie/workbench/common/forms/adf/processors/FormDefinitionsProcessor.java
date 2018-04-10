@@ -362,7 +362,7 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
 
         Map<String, String> defaultFieldSettings = new HashMap<>();
 
-        for(FieldParam param : definition.defaultFieldSettings()) {
+        for (FieldParam param : definition.defaultFieldSettings()) {
             defaultFieldSettings.put(param.name(), param.value());
         }
 
@@ -510,7 +510,6 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
                                 if (labelInfos != null && labelInfos.size() == 1) {
                                     FieldInfo labelInfo = labelInfos.iterator().next();
                                     fieldLabel = finalType.toString() + i18nSettings.separator() + labelInfo.fieldElement.getSimpleName();
-
                                 }
 
                                 helpMessage = finalType.toString() + i18nSettings.separator() + fieldDefinitionAnnotation.helpMessageKeySuffix();
@@ -521,7 +520,6 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
                                     FieldInfo helpInfo = helpMessages.iterator().next();
                                     helpMessage = finalType.toString() + i18nSettings.separator() + helpInfo.fieldElement.getSimpleName();
                                 }
-
                             }
 
                             Collection<FieldInfo> fieldValue = extractFieldInfos((TypeElement) finalTypeElement,
@@ -578,14 +576,14 @@ public class FormDefinitionsProcessor extends AbstractErrorAbsorbingProcessor {
                         isList = true;
                         finalType = fieldType.getTypeArguments().get(0);
 
-                        if(FormModelPropertiesUtil.isBaseType(finalType.toString())) {
+                        if (FormModelPropertiesUtil.isBaseType(finalType.toString())) {
                             typeKind = org.kie.workbench.common.forms.model.TypeKind.BASE;
-                        } else if(elementUtils.getTypeElement(finalType.toString()).getSuperclass().toString().startsWith("java.lang.Enum")){
+                        } else if (elementUtils.getTypeElement(finalType.toString()).getSuperclass().toString().startsWith("java.lang.Enum")) {
                             typeKind = org.kie.workbench.common.forms.model.TypeKind.ENUM;
                         } else {
                             typeKind = org.kie.workbench.common.forms.model.TypeKind.OBJECT;
                         }
-                    } else if(elementUtils.getTypeElement(finalType.toString()).getSuperclass().toString().startsWith("java.lang.Enum")){
+                    } else if (elementUtils.getTypeElement(finalType.toString()).getSuperclass().toString().startsWith("java.lang.Enum")) {
                         typeKind = org.kie.workbench.common.forms.model.TypeKind.ENUM;
                     }
                 }

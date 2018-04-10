@@ -16,20 +16,20 @@
 
 package org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.collapse;
 
-import com.google.gwtmockito.GwtMockitoTestRunner;
-import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.AbstractFormGroupTest;
+import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.FormGroupView;
+import org.uberfire.client.mvp.UberElement;
 
-@RunWith(GwtMockitoTestRunner.class)
-public class CollapseFormGroupTest extends AbstractFormGroupTest<CollapseFormGroup, CollapseFormGroupView> {
+public interface CollapsibleFormGroupView extends FormGroupView,
+                                                  UberElement<CollapsibleFormGroupView.Presenter> {
 
-    @Override
-    protected Class<CollapseFormGroupView> getViewClass() {
-        return CollapseFormGroupView.class;
-    }
+    void click();
 
-    @Override
-    protected CollapseFormGroup getFormGroupInstance(CollapseFormGroupView view) {
-        return new CollapseFormGroup(view);
+    void expand();
+
+    void collapse();
+
+    interface Presenter {
+
+        void notifyClick();
     }
 }

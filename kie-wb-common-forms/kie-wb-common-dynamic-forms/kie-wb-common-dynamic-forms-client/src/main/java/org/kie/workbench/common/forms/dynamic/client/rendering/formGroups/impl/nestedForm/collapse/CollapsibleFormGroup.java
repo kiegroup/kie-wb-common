@@ -22,25 +22,25 @@ import javax.inject.Inject;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.impl.nestedForm.AbstractNestedFormFormGroup;
 
 @Dependent
-public class CollapseFormGroup extends AbstractNestedFormFormGroup<CollapseFormGroupView> implements CollapseFormGroupView.Presenter {
+public class CollapsibleFormGroup extends AbstractNestedFormFormGroup<CollapsibleFormGroupView> implements CollapsibleFormGroupView.Presenter {
 
     private boolean expanded = false;
 
     @Inject
-    public CollapseFormGroup(CollapseFormGroupView view) {
+    public CollapsibleFormGroup(CollapsibleFormGroupView view) {
         super(view);
         this.view.init(this);
     }
 
     public void expand() {
-        if(!expanded) {
+        if (!expanded) {
             view.expand();
             expanded = true;
         }
     }
 
     public void collapse() {
-        if(expanded) {
+        if (expanded) {
             view.collapse();
             expanded = false;
         }
