@@ -1,45 +1,10 @@
 package org.kie.workbench.common.screens.library.client.settings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.enterprise.event.Event;
-
-import elemental2.dom.Console;
-import elemental2.dom.DomGlobal;
-import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
-import org.guvnor.common.services.project.client.repositories.ConflictingRepositoriesPopup;
-import org.guvnor.common.services.project.model.Module;
-import org.guvnor.common.services.project.model.POM;
-import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.DeploymentMode;
-import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.screens.library.client.settings.sections.MenuItem;
-import org.kie.workbench.common.screens.library.client.settings.sections.MenuItemsListPresenter;
-import org.kie.workbench.common.screens.library.client.settings.sections.Section;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
-import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.uberfire.backend.vfs.ObservablePath;
-import org.uberfire.ext.editor.commons.client.file.Customizable;
-import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
-import org.uberfire.mocks.CallerMock;
-import org.uberfire.promise.SyncPromises;
-import org.uberfire.workbench.events.NotificationEvent;
 
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SettingsPresenterTest {

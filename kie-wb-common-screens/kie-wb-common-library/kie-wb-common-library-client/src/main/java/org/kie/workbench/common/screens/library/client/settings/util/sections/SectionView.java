@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright (C) 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.util.sections;
 
-import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
+import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.uberfire.client.mvp.UberElemental;
 
-public class SettingsSectionChange<T> {
+public interface SectionView<T> extends UberElemental<T>,
+                                        IsElement {
 
-    private final Section<T> presenter;
-
-    public SettingsSectionChange(final Section<T> presenter) {
-        this.presenter = presenter;
-    }
-
-    public Section<T> getSection() {
-        return presenter;
-    }
+    String getTitle();
 }

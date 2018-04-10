@@ -21,6 +21,8 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
+import org.kie.workbench.common.screens.library.client.settings.sections.DefaultSettingsSections;
+import org.kie.workbench.common.screens.library.client.settings.sections.SettingsSections;
 import org.uberfire.annotations.Customizable;
 import org.uberfire.annotations.FallbackImplementation;
 

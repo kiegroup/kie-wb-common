@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright (C) 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.screens.library.client.settings;
+package org.kie.workbench.common.screens.library.client.settings.sections.knowledgebases.item;
 
-import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
+import org.kie.workbench.common.services.shared.kmodule.KBaseModel;
 
-public class SettingsSectionChange<T> {
+public class DefaultKnowledgeBaseChange {
 
-    private final Section<T> presenter;
+    private final KBaseModel newDefault;
 
-    public SettingsSectionChange(final Section<T> presenter) {
-        this.presenter = presenter;
+    public DefaultKnowledgeBaseChange(final KBaseModel newDefault) {
+        this.newDefault = newDefault;
     }
 
-    public Section<T> getSection() {
-        return presenter;
+    public KBaseModel getNewDefault() {
+        return newDefault;
     }
 }
