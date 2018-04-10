@@ -18,11 +18,14 @@ package org.kie.workbench.common.screens.datamodeller.client.util;
 
 import java.util.List;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.user.client.Command;
+import org.gwtbootstrap3.extras.select.client.constants.SelectLanguage;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 import org.uberfire.commons.data.Pair;
+
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.gwt.user.client.Command;
 
 public class UIUtil {
 
@@ -44,6 +47,15 @@ public class UIUtil {
 
     public static void initList( final Select select,
                                  boolean includeEmptyItem ) {
+        try {
+            String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
+            SelectLanguage language = Enum.valueOf(SelectLanguage.class, currentLocale.toUpperCase());
+            select.setLanguage(language);
+        } catch(IllegalArgumentException ex) {
+            // In case enum is not found (lang is not supported).
+            select.setLanguage(SelectLanguage.EN);
+        }
+
         select.clear();
         if ( includeEmptyItem ) {
             select.add( emptyOption() );
