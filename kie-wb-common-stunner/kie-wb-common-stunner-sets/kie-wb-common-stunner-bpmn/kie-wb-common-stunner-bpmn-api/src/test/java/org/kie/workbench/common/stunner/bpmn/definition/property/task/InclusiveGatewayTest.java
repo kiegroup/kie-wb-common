@@ -25,13 +25,13 @@ import javax.validation.ValidatorFactory;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.definition.ExclusiveGateway;
+import org.kie.workbench.common.stunner.bpmn.definition.InclusiveGateway;
 import org.kie.workbench.common.stunner.bpmn.definition.property.gateway.GatewayExecutionSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 
 import static org.junit.Assert.assertTrue;
 
-public class ExclusiveGatewayTest {
+public class InclusiveGatewayTest {
 
     private Validator validator;
 
@@ -45,34 +45,38 @@ public class ExclusiveGatewayTest {
     }
 
     @Test
-    public void testExclusiveDatabasedGatewayNameValid() {
-        ExclusiveGateway exclusiveGateway = new ExclusiveGateway.ExclusiveGatewayBuilder().build();
-        exclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
-        Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
+    public void testInclusiveDatabasedGatewayNameValid() {
+        InclusiveGateway inclusiveGateway = new InclusiveGateway.InclusiveGatewayBuilder().build();
+        inclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
+        Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
 
     @Test
-    public void testExclusiveDatabasedGatewayNameEmpty() {
-        ExclusiveGateway exclusiveGateway = new ExclusiveGateway.ExclusiveGatewayBuilder().build();
-        exclusiveGateway.getGeneral().setName(new Name(""));
-        Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
+    public void testInclusiveDatabasedGatewayNameEmpty() {
+        InclusiveGateway inclusiveGateway = new InclusiveGateway.InclusiveGatewayBuilder().build();
+        inclusiveGateway.getGeneral().setName(new Name(NAME_VALID));
+        Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
 
     @Test
-    public void testExclusiveDatabasedGatewayExecutionSet() {
-        ExclusiveGateway exclusiveGateway = new ExclusiveGateway.ExclusiveGatewayBuilder().build();
-        exclusiveGateway.setExecutionSet(new GatewayExecutionSet());
-        Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
+    public void testInclusiveDatabasedGatewayExecutionSet() {
+        InclusiveGateway inclusiveGateway = new InclusiveGateway.InclusiveGatewayBuilder().build();
+        inclusiveGateway.setExecutionSet(new GatewayExecutionSet());
+        Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
 
     @Test
-    public void testExclusiveDatabasedGatewayExecutionSetWithDefaultRoute() {
-        ExclusiveGateway exclusiveGateway = new ExclusiveGateway.ExclusiveGatewayBuilder().build();
-        exclusiveGateway.setExecutionSet(new GatewayExecutionSet(DEFAULT_ROUTE_VALID));
-        Set<ConstraintViolation<ExclusiveGateway>> violations = this.validator.validate(exclusiveGateway);
+    public void testInclusiveDatabasedGatewayExecutionSetWithDefaultRoute() {
+        InclusiveGateway inclusiveGateway = new InclusiveGateway.InclusiveGatewayBuilder().build();
+        inclusiveGateway.setExecutionSet(new GatewayExecutionSet(DEFAULT_ROUTE_VALID));
+        Set<ConstraintViolation<InclusiveGateway>> violations = this.validator.validate(inclusiveGateway);
+        assertTrue(violations.isEmpty());
+
+        inclusiveGateway.setExecutionSet(null);
+        violations = this.validator.validate(inclusiveGateway);
         assertTrue(violations.isEmpty());
     }
 }
