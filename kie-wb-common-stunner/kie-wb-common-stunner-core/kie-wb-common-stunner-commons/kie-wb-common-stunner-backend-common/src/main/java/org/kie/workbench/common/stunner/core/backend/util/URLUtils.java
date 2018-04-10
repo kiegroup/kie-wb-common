@@ -50,20 +50,14 @@ public class URLUtils {
 
     public static String readFromURL(final URL url) throws IOException {
         final StringBuilder builder = new StringBuilder();
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new InputStreamReader(url.openStream(),
-                                                              BackendFileSystemManager.UT8));
-            String line = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream(),
+                                                                              BackendFileSystemManager.UT8))) {
+            String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
                 builder.append("\n");
             }
             return builder.toString();
-        } finally {
-            if (null != reader) {
-                reader.close();
-            }
         }
     }
 

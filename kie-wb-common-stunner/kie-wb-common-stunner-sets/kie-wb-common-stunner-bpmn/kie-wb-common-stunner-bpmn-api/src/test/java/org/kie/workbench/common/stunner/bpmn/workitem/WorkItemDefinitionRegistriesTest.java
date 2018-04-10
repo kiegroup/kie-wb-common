@@ -28,6 +28,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class WorkItemDefinitionRegistriesTest {
@@ -80,9 +83,11 @@ public class WorkItemDefinitionRegistriesTest {
         assertTrue(tested.contains("1"));
         assertTrue(tested.contains("2"));
         tested.remove("1");
+        verify(registryDestroyer, times(1)).accept(eq(registry1));
         assertFalse(tested.contains("1"));
         assertTrue(tested.contains("2"));
         tested.remove("2");
+        verify(registryDestroyer, times(1)).accept(eq(registry2));
         assertFalse(tested.contains("1"));
         assertFalse(tested.contains("2"));
     }
@@ -98,5 +103,7 @@ public class WorkItemDefinitionRegistriesTest {
         tested.clear();
         assertFalse(tested.contains("1"));
         assertFalse(tested.contains("2"));
+        verify(registryDestroyer, times(1)).accept(eq(registry1));
+        verify(registryDestroyer, times(1)).accept(eq(registry2));
     }
 }

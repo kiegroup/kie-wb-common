@@ -45,7 +45,7 @@ public class BackendFileSystemManager {
     private static final Logger LOG = LoggerFactory.getLogger(BackendFileSystemManager.class.getName());
 
     public static final Charset UT8 = StandardCharsets.UTF_8;
-    private static final String UT8_ENC = StandardCharsets.UTF_8.name();
+    public static final String UT8_ENC = StandardCharsets.UTF_8.name();
     private static final FilenameFilter FILTER_NONE = (dir, name) -> true;
     private static final String WEBINF_PATH = "WEB-INF";
 

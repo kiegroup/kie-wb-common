@@ -34,8 +34,6 @@ import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionCacheReg
 import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinitionRegistry;
 import org.kie.workbench.common.stunner.bpmn.workitem.service.WorkItemDefinitionLookupService;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * - It produces the work item definition registry for the current request
@@ -46,8 +44,6 @@ import org.slf4j.LoggerFactory;
 @Service
 public class WorkItemDefinitionBackendService
         implements WorkItemDefinitionLookupService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(WorkItemDefinitionBackendService.class.getName());
 
     private final WorkItemDefinitionCacheRegistry registry;
     private final WorkItemDefinitionVFSLookupService vfsService;

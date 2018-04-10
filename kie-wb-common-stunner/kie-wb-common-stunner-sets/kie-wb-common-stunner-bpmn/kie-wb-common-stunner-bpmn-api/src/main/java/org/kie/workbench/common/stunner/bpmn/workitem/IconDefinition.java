@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.workitem;
 
+import java.util.Objects;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
@@ -53,8 +55,7 @@ public class IconDefinition {
     public boolean equals(Object o) {
         if (o instanceof IconDefinition) {
             final IconDefinition other = (IconDefinition) o;
-            return ((null != uri) ? uri.equals(other.uri) : null == other.uri) &&
-                    ((null != iconData) ? iconData.equals(other.iconData) : null == other.iconData);
+            return Objects.equals(iconData, other.iconData) && Objects.equals(uri, other.uri);
         }
         return false;
     }

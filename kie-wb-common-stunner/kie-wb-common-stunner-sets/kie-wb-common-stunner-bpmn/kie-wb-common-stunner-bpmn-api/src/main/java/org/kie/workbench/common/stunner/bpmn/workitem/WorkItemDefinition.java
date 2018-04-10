@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.workitem;
 
+import java.util.Objects;
+
 import org.guvnor.common.services.project.model.Dependencies;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
@@ -154,15 +156,15 @@ public class WorkItemDefinition {
             WorkItemDefinition other = (WorkItemDefinition) o;
             return super.equals(other) &&
                     name.equals(other.name) &&
-                    ((null != category) ? category.equals(other.category) : null == other.category) &&
-                    ((null != description) ? description.equals(other.description) : null == other.description) &&
-                    ((null != displayName) ? displayName.equals(other.displayName) : null == other.displayName) &&
-                    ((null != documentation) ? documentation.equals(other.documentation) : null == other.documentation) &&
-                    ((null != iconDefinition) ? iconDefinition.equals(other.iconDefinition) : null == other.iconDefinition) &&
-                    ((null != defaultHandler) ? defaultHandler.equals(other.defaultHandler) : null == other.defaultHandler) &&
-                    ((null != parameters) ? parameters.equals(other.parameters) : null == other.parameters) &&
-                    ((null != results) ? results.equals(other.results) : null == other.results) &&
-                    ((null != dependencies) ? dependencies.equals(other.dependencies) : null == other.dependencies);
+                    Objects.equals(category, other.category) &&
+                    Objects.equals(description, other.description) &&
+                    Objects.equals(displayName, other.displayName) &&
+                    Objects.equals(documentation, other.documentation) &&
+                    Objects.equals(iconDefinition, other.iconDefinition) &&
+                    Objects.equals(defaultHandler, other.defaultHandler) &&
+                    Objects.equals(parameters, other.parameters) &&
+                    Objects.equals(results, other.results) &&
+                    Objects.equals(dependencies, other.dependencies);
         }
         return false;
     }
