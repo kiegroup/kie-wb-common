@@ -21,17 +21,19 @@ import java.util.List;
 
 import elemental2.dom.Element;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.util.select.KieSelectElement.Option;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KieEnumSelectElementTest {
@@ -51,16 +53,16 @@ public class KieEnumSelectElementTest {
 
     @Before
     public void before() {
-        kieEnumSelectElement = Mockito.spy(new KieEnumSelectElement<TestEnum>(kieSelectElement, translationService));
+        kieEnumSelectElement = spy(new KieEnumSelectElement<TestEnum>(kieSelectElement, translationService));
     }
 
     @Test
     public void testSetup() {
 
-        final Element container = Mockito.spy(new Element());
+        final Element container = spy(new Element());
         final List<Option> options = Arrays.asList(new Option("FOO", "foo"), new Option("Bar", "bar"));
 
-        Mockito.doReturn(options).when(kieEnumSelectElement).buildOptions(Matchers.any());
+        doReturn(options).when(kieEnumSelectElement).buildOptions(any());
 
         kieEnumSelectElement.setup(
                 container,
@@ -70,39 +72,40 @@ public class KieEnumSelectElementTest {
                 });
 
         assertEquals(TestEnum.class, kieEnumSelectElement.componentType);
-        Mockito.verify(kieSelectElement).setup(Matchers.eq(container), Matchers.eq(options), Matchers.eq("FOO"), Matchers.any());
+        verify(kieSelectElement).setup(eq(container), eq(options), eq("FOO"), any());
     }
 
     @Test
     public void testBuildOptions() {
-        Mockito.doReturn(new Option("A", "a")).when(kieEnumSelectElement).newOption(Matchers.any());
+        doReturn(new Option("A", "a")).when(kieEnumSelectElement).newOption(any());
 
         final List<Option> options = kieEnumSelectElement.buildOptions(TestEnum.values());
 
-        Assert.assertEquals(2, options.size());
-        Assert.assertEquals("A", options.get(0).label);
-        Assert.assertEquals("a", options.get(0).value);
-        Assert.assertEquals("A", options.get(1).label);
-        Assert.assertEquals("a", options.get(1).value);
+        assertEquals(2, options.size());
+        assertEquals("A", options.get(0).label);
+        assertEquals("a", options.get(0).value);
+        assertEquals("A", options.get(1).label);
+        assertEquals("a", options.get(1).value);
     }
 
     @Test
     public void testNewOption() {
-        Mockito.doReturn("A").when(kieEnumSelectElement).getLabel(Matchers.eq(TestEnum.FOO));
+        doReturn("A").when(kieEnumSelectElement).getLabel(eq(TestEnum.FOO));
 
         final Option option = kieEnumSelectElement.newOption(TestEnum.FOO);
 
-        Assert.assertEquals("A", option.label);
-        Assert.assertEquals("FOO", option.value);
+        assertEquals("A", option.label);
+        assertEquals("FOO", option.value);
     }
 
     @Test
     public void testGetLabel() {
-        Mockito.doReturn("A").when(translationService).format(Matchers.any());
+        doReturn("A").when(translationService).format(any());
 
         final String label = kieEnumSelectElement.getLabel(TestEnum.FOO);
 
-        Assert.assertEquals("A", label);
+        assertEquals("A", label);
+        assertEquals("A", label);
     }
 
     @Test
@@ -115,11 +118,11 @@ public class KieEnumSelectElementTest {
 
     @Test
     public void testGetValue() {
-        Mockito.doReturn("FOO").when(kieSelectElement).getValue();
+        doReturn("FOO").when(kieSelectElement).getValue();
         kieEnumSelectElement.componentType = TestEnum.class;
 
         final TestEnum value = kieEnumSelectElement.getValue();
 
-        Assert.assertEquals(TestEnum.FOO, value);
+        assertEquals(TestEnum.FOO, value);
     }
 }

@@ -12,13 +12,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.util.select.KieSelectElement.Option;
-import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class KieSelectElementTest {
@@ -33,19 +36,19 @@ public class KieSelectElementTest {
 
     @Before
     public void before() {
-        kieSelectElement = Mockito.spy(new KieSelectElement(view, optionsListPresenter, new Elemental2DomUtil()));
+        kieSelectElement = spy(new KieSelectElement(view, optionsListPresenter, new Elemental2DomUtil()));
     }
 
     @Test
     public void testSetup() {
-        final HTMLElement viewRoot = Mockito.spy(new HTMLElement());
+        final HTMLElement viewRoot = spy(new HTMLElement());
         viewRoot.innerHTML = "bar";
-        Mockito.doReturn(viewRoot).when(view).getElement();
+        doReturn(viewRoot).when(view).getElement();
 
-        final HTMLSelectElement selectElement = Mockito.spy(new HTMLSelectElement());
-        Mockito.doReturn(selectElement).when(view).getSelect();
+        final HTMLSelectElement selectElement = spy(new HTMLSelectElement());
+        doReturn(selectElement).when(view).getSelect();
 
-        final Element container = Mockito.spy(new Element() {
+        final Element container = spy(new Element() {
             @Override
             public Node appendChild(final Node node) {
                 if (node instanceof HTMLElement) {
@@ -67,16 +70,16 @@ public class KieSelectElementTest {
                 value -> {
                 });
 
-        Mockito.verify(view).setValue(Matchers.eq("Value"));
-        Mockito.verify(view).initSelect();
-        Mockito.verify(optionsListPresenter).setup(Matchers.eq(selectElement), Matchers.eq(options), Matchers.any());
+        verify(view).setValue(eq("Value"));
+        verify(view).initSelect();
+        verify(optionsListPresenter).setup(eq(selectElement), eq(options), any());
         assertEquals("bar", container.innerHTML);
     }
 
     @Test
     public void testOnChange() {
         final AtomicInteger i = new AtomicInteger(0);
-        Mockito.doReturn("Test").when(kieSelectElement).getValue();
+        doReturn("Test").when(kieSelectElement).getValue();
 
         kieSelectElement.onChange = value -> {
             assertEquals("Test", value);
