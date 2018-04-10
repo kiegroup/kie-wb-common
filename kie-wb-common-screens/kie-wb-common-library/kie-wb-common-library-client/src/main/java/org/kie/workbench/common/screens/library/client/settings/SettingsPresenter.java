@@ -158,7 +158,7 @@ public class SettingsPresenter {
         }).then(i -> {
             view.hideBusyIndicator();
             if (sectionManager.manages(sectionManager.getCurrentSection())) {
-                return sectionManager.goTo(sectionManager.getCurrentSection());
+                return sectionManager.goToCurrentSection();
             } else {
                 return sectionManager.goToFirstAvailable();
             }
