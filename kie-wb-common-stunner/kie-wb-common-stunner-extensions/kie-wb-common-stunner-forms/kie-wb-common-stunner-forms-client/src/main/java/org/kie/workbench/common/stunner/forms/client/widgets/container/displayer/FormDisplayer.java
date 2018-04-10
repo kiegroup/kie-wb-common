@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
@@ -37,7 +38,6 @@ import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContex
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.dynamic.service.shared.impl.StaticModelFormRenderingContext;
 import org.kie.workbench.common.forms.processing.engine.handling.FieldChangeHandler;
-import org.kie.workbench.common.forms.processing.engine.handling.Form;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
@@ -83,7 +83,8 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
             // Collecting expanded collapses from current form to synchronize the new form collapses
             renderer.getCurrentForm().getFields()
                     .stream()
-                    .filter(formField -> formField.getContainer() instanceof CollapsibleFormGroup && ((CollapsibleFormGroup) formField.getContainer()).isExpanded())
+                    .filter(this::checkCollapsibleGroup)
+                    .filter(formField -> ((CollapsibleFormGroup) formField.getContainer()).isExpanded())
                     .map(FormField::getFieldName)
                     .collect(Collectors.toCollection(() -> previousExpandedCollapses));
 
@@ -108,24 +109,28 @@ public class FormDisplayer implements FormDisplayerView.Presenter,
 
     private void syncCollapses(final List<String> expandedCollapses) {
 
-        final Form currentForm = renderer.getCurrentForm();
+        final Stream<FormField> formFields = renderer.getCurrentForm().getFields().stream()
+                .filter(this::checkCollapsibleGroup);
 
         if (!expandedCollapses.isEmpty()) {
             // There are expanded collapses from a previous form -> Synchronize collapses
-            currentForm.getFields()
-                    .stream()
-                    .filter(formField -> expandedCollapses.contains(formField.getFieldName()) && formField.getContainer() instanceof CollapsibleFormGroup)
-                    .map(formField -> (CollapsibleFormGroup) formField.getContainer())
+            formFields.filter(formField -> expandedCollapses.contains(formField.getFieldName()))
+                    .map(this::toFormGroup)
                     .forEach(CollapsibleFormGroup::expand);
         } else {
             // There's no collapses from a previous form -> expanding first collapse group
-            currentForm.getFields()
-                    .stream()
-                    .filter(formField -> formField.getContainer() instanceof CollapsibleFormGroup)
-                    .findFirst()
-                    .map(formField -> (CollapsibleFormGroup)formField.getContainer())
+            formFields.findFirst()
+                    .map(this::toFormGroup)
                     .ifPresent(CollapsibleFormGroup::expand);
         }
+    }
+
+    private boolean checkCollapsibleGroup(FormField formField) {
+        return formField.getContainer() instanceof CollapsibleFormGroup;
+    }
+
+    private CollapsibleFormGroup toFormGroup(FormField formField) {
+        return (CollapsibleFormGroup) formField.getContainer();
     }
 
     public void show() {
