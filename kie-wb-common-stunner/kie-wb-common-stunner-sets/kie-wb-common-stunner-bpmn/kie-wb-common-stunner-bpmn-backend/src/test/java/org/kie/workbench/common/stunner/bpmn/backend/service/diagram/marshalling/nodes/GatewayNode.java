@@ -37,7 +37,6 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
@@ -50,7 +49,7 @@ public abstract class GatewayNode<T extends BaseGateway> extends BPMNDiagramMars
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
                 // New (un)marshaller is disabled for now due to found incompleteness
-                {OLD}, {NEW}
+                {OLD}, // {NEW}
         });
     }
 
