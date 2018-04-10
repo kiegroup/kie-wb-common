@@ -68,7 +68,6 @@ public class SectionManager<T> {
         setupMenuItems();
     }
 
-    @Override
     public Promise<Void> goTo(final Section<T> section) {
         currentSection = section;
         elemental2DomUtil.removeAllElementChildren(contentContainer);
