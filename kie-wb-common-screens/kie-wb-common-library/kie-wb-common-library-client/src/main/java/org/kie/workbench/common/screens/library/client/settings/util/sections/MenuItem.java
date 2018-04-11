@@ -63,11 +63,17 @@ public class MenuItem<T> extends ListItemPresenter<Section<T>, SectionManager<T>
         return section;
     }
 
+    public void setActive() {
+        getView().setActive();
+    }
+
     public interface View<T> extends ListItemView<MenuItem<T>>,
                                      IsElement {
 
         void setLabel(final String label);
 
         void markAsDirty(final boolean dirty);
+
+        void setActive();
     }
 }

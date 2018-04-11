@@ -90,14 +90,12 @@ public class SettingsPresenter {
     private final WorkspaceProjectContext projectContext;
     private final ManagedInstance<ObservablePath> observablePaths;
     private final ConflictingRepositoriesPopup conflictingRepositoriesPopup;
+    private final SectionManager<ProjectScreenModel> sectionManager;
 
     private ObservablePath pathToPom;
+
     ObservablePath.OnConcurrentUpdateEvent concurrentPomUpdateInfo = null;
-
     ProjectScreenModel model;
-
-    @Inject
-    private SectionManager<ProjectScreenModel> sectionManager;
 
     @Inject
     public SettingsPresenter(final View view,
@@ -108,7 +106,8 @@ public class SettingsPresenter {
                              final Caller<ProjectScreenService> projectScreenService,
                              final WorkspaceProjectContext projectContext,
                              final ManagedInstance<ObservablePath> observablePaths,
-                             final ConflictingRepositoriesPopup conflictingRepositoriesPopup) {
+                             final ConflictingRepositoriesPopup conflictingRepositoriesPopup,
+                             final SectionManager<ProjectScreenModel> sectionManager) {
         this.view = view;
         this.promises = promises;
         this.notificationEvent = notificationEvent;
@@ -119,6 +118,7 @@ public class SettingsPresenter {
         this.projectContext = projectContext;
         this.observablePaths = observablePaths;
         this.conflictingRepositoriesPopup = conflictingRepositoriesPopup;
+        this.sectionManager = sectionManager;
     }
 
     @PostConstruct
@@ -127,15 +127,10 @@ public class SettingsPresenter {
                             view.getMenuItemsContainer(),
                             view.getContentContainer());
 
-        view.hide();
-
-        setupCurrentSection().then(i -> {
-            view.show();
-            return promises.resolve();
-        });
+        setupUsingCurrentSection();
     }
 
-    public Promise<Void> setupCurrentSection() {
+    void setupUsingCurrentSection() {
 
         view.init(this);
         view.showBusyIndicator();
@@ -151,7 +146,7 @@ public class SettingsPresenter {
 
         pathToPom.onConcurrentUpdate(info -> concurrentPomUpdateInfo = info);
 
-        return promises.promisify(projectScreenService, s -> {
+        promises.promisify(projectScreenService, s -> {
             return s.load(pathToPom);
         }).then(model -> {
             this.model = model;
@@ -174,15 +169,15 @@ public class SettingsPresenter {
 
         // Sections can be removed inside setupSection method, so we create
         // a new ArrayList containing a copy of the original sections
-        final List<Section<ProjectScreenModel>> sections = new ArrayList<>(this.sectionManager.getSections());
+        final List<Section<ProjectScreenModel>> sections = new ArrayList<>(sectionManager.getSections());
 
-        final Promise<Object> setupResult = promises.all(sections, (final Section<ProjectScreenModel> section) -> setupSection(model, section));
-
-        if (this.sectionManager.isEmpty()) {
-            return promises.reject("No sections available");
-        }
-
-        return setupResult;
+        return promises.all(sections, (final Section<ProjectScreenModel> section) -> setupSection(model, section)).then(i -> {
+            if (sectionManager.isEmpty()) {
+                return promises.reject("No sections available");
+            } else {
+                return promises.resolve();
+            }
+        });
     }
 
     Promise<Object> setupSection(final ProjectScreenModel model,
@@ -324,7 +319,7 @@ public class SettingsPresenter {
     }
 
     public void reset() {
-        setupCurrentSection();
+        setupUsingCurrentSection();
     }
 
     public View getView() {

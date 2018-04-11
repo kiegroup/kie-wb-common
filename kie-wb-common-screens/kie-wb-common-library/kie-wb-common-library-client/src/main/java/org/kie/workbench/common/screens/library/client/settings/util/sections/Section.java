@@ -55,6 +55,9 @@ public abstract class Section<T> {
         return menuItem;
     }
 
+    public void setActive() {
+        menuItem.setActive();
+    }
     //Lifecycle
 
     public Promise<Void> save(final String comment, final Supplier<Promise<Void>> chain) {
@@ -68,4 +71,5 @@ public abstract class Section<T> {
     public Promise<Void> setup(final T model) {
         return promises.resolve();
     }
+
 }

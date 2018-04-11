@@ -63,6 +63,11 @@ public class MenuItemView<T> implements MenuItem.View<T> {
         }
     }
 
+    @Override
+    public void setActive() {
+        getElement().classList.add("active");
+    }
+
     private HTMLElement newDirtyIndicator() {
         final HTMLElement dirtyIndicator = (HTMLElement) this.dirtyIndicator.cloneNode(false);
         dirtyIndicator.textContent = " *";
