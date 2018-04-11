@@ -678,13 +678,13 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                                      TypeConstructor.builder(fqcn));
         } else {
             processingContextMap.put(className,
-                                     TypeConstructor.builder(className));
+                                     TypeConstructor.constructor(className));
         }
     }
 
     private void processDefinitionSetModelBuilder(final Element e,
                                                   final String className,
-                                                  final Map<String, String> processingContextMap) {
+                                                  final Map<String, TypeConstructor> processingContextMap) {
         DefinitionSet definitionAnn = e.getAnnotation(DefinitionSet.class);
         TypeMirror bMirror = null;
         try {
@@ -695,7 +695,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         if (null != bMirror && !VoidBuilder.class.getName().equals(bMirror.toString())) {
             String fqcn = bMirror.toString();
             processingContextMap.put(className,
-                                     fqcn);
+                                     TypeConstructor.builder(fqcn));
         }
     }
 
@@ -1228,7 +1228,8 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                             (key, value) -> buildersMap.put(key, value.representation()));
                 }
                 if (!processingContext.getDefSetAnnotations().getBuilderFieldNames().isEmpty()) {
-                    buildersMap.putAll(processingContext.getDefSetAnnotations().getBuilderFieldNames());
+                    processingContext.getDefSetAnnotations().getBuilderFieldNames().forEach(
+                            (key, value) -> buildersMap.put(key, value.representation()));
                 }
                 // Ensure visible on both backend and client sides.
                 final String packageName = getGeneratedPackageName() + ".definition.factory";
