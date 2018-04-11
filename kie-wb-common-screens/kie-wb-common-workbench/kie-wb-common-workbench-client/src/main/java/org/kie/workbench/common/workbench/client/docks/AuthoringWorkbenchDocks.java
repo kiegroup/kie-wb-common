@@ -17,6 +17,7 @@
 package org.kie.workbench.common.workbench.client.docks;
 
 import java.util.Collection;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -105,7 +106,7 @@ public class AuthoringWorkbenchDocks {
 
         uberfireDocks.add(projectExplorerDock);
         uberfireDocks.hide(UberfireDockPosition.EAST,
-                              authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
     }
 
     public void setActiveHandler(WorkbenchDocksHandler handler) {
@@ -126,7 +127,7 @@ public class AuthoringWorkbenchDocks {
         if (activeHandler.shouldDisableDocks()) {
             // disable docks
             uberfireDocks.hide(UberfireDockPosition.EAST,
-                                  currentPerspectiveIdentifier);
+                               currentPerspectiveIdentifier);
             uberfireDocks.hide(UberfireDockPosition.WEST,
                                currentPerspectiveIdentifier);
         } else {
@@ -141,7 +142,7 @@ public class AuthoringWorkbenchDocks {
             activeDocks = new UberfireDock[docks.size()];
             int activeDocksIndex = 0;
 
-            for(WorkbenchDockEntry entry: docks) {
+            for (WorkbenchDockEntry entry : docks) {
                 UberfireDock dock = entry.getDock();
                 uberfireDocks.add(dock);
                 activeDocks[activeDocksIndex++] = dock;
@@ -152,7 +153,7 @@ public class AuthoringWorkbenchDocks {
             uberfireDocks.show(UberfireDockPosition.WEST,
                                currentPerspectiveIdentifier);
 
-            for(WorkbenchDockEntry entry: docks) {
+            for (WorkbenchDockEntry entry : docks) {
                 UberfireDock dock = entry.getDock();
                 if (entry.isOpenByDefault()) {
                     uberfireDocks.open(dock);
@@ -172,13 +173,13 @@ public class AuthoringWorkbenchDocks {
             componentPaletteEnabled = false;
         }
         uberfireDocks.hide(UberfireDockPosition.WEST,
-                              authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
         projectExplorerEnabled = false;
     }
 
     public void show() {
         uberfireDocks.show(UberfireDockPosition.WEST,
-                             authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
         projectExplorerEnabled = true;
 
         libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {
