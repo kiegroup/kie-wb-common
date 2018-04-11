@@ -22,8 +22,8 @@ import java.util.Optional;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.ServiceTask;
 import org.eclipse.bpmn2.di.BPMNPlane;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomInput;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
@@ -34,8 +34,8 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
         super(task, plane, definitionResolver);
     }
 
-    public String getRuleFlowGroup() {
-        return CustomAttribute.ruleFlowGroup.of(element).get();
+    public String getTaskName() {
+        return CustomInput.taskName.of(task).get();
     }
 
     public AssignmentsInfo getAssignmentsInfo() {

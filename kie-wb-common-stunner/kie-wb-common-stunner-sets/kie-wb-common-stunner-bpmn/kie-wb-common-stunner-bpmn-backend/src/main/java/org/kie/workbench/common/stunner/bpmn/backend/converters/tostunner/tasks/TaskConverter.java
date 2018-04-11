@@ -94,11 +94,11 @@ public class TaskConverter {
         ));
 
         definition.setExecutionSet(new ServiceTaskExecutionSet(
-                new TaskName(),
-                new IsAsync(),
-                new AdHocAutostart(),
-                new OnEntryAction(),
-                new OnExitAction()
+                new TaskName(p.getTaskName()),
+                new IsAsync(p.isAsync()),
+                new AdHocAutostart(p.isAdHocAutoStart()),
+                new OnEntryAction(p.getOnEntryAction()),
+                new OnExitAction(p.getOnExitAction())
         ));
 
         definition.setSimulationSet(p.getSimulationSet());
