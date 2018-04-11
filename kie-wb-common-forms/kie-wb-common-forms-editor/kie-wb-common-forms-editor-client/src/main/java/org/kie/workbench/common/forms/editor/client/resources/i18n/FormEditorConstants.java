@@ -139,4 +139,10 @@ public interface FormEditorConstants {
 
     @TranslationKey(defaultValue = "")
     String ErrorMessageDisplayerViewImplTitle = "ErrorMessageDisplayerViewImpl.title";
+
+    @TranslationKey(defaultValue = "")
+    String ErrorMessageDisplayerViewImplClose = "ErrorMessageDisplayerViewImpl.close";
+
+    @TranslationKey(defaultValue = "")
+    String ErrorMessageDisplayerViewImplCloseAndReview = "ErrorMessageDisplayerViewImpl.closeAndReview";
 }

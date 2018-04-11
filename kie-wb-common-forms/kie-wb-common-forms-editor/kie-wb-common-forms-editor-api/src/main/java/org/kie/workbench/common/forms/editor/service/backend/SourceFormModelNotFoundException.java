@@ -21,7 +21,7 @@ import org.kie.workbench.common.forms.model.FormModel;
 /**
  * Exception thrown if the surce for a given {@link FormModel} cannot be found.
  */
-public class SourceFormModelNotFoundException extends Exception{
+public class SourceFormModelNotFoundException extends Exception {
 
     private FormModel formModel;
 
@@ -29,11 +29,14 @@ public class SourceFormModelNotFoundException extends Exception{
 
     private String fullMessage;
 
-    public SourceFormModelNotFoundException(String shortMessage, String fullMessage, FormModel formModel) {
+    private String modelSource;
+
+    public SourceFormModelNotFoundException(String shortMessage, String fullMessage, String modelSource, FormModel formModel) {
         super(fullMessage);
         this.formModel = formModel;
         this.shortMessage = shortMessage;
         this.fullMessage = fullMessage;
+        this.modelSource = modelSource;
     }
 
     public FormModel getFormModel() {
@@ -46,5 +49,9 @@ public class SourceFormModelNotFoundException extends Exception{
 
     public String getFullMessage() {
         return fullMessage;
+    }
+
+    public String getModelSource() {
+        return modelSource;
     }
 }

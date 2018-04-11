@@ -282,7 +282,7 @@ public class FormEditorServiceImplTest {
 
     @Test
     public void testConstructContentWithCheckModelFailure() throws IOException, SourceFormModelNotFoundException {
-        SourceFormModelNotFoundException exception = new SourceFormModelNotFoundException("exception", "exception", null);
+        SourceFormModelNotFoundException exception = new SourceFormModelNotFoundException("exception", "exception", "model", null);
 
         doThrow(exception)
                 .when(dataObjectFormModelHandler).checkSourceModel();

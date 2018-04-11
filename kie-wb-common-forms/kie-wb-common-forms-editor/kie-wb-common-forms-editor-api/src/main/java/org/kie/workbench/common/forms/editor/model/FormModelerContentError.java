@@ -26,9 +26,12 @@ public class FormModelerContentError {
 
     private String fullMessage;
 
-    public FormModelerContentError(@MapsTo("shortMessage") String shortMessage, @MapsTo("fullMessage") String fullMessage) {
+    private String sourceType;
+
+    public FormModelerContentError(@MapsTo("shortMessage") String shortMessage, @MapsTo("fullMessage") String fullMessage, @MapsTo("sourceType") String sourceType) {
         this.shortMessage = shortMessage;
         this.fullMessage = fullMessage;
+        this.sourceType = sourceType;
     }
 
     public String getShortMessage() {
@@ -45,5 +48,13 @@ public class FormModelerContentError {
 
     public void setFullMessage(String fullMessage) {
         this.fullMessage = fullMessage;
+    }
+
+    public String getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
     }
 }

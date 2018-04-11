@@ -35,6 +35,7 @@ public class ErrorMessageDisplayerTest {
 
     private static final String MESSAGE = "message";
     private static final String FULL_MESSAGE = "full message";
+    private static final String SOURCE_TYPE = "dataObject";
 
     @Mock
     private TranslationService translationService;
@@ -57,8 +58,9 @@ public class ErrorMessageDisplayerTest {
     public void simpleMessageTest() {
         verify(view).init(displayer);
 
-        displayer.show(MESSAGE, closeCommand);
+        displayer.show(MESSAGE, SOURCE_TYPE, closeCommand);
 
+        verify(view).setSourceType(SOURCE_TYPE);
         verify(view).displayShowMoreAnchor(false);
         verify(view, never()).setShowMoreLabel(any());
 
@@ -79,7 +81,9 @@ public class ErrorMessageDisplayerTest {
     public void fullMessageTest() {
         verify(view).init(displayer);
 
-        displayer.show(MESSAGE, FULL_MESSAGE, closeCommand);
+        displayer.show(MESSAGE, FULL_MESSAGE, SOURCE_TYPE, closeCommand);
+
+        verify(view).setSourceType(SOURCE_TYPE);
         verify(view).displayShowMoreAnchor(true);
 
         verify(translationService, times(1)).getTranslation(FormEditorConstants.ShowMoreLabel);

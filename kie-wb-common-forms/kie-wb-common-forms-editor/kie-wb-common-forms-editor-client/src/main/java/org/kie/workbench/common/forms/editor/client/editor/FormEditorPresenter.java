@@ -192,7 +192,7 @@ public class FormEditorPresenter extends KieEditor<FormModelerContent> {
         if (content.getError() != null) {
             FormModelerContentError error = content.getError();
 
-            errorMessageDisplayer.show(error.getShortMessage(), error.getFullMessage(), () -> placeManager.forceClosePlace(place));
+            errorMessageDisplayer.show(error.getShortMessage(), error.getFullMessage(), error.getSourceType(), () -> placeManager.forceClosePlace(place));
 
             errorMessageDisplayer.enableContinue(content.getDefinition() != null);
         }

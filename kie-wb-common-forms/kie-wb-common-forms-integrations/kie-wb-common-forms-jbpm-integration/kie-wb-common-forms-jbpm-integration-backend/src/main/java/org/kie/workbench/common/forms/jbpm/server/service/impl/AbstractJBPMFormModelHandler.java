@@ -31,6 +31,7 @@ public abstract class AbstractJBPMFormModelHandler<MODEL extends JBPMFormModel> 
     protected static final String BUNDLE = "org.kie.workbench.common.forms.jbpm.server.service.BackendConstants";
     protected static final String MISSING_PROCESS_SHORT_KEY = "MissingProcess.shortMessage";
     protected static final String MISSING_PROCESS_FULL_KEY = "MissingProcess.fullMessage";
+    protected static final String PROCESS_KEY = "process";
 
     protected FieldManager fieldManager;
 

@@ -73,7 +73,7 @@ public class BusinessProcessFormModelHandler extends AbstractJBPMFormModelHandle
     public void checkSourceModel() throws SourceFormModelNotFoundException {
         if (getSourceModel() == null) {
             String[] params = new String[]{formModel.getProcessId()};
-            throwException(BUNDLE, MISSING_PROCESS_SHORT_KEY, params, MISSING_PROCESS_FULL_KEY, params);
+            throwException(BUNDLE, MISSING_PROCESS_SHORT_KEY, params, MISSING_PROCESS_FULL_KEY, params, PROCESS_KEY);
         }
     }
 

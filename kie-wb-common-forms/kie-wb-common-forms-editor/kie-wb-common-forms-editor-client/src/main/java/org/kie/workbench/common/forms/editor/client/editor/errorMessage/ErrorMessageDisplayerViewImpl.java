@@ -58,6 +58,10 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
 
     @Inject
     @DataField
+    private Span closeLabel;
+
+    @Inject
+    @DataField
     private Label continueRadioContainer;
 
     @Inject
@@ -95,6 +99,15 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
     }
 
     @Override
+    public void setSourceType(String sourceType) {
+        if(sourceType == null) {
+            closeLabel.setTextContent(translationService.format(FormEditorConstants.ErrorMessageDisplayerViewImplClose, sourceType));
+        } else {
+            closeLabel.setTextContent(translationService.format(FormEditorConstants.ErrorMessageDisplayerViewImplCloseAndReview, sourceType));
+        }
+    }
+
+    @Override
     public void displayShowMoreAnchor(boolean display) {
         showMoreAnchor.setHidden(!display);
     }
@@ -109,6 +122,8 @@ public class ErrorMessageDisplayerViewImpl implements ErrorMessageDisplayerView,
             DOMUtil.addCSSClass(continueRadioContainer, "disabled");
         }
     }
+
+
 
     @Override
     public void setShowMoreLabel(String label) {

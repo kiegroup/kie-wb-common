@@ -125,14 +125,16 @@ public abstract class AbstractFormModelHandler<F extends FormModel> implements F
         return Optional.ofNullable(property);
     }
 
-    protected void throwException(String bundlePath, String shortKey, String[] shortKeyParams, String longKey, String[] longKeyParams) throws SourceFormModelNotFoundException {
+    protected void throwException(String bundlePath, String shortKey, String[] shortKeyParams, String longKey, String[] longKeyParams, String modelSourceKey) throws SourceFormModelNotFoundException {
         ResourceBundle bundle = ResourceBundle.getBundle(bundlePath, getLocale());
 
         String shortMessage = getMessage(bundle, shortKey, shortKeyParams);
 
         String longMessage = getMessage(bundle, longKey, longKeyParams);
 
-        throw new SourceFormModelNotFoundException(shortMessage, longMessage, formModel);
+        String modelSource = bundle.getString(modelSourceKey);
+
+        throw new SourceFormModelNotFoundException(shortMessage, longMessage, modelSource, formModel);
     }
 
     protected String getMessage(ResourceBundle bundle, String key, String[] params) {

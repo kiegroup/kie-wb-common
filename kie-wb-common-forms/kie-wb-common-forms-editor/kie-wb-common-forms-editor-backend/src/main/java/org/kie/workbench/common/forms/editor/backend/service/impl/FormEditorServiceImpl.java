@@ -238,7 +238,7 @@ public class FormEditorServiceImpl extends KieService<FormModelerContent> implem
 
                         formModelConent.setSynchronizationResult(synchronizationResult);
                     } catch (SourceFormModelNotFoundException ex) {
-                        formModelConent.setError(new FormModelerContentError(ex.getShortMessage(), ex.getFullMessage()));
+                        formModelConent.setError(new FormModelerContentError(ex.getShortMessage(), ex.getFullMessage(), ex.getModelSource()));
                     }
                 }
             }
@@ -249,7 +249,7 @@ public class FormEditorServiceImpl extends KieService<FormModelerContent> implem
             writer.write(shortMessage);
             writer.write("\nFull error message:\n");
             e.printStackTrace(new PrintWriter(writer));
-            formModelConent.setError(new FormModelerContentError(shortMessage, writer.toString()));
+            formModelConent.setError(new FormModelerContentError(shortMessage, writer.toString(), null));
             log.warn("Error loading form " + path.toURI(), e);
         }
 

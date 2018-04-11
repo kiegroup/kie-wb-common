@@ -52,17 +52,20 @@ public class ErrorMessageDisplayer implements ErrorMessageDisplayerView.Presente
         view.init(this);
     }
 
-    public void show(String message, Command closeCommand) {
-        show(message, null, closeCommand);
+    public void show(String message, String sourceType, Command closeCommand) {
+        show(message, null, sourceType, closeCommand);
     }
 
-    public void show(String shortMessage, String fullMessage, Command closeCommand) {
+    public void show(String shortMessage, String fullMessage, String sourceType, Command closeCommand) {
         PortablePreconditions.checkNotNull("shortMessage", shortMessage);
+        PortablePreconditions.checkNotNull("sourceType", sourceType);
         PortablePreconditions.checkNotNull("closeCommand", closeCommand);
 
         this.shortMessage = shortMessage;
         this.fullMessage = fullMessage;
         this.closeCommand = closeCommand;
+
+        view.setSourceType(sourceType);
 
         showMoreEnabled = fullMessage != null;
 

@@ -67,11 +67,11 @@ public class TaskFormModelHandler extends AbstractJBPMFormModelHandler<TaskFormM
 
             if (!optional.isPresent()) {
                 String[] params = new String[]{formModel.getTaskName(), formModel.getProcessId()};
-                throwException(BUNDLE, MISSING_TASK_SHORT_KEY, params, MISSING_TASK_FULL_KEY, params);
+                throwException(BUNDLE, MISSING_TASK_SHORT_KEY, params, MISSING_TASK_FULL_KEY, params, PROCESS_KEY);
             }
         } else {
             String[] params = new String[]{formModel.getProcessId()};
-            throwException(BUNDLE, MISSING_PROCESS_SHORT_KEY, params, MISSING_PROCESS_FULL_KEY, params);
+            throwException(BUNDLE, MISSING_PROCESS_SHORT_KEY, params, MISSING_PROCESS_FULL_KEY, params, PROCESS_KEY);
         }
     }
 

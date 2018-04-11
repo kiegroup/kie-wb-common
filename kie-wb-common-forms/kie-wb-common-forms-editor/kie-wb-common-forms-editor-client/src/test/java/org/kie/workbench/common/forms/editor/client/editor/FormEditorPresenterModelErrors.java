@@ -32,6 +32,7 @@ public class FormEditorPresenterModelErrors extends FormEditorPresenterAbstractT
 
     private final String MODEL_ERROR_MESSAGE = "model error";
     private final String UNEXPECTED_ERROR_MESSAGE = "unexpected error";
+    private final String DATA_OBJECT = "data object";
 
     enum ErrorType {
         NONE,
@@ -73,7 +74,7 @@ public class FormEditorPresenterModelErrors extends FormEditorPresenterAbstractT
         verify(editorHelper).initHelper(content);
 
         verify(view).init(presenter);
-        verify(errorMessageDisplayer).show(MODEL_ERROR_MESSAGE, MODEL_ERROR_MESSAGE, any());
+        verify(errorMessageDisplayer).show(MODEL_ERROR_MESSAGE, MODEL_ERROR_MESSAGE, DATA_OBJECT, any());
 
         verify(layoutEditorMock).clear();
         verify(layoutEditorMock).init(anyString(), anyString(), anyString(), any());
@@ -96,7 +97,7 @@ public class FormEditorPresenterModelErrors extends FormEditorPresenterAbstractT
         verify(editorHelper).initHelper(content);
 
         verify(view).init(presenter);
-        verify(errorMessageDisplayer).show(UNEXPECTED_ERROR_MESSAGE, UNEXPECTED_ERROR_MESSAGE, any());
+        verify(errorMessageDisplayer).show(UNEXPECTED_ERROR_MESSAGE, UNEXPECTED_ERROR_MESSAGE, null, any());
 
         verify(layoutEditorMock, never()).clear();
         verify(layoutEditorMock, never()).init(anyString(), anyString(), anyString(), any());
@@ -112,10 +113,10 @@ public class FormEditorPresenterModelErrors extends FormEditorPresenterAbstractT
     public FormModelerContent serviceLoad() {
         FormModelerContent content = super.serviceLoad();
         if (errorType.equals(ErrorType.MODEL)) {
-            content.setError(new FormModelerContentError(MODEL_ERROR_MESSAGE, MODEL_ERROR_MESSAGE));
+            content.setError(new FormModelerContentError(MODEL_ERROR_MESSAGE, MODEL_ERROR_MESSAGE, DATA_OBJECT));
         } else if (errorType.equals(ErrorType.UNEXPECTED)) {
             content.setDefinition(null);
-            content.setError(new FormModelerContentError(UNEXPECTED_ERROR_MESSAGE, UNEXPECTED_ERROR_MESSAGE));
+            content.setError(new FormModelerContentError(UNEXPECTED_ERROR_MESSAGE, UNEXPECTED_ERROR_MESSAGE, null));
         }
         return content;
     }

@@ -20,6 +20,8 @@ public interface ErrorMessageDisplayerView {
 
     void init(Presenter presenter);
 
+    void setSourceType(String sourceType);
+
     void show(String message);
 
     void displayShowMoreAnchor(boolean display);
