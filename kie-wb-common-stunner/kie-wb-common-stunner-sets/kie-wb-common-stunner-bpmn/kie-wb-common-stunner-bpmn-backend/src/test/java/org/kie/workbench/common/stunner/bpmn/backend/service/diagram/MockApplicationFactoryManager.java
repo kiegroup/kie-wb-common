@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
 import org.kie.workbench.common.stunner.backend.definition.factory.TestScopeModelFactory;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -90,7 +93,17 @@ public class MockApplicationFactoryManager extends BackendFactoryManager {
             Graph graph = bpmnGraphFactory.build(uuid, BPMN_DEF_SET_ID);
             return graph;
         }
-        Object model = testScopeModelFactory.accepts(id) ? testScopeModelFactory.build(id) : null;
+        Object model;
+        if (testScopeModelFactory.accepts(id)) {
+            model = testScopeModelFactory.build(id);
+            // fallback to reflection if no builder is present
+            // (this should be moved to `testScopeModelFactory`)
+            if (model == null) {
+                model = invokeEmptyConstructor(type, id);
+            }
+        } else {
+            model = null;
+        }
         if (null != model) {
             Class<? extends ElementFactory> element = BackendDefinitionAdapter.getGraphFactory(model.getClass());
             if (element.isAssignableFrom(NodeFactory.class)) {
@@ -115,4 +128,15 @@ public class MockApplicationFactoryManager extends BackendFactoryManager {
         result.setGraph(graph);
         return (D) result;
     }
+
+    private Object invokeEmptyConstructor(Class<?> type, String id) {
+        try {
+            Constructor<?> constructor = type.getConstructor();
+            return constructor.newInstance();
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            throw new IllegalArgumentException("No constructor for type " + id, e);
+        }
+    }
+
+
 }
