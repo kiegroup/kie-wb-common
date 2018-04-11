@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.core.processors.definition;
 
 public interface TypeConstructor {
 
-    String representation();
+    String toCode();
 
     static TypeConstructor builder(String builderClass) {
         return () -> String.format("new %s().build()", builderClass);

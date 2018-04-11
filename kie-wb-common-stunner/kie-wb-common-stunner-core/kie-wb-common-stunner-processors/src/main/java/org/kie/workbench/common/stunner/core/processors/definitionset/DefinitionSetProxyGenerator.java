@@ -53,7 +53,7 @@ public class DefinitionSetProxyGenerator extends AbstractAdapterGenerator {
                  defSetClassName);
         String builder = "new " + defSetClassName + "()";
         if (null != buildersMap && !buildersMap.isEmpty()) {
-            builder = buildersMap.get(defSetClassName).representation();
+            builder = buildersMap.get(defSetClassName).toCode();
         }
 
         // Builder.

@@ -1225,11 +1225,11 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
                 final Map<String, String> buildersMap = new LinkedHashMap<>();
                 if (!processingContext.getDefinitionAnnotations().getBuilderFieldNames().isEmpty()) {
                     processingContext.getDefinitionAnnotations().getBuilderFieldNames().forEach(
-                            (key, value) -> buildersMap.put(key, value.representation()));
+                            (key, value) -> buildersMap.put(key, value.toCode()));
                 }
                 if (!processingContext.getDefSetAnnotations().getBuilderFieldNames().isEmpty()) {
                     processingContext.getDefSetAnnotations().getBuilderFieldNames().forEach(
-                            (key, value) -> buildersMap.put(key, value.representation()));
+                            (key, value) -> buildersMap.put(key, value.toCode()));
                 }
                 // Ensure visible on both backend and client sides.
                 final String packageName = getGeneratedPackageName() + ".definition.factory";
