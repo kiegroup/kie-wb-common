@@ -191,7 +191,7 @@ public class FormEditorHelper {
 
                 FieldDefinition originalField = fieldToRemove;
 
-                if(fieldToRemove.getBinding() == null) {
+                if (fieldToRemove.getBinding() == null) {
                     return;
                 }
 

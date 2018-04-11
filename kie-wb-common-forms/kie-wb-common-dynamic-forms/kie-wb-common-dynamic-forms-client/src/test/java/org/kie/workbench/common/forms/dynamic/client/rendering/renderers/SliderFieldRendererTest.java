@@ -78,7 +78,6 @@ public class SliderFieldRendererTest {
                      name);
     }
 
-
     @Test
     public void testGetConverterInteger() {
         when(fieldMock.getStandaloneClassName()).thenReturn(Integer.class.getName());

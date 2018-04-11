@@ -25,6 +25,7 @@ import org.jboss.errai.common.client.api.Assert;
 import org.kie.workbench.common.forms.dynamic.client.rendering.formGroups.FormGroup;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.processing.engine.handling.CustomFieldValidator;
+import org.kie.workbench.common.forms.processing.engine.handling.FieldContainer;
 import org.kie.workbench.common.forms.processing.engine.handling.FormField;
 
 public abstract class FormFieldImpl<F extends FieldDefinition> implements FormField {
@@ -75,6 +76,11 @@ public abstract class FormFieldImpl<F extends FieldDefinition> implements FormFi
         if (!field.getReadOnly()) {
             doSetReadOnly(readOnly);
         }
+    }
+
+    @Override
+    public FieldContainer getContainer() {
+        return formGroup;
     }
 
     @Override
