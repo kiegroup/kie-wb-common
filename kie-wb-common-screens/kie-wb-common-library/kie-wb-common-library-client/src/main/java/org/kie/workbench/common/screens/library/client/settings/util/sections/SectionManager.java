@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.library.client.settings.util.sections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -38,15 +37,15 @@ public class SectionManager<T> {
     private final Promises promises;
     private final Elemental2DomUtil elemental2DomUtil;
 
-    private List<Section<T>> sections;
+    List<Section<T>> sections;
     private HTMLElement menuItemsContainer;
     private HTMLElement contentContainer;
 
-    private Map<Section<T>, Integer> originalHashCodes;
+    Map<Section<T>, Integer> originalHashCodes;
     private Section<T> currentSection;
 
     @Inject
-    public SectionManager(final MenuItemsListPresenter menuItemsListPresenter,
+    public SectionManager(final MenuItemsListPresenter<T> menuItemsListPresenter,
                           final Promises promises,
                           final Elemental2DomUtil elemental2DomUtil) {
 
@@ -64,8 +63,20 @@ public class SectionManager<T> {
         this.menuItemsContainer = menuItemsContainer;
         this.contentContainer = contentContainer;
         this.originalHashCodes = new HashMap<>();
-        setActiveMenuItem(currentSection);
+        this.currentSection.setActive();
         setupMenuItems();
+    }
+
+    private void setupMenuItems() {
+
+        final List<MenuItem<T>> menuItems = sections.stream()
+                .peek(section -> section.getMenuItem().setup(section, this))
+                .map(Section::getMenuItem).collect(toList());
+
+        menuItemsListPresenter.setupWithPresenters(
+                menuItemsContainer,
+                menuItems,
+                (section, menuItem) -> menuItem.setup(section, this));
     }
 
     public Promise<Void> goTo(final Section<T> section) {
@@ -75,42 +86,20 @@ public class SectionManager<T> {
         return promises.resolve();
     }
 
-    private void setActiveMenuItem(final Section<T> section) {
-        section.getMenuItem().getView().getElement().classList.add("active");
+    public Promise<Void> goToFirstAvailable() {
+        return goTo(sections.get(0));
     }
 
-    public void setupMenuItems() {
-
-        final List<MenuItem<T>> menuItems = sections.stream()
-                .peek(section -> setupMenuItemPresenter(section, section.getMenuItem()))
-                .map(Section::getMenuItem).collect(toList());
-
-        menuItemsListPresenter.setupWithPresenters(
-                menuItemsContainer,
-                menuItems,
-                this::setupMenuItemPresenter);
+    public Promise<Void> goToCurrentSection() {
+        return goTo(currentSection);
     }
 
-    private MenuItem<T> setupMenuItemPresenter(final Section<T> section,
-                                               final MenuItem<T> menuItem) {
-
-        return menuItem.setup(section, this);
-    }
-
-    public List<Section<T>> getSections() {
-        return sections;
-    }
-
-    public Section<T> getCurrentSection() {
-        return currentSection;
+    public Promise<Object> validateAll() {
+        return promises.reduceLazily(sections, Section::validate);
     }
 
     public void remove(final Section<T> section) {
         sections.remove(section);
-    }
-
-    public Promise<Void> goToFirstAvailable() {
-        return goTo(sections.get(0));
     }
 
     public Promise<Void> resetAllDirtyIndicators() {
@@ -123,28 +112,27 @@ public class SectionManager<T> {
         updateDirtyIndicator(section);
     }
 
-    public void updateDirtyIndicator(final Section<T> changedSection) {
-
-        final boolean isDirty = Optional.ofNullable(originalHashCodes.get(changedSection))
-                .map(originalHashCode -> !originalHashCode.equals(changedSection.currentHashCode()))
-                .orElse(false);
-
-        changedSection.setDirty(isDirty);
+    public void updateDirtyIndicator(final Section<T> section) {
+        section.setDirty(isDirty(section));
     }
 
-    public Promise<Object> validateAll() {
-        return promises.reduceLazily(sections, Section::validate);
-    }
-
-    public boolean isEmpty() {
-        return sections.isEmpty();
+    private boolean isDirty(final Section<T> section) {
+        return originalHashCodes.containsKey(section) && !originalHashCodes.get(section).equals(section.currentHashCode());
     }
 
     public boolean manages(final Section<T> section) {
         return sections.contains(section);
     }
 
-    public Promise<Void> goToCurrentSection() {
-        return goTo(currentSection);
+    public boolean isEmpty() {
+        return sections.isEmpty();
+    }
+
+    public List<Section<T>> getSections() {
+        return sections;
+    }
+
+    public Section<T> getCurrentSection() {
+        return currentSection;
     }
 }
