@@ -54,6 +54,7 @@ import org.kie.workbench.common.stunner.core.definition.builder.VoidBuilder;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyMetaTypes;
 import org.kie.workbench.common.stunner.core.definition.property.PropertyType;
 import org.kie.workbench.common.stunner.core.processors.definition.BindableDefinitionAdapterGenerator;
+import org.kie.workbench.common.stunner.core.processors.definition.TypeConstructor;
 import org.kie.workbench.common.stunner.core.processors.definitionset.BindableDefinitionSetAdapterGenerator;
 import org.kie.workbench.common.stunner.core.processors.definitionset.DefinitionSetProxyGenerator;
 import org.kie.workbench.common.stunner.core.processors.factory.ModelFactoryGenerator;
@@ -663,7 +664,7 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
 
     private void processDefinitionModelBuilder(final Element e,
                                                final String className,
-                                               final Map<String, String> processingContextMap) {
+                                               final Map<String, TypeConstructor> processingContextMap) {
         Definition definitionAnn = e.getAnnotation(Definition.class);
         TypeMirror bMirror = null;
         try {
@@ -674,7 +675,10 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
         if (null != bMirror && !VoidBuilder.class.getName().equals(bMirror.toString())) {
             String fqcn = bMirror.toString();
             processingContextMap.put(className,
-                                     fqcn);
+                                     TypeConstructor.builder(fqcn));
+        } else {
+            processingContextMap.put(className,
+                                     TypeConstructor.builder(className));
         }
     }
 
@@ -1220,7 +1224,8 @@ public class MainProcessor extends AbstractErrorAbsorbingProcessor {
             if (size > 0) {
                 final Map<String, String> buildersMap = new LinkedHashMap<>();
                 if (!processingContext.getDefinitionAnnotations().getBuilderFieldNames().isEmpty()) {
-                    buildersMap.putAll(processingContext.getDefinitionAnnotations().getBuilderFieldNames());
+                    processingContext.getDefinitionAnnotations().getBuilderFieldNames().forEach(
+                            (key, value) -> buildersMap.put(key, value.representation()));
                 }
                 if (!processingContext.getDefSetAnnotations().getBuilderFieldNames().isEmpty()) {
                     buildersMap.putAll(processingContext.getDefSetAnnotations().getBuilderFieldNames());
