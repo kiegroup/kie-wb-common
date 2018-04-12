@@ -38,7 +38,6 @@ import org.kie.workbench.common.screens.defaulteditor.client.editor.NewFileUploa
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.screens.assets.AssetsScreen;
-import org.kie.workbench.common.screens.library.client.screens.assets.EmptyAssetsScreen;
 import org.kie.workbench.common.screens.library.client.screens.assets.events.UpdatedAssetsEvent;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.edit.EditContributorsPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.contributors.tab.ContributorsListPresenter;
@@ -104,7 +103,6 @@ public class ProjectScreen {
 
     private final LibraryPlaces libraryPlaces;
 
-    private EmptyAssetsScreen emptyAssetsScreen;
     private AssetsScreen assetsScreen;
     private ContributorsListPresenter contributorsListScreen;
     private ProjectMetricsScreen projectMetricsScreen;
@@ -129,7 +127,6 @@ public class ProjectScreen {
     @Inject
     public ProjectScreen(final View view,
                          final LibraryPlaces libraryPlaces,
-                         final EmptyAssetsScreen emptyAssetsScreen,
                          final AssetsScreen assetsScreen,
                          final ContributorsListPresenter contributorsListScreen,
                          final ProjectMetricsScreen projectMetricsScreen,
@@ -151,7 +148,6 @@ public class ProjectScreen {
                          final ViewHideAlertsButtonPresenter viewHideAlertsButtonPresenter) {
         this.view = view;
         this.libraryPlaces = libraryPlaces;
-        this.emptyAssetsScreen = emptyAssetsScreen;
         this.assetsScreen = assetsScreen;
         this.contributorsListScreen = contributorsListScreen;
         this.projectMetricsScreen = projectMetricsScreen;
@@ -179,7 +175,7 @@ public class ProjectScreen {
         this.workspaceProject = this.libraryPlaces.getActiveWorkspaceContext();
         this.view.init(this);
         this.buildExecutor.init(this.view);
-        this.view.setTitle(libraryPlaces.getActiveWorkspaceContext().getMainModule().getModuleName());
+        this.view.setTitle(libraryPlaces.getActiveWorkspaceContext().getName());
         this.view.addMainAction(viewHideAlertsButtonPresenter.getView());
         this.resolveContributorsCount();
         this.resolveAssetsCount();
@@ -223,7 +219,7 @@ public class ProjectScreen {
         resolveAssetsCount();
     }
 
-    public void onContriburorsUpdated(@Observes AfterEditOrganizationalUnitEvent event) {
+    public void onContributorsUpdated(@Observes AfterEditOrganizationalUnitEvent event) {
         resolveContributorsCount();
     }
 
@@ -251,7 +247,7 @@ public class ProjectScreen {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return this.libraryPlaces.getActiveWorkspaceContext().getMainModule().getModuleName();
+        return this.libraryPlaces.getActiveWorkspaceContext().getName();
     }
 
     public void delete() {
@@ -368,11 +364,11 @@ public class ProjectScreen {
     }
 
     public boolean userCanBuildProject() {
-        return projectController.canBuildProject(this.workspaceProject);
+        return workspaceProject.getMainModule() != null && projectController.canBuildProject(this.workspaceProject);
     }
 
     public boolean userCanUpdateProject() {
-        return projectController.canUpdateProject(this.workspaceProject);
+        return workspaceProject.getMainModule() != null && projectController.canUpdateProject(this.workspaceProject);
     }
 
     public boolean userCanCreateProjects() {
