@@ -65,6 +65,8 @@ public class TaskConverter {
         ServiceTask definition = n.getContent().getDefinition();
         ServiceTaskPropertyWriter p = propertyWriterFactory.of(task);
 
+        p.setServiceTaskName(definition.getName());
+
         TaskGeneralSet general = definition.getGeneral();
         p.setName(general.getName().getValue());
         p.setDocumentation(general.getDocumentation().getValue());

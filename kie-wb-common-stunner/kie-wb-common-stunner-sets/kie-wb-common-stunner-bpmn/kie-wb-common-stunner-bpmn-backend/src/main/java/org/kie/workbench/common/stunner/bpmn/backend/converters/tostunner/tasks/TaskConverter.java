@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.tasks
 import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.BusinessRuleTaskPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
@@ -72,17 +73,22 @@ public class TaskConverter {
                 .when(org.eclipse.bpmn2.BusinessRuleTask.class, this::businessRuleTask)
                 .when(org.eclipse.bpmn2.ScriptTask.class, this::scriptTask)
                 .when(org.eclipse.bpmn2.UserTask.class, this::userTask)
-                .when(org.eclipse.bpmn2.ServiceTask.class, this::serviceTask)
                 .missing(org.eclipse.bpmn2.ManualTask.class)
-                .orElse(this::noneTask)
+                .orElse(this::fallback)
                 .apply(task).value();
     }
 
-    private BpmnNode serviceTask(org.eclipse.bpmn2.ServiceTask task) {
+    private BpmnNode serviceTask(org.eclipse.bpmn2.Task task) {
         Node<View<ServiceTask>, Edge> node = factoryManager.newNode(task.getId(), ServiceTask.class);
 
         ServiceTask definition = node.getContent().getDefinition();
-        ServiceTaskPropertyReader p = propertyReaderFactory.of(task);
+        ServiceTaskPropertyReader p = propertyReaderFactory.ofCustom(task);
+
+        definition.setName(p.getServiceTaskName());
+        definition.getTaskType().setRawType(p.getServiceTaskName());
+        definition.setDescription(p.getServiceTaskDescription());
+        definition.setCategory(p.getServiceTaskCategory());
+        definition.setDefaultHandler(p.getServiceTaskDefaultHandler());
 
         definition.setGeneral(new TaskGeneralSet(
                 new Name(p.getName()),
@@ -211,6 +217,12 @@ public class TaskConverter {
         definition.setFontSet(p.getFontSet());
 
         return BpmnNode.of(node);
+    }
+
+    private BpmnNode fallback(Task task) {
+        String taskName = CustomAttribute.serviceTaskName.of(task).get();
+        if (taskName.isEmpty()) return noneTask(task);
+        else return serviceTask(task);
     }
 
     private BpmnNode noneTask(Task task) {

@@ -20,18 +20,32 @@ import java.util.Collections;
 import java.util.Optional;
 
 import org.eclipse.bpmn2.InputOutputSpecification;
-import org.eclipse.bpmn2.ServiceTask;
+import org.eclipse.bpmn2.Task;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomInput;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeListValue;
+import org.kie.workbench.common.stunner.bpmn.workitem.WorkItemDefinition;
 
 public class ServiceTaskPropertyReader extends TaskPropertyReader {
 
-    public ServiceTaskPropertyReader(ServiceTask task, BPMNPlane plane, DefinitionResolver definitionResolver) {
+    private final WorkItemDefinition workItemDefinition;
+
+    public ServiceTaskPropertyReader(Task task, WorkItemDefinition workItemDefinition, BPMNPlane plane, DefinitionResolver definitionResolver) {
         super(task, plane, definitionResolver);
+        this.workItemDefinition = workItemDefinition;
+    }
+
+    @Override
+    public String getName() {
+        return workItemDefinition.getName();
+    }
+
+    @Override
+    public String getDocumentation() {
+        return workItemDefinition.getDocumentation();
     }
 
     public String getTaskName() {
@@ -74,5 +88,21 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
 
     public boolean isAdHocAutoStart() {
         return CustomElement.autoStart.of(element).get();
+    }
+
+    public String getServiceTaskName() {
+        return workItemDefinition.getName();
+    }
+
+    public String getServiceTaskCategory() {
+        return workItemDefinition.getCategory();
+    }
+
+    public String getServiceTaskDefaultHandler() {
+        return workItemDefinition.getDefaultHandler();
+    }
+
+    public String getServiceTaskDescription() {
+        return workItemDefinition.getDescription();
     }
 }

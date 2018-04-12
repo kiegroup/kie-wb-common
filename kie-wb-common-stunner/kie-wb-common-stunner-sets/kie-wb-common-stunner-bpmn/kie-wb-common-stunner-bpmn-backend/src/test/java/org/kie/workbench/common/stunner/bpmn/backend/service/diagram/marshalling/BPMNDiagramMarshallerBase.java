@@ -339,6 +339,7 @@ public abstract class BPMNDiagramMarshallerBase {
                 new XMLEncoderDiagramMetadataMarshaller(),
                 definitionManager,
                 rulesManager,
+                widService,
                 applicationFactoryManager,
                 commandFactory,
                 commandManager);

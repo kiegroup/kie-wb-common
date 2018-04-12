@@ -22,7 +22,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnEntryAction;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitAction;
-import org.kie.workbench.common.stunner.bpmn.definition.property.task.RuleFlowGroup;
 
 public class ServiceTaskPropertyWriter extends ActivityPropertyWriter {
 
@@ -44,5 +43,9 @@ public class ServiceTaskPropertyWriter extends ActivityPropertyWriter {
 
     public void setOnExitAction(OnExitAction onExitAction) {
         Scripts.setOnExitAction(flowElement, onExitAction);
+    }
+
+    public void setServiceTaskName(String name) {
+        CustomAttribute.serviceTaskName.of(flowElement).set(name);
     }
 }
