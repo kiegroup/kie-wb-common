@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.validation.BPMNViolation;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.kie.workbench.common.stunner.core.validation.Violation;
@@ -96,6 +97,6 @@ public class BPMNValidatorImplTest {
 
     @Test
     public void getDefinitionSetId() {
-        assertEquals(bpmnValidador.getDefinitionSetId(), BPMNDefinitionSet.class.getName());
+        assertEquals(bpmnValidador.getDefinitionSetId(), BindableAdapterUtils.getDefinitionId(BPMNDefinitionSet.class));
     }
 }

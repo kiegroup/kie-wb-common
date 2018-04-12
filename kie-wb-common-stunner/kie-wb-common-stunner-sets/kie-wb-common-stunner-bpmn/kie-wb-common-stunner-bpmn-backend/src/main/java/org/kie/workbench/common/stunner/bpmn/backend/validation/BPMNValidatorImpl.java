@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -40,6 +41,7 @@ import org.kie.api.definition.process.Process;
 import org.kie.workbench.common.stunner.bpmn.BPMNDefinitionSet;
 import org.kie.workbench.common.stunner.bpmn.validation.BPMNValidator;
 import org.kie.workbench.common.stunner.bpmn.validation.BPMNViolation;
+import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.service.DiagramService;
 import org.kie.workbench.common.stunner.core.validation.DomainViolation;
@@ -54,6 +56,10 @@ public class BPMNValidatorImpl implements BPMNValidator {
     private static final Logger LOG = LoggerFactory.getLogger(BPMNValidatorImpl.class);
     private final DiagramService diagramService;
     private SemanticModules modules;
+
+    BPMNValidatorImpl() {
+        this(null);
+    }
 
     @Inject
     public BPMNValidatorImpl(final DiagramService diagramService) {
@@ -92,10 +98,17 @@ public class BPMNValidatorImpl implements BPMNValidator {
                     .filter(Objects::nonNull)
                     .map(error -> new BPMNViolation(error.getMessage(), Violation.Type.ERROR))
                     .collect(Collectors.toSet());
-        } catch (Exception e) {
+        } catch (SAXException | IOException e) {
             LOG.error("Error parsing process", e);
-            return Arrays.asList(new BPMNViolation(e.getMessage(), Violation.Type.ERROR));
+            return getBpmnViolationsFromException(() -> e.getMessage());
+        } catch (Exception e) {
+            LOG.error("Error validating process", e);
+            return getBpmnViolationsFromException(() -> e.getMessage());
         }
+    }
+
+    private List<BPMNViolation> getBpmnViolationsFromException(Supplier<String> message) {
+        return Arrays.asList(new BPMNViolation(message.get(), Violation.Type.ERROR));
     }
 
     private List<Process> parseProcess(String serializedProcess) throws SAXException, IOException {
@@ -104,6 +117,6 @@ public class BPMNValidatorImpl implements BPMNValidator {
 
     @Override
     public String getDefinitionSetId() {
-        return BPMNDefinitionSet.class.getName();
+        return BindableAdapterUtils.getDefinitionSetId(BPMNDefinitionSet.class);
     }
 }
