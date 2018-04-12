@@ -139,26 +139,19 @@ public class AuthoringWorkbenchDocks {
             // getting docks from the handler and  refreshing
             Collection<WorkbenchDockEntry> docks = activeHandler.provideDocks(currentPerspectiveIdentifier);
 
-            activeDocks = new UberfireDock[docks.size()];
-            int activeDocksIndex = 0;
-
-            for (WorkbenchDockEntry entry : docks) {
-                UberfireDock dock = entry.getDock();
-                uberfireDocks.add(dock);
-                activeDocks[activeDocksIndex++] = dock;
-            }
+            activeDocks = docks.stream()
+                    .map(entry -> entry.getDock())
+                    .toArray(size -> new UberfireDock[size]);
+            uberfireDocks.add(activeDocks);
 
             uberfireDocks.show(UberfireDockPosition.EAST,
                                currentPerspectiveIdentifier);
             uberfireDocks.show(UberfireDockPosition.WEST,
                                currentPerspectiveIdentifier);
 
-            for (WorkbenchDockEntry entry : docks) {
-                UberfireDock dock = entry.getDock();
-                if (entry.isOpenByDefault()) {
-                    uberfireDocks.open(dock);
-                }
-            }
+            docks.stream().forEach(entry -> { if (entry.getOpenOnInitialization()) {
+                uberfireDocks.open(entry.getDock());
+            }});
         }
     }
 

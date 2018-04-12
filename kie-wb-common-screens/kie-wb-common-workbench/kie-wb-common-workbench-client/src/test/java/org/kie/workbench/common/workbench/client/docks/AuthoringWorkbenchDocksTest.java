@@ -119,7 +119,7 @@ public class AuthoringWorkbenchDocksTest {
         //no other docks operations should have been invoked.
         verify(uberfireDocks, times(2)).show(any(UberfireDockPosition.class),
                                    anyString());
-        verify(uberfireDocks, times(3)).add(any());
+        verify(uberfireDocks).add(any(), any());
     }
 
     @Test
@@ -169,21 +169,15 @@ public class AuthoringWorkbenchDocksTest {
         handler.refresh(true,
                         true);
 
-        verify(uberfireDocks,
-               never()).remove(any(),
-                               any());
-        verify(uberfireDocks,
-               times(2)).show(any(),
-                              any());
-        verify(uberfireDocks,
-               times(3)).add(any());
+        verify(uberfireDocks, never()).remove(any(), any());
 
-        verify(uberfireDocks).show(UberfireDockPosition.EAST,
-                                   "authoring");
+        verify(uberfireDocks, times(2)).show(any(), any());
+
+        verify(uberfireDocks).add(any(), any());
+
+        verify(uberfireDocks).show(UberfireDockPosition.EAST, "authoring");
         // it's also disabled on setup!
-        verify(uberfireDocks,
-               times(3)).hide(any(),
-                              any());
+        verify(uberfireDocks, times(3)).hide(any(), any());
     }
 
     @Test

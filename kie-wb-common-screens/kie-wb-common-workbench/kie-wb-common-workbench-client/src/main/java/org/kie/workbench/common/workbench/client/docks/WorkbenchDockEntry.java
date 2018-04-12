@@ -14,28 +14,42 @@
  * limitations under the License.
  */
 
-
 package org.kie.workbench.common.workbench.client.docks;
 
 import org.uberfire.client.workbench.docks.UberfireDock;
 
+/**
+ * Component that holds a dock and has a property that signals if the dock should be open when the it is
+ * initialized.
+ */
 public class WorkbenchDockEntry {
 
     private UberfireDock dock;
-    private boolean openByDefault;
+    private boolean openOnInitialization;
 
-
-    public WorkbenchDockEntry(UberfireDock dock, boolean openByDefault) {
+    /**
+     * @param dock The dock.
+     * @param openOnInitialization The flag to signal if the dock should be open on initialization.
+     */
+    public WorkbenchDockEntry(UberfireDock dock, boolean openOnInitialization) {
         this.dock = dock;
-        this.openByDefault = openByDefault;
+        this.openOnInitialization = openOnInitialization;
     }
 
-
+    /**
+     * This is the dock that will be signaled.
+     * @return the dock.
+     */
     public UberfireDock getDock() {
         return dock;
     }
 
-    public boolean isOpenByDefault() {
-        return openByDefault;
+    /**
+     * The flag that signals if the dock should be open on initialization.
+     * If this is set to true when the dock is initialized it's tab will appear open.
+     * @return true if the dock should be opened on initialization, otherwise false.
+     */
+    public boolean getOpenOnInitialization() {
+        return openOnInitialization;
     }
 }

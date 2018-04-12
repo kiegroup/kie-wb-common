@@ -83,9 +83,7 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
                              perspectiveIdentifier);
             drollsJBPMDock.withSize(450);
             drollsJBPMDock.withLabel(constants.DocksDroolsJBPMTitle());
-
-            WorkbenchDockEntry droolsJBPMEntry = new WorkbenchDockEntry(drollsJBPMDock, false);
-            result.add(droolsJBPMEntry);
+            result.add(new WorkbenchDockEntry(drollsJBPMDock, false));
 
             UberfireDock persistenceDock = new UberfireDock(UberfireDockPosition.EAST,
                                         "BRIEFCASE",
@@ -93,9 +91,7 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
                                         perspectiveIdentifier);
             persistenceDock.withSize(450);
             persistenceDock.withLabel(constants.DocksPersistenceTitle());
-
-            WorkbenchDockEntry persistenceEntry = new WorkbenchDockEntry(persistenceDock, false);
-            result.add(persistenceEntry);
+            result.add(new WorkbenchDockEntry(persistenceDock, false));
 
             UberfireDock advancedDock = new UberfireDock(UberfireDockPosition.EAST,
                                         "COG",
@@ -103,9 +99,7 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
                                         perspectiveIdentifier);
             advancedDock.withSize(450);
             advancedDock.withLabel(constants.DocksAdvancedTitle());
-
-            WorkbenchDockEntry advancedEntry = new WorkbenchDockEntry(advancedDock, false);
-            result.add(advancedEntry);
+            result.add(new WorkbenchDockEntry(advancedDock, false));
 
             if (authorizationManager.authorize(WorkbenchFeatures.PLANNER_AVAILABLE,
                                                sessionInfo.getIdentity())) {
@@ -117,9 +111,7 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
 
                 optaPlannerDock.withSize(450);
                 optaPlannerDock.withLabel(constants.DocksOptaPlannerTitle());
-
-                WorkbenchDockEntry optaPlannerEntry = new WorkbenchDockEntry(optaPlannerDock, false);
-                result.add(optaPlannerEntry);
+                result.add(new WorkbenchDockEntry(optaPlannerDock, false));
             }
         }
         return result;
