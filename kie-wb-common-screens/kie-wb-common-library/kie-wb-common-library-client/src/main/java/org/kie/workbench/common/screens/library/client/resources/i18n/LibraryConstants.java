@@ -409,4 +409,10 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ReimportSuccessful = "ReimportSuccessful";
+
+    @TranslationKey(defaultValue = "")
+    public static final String GitUrlSuccessfullyCopiedToClipboard = "GitUrlSuccessfullyCopiedToClipboard";
+
+    @TranslationKey(defaultValue = "")
+    public static final String GitUrlFailedToBeCopiedToClipboard = "GitUrlFailedToBeCopiedToClipboard";
 }
