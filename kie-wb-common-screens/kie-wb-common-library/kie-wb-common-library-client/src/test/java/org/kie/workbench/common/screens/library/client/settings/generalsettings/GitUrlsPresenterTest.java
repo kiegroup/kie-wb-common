@@ -1,10 +1,13 @@
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
+import java.util.Arrays;
+
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.generalsettings.GitUrlsPresenter.View;
+import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.EventSourceMock;
@@ -32,12 +35,16 @@ public class GitUrlsPresenterTest {
     @Mock
     private TranslationService translationService;
 
+    @Mock
+    private KieSelectElement kieSelectElement;
+
     private GitUrlsPresenter presenter;
 
     @Before
     public void before() {
         presenter = spy(new GitUrlsPresenter(view,
                                              notificationEvent,
+                                             kieSelectElement,
                                              translationService));
     }
 
@@ -48,22 +55,44 @@ public class GitUrlsPresenterTest {
     }
 
     @Test
+    public void testSetup() {
+
+        final GitUrl gitUrl = new GitUrl("git", "git-url");
+        final GitUrl sshUrl = new GitUrl("ssh", "ssh-url");
+
+        presenter.setup(Arrays.asList(gitUrl, sshUrl));
+
+        verify(presenter, times(1)).update();
+
+        assertEquals("ssh",
+                     presenter.selectedProtocol);
+        assertEquals(2,
+                     presenter.gitUrlsByProtocol.size());
+        assertEquals(gitUrl,
+                     presenter.gitUrlsByProtocol.get("git"));
+        assertEquals(sshUrl,
+                     presenter.gitUrlsByProtocol.get("ssh"));
+    }
+
+    @Test
     public void testSetSelectedProtocol() {
 
-        final GitUrl gitUrl = new GitUrl("git", "url");
+        final GitUrl gitUrl = new GitUrl("git", "git-url");
+        final GitUrl sshUrl = new GitUrl("ssh", "ssh-url");
 
-        presenter.setup(singletonList(gitUrl));
+        presenter.setup(Arrays.asList(gitUrl, sshUrl));
         presenter.setSelectedProtocol("git");
 
-        verify(view).setProtocols(singletonList("git"));
         verify(presenter, times(2)).update();
 
         assertEquals("git",
                      presenter.selectedProtocol);
-        assertEquals(1,
+        assertEquals(2,
                      presenter.gitUrlsByProtocol.size());
         assertEquals(gitUrl,
                      presenter.gitUrlsByProtocol.get("git"));
+        assertEquals(sshUrl,
+                     presenter.gitUrlsByProtocol.get("ssh"));
     }
 
     @Test
