@@ -54,7 +54,7 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 45;
 
-    public CatchingIntermediateTimerEventTest (Marshaller marshallerType) {
+    public CatchingIntermediateTimerEventTest(Marshaller marshallerType) {
         super(marshallerType);
     }
 
@@ -77,18 +77,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram, FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram,
+                                                                                             FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
+                                                                                             HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram, FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
+                                                                                        FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID,
+                                                                                        HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram, FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
+                                                                                            FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
+                                                                                            HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING);
     }
@@ -99,8 +102,9 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent emptyTopEvent = getCatchingIntermediateNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent emptyTopEvent = getCatchingIntermediateNodeById(diagram,
+                                                                               EMPTY_TOP_LEVEL_EVENT_ID,
+                                                                               HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptyTopEvent.getExecutionSet(), CANCELLING);
     }
@@ -125,18 +129,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent filledSubprocessEventAfterDuration = getCatchingIntermediateNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledSubprocessEventAfterDuration = getCatchingIntermediateNodeById(diagram,
+                                                                                                    FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
+                                                                                                    HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledSubprocessEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING);
 
-        IntermediateTimerEvent filledSubprocessEventMultiple = getCatchingIntermediateNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledSubprocessEventMultiple = getCatchingIntermediateNodeById(diagram,
+                                                                                               FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
+                                                                                               HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledSubprocessEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING);
 
-        IntermediateTimerEvent filledSubprocessEventSpecificDate = getCatchingIntermediateNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent filledSubprocessEventSpecificDate = getCatchingIntermediateNodeById(diagram,
+                                                                                                   FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
+                                                                                                   HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledSubprocessEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING);
     }
@@ -147,8 +154,9 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent emptySubprocessEvent = getCatchingIntermediateNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateTimerEvent.class, HAS_NOT_INCOME_EDGE);
+        IntermediateTimerEvent emptySubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                      EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                      HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING);
     }
@@ -173,18 +181,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram,
+                                                                                             FILLED_WITH_INCOME_TOP_LEVEL_EVENT_AFTER_DURATION_ID,
+                                                                                             HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_TOP_LEVEL_EVENT_MULTIPLE_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
+                                                                                        FILLED_WITH_INCOME_TOP_LEVEL_EVENT_MULTIPLE_ID,
+                                                                                        HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
+                                                                                            FILLED_WITH_INCOME_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID,
+                                                                                            HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING);
     }
@@ -195,8 +206,9 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent emptyEvent = getCatchingIntermediateNodeById(diagram, EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent emptyEvent = getCatchingIntermediateNodeById(diagram,
+                                                                            EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
+                                                                            HAS_INCOME_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptyEvent.getExecutionSet(), CANCELLING);
     }
@@ -207,8 +219,9 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent emptySubprocessEvent = getCatchingIntermediateNodeById(diagram, EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent emptySubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                      EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                      HAS_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertTimerEventEmpty(emptySubprocessEvent.getExecutionSet(), CANCELLING);
     }
@@ -232,18 +245,21 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventAfterDuration = getCatchingIntermediateNodeById(diagram,
+                                                                                             FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID,
+                                                                                             HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventAfterDuration.getGeneral(), EVENT_NAME_AFTER_DURATION, EVENT_DOCUMENTATION_AFTER_DURATION);
         assertTimerEventAfterDuration(filledTopEventAfterDuration.getExecutionSet(), EVENT_TIMER_VALUE_AFTER_DURATION, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventMultiple = getCatchingIntermediateNodeById(diagram,
+                                                                                        FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID,
+                                                                                        HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventMultiple.getGeneral(), EVENT_NAME_MULTIPLE, EVENT_DOCUMENTATION_MULTIPLE);
         assertTimerEventMultiple(filledTopEventMultiple.getExecutionSet(), EVENT_TIMER_VALUE_MULTIPLE, EVENT_TIMER_VALUE_LANGUAGE_MULTIPLE, CANCELLING);
 
-        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
-                IntermediateTimerEvent.class, HAS_INCOME_EDGE);
+        IntermediateTimerEvent filledTopEventSpecificDate = getCatchingIntermediateNodeById(diagram,
+                                                                                            FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID,
+                                                                                            HAS_INCOME_EDGE);
         assertGeneralSet(filledTopEventSpecificDate.getGeneral(), EVENT_NAME_SPECIFIC_DATE, EVENT_DOCUMENTATION_SPECIFIC_DATE);
         assertTimerEventSpecificDate(filledTopEventSpecificDate.getExecutionSet(), EVENT_TIMER_VALUE_SPECIFIC_DATE, CANCELLING);
     }
@@ -251,36 +267,34 @@ public class CatchingIntermediateTimerEventTest extends CatchingIntermediateEven
     @Test
     @Override
     public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID, HAS_NOT_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID, HAS_NOT_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(FILLED_TOP_LEVEL_EVENT_AFTER_DURATION_ID, HAS_NO_INCOME_EDGE);
+        checkEventMarshalling(FILLED_TOP_LEVEL_EVENT_MULTIPLE_ID, HAS_NO_INCOME_EDGE);
+        checkEventMarshalling(FILLED_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_NO_INCOME_EDGE);
     }
 
     @Test
     @Override
     public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID, HAS_NOT_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID, HAS_NOT_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(FILLED_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID, HAS_NO_INCOME_EDGE);
+        checkEventMarshalling(FILLED_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID, HAS_NO_INCOME_EDGE);
+        checkEventMarshalling(FILLED_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_NO_INCOME_EDGE);
     }
 
     @Test
     @Override
     public void testMarshallTopLevelEventWithIncomeFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_TOP_LEVEL_EVENT_AFTER_DURATION_ID, HAS_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_TOP_LEVEL_EVENT_MULTIPLE_ID, HAS_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_TOP_LEVEL_EVENT_AFTER_DURATION_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_TOP_LEVEL_EVENT_MULTIPLE_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_TOP_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_INCOME_EDGE);
     }
 
     @Test
     @Override
     public void testMarshallSubprocessLevelEventWithIncomeFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID, HAS_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID, HAS_INCOME_EDGE);
-        checkEventMarshalling(getCatchingIntermediateEventType(), FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_AFTER_DURATION_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_MULTIPLE_ID, HAS_INCOME_EDGE);
+        checkEventMarshalling(FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_SPECIFIC_DATE_ID, HAS_INCOME_EDGE);
     }
-
-
 
     @Override
     String getBpmnCatchingIntermediateEventFilePath() {
