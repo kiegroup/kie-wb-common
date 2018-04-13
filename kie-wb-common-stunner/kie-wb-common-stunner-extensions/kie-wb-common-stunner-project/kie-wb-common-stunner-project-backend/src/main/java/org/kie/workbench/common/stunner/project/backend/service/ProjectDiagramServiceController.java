@@ -20,10 +20,9 @@ import java.util.Map;
 
 import javax.enterprise.inject.Instance;
 
-import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.model.Overview;
+import org.kie.workbench.common.services.backend.service.KieServiceOverviewLoader;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
@@ -49,8 +48,7 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
 
     private final IOService ioService;
     private final KieModuleService moduleService;
-    private final MetadataServerSideService metadataService;
-    private final WorkspaceProjectService projectService;
+    private final KieServiceOverviewLoader overviewLoader;
 
     ProjectDiagramServiceController(final DefinitionManager definitionManager,
                                     final FactoryManager factoryManager,
@@ -58,16 +56,14 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                     final IOService ioService,
                                     final BackendRegistryFactory registryFactory,
                                     final KieModuleService moduleService,
-                                    final MetadataServerSideService metadataService,
-                                    final WorkspaceProjectService projectService) {
+                                    final KieServiceOverviewLoader overviewLoader) {
         super(definitionManager,
               factoryManager,
               definitionSetServiceInstances,
               registryFactory);
         this.ioService = ioService;
         this.moduleService = moduleService;
-        this.metadataService = metadataService;
-        this.projectService = projectService;
+        this.overviewLoader = overviewLoader;
     }
 
     @Override
@@ -102,7 +98,7 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                                                       defSetId,
                                                                       moduleName,
                                                                       projPkg,
-                                                                      loadOverview(path));
+                                                                      overviewLoader.loadOverview(path));
         return this.create(path,
                            name,
                            defSetId,
@@ -120,17 +116,7 @@ class ProjectDiagramServiceController extends AbstractVFSDiagramService<ProjectM
                                             defSetId,
                                             kieModule.getModuleName(),
                                             modulePackage,
-                                            loadOverview(path));
-    }
-
-    private Overview loadOverview(final Path path) {
-        final Overview overview = new Overview();
-        overview.setMetadata(metadataService.getMetadata(path));
-
-        final KieModule module = moduleService.resolveModule(path);
-        overview.setProjectName(projectService.resolveProject(module.getRootPath()).getName());
-
-        return overview;
+                                            overviewLoader.loadOverview(path));
     }
 
     private KieModule getCurrentModule(final Path path) {

@@ -24,6 +24,7 @@ import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.services.backend.service.KieServiceOverviewLoader;
 import org.kie.workbench.common.services.shared.project.KieModule;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.backend.service.AbstractVFSDiagramService;
@@ -92,8 +93,9 @@ public class ProjectDiagramServiceControllerTest
                                                                                       ioService,
                                                                                       registryFactory,
                                                                                       moduleService,
-                                                                                      metadataService,
-                                                                                      projectService);
+                                                                                      new KieServiceOverviewLoader(metadataService,
+                                                                                                                   moduleService,
+                                                                                                                   projectService));
         service.initialize();
         return service;
     }

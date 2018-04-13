@@ -31,6 +31,7 @@ import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.services.backend.service.KieServiceOverviewLoader;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -129,8 +130,9 @@ public class ProjectDiagramServiceImplTest {
                                                        resourceOpenedEvent,
                                                        commentedOptionFactory,
                                                        moduleService,
-                                                       metadataService,
-                                                       projectService) {
+                                                       new KieServiceOverviewLoader(metadataService,
+                                                                                    moduleService,
+                                                                                    projectService)) {
 
             {
                 metadataService = ProjectDiagramServiceImplTest.this.metadataService;
@@ -143,8 +145,7 @@ public class ProjectDiagramServiceImplTest {
                                                                       final BackendRegistryFactory registryFactory,
                                                                       final @Named("ioStrategy") IOService ioService,
                                                                       final KieModuleService moduleService,
-                                                                      final MetadataServerSideService metadataService,
-                                                                      final WorkspaceProjectService projectService) {
+                                                                      final KieServiceOverviewLoader overviewLoader) {
                 return diagramServiceController;
             }
         };

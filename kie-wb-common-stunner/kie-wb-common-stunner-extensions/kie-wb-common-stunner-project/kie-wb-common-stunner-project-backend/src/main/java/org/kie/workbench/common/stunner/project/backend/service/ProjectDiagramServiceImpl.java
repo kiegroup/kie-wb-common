@@ -23,14 +23,13 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.guvnor.common.services.backend.metadata.MetadataServerSideService;
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.project.model.Package;
-import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.kie.workbench.common.services.backend.service.KieService;
+import org.kie.workbench.common.services.backend.service.KieServiceOverviewLoader;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
@@ -68,7 +67,6 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
              null,
              null,
              null,
-             null,
              null);
     }
 
@@ -82,8 +80,7 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                      final Event<ResourceOpenedEvent> resourceOpenedEvent,
                                      final CommentedOptionFactory commentedOptionFactory,
                                      final KieModuleService moduleService,
-                                     final MetadataServerSideService metadataService,
-                                     final WorkspaceProjectService projectService) {
+                                     final KieServiceOverviewLoader overviewLoader) {
         this.ioService = ioService;
         this.sessionInfo = sessionInfo;
         this.resourceOpenedEvent = resourceOpenedEvent;
@@ -94,8 +91,7 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                           registryFactory,
                                           ioService,
                                           moduleService,
-                                          metadataService,
-                                          projectService);
+                                          overviewLoader);
     }
 
     @PostConstruct
@@ -189,15 +185,13 @@ public class ProjectDiagramServiceImpl extends KieService<ProjectDiagram>
                                                               final BackendRegistryFactory registryFactory,
                                                               final IOService ioService,
                                                               final KieModuleService moduleService,
-                                                              final MetadataServerSideService metadataService,
-                                                              final WorkspaceProjectService projectService) {
+                                                              final KieServiceOverviewLoader overviewLoader) {
         return new ProjectDiagramServiceController(definitionManager,
                                                    factoryManager,
                                                    definitionSetServiceInstances,
                                                    ioService,
                                                    registryFactory,
                                                    moduleService,
-                                                   metadataService,
-                                                   projectService);
+                                                   overviewLoader);
     }
 }
