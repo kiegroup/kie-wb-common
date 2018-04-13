@@ -23,8 +23,10 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
+import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
+import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel.GitUrl;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -34,14 +36,18 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.GitUrlFailedToBeCopiedToClipboard;
 import static org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants.GitUrlSuccessfullyCopiedToClipboard;
+import static org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement.Option;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
 public class GitUrlsPresenter {
 
+    private static final String DEFAULT_SELECTED_PROTOCOL = "ssh";
+
     private final View view;
     private final Event<NotificationEvent> notificationEventEvent;
     private final TranslationService translationService;
+    private final KieSelectElement protocolSelect;
 
     Map<String, GitUrl> gitUrlsByProtocol;
     String selectedProtocol;
@@ -49,10 +55,12 @@ public class GitUrlsPresenter {
     @Inject
     public GitUrlsPresenter(final View view,
                             final Event<NotificationEvent> notificationEventEvent,
+                            final KieSelectElement protocolSelect,
                             final TranslationService translationService) {
 
         this.view = view;
         this.notificationEventEvent = notificationEventEvent;
+        this.protocolSelect = protocolSelect;
         this.translationService = translationService;
     }
 
@@ -63,10 +71,16 @@ public class GitUrlsPresenter {
 
     public void setup(final List<GitUrl> gitUrls) {
 
-        this.gitUrlsByProtocol = gitUrls.stream().collect(toMap(GitUrl::getProtocol, identity()));
-        this.selectedProtocol = gitUrls.get(0).getProtocol();
+        gitUrlsByProtocol = gitUrls.stream().collect(toMap(GitUrl::getProtocol, identity()));
 
-        view.setProtocols(gitUrlsByProtocol.keySet().stream().sorted().collect(toList()));
+        selectedProtocol = gitUrlsByProtocol.containsKey(DEFAULT_SELECTED_PROTOCOL)
+                ? DEFAULT_SELECTED_PROTOCOL
+                : gitUrls.get(0).getProtocol();
+
+        protocolSelect.setup(view.getProtocolSelectContainer(),
+                             gitUrls.stream().map(GitUrl::getProtocol).map(p -> new Option(p, p)).collect(toList()),
+                             selectedProtocol,
+                             this::setSelectedProtocol);
 
         update();
     }
@@ -105,8 +119,8 @@ public class GitUrlsPresenter {
     public interface View extends UberElemental<GitUrlsPresenter>,
                                   IsElement {
 
-        void setProtocols(final List<String> protocols);
-
         void setUrl(final String url);
+
+        HTMLElement getProtocolSelectContainer();
     }
 }
