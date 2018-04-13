@@ -174,34 +174,35 @@ public class SessionPresenterView extends Composite
 
     @Override
     public SessionPresenterView showError(final String message) {
-        settings.setType(NotifyType.DANGER);
-        showNotification("Error",
-                         buildHtmlEscapedText(message),
-                         IconType.CLOSE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.DANGER));
+        showNotification("Error", message, IconType.EXCLAMATION_CIRCLE);
+
         return this;
     }
 
     @Override
     public SessionPresenter.View showWarning(final String message) {
-        settings.setType(NotifyType.WARNING);
-        showNotification("Warning",
-                         buildHtmlEscapedText(message),
-                         IconType.CLOSE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
+        showNotification("Warning", message, IconType.EXCLAMATION_TRIANGLE);
+
         return this;
     }
 
     @Override
     public SessionPresenterView showMessage(final String message) {
-        settings.setType(NotifyType.SUCCESS);
-        showNotification("Info",
-                         buildHtmlEscapedText(message),
-                         IconType.STICKY_NOTE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.SUCCESS));
+        showNotification("Info", message, IconType.INFO_CIRCLE);
+
         return this;
     }
 
-    private void showNotification(final String title,
-                                  final String message,
-                                  final IconType icon) {
+    void showNotification(final String title,
+                          final String message,
+                          final IconType icon) {
+
         Notify.notify(title,
                       buildHtmlEscapedText(message),
                       icon,
@@ -229,7 +230,15 @@ public class SessionPresenterView extends Composite
         this.removeFromParent();
     }
 
+    NotifySettings getSettings() {
+        return settings;
+    }
+
     private static String buildHtmlEscapedText(final String message) {
         return new SafeHtmlBuilder().appendEscapedLines(message).toSafeHtml().asString();
+    }
+
+    private String kieNotificationCssClass(final NotifyType notifyType) {
+        return notifyType.getCssName() + " kie-session-notification";
     }
 }

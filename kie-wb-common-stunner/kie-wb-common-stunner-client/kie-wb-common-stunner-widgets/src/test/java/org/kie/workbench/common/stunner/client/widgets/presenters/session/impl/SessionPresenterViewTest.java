@@ -26,6 +26,7 @@ import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import com.google.gwtmockito.WithClassesToStub;
+import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
 import org.junit.Before;
@@ -206,5 +207,47 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         verify(element).setScrollLeft(eventX);
         verify(element).setScrollTop(eventY);
+    }
+
+    @Test
+    public void testShowError() {
+
+        final SessionPresenterView view = spy(new SessionPresenterView());
+        final String message = "Hello<br />World";
+
+        when(view.getSettings()).thenReturn(settings);
+
+        view.showError(message);
+
+        verify(settings).setType("danger kie-session-notification");
+        verify(view).showNotification("Error", message, IconType.EXCLAMATION_CIRCLE);
+    }
+
+    @Test
+    public void testShowWarning() {
+
+        final SessionPresenterView view = spy(new SessionPresenterView());
+        final String message = "Hello<br />World";
+
+        when(view.getSettings()).thenReturn(settings);
+
+        view.showWarning(message);
+
+        verify(settings).setType("warning kie-session-notification");
+        verify(view).showNotification("Warning", message, IconType.EXCLAMATION_TRIANGLE);
+    }
+
+    @Test
+    public void testShowMessage() {
+
+        final SessionPresenterView view = spy(new SessionPresenterView());
+        final String message = "Hello<br />World";
+
+        when(view.getSettings()).thenReturn(settings);
+
+        view.showMessage(message);
+
+        verify(settings).setType("success kie-session-notification");
+        verify(view).showNotification("Info", message, IconType.INFO_CIRCLE);
     }
 }
