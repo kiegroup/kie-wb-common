@@ -16,11 +16,10 @@
 
 package org.kie.workbench.common.screens.library.client.settings.generalsettings;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLInputElement;
 import elemental2.dom.MouseEvent;
@@ -28,14 +27,9 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.screens.library.client.settings.util.radio.DynamicRadioGroup;
-
-import static java.util.function.Function.identity;
 
 @Templated
 public class GitUrlsView implements GitUrlsPresenter.View {
-
-    private GitUrlsPresenter presenter;
 
     @Inject
     @DataField("url")
@@ -47,8 +41,10 @@ public class GitUrlsView implements GitUrlsPresenter.View {
     private HTMLElement copyToClipboardButton;
 
     @Inject
-    @DataField("protocol-radio-group")
-    private DynamicRadioGroup<String> protocolRadioGroup;
+    @DataField("protocol-select-container")
+    private HTMLDivElement protocolSelectContainer;
+
+    private GitUrlsPresenter presenter;
 
     @Override
     public void init(final GitUrlsPresenter presenter) {
@@ -62,14 +58,12 @@ public class GitUrlsView implements GitUrlsPresenter.View {
     }
 
     @Override
-    public void setProtocols(final List<String> protocols) {
-        protocolRadioGroup.init(protocols, identity(), identity());
-        protocolRadioGroup.onChange(presenter::setSelectedProtocol);
-        protocolRadioGroup.setValue(protocols.get(0));
+    public void setUrl(final String url) {
+        this.url.value = url;
     }
 
     @Override
-    public void setUrl(final String url) {
-        this.url.value = url;
+    public HTMLElement getProtocolSelectContainer() {
+        return protocolSelectContainer;
     }
 }
