@@ -43,7 +43,7 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
 
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 23;
 
-    public CatchingIntermediateSignalEventTest (Marshaller marshallerType) {
+    public CatchingIntermediateSignalEventTest(Marshaller marshallerType) {
         super(marshallerType);
     }
 
@@ -58,8 +58,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching filledTopEvent = getCatchingIntermediateNodeById(diagram, FILLED_TOP_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_NOT_INCOME_EDGE);
+        IntermediateSignalEventCatching filledTopEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                         FILLED_TOP_LEVEL_EVENT_ID,
+                                                                                         HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertSignalEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF, CANCELLING);
         assertDataIOSet(filledTopEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -71,8 +72,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching emptyTopEvent = getCatchingIntermediateNodeById(diagram, EMPTY_TOP_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_NOT_INCOME_EDGE);
+        IntermediateSignalEventCatching emptyTopEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                        EMPTY_TOP_LEVEL_EVENT_ID,
+                                                                                        HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptyTopEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING);
         assertDataIOSet(emptyTopEvent.getDataIOSet(), EMPTY_VALUE);
@@ -89,8 +91,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram, FILLED_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_NOT_INCOME_EDGE);
+        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                                FILLED_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                                HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertSignalEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, CANCELLING);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -102,8 +105,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching emptySubprocessEvent = getCatchingIntermediateNodeById(diagram, EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_NOT_INCOME_EDGE);
+        IntermediateSignalEventCatching emptySubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                               EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                               HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
@@ -120,8 +124,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_INCOME_EDGE);
+        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                                FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
+                                                                                                HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertSignalEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, CANCELLING);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -133,8 +138,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching emptyEvent = getCatchingIntermediateNodeById(diagram, EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_INCOME_EDGE);
+        IntermediateSignalEventCatching emptyEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                     EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
+                                                                                     HAS_INCOME_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptyEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING);
         assertDataIOSet(emptyEvent.getDataIOSet(), EMPTY_VALUE);
@@ -146,8 +152,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching emptySubprocessEvent = getCatchingIntermediateNodeById(diagram, EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_INCOME_EDGE);
+        IntermediateSignalEventCatching emptySubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                               EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                               HAS_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
         assertSignalEventExecutionSet(emptySubprocessEvent.getExecutionSet(), EMPTY_VALUE, CANCELLING);
         assertDataIOSet(emptySubprocessEvent.getDataIOSet(), EMPTY_VALUE);
@@ -164,8 +171,9 @@ public class CatchingIntermediateSignalEventTest extends CatchingIntermediateEve
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram, FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
-                IntermediateSignalEventCatching.class, HAS_INCOME_EDGE);
+        IntermediateSignalEventCatching filledSubprocessEvent = getCatchingIntermediateNodeById(diagram,
+                                                                                                FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
+                                                                                                HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertSignalEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF, CANCELLING);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);

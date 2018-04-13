@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events.intermediate;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,28 +37,23 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
 public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermediateEvent> extends BPMNDiagramMarshallerBase {
 
     static final String EMPTY_VALUE = "";
-    static final boolean NON_CANCELLING = false;
     static final boolean CANCELLING = true;
     static final boolean HAS_INCOME_EDGE = true;
-    static final boolean HAS_NOT_INCOME_EDGE = false;
+    static final boolean HAS_NO_INCOME_EDGE = false;
 
     protected DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller = null;
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 // New (un)marshaller is disabled for now due to found incompleteness
                 {OLD}//, {NEW}
         });
@@ -88,42 +86,42 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     @Test
     public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getFilledTopLevelEventId(), HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(getFilledTopLevelEventId(), HAS_NO_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallTopLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getEmptyTopLevelEventId(), HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(getEmptyTopLevelEventId(), HAS_NO_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getFilledSubprocessLevelEventId(), HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(getFilledSubprocessLevelEventId(), HAS_NO_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getEmptySubprocessLevelEventId(), HAS_NOT_INCOME_EDGE);
+        checkEventMarshalling(getEmptySubprocessLevelEventId(), HAS_NO_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallTopLevelEventWithIncomeFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getFilledTopLevelEventWithIncomeId(), HAS_INCOME_EDGE);
+        checkEventMarshalling(getFilledTopLevelEventWithIncomeId(), HAS_INCOME_EDGE);
     }
 
     @Test
-    public void testMarshallTopLevelventWithIncomeEmptyProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getEmptyTopLevelEventWithIncomeId(), HAS_INCOME_EDGE);
+    public void testMarshallTopLevelEventWithIncomeEmptyProperties() throws Exception {
+        checkEventMarshalling(getEmptyTopLevelEventWithIncomeId(), HAS_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallSubprocessLevelEventWithIncomeFilledProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getFilledSubprocessLevelEventWithIncomeId(), HAS_INCOME_EDGE);
+        checkEventMarshalling(getFilledSubprocessLevelEventWithIncomeId(), HAS_INCOME_EDGE);
     }
 
     @Test
     public void testMarshallSubprocessLevelEventWithIncomeEmptyProperties() throws Exception {
-        checkEventMarshalling(getCatchingIntermediateEventType(), getEmptySubprocessLevelEventWithIncomeId(), HAS_INCOME_EDGE);
+        checkEventMarshalling(getEmptySubprocessLevelEventWithIncomeId(), HAS_INCOME_EDGE);
     }
 
     public abstract void testUnmarshallTopLevelEventFilledProperties() throws Exception;
@@ -141,10 +139,6 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
     public abstract void testUnmarshallSubprocessLevelEventWithIncomeEmptyProperties() throws Exception;
 
     public abstract void testUnmarshallSubprocessLevelEventWithIncomeFilledProperties() throws Exception;
-
-
-
-
 
     abstract String getBpmnCatchingIntermediateEventFilePath();
 
@@ -166,14 +160,14 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     abstract String getEmptySubprocessLevelEventWithIncomeId();
 
-    private void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, Class<T> catchingIntermediateNodeType, boolean hasIncomeEdge) {
-        T nodeBeforeMarshalling = getCatchingIntermediateNodeById(before, nodeId, catchingIntermediateNodeType, hasIncomeEdge);
-        T nodeAfterMarshalling = getCatchingIntermediateNodeById(after, nodeId, catchingIntermediateNodeType, hasIncomeEdge);
+    private void assertNodesEqualsAfterMarshalling(Diagram<Graph, Metadata> before, Diagram<Graph, Metadata> after, String nodeId, boolean hasIncomeEdge) {
+        T nodeBeforeMarshalling = getCatchingIntermediateNodeById(before, nodeId, hasIncomeEdge);
+        T nodeAfterMarshalling = getCatchingIntermediateNodeById(after, nodeId, hasIncomeEdge);
         assertEquals(nodeBeforeMarshalling, nodeAfterMarshalling);
     }
 
     @SuppressWarnings("unchecked")
-    T getCatchingIntermediateNodeById(Diagram<Graph, Metadata> diagram, String id, Class<T> type, boolean hasIncomeEdge) {
+    T getCatchingIntermediateNodeById(Diagram<Graph, Metadata> diagram, String id, boolean hasIncomeEdge) {
         Node<? extends Definition, ?> node = diagram.getGraph().getNode(id);
         assertNotNull(node);
 
@@ -181,11 +175,11 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
         assertEquals(incomeEdges, node.getInEdges().size());
 
         assertEquals(1, node.getOutEdges().size());
-        return type.cast(node.getContent().getDefinition());
+        return getCatchingIntermediateEventType().cast(node.getContent().getDefinition());
     }
 
     @SuppressWarnings("unchecked")
-    void checkEventMarshalling(Class catchingIntermediateNodeType, String nodeID, boolean hasIncomeEdge) throws Exception {
+    void checkEventMarshalling(String nodeID, boolean hasIncomeEdge) throws Exception {
         Diagram<Graph, Metadata> initialDiagram = unmarshall(marshaller, getBpmnCatchingIntermediateEventFilePath());
         final int AMOUNT_OF_NODES_IN_DIAGRAM = getNodes(initialDiagram).size();
         String resultXml = marshaller.marshall(initialDiagram);
@@ -193,7 +187,7 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
         Diagram<Graph, Metadata> marshalledDiagram = unmarshall(marshaller, getStream(resultXml));
         assertDiagram(marshalledDiagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, catchingIntermediateNodeType, hasIncomeEdge);
+        assertNodesEqualsAfterMarshalling(initialDiagram, marshalledDiagram, nodeID, hasIncomeEdge);
     }
 
     void assertGeneralSet(BPMNGeneralSet generalSet, String nodeName, String documentation) {
