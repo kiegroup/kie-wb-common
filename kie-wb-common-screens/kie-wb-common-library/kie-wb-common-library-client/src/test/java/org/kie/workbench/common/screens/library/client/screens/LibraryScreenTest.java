@@ -36,8 +36,12 @@ import org.kie.workbench.common.screens.library.client.screens.organizationaluni
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.delete.DeleteOrganizationalUnitPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.uberfire.mocks.CallerMock;
+import org.uberfire.mvp.Command;
+import org.uberfire.spaces.Space;
 
 import static org.mockito.Mockito.*;
 
@@ -114,18 +118,23 @@ public class LibraryScreenTest {
         when(projectContext.getActiveRepositoryRoot()).thenReturn(Optional.empty());
         when(projectContext.getActivePackage()).thenReturn(Optional.empty());
 
-        libraryScreen = new LibraryScreen(view,
-                                          deleteOrganizationalUnitPopUpPresenters,
-                                          editContributorsPopUpPresenters,
-                                          projectContext,
-                                          organizationalUnitController,
-                                          projectController,
-                                          emptyLibraryScreen,
-                                          populatedLibraryScreen,
-                                          orgUnitsMetricsScreen,
-                                          contributorsListPresenter,
-                                          new CallerMock<>(libraryService),
-                                          libraryPlaces);
+        doAnswer(invocationOnMock -> {
+            ((Command) invocationOnMock.getArguments()[0]).execute();
+            return null;
+        }).when(libraryPlaces).closeAllPlacesOrNothing(any());
+
+        libraryScreen = spy(new LibraryScreen(view,
+                                              deleteOrganizationalUnitPopUpPresenters,
+                                              editContributorsPopUpPresenters,
+                                              projectContext,
+                                              organizationalUnitController,
+                                              projectController,
+                                              emptyLibraryScreen,
+                                              populatedLibraryScreen,
+                                              orgUnitsMetricsScreen,
+                                              contributorsListPresenter,
+                                              new CallerMock<>(libraryService),
+                                              libraryPlaces));
     }
 
     @Test
