@@ -447,8 +447,6 @@ public class AbstractProjectDiagramEditorTest {
         verify(kieView).addMainEditorPage(eq(view));
         verify(kieView).addOverviewPage(eq(overviewWidget),
                                         any(com.google.gwt.user.client.Command.class));
-
-        verify(presenter).onDiagramLoad();
     }
 
     @Test
