@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.shapes.client.view;
 
 import com.ait.lienzo.client.core.shape.MultiPath;
-import com.ait.lienzo.client.core.types.BoundingBox;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresContainerShapeView;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasRadius;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
@@ -35,10 +34,10 @@ public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView> ext
         double minDiameter = minRadius * 2;
         double maxDiameter = maxRadius * 2;
 
-        getPath().setSizeConstraints(new BoundingBox(minDiameter,
-                                                     minDiameter,
-                                                     maxDiameter,
-                                                     maxDiameter));
+        getPath().setMinWidth(minDiameter)
+                 .setMaxWidth(maxDiameter)
+                 .setMinHeight(minDiameter)
+                 .setMaxHeight(maxDiameter);
 
         return cast();
     }

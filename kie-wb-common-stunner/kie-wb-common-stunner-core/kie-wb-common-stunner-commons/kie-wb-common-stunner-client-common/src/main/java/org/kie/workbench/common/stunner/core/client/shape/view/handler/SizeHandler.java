@@ -75,18 +75,33 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
             final Double beanWidth = widthProvider.apply(bean);
             final Double beanHeight = heightProvider.apply(bean);
             final double width = null != beanWidth ? beanWidth : boundsWidth;
-            final double minWidth = minWidthProvider.apply(bean);
-            final double maxWidth = maxWidthProvider.apply(bean);
             final double height = null != beanHeight ? beanHeight : boundsHeight;
-            final double minHeight = minHeightProvider.apply(bean);
-            final double maxHeight = maxHeightProvider.apply(bean);
+            final Double minWidth = minWidthProvider.apply(bean);
+            final Double maxWidth = maxWidthProvider.apply(bean);
+            final Double minHeight = minHeightProvider.apply(bean);
+            final Double maxHeight = maxHeightProvider.apply(bean);
+
+            HasSize hasSizeView = (HasSize)view;
+
             if (width > 0 && height > 0) {
-                ((HasSize) view).setSize(width, height);
-            }
-            if (minWidth > 0 && minHeight > 0 && maxWidth > 0 && maxHeight > 0) {
-                ((HasSize) view).setSizeConstraints(minWidth, minHeight, maxWidth, maxHeight);
+                hasSizeView.setSize(width, height);
             }
 
+            if (minWidth == null || minWidth > 0) {
+                hasSizeView.setMinWidth(minWidth);
+            }
+
+            if (maxWidth == null || maxWidth > 0) {
+                hasSizeView.setMaxWidth(maxWidth);
+            }
+
+            if (minHeight == null || minHeight > 0) {
+                hasSizeView.setMinHeight(minHeight);
+            }
+
+            if (maxHeight == null || maxHeight > 0) {
+                hasSizeView.setMaxHeight(maxHeight);
+            }
         }
         if (view instanceof HasRadius) {
             final Double beanRadius = radiusProvider.apply(bean);
