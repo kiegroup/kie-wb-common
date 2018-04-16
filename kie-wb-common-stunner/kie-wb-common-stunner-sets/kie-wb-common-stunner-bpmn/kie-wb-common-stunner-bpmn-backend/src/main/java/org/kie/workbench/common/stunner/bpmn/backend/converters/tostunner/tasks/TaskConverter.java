@@ -221,8 +221,11 @@ public class TaskConverter {
 
     private BpmnNode fallback(Task task) {
         String taskName = CustomAttribute.serviceTaskName.of(task).get();
-        if (taskName.isEmpty()) return noneTask(task);
-        else return serviceTask(task);
+        if (taskName.isEmpty()) {
+            return noneTask(task);
+        } else {
+            return serviceTask(task);
+        }
     }
 
     private BpmnNode noneTask(Task task) {

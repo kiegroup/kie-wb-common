@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.Process;
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBase;
 import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
@@ -57,13 +56,12 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
 
         org.eclipse.bpmn2.ServiceTask serviceTask =
                 ((Process) definitions.getRootElements().get(0))
-                .getFlowElements()
-                .stream()
-                .filter(org.eclipse.bpmn2.ServiceTask.class::isInstance)
-                .map(org.eclipse.bpmn2.ServiceTask.class::cast)
-                .findFirst().get();
+                        .getFlowElements()
+                        .stream()
+                        .filter(org.eclipse.bpmn2.ServiceTask.class::isInstance)
+                        .map(org.eclipse.bpmn2.ServiceTask.class::cast)
+                        .findFirst().get();
 
         assertEquals("Email", serviceTask.getName());
     }
-
 }
