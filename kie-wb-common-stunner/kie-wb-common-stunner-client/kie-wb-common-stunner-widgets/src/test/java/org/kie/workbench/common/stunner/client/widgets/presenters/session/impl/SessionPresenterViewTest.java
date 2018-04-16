@@ -29,6 +29,7 @@ import com.google.gwtmockito.WithClassesToStub;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.gwt.FlowPanel;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +39,9 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.selection.Canva
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertNotNull;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
@@ -86,6 +90,9 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
     @Mock
     private com.google.gwt.dom.client.Style paletteStyle;
+
+    @Mock
+    private TranslationService translationService;
 
     @Before
     public void setup() throws Exception {
@@ -214,13 +221,16 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         final SessionPresenterView view = spy(new SessionPresenterView());
         final String message = "Hello<br />World";
+        final String error = "Error";
 
+        when(translationService.getTranslation(SessionPresenterView_Error)).thenReturn(error);
+        when(view.getTranslationService()).thenReturn(translationService);
         when(view.getSettings()).thenReturn(settings);
 
         view.showError(message);
 
         verify(settings).setType("danger kie-session-notification");
-        verify(view).showNotification("Error", message, IconType.EXCLAMATION_CIRCLE);
+        verify(view).showNotification(error, message, IconType.EXCLAMATION_CIRCLE);
     }
 
     @Test
@@ -228,13 +238,16 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         final SessionPresenterView view = spy(new SessionPresenterView());
         final String message = "Hello<br />World";
+        final String warning = "Warning";
 
+        when(translationService.getTranslation(SessionPresenterView_Warning)).thenReturn(warning);
+        when(view.getTranslationService()).thenReturn(translationService);
         when(view.getSettings()).thenReturn(settings);
 
         view.showWarning(message);
 
         verify(settings).setType("warning kie-session-notification");
-        verify(view).showNotification("Warning", message, IconType.EXCLAMATION_TRIANGLE);
+        verify(view).showNotification(warning, message, IconType.EXCLAMATION_TRIANGLE);
     }
 
     @Test
@@ -242,12 +255,15 @@ public class SessionPresenterViewTest extends AbstractCanvasHandlerViewerTest {
 
         final SessionPresenterView view = spy(new SessionPresenterView());
         final String message = "Hello<br />World";
+        final String info = "Info";
 
+        when(translationService.getTranslation(SessionPresenterView_Info)).thenReturn(info);
+        when(view.getTranslationService()).thenReturn(translationService);
         when(view.getSettings()).thenReturn(settings);
 
         view.showMessage(message);
 
         verify(settings).setType("success kie-session-notification");
-        verify(view).showNotification("Info", message, IconType.INFO_CIRCLE);
+        verify(view).showNotification(info, message, IconType.INFO_CIRCLE);
     }
 }

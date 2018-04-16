@@ -35,6 +35,7 @@ import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
 import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -44,6 +45,10 @@ import org.kie.workbench.common.stunner.client.widgets.presenters.session.Sessio
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasFocusedShapeEvent;
 import org.kie.workbench.common.stunner.core.client.components.palette.PaletteDefinition;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
+
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
 
 // TODO: i18n.
 @Dependent
@@ -73,6 +78,9 @@ public class SessionPresenterView extends Composite
     @Inject
     @DataField
     private SessionContainer sessionContainer;
+
+    @Inject
+    private TranslationService translationService;
 
     private final NotifySettings settings = NotifySettings.newSettings();
 
@@ -176,7 +184,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenterView showError(final String message) {
 
         getSettings().setType(kieNotificationCssClass(NotifyType.DANGER));
-        showNotification("Error", message, IconType.EXCLAMATION_CIRCLE);
+        showNotification(translate(SessionPresenterView_Error), message, IconType.EXCLAMATION_CIRCLE);
 
         return this;
     }
@@ -185,7 +193,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenter.View showWarning(final String message) {
 
         getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
-        showNotification("Warning", message, IconType.EXCLAMATION_TRIANGLE);
+        showNotification(translate(SessionPresenterView_Warning), message, IconType.EXCLAMATION_TRIANGLE);
 
         return this;
     }
@@ -194,7 +202,7 @@ public class SessionPresenterView extends Composite
     public SessionPresenterView showMessage(final String message) {
 
         getSettings().setType(kieNotificationCssClass(NotifyType.SUCCESS));
-        showNotification("Info", message, IconType.INFO_CIRCLE);
+        showNotification(translate(SessionPresenterView_Info), message, IconType.INFO_CIRCLE);
 
         return this;
     }
@@ -232,6 +240,14 @@ public class SessionPresenterView extends Composite
 
     NotifySettings getSettings() {
         return settings;
+    }
+
+    TranslationService getTranslationService() {
+        return translationService;
+    }
+
+    private String translate(final String translationKey) {
+        return getTranslationService().getTranslation(translationKey);
     }
 
     private static String buildHtmlEscapedText(final String message) {
