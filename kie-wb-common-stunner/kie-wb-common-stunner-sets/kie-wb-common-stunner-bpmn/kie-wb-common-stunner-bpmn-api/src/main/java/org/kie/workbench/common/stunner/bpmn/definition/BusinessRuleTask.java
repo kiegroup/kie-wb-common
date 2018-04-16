@@ -50,7 +50,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = BusinessRuleTask.BusinessRuleTaskBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @CanDock(roles = {"IntermediateEventOnActivityBoundary"})
 @Morph(base = BaseTask.class)
 @FormDefinition(
@@ -73,15 +73,6 @@ public class BusinessRuleTask extends BaseTask implements DataIOModel {
     )
     @Valid
     protected DataIOSet dataIOSet;
-
-    @NonPortable
-    public static class BusinessRuleTaskBuilder implements Builder<BusinessRuleTask> {
-
-        @Override
-        public BusinessRuleTask build() {
-            return new BusinessRuleTask();
-        }
-    }
 
     public BusinessRuleTask() {
         this(new TaskGeneralSet(new Name("Task"),

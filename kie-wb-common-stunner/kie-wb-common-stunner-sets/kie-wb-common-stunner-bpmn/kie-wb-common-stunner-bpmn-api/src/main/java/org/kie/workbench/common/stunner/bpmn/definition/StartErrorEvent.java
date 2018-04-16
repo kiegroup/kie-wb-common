@@ -46,7 +46,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = StartErrorEvent.StartErrorEventBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @Morph(base = BaseStartEvent.class)
 @FormDefinition(
         startElement = "general",
@@ -65,22 +65,14 @@ public class StartErrorEvent extends BaseStartEvent {
     @Valid
     protected DataIOSet dataIOSet;
 
-    @NonPortable
-    public static class StartErrorEventBuilder implements Builder<StartErrorEvent> {
-
-        @Override
-        public StartErrorEvent build() {
-            return new StartErrorEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new DataIOSet(),
-                                       new InterruptingErrorEventExecutionSet());
-        }
-    }
-
     public StartErrorEvent() {
+        this(new BPMNGeneralSet(""),
+             new BackgroundSet(),
+             new FontSet(),
+             new CircleDimensionSet(new Radius()),
+             new SimulationAttributeSet(),
+             new DataIOSet(),
+             new InterruptingErrorEventExecutionSet());
     }
 
     public StartErrorEvent(final @MapsTo("general") BPMNGeneralSet general,

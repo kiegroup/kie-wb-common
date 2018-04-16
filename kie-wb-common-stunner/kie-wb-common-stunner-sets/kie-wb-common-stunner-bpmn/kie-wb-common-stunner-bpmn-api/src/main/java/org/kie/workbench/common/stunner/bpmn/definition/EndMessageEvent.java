@@ -47,7 +47,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = EndMessageEvent.EndMessageEventBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @Morph(base = BaseEndEvent.class)
 @FormDefinition(
         startElement = "general",
@@ -66,6 +66,12 @@ public class EndMessageEvent extends BaseEndEvent {
     protected DataIOSet dataIOSet;
 
     public EndMessageEvent() {
+        this(new BPMNGeneralSet(""),
+             new BackgroundSet(),
+             new FontSet(),
+             new CircleDimensionSet(new Radius()),
+             new MessageEventExecutionSet(),
+             new DataIOSet());
     }
 
     public EndMessageEvent(final @MapsTo("general") BPMNGeneralSet general,
@@ -134,17 +140,4 @@ public class EndMessageEvent extends BaseEndEvent {
         return false;
     }
 
-    @NonPortable
-    public static class EndMessageEventBuilder implements Builder<EndMessageEvent> {
-
-        @Override
-        public EndMessageEvent build() {
-            return new EndMessageEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new MessageEventExecutionSet(),
-                                       new DataIOSet());
-        }
-    }
 }

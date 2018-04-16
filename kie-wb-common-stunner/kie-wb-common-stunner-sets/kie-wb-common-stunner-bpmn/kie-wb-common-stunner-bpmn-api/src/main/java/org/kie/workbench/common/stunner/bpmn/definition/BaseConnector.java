@@ -51,13 +51,9 @@ public abstract class BaseConnector implements BPMNViewDefinition {
     @PropertySet
     protected FontSet fontSet;
 
-    @NonPortable
-    static abstract class BaseConnectorBuilder<T extends BaseConnector> implements Builder<BaseConnector> {
-
-        public static final transient String COLOR = "#000000";
-        public static final transient String BORDER_COLOR = "#000000";
-        public static final Double BORDER_SIZE = 1d;
-    }
+    public static final transient String COLOR = "#000000";
+    public static final transient String BORDER_COLOR = "#000000";
+    public static final Double BORDER_SIZE = 1d;
 
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{

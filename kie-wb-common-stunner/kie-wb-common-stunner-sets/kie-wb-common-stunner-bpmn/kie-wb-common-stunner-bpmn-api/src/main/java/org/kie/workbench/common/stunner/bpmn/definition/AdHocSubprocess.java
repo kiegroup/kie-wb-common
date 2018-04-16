@@ -51,7 +51,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Bindable
 @CanContain(roles = {"cm_activity", "cm_stage", "IntermediateEventsMorph", "GatewaysMorph"})
 @CanDock(roles = {"IntermediateEventOnSubprocessBoundary"})
-@Definition(graphFactory = NodeFactory.class, builder = AdHocSubprocess.AdHocSubprocessBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @Morph(base = BaseSubprocess.class)
 @FormDefinition(
         startElement = "general",
@@ -71,22 +71,14 @@ public class AdHocSubprocess
     @Valid
     private ProcessData processData;
 
-    @NonPortable
-    public static class AdHocSubprocessBuilder implements Builder<AdHocSubprocess> {
-
-        @Override
-        public AdHocSubprocess build() {
-            return new AdHocSubprocess(new BPMNGeneralSet("Sub-process"),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new RectangleDimensionsSet(),
-                                       new SimulationSet(),
-                                       new AdHocSubprocessTaskExecutionSet(),
-                                       new ProcessData());
-        }
-    }
-
     public AdHocSubprocess() {
+        this(new BPMNGeneralSet("Sub-process"),
+                        new BackgroundSet(),
+                        new FontSet(),
+                        new RectangleDimensionsSet(),
+                        new SimulationSet(),
+                        new AdHocSubprocessTaskExecutionSet(),
+                        new ProcessData());
     }
 
     public AdHocSubprocess(final @MapsTo("general") BPMNGeneralSet general,

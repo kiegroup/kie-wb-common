@@ -45,7 +45,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = StartTimerEvent.StartTimerEventBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @Morph(base = BaseStartEvent.class)
 @FormDefinition(
         startElement = "general",
@@ -59,21 +59,13 @@ public class StartTimerEvent extends BaseStartEvent {
     @Valid
     protected InterruptingTimerEventExecutionSet executionSet;
 
-    @NonPortable
-    public static class StartTimerEventBuilder implements Builder<StartTimerEvent> {
-
-        @Override
-        public StartTimerEvent build() {
-            return new StartTimerEvent(new BPMNGeneralSet(""),
-                                       new BackgroundSet(),
-                                       new FontSet(),
-                                       new CircleDimensionSet(new Radius()),
-                                       new SimulationAttributeSet(),
-                                       new InterruptingTimerEventExecutionSet());
-        }
-    }
-
     public StartTimerEvent() {
+        this((new BPMNGeneralSet("")),
+             new BackgroundSet(),
+             new FontSet(),
+             new CircleDimensionSet(new Radius()),
+             new SimulationAttributeSet(),
+             new InterruptingTimerEventExecutionSet());
     }
 
     public StartTimerEvent(final @MapsTo("general") BPMNGeneralSet general,

@@ -47,7 +47,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = Lane.LaneBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @CanContain(roles = {"lane_child"})
 @FormDefinition(
         startElement = "general",
@@ -83,19 +83,11 @@ public class Lane implements BPMNViewDefinition {
         add("cm_nop");
     }};
 
-    @NonPortable
-    public static class LaneBuilder implements Builder<Lane> {
-
-        @Override
-        public Lane build() {
-            return new Lane(new BPMNGeneralSet("Lane"),
-                            new BackgroundSet(),
-                            new FontSet(),
-                            new RectangleDimensionsSet());
-        }
-    }
-
     public Lane() {
+        this(new BPMNGeneralSet("Lane"),
+             new BackgroundSet(),
+             new FontSet(),
+             new RectangleDimensionsSet());
     }
 
     public Lane(final @MapsTo("general") BPMNGeneralSet general,
