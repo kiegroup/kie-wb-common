@@ -451,4 +451,7 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddEnvironmentEntry = "AddEnvironmentEntry";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ProjectScreenSettings = "ProjectScreenSettings";
 }
