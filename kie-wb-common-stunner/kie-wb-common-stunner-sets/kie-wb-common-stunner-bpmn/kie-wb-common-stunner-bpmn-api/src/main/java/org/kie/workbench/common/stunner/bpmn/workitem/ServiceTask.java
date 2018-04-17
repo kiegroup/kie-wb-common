@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.workitem;
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
+import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
@@ -44,6 +45,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Id;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Title;
+import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
 import org.kie.workbench.common.stunner.core.rule.annotation.CanDock;
 import org.kie.workbench.common.stunner.core.util.ClassUtils;
@@ -54,7 +56,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class)
+@Definition(graphFactory = NodeFactory.class, builder = ServiceTask.ServiceTaskBuilder.class)
 @CanDock(roles = {"IntermediateEventOnActivityBoundary"})
 @FormDefinition(
         policy = FieldPolicy.ONLY_MARKED,
@@ -93,6 +95,16 @@ public class ServiceTask extends BaseTask implements DataIOModel {
         return ClassUtils.isTypeOf(ServiceTask.class,
                                    definition);
     }
+
+    @NonPortable
+    public static class ServiceTaskBuilder implements Builder<ServiceTask> {
+
+        @Override
+        public ServiceTask build() {
+            return new ServiceTask();
+        }
+    }
+
 
     public ServiceTask() {
         this("Service Task",
