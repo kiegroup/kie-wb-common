@@ -87,19 +87,19 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
                 hasSizeView.setSize(width, height);
             }
 
-            if (minWidth == null || minWidth > 0) {
+            if (isValidSize(minWidth)) {
                 hasSizeView.setMinWidth(minWidth);
             }
 
-            if (maxWidth == null || maxWidth > 0) {
+            if (isValidSize(maxWidth)) {
                 hasSizeView.setMaxWidth(maxWidth);
             }
 
-            if (minHeight == null || minHeight > 0) {
+            if (isValidSize(minHeight)) {
                 hasSizeView.setMinHeight(minHeight);
             }
 
-            if (maxHeight == null || maxHeight > 0) {
+            if (isValidSize(maxHeight)) {
                 hasSizeView.setMaxHeight(maxHeight);
             }
         }
@@ -118,6 +118,18 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
                 ((HasRadius) view).setRadiusConstraints(minRadius, maxRadius);
             }
         }
+    }
+
+    private static boolean isValidSize(Double value) {
+        if (value == null) {
+            return true;
+        }
+
+        if (value < 0) {
+            return true;
+        }
+
+        return false;
     }
 
     public static class Builder<W, V extends ShapeView> {
