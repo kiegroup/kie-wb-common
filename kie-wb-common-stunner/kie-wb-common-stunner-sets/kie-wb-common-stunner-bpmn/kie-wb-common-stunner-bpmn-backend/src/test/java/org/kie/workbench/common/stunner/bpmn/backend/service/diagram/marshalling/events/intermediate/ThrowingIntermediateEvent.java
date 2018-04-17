@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.events.intermediate;
 
-import org.junit.Ignore;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -34,11 +36,9 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
@@ -52,9 +52,8 @@ public abstract class ThrowingIntermediateEvent<T extends BaseThrowingIntermedia
 
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
-        return Arrays.asList(new Object[][] {
-                // New (un)marshaller is disabled for now due to found incompleteness
-                {OLD}//, {NEW}
+        return Arrays.asList(new Object[][]{
+                {OLD}, {NEW}
         });
     }
 
@@ -70,7 +69,6 @@ public abstract class ThrowingIntermediateEvent<T extends BaseThrowingIntermedia
         }
     }
 
-    @Ignore
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnThrowingIntermediateEventFilePath());
@@ -138,10 +136,6 @@ public abstract class ThrowingIntermediateEvent<T extends BaseThrowingIntermedia
     public abstract void testUnmarshallSubprocessLevelEventWithIncomeEmptyProperties() throws Exception;
 
     public abstract void testUnmarshallSubprocessLevelEventWithIncomeFilledProperties() throws Exception;
-
-
-
-
 
     abstract String getBpmnThrowingIntermediateEventFilePath();
 
