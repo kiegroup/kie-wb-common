@@ -34,6 +34,7 @@ import org.gwtbootstrap3.extras.notify.client.constants.NotifyType;
 import org.gwtbootstrap3.extras.notify.client.ui.Notify;
 import org.gwtbootstrap3.extras.notify.client.ui.NotifySettings;
 import org.jboss.errai.common.client.ui.ElementWrapperWidget;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
@@ -42,6 +43,10 @@ import org.kie.workbench.common.stunner.client.widgets.palette.PaletteWidget;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.core.client.components.palette.PaletteDefinition;
 import org.uberfire.client.workbench.widgets.listbar.ResizeFlowPanel;
+
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Error;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Info;
+import static org.kie.workbench.common.stunner.client.widgets.resources.i18n.StunnerWidgetsConstants.SessionPresenterView_Warning;
 
 // TODO: i18n.
 @Dependent
@@ -71,6 +76,9 @@ public class SessionPresenterView extends Composite
     @Inject
     @DataField
     private SessionContainer sessionContainer;
+
+    @Inject
+    private TranslationService translationService;
 
     private final NotifySettings settings = NotifySettings.newSettings();
 
@@ -163,34 +171,35 @@ public class SessionPresenterView extends Composite
 
     @Override
     public SessionPresenterView showError(final String message) {
-        settings.setType(NotifyType.DANGER);
-        showNotification("Error",
-                         buildHtmlEscapedText(message),
-                         IconType.CLOSE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.DANGER));
+        showNotification(translate(SessionPresenterView_Error), message, IconType.EXCLAMATION_CIRCLE);
+
         return this;
     }
 
     @Override
     public SessionPresenter.View showWarning(final String message) {
-        settings.setType(NotifyType.WARNING);
-        showNotification("Warning",
-                         buildHtmlEscapedText(message),
-                         IconType.CLOSE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.WARNING));
+        showNotification(translate(SessionPresenterView_Warning), message, IconType.EXCLAMATION_TRIANGLE);
+
         return this;
     }
 
     @Override
     public SessionPresenterView showMessage(final String message) {
-        settings.setType(NotifyType.SUCCESS);
-        showNotification("Info",
-                         buildHtmlEscapedText(message),
-                         IconType.STICKY_NOTE);
+
+        getSettings().setType(kieNotificationCssClass(NotifyType.SUCCESS));
+        showNotification(translate(SessionPresenterView_Info), message, IconType.INFO_CIRCLE);
+
         return this;
     }
 
-    private void showNotification(final String title,
-                                  final String message,
-                                  final IconType icon) {
+    void showNotification(final String title,
+                          final String message,
+                          final IconType icon) {
+
         Notify.notify(title,
                       buildHtmlEscapedText(message),
                       icon,
@@ -218,7 +227,23 @@ public class SessionPresenterView extends Composite
         this.removeFromParent();
     }
 
+    NotifySettings getSettings() {
+        return settings;
+    }
+
+    TranslationService getTranslationService() {
+        return translationService;
+    }
+
+    private String translate(final String translationKey) {
+        return getTranslationService().getTranslation(translationKey);
+    }
+
     private static String buildHtmlEscapedText(final String message) {
         return new SafeHtmlBuilder().appendEscapedLines(message).toSafeHtml().asString();
+    }
+
+    private String kieNotificationCssClass(final NotifyType notifyType) {
+        return notifyType.getCssName() + " kie-session-notification";
     }
 }
