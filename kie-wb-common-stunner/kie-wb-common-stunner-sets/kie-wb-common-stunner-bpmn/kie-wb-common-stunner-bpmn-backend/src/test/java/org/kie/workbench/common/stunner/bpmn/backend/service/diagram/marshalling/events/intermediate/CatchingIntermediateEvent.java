@@ -39,6 +39,7 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.NEW;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.OLD;
 
 @RunWith(Parameterized.class)
@@ -54,8 +55,7 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
-                // New (un)marshaller is disabled for now due to found incompleteness
-                {OLD}//, {NEW}
+                {OLD}, {NEW}
         });
     }
 
@@ -71,7 +71,6 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
         }
     }
 
-    @Ignore
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnCatchingIntermediateEventFilePath());
