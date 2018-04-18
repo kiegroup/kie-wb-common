@@ -29,29 +29,6 @@ import org.uberfire.backend.vfs.Path;
 @Portable
 public class ProjectScreenModel {
 
-    @Portable
-    public static class GitUrl {
-
-        private String protocol;
-        private String url;
-
-        public GitUrl() {
-        }
-
-        public GitUrl(final String protocol, final String url) {
-            this.protocol = protocol;
-            this.url = url;
-        }
-
-        public String getProtocol() {
-            return protocol;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-    }
-
     private POM pom;
     private KModuleModel KModule;
     private List<GitUrl> gitUrls;

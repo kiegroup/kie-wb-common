@@ -33,7 +33,8 @@ import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 
 import static java.util.stream.Collectors.toList;
-import static org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel.GitUrl;
+
+import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 
 public class ProjectScreenModelLoader {
 

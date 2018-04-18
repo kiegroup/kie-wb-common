@@ -27,7 +27,7 @@ import elemental2.dom.HTMLElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.library.client.settings.util.KieSelectElement;
-import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel.GitUrl;
+import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 import org.uberfire.client.mvp.UberElemental;
 import org.uberfire.workbench.events.NotificationEvent;
 
