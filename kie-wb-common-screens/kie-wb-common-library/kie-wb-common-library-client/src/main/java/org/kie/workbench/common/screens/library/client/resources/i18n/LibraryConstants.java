@@ -399,7 +399,6 @@ public class LibraryConstants {
     public static final String ReimportSuccessful = "ReimportSuccessful";
 
     @TranslationKey(defaultValue = "")
-<<<<<<< HEAD
     public static final String CloseUnsavedProjectAssets = "CloseUnsavedProjectAssets";
 
     @TranslationKey(defaultValue = "")
