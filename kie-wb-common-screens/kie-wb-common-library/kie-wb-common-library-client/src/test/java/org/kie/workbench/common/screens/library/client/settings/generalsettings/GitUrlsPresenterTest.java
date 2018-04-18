@@ -15,7 +15,8 @@ import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
-import static org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel.GitUrl;
+
+import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
