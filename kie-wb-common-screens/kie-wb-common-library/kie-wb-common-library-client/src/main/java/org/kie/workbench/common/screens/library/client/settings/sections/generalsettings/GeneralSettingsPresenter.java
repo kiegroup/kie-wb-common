@@ -28,6 +28,7 @@ import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.preferences.GAVPreferences;
 import org.jboss.errai.common.client.api.Caller;
 import org.kie.workbench.common.screens.library.client.settings.SettingsSectionChange;
+import org.kie.workbench.common.screens.library.client.settings.generalsettings.GitUrlsPresenter;
 import org.kie.workbench.common.screens.library.client.settings.util.sections.MenuItem;
 import org.kie.workbench.common.screens.library.client.settings.util.sections.Section;
 import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionView;

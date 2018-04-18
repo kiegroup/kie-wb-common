@@ -31,6 +31,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
+import org.kie.workbench.common.screens.library.client.settings.generalsettings.GitUrlsPresenter;
 
 @Templated
 public class GeneralSettingsView implements GeneralSettingsPresenter.View {
