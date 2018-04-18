@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.tasks;
 
+import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.EmptyTaskExecutionSet;
@@ -50,6 +51,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         super(marshallerType);
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelTaskFilledProperties() throws Exception {
         final String TASK_NAME = "Task01 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
@@ -66,6 +68,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelEmptyTaskProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -79,6 +82,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskFilledProperties() throws Exception {
         final String TASK_NAME = "Task03 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
@@ -95,6 +99,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskEmptyProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -108,6 +113,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
         final String TASK_NAME = "Task02 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
@@ -124,6 +130,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -137,6 +144,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -150,6 +158,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
         final String TASK_NAME = "Task04 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
@@ -166,6 +175,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
         final String TASK_NAME = "Task05 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
@@ -182,6 +192,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -195,6 +206,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
@@ -208,6 +220,7 @@ public class NoneTaskTest extends Task<NoneTask> {
         assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
     }
 
+    @Test
     @Override
     public void testUnmarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
         final String TASK_NAME = "Task06 name ~!@#$%^&*()_+`-={}[]:\"|;'\\<>?,./";
