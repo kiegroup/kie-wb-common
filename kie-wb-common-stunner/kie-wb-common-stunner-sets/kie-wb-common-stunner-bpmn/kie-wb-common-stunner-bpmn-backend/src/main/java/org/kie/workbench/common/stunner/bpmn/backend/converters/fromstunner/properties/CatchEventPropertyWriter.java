@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.EventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -66,5 +67,9 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
     @Override
     public void addEventDefinition(EventDefinition eventDefinition) {
         this.event.getEventDefinitions().add(eventDefinition);
+    }
+
+    public void setCancelActivity(Boolean value) {
+        CustomAttribute.boundarycaForEvent.of(flowElement).set(value);
     }
 }
