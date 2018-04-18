@@ -33,6 +33,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.Match;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.TypedFactoryManager;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.BpmnNode;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.CatchEventPropertyReader;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.EventDefinitionReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.EventPropertyReader;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.PropertyReaderFactory;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCatching;
@@ -126,7 +127,7 @@ public class IntermediateCatchEventConverter {
 
         definition.setExecutionSet(new CancellingErrorEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
-                new ErrorRef(e.getErrorRef().getErrorCode())
+                new ErrorRef(EventDefinitionReader.errorRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
@@ -212,7 +213,7 @@ public class IntermediateCatchEventConverter {
 
         definition.setExecutionSet(new CancellingMessageEventExecutionSet(
                 new CancelActivity(p.isCancelActivity()),
-                new MessageRef(e.getMessageRef().getName())
+                new MessageRef(EventDefinitionReader.messageRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
