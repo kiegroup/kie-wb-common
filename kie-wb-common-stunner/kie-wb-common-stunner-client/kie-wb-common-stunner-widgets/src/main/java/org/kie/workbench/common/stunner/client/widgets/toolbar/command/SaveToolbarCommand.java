@@ -13,50 +13,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.kie.workbench.common.stunner.client.widgets.toolbar.command;
 
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.ExportToBpmnSessionCommand;
-import org.kie.workbench.common.stunner.core.client.session.impl.AbstractSession;
-import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.client.session.command.impl.SaveDiagramSessionCommand;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.i18n.CoreTranslationMessages;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 
-public class ExportToBpmnToolbarCommand extends AbstractToolbarCommand<AbstractSession<AbstractCanvas, AbstractCanvasHandler>, ExportToBpmnSessionCommand> {
+@Dependent
+public class SaveToolbarCommand extends AbstractToolbarCommand<EditorSession, SaveDiagramSessionCommand> {
 
     @Inject
-    public ExportToBpmnToolbarCommand(final DefinitionUtils definitionUtils,
-                                      final ManagedInstance<ExportToBpmnSessionCommand> command,
-                                      final ClientTranslationService translationService) {
-        super(definitionUtils,
-              command,
-              translationService);
+    public SaveToolbarCommand(final DefinitionUtils definitionUtils,
+                              final ManagedInstance<SaveDiagramSessionCommand> command,
+                              final ClientTranslationService translationService) {
+        super(definitionUtils, command, translationService);
+    }
+
+    @Override
+    public IconType getIcon() {
+        return IconType.SAVE;
+    }
+
+    @Override
+    public String getCaption() {
+        return translationService.getValue(CoreTranslationMessages.SAVE);
+    }
+
+    @Override
+    public String getTooltip() {
+        return translationService.getValue(CoreTranslationMessages.SAVE);
     }
 
     @Override
     protected boolean requiresConfirm() {
         return false;
-    }
-
-    @Override
-    public IconType getIcon() {
-        return IconType.FILE_TEXT_O;
-    }
-
-    @Override
-    public String getCaption() {
-        return translationService.getValue(CoreTranslationMessages.EXPORT_BPMN);
-    }
-
-    @Override
-    public String getTooltip() {
-        return translationService.getValue(CoreTranslationMessages.EXPORT_BPMN);
     }
 }

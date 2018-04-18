@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
+package org.kie.workbench.common.stunner.core.client.session.command.event;
 
-import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
-import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+public class SaveDiagramSessionCommandExecutedEvent {
 
-public interface EditorToolbar
-        extends Toolbar<EditorSession> {
+    private String diagramUUID;
 
+    public SaveDiagramSessionCommandExecutedEvent(final String diagramUUID) {
+        this.diagramUUID = diagramUUID;
+    }
+
+    public String getDiagramUUID() {
+        return diagramUUID;
+    }
+
+    @Override
+    public String toString() {
+        return "SaveDiagramSessionCommandExecutedEvent{" +
+                "diagramUUID='" + diagramUUID + '\'' +
+                '}';
+    }
 }

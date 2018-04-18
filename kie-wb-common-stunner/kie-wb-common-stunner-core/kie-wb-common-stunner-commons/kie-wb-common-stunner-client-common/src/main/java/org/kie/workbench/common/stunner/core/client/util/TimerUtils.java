@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
+package org.kie.workbench.common.stunner.core.client.util;
 
-import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
-import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import com.google.gwt.user.client.Timer;
 
-public interface EditorToolbar
-        extends Toolbar<EditorSession> {
+public class TimerUtils {
 
+    public void executeWithDelay(Runnable executeFunction, int delayMillis) {
+        new Timer() {
+            public void run() {
+                executeFunction.run();
+            }
+        }.schedule(delayMillis);
+    }
 }

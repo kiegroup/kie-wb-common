@@ -13,14 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.kie.workbench.common.stunner.core.definition.annotation;
 
-package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
-import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
-
-public interface EditorToolbar
-        extends Toolbar<EditorSession> {
+@Inherited
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD})
+public @interface SvgNodeId {
 
 }
