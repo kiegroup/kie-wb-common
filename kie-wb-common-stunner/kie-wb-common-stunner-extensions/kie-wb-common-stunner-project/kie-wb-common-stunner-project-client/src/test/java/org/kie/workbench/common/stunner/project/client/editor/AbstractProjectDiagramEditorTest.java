@@ -451,8 +451,10 @@ public class AbstractProjectDiagramEditorTest {
         String title = "testDiagram";
 
         String formattedTitle = presenter.formatTitle(title);
+        String suffix = getResourceType().getSuffix();
+        String shortName = getResourceType().getShortName();
         assertEquals(formattedTitle,
-                     "testDiagram.bpmn - Business Process");
+                     "testDiagram." + suffix + " - " + shortName);
     }
 
     @Test
@@ -528,13 +530,13 @@ public class AbstractProjectDiagramEditorTest {
                                                 clientReadOnlySessionConsumerCaptor.capture());
 
         final Consumer<ClientReadOnlySession> clientReadOnlySessionConsumer = clientReadOnlySessionConsumerCaptor.getValue();
-        clientReadOnlySessionConsumer.accept(clientFullSession);
+        clientReadOnlySessionConsumer.accept(clientReadOnlySession);
 
         verify(view).setWidget(eq(sessionPresenterView));
         verify(readOnlySessionPresenter).withToolbar(eq(false));
         verify(readOnlySessionPresenter).withPalette(eq(false));
         verify(readOnlySessionPresenter).open(eq(diagram),
-                                              eq(clientFullSession),
+                                              eq(clientReadOnlySession),
                                               clientSessionPresenterCallbackCaptor.capture());
 
         final SessionPresenter.SessionPresenterCallback clientSessionPresenterCallback = clientSessionPresenterCallbackCaptor.getValue();
