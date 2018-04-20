@@ -30,14 +30,21 @@ public abstract class AbstractHasRadiusView<T extends AbstractHasRadiusView> ext
     }
 
     @Override
-    public T setRadiusConstraints(double minRadius, double maxRadius) {
+    public T setMinRadius(Double minRadius) {
         double minDiameter = minRadius * 2;
-        double maxDiameter = maxRadius * 2;
 
         getPath().setMinWidth(minDiameter)
-                 .setMaxWidth(maxDiameter)
-                 .setMinHeight(minDiameter)
-                 .setMaxHeight(maxDiameter);
+                .setMinHeight(minDiameter);
+
+        return cast();
+    }
+
+    @Override
+    public T setMaxRadius(Double maxRadius) {
+        double maxDiameter = maxRadius * 2;
+
+        getPath().setMaxWidth(maxDiameter)
+                .setMaxHeight(maxDiameter);
 
         return cast();
     }

@@ -87,19 +87,19 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
                 hasSizeView.setSize(width, height);
             }
 
-            if (isValidSize(minWidth)) {
+            if (isValidSizeConstraint(minWidth)) {
                 hasSizeView.setMinWidth(minWidth);
             }
 
-            if (isValidSize(maxWidth)) {
+            if (isValidSizeConstraint(maxWidth)) {
                 hasSizeView.setMaxWidth(maxWidth);
             }
 
-            if (isValidSize(minHeight)) {
+            if (isValidSizeConstraint(minHeight)) {
                 hasSizeView.setMinHeight(minHeight);
             }
 
-            if (isValidSize(maxHeight)) {
+            if (isValidSizeConstraint(maxHeight)) {
                 hasSizeView.setMaxHeight(maxHeight);
             }
         }
@@ -109,23 +109,28 @@ public class SizeHandler<W, V extends ShapeView> implements ShapeViewHandler<Vie
                     (boundsWidth > boundsHeight ?
                         boundsWidth / 2 :
                         boundsHeight / 2);
-            final double minRadius = minRadiusProvider.apply(bean);
-            final double maxRadius = maxRadiusProvider.apply(bean);
+            final Double minRadius = minRadiusProvider.apply(bean);
+            final Double maxRadius = maxRadiusProvider.apply(bean);
             if (radius > 0) {
                 ((HasRadius) view).setRadius(radius);
             }
-            if (minRadius > 0 && maxRadius > 0) {
-                ((HasRadius) view).setRadiusConstraints(minRadius, maxRadius);
+
+            if (isValidSizeConstraint(minRadius)) {
+                ((HasRadius) view).setMinRadius(minRadius);
+            }
+
+            if (isValidSizeConstraint(maxRadius)) {
+                ((HasRadius) view).setMaxRadius(maxRadius);
             }
         }
     }
 
-    private static boolean isValidSize(Double value) {
+    private static boolean isValidSizeConstraint(Double value) {
         if (value == null) {
             return true;
         }
 
-        if (value < 0) {
+        if (value > 0) {
             return true;
         }
 
