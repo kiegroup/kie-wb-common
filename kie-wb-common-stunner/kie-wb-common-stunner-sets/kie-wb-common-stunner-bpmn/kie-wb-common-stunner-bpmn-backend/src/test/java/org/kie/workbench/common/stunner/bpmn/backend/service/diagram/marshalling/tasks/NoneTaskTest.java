@@ -74,12 +74,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      EMPTY_TOP_LEVEL_TASK_ID,
-                                                      ZERO_INCOME_EDGES,
-                                                      HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask emptyTopLevelTask = getTaskNodeById(diagram,
+                                                     EMPTY_TOP_LEVEL_TASK_ID,
+                                                     ZERO_INCOME_EDGES,
+                                                     HAS_NO_OUTCOME_EDGE);
+        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertNoneTaskExecutionSet(emptyTopLevelTask.getExecutionSet());
     }
 
     @Test
@@ -91,12 +91,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      FILLED_SUBPROCESS_LEVEL_TASK_ID,
-                                                      ZERO_INCOME_EDGES,
-                                                      HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+                                                             FILLED_SUBPROCESS_LEVEL_TASK_ID,
+                                                             ZERO_INCOME_EDGES,
+                                                             HAS_NO_OUTCOME_EDGE);
+        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 
     @Test
@@ -105,12 +105,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      EMPTY_SUBPROCESS_LEVEL_TASK_ID,
-                                                      ZERO_INCOME_EDGES,
-                                                      HAS_NO_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+                                                            EMPTY_SUBPROCESS_LEVEL_TASK_ID,
+                                                            ZERO_INCOME_EDGES,
+                                                            HAS_NO_OUTCOME_EDGE);
+        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
     @Test
@@ -136,12 +136,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
-                                                      ONE_INCOME_EDGE,
-                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask emptyTopLevelTask = getTaskNodeById(diagram,
+                                                     EMPTY_ONE_INCOME_TOP_LEVEL_TASK_ID,
+                                                     ONE_INCOME_EDGE,
+                                                     HAS_OUTCOME_EDGE);
+        assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertNoneTaskExecutionSet(emptyTopLevelTask.getExecutionSet());
     }
 
     @Test
@@ -150,12 +150,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
-                                                      ONE_INCOME_EDGE,
-                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+                                                            EMPTY_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
+                                                            ONE_INCOME_EDGE,
+                                                            HAS_OUTCOME_EDGE);
+        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
     @Test
@@ -167,12 +167,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
-                                                      ONE_INCOME_EDGE,
-                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+                                                             FILLED_ONE_INCOME_SUBPROCESS_LEVEL_TASK_ID,
+                                                             ONE_INCOME_EDGE,
+                                                             HAS_OUTCOME_EDGE);
+        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 
     @Test
@@ -212,12 +212,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
-                                                      TWO_INCOME_EDGES,
-                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask emptySubprocessLevelTask = getTaskNodeById(diagram,
+                                                            EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
+                                                            TWO_INCOME_EDGES,
+                                                            HAS_OUTCOME_EDGE);
+        assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
+        assertNoneTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet());
     }
 
     @Test
@@ -229,12 +229,12 @@ public class NoneTaskTest extends Task<NoneTask> {
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_TASK_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
-        NoneTask filledTopLevelTask = getTaskNodeById(diagram,
-                                                      FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
-                                                      TWO_INCOME_EDGES,
-                                                      HAS_OUTCOME_EDGE);
-        assertGeneralSet(filledTopLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
-        assertNoneTaskExecutionSet(filledTopLevelTask.getExecutionSet());
+        NoneTask filledSubprocessLevelTask = getTaskNodeById(diagram,
+                                                             FILLED_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID,
+                                                             TWO_INCOME_EDGES,
+                                                             HAS_OUTCOME_EDGE);
+        assertGeneralSet(filledSubprocessLevelTask.getGeneral(), TASK_NAME, TASK_DOCUMENTATION);
+        assertNoneTaskExecutionSet(filledSubprocessLevelTask.getExecutionSet());
     }
 
     @Override
