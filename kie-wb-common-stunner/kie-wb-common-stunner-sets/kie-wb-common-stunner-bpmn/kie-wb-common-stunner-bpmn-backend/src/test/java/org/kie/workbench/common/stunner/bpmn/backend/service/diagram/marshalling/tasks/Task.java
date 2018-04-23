@@ -55,7 +55,8 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
-                {OLD}, {NEW}
+                // New (un)marshaller is disabled for now due to found incompleteness
+                {OLD}//, {NEW}
         });
     }
 
@@ -84,7 +85,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         assertDiagramEquals(oldDiagram, newDiagram, getBpmnTaskFilePath());
     }
 
-    @Ignore
     @Test
     public void testMarshallTopLevelTaskFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledTopLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -95,7 +95,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         checkTaskMarshalling(getEmptyTopLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallSubprocessLevelTaskFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledSubprocessLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
@@ -106,7 +105,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         checkTaskMarshalling(getEmptySubprocessLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallTopLevelTaskOneIncomeFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledTopLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
@@ -117,19 +115,16 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         checkTaskMarshalling(getEmptyTopLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallSubprocessLevelTaskOneIncomeFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledSubprocessLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
         checkTaskMarshalling(getEmptySubprocessLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallTopLevelTaskTwoIncomesFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledTopLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
@@ -140,7 +135,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         checkTaskMarshalling(getEmptyTopLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
     }
 
-    @Ignore
     @Test
     public void testMarshallSubprocessLevelTaskTwoIncomesFilledProperties() throws Exception {
         checkTaskMarshalling(getFilledSubprocessLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
