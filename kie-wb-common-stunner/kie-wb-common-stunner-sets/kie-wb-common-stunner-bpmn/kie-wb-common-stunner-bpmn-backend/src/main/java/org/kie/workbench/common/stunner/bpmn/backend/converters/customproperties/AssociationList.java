@@ -74,4 +74,12 @@ public class AssociationList {
                 .map(AssociationDeclaration::toString)
                 .collect(Collectors.joining(","));
     }
+
+    public void addInputs(DeclarationList inputList) {
+        for (VariableDeclaration declaration : inputList.getDeclarations()) {
+            if (inputs.stream().noneMatch(in -> in.getLeft().equals(declaration.getIdentifier())) && declaration.getType() != null) {
+                inputs.add(new AssociationDeclaration(AssociationDeclaration.Direction.Input, AssociationDeclaration.Type.SourceTarget, "", declaration.getIdentifier()));
+            }
+        }
+    }
 }

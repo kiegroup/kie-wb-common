@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import org.eclipse.bpmn2.ServiceTask;
+import org.eclipse.bpmn2.Task;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
@@ -25,7 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.OnExitActi
 
 public class ServiceTaskPropertyWriter extends ActivityPropertyWriter {
 
-    public ServiceTaskPropertyWriter(ServiceTask task, VariableScope variableScope) {
+    public ServiceTaskPropertyWriter(Task task, VariableScope variableScope) {
         super(task, variableScope);
     }
 

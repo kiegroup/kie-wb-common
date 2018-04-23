@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.Optional;
+
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.InputOutputSpecification;
@@ -60,7 +62,8 @@ public class ActivityPropertyWriter extends PropertyWriter {
                 .map(declaration -> new InputAssignmentWriter(
                         flowElement.getId(),
                         // source is a variable
-                        variableScope.lookup(declaration.getLeft()),
+                        variableScope.lookup(declaration.getLeft())
+                                .orElseGet(() -> new VariableScope.Variable(getId(), declaration.getLeft(), declaration.getRight())),
                         // target is an input
                         assignmentsInfo
                                 .getInputs()
@@ -82,7 +85,7 @@ public class ActivityPropertyWriter extends PropertyWriter {
                                 .getOutputs()
                                 .lookup(declaration.getLeft()),
                         // target is a variable
-                        variableScope.lookup(declaration.getRight())
+                        variableScope.lookup(declaration.getRight()).get()
                 ))
                 .forEach(doa -> {
                     this.addItemDefinition(doa.getItemDefinition());

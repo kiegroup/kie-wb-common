@@ -38,7 +38,8 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                 .stream()
                 .map(declaration -> new InputAssignmentWriter(
                         flowElement.getId(),
-                        variableScope.lookup(declaration.getLeft()),
+                        variableScope.lookup(declaration.getLeft())
+                                .orElseGet(() -> new VariableScope.Variable(getId(), declaration.getLeft(), declaration.getRight())),
                         assignmentsInfo
                                 .getInputs()
                                 .lookup(declaration.getRight()))
@@ -46,7 +47,9 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
             this.addItemDefinition(dia.getItemDefinition());
             throwEvent.getDataInputs().add(dia.getDataInput());
             throwEvent.setInputSet(dia.getInputSet());
-            throwEvent.getDataInputAssociation().add(dia.getAssociation());
+            if (dia.getAssociation() != null) {
+                throwEvent.getDataInputAssociation().add(dia.getAssociation());
+            }
         });
     }
 

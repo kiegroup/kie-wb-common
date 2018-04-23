@@ -56,12 +56,12 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
 
         Definitions definitions = convertToDefinitions(d);
 
-        org.eclipse.bpmn2.ServiceTask serviceTask =
+        org.eclipse.bpmn2.Task serviceTask =
                 ((Process) definitions.getRootElements().get(0))
                         .getFlowElements()
                         .stream()
-                        .filter(org.eclipse.bpmn2.ServiceTask.class::isInstance)
-                        .map(org.eclipse.bpmn2.ServiceTask.class::cast)
+                        .filter(org.eclipse.bpmn2.Task.class::isInstance)
+                        .map(org.eclipse.bpmn2.Task.class::cast)
                         .findFirst().get();
 
         assertEquals("Email", serviceTask.getName());
