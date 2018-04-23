@@ -60,7 +60,7 @@ public class TaskConverter {
     }
 
     private PropertyWriter serviceTask(Node<View<ServiceTask>, ?> n) {
-        org.eclipse.bpmn2.ServiceTask task = bpmn2.createServiceTask();
+        org.eclipse.bpmn2.Task task = bpmn2.createTask();
         task.setId(n.getUUID());
         ServiceTask definition = n.getContent().getDefinition();
         ServiceTaskPropertyWriter p = propertyWriterFactory.of(task);

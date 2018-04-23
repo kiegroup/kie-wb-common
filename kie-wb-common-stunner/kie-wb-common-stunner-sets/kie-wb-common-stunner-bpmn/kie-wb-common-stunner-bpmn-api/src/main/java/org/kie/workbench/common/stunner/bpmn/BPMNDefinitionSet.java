@@ -53,7 +53,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.StartTimerEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
 import org.kie.workbench.common.stunner.bpmn.qualifiers.BPMN;
-import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTask;
 import org.kie.workbench.common.stunner.core.definition.annotation.DefinitionSet;
 import org.kie.workbench.common.stunner.core.definition.annotation.SvgNodeId;
 import org.kie.workbench.common.stunner.core.definition.builder.Builder;
@@ -72,7 +71,6 @@ import org.kie.workbench.common.stunner.core.rule.annotation.Occurrences;
                 UserTask.class,
                 ScriptTask.class,
                 BusinessRuleTask.class,
-                ServiceTask.class,
                 StartNoneEvent.class,
                 StartMessageEvent.class,
                 StartSignalEvent.class,
