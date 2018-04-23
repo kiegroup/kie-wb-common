@@ -28,7 +28,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class NoneTaskTest extends Task<NoneTask> {
 
-    private static final String BPMN_TASK_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/NoneTasks.bpmn";
+    private static final String BPMN_TASK_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/noneTasks.bpmn";
 
     private static final String EMPTY_TOP_LEVEL_TASK_ID = "D9666725-31FB-4D20-8E81-579D8BA893CE";
     private static final String FILLED_TOP_LEVEL_TASK_ID = "4EE0C527-0D2E-411C-B277-1E6A60C9053B";
