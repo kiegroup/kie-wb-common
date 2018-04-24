@@ -428,7 +428,7 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     }
 
     @SuppressWarnings("unchecked")
-    private T cast() {
+    protected T cast() {
         return (T) this;
     }
 }
