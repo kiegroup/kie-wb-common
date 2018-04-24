@@ -70,6 +70,6 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
     }
 
     public void setCancelActivity(Boolean value) {
-        CustomAttribute.boundarycaForEvent.of(flowElement).set(value);
+        // this only makes sense for boundary events: ignore
     }
 }

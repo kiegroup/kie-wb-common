@@ -23,6 +23,7 @@ import java.util.List;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.di.BPMNPlane;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
@@ -34,6 +35,12 @@ public class CatchEventPropertyReader extends EventPropertyReader {
         super(catchEvent, plane, definitionResolver, EventPropertyReader.getSignalRefId(catchEvent.getEventDefinitions()));
         this.catchEvent = catchEvent;
     }
+
+    public boolean isCancelActivity() {
+        // return default value (only used in boundary)
+        return true;
+    }
+
 
     @Override
     public AssignmentsInfo getAssignmentsInfo() {

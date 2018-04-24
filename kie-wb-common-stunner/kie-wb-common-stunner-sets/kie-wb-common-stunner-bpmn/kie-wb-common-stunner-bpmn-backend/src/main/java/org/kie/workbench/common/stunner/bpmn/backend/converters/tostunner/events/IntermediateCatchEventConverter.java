@@ -114,7 +114,7 @@ public class IntermediateCatchEventConverter {
         Node<View<IntermediateErrorEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateErrorEventCatching.class);
 
         IntermediateErrorEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = propertyReaderFactory.of(event);
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(p.getName()),
@@ -144,7 +144,7 @@ public class IntermediateCatchEventConverter {
         Node<View<IntermediateSignalEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateSignalEventCatching.class);
 
         IntermediateSignalEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = propertyReaderFactory.of(event);
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(p.getName()),
@@ -174,7 +174,7 @@ public class IntermediateCatchEventConverter {
         Node<View<IntermediateTimerEvent>, Edge> node = factoryManager.newNode(nodeId, IntermediateTimerEvent.class);
 
         IntermediateTimerEvent definition = node.getContent().getDefinition();
-        EventPropertyReader p = propertyReaderFactory.of(event);
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(p.getName()),
@@ -200,7 +200,7 @@ public class IntermediateCatchEventConverter {
         Node<View<IntermediateMessageEventCatching>, Edge> node = factoryManager.newNode(nodeId, IntermediateMessageEventCatching.class);
 
         IntermediateMessageEventCatching definition = node.getContent().getDefinition();
-        EventPropertyReader p = propertyReaderFactory.of(event);
+        CatchEventPropertyReader p = propertyReaderFactory.of(event);
 
         definition.setGeneral(new BPMNGeneralSet(
                 new Name(p.getName()),

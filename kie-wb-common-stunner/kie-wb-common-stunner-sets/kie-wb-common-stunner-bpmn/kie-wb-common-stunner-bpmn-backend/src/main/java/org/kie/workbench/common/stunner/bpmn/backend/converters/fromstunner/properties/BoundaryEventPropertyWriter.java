@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import org.eclipse.bpmn2.BoundaryEvent;
 import org.eclipse.bpmn2.EventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.dc;
 
@@ -29,6 +30,12 @@ public class BoundaryEventPropertyWriter extends CatchEventPropertyWriter {
         super(event, variableScope);
         this.event = event;
     }
+
+    @Override
+    public void setCancelActivity(Boolean value) {
+        CustomAttribute.boundarycaForEvent.of(flowElement).set(value);
+    }
+
 
     public void setParentActivity(ActivityPropertyWriter parent) {
         org.eclipse.dd.dc.Bounds parentBounds =

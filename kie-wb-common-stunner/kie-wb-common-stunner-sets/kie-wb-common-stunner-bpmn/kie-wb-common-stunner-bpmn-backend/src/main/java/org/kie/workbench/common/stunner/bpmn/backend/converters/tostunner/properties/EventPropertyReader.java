@@ -58,10 +58,6 @@ public abstract class EventPropertyReader extends FlowElementPropertyReader {
 
     public abstract AssignmentsInfo getAssignmentsInfo();
 
-    public boolean isCancelActivity() {
-        return CustomAttribute.boundarycaForEvent.of(element).get();
-    }
-
     public TimerSettingsValue getTimerSettings(TimerEventDefinition eventDefinition) {
         TimerSettingsValue timerSettingsValue = new TimerSettings().getValue();
         toFormalExpression(eventDefinition.getTimeCycle()).ifPresent(timeCycle -> {
