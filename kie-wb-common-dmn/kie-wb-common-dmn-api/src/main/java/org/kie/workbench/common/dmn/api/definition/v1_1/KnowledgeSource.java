@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
-import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
@@ -83,7 +82,6 @@ public class KnowledgeSource extends DRGElement implements DMNViewDefinition {
     @Valid
     protected RectangleDimensionsSet dimensionsSet;
 
-    @NonPortable
     public KnowledgeSource() {
         this(new Id(),
              new org.kie.workbench.common.dmn.api.property.dmn.Description(),

@@ -21,7 +21,6 @@ import java.util.Set;
 import javax.validation.Valid;
 
 import org.jboss.errai.common.client.api.annotations.MapsTo;
-import org.jboss.errai.common.client.api.annotations.NonPortable;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
@@ -78,12 +77,12 @@ public class InputData extends DRGElement implements DMNViewDefinition {
 
     public InputData() {
         this(new Id(),
-                             new org.kie.workbench.common.dmn.api.property.dmn.Description(),
-                             new Name(),
-                             new InformationItem(),
-                             new BackgroundSet(),
-                             new FontSet(),
-                             new RectangleDimensionsSet());
+             new org.kie.workbench.common.dmn.api.property.dmn.Description(),
+             new Name(),
+             new InformationItem(),
+             new BackgroundSet(),
+             new FontSet(),
+             new RectangleDimensionsSet());
     }
 
     public InputData(final @MapsTo("id") Id id,

@@ -44,7 +44,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 
 @Portable
 @Bindable
-@Definition(graphFactory = NodeFactory.class, builder = BusinessKnowledgeModel.BusinessKnowledgeModelBuilder.class)
+@Definition(graphFactory = NodeFactory.class)
 @FormDefinition(policy = FieldPolicy.ONLY_MARKED, startElement = "id", defaultFieldSettings = {@FieldParam(name = FIELD_CONTAINER_PARAM, value = COLLAPSIBLE_CONTAINER)})
 public class BusinessKnowledgeModel extends DRGElement implements DMNViewDefinition {
 
@@ -86,9 +86,6 @@ public class BusinessKnowledgeModel extends DRGElement implements DMNViewDefinit
              new BackgroundSet(),
              new FontSet(),
              new RectangleDimensionsSet());
-    }
-
-    public BusinessKnowledgeModel() {
     }
 
     public BusinessKnowledgeModel(final @MapsTo("id") Id id,

@@ -81,7 +81,6 @@ public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefin
     @FormField
     protected RectangleDimensionsSet dimensionsSet;
 
-    @Override
     public DMNDiagram() {
         this(new Definitions(),
              new BackgroundSet(),
