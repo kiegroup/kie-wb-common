@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.project.backend.service;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.enterprise.inject.Instance;
@@ -219,7 +219,7 @@ public class ProjectDiagramServiceImplTest {
     public void testSave() {
         Metadata metadata = mock(Metadata.class);
         String comment = "COMMENT";
-        Map<String, Object> attributes = new HashMap<>();
+        Map<String, Object> attributes = Collections.singletonMap("key", "value");
         CommentedOption options = mock(CommentedOption.class);
         when(metadataService.setUpAttributes(path,
                                              metadata)).thenReturn(attributes);
@@ -245,7 +245,7 @@ public class ProjectDiagramServiceImplTest {
     public void testSaveAsXml() {
         final String xml = "xml";
         final String comment = "comment";
-        final Map<String, Object> attributes = new HashMap<>();
+        final Map<String, Object> attributes = Collections.singletonMap("key", "value");
         final Path path = mock(Path.class);
         final Metadata metadata = mock(Metadata.class);
         final CommentedOption options = mock(CommentedOption.class);

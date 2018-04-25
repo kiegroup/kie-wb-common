@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.project.client.editor;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -64,6 +67,11 @@ import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientF
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
 import org.kie.workbench.common.stunner.core.definition.exception.DefinitionNotFoundException;
 import org.kie.workbench.common.stunner.core.diagram.DiagramParsingException;
+import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.rule.RuleViolation;
+import org.kie.workbench.common.stunner.core.rule.violations.BoundsExceededViolation;
+import org.kie.workbench.common.stunner.core.validation.DiagramElementViolation;
+import org.kie.workbench.common.stunner.core.validation.impl.ElementViolationImpl;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerProjectClientConstants;
@@ -675,7 +683,58 @@ public class AbstractProjectDiagramEditorTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testSave_ValidationSuccessful() {
+    public void testStunnerSave_SaveFailed() {
+        final String errorMessage = "Something went wrong";
+        final ClientRuntimeError cre = new ClientRuntimeError(errorMessage);
+        final ServiceCallback<ProjectDiagram> serviceCallback = assertBasicStunnerSaveOperation();
+
+        serviceCallback.onError(cre);
+
+        verify(presenter).onSaveError(eq(cre));
+        final ArgumentCaptor<Consumer> consumerCaptor = forClass(Consumer.class);
+        verify(diagramClientErrorHandler).handleError(eq(cre), consumerCaptor.capture());
+
+        final Consumer consumer = consumerCaptor.getValue();
+        consumer.accept(errorMessage);
+
+        verify(errorPopupPresenter).showMessage(eq(errorMessage));
+    }
+
+    @Test
+    public void testStunnerSave_ValidationSuccessful() {
+        final ServiceCallback<ProjectDiagram> serviceCallback = assertBasicStunnerSaveOperation();
+
+        serviceCallback.onSuccess(diagram);
+
+        final Path path = versionRecordManager.getCurrentPath();
+        verify(versionRecordManager).reloadVersions(eq(path));
+        verify(sessionPresenterView).showMessage(eq(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL));
+        verify(view).hideBusyIndicator();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testStunnerSave_ValidationUnsuccessful() {
+        openDiagram();
+
+        reset(presenter, view);
+
+        doReturn(diagram).when(presenter).getDiagram();
+        presenter.save();
+
+        verify(validateSessionCommand).execute(validationCallbackCaptor.capture());
+
+        final Collection<DiagramElementViolation<RuleViolation>> violations = new ArrayList<>();
+        violations.add(ElementViolationImpl.Builder.build("UUID", Collections.singletonList(new BoundsExceededViolation(mock(Bounds.class)))));
+        final ClientSessionCommand.Callback validationCallback = validationCallbackCaptor.getValue();
+        validationCallback.onError(violations);
+
+        verify(presenter).onValidationFailed(eq(violations));
+        verify(view).hideBusyIndicator();
+    }
+
+    @SuppressWarnings("unchecked")
+    private ServiceCallback<ProjectDiagram> assertBasicStunnerSaveOperation() {
         final String commitMessage = "message";
         final Overview overview = openDiagram();
         final Metadata metadata = overview.getMetadata();
@@ -703,19 +762,50 @@ public class AbstractProjectDiagramEditorTest {
                                                          eq(commitMessage),
                                                          serviceCallbackCaptor.capture());
 
-        final ServiceCallback<ProjectDiagram> serviceCallback = serviceCallbackCaptor.getValue();
-        serviceCallback.onSuccess(diagram);
+        return serviceCallbackCaptor.getValue();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testXMLSave_ValidationNotRequired() {
+        final String xml = "xml";
+        final ServiceCallback<String> serviceCallback = assertBasicXMLSaveOperation(xml);
+
+        serviceCallback.onSuccess(xml);
 
         final Path path = versionRecordManager.getCurrentPath();
         verify(versionRecordManager).reloadVersions(eq(path));
-        verify(sessionPresenterView).showMessage(eq(StunnerProjectClientConstants.DIAGRAM_SAVE_SUCCESSFUL));
+        verify(notificationEvent).fire(notificationEventCaptor.capture());
+
+        final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
+        assertEquals("ItemSavedSuccessfully",
+                     notificationEvent.getNotification());
+
         verify(view).hideBusyIndicator();
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testSaveWithInvalidBPMNFile_ValidationSuccessful() {
+    public void testXMLSave_SaveFailed() {
         final String xml = "xml";
+        final String errorMessage = "Something went wrong";
+        final ClientRuntimeError cre = new ClientRuntimeError(errorMessage);
+        final ServiceCallback<String> serviceCallback = assertBasicXMLSaveOperation(xml);
+
+        serviceCallback.onError(cre);
+
+        verify(presenter).onSaveError(eq(cre));
+        final ArgumentCaptor<Consumer> consumerCaptor = forClass(Consumer.class);
+        verify(diagramClientErrorHandler).handleError(eq(cre), consumerCaptor.capture());
+
+        final Consumer consumer = consumerCaptor.getValue();
+        consumer.accept(errorMessage);
+
+        verify(errorPopupPresenter).showMessage(eq(errorMessage));
+    }
+
+    @SuppressWarnings("unchecked")
+    private ServiceCallback<String> assertBasicXMLSaveOperation(final String xml) {
         final String commitMessage = "message";
         final Overview overview = openInvalidBPMNFile(xml);
         final Metadata metadata = overview.getMetadata();
@@ -738,18 +828,7 @@ public class AbstractProjectDiagramEditorTest {
                                                       eq(commitMessage),
                                                       serviceCallbackCaptor.capture());
 
-        final ServiceCallback<String> serviceCallback = serviceCallbackCaptor.getValue();
-        serviceCallback.onSuccess(xml);
-
-        final Path path = versionRecordManager.getCurrentPath();
-        verify(versionRecordManager).reloadVersions(eq(path));
-        verify(notificationEvent).fire(notificationEventCaptor.capture());
-
-        final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
-        assertEquals("ItemSavedSuccessfully",
-                     notificationEvent.getNotification());
-
-        verify(view).hideBusyIndicator();
+        return serviceCallbackCaptor.getValue();
     }
 
     @Test

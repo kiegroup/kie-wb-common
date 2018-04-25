@@ -862,7 +862,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
             "Validation SUCCESS.");
     }
 
-    private void onValidationFailed(final Collection<DiagramElementViolation<RuleViolation>> violations) {
+    protected void onValidationFailed(final Collection<DiagramElementViolation<RuleViolation>> violations) {
         log(Level.WARNING,
             "Validation FAILED [violations=" + violations.toString() + "]");
         hideLoadingViews();
