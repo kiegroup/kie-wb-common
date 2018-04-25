@@ -575,7 +575,6 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(view).showLoading();
         verify(presenter).setOriginalHash(anyInt());
-        verify(presenter).destroySession();
 
         verify(view).setWidget(eq(sessionPresenterView));
         verify(fullSessionPresenter).withToolbar(eq(false));
@@ -603,7 +602,6 @@ public class AbstractProjectDiagramEditorTest {
 
         verify(view).showLoading();
         verify(presenter).setOriginalHash(anyInt());
-        verify(presenter).destroySession();
 
         verify(view).setWidget(eq(sessionPresenterView));
         verify(readOnlySessionPresenter).withToolbar(eq(false));
@@ -864,6 +862,8 @@ public class AbstractProjectDiagramEditorTest {
 
         presenter.loadContent();
 
+        verify(presenter).destroySession();
+
         verify(clientSessionFactory).newSession(eq(metadata),
                                                 clientFullSessionConsumerCaptor.capture());
 
@@ -904,6 +904,8 @@ public class AbstractProjectDiagramEditorTest {
 
         presenter.loadContent();
 
+        verify(presenter).destroySession();
+
         verify(clientSessionFactory).newSession(eq(metadata),
                                                 clientReadOnlySessionConsumerCaptor.capture());
 
@@ -943,6 +945,8 @@ public class AbstractProjectDiagramEditorTest {
                                                        any(ServiceCallback.class));
 
         presenter.loadContent();
+
+        verify(presenter).destroySession();
 
         return overview;
     }

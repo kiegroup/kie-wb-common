@@ -240,6 +240,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
 
     @Override
     protected void loadContent() {
+        destroySession();
         showLoadingViews();
         projectDiagramServices.getByPath(versionRecordManager.getCurrentPath(),
                                          new ServiceCallback<ProjectDiagram>() {
@@ -258,8 +259,6 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     @SuppressWarnings("unchecked")
     public void open(final ProjectDiagram diagram) {
         editorProxy = makeStunnerEditorProxy();
-
-        destroySession();
 
         //Open applicable SessionPresenter
         if (!isReadOnly()) {
