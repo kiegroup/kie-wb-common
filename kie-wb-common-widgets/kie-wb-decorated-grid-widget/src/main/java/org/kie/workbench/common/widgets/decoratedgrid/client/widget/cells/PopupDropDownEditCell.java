@@ -28,6 +28,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.PopupPanel.PositionCallback;
 import org.drools.workbench.models.datamodel.oracle.DropDownData;
+import org.drools.workbench.models.datamodel.util.ListSplitter;
 import org.gwtbootstrap3.client.ui.ListBox;
 import org.kie.workbench.common.widgets.client.datamodel.AsyncPackageDataModelOracle;
 import org.kie.workbench.common.widgets.client.widget.CachingEnumDropDownUtilities;
@@ -39,7 +40,7 @@ import org.kie.workbench.common.widgets.decoratedgrid.client.widget.CellTableDro
 public class PopupDropDownEditCell extends
                                    AbstractPopupEditCell<String, String> {
 
-    private final ListBox listBox = GWT.create( ListBox.class );
+    protected final ListBox listBox = GWT.create( ListBox.class );
     private final boolean isMultipleSelect;
 
     private final String factType;
@@ -203,7 +204,11 @@ public class PopupDropDownEditCell extends
             listBox.setSelectedIndex( 0 );
         } else {
             if ( listBox.isMultipleSelect() ) {
-                final List<String> values = Arrays.asList( value.split( "," ) );
+                final List<String> values = Arrays.asList( splitPreserveQuotes("\"",
+                                                                               false,
+                                                                               value) );
+
+
                 for ( int i = 0; i < listBox.getItemCount(); i++ ) {
                     listBox.setItemSelected( i,
                                              values.contains( listBox.getValue( i ) ) );
