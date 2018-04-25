@@ -305,12 +305,12 @@ public class BuildExecutor {
                                                          final String containerAlias,
                                                          final ServerTemplate serverTemplate,
                                                          final Boolean startContainer,
-                                                         final Map<String, String> runtimeStrategy) {
+                                                         final Map<String, String> parameters) {
 
         final ContainerSpec containerSpec = makeContainerSpec(containerId,
                                                               containerAlias,
                                                               serverTemplate,
-                                                              runtimeStrategy);
+                                                              parameters);
 
         specManagementService.call(ignore -> {
 
