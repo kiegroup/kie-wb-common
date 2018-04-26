@@ -20,34 +20,34 @@ public class AssociationDeclaration {
 
     private Direction direction;
     private Type type;
-    private String left;
-    private String right;
+    private String source;
+    private String target;
 
-    public AssociationDeclaration(Direction direction, Type type, String left, String right) {
+    public AssociationDeclaration(Direction direction, Type type, String source, String target) {
         this.direction = direction;
         this.type = type;
-        this.left = left;
-        this.right = right;
+        this.source = source;
+        this.target = target;
     }
 
     public static AssociationDeclaration fromString(String encoded) {
         return AssociationParser.parse(encoded);
     }
 
-    public String getLeft() {
-        return left;
+    public String getSource() {
+        return source;
     }
 
-    public void setLeft(String left) {
-        this.left = left;
+    public void setSource(String source) {
+        this.source = source;
     }
 
-    public String getRight() {
-        return right;
+    public String getTarget() {
+        return target;
     }
 
-    public void setRight(String right) {
-        this.right = right;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     public Direction getDirection() {
@@ -64,7 +64,7 @@ public class AssociationDeclaration {
 
     @Override
     public String toString() {
-        return direction.prefix() + left + type.op() + right;
+        return direction.prefix() + source + type.op() + target;
     }
 
     public enum Direction {

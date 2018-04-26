@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.Objects;
+import java.util.stream.Stream;
+
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
@@ -38,28 +41,22 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                 .stream()
                 .filter(varDecl -> varDecl.getType() != null)
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
-                .forEach(dw -> {
+                .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());
-                    throwEvent.getDataInputs().add(dw.getDataInput());
                     throwEvent.setInputSet(dw.getInputSet());
+                    throwEvent.getDataInputs().add(dw.getDataInput());
+                })
+                .flatMap(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .forEach(dia -> {
+                    throwEvent.getDataInputAssociation().add(dia.getAssociation());
                 });
+    }
 
-        assignmentsInfo.getAssociations()
-                .getInputs()
-                .stream()
-                .map(declaration -> new InputAssignmentWriter(
-                        flowElement.getId(),
-                        // source is a variable
-                        variableScope.lookup(declaration.getLeft()),
-                        // target is an input
-                        assignmentsInfo
-                                .getInputs()
-                                .lookup(declaration.getRight()))
-                ).forEach(dia -> {
-            throwEvent.getDataInputs().add(dia.getDataInput());
-            throwEvent.setInputSet(dia.getInputSet());
-            throwEvent.getDataInputAssociation().add(dia.getAssociation());
-        });
+    private Stream<InputAssignmentWriter> toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
+        return assignmentsInfo.getAssociations().lookupInput(dw.getVarId())
+                .map(targetVar -> variableScope.lookup(targetVar.getSource()))
+                .filter(Objects::nonNull)
+                .map(targetVar -> new InputAssignmentWriter(dw, targetVar));
     }
 
     @Override

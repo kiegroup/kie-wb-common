@@ -19,10 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.Objects;
 
 import org.eclipse.bpmn2.DataInput;
-import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemDefinition;
-import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
@@ -58,7 +56,7 @@ public class DeclarationWriter {
     }
 
     private ItemDefinition typedefInput(VariableDeclaration decl) {
-        Objects.requireNonNull(decl.getType(), "Cannot declare "+decl+": no type");
+        Objects.requireNonNull(decl.getType(), "Cannot declare " + decl + ": no type");
         ItemDefinition typeDef = bpmn2.createItemDefinition();
         typeDef.setId(Ids.dataInputItem(parentId, decl.getIdentifier()));
         typeDef.setStructureRef(decl.getType());

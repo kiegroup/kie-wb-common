@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Property;

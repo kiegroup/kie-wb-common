@@ -16,8 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.Map;
-import java.util.function.Function;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
@@ -27,7 +27,6 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
-import static java.util.stream.Collectors.toMap;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
 public class ActivityPropertyWriter extends PropertyWriter {
@@ -58,27 +57,20 @@ public class ActivityPropertyWriter extends PropertyWriter {
         final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
 
-        Map<String, DeclarationWriter> declarations = assignmentsInfo
+        assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
                 .filter(varDecl -> varDecl.getType() != null)
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
-                .collect(toMap(DeclarationWriter::getVarId, Function.identity()));
-
-        assignmentsInfo.getAssociations()
-                .getInputs()
-                .stream()
-                .map(declaration ->
-                     new InputAssignmentWriter(
-                        declarations.get(declaration.getRight()),
-                        // source is a variable
-                        variableScope.lookup(declaration.getLeft()))
-                ).forEach(dia -> {
-            this.addItemDefinition(dia.getItemDefinition());
-            ioSpec.getInputSets().add(dia.getInputSet());
-            ioSpec.getDataInputs().add(dia.getDataInput());
-            activity.getDataInputAssociations().add(dia.getAssociation());
-        });
+                .peek(dw -> {
+                    this.addItemDefinition(dw.getItemDefinition());
+                    ioSpec.getInputSets().add(dw.getInputSet());
+                    ioSpec.getDataInputs().add(dw.getDataInput());
+                })
+                .flatMap(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .forEach(dia -> {
+                    activity.getDataInputAssociations().add(dia.getAssociation());
+                });
 
         assignmentsInfo.getAssociations()
                 .getOutputs()
@@ -88,9 +80,9 @@ public class ActivityPropertyWriter extends PropertyWriter {
                         // source is an output
                         assignmentsInfo
                                 .getOutputs()
-                                .lookup(declaration.getLeft()),
+                                .lookup(declaration.getSource()),
                         // target is a variable
-                        variableScope.lookup(declaration.getRight())
+                        variableScope.lookup(declaration.getTarget())
                 ))
                 .forEach(doa -> {
                     this.addItemDefinition(doa.getItemDefinition());
@@ -98,6 +90,13 @@ public class ActivityPropertyWriter extends PropertyWriter {
                     ioSpec.getDataOutputs().add(doa.getDataOutput());
                     activity.getDataOutputAssociations().add(doa.getAssociation());
                 });
+    }
+
+    private Stream<InputAssignmentWriter> toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
+        return assignmentsInfo.getAssociations().lookupInput(dw.getVarId())
+                .map(targetVar -> variableScope.lookup(targetVar.getSource()))
+                .filter(Objects::nonNull)
+                .map(targetVar -> new InputAssignmentWriter(dw, targetVar));
     }
 
     private InputOutputSpecification getIoSpecification() {
