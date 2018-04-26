@@ -33,23 +33,30 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     @Override
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
+        assignmentsInfo
+                .getInputs().getDeclarations()
+                .stream()
+                .filter(varDecl -> varDecl.getType() != null)
+                .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
+                .forEach(dw -> {
+                    this.addItemDefinition(dw.getItemDefinition());
+                    throwEvent.getDataInputs().add(dw.getDataInput());
+                });
+
         assignmentsInfo.getAssociations()
                 .getInputs()
                 .stream()
                 .map(declaration -> new InputAssignmentWriter(
                         flowElement.getId(),
-                        variableScope.lookup(declaration.getLeft())
-                                .orElseGet(() -> new VariableScope.Variable(getId(), declaration.getLeft(), declaration.getRight())),
+                        // source is a variable
+                        variableScope.lookup(declaration.getLeft()),
+                        // target is an input
                         assignmentsInfo
                                 .getInputs()
                                 .lookup(declaration.getRight()))
                 ).forEach(dia -> {
-            this.addItemDefinition(dia.getItemDefinition());
             throwEvent.getDataInputs().add(dia.getDataInput());
             throwEvent.setInputSet(dia.getInputSet());
-            if (dia.getAssociation() != null) {
-                throwEvent.getDataInputAssociation().add(dia.getAssociation());
-            }
         });
     }
 

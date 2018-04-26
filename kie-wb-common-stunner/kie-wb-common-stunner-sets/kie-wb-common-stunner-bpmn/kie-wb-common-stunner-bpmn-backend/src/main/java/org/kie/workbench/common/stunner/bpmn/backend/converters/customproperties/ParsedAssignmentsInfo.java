@@ -129,7 +129,6 @@ public class ParsedAssignmentsInfo {
         DeclarationList inputList = DeclarationList.fromString(in);
         DeclarationList outputList = DeclarationList.fromString(out);
         AssociationList associationList = AssociationList.fromString(assoc);
-        associationList.addInputs(inputList);
         return new ParsedAssignmentsInfo(
                 inputList,
                 outputList,

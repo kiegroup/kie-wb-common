@@ -54,22 +54,29 @@ public class ActivityPropertyWriter extends PropertyWriter {
         final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
 
+        assignmentsInfo
+                .getInputs().getDeclarations()
+                .stream()
+                .filter(varDecl -> varDecl.getType() != null)
+                .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
+                .forEach(dw -> {
+                    this.addItemDefinition(dw.getItemDefinition());
+                    ioSpec.getInputSets().add(dw.getInputSet());
+                    ioSpec.getDataInputs().add(dw.getDataInput());
+                });
+
         assignmentsInfo.getAssociations()
                 .getInputs()
                 .stream()
                 .map(declaration -> new InputAssignmentWriter(
                         flowElement.getId(),
                         // source is a variable
-                        variableScope.lookup(declaration.getLeft())
-                                .orElseGet(() -> new VariableScope.Variable(getId(), declaration.getLeft(), declaration.getRight())),
+                        variableScope.lookup(declaration.getLeft()),
                         // target is an input
                         assignmentsInfo
                                 .getInputs()
                                 .lookup(declaration.getRight()))
                 ).forEach(dia -> {
-            this.addItemDefinition(dia.getItemDefinition());
-            ioSpec.getInputSets().add(dia.getInputSet());
-            ioSpec.getDataInputs().add(dia.getDataInput());
             activity.getDataInputAssociations().add(dia.getAssociation());
         });
 
@@ -83,7 +90,7 @@ public class ActivityPropertyWriter extends PropertyWriter {
                                 .getOutputs()
                                 .lookup(declaration.getLeft()),
                         // target is a variable
-                        variableScope.lookup(declaration.getRight()).get()
+                        variableScope.lookup(declaration.getRight())
                 ))
                 .forEach(doa -> {
                     this.addItemDefinition(doa.getItemDefinition());

@@ -63,8 +63,8 @@ public class FlatVariableScope implements VariableScope {
         return variable;
     }
 
-    public Optional<Variable> lookup(String identifier) {
-        return Optional.ofNullable(variables.get(identifier));
+    public Variable lookup(String identifier) {
+        return variables.get(identifier);
     }
 
     public Collection<Variable> getVariables(String scopeId) {

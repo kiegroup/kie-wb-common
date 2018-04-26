@@ -30,7 +30,7 @@ public interface VariableScope {
 
     Variable declare(String scopeId, String identifier, String type);
 
-    Optional<Variable> lookup(String identifier);
+    Variable lookup(String identifier);
 
     Collection<Variable> getVariables(String scopeId);
 

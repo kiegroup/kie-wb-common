@@ -44,7 +44,7 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
                         assignmentsInfo
                                 .getOutputs()
                                 .lookup(declaration.getLeft()),
-                        variableScope.lookup(declaration.getRight()).get()
+                        variableScope.lookup(declaration.getRight())
                 ))
                 .forEach(doa -> {
                     this.addItemDefinition(doa.getItemDefinition());
