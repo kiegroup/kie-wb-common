@@ -41,6 +41,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                 .forEach(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());
                     throwEvent.getDataInputs().add(dw.getDataInput());
+                    throwEvent.setInputSet(dw.getInputSet());
                 });
 
         assignmentsInfo.getAssociations()
@@ -57,6 +58,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                 ).forEach(dia -> {
             throwEvent.getDataInputs().add(dia.getDataInput());
             throwEvent.setInputSet(dia.getInputSet());
+            throwEvent.getDataInputAssociation().add(dia.getAssociation());
         });
     }
 

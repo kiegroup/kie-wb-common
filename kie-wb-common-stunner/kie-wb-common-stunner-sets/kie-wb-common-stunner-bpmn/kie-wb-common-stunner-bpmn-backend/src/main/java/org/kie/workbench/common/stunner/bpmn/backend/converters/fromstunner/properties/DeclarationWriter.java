@@ -36,10 +36,12 @@ public class DeclarationWriter {
     private final DataInput target;
     private final ItemDefinition typeDef;
     private final VariableDeclaration decl;
+    private final String varId;
 
     public DeclarationWriter(
             String parentId,
             VariableDeclaration decl) {
+        this.varId = decl.getIdentifier();
         this.parentId = parentId;
         this.decl = decl;
 
@@ -83,5 +85,13 @@ public class DeclarationWriter {
 
     public InputSet getInputSet() {
         return inputSet;
+    }
+
+    public String getVarId() {
+        return varId;
+    }
+
+    public String getParentId() {
+        return parentId;
     }
 }

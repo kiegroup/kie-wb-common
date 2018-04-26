@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.Map;
+import java.util.function.Function;
+
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
 import org.eclipse.bpmn2.InputOutputSpecification;
@@ -24,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.proper
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
+import static java.util.stream.Collectors.toMap;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
 public class ActivityPropertyWriter extends PropertyWriter {
@@ -54,29 +58,25 @@ public class ActivityPropertyWriter extends PropertyWriter {
         final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
 
-        assignmentsInfo
+        Map<String, DeclarationWriter> declarations = assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
                 .filter(varDecl -> varDecl.getType() != null)
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
-                .forEach(dw -> {
-                    this.addItemDefinition(dw.getItemDefinition());
-                    ioSpec.getInputSets().add(dw.getInputSet());
-                    ioSpec.getDataInputs().add(dw.getDataInput());
-                });
+                .collect(toMap(DeclarationWriter::getVarId, Function.identity()));
 
         assignmentsInfo.getAssociations()
                 .getInputs()
                 .stream()
-                .map(declaration -> new InputAssignmentWriter(
-                        flowElement.getId(),
+                .map(declaration ->
+                     new InputAssignmentWriter(
+                        declarations.get(declaration.getRight()),
                         // source is a variable
-                        variableScope.lookup(declaration.getLeft()),
-                        // target is an input
-                        assignmentsInfo
-                                .getInputs()
-                                .lookup(declaration.getRight()))
+                        variableScope.lookup(declaration.getLeft()))
                 ).forEach(dia -> {
+            this.addItemDefinition(dia.getItemDefinition());
+            ioSpec.getInputSets().add(dia.getInputSet());
+            ioSpec.getDataInputs().add(dia.getDataInput());
             activity.getDataInputAssociations().add(dia.getAssociation());
         });
 

@@ -30,6 +30,11 @@ public class InputAssignmentWriter {
     private final DataInputAssociation association;
     private final DeclarationWriter declarationWriter;
 
+    public InputAssignmentWriter(DeclarationWriter dw, VariableScope.Variable variable) {
+        this.declarationWriter = dw;
+        this.association = associationOf(variable.getTypedIdentifier(), declarationWriter.getDataInput());
+    }
+
     public InputAssignmentWriter(
             String parentId,
             VariableScope.Variable variable,
