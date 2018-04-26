@@ -34,7 +34,6 @@ import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.OrganizationalUnitRepositoryInfo;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
-import org.kie.workbench.common.screens.library.api.sync.ClusterLibraryEvent;
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.popup.OrganizationalUnitPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
@@ -181,10 +180,6 @@ public class OrganizationalUnitsScreen {
     }
 
     public void onRemoveOrganizationalUnitEvent(@Observes final RemoveOrganizationalUnitEvent removeOrganizationalUnitEvent) {
-        setupOrganizationalUnits();
-    }
-
-    public void onClusterLibraryEvent(@Observes ClusterLibraryEvent clusterLibraryEvent) {
         setupOrganizationalUnits();
     }
 

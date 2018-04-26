@@ -36,7 +36,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.api.LibraryService;
 import org.kie.workbench.common.screens.library.api.preferences.LibraryInternalPreferences;
-import org.kie.workbench.common.screens.library.api.sync.ClusterLibraryEvent;
 import org.kie.workbench.common.screens.library.client.screens.organizationalunit.popup.OrganizationalUnitPopUpPresenter;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.kie.workbench.common.screens.library.client.util.TranslationUtils;
@@ -199,12 +198,12 @@ public class OrganizationalUnitsScreenTest {
 
         presenter.onNewOrganizationalUnitEvent(new NewOrganizationalUnitEvent());
 
-        presenter.onClusterLibraryEvent(new ClusterLibraryEvent());
-
         presenter.onRemoveOrganizationalUnitEvent(new RemoveOrganizationalUnitEvent());
 
-        verify(presenter, times(3)).setupOrganizationalUnits();
-        verify(libraryService, times(3)).getOrganizationalUnits();
+        verify(presenter,
+               times(2)).setupOrganizationalUnits();
+        verify(libraryService,
+               times(2)).getOrganizationalUnits();
     }
 
     @Test
