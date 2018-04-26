@@ -693,14 +693,14 @@ public class HashCodeAndEqualityTest {
                                                 new CircleDimensionSet(),
                                                 new SimulationAttributeSet(),
                                                 new IsInterrupting()))
-                .addFalseCase(new StartNoneEvent(),
+                .addTrueCase(new StartNoneEvent(),
                               new StartNoneEvent(new BPMNGeneralSet(),
                                                  new BackgroundSet(),
                                                  new FontSet(),
                                                  new CircleDimensionSet(),
                                                  new SimulationAttributeSet(),
                                                  new IsInterrupting()))
-                .addFalseCase(new StartNoneEvent(new BPMNGeneralSet(),
+                .addTrueCase(new StartNoneEvent(new BPMNGeneralSet(),
                                                  new BackgroundSet(),
                                                  new FontSet(),
                                                  new CircleDimensionSet(),
