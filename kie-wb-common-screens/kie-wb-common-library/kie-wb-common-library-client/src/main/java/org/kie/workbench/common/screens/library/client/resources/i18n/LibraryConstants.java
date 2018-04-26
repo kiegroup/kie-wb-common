@@ -451,4 +451,10 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddEnvironmentEntry = "AddEnvironmentEntry";
+
+    @TranslationKey(defaultValue = "")
+    public static final String InvalidSpaceName = "InvalidSpaceName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String InvalidProjectName = "InvalidProjectName";
 }
