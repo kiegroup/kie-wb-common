@@ -298,7 +298,6 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
             }
             if (ViewEventType.TEXT_DBL_CLICK.equals(type)) {
                 textViewDecorator.setTextDblClickHandler((ViewHandler<TextDoubleClickEvent>) eventHandler);
-                delegate = false;
             }
             if (delegate) {
                 eventHandlerManager.addHandler(type,

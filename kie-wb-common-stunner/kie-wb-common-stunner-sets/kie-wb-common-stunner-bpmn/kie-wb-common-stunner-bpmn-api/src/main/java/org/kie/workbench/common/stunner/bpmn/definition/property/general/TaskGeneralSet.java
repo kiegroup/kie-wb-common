@@ -38,7 +38,7 @@ public class TaskGeneralSet implements BPMNPropertySet,
                                        BPMNBaseInfo {
 
     @Property
-    @FormField
+    @FormField(type = TextAreaFieldType.class)
     private Name name;
 
     @Property
