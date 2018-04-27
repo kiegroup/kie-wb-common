@@ -47,7 +47,6 @@ import org.kie.workbench.common.forms.jbpm.service.bpmn.util.BPMNVariableUtils;
 import org.kie.workbench.common.forms.model.ModelProperty;
 import org.kie.workbench.common.forms.model.impl.meta.entries.FieldReadOnlyEntry;
 import org.kie.workbench.common.forms.model.impl.meta.entries.FieldTypeEntry;
-import org.kie.workbench.common.forms.model.util.formModel.FormModelPropertiesUtil;
 import org.kie.workbench.common.forms.service.backend.util.ModelPropertiesGenerator;
 import org.kie.workbench.common.services.backend.project.ModuleClassLoaderHelper;
 import org.kie.workbench.common.services.shared.project.KieModuleService;
@@ -126,10 +125,9 @@ public class BPMNFormModelGeneratorImpl implements BPMNFormModelGenerator {
 
         ModelProperty property = ModelPropertiesGenerator.createModelProperty(variable.getName(),
                                                                               BPMNVariableUtils.getRealTypeForInput(variable.getType()),
-                                                                              FormModelPropertiesUtil.isListType(variable.getType()),
                                                                               classLoader);
 
-        if(property != null) {
+        if (property != null) {
             property.getMetaData().addEntry(new FieldReadOnlyEntry(variable.isInput() && !variable.isOutput()));
 
             if (!property.getTypeInfo().isMultiple() && property.getTypeInfo().getClassName().equals(Object.class.getName())) {
