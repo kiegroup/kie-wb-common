@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshallin
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -52,13 +51,6 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     protected DiagramMarshaller<Graph, Metadata, Diagram<Graph, Metadata>> marshaller = null;
 
-    @Parameterized.Parameters
-    public static List<Object[]> marshallers() {
-        return Arrays.asList(new Object[][]{
-                {OLD}, {NEW}
-        });
-    }
-
     CatchingIntermediateEvent(Marshaller marshallerType) {
         super.init();
         switch (marshallerType) {
@@ -69,6 +61,13 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
                 marshaller = newMarshaller;
                 break;
         }
+    }
+
+    @Parameterized.Parameters
+    public static List<Object[]> marshallers() {
+        return Arrays.asList(new Object[][]{
+                {OLD}, {NEW}
+        });
     }
 
     @Test
