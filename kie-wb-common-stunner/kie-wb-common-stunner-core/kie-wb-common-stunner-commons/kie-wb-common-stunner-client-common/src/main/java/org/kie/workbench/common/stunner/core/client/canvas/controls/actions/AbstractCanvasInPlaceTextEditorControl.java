@@ -268,6 +268,12 @@ public abstract class AbstractCanvasInPlaceTextEditorControl
         flush();
     }
 
+    void onCanvasSelectionEvent(final @Observes CanvasSelectionEvent event) {
+        checkNotNull("event",
+                     event);
+        flush();
+    }
+
     void flush() {
         getTextEditorBox().flush();
         hide();

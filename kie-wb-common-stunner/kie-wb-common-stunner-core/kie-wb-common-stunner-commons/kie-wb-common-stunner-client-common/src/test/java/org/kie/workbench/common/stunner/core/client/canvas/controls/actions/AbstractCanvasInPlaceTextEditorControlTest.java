@@ -426,6 +426,13 @@ public abstract class AbstractCanvasInPlaceTextEditorControlTest<C extends Abstr
         verify(control).flush();
     }
 
+    @Test
+    public void testOnCanvasSelectionEvent() {
+        control.onCanvasSelectionEvent(new CanvasSelectionEvent(canvasHandler, UUID));
+
+        verify(control).flush();
+    }
+
     private void assertShow() {
         verify(testShapeView).setFillAlpha(eq(AbstractCanvasInPlaceTextEditorControl.SHAPE_EDIT_ALPHA));
         verify(testShapeView).setTitleAlpha(eq(AbstractCanvasInPlaceTextEditorControl.SHAPE_EDIT_ALPHA));
