@@ -36,7 +36,6 @@ public class BoundaryEventPropertyWriter extends CatchEventPropertyWriter {
         CustomAttribute.boundarycaForEvent.of(flowElement).set(value);
     }
 
-
     public void setParentActivity(ActivityPropertyWriter parent) {
         org.eclipse.dd.dc.Bounds parentBounds =
                 getParentActivityBounds(parent.getShape().getBounds());

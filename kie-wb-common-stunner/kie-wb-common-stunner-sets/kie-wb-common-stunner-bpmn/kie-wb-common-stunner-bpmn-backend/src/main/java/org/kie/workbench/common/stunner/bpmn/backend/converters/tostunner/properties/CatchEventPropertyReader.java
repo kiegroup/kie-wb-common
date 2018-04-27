@@ -41,7 +41,6 @@ public class CatchEventPropertyReader extends EventPropertyReader {
         return true;
     }
 
-
     @Override
     public AssignmentsInfo getAssignmentsInfo() {
         return AssignmentsInfos.of(
@@ -60,5 +59,4 @@ public class CatchEventPropertyReader extends EventPropertyReader {
         result.addAll(eventDefinitionRefs);
         return result;
     }
-
 }
