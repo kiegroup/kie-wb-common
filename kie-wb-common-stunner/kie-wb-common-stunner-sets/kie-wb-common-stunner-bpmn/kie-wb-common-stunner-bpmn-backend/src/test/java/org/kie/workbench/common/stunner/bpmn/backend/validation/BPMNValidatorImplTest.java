@@ -82,7 +82,7 @@ public class BPMNValidatorImplTest {
         bpmnValidador.validate(diagram, result -> {
             assertNotNull(result);
             assertEquals(result.size(), 2);
-            assertTrue(result.stream().map(Violation::getViolationType).allMatch(t -> Violation.Type.ERROR.equals(t)));
+            assertTrue(result.stream().map(Violation::getViolationType).allMatch(t -> Violation.Type.WARNING.equals(t)));
         });
     }
 
