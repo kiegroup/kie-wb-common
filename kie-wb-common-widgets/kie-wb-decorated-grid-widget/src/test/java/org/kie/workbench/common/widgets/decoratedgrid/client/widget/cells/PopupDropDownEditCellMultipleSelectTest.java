@@ -48,21 +48,120 @@ public class PopupDropDownEditCellMultipleSelectTest {
                                          mock(CellTableDropDownDataValueMapProvider.class),
                                          false) {
         };
-    }
 
-    @Test
-    public void setMultiselectionSelected() throws Exception {
         doReturn(mock(DropDownData.class)).when(dmo).getEnums(anyString(),
                                                               anyString(),
                                                               anyMap());
+    }
+
+    @Test
+    public void testBasic() throws Exception {
+        testMultiselectionSelected("\"a,b\"", new String[]{"\"a,b\""}, new Integer[]{0});
+    }
+
+    @Test
+    public void setMultiselectionSelectedUnquotedBeginning() throws Exception {
+        testMultiselectionSelected("a,\"a,b\"",
+                                   new String[]{"a", "\"a,b\""},
+                                   new Integer[]{0, 1});
+    }
+
+    @Test
+    public void setMultiselectionSelectedUnquotedEnd() throws Exception {
+        testMultiselectionSelected("\"a,b\",a",
+                                   new String[]{"\"a,b\"", "a"},
+                                   new Integer[]{0, 1});
+    }
+
+    @Test
+    public void setMultiselectionSelectedUnquotedMiddle() throws Exception {
+        testMultiselectionSelected("\"a,b\",a,\"c,d\"",
+                                   new String[]{"\"a,b\"", "a", "\"c,d\""},
+                                   new Integer[]{0, 1, 2});
+    }
+
+    @Test
+    public void setMultiselectionSelectedStartQuoted() throws Exception {
+        testMultiselectionSelected("\"a,b\"",
+                                   new String[]{"\"a,b\"", "a", "\"c,d\""},
+                                   new Integer[]{0});
+    }
+
+    @Test
+    public void setMultiselectionSelectedStartNotQuoted() throws Exception {
+        testMultiselectionSelected("a",
+                                   new String[]{"a", "\"a,b\"", "\"c,d\""},
+                                   new Integer[]{0});
+    }
+
+    @Test
+    public void setMultiselectionSelectedMiddleQuoted() throws Exception {
+        testMultiselectionSelected("\"a,b\"",
+                                   new String[]{"a", "\"a,b\"", "\"c,d\""},
+                                   new Integer[]{1});
+    }
+
+    @Test
+    public void setMultiselectionSelectedMiddleNotQuoted() throws Exception {
+        testMultiselectionSelected("a",
+                                   new String[]{"\"a,b\"", "a", "\"c,d\""},
+                                   new Integer[]{1});
+    }
+
+    @Test
+    public void setMultiselectionSelectedEndQuoted() throws Exception {
+        testMultiselectionSelected("\"c,d\"",
+                                   new String[]{"a", "\"a,b\"", "\"c,d\""},
+                                   new Integer[]{2});
+    }
+
+    @Test
+    public void setMultiselectionSelectedEndNotQuoted() throws Exception {
+        testMultiselectionSelected("a",
+                                   new String[]{"\"a,b\"", "\"c,d\"", "a"},
+                                   new Integer[]{2});
+    }
+
+    @Test
+    public void setMultiselectionSelectedTwoOfThreeStart() throws Exception {
+        testMultiselectionSelected("\"a,b\",a",
+                                   new String[]{"\"a,b\"", "a", "\"c,d\""},
+                                   new Integer[]{0, 1});
+    }
+
+    @Test
+    public void setMultiselectionSelectedTwoOfThreeEnd() throws Exception {
+        testMultiselectionSelected("a,\"c,d\"",
+                                   new String[]{"\"a,b\"", "a", "\"c,d\""},
+                                   new Integer[]{1, 2});
+    }
+
+    private void testMultiselectionSelected(final String selectionText,
+                                            final String[] selectionItems,
+                                            final Integer[] selectedIndexes) throws Exception {
+
         doReturn(true).when(cell.listBox).isMultipleSelect();
-        doReturn(1).when(cell.listBox).getItemCount();
-        doReturn("\"a,b\"").when(cell.listBox).getValue(0);
+        doReturn(selectionItems.length).when(cell.listBox).getItemCount();
+        for (int i = 0; i < selectionItems.length; i++) {
+            doReturn(selectionItems[i]).when(cell.listBox).getValue(i);
+        }
 
         cell.startEditing(mock(Cell.Context.class),
                           mock(Element.class),
-                          "\"a,b\"");
+                          selectionText);
 
-        verify(cell.listBox).setItemSelected(0, true);
+        for (int i = 0; i < selectedIndexes.length; i++) {
+
+        }
+        for (int i = 0; i < selectionItems.length; i++) {
+            boolean isSelected = false;
+            for (int j = 0; j < selectedIndexes.length; j++) {
+                if (i == selectedIndexes[j]) {
+                    isSelected = true;
+                    break;
+                }
+            }
+            verify(cell.listBox).setItemSelected(i, isSelected);
+        }
     }
 }
