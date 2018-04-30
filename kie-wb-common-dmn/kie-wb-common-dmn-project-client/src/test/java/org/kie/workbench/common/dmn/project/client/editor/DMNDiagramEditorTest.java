@@ -70,7 +70,8 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  projectMessagesListener,
                                                  diagramClientErrorHandler,
                                                  translationService,
-                                                 xmlEditorView) {
+                                                 xmlEditorView,
+                                                 stunnerPreferencesRegistry) {
             {
                 place = DMNDiagramEditorTest.this.placeRequest;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
