@@ -18,7 +18,7 @@ package org.kie.workbench.common.project.migration.cli.maven;
 public class PluginPresence {
 
     private boolean isPresent;
-    private int position ;
+    private int position;
 
     public PluginPresence(boolean isPresent, int position) {
         this.isPresent = isPresent;

@@ -36,32 +36,6 @@ public class PomProcessor {
         editor = new PomEditor();
     }
 
-    public int processProject(String projectPath) {
-        Path project = Paths.get("file:" + projectPath);
-        List<String> pomsList = searchPoms(project);
-        int counter = 0;
-        for (String pom : pomsList) {
-            Model model = editor.updatePom(Paths.get("file:" + pom));
-            if(!model.getBuild().getPlugins().isEmpty()){
-                counter++;
-            }
-        }
-        return counter;
-    }
-
-    public int processProject(String projectPath, String jsonPath) {
-        Path project = Paths.get("file:" + projectPath);
-        List<String> pomsList = searchPoms(project);
-        int counter = 0;
-        for (String pom : pomsList) {
-            Model model = editor.updatePom(Paths.get("file:" + pom), jsonPath);
-            if(model.getGroupId() != null && !model.getGroupId().isEmpty()){
-                counter++;
-            }
-        }
-        return counter;
-    }
-
     public static List<String> searchPoms(Path file) {
         List<String> poms = new ArrayList<>();
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
@@ -76,5 +50,31 @@ public class PomProcessor {
             logger.error(e.getMessage());
         }
         return poms;
+    }
+
+    public int processProject(String projectPath) {
+        Path project = Paths.get("file:" + projectPath);
+        List<String> pomsList = searchPoms(project);
+        int counter = 0;
+        for (String pom : pomsList) {
+            Model model = editor.updatePom(Paths.get("file:" + pom));
+            if (!model.getBuild().getPlugins().isEmpty()) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public int processProject(String projectPath, String jsonPath) {
+        Path project = Paths.get("file:" + projectPath);
+        List<String> pomsList = searchPoms(project);
+        int counter = 0;
+        for (String pom : pomsList) {
+            Model model = editor.updatePom(Paths.get("file:" + pom), jsonPath);
+            if (model.getGroupId() != null && !model.getGroupId().isEmpty()) {
+                counter++;
+            }
+        }
+        return counter;
     }
 }

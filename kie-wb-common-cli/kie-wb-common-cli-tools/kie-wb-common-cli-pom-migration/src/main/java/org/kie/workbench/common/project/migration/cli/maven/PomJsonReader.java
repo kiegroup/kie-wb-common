@@ -18,6 +18,7 @@ package org.kie.workbench.common.project.migration.cli.maven;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.json.Json;
@@ -64,14 +65,15 @@ import org.slf4j.LoggerFactory;
  */
 public class PomJsonReader {
 
-    private static final String JSON_POM_FILE = "pom-migration.json";
     private final Logger logger = LoggerFactory.getLogger(PomJsonReader.class);
+    private String JSON_POM_FILE;//= "pom-migration.json";
     private String DEPENDENCIES = "dependencies";
     private String REPOSITORIES = "repositories";
     private String PLUGIN_REPOSITORIES = "pluginRepositories";
     private JsonObject pomObject;
 
-    public PomJsonReader(String path) {
+    public PomJsonReader(String path, String jsonName) {
+        JSON_POM_FILE = jsonName;
         if (!path.endsWith(JSON_POM_FILE)) {
             throw new RuntimeException("no " + JSON_POM_FILE + " in the provided path :" + path);
         }
@@ -86,7 +88,18 @@ public class PomJsonReader {
         }
     }
 
-    public JSONDTO readPom() {
+    public PomJsonReader(InputStream in) {
+        try {
+            JsonReader reader = Json.createReader(in);
+            pomObject = reader.readObject();
+            reader.close();
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public JSONDTO readDepsAndRepos() {
         JsonArray dependencies = pomObject.getJsonArray(DEPENDENCIES);
         List<Dependency> deps = new ArrayList<>(dependencies.size());
         for (int i = 0; i < dependencies.size(); i++) {
@@ -109,8 +122,19 @@ public class PomJsonReader {
             Repository repo = getRepository(pluginRepositories, i);
             pluginRepos.add(repo);
         }
-
         return new JSONDTO(deps, repos, pluginRepos);
+    }
+
+    public JSONDTO readDeps() {
+        JsonArray dependencies = pomObject.getJsonArray(DEPENDENCIES);
+        List<Dependency> deps = new ArrayList<>(dependencies.size());
+        for (int i = 0; i < dependencies.size(); i++) {
+            Dependency dependency = getDependency(dependencies, i);
+            if (!dependency.getGroupId().isEmpty()) {
+                deps.add(dependency);
+            }
+        }
+        return new JSONDTO(deps, Collections.emptyList(), Collections.emptyList());
     }
 
     private Dependency getDependency(JsonArray dependencies, int i) {

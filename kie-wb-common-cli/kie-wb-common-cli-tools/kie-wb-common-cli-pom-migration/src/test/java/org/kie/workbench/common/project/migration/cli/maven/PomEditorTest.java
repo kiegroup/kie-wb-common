@@ -28,6 +28,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -60,8 +61,9 @@ public class PomEditorTest {
             assertTrue(original.getBuild().getPlugins().size() == 1);
 
             Model modelUpdated = editor.updatePom(path);
+            assertEquals(modelUpdated.getPackaging(),"kjar");
             assertNotNull(modelUpdated);
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 2);
+            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
             List<Dependency> deps = modelUpdated.getDependencies();
             for (Dependency dep : deps) {
                 assertTrue(dep.getVersion() != null);
@@ -77,9 +79,7 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateCurriculumCourse() {
-        testDefault(CURRICULUM_COURSE_PRJ);
-    }
+    public void updateCurriculumCourse() { testDefault(CURRICULUM_COURSE_PRJ); }
 
     @Test
     public void updateDinnerParty() {
@@ -87,14 +87,10 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateEmployeeRostering() {
-        testDefault(EMPLOYEE_ROSTERING_PRJ);
-    }
+    public void updateEmployeeRostering() { testDefault(EMPLOYEE_ROSTERING_PRJ); }
 
     @Test
-    public void updateEvaluation() {
-        testDefault(EVALUATION_PRJ);
-    }
+    public void updateEvaluation() { testDefault(EVALUATION_PRJ); }
 
     @Test
     public void updateItOrders() {
@@ -121,6 +117,7 @@ public class PomEditorTest {
         try {
 
             Model original = editor.getModel(path);
+            assertEquals(original.getPackaging(),"jar");
             assertTrue(original.getBuild().getPlugins().size() == 1);
             assertTrue(original.getDependencies().size() == 3);
             assertTrue(original.getRepositories().size() == 0);
@@ -128,8 +125,9 @@ public class PomEditorTest {
 
             Model modelUpdated = editor.updatePom(path, jsonPath.toAbsolutePath().toString());
             assertNotNull(modelUpdated);
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 2);
-            assertTrue(modelUpdated.getDependencies().size() == 5);
+            assertEquals(modelUpdated.getPackaging(),"kjar");
+            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
+            assertTrue(modelUpdated.getDependencies().size() == 7);
             assertTrue(modelUpdated.getRepositories().size() == 2);
             assertTrue(modelUpdated.getPluginRepositories().size() == 2);
         } catch (Exception e) {

@@ -37,7 +37,7 @@ public class PomProcessorTest {
     private Path pathSrc;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         processor = new PomProcessor();
         currentDir = new File("").getAbsolutePath();
         path = Paths.get(currentDir + GENERIC_PRJ);

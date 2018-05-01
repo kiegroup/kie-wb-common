@@ -22,25 +22,16 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -51,19 +42,23 @@ import org.uberfire.java.nio.file.StandardOpenOption;
 public class PomEditor {
 
     private static final String PROPERTIES_FILE = "PomMigration.properties";
+    private static final String JSON_POM_MIGRATION = "pom-migration.json";
+    private static final String JSON_POM_MANDATORY_DEPS = "pom-mandatory.json";
     private static final String KIE_VERSION_KEY = "KIE_VERSION";
-    public final String TRUE = "true";
     private final Logger logger = LoggerFactory.getLogger(PomEditor.class);
-    protected String FILE_URI = "file://";
+    private String FILE_URI = "file://";
     private MavenXpp3Reader reader;
     private MavenXpp3Writer writer;
     private String kieVersion;
     private String SCOPE_PROVIDED = "provided";
     private String KIE_PKG = "org.kie";
+    private String JBPM_PKG = "org.jbpm";
     private String DROOLS_PKG = "org.drools";
     private String OPTAPLANNER_PKG = "org.optaplanner";
+    private String KJAR_PKG = "kjar";
+    private String KIE_MAVEN_PLUGIN_ARTIFACT_ID = "kie-maven-plugin";
     private JSONDTO jsonConf;
-    private PomJsonReader jsonReader;
+    private PomJsonReader jsonReader, jsonMandatoryDepsReader;
 
     private Properties props;
 
@@ -71,6 +66,7 @@ public class PomEditor {
         reader = new MavenXpp3Reader();
         writer = new MavenXpp3Writer();
         props = loadProperties(PROPERTIES_FILE);
+        jsonMandatoryDepsReader = new PomJsonReader(getClass().getClassLoader().getResourceAsStream(JSON_POM_MANDATORY_DEPS));
         kieVersion = props.getProperty(KIE_VERSION_KEY);
         if (kieVersion == null) {
             throw new RuntimeException("Kie version missing in configuration files");
@@ -81,6 +77,7 @@ public class PomEditor {
         try {
             Model model = getModel(pom);
             Build build = getBuild(model);
+            updatePackaging(model);
             updateBuildTag(build);
             updateDependenciesTag(model);
             updateRepositories(model);
@@ -100,24 +97,20 @@ public class PomEditor {
 
     public Model updatePom(Path pom, String pathJsonFile) {
         try {
-            jsonReader = new PomJsonReader(pathJsonFile);
-            jsonConf = jsonReader.readPom();
-            Model model = getModel(pom);
-            Build build = getBuild(model);
-            updateBuildTag(build);
-            updateDependenciesTag(model);
-            updateRepositories(model);
-            updatePluginRepositories(model);
-            boolean writed = write(model, pom.toAbsolutePath().toString());
-            if (writed) {
-                return model;
-            } else {
-                return new Model();
-            }
+            jsonReader = new PomJsonReader(pathJsonFile, JSON_POM_MIGRATION);
+            jsonConf = jsonReader.readDepsAndRepos();
+            return updatePom(pom);
         } catch (Exception e) {
             System.out.println("Error occurred during POMs migration:" + e.getMessage());
             logger.error(e.getMessage());
             return new Model();
+        }
+    }
+
+    private void updatePackaging(Model model) {
+        String packaging = model.getPackaging();
+        if (packaging == null || !packaging.equals(KJAR_PKG)) {
+            model.setPackaging(KJAR_PKG);
         }
     }
 
@@ -131,10 +124,10 @@ public class PomEditor {
                 prop.load(in);
             } catch (IOException e) {
                 logger.error(e.getMessage());
-            }finally {
+            } finally {
                 try {
                     in.close();
-                } catch(IOException e) {
+                } catch (IOException e) {
                     //suppressed
                 }
             }
@@ -146,68 +139,16 @@ public class PomEditor {
 
     private void updateBuildTag(Build build) {
         List<Plugin> buildPlugins = getBuildPlugins(build);
-
-        //order of processing matters !!!!
-        processDefaultMavenCompiler(build, buildPlugins);
         processKieMavenCompiler(buildPlugins);
-        processAlternativeMavenCompiler(build, buildPlugins);
-    }
-
-    private void processAlternativeMavenCompiler(Build build, List<Plugin> buildPlugins) {
-        PluginPresence alternativeMavenCompiler = getPluginPresence(buildPlugins,
-                                                                    props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()),
-                                                                    props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
-
-        if (!alternativeMavenCompiler.isPresent()) {
-            Plugin alternativeMavenCompilerPlugin = getAlternativeCompilerPlugin();
-            List<Plugin> newPlugins = new ArrayList<>(buildPlugins.size() + 1);
-            newPlugins.add(alternativeMavenCompilerPlugin);
-            newPlugins.addAll(buildPlugins);
-            build.setPlugins(newPlugins);
-        }
-    }
-
-    private void processDefaultMavenCompiler(Build build, List<Plugin> buildPlugins) {
-        PluginPresence defaultMavenCompiler = getPluginPresence(buildPlugins,
-                                                                props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP.name()),
-                                                                props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
-        if (defaultMavenCompiler.isPresent()) {
-            turnOffDefaultMavenCompiler(buildPlugins, defaultMavenCompiler);
-        } else {
-            Plugin disabledDefaultCompiler = new Plugin();
-            disabledDefaultCompiler.setArtifactId(props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT.name()));
-            disableDefaultMavenCompiler(disabledDefaultCompiler);
-            build.addPlugin(disabledDefaultCompiler);
-        }
     }
 
     private void processKieMavenCompiler(List<Plugin> buildPlugins) {
         PluginPresence kieMavenCompiler = getPluginPresence(buildPlugins,
-                                                            props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGINS.name()),
-                                                            props.getProperty(ConfigurationKey.KIE_MAVEN_PLUGIN.name()));
-        if (kieMavenCompiler.isPresent()) {
-            buildPlugins.remove(kieMavenCompiler.getPosition());
+                                                            KIE_PKG,
+                                                            KIE_MAVEN_PLUGIN_ARTIFACT_ID);
+        if (!kieMavenCompiler.isPresent()) {
+            buildPlugins.add(getKieMavenPlugin());
         }
-    }
-
-    private void turnOffDefaultMavenCompiler(List<Plugin> buildPlugins, PluginPresence defautlMavenCompiler) {
-        Plugin defaulMavenCompiler = buildPlugins.get(defautlMavenCompiler.getPosition());
-        Xpp3Dom skipMain = new Xpp3Dom(MavenConfig.MAVEN_SKIP_MAIN);
-        skipMain.setValue(TRUE);
-        Xpp3Dom skip = new Xpp3Dom(MavenConfig.MAVEN_SKIP);
-        skip.setValue(TRUE);
-
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(skipMain);
-        configuration.addChild(skip);
-
-        defaulMavenCompiler.setConfiguration(configuration);
-
-        PluginExecution exec = new PluginExecution();
-        exec.setId(MavenConfig.MAVEN_DEFAULT_COMPILE);
-        exec.setPhase(MavenConfig.MAVEN_PHASE_NONE);
-
-        defaulMavenCompiler.setExecutions(Collections.singletonList(exec));
     }
 
     public Model getModel(Path pom) throws Exception {
@@ -240,74 +181,28 @@ public class PomEditor {
         return build.getPlugins();
     }
 
-    private Plugin getAlternativeCompilerPlugin() {
-
-        Plugin newCompilerPlugin = new Plugin();
-        newCompilerPlugin.setGroupId(props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name()));
-        newCompilerPlugin.setArtifactId(props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name()));
-        newCompilerPlugin.setVersion(props.getProperty(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name()));
-
-        Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
-        compilerId.setValue(props.getProperty(ConfigurationKey.COMPILER.name()));
-        Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
-        sourceVersion.setValue(props.getProperty(ConfigurationKey.SOURCE_VERSION.name()));
-        Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
-        targetVersion.setValue(props.getProperty(ConfigurationKey.TARGET_VERSION.name()));
-
-        Xpp3Dom failOnError = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
-        failOnError.setValue(props.getProperty(ConfigurationKey.FAIL_ON_ERROR.name()));
-
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(compilerId);
-        configuration.addChild(sourceVersion);
-        configuration.addChild(targetVersion);
-        configuration.addChild(failOnError);
-        newCompilerPlugin.setConfiguration(configuration);
-
-        PluginExecution execution = new PluginExecution();
-        execution.setId(MavenCLIArgs.DEFAULT_COMPILE);
-        execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
-        execution.setPhase(MavenCLIArgs.COMPILE);
-
-        newCompilerPlugin.setExecutions(Arrays.asList(execution));
-        return newCompilerPlugin;
-    }
-
-    private void disableDefaultMavenCompiler(Plugin plugin) {
-        Xpp3Dom skipMain = new Xpp3Dom(MavenConfig.MAVEN_SKIP_MAIN);
-        skipMain.setValue(TRUE);
-        Xpp3Dom skip = new Xpp3Dom(MavenConfig.MAVEN_SKIP);
-        skip.setValue(TRUE);
-
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(skipMain);
-        configuration.addChild(skip);
-
-        plugin.setConfiguration(configuration);
-
-        PluginExecution exec = new PluginExecution();
-        exec.setId(MavenConfig.MAVEN_DEFAULT_COMPILE);
-        exec.setPhase(MavenConfig.MAVEN_PHASE_NONE);
-        plugin.setExecutions(Collections.singletonList(exec));
+    private Plugin getKieMavenPlugin() {
+        Plugin kieMavenPlugin = new Plugin();
+        kieMavenPlugin.setGroupId(KIE_PKG);
+        kieMavenPlugin.setArtifactId(KIE_MAVEN_PLUGIN_ARTIFACT_ID);
+        kieMavenPlugin.setVersion(kieVersion);
+        kieMavenPlugin.setExtensions(true);
+        return kieMavenPlugin;
     }
 
     /***************************************** END Build TAG *****************************************/
     /***************************************** Start Dependencies TAG *****************************************/
 
     private void updateDependenciesTag(Model model) {
-        model.setDependencies(applyMandatoryDeps(getChangedCurrentDependencies(model.getDependencies())));
+        // Order matter !!!!
+        DependenciesCollection coll = new DependenciesCollection();
+        coll.addDependencies(jsonMandatoryDepsReader.readDeps().getDependencies());
+        coll.addDependenciesKeys(getChangedCurrentDependencies(model.getDependencies()));
+        model.setDependencies(coll.getAsDependencyList());
     }
 
-    private List<Dependency> applyMandatoryDeps(List<Dependency> dependencies) {
-        Set<Dependency> uniques = new HashSet<>(dependencies);
-        if (jsonConf != null) {
-            uniques.addAll(jsonConf.getDependencies());
-        }
-        return new ArrayList<>(uniques);
-    }
-
-    private List<Dependency> getChangedCurrentDependencies(List<Dependency> dependencies) {
-        List<Dependency> newDeps = new ArrayList<>();
+    private List<DependencyKey> getChangedCurrentDependencies(List<Dependency> dependencies) {
+        List<DependencyKey> newDeps = new ArrayList<>();
         for (Dependency dep : dependencies) {
             Dependency newDep = new Dependency();
             newDep.setGroupId(dep.getGroupId());
@@ -315,21 +210,22 @@ public class PomEditor {
             if (dep.getClassifier() != null) {
                 newDep.setClassifier(dep.getClassifier());
             }
-            if (dep.getVersion() == null) {
+            if (dep.getVersion() == null && isKieGroupDependency(dep.getGroupId())) {
                 newDep.setVersion(kieVersion);
             }
-            if (dep.getScope().equals(SCOPE_PROVIDED) && isCustomerDependency(dep.getGroupId())) {
+            if (dep.getScope() != null) {
                 newDep.setScope(dep.getScope());
             }
-            newDeps.add(newDep);
+            newDeps.add(new DependencyKey(newDep));
         }
         return newDeps;
     }
 
-    private boolean isCustomerDependency(String groupID) {
-        return (!groupID.equals(KIE_PKG)
-                || !groupID.equals(OPTAPLANNER_PKG)
-                || !groupID.equals(DROOLS_PKG));
+    private boolean isKieGroupDependency(String groupID) {
+        return (groupID.startsWith(KIE_PKG)
+                || groupID.startsWith(OPTAPLANNER_PKG)
+                || groupID.startsWith(DROOLS_PKG)
+                || groupID.startsWith(JBPM_PKG));
     }
 
     /***************************************** End Dependencies TAG *****************************************/
@@ -394,10 +290,10 @@ public class PomEditor {
         } catch (Exception e) {
             logger.error(e.getMessage());
             return false;
-        }finally {
+        } finally {
             try {
                 baos.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 //suppressed
             }
         }
