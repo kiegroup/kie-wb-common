@@ -60,4 +60,8 @@ public class Ids {
     public static String bpmnEdge(String source, String target) {
         return "edge_" + source + "_to_" + target;
     }
+
+    public static String multiInstanceItemType(String parentId) {
+        return parentId + "_multiInstanceItemType";
+    }
 }

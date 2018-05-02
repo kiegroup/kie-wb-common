@@ -2191,8 +2191,8 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<drools:metaValue><![CDATA[true]]></drools:metaValue>"));
         assertTrue(result.contains("</drools:metaData>"));
         assertTrue(result.contains("<bpmn2:multiInstanceLoopCharacteristics"));
-        assertTrue(result.contains("<bpmn2:loopDataInputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_input</bpmn2:loopDataInputRef>"));
-        assertTrue(result.contains("<bpmn2:loopDataOutputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_output</bpmn2:loopDataOutputRef>"));
+        assertTrue(result.contains("<bpmn2:loopDataInputRef>var_MultipleInstanceSubprocess_var1</bpmn2:loopDataInputRef>"));
+        assertTrue(result.contains("<bpmn2:loopDataOutputRef>var_MultipleInstanceSubprocess_var2</bpmn2:loopDataOutputRef>"));
         assertTrue(result.contains("<bpmn2:inputDataItem xsi:type=\"bpmn2:tDataInput\" id=\"dataInput\"/>"));
         assertTrue(result.contains("<bpmn2:outputDataItem xsi:type=\"bpmn2:tDataOutput\" id=\"dataOutput\" itemSubjectRef=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_multiInstanceItemType\"/>"));
         assertTrue(result.contains("<bpmn2:completionCondition xsi:type=\"bpmn2:tFormalExpression\""));
