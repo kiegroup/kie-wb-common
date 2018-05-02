@@ -16,6 +16,7 @@
 package org.kie.workbench.common.project.migration.cli.maven;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,22 +78,32 @@ public class PomJsonReader {
         if (!path.endsWith(JSON_POM_FILE)) {
             throw new RuntimeException("no " + JSON_POM_FILE + " in the provided path :" + path);
         }
+        InputStream fis = null;
+        JsonReader reader = null;
         try {
-            InputStream fis = new FileInputStream(path);
-            JsonReader reader = Json.createReader(fis);
+            fis = new FileInputStream(path);
+            reader = Json.createReader(fis);
             pomObject = reader.readObject();
             reader.close();
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
+        }finally {
+            if(fis != null) {
+                try {
+                    fis.close();
+                }catch (IOException ex){
+                    //suppressed
+                }
+            }
+            reader.close();
         }
     }
 
     public PomJsonReader(InputStream in) {
-        try {
-            JsonReader reader = Json.createReader(in);
+
+        try (JsonReader reader = Json.createReader(in)) {
             pomObject = reader.readObject();
-            reader.close();
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e.getMessage());

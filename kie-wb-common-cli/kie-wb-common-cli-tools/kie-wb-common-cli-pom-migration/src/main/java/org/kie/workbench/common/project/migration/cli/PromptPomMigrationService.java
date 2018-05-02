@@ -36,7 +36,7 @@ public class PromptPomMigrationService {
         this.config = config;
         this.niogitDir = config.getTarget();
     }
-    
+
     public String promptForExternalConfiguration() {
         SystemAccess.Console console = system.console();
         console.format("WARNING: Please ensure that you have made backups of the directory [%s] before proceeding.\n", niogitDir);
