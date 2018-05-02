@@ -32,6 +32,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -50,7 +51,6 @@ public class PomEditor {
     private MavenXpp3Reader reader;
     private MavenXpp3Writer writer;
     private String kieVersion;
-    private String SCOPE_PROVIDED = "provided";
     private String KIE_PKG = "org.kie";
     private String JBPM_PKG = "org.jbpm";
     private String DROOLS_PKG = "org.drools";
@@ -59,10 +59,12 @@ public class PomEditor {
     private String KIE_MAVEN_PLUGIN_ARTIFACT_ID = "kie-maven-plugin";
     private JSONDTO jsonConf;
     private PomJsonReader jsonReader, jsonMandatoryDepsReader;
+    private SystemAccess system;
 
     private Properties props;
 
-    public PomEditor() {
+    public PomEditor(SystemAccess system) {
+        this.system = system;
         reader = new MavenXpp3Reader();
         writer = new MavenXpp3Writer();
         props = loadProperties(PROPERTIES_FILE);
@@ -71,6 +73,7 @@ public class PomEditor {
         if (kieVersion == null) {
             throw new RuntimeException("Kie version missing in configuration files");
         }
+
     }
 
     public Model updatePom(Path pom) {
@@ -89,7 +92,7 @@ public class PomEditor {
                 return new Model();
             }
         } catch (Exception e) {
-            System.out.println("Error occurred during POMs migration:" + e.getMessage());
+            system.err().println("Error occurred during POMs migration:" + e.getMessage());
             logger.error(e.getMessage());
             return new Model();
         }
@@ -101,7 +104,7 @@ public class PomEditor {
             jsonConf = jsonReader.readDepsAndRepos();
             return updatePom(pom);
         } catch (Exception e) {
-            System.out.println("Error occurred during POMs migration:" + e.getMessage());
+            system.err().println("Error occurred during POMs migration:" + e.getMessage());
             logger.error(e.getMessage());
             return new Model();
         }

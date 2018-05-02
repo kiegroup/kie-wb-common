@@ -36,22 +36,7 @@ public class PromptPomMigrationService {
         this.config = config;
         this.niogitDir = config.getTarget();
     }
-
-    public boolean maybePromptForBackup() {
-        return config.isBatch() || promptForBackup();
-    }
-
-    private boolean promptForBackup() {
-        SystemAccess.Console console = system.console();
-        console.format("WARNING: Please ensure that you have made backups of the directory [%s] before proceeding.\n", niogitDir);
-        Collection<String> validResponses = Arrays.asList("yes", "no");
-        String response;
-        do {
-            response = console.readLine("Do you wish to continue? [yes/no]: ").toLowerCase();
-        } while (!validResponses.contains(response));
-        return "yes".equals(response);
-    }
-
+    
     public String promptForExternalConfiguration() {
         SystemAccess.Console console = system.console();
         console.format("WARNING: Please ensure that you have made backups of the directory [%s] before proceeding.\n", niogitDir);

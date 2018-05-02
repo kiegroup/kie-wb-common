@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.maven.model.Model;
+import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
@@ -32,8 +33,8 @@ public class PomProcessor {
     private final static String POM_NAME = "pom.xml";
     private PomEditor editor;
 
-    public PomProcessor() {
-        editor = new PomEditor();
+    public PomProcessor(SystemAccess system) {
+        editor = new PomEditor(system);
     }
 
     public static List<String> searchPoms(Path file) {

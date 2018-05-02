@@ -22,6 +22,8 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.migration.cli.RealSystemAccess;
+import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -49,7 +51,7 @@ public class PomEditorTest {
     @Before
     public void setUp() {
         currentDir = new File(".").getAbsolutePath();
-        editor = new PomEditor();
+        editor = new PomEditor(new RealSystemAccess());
     }
 
     private void testDefault(String prj) {

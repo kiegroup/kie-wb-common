@@ -23,6 +23,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.migration.cli.RealSystemAccess;
+import org.kie.workbench.common.migration.cli.SystemAccess;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -38,7 +40,7 @@ public class PomProcessorTest {
 
     @Before
     public void setUp() {
-        processor = new PomProcessor();
+        processor = new PomProcessor(new RealSystemAccess());
         currentDir = new File("").getAbsolutePath();
         path = Paths.get(currentDir + GENERIC_PRJ);
         pathSrc = Paths.get(currentDir + SRC_GENERIC_PRJ);

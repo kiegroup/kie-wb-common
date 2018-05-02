@@ -47,12 +47,11 @@ public class PomMigrationTool implements MigrationTool {
     @Override
     public void run(ToolConfig config, SystemAccess system) {
         PromptPomMigrationService promptService = new PromptPomMigrationService(system, config);
-        promptService.maybePromptForBackup();
         String jsonPath = promptService.promptForExternalConfiguration();
         Path niogitDir = config.getTarget();
         system.out().println("Starting POMs migration");
         String projectPath = niogitDir.toAbsolutePath().toString();
-        PomProcessor processor = new PomProcessor();
+        PomProcessor processor = new PomProcessor(system);
         if (jsonPath.isEmpty()) {
             processor.processProject(projectPath);
         } else {
