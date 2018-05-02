@@ -96,7 +96,9 @@ public class PomJsonReader {
                     //suppressed
                 }
             }
-            reader.close();
+            if(reader != null) {
+                reader.close();
+            }
         }
     }
 
