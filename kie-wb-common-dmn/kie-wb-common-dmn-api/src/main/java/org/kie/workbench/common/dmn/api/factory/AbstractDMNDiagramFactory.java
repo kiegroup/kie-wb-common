@@ -18,6 +18,8 @@ package org.kie.workbench.common.dmn.api.factory;
 import java.util.function.Function;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.factory.impl.BindableDiagramFactory;
@@ -49,10 +51,10 @@ public abstract class AbstractDMNDiagramFactory<M extends Metadata, D extends Di
                                   graph);
         final Node<Definition<DMNDiagram>, ?> diagramNode = diagramProvider.apply(graph);
         if (null == diagramNode) {
-            throw new IllegalStateException("A BPMN Diagram is expected to be present on BPMN Diagram graphs.");
+            throw new IllegalStateException("A DMNDiagram is expected to be present on DMN Diagram graphs.");
         }
-        updateProperties(diagramNode,
-                         metadata);
+        updateProperties(diagramNode, metadata);
+        updateDefaultNameSpaces(diagramNode);
         return diagram;
     }
 
@@ -60,5 +62,22 @@ public abstract class AbstractDMNDiagramFactory<M extends Metadata, D extends Di
                                   final M metadata) {
         // Set the diagram node as the canvas root.
         metadata.setCanvasRootUUID(diagramNode.getUUID());
+    }
+
+    private void updateDefaultNameSpaces(final Node<Definition<DMNDiagram>, ?> diagramNode) {
+        final DMNDiagram dmnDiagram = diagramNode.getContent().getDefinition();
+        final Definitions dmnDefinitions = dmnDiagram.getDefinitions();
+        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_FEEL)) {
+            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
+                                              DMNModelInstrumentedBase.URI_FEEL);
+        }
+        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_DMN)) {
+            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_DMN,
+                                              DMNModelInstrumentedBase.URI_DMN);
+        }
+        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_KIE)) {
+            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_KIE,
+                                              DMNModelInstrumentedBase.URI_KIE);
+        }
     }
 }
