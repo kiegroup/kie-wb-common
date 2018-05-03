@@ -18,7 +18,6 @@ package org.kie.workbench.common.screens.library.client.screens.project;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -48,6 +47,7 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.mvp.Command;
+import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -128,6 +128,8 @@ public class AddProjectPopUpPresenter {
 
     LibraryInfo libraryInfo;
 
+    ParameterizedCommand<WorkspaceProject> successCallback;
+
     @Inject
     public AddProjectPopUpPresenter(final Caller<LibraryService> libraryService,
                                     final BusyIndicatorView busyIndicatorView,
@@ -166,6 +168,10 @@ public class AddProjectPopUpPresenter {
                                         .orElseThrow(() -> new IllegalStateException("Cannot get library info without an active organizational unit.")));
     }
 
+    public void setSuccessCallback(ParameterizedCommand<WorkspaceProject> successCallback) {
+        this.successCallback = successCallback;
+    }
+
     public void show() {
         libraryPreferences.load(loadedLibraryPreferences -> {
                                     view.setDescription(loadedLibraryPreferences.getProjectPreferences().getDescription());
@@ -196,7 +202,7 @@ public class AddProjectPopUpPresenter {
                        artifactId,
                        version,
                        () -> {
-                           final RemoteCallback<WorkspaceProject> successCallback = getSuccessCallback();
+                           final ParameterizedCommand<WorkspaceProject> successCallback = getSuccessCallback();
                            final ErrorCallback<?> errorCallback = getErrorCallback();
                            final POM pom = setDefaultPOM(groupId,
                                                          artifactId,
@@ -306,7 +312,15 @@ public class AddProjectPopUpPresenter {
         }).validateGAVVersion(version);
     }
 
-    private RemoteCallback<WorkspaceProject> getSuccessCallback() {
+    public ParameterizedCommand<WorkspaceProject> getSuccessCallback() {
+        if (successCallback != null) {
+            return successCallback;
+        } else {
+            return getProjectCreationSuccessCallback();
+        }
+    }
+
+    public ParameterizedCommand<WorkspaceProject> getProjectCreationSuccessCallback() {
         return project -> {
             newProjectEvent.fire(new NewProjectEvent(project));
             view.hide();

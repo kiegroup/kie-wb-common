@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistry;
 import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
 import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
@@ -82,7 +83,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
                             final ProjectMessagesListener projectMessagesListener,
                             final DiagramClientErrorHandler diagramClientErrorHandler,
                             final ClientTranslationService translationService,
-                            final TextEditorView xmlEditorView) {
+                            final TextEditorView xmlEditorView,
+                            final StunnerPreferencesRegistry stunnerPreferencesRegistry) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -99,7 +101,8 @@ public class DMNDiagramEditor extends AbstractProjectDiagramEditor<DMNDiagramRes
               projectMessagesListener,
               diagramClientErrorHandler,
               translationService,
-              xmlEditorView);
+              xmlEditorView,
+              stunnerPreferencesRegistry);
     }
 
     @OnStartup

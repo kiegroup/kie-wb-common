@@ -16,14 +16,10 @@
 
 package org.kie.workbench.common.screens.library.client.screens.samples;
 
-import static org.kie.workbench.common.screens.library.client.screens.importrepository.Source.Kind.EXAMPLE;
-
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.screens.library.client.perspective.LibraryPerspective;
 import org.kie.workbench.common.screens.library.client.screens.importrepository.ImportPresenter;
-import org.kie.workbench.common.screens.library.client.screens.importrepository.ImportProjectsSetupEvent;
 import org.kie.workbench.common.screens.library.client.screens.importrepository.Source;
 import org.kie.workbench.common.screens.library.client.util.LibraryPlaces;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
@@ -31,6 +27,8 @@ import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchScreen;
 import org.uberfire.lifecycle.OnStartup;
 import org.uberfire.mvp.PlaceRequest;
+
+import static org.kie.workbench.common.screens.library.client.screens.importrepository.Source.Kind.EXAMPLE;
 
 @WorkbenchScreen(identifier = LibraryPlaces.IMPORT_SAMPLE_PROJECTS_SCREEN,
         owningPerspective = LibraryPerspective.class)
@@ -46,10 +44,6 @@ public class ImportExamplesProjectsScreen {
     @OnStartup
     public void onStartup(final PlaceRequest placeRequest) {
         presenter.onStartup(placeRequest);
-    }
-
-    public void setupEvent(@Observes @Source(EXAMPLE) ImportProjectsSetupEvent event) {
-        presenter.setupEvent(event);
     }
 
     @WorkbenchPartTitle
