@@ -77,6 +77,7 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
 
     private void setWaypoints(ViewConnector<? extends BPMNViewDefinition> connector) {
         BPMNEdge bpmnEdge = di.createBPMNEdge();
+        bpmnEdge.setId("edge_"+source.getShape().getId()+"_to_"+target.getShape().getId());
         bpmnEdge.setBpmnElement(sequenceFlow);
 
         Point2D sourcePt = connector.getSourceConnection().get().getLocation();
