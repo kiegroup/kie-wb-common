@@ -50,6 +50,7 @@ public abstract class BasePropertyWriter {
 
     public void setBounds(Bounds rect) {
         this.shape = di.createBPMNShape();
+        shape.setId("shape_"+getId());
         shape.setBpmnElement(baseElement);
 
         org.eclipse.dd.dc.Bounds bounds = dc.createBounds();
