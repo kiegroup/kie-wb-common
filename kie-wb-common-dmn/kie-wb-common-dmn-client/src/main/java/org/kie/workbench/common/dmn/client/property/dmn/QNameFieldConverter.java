@@ -39,7 +39,7 @@ public class QNameFieldConverter implements Converter<QName, String> {
     private static final String QNAME_PREFIX = "@3";
     private static final String QNAME_ENCODING = "[" + QNAME_URI + "][" + QNAME_LOCALPART + "][" + QNAME_PREFIX + "]";
 
-    protected static final String QNAME_DECODING_PATTERN = "\\[(.*?)\\]\\[(.*?)\\]\\[(.*?)\\]";
+    protected static final String QNAME_DECODING_PATTERN = "^\\[(.*?)\\]\\[(.*?)\\]\\[(.*?)\\]$";
 
     private DMNGraphUtils dmnGraphUtils;
 

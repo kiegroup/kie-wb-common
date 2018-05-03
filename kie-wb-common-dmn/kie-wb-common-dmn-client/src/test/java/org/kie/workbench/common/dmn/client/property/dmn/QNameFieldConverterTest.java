@@ -40,6 +40,7 @@ import static org.mockito.Mockito.when;
 public class QNameFieldConverterTest {
 
     private static final String ENCODED_FEEL_DATE = "[][date][" + DMNModelInstrumentedBase.PREFIX_FEEL + "]";
+
     private static final String ENCODED_DMN_UNKNOWN = "[" + org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN + "]" +
             "[unknown]" +
             "[" + DMNModelInstrumentedBase.PREFIX_DMN + "]";
@@ -99,7 +100,7 @@ public class QNameFieldConverterTest {
 
         final String encoding = converter.toWidgetValue(new QName(org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN,
                                                                   "unknown",
-                                                                  "dmn"));
+                                                                  DMNModelInstrumentedBase.PREFIX_DMN));
         assertEquals(ENCODED_DMN_UNKNOWN, encoding);
     }
 
