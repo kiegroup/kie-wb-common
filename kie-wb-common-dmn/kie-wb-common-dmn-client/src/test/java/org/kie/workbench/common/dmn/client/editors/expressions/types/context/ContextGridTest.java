@@ -426,6 +426,16 @@ public class ContextGridTest {
     }
 
     @Test
+    public void testGetItemsWithCellSelectionsCoveringMultipleColumns() {
+        setupGrid(0);
+
+        grid.getModel().selectCell(0, 0);
+        grid.getModel().selectCell(0, 1);
+
+        assertDefaultListItems(grid.getItems(0, 0), true);
+    }
+
+    @Test
     public void testOnItemSelectedExpressionColumnDefinedExpressionTypeWithCellSelectionsCoveringMultipleRows() {
         setupGrid(0);
 
