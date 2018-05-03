@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -319,28 +320,26 @@ public class AssignmentsEditorWidget extends Composite implements HasValue<Strin
                         variables.append(processVariables.getValue());
                     }
                 }
-                if (parent != null) {
-                    if (parent.equals(element)) {
-                        ProcessVariables subprocessVariables = null;
-                        if (oDefinition instanceof EventSubprocess) {
-                            EventSubprocess subprocess = (EventSubprocess) oDefinition;
-                            subprocessVariables = subprocess.getProcessData().getProcessVariables();
-                        } else if (oDefinition instanceof AdHocSubprocess) {
-                            AdHocSubprocess subprocess = (AdHocSubprocess) oDefinition;
-                            subprocessVariables = subprocess.getProcessData().getProcessVariables();
-                        } else if (oDefinition instanceof MultipleInstanceSubprocess) {
-                            MultipleInstanceSubprocess subprocess = (MultipleInstanceSubprocess) oDefinition;
-                            subprocessVariables = subprocess.getProcessData().getProcessVariables();
-                        } else if (oDefinition instanceof EmbeddedSubprocess) {
-                            EmbeddedSubprocess subprocess = (EmbeddedSubprocess) oDefinition;
-                            subprocessVariables = subprocess.getProcessData().getProcessVariables();
+                if (Objects.equals(parent, element)) {
+                    ProcessVariables subprocessVariables = null;
+                    if (oDefinition instanceof EventSubprocess) {
+                        EventSubprocess subprocess = (EventSubprocess) oDefinition;
+                        subprocessVariables = subprocess.getProcessData().getProcessVariables();
+                    } else if (oDefinition instanceof AdHocSubprocess) {
+                        AdHocSubprocess subprocess = (AdHocSubprocess) oDefinition;
+                        subprocessVariables = subprocess.getProcessData().getProcessVariables();
+                    } else if (oDefinition instanceof MultipleInstanceSubprocess) {
+                        MultipleInstanceSubprocess subprocess = (MultipleInstanceSubprocess) oDefinition;
+                        subprocessVariables = subprocess.getProcessData().getProcessVariables();
+                    } else if (oDefinition instanceof EmbeddedSubprocess) {
+                        EmbeddedSubprocess subprocess = (EmbeddedSubprocess) oDefinition;
+                        subprocessVariables = subprocess.getProcessData().getProcessVariables();
+                    }
+                    if (subprocessVariables != null) {
+                        if (variables.length() > 0) {
+                            variables.append(",");
                         }
-                        if (subprocessVariables != null) {
-                            if (variables.length() > 0) {
-                                variables.append(",");
-                            }
-                            variables.append(subprocessVariables.getValue());
-                        }
+                        variables.append(subprocessVariables.getValue());
                     }
                 }
             }
