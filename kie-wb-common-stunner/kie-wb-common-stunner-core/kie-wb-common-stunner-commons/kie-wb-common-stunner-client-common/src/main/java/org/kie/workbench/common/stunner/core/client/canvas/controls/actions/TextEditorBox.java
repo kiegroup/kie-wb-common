@@ -34,6 +34,16 @@ public interface TextEditorBox<C extends CanvasHandler, E extends Element>
     boolean isVisible();
 
     void hide();
+
+    void flush();
+
+    default double getDisplayOffsetX() {
+        return 0.0;
+    }
+
+    default double getDisplayOffsetY() {
+        return 0.0;
+    }
 }
 
 
