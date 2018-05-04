@@ -20,6 +20,7 @@ import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
 
@@ -28,19 +29,23 @@ public class ProcessPropertyWriterTest {
     ProcessPropertyWriter p = new ProcessPropertyWriter(
             bpmn2.createProcess(), new FlatVariableScope());
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addChildShape() {
         BPMNShape bpmnShape = di.createBPMNShape();
         bpmnShape.setId("a");
         p.addChildShape(bpmnShape);
-        p.addChildShape(bpmnShape);
+        assertThatThrownBy(() -> p.addChildShape(bpmnShape))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("Cannot add the same shape twice");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void addChildEdge() {
         BPMNEdge bpmnEdge = di.createBPMNEdge();
         bpmnEdge.setId("a");
         p.addChildEdge(bpmnEdge);
-        p.addChildEdge(bpmnEdge);
+        assertThatThrownBy(() -> p.addChildEdge(bpmnEdge))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageStartingWith("Cannot add the same edge twice");
     }
 }
