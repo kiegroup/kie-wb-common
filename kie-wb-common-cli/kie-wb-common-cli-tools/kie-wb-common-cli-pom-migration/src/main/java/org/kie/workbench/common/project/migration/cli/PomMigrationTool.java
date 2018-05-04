@@ -31,7 +31,7 @@ public class PomMigrationTool implements MigrationTool {
 
     @Override
     public String getDescription() {
-        return "Changes old POMs to new POMs version ( >7.7 community)";
+        return "Migrates pom.xml files to format required in 7.7.x and later (community)";
     }
 
     @Override
@@ -52,11 +52,12 @@ public class PomMigrationTool implements MigrationTool {
         system.out().println("Starting POMs migration");
         String projectPath = niogitDir.toAbsolutePath().toString();
         PomProcessor processor = new PomProcessor(system);
+        int pomMigrated;
         if (jsonPath.isEmpty()) {
-            processor.processProject(projectPath);
+            pomMigrated = processor.processProject(projectPath);
         } else {
-            processor.processProject(projectPath, jsonPath);
+            pomMigrated = processor.processProject(projectPath, jsonPath);
         }
-        system.out().println("POMs migrated");
+        system.out().println("Migrated "+pomMigrated + " POMs");
     }
 }

@@ -39,7 +39,6 @@ public class PromptPomMigrationService {
 
     public String promptForExternalConfiguration() {
         SystemAccess.Console console = system.console();
-        console.format("WARNING: Please ensure that you have made backups of the directory [%s] before proceeding.\n", niogitDir);
         Collection<String> validResponses = Arrays.asList("yes", "no");
         String response;
         do {

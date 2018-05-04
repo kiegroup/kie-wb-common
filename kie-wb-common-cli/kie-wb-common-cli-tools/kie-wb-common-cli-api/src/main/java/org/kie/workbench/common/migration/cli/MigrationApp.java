@@ -96,7 +96,7 @@ public class MigrationApp {
     }
 
     private Path promptForOutputPath() {
-        final Path rawPath = Paths.get(system.console().readLine("Enter locaton migrated repository output: "));
+        final Path rawPath = Paths.get(system.console().readLine("Enter location for migrated repository output: "));
         if (rawPath.isAbsolute()) {
             return rawPath;
         } else {
