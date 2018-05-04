@@ -46,6 +46,7 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
 
     static final String EMPTY_VALUE = "";
     static final boolean CANCELLING = true;
+    static final boolean NON_CANCELLING = false;
     static final boolean HAS_INCOME_EDGE = true;
     static final boolean HAS_NO_INCOME_EDGE = false;
     static final boolean HAS_OUTGOING_EDGE = true;
