@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.core.util.HashUtil;
 import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource;
 
+import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 import static org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource.Type.PROJECT_DIAGRAM;
 import static org.kie.workbench.common.stunner.project.editor.ProjectDiagramResource.Type.XML_DIAGRAM;
 
@@ -40,6 +41,8 @@ public class ProjectDiagramResourceImpl implements ProjectDiagramResource {
     public ProjectDiagramResourceImpl(final @MapsTo("projectDiagram") ProjectDiagram projectDiagram,
                                       final @MapsTo("xmlDiagram") String xmlDiagram,
                                       final @MapsTo("type") Type type) {
+        checkNotNull("type", type);
+
         this.projectDiagram = projectDiagram;
         this.xmlDiagram = xmlDiagram;
         this.type = type;

@@ -111,6 +111,11 @@ public class ProjectDiagramResourceImplTest {
         assertEquals(projectDiagramResource1.hashCode(), projectDiagramResource2.hashCode());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testInstanceCreationWhenTypeIsNull() {
+        new ProjectDiagramResourceImpl(null, null, null);
+    }
+
     private GraphImpl makeGraph() {
         return new GraphImpl("Graph", new GraphNodeStoreImpl());
     }
