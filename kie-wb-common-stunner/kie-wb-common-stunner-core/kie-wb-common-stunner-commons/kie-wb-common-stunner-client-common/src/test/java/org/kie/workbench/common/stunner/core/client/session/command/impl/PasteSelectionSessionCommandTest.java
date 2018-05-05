@@ -108,9 +108,6 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     private ClipboardControl<Element, AbstractCanvas, ClientSession> clipboardControl;
 
     @Mock
-    private SessionCommandFactory sessionCommandFactory;
-
-    @Mock
     private Event<CanvasSelectionEvent> selectionEvent;
 
     @Mock
@@ -186,7 +183,6 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
         when(clone.getUUID()).thenReturn(CLONE_UUID);
         when(clone2.getUUID()).thenReturn(CLONE2_UUID);
         when(session.getClipboardControl()).thenReturn(clipboardControl);
-        when(sessionCommandFactory.newCopySelectionCommand()).thenReturn(copySelectionSessionCommand);
         when(sessionCommandManager.getRegistry()).thenReturn(commandRegistry);
 
         cloneMap = new HashMap() {{
@@ -309,7 +305,7 @@ public class PasteSelectionSessionCommandTest extends BaseSessionCommandKeyboard
     @Override
     protected PasteSelectionSessionCommand getCommand() {
         return new PasteSelectionSessionCommand(sessionCommandManager, canvasCommandFactory,
-                                                selectionEvent, sessionCommandFactory);
+                                                selectionEvent, copySelectionSessionCommand);
     }
 
     @Override

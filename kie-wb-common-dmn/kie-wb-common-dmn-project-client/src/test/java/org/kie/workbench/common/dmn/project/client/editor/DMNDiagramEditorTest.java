@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -42,6 +43,12 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
     private AbstractCanvasHandler canvasHandler;
 
     private DMNDiagramEditor diagramEditor;
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        when(resourceType.getSuffix()).thenReturn("dmn");
+    }
 
     @Override
     protected DMNDiagramResourceType mockResourceType() {
@@ -61,30 +68,37 @@ public class DMNDiagramEditorTest extends AbstractProjectDiagramEditorTest {
                                                  savePopUpPresenter,
                                                  (DMNDiagramResourceType) getResourceType(),
                                                  clientProjectDiagramService,
-                                                 sessionManager,
-                                                 sessionPresenterFactory,
-                                                 sessionCommandFactory,
-                                                 projectMenuItemsBuilder,
+                                                 sessionEditorPresenters,
+                                                 sessionViewerPresenters,
+                                                 getMenuSessionItems(),
                                                  onDiagramFocusEvent,
                                                  onDiagramLostFocusEvent,
                                                  projectMessagesListener,
                                                  diagramClientErrorHandler,
                                                  translationService,
                                                  xmlEditorView,
-                                                 stunnerPreferencesRegistry) {
+                                                 stunnerPreferencesRegistr) {
             {
-                place = DMNDiagramEditorTest.this.placeRequest;
                 fileMenuBuilder = DMNDiagramEditorTest.this.fileMenuBuilder;
                 workbenchContext = DMNDiagramEditorTest.this.workbenchContext;
                 projectController = DMNDiagramEditorTest.this.projectController;
                 versionRecordManager = DMNDiagramEditorTest.this.versionRecordManager;
+                sessionEditorPresenters = DMNDiagramEditorTest.this.sessionEditorPresenters;
                 alertsButtonMenuItemBuilder = DMNDiagramEditorTest.this.alertsButtonMenuItemBuilder;
                 kieView = DMNDiagramEditorTest.this.kieView;
                 overviewWidget = DMNDiagramEditorTest.this.overviewWidget;
-                notification = DMNDiagramEditorTest.this.notificationEvent;
+                notification = DMNDiagramEditorTest.this.notification;
             }
         });
 
         return diagramEditor;
+    }
+
+    @Override
+    public void testFormatTitle() {
+        String title = "testDiagram";
+        String formattedTitle = formatTitle(title);
+        assertEquals(formattedTitle,
+                     "testDiagram.dmn - DMN");
     }
 }
