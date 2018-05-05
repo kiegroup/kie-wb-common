@@ -33,6 +33,7 @@ import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.kie.workbench.common.migration.cli.SystemAccess;
+import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -56,14 +57,17 @@ public class PomEditor {
     private String DROOLS_PKG = "org.drools";
     private String OPTAPLANNER_PKG = "org.optaplanner";
     private String KJAR_PKG = "kjar";
+    private String POM_PKG = "pom";
     private String KIE_MAVEN_PLUGIN_ARTIFACT_ID = "kie-maven-plugin";
     private JSONDTO jsonConf;
     private PomJsonReader jsonReader, jsonMandatoryDepsReader;
     private SystemAccess system;
+    private ServiceCDIWrapper cdiWrapper;
 
     private Properties props;
 
-    public PomEditor(SystemAccess system) {
+    public PomEditor(SystemAccess system, ServiceCDIWrapper cdiWrapper) {
+        this.cdiWrapper = cdiWrapper;
         this.system = system;
         reader = new MavenXpp3Reader();
         writer = new MavenXpp3Writer();
@@ -85,7 +89,7 @@ public class PomEditor {
             updateDependenciesTag(model);
             updateRepositories(model);
             updatePluginRepositories(model);
-            boolean written = write(model, pom.toAbsolutePath().toString());
+            boolean written = write(model, pom);
             if (written) {
                 return model;
             } else {
@@ -112,7 +116,7 @@ public class PomEditor {
 
     private void updatePackaging(Model model) {
         String packaging = model.getPackaging();
-        if (packaging == null || !packaging.equals(KJAR_PKG)) {
+        if (packaging != POM_PKG && (packaging == null || !packaging.equals(KJAR_PKG))) {
             model.setPackaging(KJAR_PKG);
         }
     }
@@ -151,7 +155,14 @@ public class PomEditor {
                                                             KIE_MAVEN_PLUGIN_ARTIFACT_ID);
         if (!kieMavenCompiler.isPresent()) {
             buildPlugins.add(getKieMavenPlugin());
+        }else{
+            Plugin kieMavenPlugin = buildPlugins.get(kieMavenCompiler.getPosition());
+            kieMavenPlugin.setVersion(kieVersion);
         }
+    }
+
+    public Model getModel(byte[] bytez) throws Exception {
+        return reader.read(new ByteArrayInputStream(bytez));
     }
 
     public Model getModel(Path pom) throws Exception {
@@ -273,7 +284,33 @@ public class PomEditor {
 
     /***************************************** Start PluginRepositories TAG *****************************************/
 
-    private boolean write(Model model, String absolutePath) {
+    private boolean write(Model model, Path path){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            writer.write(baos, model);
+            if (logger.isInfoEnabled()) {
+                logger.info("Pom changed:{}",
+                            new String(baos.toByteArray(),
+                                       StandardCharsets.UTF_8));
+            }
+
+            cdiWrapper.write(org.uberfire.backend.server.util.Paths.convert(path),
+                             new String(baos.toByteArray(), StandardCharsets.UTF_8),
+                             "Pom's Migration" + path.toString());
+            return true;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return false;
+        } finally {
+            try {
+                baos.close();
+            } catch (IOException e) {
+                //suppressed
+            }
+        }
+    }
+
+    private boolean writeToFile(Model model, String absolutePath) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             writer.write(baos, model);
