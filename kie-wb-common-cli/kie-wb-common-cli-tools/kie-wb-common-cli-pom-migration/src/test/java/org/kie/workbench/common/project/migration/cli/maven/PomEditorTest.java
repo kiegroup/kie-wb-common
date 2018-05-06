@@ -64,7 +64,9 @@ public class PomEditorTest {
 
     @After
     public void tearDown() {
-        weldContainer.close();
+        if(weldContainer!= null) {
+            weldContainer.close();
+        }
     }
 
     private void testDefault(String prj) {
