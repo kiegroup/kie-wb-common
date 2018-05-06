@@ -20,10 +20,14 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.jboss.weld.environment.se.Weld;
+import org.jboss.weld.environment.se.WeldContainer;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.migration.cli.RealSystemAccess;
 import org.kie.workbench.common.migration.cli.SystemAccess;
+import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -47,16 +51,25 @@ public class PomEditorTest {
     private String ITORDERS_PRJ = "/target/test-classes/itorders/";
     private String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
     private String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
+    private WeldContainer weldContainer;
+    private ServiceCDIWrapper cdiWrapper;
 
     @Before
     public void setUp() {
+        weldContainer = new Weld().initialize();
+        cdiWrapper = weldContainer.instance().select(ServiceCDIWrapper.class).get();
         currentDir = new File(".").getAbsolutePath();
-        editor = new PomEditor(new RealSystemAccess());
+        editor = new PomEditor(new RealSystemAccess(),cdiWrapper);
+    }
+
+    @After
+    public void tearDown() {
+        weldContainer.close();
     }
 
     private void testDefault(String prj) {
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        Path path = Paths.get("file://" + currentDir + prj + "pom.xml");
+        Path pathCopy = Paths.get("file://" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
             Model original = editor.getModel(path);
@@ -129,7 +142,7 @@ public class PomEditorTest {
             assertNotNull(modelUpdated);
             assertEquals(modelUpdated.getPackaging(),"kjar");
             assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
-            assertTrue(modelUpdated.getDependencies().size() == 7);
+            assertTrue(modelUpdated.getDependencies().size() == 6);
             assertTrue(modelUpdated.getRepositories().size() == 2);
             assertTrue(modelUpdated.getPluginRepositories().size() == 2);
         } catch (Exception e) {
