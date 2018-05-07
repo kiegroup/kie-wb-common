@@ -28,7 +28,6 @@ import org.uberfire.mocks.MockInstanceImpl;
 
 import static org.kie.workbench.common.workbench.client.EditorIds.GUIDED_DECISION_TREE;
 import static org.kie.workbench.common.workbench.client.EditorIds.GUIDED_SCORE_CARD;
-import static org.kie.workbench.common.workbench.client.EditorIds.STUNNER_DESIGNER;
 import static org.kie.workbench.common.workbench.client.EditorIds.XLS_SCORE_CARD;
 import static org.kie.workbench.common.workbench.client.PerspectiveIds.*;
 import static org.mockito.Matchers.eq;
@@ -139,8 +138,6 @@ public class PermissionTreeSetupTest {
                                                   eq("GuidedScoreCard"));
         verify(editorTreeProvider).registerEditor(eq(XLS_SCORE_CARD),
                                                   eq("XLSScoreCard"));
-        verify(editorTreeProvider).registerEditor(eq(STUNNER_DESIGNER),
-                                                  eq("StunnerDesigner"));
     }
 
     @Test
