@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.client.widgets.toolbar.impl;
 
 import org.kie.workbench.common.stunner.client.widgets.toolbar.Toolbar;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 
 public interface EditorToolbar
