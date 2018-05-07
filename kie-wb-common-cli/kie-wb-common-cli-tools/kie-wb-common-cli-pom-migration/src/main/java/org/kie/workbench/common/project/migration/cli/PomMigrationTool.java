@@ -92,8 +92,8 @@ public class PomMigrationTool implements MigrationTool {
                         processWorkspaceProject(prj, jsonPath);
                     }
                 }
-                String userHome = System.getProperty("user.home");
-                system.out().println("End POMs migration, detailed log available on "+userHome + "/migration_tool.log");
+                String userDir = System.getProperty("user.dir");
+                system.out().println("Finished POMs migration, detailed log available in "+userDir + "/migration_tool.log");
             }finally {
                 if (weldContainer != null) {
                     try {
