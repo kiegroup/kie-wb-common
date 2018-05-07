@@ -93,7 +93,7 @@ public class PomMigrationTool implements MigrationTool {
                     }
                 }
                 String userHome = System.getProperty("user.home");
-                system.out().println("End POMs migration, detailed log available on "+userHome + "/pom_migration.log");
+                system.out().println("End POMs migration, detailed log available on "+userHome + "/migration_tool.log");
             }finally {
                 if (weldContainer != null) {
                     try {
