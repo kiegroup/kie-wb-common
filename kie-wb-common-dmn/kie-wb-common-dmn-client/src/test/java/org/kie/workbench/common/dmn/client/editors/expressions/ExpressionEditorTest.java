@@ -24,9 +24,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
+import org.kie.workbench.common.dmn.client.widgets.toolbar.DMNEditorToolbar;
 import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenter;
 import org.kie.workbench.common.stunner.client.widgets.toolbar.ToolbarCommand;
-import org.kie.workbench.common.stunner.client.widgets.toolbar.impl.EditorToolbar;
 import org.mockito.Mock;
 import org.uberfire.mvp.Command;
 
@@ -48,7 +48,7 @@ public class ExpressionEditorTest {
     private SessionPresenter sessionPresenter;
 
     @Mock
-    private EditorToolbar editorToolbar;
+    private DMNEditorToolbar editorToolbar;
 
     @Mock
     private HasName hasName;

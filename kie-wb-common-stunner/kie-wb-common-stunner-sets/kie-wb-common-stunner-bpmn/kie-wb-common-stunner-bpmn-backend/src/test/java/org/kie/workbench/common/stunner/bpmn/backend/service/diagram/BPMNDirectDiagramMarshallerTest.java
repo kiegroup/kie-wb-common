@@ -230,7 +230,8 @@ public class BPMNDirectDiagramMarshallerTest {
                                    any(RuleEvaluationContext.class))).thenReturn(new DefaultRuleViolations());
 
         DefinitionUtils definitionUtils = new DefinitionUtils(definitionManager,
-                                                              applicationFactoryManager);
+                                                              applicationFactoryManager,
+                                                              null); // TODO!
         TestScopeModelFactory testScopeModelFactory = new TestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build());
         // Definition manager.
         final BackendDefinitionAdapter definitionAdapter = new BackendDefinitionAdapter(definitionUtils);
