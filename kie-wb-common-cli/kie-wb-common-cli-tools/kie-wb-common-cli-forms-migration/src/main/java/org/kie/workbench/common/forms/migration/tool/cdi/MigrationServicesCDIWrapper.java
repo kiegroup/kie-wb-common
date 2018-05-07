@@ -40,6 +40,8 @@ public class MigrationServicesCDIWrapper {
 
     private IOService systemIoService;
 
+    //@TODO move in shared place to reuse in all migration tools
+
     @Inject
     public MigrationServicesCDIWrapper(final @Named("ioStrategy") IOService ioService,
                                        final FormDefinitionSerializer formDefinitionSerializer,
