@@ -148,10 +148,12 @@ public class CreateNodeAction extends AbstractToolboxAction {
                                                                targetNode))
                         .deferCommand(() -> addEdge(canvasHandler,
                                                     sourceNode,
+                                                    targetNode,
                                                     connector))
                         .deferCommand(() -> setEdgeTarget(canvasHandler,
                                                           connector,
-                                                          targetNode));
+                                                          targetNode,
+                                                          sourceNode));
 
         final CommandResult result =
                 sessionCommandManager.execute(canvasHandler,
@@ -185,19 +187,21 @@ public class CreateNodeAction extends AbstractToolboxAction {
 
     private CanvasCommand<AbstractCanvasHandler> addEdge(final AbstractCanvasHandler canvasHandler,
                                                          final Node<View<?>, Edge> sourceNode,
+                                                         final Node<View<?>, Edge> targetNode,
                                                          final Edge<? extends ViewConnector<?>, Node> connector) {
         return canvasCommandFactory.addConnector(sourceNode,
                                                  connector,
-                                                 MagnetConnection.Builder.forElement(sourceNode),
+                                                 MagnetConnection.Builder.forElement(sourceNode, targetNode),
                                                  canvasHandler.getDiagram().getMetadata().getShapeSetId());
     }
 
     private CanvasCommand<AbstractCanvasHandler> setEdgeTarget(final AbstractCanvasHandler canvasHandler,
                                                                final Edge<? extends ViewConnector<?>, Node> connector,
-                                                               final Node<View<?>, Edge> targetNode) {
+                                                               final Node<View<?>, Edge> targetNode,
+                                                               final Node<View<?>, Edge> sourceNode) {
         return canvasCommandFactory.setTargetNode(targetNode,
                                                   connector,
-                                                  MagnetConnection.Builder.forElement(targetNode));
+                                                  MagnetConnection.Builder.forElement(targetNode, sourceNode));
     }
 
     private CanvasCommand<AbstractCanvasHandler> addNode(final AbstractCanvasHandler canvasHandler,
