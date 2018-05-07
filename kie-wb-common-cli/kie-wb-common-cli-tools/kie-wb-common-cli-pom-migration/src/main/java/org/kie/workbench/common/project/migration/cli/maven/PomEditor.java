@@ -289,7 +289,9 @@ public class PomEditor {
         try {
             writer.write(baos, model);
             if (logger.isInfoEnabled()) {
-                logger.info("Pom changed:{}",
+                logger.info("Pom changed of the groupID:{} artifactID:{}:\n{}",
+                            model.getGroupId(),
+                            model.getArtifactId(),
                             new String(baos.toByteArray(),
                                        StandardCharsets.UTF_8));
             }

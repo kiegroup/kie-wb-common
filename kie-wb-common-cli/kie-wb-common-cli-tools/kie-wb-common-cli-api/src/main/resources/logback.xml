@@ -10,14 +10,17 @@
     </encoder>
   </appender>
 
+  <appender name="fileAppender" class="ch.qos.logback.core.FileAppender">
+    <file>${user.home}/pom_migration.log</file>
+    <append>true</append>
+    <encoder>
+      <pattern>%-5relative %-5level %logger{35} - %msg%n</pattern>
+    </encoder>
+  </appender>
 
-  <logger name="org.drools" level="INFO"/>
-  <logger name="org.kie" level="INFO"/>
-  <logger name="org.guvnor" level="INFO"/>
-  <logger name="org.uberfire.backend" level="INFO"/>
 
   <root level="INFO">
-    <appender-ref ref="consoleAppender"/>
+    <appender-ref ref="fileAppender"/>
   </root>
 
 </configuration>

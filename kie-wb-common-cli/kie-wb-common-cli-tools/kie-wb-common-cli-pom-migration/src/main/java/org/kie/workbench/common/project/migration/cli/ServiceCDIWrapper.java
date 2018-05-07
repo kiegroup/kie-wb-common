@@ -47,9 +47,9 @@ public class ServiceCDIWrapper {
         this.systemIoService = systemIoService;
     }
 
-    /*public IOService getIOService() {
+    public IOService getIOService() {
         return ioService;
-    }*/
+    }
 
     public void write(Path path, String content, String comment) {
         ioService.write(Paths.convert(path), content, commentedOptionFactory.makeCommentedOption(comment));
