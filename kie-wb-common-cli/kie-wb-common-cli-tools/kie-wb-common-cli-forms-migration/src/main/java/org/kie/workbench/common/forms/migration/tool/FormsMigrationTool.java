@@ -177,9 +177,10 @@ public class FormsMigrationTool implements MigrationTool {
 
         system.console().format("\nProcessing module %s: %s forms found\n", workspaceProject.getName(), summaries.size());
 
-        MigrationContext context = new MigrationContext(workspaceProject, weldContainer, formMigrationServicesCDIWrapper, system, summaries, migrationServicesCDIWrapper);
-
-        pipeline.migrate(context);
+        if(summaries.size() > 0) {
+            MigrationContext context = new MigrationContext(workspaceProject, weldContainer, formMigrationServicesCDIWrapper, system, summaries, migrationServicesCDIWrapper);
+            pipeline.migrate(context);
+        }
     }
 
     private boolean projectMigrationWasExecuted() {
