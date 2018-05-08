@@ -27,9 +27,8 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
 import org.kie.workbench.common.migration.cli.RealSystemAccess;
-import org.kie.workbench.common.migration.cli.SystemAccess;
-import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -39,13 +38,9 @@ import org.uberfire.java.nio.file.Paths;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class PomEditorTest {
 
-    private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
-    private PomEditor editor;
-    private String currentDir;
     private static final String CURRICULUM_COURSE_PRJ = "/target/test-classes/curriculumcourse/";
     private static final String DINNER_PARTY_PRJ = "/target/test-classes/dinnerparty/";
     private static final String EMPLOYEE_ROSTERING_PRJ = "/target/test-classes/employee-rostering/";
@@ -53,20 +48,23 @@ public class PomEditorTest {
     private static final String ITORDERS_PRJ = "/target/test-classes/itorders/";
     private static final String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
     private static final String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
+    private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
+    private PomEditor editor;
+    private String currentDir;
     private WeldContainer weldContainer;
-    private ServiceCDIWrapper cdiWrapper;
+    private MigrationServicesCDIWrapper cdiWrapper;
 
     @Before
     public void setUp() {
         weldContainer = new Weld().initialize();
-        cdiWrapper = weldContainer.instance().select(ServiceCDIWrapper.class).get();
+        cdiWrapper = weldContainer.instance().select(MigrationServicesCDIWrapper.class).get();
         currentDir = new File(".").getAbsolutePath();
-        editor = new PomEditor(new RealSystemAccess(),cdiWrapper);
+        editor = new PomEditor(new RealSystemAccess(), cdiWrapper);
     }
 
     @After
     public void tearDown() {
-        if(weldContainer!= null) {
+        if (weldContainer != null) {
             weldContainer.close();
         }
     }
@@ -80,7 +78,7 @@ public class PomEditorTest {
             assertTrue(original.getBuild().getPlugins().size() == 1);
 
             Model modelUpdated = editor.updatePom(path);
-            assertEquals(modelUpdated.getPackaging(),"kjar");
+            assertEquals(modelUpdated.getPackaging(), "kjar");
             assertNotNull(modelUpdated);
             assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
             List<Dependency> deps = modelUpdated.getDependencies();
@@ -90,8 +88,7 @@ public class PomEditorTest {
         } catch (IOException ioex) {
             logger.error(ioex.getMessage(), ioex);
             throw new AssertionError(ioex.getMessage());
-        }
-        catch (XmlPullParserException xmlEx) {
+        } catch (XmlPullParserException xmlEx) {
             logger.error(xmlEx.getMessage(), xmlEx);
             throw new AssertionError(xmlEx.getMessage());
         } finally {
@@ -102,7 +99,9 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateCurriculumCourse() { testDefault(CURRICULUM_COURSE_PRJ); }
+    public void updateCurriculumCourse() {
+        testDefault(CURRICULUM_COURSE_PRJ);
+    }
 
     @Test
     public void updateDinnerParty() {
@@ -110,10 +109,14 @@ public class PomEditorTest {
     }
 
     @Test
-    public void updateEmployeeRostering() { testDefault(EMPLOYEE_ROSTERING_PRJ); }
+    public void updateEmployeeRostering() {
+        testDefault(EMPLOYEE_ROSTERING_PRJ);
+    }
 
     @Test
-    public void updateEvaluation() { testDefault(EVALUATION_PRJ); }
+    public void updateEvaluation() {
+        testDefault(EVALUATION_PRJ);
+    }
 
     @Test
     public void updateItOrders() {
@@ -140,7 +143,7 @@ public class PomEditorTest {
         try {
 
             Model original = editor.getModel(path);
-            assertEquals(original.getPackaging(),"jar");
+            assertEquals(original.getPackaging(), "jar");
             assertTrue(original.getBuild().getPlugins().size() == 1);
             assertTrue(original.getDependencies().size() == 3);
             assertTrue(original.getRepositories().size() == 0);
@@ -148,7 +151,7 @@ public class PomEditorTest {
 
             Model modelUpdated = editor.updatePom(path, jsonPath.toAbsolutePath().toString());
             assertNotNull(modelUpdated);
-            assertEquals(modelUpdated.getPackaging(),"kjar");
+            assertEquals(modelUpdated.getPackaging(), "kjar");
             assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
             assertTrue(modelUpdated.getDependencies().size() == 6);
             assertTrue(modelUpdated.getRepositories().size() == 2);

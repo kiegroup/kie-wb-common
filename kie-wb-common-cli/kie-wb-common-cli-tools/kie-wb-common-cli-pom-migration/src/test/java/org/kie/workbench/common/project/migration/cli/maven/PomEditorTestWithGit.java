@@ -17,7 +17,6 @@ package org.kie.workbench.common.project.migration.cli.maven;
 
 import java.io.File;
 import java.net.URI;
-
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
@@ -32,8 +31,8 @@ import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
 import org.kie.workbench.common.migration.cli.RealSystemAccess;
-import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
 import org.uberfire.java.nio.file.Files;
@@ -53,33 +52,32 @@ public class PomEditorTestWithGit {
     private IOService ioService;
     private PomEditor editor;
     private WeldContainer weldContainer;
-    private ServiceCDIWrapper cdiWrapper;
+    private MigrationServicesCDIWrapper cdiWrapper;
 
     @Before
     public void setUp() throws Exception {
         weldContainer = new Weld().initialize();
-        cdiWrapper = weldContainer.instance().select(ServiceCDIWrapper.class).get();
+        cdiWrapper = weldContainer.instance().select(MigrationServicesCDIWrapper.class).get();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-        editor = new PomEditor(new RealSystemAccess(),cdiWrapper);
+        editor = new PomEditor(new RealSystemAccess(), cdiWrapper);
     }
 
     @After
     public void tearDown() throws IOException {
         fileSystemTestingUtils.cleanup();
-        if(weldContainer != null) {
+        if (weldContainer != null) {
             weldContainer.close();
         }
     }
 
     @Test
-    public void testPomEditor() throws Exception{
+    public void testPomEditor() throws Exception {
         final String repoName = "myrepoxxxx";
         HashMap<String, Object> env = new HashMap<>();
         env.put("init", Boolean.TRUE);
         env.put("internal", Boolean.TRUE);
         final JGitFileSystem fs = (JGitFileSystem) ioService.newFileSystem(URI.create("git://" + repoName), env);
-
 
         ioService.startBatch(fs);
         ioService.write(fs.getPath("/pom.xml"), new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/generic/pom.xml").toPath())));
@@ -92,7 +90,7 @@ public class PomEditorTestWithGit {
 
         assertNotNull(cloned);
 
-        Path pomPath = Paths.get("file://"+gitClonedFolder.toString()  + "/pom.xml");
+        Path pomPath = Paths.get("file://" + gitClonedFolder.toString() + "/pom.xml");
         byte[] encoded = Files.readAllBytes(pomPath);
         String pomOriginal = new String(encoded, StandardCharsets.UTF_8);
 
@@ -107,7 +105,7 @@ public class PomEditorTestWithGit {
         RebaseResult rbResult = rb.setPreserveMerges(true).call();
         assertTrue(rbResult.getStatus().isSuccessful());
 
-        pomPath = Paths.get("file://"+gitClonedFolder.toString()  + "/pom.xml");
+        pomPath = Paths.get("file://" + gitClonedFolder.toString() + "/pom.xml");
         encoded = Files.readAllBytes(pomPath);
         String pomUpdated = new String(encoded, StandardCharsets.UTF_8);
 

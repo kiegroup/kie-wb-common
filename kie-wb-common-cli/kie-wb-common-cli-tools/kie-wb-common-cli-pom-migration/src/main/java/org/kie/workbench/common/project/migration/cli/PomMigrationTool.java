@@ -16,12 +16,14 @@
 package org.kie.workbench.common.project.migration.cli;
 
 import java.io.File;
+
 import org.apache.maven.model.Model;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.weld.environment.se.Weld;
 import org.kie.workbench.common.migration.cli.ContainerHandler;
 import org.kie.workbench.common.migration.cli.MigrationConstants;
+import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
 import org.kie.workbench.common.migration.cli.MigrationSetup;
 import org.kie.workbench.common.migration.cli.MigrationTool;
 import org.kie.workbench.common.migration.cli.SystemAccess;
@@ -37,10 +39,10 @@ import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 
 public class PomMigrationTool implements MigrationTool {
 
-    private SystemAccess system;
-    private ToolConfig config;
     private final String POM_DOT_XML = "pom.xml";
     boolean systemMigrationCheck;
+    private SystemAccess system;
+    private ToolConfig config;
 
     @Override
     public String getTitle() {
@@ -70,27 +72,25 @@ public class PomMigrationTool implements MigrationTool {
         if (projectMigrationWasExecuted()) {
             system.out().println("Starting POMs migration");
             migrate();
-            system.out().println("Finished POMs migration, detailed log available in "+ System.getProperty("user.dir") + "/migration_tool.log");
+            system.out().println("Finished POMs migration, detailed log available in " + System.getProperty("user.dir") + "/migration_tool.log");
         }
     }
-
 
     private void migrate() {
         MigrationSetup.configureProperties(system, config.getTarget());
         PromptPomMigrationService promptPomMigrationService = new PromptPomMigrationService(system);
         String jsonPath = promptPomMigrationService.promptForExternalConfiguration();
-        final ContainerHandler container = new ContainerHandler(()-> new Weld().initialize());
-            container.run(ServiceCDIWrapper.class,
-                          cdiWrapper -> cdiWrapper.getWorkspaceProjectService().getAllWorkspaceProjects().forEach(pr -> processWorkspaceProject(pr, jsonPath, cdiWrapper)),
-                          error -> {
-                              system.err().println("Error during migration: ");
-                              error.printStackTrace(system.err());
-                          });
+        final ContainerHandler container = new ContainerHandler(() -> new Weld().initialize());
+        container.run(MigrationServicesCDIWrapper.class,
+                      cdiWrapper -> cdiWrapper.getWorkspaceProjectService().getAllWorkspaceProjects().forEach(pr -> processWorkspaceProject(pr, jsonPath, cdiWrapper)),
+                      error -> {
+                          system.err().println("Error during migration: ");
+                          error.printStackTrace(system.err());
+                      });
         container.close();
     }
 
-
-    private void processWorkspaceProject(WorkspaceProject workspaceProject, String jsonPath, ServiceCDIWrapper cdiWrapper) {
+    private void processWorkspaceProject(WorkspaceProject workspaceProject, String jsonPath, MigrationServicesCDIWrapper cdiWrapper) {
         if (systemMigrationWasExecuted(cdiWrapper)) {
 
             PomEditor editor = new PomEditor(system, cdiWrapper);
@@ -123,20 +123,19 @@ public class PomMigrationTool implements MigrationTool {
                 }
             });
             system.out().println("Migrated " + counter[0] + " POMs for project: " + workspaceProject.getName());
-
         }
     }
 
-        private boolean projectMigrationWasExecuted() {
-            if (!config.getTarget().resolve("system").resolve(MigrationConstants.SYSTEM_GIT).toFile().exists()) {
-                system.err().println(String.format("The PROJECT STRUCTURE MIGRATION must be ran before this one."));
-                return false;
-            }
-            return true;
+    private boolean projectMigrationWasExecuted() {
+        if (!config.getTarget().resolve("system").resolve(MigrationConstants.SYSTEM_GIT).toFile().exists()) {
+            system.err().println(String.format("The PROJECT STRUCTURE MIGRATION must be ran before this one."));
+            return false;
         }
+        return true;
+    }
 
-    private boolean systemMigrationWasExecuted(ServiceCDIWrapper cdiWrapper) {
-        if(!systemMigrationCheck) {
+    private boolean systemMigrationWasExecuted(MigrationServicesCDIWrapper cdiWrapper) {
+        if (!systemMigrationCheck) {
             systemMigrationCheck = true;
             final IOService systemIoService = cdiWrapper.getSystemIoService();
             final Repository systemRepository = cdiWrapper.getSystemRepository();
@@ -145,10 +144,8 @@ public class PomMigrationTool implements MigrationTool {
                 return false;
             }
             return true;
-        }else {
+        } else {
             return true;
         }
     }
-
-
 }

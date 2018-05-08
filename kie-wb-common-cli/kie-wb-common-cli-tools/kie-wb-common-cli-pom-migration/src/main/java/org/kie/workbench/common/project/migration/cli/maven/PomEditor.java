@@ -32,8 +32,8 @@ import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
 import org.kie.workbench.common.migration.cli.SystemAccess;
-import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -59,11 +59,11 @@ public class PomEditor {
     private JSONDTO jsonConf;
     private PomJsonReader jsonReader, jsonMandatoryDepsReader;
     private SystemAccess system;
-    private ServiceCDIWrapper cdiWrapper;
+    private MigrationServicesCDIWrapper cdiWrapper;
 
     private Properties props;
 
-    public PomEditor(SystemAccess system, ServiceCDIWrapper cdiWrapper) {
+    public PomEditor(SystemAccess system, MigrationServicesCDIWrapper cdiWrapper) {
         this.cdiWrapper = cdiWrapper;
         this.system = system;
         reader = new MavenXpp3Reader();

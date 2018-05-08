@@ -16,12 +16,10 @@
 package org.kie.workbench.common.project.migration.cli;
 
 import java.io.File;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.kie.workbench.common.migration.cli.SystemAccess;
-import org.kie.workbench.common.migration.cli.ToolConfig;
 
 public class PromptPomMigrationService {
 
