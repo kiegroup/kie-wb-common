@@ -154,7 +154,7 @@ public class PomEditorTest {
             assertTrue(modelUpdated.getRepositories().size() == 2);
             assertTrue(modelUpdated.getPluginRepositories().size() == 2);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
         } finally {
             Files.delete(path);
@@ -183,7 +183,7 @@ public class PomEditorTest {
             modelUpdated = editor.updatePom(null, null);
             assertTrue(modelUpdated.getGroupId() == null);
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
         } finally {
             Files.delete(path);
