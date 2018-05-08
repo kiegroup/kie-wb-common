@@ -229,6 +229,8 @@ public class PomEditor implements PomEnhancer {
             }
             if (dep.getVersion() == null && isKieGroupDependency(dep.getGroupId())) {
                 newDep.setVersion(kieVersion);
+            }else{
+                newDep.setVersion(dep.getVersion());
             }
             if (dep.getScope() != null) {
                 newDep.setScope(dep.getScope());
