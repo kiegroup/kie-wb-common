@@ -42,6 +42,7 @@ import org.uberfire.ext.widgets.common.client.common.BusyIndicatorView;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.mocks.CallerMock;
 import org.uberfire.mocks.SessionInfoMock;
+import org.uberfire.mvp.ParameterizedCommand;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -157,10 +158,11 @@ public class AddProjectPopUpPresenterTest {
 
         presenter.add();
 
-        verify(libraryService).createProject("test",
-                                             organizationalUnit,
-                                             "description",
-                                             DeploymentMode.VALIDATED);
+        final ArgumentCaptor<POM> pomArgumentCaptor = ArgumentCaptor.forClass(POM.class);
+
+        verify(libraryService).createProject(eq(organizationalUnit),
+                                             pomArgumentCaptor.capture(),
+                                             eq(DeploymentMode.VALIDATED));
     }
 
     @Test
@@ -190,6 +192,45 @@ public class AddProjectPopUpPresenterTest {
         assertEquals("groupId", pom.getGav().getGroupId());
         assertEquals("artifactId", pom.getGav().getArtifactId());
         assertEquals("version", pom.getGav().getVersion());
+        
+        //Checking default kie-server options
+        assertEquals("kjar", pom.getPackaging());
+        assertEquals("org.kie", pom.getBuild().getPlugins().get(0).getGroupId());
+        assertEquals("kie-maven-plugin", pom.getBuild().getPlugins().get(0).getArtifactId());
+    }
+    
+    @Test
+    public void newWorkbenchProjectWithQuickSettingsIsCreated() throws Exception {
+        final OrganizationalUnit organizationalUnit = mock(OrganizationalUnit.class);
+        when(projectContext.getActiveOrganizationalUnit()).thenReturn(Optional.of(organizationalUnit));
+
+        doReturn("test").when(view).getName();
+        doReturn("description").when(view).getDescription();
+        doReturn("groupId").when(view).getGroupId();
+        doReturn("artifactId").when(view).getArtifactId();
+        doReturn("version").when(view).getVersion();
+        doReturn(false).when(view).isAdvancedOptionsSelected();
+
+        presenter.add();
+
+        final ArgumentCaptor<POM> pomArgumentCaptor = ArgumentCaptor.forClass(POM.class);
+
+        verify(libraryService).createProject(eq(organizationalUnit),
+                                             pomArgumentCaptor.capture(),
+                                             eq(DeploymentMode.VALIDATED));
+        
+        final POM pom = pomArgumentCaptor.getValue();
+
+        assertEquals("test", pom.getName());
+        assertEquals("description", pom.getDescription());
+        assertEquals("groupId", pom.getGav().getGroupId());
+        assertEquals("artifactId", pom.getGav().getArtifactId());
+        assertEquals("version", pom.getGav().getVersion());
+        
+        //Checking default kie-server options
+        assertEquals("kjar", pom.getPackaging());
+        assertEquals("org.kie", pom.getBuild().getPlugins().get(0).getGroupId());
+        assertEquals("kie-maven-plugin", pom.getBuild().getPlugins().get(0).getArtifactId());
     }
 
     @Test
@@ -211,9 +252,8 @@ public class AddProjectPopUpPresenterTest {
         doReturn("test").when(view).getName();
         doReturn("description").when(view).getDescription();
 
-        doThrow(new FileAlreadyExistsException()).when(libraryService).createProject(anyString(),
+        doThrow(new FileAlreadyExistsException()).when(libraryService).createProject(any(),
                                                                                      any(),
-                                                                                     anyString(),
                                                                                      any());
         doAnswer(invocationOnMock -> ((Throwable) invocationOnMock.getArguments()[0]).getCause() instanceof FileAlreadyExistsException)
                 .when(presenter).isDuplicatedProjectName(any());
@@ -413,5 +453,19 @@ public class AddProjectPopUpPresenterTest {
         verify(view).showError(anyString());
         verify(libraryPlaces,
                never()).goToProject(any(WorkspaceProject.class));
+    }
+
+
+    @Test
+    public void createProjectWithExternalSuccessCallbackTest() {
+        doReturn("test").when(view).getName();
+        doReturn("description").when(view).getDescription();
+        ParameterizedCommand<WorkspaceProject> command = mock(ParameterizedCommand.class);
+        presenter.setSuccessCallback(command);
+
+        presenter.add();
+
+        verify(view).showBusyIndicator(anyString());
+        verify(command).execute(any());
     }
 }

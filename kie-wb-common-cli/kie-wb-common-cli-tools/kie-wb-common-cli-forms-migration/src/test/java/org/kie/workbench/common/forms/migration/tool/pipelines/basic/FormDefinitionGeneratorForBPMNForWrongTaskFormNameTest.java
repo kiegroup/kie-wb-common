@@ -56,7 +56,7 @@ public class FormDefinitionGeneratorForBPMNForWrongTaskFormNameTest extends Abst
     private Path wrongTaskPath;
 
     private Form wrongProcessForm;
-    private Form wrontTaskForm;
+    private Form wrongTaskForm;
 
     @Override
     protected void doInit() throws Exception {
@@ -66,8 +66,8 @@ public class FormDefinitionGeneratorForBPMNForWrongTaskFormNameTest extends Abst
         initForm(form -> wrongProcessForm = form, BPMN_RESOURCES, WRONG_PROCESS_FORM, wrongProcessPath);
         summaries.add(new FormMigrationSummary(new Resource<>(wrongProcessForm, wrongProcessPath)));
 
-        initForm(form -> wrontTaskForm = form, BPMN_RESOURCES, WRONG_TASK_FORM, wrongTaskPath);
-        summaries.add(new FormMigrationSummary(new Resource<>(wrontTaskForm, wrongTaskPath)));
+        initForm(form -> wrongTaskForm = form, BPMN_RESOURCES, WRONG_TASK_FORM, wrongTaskPath);
+        summaries.add(new FormMigrationSummary(new Resource<>(wrongTaskForm, wrongTaskPath)));
 
         context = new MigrationContext(workspaceProject, weldContainer, formsMigrationServicesCDIWrapper, new RealSystemAccess(), summaries, migrationServicesCDIWrapper);
 

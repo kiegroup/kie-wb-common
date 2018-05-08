@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ScrollEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.IsWidget;
@@ -85,10 +86,9 @@ public class SessionPresenterView extends Composite
     private final NotifySettings settings = NotifySettings.newSettings();
 
     private ScrollType scrollType = ScrollType.AUTO;
-
     private double paletteInitialTop;
-
     private double paletteInitialLeft;
+    private HandlerRegistration handlerRegistration;
 
     @PostConstruct
     public void init() {
@@ -97,11 +97,11 @@ public class SessionPresenterView extends Composite
         settings.setAllowDismiss(true);
         settings.setDelay(DELAY);
         settings.setTimer(TIMER);
-        addDomHandler((e) -> {
-                          e.preventDefault();
-                          e.stopPropagation();
-                      },
-                      ContextMenuEvent.getType());
+        handlerRegistration = addDomHandler((e) -> {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                            },
+                                            ContextMenuEvent.getType());
         showLoading(false);
 
         //getting initial palette position
@@ -112,8 +112,10 @@ public class SessionPresenterView extends Composite
     @EventHandler("sessionContainer")
     protected void onScroll(@ForEvent("scroll") ScrollEvent e) {
         // on the editor scroll recalculate palette position to be fixed on the screen
-        palettePanel.getElement().getStyle().setTop(paletteInitialTop + e.getRelativeElement().getScrollTop(), Style.Unit.PX);
-        palettePanel.getElement().getStyle().setLeft(paletteInitialLeft + e.getRelativeElement().getScrollLeft(), Style.Unit.PX);
+        palettePanel.getElement().getStyle().setTop(paletteInitialTop + e.getRelativeElement().getScrollTop(),
+                                                    Style.Unit.PX);
+        palettePanel.getElement().getStyle().setLeft(paletteInitialLeft + e.getRelativeElement().getScrollLeft(),
+                                                     Style.Unit.PX);
 
         e.preventDefault();
     }
@@ -225,6 +227,10 @@ public class SessionPresenterView extends Composite
 
     @Override
     public void onResize() {
+        palettePanel.getElement().getStyle().setTop(paletteInitialTop + sessionContainer.getElement().getScrollTop(),
+                                                    Style.Unit.PX);
+        palettePanel.getElement().getStyle().setLeft(paletteInitialLeft + sessionContainer.getElement().getScrollLeft(),
+                                                     Style.Unit.PX);
         canvasPanel.onResize();
     }
 
@@ -235,6 +241,17 @@ public class SessionPresenterView extends Composite
     }
 
     public void destroy() {
+        handlerRegistration.removeHandler();
+        handlerRegistration = null;
+        loadingPanel.removeFromParent();
+        toolbarPanel.clear();
+        toolbarPanel.removeFromParent();
+        canvasPanel.clear();
+        canvasPanel.removeFromParent();
+        palettePanel.clear();
+        palettePanel.removeFromParent();
+        sessionContainer.clear();
+        sessionContainer.removeFromParent();
         this.removeFromParent();
     }
 

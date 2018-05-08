@@ -41,7 +41,7 @@ import org.kie.workbench.common.dmn.client.commands.general.DeleteHeaderValueCom
 import org.kie.workbench.common.dmn.client.commands.general.SetCellValueCommand;
 import org.kie.workbench.common.dmn.client.commands.general.SetHeaderValueCommand;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
-import org.kie.workbench.common.dmn.client.session.DMNClientFullSession;
+import org.kie.workbench.common.dmn.client.session.DMNEditorSession;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextAreaSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.columns.factory.TextBoxSingletonDOMElementFactory;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -136,7 +136,7 @@ public class RelationGridTest {
     private SessionManager sessionManager;
 
     @Mock
-    private DMNClientFullSession dmnClientFullSession;
+    private DMNEditorSession dmnEditorSession;
 
     @Mock
     private AbstractCanvasHandler canvasHandler;
@@ -204,8 +204,8 @@ public class RelationGridTest {
         hasName = Optional.of(decision);
         expression = definition.getModelClass();
 
-        doReturn(canvasHandler).when(dmnClientFullSession).getCanvasHandler();
-        doReturn(dmnClientFullSession).when(sessionManager).getCurrentSession();
+        doReturn(canvasHandler).when(dmnEditorSession).getCanvasHandler();
+        doReturn(dmnEditorSession).when(sessionManager).getCurrentSession();
         doReturn(parentGridData).when(parentGridWidget).getModel();
         doReturn(Collections.singletonList(parentGridColumn)).when(parentGridData).getColumns();
 
@@ -497,6 +497,32 @@ public class RelationGridTest {
         assertListSelectorItemEnabled(1, 0, DELETE_ROW, true);
     }
 
+    @Test
+    public void testGetItemsWithCellSelectionsCoveringMultipleRows() {
+        setupGrid(0);
+
+        addRow(0);
+        grid.getModel().selectCell(0, 0);
+        grid.getModel().selectCell(1, 0);
+
+        assertListSelectorItemEnabled(0, 0, INSERT_ROW_ABOVE, false);
+        assertListSelectorItemEnabled(0, 0, INSERT_ROW_BELOW, false);
+        assertListSelectorItemEnabled(0, 0, DELETE_ROW, false);
+    }
+
+    @Test
+    public void testGetItemsWithCellSelectionsCoveringMultipleColumns() {
+        setupGrid(0);
+
+        addColumn(0);
+        grid.getModel().selectCell(0, 0);
+        grid.getModel().selectCell(0, 1);
+
+        assertListSelectorItemEnabled(0, 0, INSERT_COLUMN_BEFORE, false);
+        assertListSelectorItemEnabled(0, 0, INSERT_COLUMN_AFTER, false);
+        assertListSelectorItemEnabled(0, 0, DELETE_COLUMN, false);
+    }
+
     private void assertListSelectorItemEnabled(final int uiRowIndex,
                                                final int uiColumnIndex,
                                                final int listItemIndex,
@@ -510,16 +536,21 @@ public class RelationGridTest {
     public void testAddColumn() throws Exception {
         setupGrid(0);
 
-        grid.addColumn(0);
+        addColumn(0);
 
-        verify(sessionCommandManager).execute(eq(canvasHandler), addColumnCommand.capture());
-
-        addColumnCommand.getValue().execute(canvasHandler);
         verify(parent).proposeContainingColumnWidth(grid.getWidth() + grid.getPadding() * 2);
         verify(parentGridColumn).setWidth(grid.getWidth() + grid.getPadding() * 2);
         verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
+    }
+
+    private void addColumn(final int index) {
+        grid.addColumn(index);
+
+        verify(sessionCommandManager).execute(eq(canvasHandler), addColumnCommand.capture());
+
+        addColumnCommand.getValue().execute(canvasHandler);
     }
 
     @Test
@@ -544,14 +575,19 @@ public class RelationGridTest {
     public void testAddRow() throws Exception {
         setupGrid(0);
 
-        grid.addRow(0);
+        addRow(0);
+
+        verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
+        verify(gridPanel).refreshScrollPosition();
+        verify(gridPanel).updatePanelSize();
+    }
+
+    private void addRow(final int index) {
+        grid.addRow(index);
 
         verify(sessionCommandManager).execute(eq(canvasHandler), addRowCommand.capture());
 
         addRowCommand.getValue().execute(canvasHandler);
-        verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
-        verify(gridPanel).refreshScrollPosition();
-        verify(gridPanel).updatePanelSize();
     }
 
     @Test
