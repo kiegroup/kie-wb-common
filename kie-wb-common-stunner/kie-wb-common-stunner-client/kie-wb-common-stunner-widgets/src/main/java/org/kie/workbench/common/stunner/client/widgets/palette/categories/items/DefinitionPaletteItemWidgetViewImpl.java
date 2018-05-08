@@ -16,11 +16,13 @@
 
 package org.kie.workbench.common.stunner.client.widgets.palette.categories.items;
 
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import org.jboss.errai.common.client.dom.Anchor;
+import org.jboss.errai.common.client.dom.DOMUtil;
 import org.jboss.errai.common.client.dom.Span;
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -35,7 +37,6 @@ public class DefinitionPaletteItemWidgetViewImpl implements DefinitionPaletteIte
                                                             IsElement {
 
     private static final String DISPLAY = "display";
-    private static final String DISPLAY_INLINE = "inline";
     private static final String DISPLAY_NONE = "none";
     private static final String PADDING_RIGHT = "padding-right";
 
@@ -73,7 +74,6 @@ public class DefinitionPaletteItemWidgetViewImpl implements DefinitionPaletteIte
         final String title = presenter.getItem().getTitle();
         if (!isEmpty(title)) {
             name.setTextContent(presenter.getItem().getTitle());
-            name.getStyle().setProperty(DISPLAY, DISPLAY_INLINE);
         } else {
             name.getStyle().setProperty(DISPLAY, DISPLAY_NONE);
             icon.getStyle().setProperty(PADDING_RIGHT, "0");
@@ -92,6 +92,14 @@ public class DefinitionPaletteItemWidgetViewImpl implements DefinitionPaletteIte
                               mouseDownEvent.getClientY(),
                               mouseDownEvent.getX(),
                               mouseDownEvent.getY());
+    }
+
+    @PreDestroy
+    public void destroy() {
+        DOMUtil.removeAllChildren(itemAnchor);
+        DOMUtil.removeAllChildren(icon);
+        DOMUtil.removeAllChildren(name);
+        presenter = null;
     }
 
     private static boolean isEmpty(final String s) {

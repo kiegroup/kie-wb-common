@@ -158,7 +158,10 @@ public class FloatingWidgetView implements FloatingView<IsWidget> {
 
     @Override
     public void destroy() {
+        stopTimeout();
         detach();
+        timer = null;
+        hideCallback = null;
     }
 
     private void detach() {
@@ -175,7 +178,7 @@ public class FloatingWidgetView implements FloatingView<IsWidget> {
             timer = new Timer() {
                 @Override
                 public void run() {
-                    FloatingWidgetView.this.doHide();
+                    FloatingWidgetView.this.hide();
                 }
             };
             timer.schedule(timeout);

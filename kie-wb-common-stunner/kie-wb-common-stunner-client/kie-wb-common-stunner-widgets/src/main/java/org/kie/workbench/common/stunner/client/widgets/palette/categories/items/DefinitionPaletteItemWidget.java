@@ -19,11 +19,11 @@ package org.kie.workbench.common.stunner.client.widgets.palette.categories.items
 import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.common.client.dom.HTMLElement;
-import org.kie.workbench.common.stunner.core.client.api.ShapeManager;
 import org.kie.workbench.common.stunner.core.client.components.palette.DefaultPaletteItem;
 import org.kie.workbench.common.stunner.core.client.components.palette.PaletteItemMouseEvent;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeFactory;
@@ -32,22 +32,25 @@ import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 @Dependent
 public class DefinitionPaletteItemWidget implements DefinitionPaletteItemWidgetView.Presenter {
 
-    private final ShapeManager shapeManager;
     private final DefinitionPaletteItemWidgetView view;
 
     private DefaultPaletteItem item;
     private Consumer<PaletteItemMouseEvent> itemMouseDownCallback;
 
     @Inject
-    public DefinitionPaletteItemWidget(final ShapeManager shapeManager,
-                                       final DefinitionPaletteItemWidgetView view) {
-        this.shapeManager = shapeManager;
+    public DefinitionPaletteItemWidget(final DefinitionPaletteItemWidgetView view) {
         this.view = view;
     }
 
     @PostConstruct
     public void setUp() {
         view.init(this);
+    }
+
+    @PreDestroy
+    public void destroy() {
+        item = null;
+        itemMouseDownCallback = null;
     }
 
     @Override

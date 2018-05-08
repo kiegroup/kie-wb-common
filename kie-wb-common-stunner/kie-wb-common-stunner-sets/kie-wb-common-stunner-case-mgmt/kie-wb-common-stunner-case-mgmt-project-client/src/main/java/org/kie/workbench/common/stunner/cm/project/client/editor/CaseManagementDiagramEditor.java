@@ -21,25 +21,24 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
+import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.bpmn.factory.BPMNGraphFactory;
-import org.kie.workbench.common.stunner.client.widgets.presenters.session.SessionPresenterFactory;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionEditorPresenter;
+import org.kie.workbench.common.stunner.client.widgets.presenters.session.impl.SessionViewerPresenter;
 import org.kie.workbench.common.stunner.cm.project.client.type.CaseManagementDiagramResourceType;
-import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.annotation.DiagramEditor;
-import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.error.DiagramClientErrorHandler;
 import org.kie.workbench.common.stunner.core.client.i18n.ClientTranslationService;
-import org.kie.workbench.common.stunner.core.client.session.command.impl.SessionCommandFactory;
-import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientFullSession;
-import org.kie.workbench.common.stunner.core.client.session.impl.AbstractClientReadOnlySession;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistry;
+import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
+import org.kie.workbench.common.stunner.core.client.session.impl.ViewerSession;
+import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
 import org.kie.workbench.common.stunner.project.client.editor.AbstractProjectDiagramEditor;
-import org.kie.workbench.common.stunner.project.client.editor.ProjectDiagramEditorMenuItemsBuilder;
+import org.kie.workbench.common.stunner.project.client.editor.ProjectEditorMenuSessionItems;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
 import org.kie.workbench.common.stunner.project.client.screens.ProjectMessagesListener;
 import org.kie.workbench.common.stunner.project.client.service.ClientProjectDiagramService;
-import org.kie.workbench.common.stunner.project.diagram.ProjectDiagram;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.annotations.WorkbenchEditor;
 import org.uberfire.client.annotations.WorkbenchMenu;
@@ -75,16 +74,16 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
                                        final SavePopUpPresenter savePopUpPresenter,
                                        final CaseManagementDiagramResourceType resourceType,
                                        final ClientProjectDiagramService projectDiagramServices,
-                                       final SessionManager sessionManager,
-                                       final @CaseManagementEditor SessionPresenterFactory<Diagram, AbstractClientReadOnlySession, AbstractClientFullSession> sessionPresenterFactory,
-                                       final @CaseManagementEditor SessionCommandFactory sessionCommandFactory,
-                                       final ProjectDiagramEditorMenuItemsBuilder menuItemsBuilder,
+                                       final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
+                                       final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
+                                       final ProjectEditorMenuSessionItems menuSessionItems,
                                        final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
                                        final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
                                        final ProjectMessagesListener projectMessagesListener,
                                        final DiagramClientErrorHandler diagramClientErrorHandler,
                                        final ClientTranslationService translationService,
-                                       final TextEditorView xmlEditorView) {
+                                       final TextEditorView xmlEditorView,
+                                       final StunnerPreferencesRegistry stunnerPreferencesRegistry) {
         super(view,
               placeManager,
               errorPopupPresenter,
@@ -92,16 +91,16 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
               savePopUpPresenter,
               resourceType,
               projectDiagramServices,
-              sessionManager,
-              sessionPresenterFactory,
-              sessionCommandFactory,
-              menuItemsBuilder,
+              editorSessionPresenterInstances,
+              viewerSessionPresenterInstances,
+              menuSessionItems,
               onDiagramFocusEvent,
               onDiagramLostFocusEvent,
               projectMessagesListener,
               diagramClientErrorHandler,
               translationService,
-              xmlEditorView);
+              xmlEditorView,
+              stunnerPreferencesRegistry);
     }
 
     @OnStartup
@@ -129,12 +128,6 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
     @OnOpen
     public void onOpen() {
         super.doOpen();
-    }
-
-    @Override
-    public void open(final ProjectDiagram diagram) {
-        super.open(diagram);
-        getSessionPresenter().displayNotifications(type -> false);
     }
 
     @OnClose
@@ -175,5 +168,15 @@ public class CaseManagementDiagramEditor extends AbstractProjectDiagramEditor<Ca
     @OnMayClose
     public boolean onMayClose() {
         return super.mayClose(getCurrentDiagramHash());
+    }
+
+    @Override
+    protected SessionEditorPresenter<EditorSession> newSessionEditorPresenter() {
+        SessionEditorPresenter<EditorSession> presenter = super.newSessionEditorPresenter();
+        StunnerPreferences preferences = (StunnerPreferences) getStunnerPreferences().clone();
+        preferences.getDiagramEditorPreferences().setAutoHidePalettePanel(true);
+        presenter.withPreferences(preferences);
+        presenter.displayNotifications(type -> false);
+        return presenter;
     }
 }

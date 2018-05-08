@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.client.widgets.canvas.actions;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import org.jboss.errai.common.client.dom.HTMLElement;
@@ -83,6 +84,13 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
     // TODO: Check command result.
     @Override
     public void onSave() {
+        flush();
+        getView().hide();
+        fireCloseCallback();
+    }
+
+    @Override
+    public void flush() {
         if (null != this.value) {
             final TextPropertyProvider textPropertyProvider = textPropertyProviderFactory.getProvider(element);
             textPropertyProvider.setText(canvasHandler,
@@ -90,14 +98,22 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
                                          element,
                                          value);
         }
-        getView().hide();
-        fireCloseCallback();
     }
 
     @Override
     public void onClose() {
         this.hide();
         fireCloseCallback();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        canvasHandler = null;
+        textPropertyProviderFactory = null;
+        commandManagerProvider = null;
+        closeCallback = null;
+        element = null;
+        value = null;
     }
 
     private void fireCloseCallback() {
@@ -130,6 +146,16 @@ public abstract class AbstractTextEditorBox implements TextEditorBoxView.Present
         this.value = value;
         // Enter key produces save.
         if ((KeyCodes.KEY_ENTER == keyCode) && (!shiftKeyPressed)) {
+            onSave();
+        }
+    }
+
+    @Override
+    public void onKeyDown(final int keyCode,
+                          final String value) {
+        this.value = value;
+        // Tab key produces save.
+        if (KeyCodes.KEY_TAB == keyCode) {
             onSave();
         }
     }

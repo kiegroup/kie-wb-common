@@ -303,7 +303,8 @@ public class BPMNDiagramMarshallerTest {
         when(definitionManager.adapters()).thenReturn(adapterManager);
         when(adapterManager.registry()).thenReturn(adapterRegistry);
         definitionUtils = new DefinitionUtils(definitionManager,
-                                              applicationFactoryManager);
+                                              applicationFactoryManager,
+                                              null); // TODO!!!
         testScopeModelFactory = new BPMNTestScopeModelFactory(new BPMNDefinitionSet.BPMNDefinitionSetBuilder().build(),
                                                               workItemDefinitionMockRegistry);
         // Definition manager.
@@ -454,6 +455,7 @@ public class BPMNDiagramMarshallerTest {
                                            indexBuilder,
                                            oryxManager,
                                            applicationFactoryManager,
+                                           null, // TODO!
                                            rulesManager,
                                            commandManager,
                                            commandFactory,
@@ -1600,7 +1602,7 @@ public class BPMNDiagramMarshallerTest {
                      executionSet.getCalledElement().getValue());
         assertEquals(false,
                      executionSet.getIndependent().getValue());
-        assertEquals(false,
+        assertEquals(true,
                      executionSet.getWaitForCompletion().getValue());
 
         String assignmentsInfo = reusableSubprocess.getDataIOSet().getAssignmentsinfo().getValue();
@@ -2608,7 +2610,7 @@ public class BPMNDiagramMarshallerTest {
                       3,
                       2);
 
-        assertTrue(result.contains("<bpmn2:callActivity id=\"_FC6D8570-8C67-40C2-8B7B-953DE15765FB\" drools:independent=\"false\" drools:waitForCompletion=\"false\" name=\"my subprocess\" calledElement=\"my-called-element\">"));
+        assertTrue(result.contains("<bpmn2:callActivity id=\"_FC6D8570-8C67-40C2-8B7B-953DE15765FB\" drools:independent=\"false\" drools:waitForCompletion=\"true\" name=\"my subprocess\" calledElement=\"my-called-element\">"));
 
         assertTrue(result.contains("<bpmn2:dataInput id=\"_FC6D8570-8C67-40C2-8B7B-953DE15765FB_input1InputX\" drools:dtype=\"String\" itemSubjectRef=\"__FC6D8570-8C67-40C2-8B7B-953DE15765FB_input1InputXItem\" name=\"input1\"/>"));
         assertTrue(result.contains("<bpmn2:dataOutput id=\"_FC6D8570-8C67-40C2-8B7B-953DE15765FB_output2OutputX\" drools:dtype=\"Float\" itemSubjectRef=\"__FC6D8570-8C67-40C2-8B7B-953DE15765FB_output2OutputXItem\" name=\"output2\"/>"));
