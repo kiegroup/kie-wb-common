@@ -48,7 +48,9 @@ public class PluginPresence {
 
     @Override
     public boolean equals(Object o) {
-        PortablePreconditions.checkNotNull("PluginPresence", o);
+        if (o == null) {
+            return false;
+        }
         if (this == o) {
             return true;
         }

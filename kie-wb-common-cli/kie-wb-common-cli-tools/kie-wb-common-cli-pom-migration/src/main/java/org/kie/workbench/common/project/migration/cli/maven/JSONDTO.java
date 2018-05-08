@@ -58,7 +58,9 @@ public class JSONDTO {
 
     @Override
     public boolean equals(Object o) {
-        PortablePreconditions.checkNotNull("JSONDTO", o);
+        if (o == null) {
+            return false;
+        }
         if (this == o) {
             return true;
         }
