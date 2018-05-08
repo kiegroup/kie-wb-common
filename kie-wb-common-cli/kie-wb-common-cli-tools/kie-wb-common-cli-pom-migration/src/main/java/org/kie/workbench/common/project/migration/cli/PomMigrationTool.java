@@ -16,15 +16,11 @@
 package org.kie.workbench.common.project.migration.cli;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.Collection;
-
 import org.apache.maven.model.Model;
 import org.guvnor.common.services.project.model.WorkspaceProject;
-import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.repositories.Repository;
 import org.jboss.weld.environment.se.Weld;
-import org.jboss.weld.environment.se.WeldContainer;
+import org.kie.workbench.common.migration.cli.ContainerHandler;
 import org.kie.workbench.common.migration.cli.MigrationConstants;
 import org.kie.workbench.common.migration.cli.MigrationSetup;
 import org.kie.workbench.common.migration.cli.MigrationTool;
@@ -43,10 +39,8 @@ public class PomMigrationTool implements MigrationTool {
 
     private SystemAccess system;
     private ToolConfig config;
-    private WeldContainer weldContainer;
-    private ServiceCDIWrapper cdiWrapper;
-
     private String POM_DOT_XML = "pom.xml";
+    boolean systemMigrationCheck;
 
     @Override
     public String getTitle() {
@@ -55,7 +49,7 @@ public class PomMigrationTool implements MigrationTool {
 
     @Override
     public String getDescription() {
-        return "Migrates pom.xml files to format required in 7.7.x and later (community)";
+        return "Migrates pom.xml files to format compatible with KIE Maven build.";
     }
 
     @Override
@@ -73,72 +67,64 @@ public class PomMigrationTool implements MigrationTool {
 
         this.config = config;
         this.system = system;
-
-        PromptPomMigrationService promptService = new PromptPomMigrationService(system, config);
-        String jsonPath = promptService.promptForExternalConfiguration();
-        Path niogitDir = config.getTarget();
-        system.out().println("Starting POMs migration");
         if (projectMigrationWasExecuted()) {
-            try {
-                MigrationSetup.configureProperties(system, niogitDir);
-                weldContainer = new Weld().initialize();
-                cdiWrapper = weldContainer.instance().select(ServiceCDIWrapper.class).get();
-               if (systemMigrationWasExecuted()) {
-
-                    WorkspaceProjectService service = weldContainer.instance().select(WorkspaceProjectService.class).get();
-
-                    Collection<WorkspaceProject> projects = service.getAllWorkspaceProjects();
-                    for(WorkspaceProject prj : projects){
-                        processWorkspaceProject(prj, jsonPath);
-                    }
-                }
-                String userDir = System.getProperty("user.dir");
-                system.out().println("Finished POMs migration, detailed log available in "+userDir + "/migration_tool.log");
-            }finally {
-                if (weldContainer != null) {
-                    try {
-                        cdiWrapper = null;
-                        weldContainer.close();
-                    } catch (Exception ex) {
-
-                    }
-                }
-            }
+            system.out().println("Starting POMs migration");
+            migrate();
+            system.out().println("Finished POMs migration, detailed log available in "+ System.getProperty("user.dir") + "/migration_tool.log");
         }
     }
 
 
-    private void processWorkspaceProject(WorkspaceProject workspaceProject, String jsonPath) {
-        PomEditor editor = new PomEditor(system, cdiWrapper);
-        final int[] counter = {0};
-        Files.walkFileTree(Paths.convert(workspaceProject.getRootPath()), new SimpleFileVisitor<org.uberfire.java.nio.file.Path>() {
-            @Override
-            public FileVisitResult visitFile(org.uberfire.java.nio.file.Path visitedPath, BasicFileAttributes attrs) throws IOException {
+    private void migrate() {
+        MigrationSetup.configureProperties(system, config.getTarget());
+        PromptPomMigrationService promptPomMigrationService = new PromptPomMigrationService(system, config);
+        String jsonPath = promptPomMigrationService.promptForExternalConfiguration();
+        final ContainerHandler container = new ContainerHandler(()-> new Weld().initialize());
+            container.run(ServiceCDIWrapper.class,
+                          cdiWrapper -> cdiWrapper.getWorkspaceProjectService().getAllWorkspaceProjects().forEach(pr -> processWorkspaceProject(pr, jsonPath, cdiWrapper)),
+                          error -> {
+                              system.err().println("Error during migration: ");
+                              error.printStackTrace(system.err());
+                          });
+        container.close();
+    }
 
-                org.uberfire.backend.vfs.Path visitedVFSPath = Paths.convert(visitedPath);
-                String fileName = visitedVFSPath.getFileName();
-                File file = visitedPath.toFile();
 
-                if (file.isFile() && fileName.equals(POM_DOT_XML)){
+    private void processWorkspaceProject(WorkspaceProject workspaceProject, String jsonPath, ServiceCDIWrapper cdiWrapper) {
+        if (systemMigrationWasExecuted(cdiWrapper)) {
+
+            PomEditor editor = new PomEditor(system, cdiWrapper);
+            final int[] counter = {0};
+            Files.walkFileTree(Paths.convert(workspaceProject.getRootPath()), new SimpleFileVisitor<org.uberfire.java.nio.file.Path>() {
+                @Override
+                public FileVisitResult visitFile(org.uberfire.java.nio.file.Path visitedPath, BasicFileAttributes attrs) throws IOException {
+
+                    org.uberfire.backend.vfs.Path visitedVFSPath = Paths.convert(visitedPath);
+                    String fileName = visitedVFSPath.getFileName();
+                    File file = visitedPath.toFile();
+
+                    if (file.isFile() && fileName.equals(POM_DOT_XML)) {
                         try {
                             Model model;
                             if (jsonPath.isEmpty()) {
                                 model = editor.updatePom(visitedPath);
                             } else {
-                                model =  editor.updatePom(visitedPath, jsonPath);
+                                model = editor.updatePom(visitedPath, jsonPath);
                             }
                             if (!model.getBuild().getPlugins().isEmpty()) {
                                 counter[0]++;
                             }
                         } catch (Exception e) {
-                            system.err().println("Error reading form: " + fileName + ":\n");
+                            system.err().println("Error reading from filename [" + fileName + "] (error below).");
                             e.printStackTrace(system.err());
                         }
+                    }
+                    return FileVisitResult.CONTINUE;
                 }
-                return FileVisitResult.CONTINUE;
-            }
-        });
-        system.out().println("Migrated " + counter[0] + " POMs for prj:"+workspaceProject.getName());
+            });
+            system.out().println("Migrated " + counter[0] + " POMs for project: " + workspaceProject.getName());
+
+        }
     }
 
         private boolean projectMigrationWasExecuted() {
@@ -149,13 +135,20 @@ public class PomMigrationTool implements MigrationTool {
             return true;
         }
 
-    private boolean systemMigrationWasExecuted() {
-        final IOService systemIoService = cdiWrapper.getSystemIoService();
-        final Repository systemRepository = cdiWrapper.getSystemRepository();
-        if (!systemIoService.exists(systemIoService.get(systemRepository.getUri()).resolve("spaces"))) {
-            system.err().println(String.format("The SYSTEM CONFIGURATION DIRECTORY STRUCTURE MIGRATION must be ran before this one."));
-            return false;
+    private boolean systemMigrationWasExecuted(ServiceCDIWrapper cdiWrapper) {
+        if(!systemMigrationCheck) {
+            systemMigrationCheck = true;
+            final IOService systemIoService = cdiWrapper.getSystemIoService();
+            final Repository systemRepository = cdiWrapper.getSystemRepository();
+            if (!systemIoService.exists(systemIoService.get(systemRepository.getUri()).resolve("spaces"))) {
+                system.err().println(String.format("The SYSTEM CONFIGURATION DIRECTORY STRUCTURE MIGRATION must be ran before this one."));
+                return false;
+            }
+            return true;
+        }else {
+            return true;
         }
-        return true;
     }
+
+
 }

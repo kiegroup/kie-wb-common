@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +31,13 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.kie.workbench.common.project.migration.cli.ServiceCDIWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
-import org.uberfire.java.nio.file.StandardOpenOption;
 
 public class PomEditor {
 
@@ -77,7 +75,6 @@ public class PomEditor {
         if (kieVersion == null) {
             throw new RuntimeException("Kie version missing in configuration files");
         }
-
     }
 
     public Model updatePom(Path pom) {
@@ -155,7 +152,7 @@ public class PomEditor {
                                                             KIE_MAVEN_PLUGIN_ARTIFACT_ID);
         if (!kieMavenCompiler.isPresent()) {
             buildPlugins.add(getKieMavenPlugin());
-        }else{
+        } else {
             Plugin kieMavenPlugin = buildPlugins.get(kieMavenCompiler.getPosition());
             kieMavenPlugin.setVersion(kieVersion);
         }
@@ -165,7 +162,7 @@ public class PomEditor {
         return reader.read(new ByteArrayInputStream(bytez));
     }
 
-    public Model getModel(Path pom) throws Exception {
+    public Model getModel(Path pom) throws IOException, XmlPullParserException {
         return reader.read(new ByteArrayInputStream(Files.readAllBytes(pom)));
     }
 
@@ -247,7 +244,7 @@ public class PomEditor {
 
     private void updateRepositories(Model model) {
         List<Repository> repos = model.getRepositories();
-        if (repos == null || repos.isEmpty()) {
+        if (repos == null) {
             repos = new ArrayList<>();
         }
         applyMandatoryRepos(repos);
@@ -267,7 +264,7 @@ public class PomEditor {
 
     private void updatePluginRepositories(Model model) {
         List<Repository> repos = model.getPluginRepositories();
-        if (repos == null || repos.isEmpty()) {
+        if (repos == null) {
             repos = new ArrayList<>();
         }
         applyMandatoryPluginRepos(repos, jsonConf);
@@ -282,9 +279,9 @@ public class PomEditor {
         }
     }
 
-    /***************************************** Start PluginRepositories TAG *****************************************/
+    /***************************************** End PluginRepositories TAG *****************************************/
 
-    private boolean write(Model model, Path path){
+    private boolean write(Model model, Path path) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
             writer.write(baos, model);
@@ -301,36 +298,7 @@ public class PomEditor {
                              "Pom's Migration" + path.toString());
             return true;
         } catch (Exception e) {
-            logger.error(e.getMessage());
-            return false;
-        } finally {
-            try {
-                baos.close();
-            } catch (IOException e) {
-                //suppressed
-            }
-        }
-    }
-
-    private boolean writeToFile(Model model, String absolutePath) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            writer.write(baos, model);
-            if (logger.isDebugEnabled()) {
-                logger.info("Pom changed:{}",
-                            new String(baos.toByteArray(),
-                                       StandardCharsets.UTF_8));
-            }
-
-            Path pomParent = Paths.get(URI.create(
-                    new StringBuffer().
-                            append(FILE_URI).
-                            append(absolutePath).toString()));
-            Files.delete(pomParent);
-            Files.write(pomParent, baos.toByteArray(), StandardOpenOption.CREATE_NEW);
-            return true;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return false;
         } finally {
             try {

@@ -35,7 +35,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * It reads the pom-migrations.json with dependencies, repositories and plugin repositories with the following format
- * <p>
+ *
+ * <pre>
  * {
  * "dependencies":[
  * {"groupId":"junit", "artifactId":"junit", "version":"4.12", "scope":"test"},
@@ -63,20 +64,21 @@ import org.slf4j.LoggerFactory;
  * }
  * ]
  * }
+ * </pre>
  */
 public class PomJsonReader {
 
     private final Logger logger = LoggerFactory.getLogger(PomJsonReader.class);
-    private String JSON_POM_FILE;//= "pom-migration.json";
+    private String jsonPomFile;
     private String DEPENDENCIES = "dependencies";
     private String REPOSITORIES = "repositories";
     private String PLUGIN_REPOSITORIES = "pluginRepositories";
     private JsonObject pomObject;
 
     public PomJsonReader(String path, String jsonName) {
-        JSON_POM_FILE = jsonName;
-        if (!path.endsWith(JSON_POM_FILE)) {
-            throw new RuntimeException("no " + JSON_POM_FILE + " in the provided path :" + path);
+        jsonPomFile = jsonName;
+        if (!path.endsWith(jsonPomFile)) {
+            throw new RuntimeException("no " + jsonPomFile + " in the provided path :" + path);
         }
         InputStream fis = null;
         JsonReader reader = null;
@@ -88,15 +90,15 @@ public class PomJsonReader {
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new RuntimeException(e.getMessage());
-        }finally {
-            if(fis != null) {
+        } finally {
+            if (fis != null) {
                 try {
                     fis.close();
-                }catch (IOException ex){
+                } catch (IOException ex) {
                     //suppressed
                 }
             }
-            if(reader != null) {
+            if (reader != null) {
                 reader.close();
             }
         }
@@ -107,7 +109,7 @@ public class PomJsonReader {
         try (JsonReader reader = Json.createReader(in)) {
             pomObject = reader.readObject();
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage());
         }
     }

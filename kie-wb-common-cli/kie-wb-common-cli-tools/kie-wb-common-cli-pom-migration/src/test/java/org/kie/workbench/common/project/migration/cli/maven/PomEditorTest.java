@@ -16,10 +16,12 @@
 package org.kie.workbench.common.project.migration.cli.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
@@ -85,9 +87,13 @@ public class PomEditorTest {
             for (Dependency dep : deps) {
                 assertTrue(dep.getVersion() != null);
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            fail(e.getMessage());
+        } catch (IOException ioex) {
+            logger.error(ioex.getMessage(), ioex);
+            throw new AssertionError(ioex.getMessage());
+        }
+        catch (XmlPullParserException xmlEx) {
+            logger.error(xmlEx.getMessage(), xmlEx);
+            throw new AssertionError(xmlEx.getMessage());
         } finally {
             Files.delete(path);
             Files.copy(pathCopy, path);
@@ -149,7 +155,7 @@ public class PomEditorTest {
             assertTrue(modelUpdated.getPluginRepositories().size() == 2);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            fail(e.getMessage());
+            throw new AssertionError(e.getMessage());
         } finally {
             Files.delete(path);
             Files.copy(pathCopy, path);
@@ -178,7 +184,7 @@ public class PomEditorTest {
             assertTrue(modelUpdated.getGroupId() == null);
         } catch (Exception e) {
             logger.error(e.getMessage());
-            fail(e.getMessage());
+            throw new AssertionError(e.getMessage());
         } finally {
             Files.delete(path);
             Files.copy(pathCopy, path);

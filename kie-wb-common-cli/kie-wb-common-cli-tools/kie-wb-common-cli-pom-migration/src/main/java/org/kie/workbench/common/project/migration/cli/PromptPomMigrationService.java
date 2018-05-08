@@ -62,7 +62,8 @@ public class PromptPomMigrationService {
     }
 
     private boolean jsonExists(String path) {
-        File test = new File(path + File.separator + JSON_POM_FILE);
+        //File test = new File(path + File.separator + JSON_POM_FILE);
+        File test = new File(path, JSON_POM_FILE);
         return test.exists() && test.isFile();
     }
 }

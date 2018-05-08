@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.guvnor.common.services.backend.util.CommentedOptionFactory;
+import org.guvnor.common.services.project.service.WorkspaceProjectService;
 import org.guvnor.structure.repositories.Repository;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
@@ -36,15 +37,19 @@ public class ServiceCDIWrapper {
 
     private IOService systemIoService;
 
+    private WorkspaceProjectService workspaceProjectService;
+
     @Inject
     public ServiceCDIWrapper(final @Named("ioStrategy") IOService ioService,
-                                       final CommentedOptionFactory commentedOptionFactory,
-                                       final @Named("system") Repository systemRepository,
-                                       final @Named("configIO") IOService systemIoService) {
+                             final CommentedOptionFactory commentedOptionFactory,
+                             final @Named("system") Repository systemRepository,
+                             final @Named("configIO") IOService systemIoService,
+                             final WorkspaceProjectService workspaceProjectService) {
         this.ioService = ioService;
         this.commentedOptionFactory = commentedOptionFactory;
         this.systemRepository = systemRepository;
         this.systemIoService = systemIoService;
+        this.workspaceProjectService = workspaceProjectService;
     }
 
     public IOService getIOService() {
@@ -61,5 +66,9 @@ public class ServiceCDIWrapper {
 
     public IOService getSystemIoService() {
         return systemIoService;
+    }
+
+    public WorkspaceProjectService getWorkspaceProjectService(){
+        return workspaceProjectService;
     }
 }

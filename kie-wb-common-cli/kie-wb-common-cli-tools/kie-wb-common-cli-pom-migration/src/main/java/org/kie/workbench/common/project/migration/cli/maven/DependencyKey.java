@@ -18,6 +18,7 @@ package org.kie.workbench.common.project.migration.cli.maven;
 import java.util.Objects;
 
 import org.apache.maven.model.Dependency;
+import org.kie.soup.commons.validation.PortablePreconditions;
 
 public class DependencyKey {
 
@@ -33,6 +34,7 @@ public class DependencyKey {
 
     @Override
     public boolean equals(Object o) {
+        PortablePreconditions.checkNotNull("DependencyKey", o);
         if (this == o) {
             return true;
         }
@@ -47,5 +49,13 @@ public class DependencyKey {
     @Override
     public int hashCode() {
         return Objects.hash(dependency.getGroupId(), dependency.getArtifactId());
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DependencyKey{");
+        sb.append("dependency=").append(dependency);
+        sb.append('}');
+        return sb.toString();
     }
 }
