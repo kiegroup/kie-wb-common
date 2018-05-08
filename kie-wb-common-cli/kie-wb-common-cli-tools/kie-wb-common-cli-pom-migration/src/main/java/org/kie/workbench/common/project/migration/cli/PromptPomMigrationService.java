@@ -27,14 +27,9 @@ public class PromptPomMigrationService {
 
     private static final String JSON_POM_FILE = "pom-migration.json";
     private SystemAccess system;
-    private ToolConfig config;
-    private Path niogitDir;
 
-    public PromptPomMigrationService(final SystemAccess system,
-                                     final ToolConfig config) {
+    public PromptPomMigrationService(final SystemAccess system) {
         this.system = system;
-        this.config = config;
-        this.niogitDir = config.getTarget();
     }
 
     public String promptForExternalConfiguration() {
@@ -62,7 +57,6 @@ public class PromptPomMigrationService {
     }
 
     private boolean jsonExists(String path) {
-        //File test = new File(path + File.separator + JSON_POM_FILE);
         File test = new File(path, JSON_POM_FILE);
         return test.exists() && test.isFile();
     }
