@@ -15,6 +15,10 @@
  */
 package org.kie.workbench.common.project.migration.cli.maven;
 
+import java.util.Objects;
+
+import org.kie.soup.commons.validation.PortablePreconditions;
+
 public class PluginPresence {
 
     private boolean isPresent;
@@ -31,5 +35,34 @@ public class PluginPresence {
 
     public int getPosition() {
         return position;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("PluginPresence{");
+        sb.append("isPresent=").append(isPresent);
+        sb.append(", position=").append(position);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        PortablePreconditions.checkNotNull("PluginPresence", o);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PluginPresence)) {
+            return false;
+        }
+        PluginPresence that = (PluginPresence) o;
+        return isPresent == that.isPresent &&
+                position == that.position;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(isPresent, position);
     }
 }

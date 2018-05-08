@@ -35,6 +35,7 @@ public class DependencyKey {
 
     @Override
     public boolean equals(Object o) {
+        PortablePreconditions.checkNotNull("DependencyKey", o);
         if (this == o) {
             return true;
         }

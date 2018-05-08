@@ -46,13 +46,13 @@ public class PomEditorTest {
     private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
     private PomEditor editor;
     private String currentDir;
-    private String CURRICULUM_COURSE_PRJ = "/target/test-classes/curriculumcourse/";
-    private String DINNER_PARTY_PRJ = "/target/test-classes/dinnerparty/";
-    private String EMPLOYEE_ROSTERING_PRJ = "/target/test-classes/employee-rostering/";
-    private String EVALUATION_PRJ = "/target/test-classes/employee-rostering/";
-    private String ITORDERS_PRJ = "/target/test-classes/itorders/";
-    private String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
-    private String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
+    private static final String CURRICULUM_COURSE_PRJ = "/target/test-classes/curriculumcourse/";
+    private static final String DINNER_PARTY_PRJ = "/target/test-classes/dinnerparty/";
+    private static final String EMPLOYEE_ROSTERING_PRJ = "/target/test-classes/employee-rostering/";
+    private static final String EVALUATION_PRJ = "/target/test-classes/employee-rostering/";
+    private static final String ITORDERS_PRJ = "/target/test-classes/itorders/";
+    private static final String MORTGAGES_PRJ = "/target/test-classes/mortgages/";
+    private static final String OPTACLOUD_PRJ = "/target/test-classes/optacloud/";
     private WeldContainer weldContainer;
     private ServiceCDIWrapper cdiWrapper;
 

@@ -37,7 +37,7 @@ public class PromptPomMigrationService {
         Collection<String> validResponses = Arrays.asList("yes", "no");
         String response;
         do {
-            response = console.readLine("Do you want provide a path to an external Pom migration json  with dependencies and repositories ? [yes/no]: ").toLowerCase();
+            response = console.readLine("Do you want provide a path to an external Pom migration json with dependencies and repositories ? [yes/no]: ").toLowerCase();
         } while (!validResponses.contains(response));
 
         if ("yes".equals(response)) {

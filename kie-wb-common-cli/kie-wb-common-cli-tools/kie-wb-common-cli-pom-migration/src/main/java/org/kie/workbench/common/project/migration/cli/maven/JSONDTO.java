@@ -16,9 +16,11 @@
 package org.kie.workbench.common.project.migration.cli.maven;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Repository;
+import org.kie.soup.commons.validation.PortablePreconditions;
 
 public class JSONDTO {
 
@@ -42,5 +44,36 @@ public class JSONDTO {
 
     public List<Repository> getPluginRepositories() {
         return pluginRepositories;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("JSONDTO{");
+        sb.append("dependencies=").append(dependencies);
+        sb.append(", repositories=").append(repositories);
+        sb.append(", pluginRepositories=").append(pluginRepositories);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        PortablePreconditions.checkNotNull("JSONDTO", o);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof JSONDTO)) {
+            return false;
+        }
+        JSONDTO jsondto = (JSONDTO) o;
+        return Objects.equals(dependencies, jsondto.dependencies) &&
+                Objects.equals(repositories, jsondto.repositories) &&
+                Objects.equals(pluginRepositories, jsondto.pluginRepositories);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(dependencies, repositories, pluginRepositories);
     }
 }

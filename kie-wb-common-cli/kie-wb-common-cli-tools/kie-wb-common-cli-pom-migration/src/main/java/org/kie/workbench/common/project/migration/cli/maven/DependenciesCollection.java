@@ -18,8 +18,10 @@ package org.kie.workbench.common.project.migration.cli.maven;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.model.Dependency;
+import org.kie.soup.commons.validation.PortablePreconditions;
 
 public class DependenciesCollection {
 
@@ -46,5 +48,31 @@ public class DependenciesCollection {
             deps.add(key.getDependency());
         }
         return deps;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DependenciesCollection{");
+        sb.append("keys=").append(keys);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        PortablePreconditions.checkNotNull("DependenciesCollection", o);
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DependenciesCollection)) {
+            return false;
+        }
+        DependenciesCollection that = (DependenciesCollection) o;
+        return Objects.equals(keys, that.keys);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(keys);
     }
 }

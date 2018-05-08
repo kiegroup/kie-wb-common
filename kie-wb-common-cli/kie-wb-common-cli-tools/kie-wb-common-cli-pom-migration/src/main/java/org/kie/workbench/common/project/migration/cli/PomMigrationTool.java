@@ -39,7 +39,7 @@ public class PomMigrationTool implements MigrationTool {
 
     private SystemAccess system;
     private ToolConfig config;
-    private String POM_DOT_XML = "pom.xml";
+    private final String POM_DOT_XML = "pom.xml";
     boolean systemMigrationCheck;
 
     @Override
