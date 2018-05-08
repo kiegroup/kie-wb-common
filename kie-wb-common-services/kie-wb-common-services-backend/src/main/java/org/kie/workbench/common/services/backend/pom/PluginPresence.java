@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.project.migration.cli.maven;
+package org.kie.workbench.common.services.backend.pom;
 
 import java.util.Objects;
-
-import org.kie.soup.commons.validation.PortablePreconditions;
 
 public class PluginPresence {
 

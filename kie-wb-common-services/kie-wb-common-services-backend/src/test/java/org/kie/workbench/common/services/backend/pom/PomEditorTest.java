@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.project.migration.cli.maven;
+package org.kie.workbench.common.services.backend.pom;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,13 +22,10 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.jboss.weld.environment.se.Weld;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
-import org.kie.workbench.common.migration.cli.RealSystemAccess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -52,14 +49,11 @@ public class PomEditorTest {
     private PomEditor editor;
     private String currentDir;
     private WeldContainer weldContainer;
-    private MigrationServicesCDIWrapper cdiWrapper;
 
     @Before
     public void setUp() {
-        weldContainer = new Weld().initialize();
-        cdiWrapper = weldContainer.instance().select(MigrationServicesCDIWrapper.class).get();
         currentDir = new File(".").getAbsolutePath();
-        editor = new PomEditor(new RealSystemAccess(), cdiWrapper);
+        editor = new PomEditor();
     }
 
     @After
@@ -77,7 +71,7 @@ public class PomEditorTest {
             Model original = editor.getModel(path);
             assertTrue(original.getBuild().getPlugins().size() == 1);
 
-            Model modelUpdated = editor.updatePom(path);
+            Model modelUpdated = editor.updatePomWithoutWrite(path);
             assertEquals(modelUpdated.getPackaging(), "kjar");
             assertNotNull(modelUpdated);
             assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
@@ -149,7 +143,7 @@ public class PomEditorTest {
             assertTrue(original.getRepositories().size() == 0);
             assertTrue(original.getPluginRepositories().size() == 0);
 
-            Model modelUpdated = editor.updatePom(path, jsonPath.toAbsolutePath().toString());
+            Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
             assertNotNull(modelUpdated);
             assertEquals(modelUpdated.getPackaging(), "kjar");
             assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
@@ -181,9 +175,9 @@ public class PomEditorTest {
             assertTrue(original.getPluginRepositories().size() == 0);
 
             Model modelUpdated;
-            modelUpdated = editor.updatePom(path, null);
+            modelUpdated = editor.updatePomWithoutWrite(path, null);
             assertTrue(modelUpdated.getGroupId() == null);
-            modelUpdated = editor.updatePom(null, null);
+            modelUpdated = editor.updatePomWithoutWrite(null, null);
             assertTrue(modelUpdated.getGroupId() == null);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);

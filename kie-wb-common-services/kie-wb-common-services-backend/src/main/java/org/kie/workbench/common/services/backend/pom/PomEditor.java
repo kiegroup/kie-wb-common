@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.project.migration.cli.maven;
+package org.kie.workbench.common.services.backend.pom;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+
+import javax.enterprise.context.ApplicationScoped;
 
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
@@ -32,14 +32,14 @@ import org.apache.maven.model.Repository;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
-import org.kie.workbench.common.migration.cli.SystemAccess;
+import org.guvnor.common.services.project.backend.server.PomEnhancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 
-public class PomEditor {
+@ApplicationScoped
+public class PomEditor implements PomEnhancer {
 
     private static final String PROPERTIES_FILE = "PomMigration.properties";
     private static final String JSON_POM_MIGRATION = "pom-migration.json";
@@ -58,14 +58,10 @@ public class PomEditor {
     private String kieVersion;
     private JSONDTO jsonConf;
     private PomJsonReader jsonReader, jsonMandatoryDepsReader;
-    private SystemAccess system;
-    private MigrationServicesCDIWrapper cdiWrapper;
 
     private Properties props;
 
-    public PomEditor(SystemAccess system, MigrationServicesCDIWrapper cdiWrapper) {
-        this.cdiWrapper = cdiWrapper;
-        this.system = system;
+    public PomEditor() {
         reader = new MavenXpp3Reader();
         writer = new MavenXpp3Writer();
         props = loadProperties(PROPERTIES_FILE);
@@ -76,35 +72,46 @@ public class PomEditor {
         }
     }
 
-    public Model updatePom(Path pom) {
+    @Override
+    public Model execute(Model model) {
         try {
-            Model model = getModel(pom);
-            Build build = getBuild(model);
-            updatePackaging(model);
-            updateBuildTag(build);
-            updateDependenciesTag(model);
-            updateRepositories(model);
-            updatePluginRepositories(model);
-            boolean written = write(model, pom);
-            if (written) {
-                return model;
-            } else {
-                return new Model();
-            }
+            process(model);
+            return model;
         } catch (Exception e) {
-            system.err().println("Error occurred during POMs migration:" + e.getMessage());
+            System.err.println("Error occurred during POMs migration:" + e.getMessage());
             logger.error(e.getMessage());
             return new Model();
         }
     }
 
-    public Model updatePom(Path pom, String pathJsonFile) {
+    private void process(Model model) {
+        Build build = getBuild(model);
+        updatePackaging(model);
+        updateBuildTag(build);
+        updateDependenciesTag(model);
+        updateRepositories(model);
+        updatePluginRepositories(model);
+    }
+
+    public Model updatePomWithoutWrite(Path pom) {
+        try {
+            Model model = getModel(pom);
+            process(model);
+            return model;
+        } catch (Exception e) {
+            System.err.println("Error occurred during POMs migration:" + e.getMessage());
+            logger.error(e.getMessage());
+            return new Model();
+        }
+    }
+
+    public Model updatePomWithoutWrite(Path pom, String pathJsonFile) {
         try {
             jsonReader = new PomJsonReader(pathJsonFile, JSON_POM_MIGRATION);
             jsonConf = jsonReader.readDepsAndRepos();
-            return updatePom(pom);
+            return updatePomWithoutWrite(pom);
         } catch (Exception e) {
-            system.err().println("Error occurred during POMs migration:" + e.getMessage());
+            System.err.println("Error occurred during POMs migration:" + e.getMessage());
             logger.error(e.getMessage());
             return new Model();
         }
@@ -280,31 +287,4 @@ public class PomEditor {
 
     /***************************************** End PluginRepositories TAG *****************************************/
 
-    private boolean write(Model model, Path path) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try {
-            writer.write(baos, model);
-            if (logger.isInfoEnabled()) {
-                logger.info("Pom changed of the groupID:{} artifactID:{}:\n{}",
-                            model.getGroupId(),
-                            model.getArtifactId(),
-                            new String(baos.toByteArray(),
-                                       StandardCharsets.UTF_8));
-            }
-
-            cdiWrapper.write(org.uberfire.backend.server.util.Paths.convert(path),
-                             new String(baos.toByteArray(), StandardCharsets.UTF_8),
-                             "Pom's Migration" + path.toString());
-            return true;
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            return false;
-        } finally {
-            try {
-                baos.close();
-            } catch (IOException e) {
-                //suppressed
-            }
-        }
-    }
 }

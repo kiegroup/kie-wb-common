@@ -28,7 +28,7 @@ import org.kie.workbench.common.migration.cli.MigrationSetup;
 import org.kie.workbench.common.migration.cli.MigrationTool;
 import org.kie.workbench.common.migration.cli.SystemAccess;
 import org.kie.workbench.common.migration.cli.ToolConfig;
-import org.kie.workbench.common.project.migration.cli.maven.PomEditor;
+import org.kie.workbench.common.project.migration.cli.maven.PomMigrationEditor;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
@@ -93,7 +93,7 @@ public class PomMigrationTool implements MigrationTool {
     private void processWorkspaceProject(WorkspaceProject workspaceProject, String jsonPath, MigrationServicesCDIWrapper cdiWrapper) {
         if (systemMigrationWasExecuted(cdiWrapper)) {
 
-            PomEditor editor = new PomEditor(system, cdiWrapper);
+            PomMigrationEditor editor = new PomMigrationEditor();
             final int[] counter = {0};
             Files.walkFileTree(Paths.convert(workspaceProject.getRootPath()), new SimpleFileVisitor<org.uberfire.java.nio.file.Path>() {
                 @Override
@@ -107,9 +107,9 @@ public class PomMigrationTool implements MigrationTool {
                         try {
                             Model model;
                             if (jsonPath.isEmpty()) {
-                                model = editor.updatePom(visitedPath);
+                                model = editor.updatePom(visitedPath, cdiWrapper);
                             } else {
-                                model = editor.updatePom(visitedPath, jsonPath);
+                                model = editor.updatePom(visitedPath, jsonPath, cdiWrapper);
                             }
                             if (!model.getBuild().getPlugins().isEmpty()) {
                                 counter[0]++;

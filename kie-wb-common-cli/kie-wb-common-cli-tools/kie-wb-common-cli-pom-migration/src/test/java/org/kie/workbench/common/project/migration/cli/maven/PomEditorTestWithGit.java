@@ -32,7 +32,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.migration.cli.MigrationServicesCDIWrapper;
-import org.kie.workbench.common.migration.cli.RealSystemAccess;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.IOException;
 import org.uberfire.java.nio.file.Files;
@@ -50,7 +49,7 @@ public class PomEditorTestWithGit {
 
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private PomEditor editor;
+    private PomMigrationEditor editor;
     private WeldContainer weldContainer;
     private MigrationServicesCDIWrapper cdiWrapper;
 
@@ -60,7 +59,7 @@ public class PomEditorTestWithGit {
         cdiWrapper = weldContainer.instance().select(MigrationServicesCDIWrapper.class).get();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-        editor = new PomEditor(new RealSystemAccess(), cdiWrapper);
+        editor = new PomMigrationEditor();
     }
 
     @After
@@ -94,7 +93,7 @@ public class PomEditorTestWithGit {
         byte[] encoded = Files.readAllBytes(pomPath);
         String pomOriginal = new String(encoded, StandardCharsets.UTF_8);
 
-        Model model = editor.updatePom(pomPath);
+        Model model = editor.updatePom(pomPath, cdiWrapper);
         assertNotNull(model);
 
         PullCommand pc = cloned.pull().setRemote("origin").setRebase(Boolean.TRUE);
