@@ -51,8 +51,8 @@ public class EndEventShapeDef
                     .put(EndErrorEvent.class,
                          BPMNSVGViewFactory::endErrorEvent);
 
-    public static final Map<Class<? extends BaseEndEvent>, SvgDataUriGlyph> GLYPHS =
-            new HashMap<Class<? extends BaseEndEvent>, SvgDataUriGlyph>() {{
+    public static final Map<Class<? extends BaseEndEvent>, Glyph> GLYPHS =
+            new HashMap<Class<? extends BaseEndEvent>, Glyph>() {{
                 put(EndNoneEvent.class,
                     BPMNSVGGlyphFactory.END_NONE_EVENT_GLYPH);
                 put(EndSignalEvent.class,

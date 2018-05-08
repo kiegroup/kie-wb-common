@@ -39,8 +39,8 @@ public class ThrowingIntermediateEventShapeDef
                     .put(IntermediateSignalEventThrowing.class, BPMNSVGViewFactory::intermediateSignalThrowingEvent)
                     .put(IntermediateMessageEventThrowing.class, BPMNSVGViewFactory::intermediateMessageThrowingEvent);
 
-    public static final Map<Class<? extends BaseThrowingIntermediateEvent>, SvgDataUriGlyph> GLYPHS =
-            new HashMap<Class<? extends BaseThrowingIntermediateEvent>, SvgDataUriGlyph>() {{
+    public static final Map<Class<? extends BaseThrowingIntermediateEvent>, Glyph> GLYPHS =
+            new HashMap<Class<? extends BaseThrowingIntermediateEvent>, Glyph>() {{
                 put(IntermediateSignalEventThrowing.class, BPMNSVGGlyphFactory.INTERMEDIATE_SIGNAL_EVENT_THROWING_GLYPH);
                 put(IntermediateMessageEventThrowing.class, BPMNSVGGlyphFactory.INTERMEDIATE_MESSAGE_EVENT_THROWING_GLYPH);
             }};

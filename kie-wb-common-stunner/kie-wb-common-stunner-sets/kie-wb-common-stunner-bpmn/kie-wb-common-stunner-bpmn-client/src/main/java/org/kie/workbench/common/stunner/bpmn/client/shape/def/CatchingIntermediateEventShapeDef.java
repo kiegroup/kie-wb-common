@@ -51,8 +51,8 @@ public class CatchingIntermediateEventShapeDef
                     .put(IntermediateMessageEventCatching.class,
                          BPMNSVGViewFactory::intermediateMessageCatchingEvent);
 
-    public static final Map<Class<? extends BaseCatchingIntermediateEvent>, SvgDataUriGlyph> GLYPHS =
-            new HashMap<Class<? extends BaseCatchingIntermediateEvent>, SvgDataUriGlyph>() {{
+    public static final Map<Class<? extends BaseCatchingIntermediateEvent>, Glyph> GLYPHS =
+            new HashMap<Class<? extends BaseCatchingIntermediateEvent>, Glyph>() {{
                 put(IntermediateTimerEvent.class,
                     BPMNSVGGlyphFactory.INTERMEDIATE_TIMER_EVENT_GLYPH);
                 put(IntermediateSignalEventCatching.class,
