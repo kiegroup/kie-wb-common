@@ -48,7 +48,9 @@ public class DefinitionsPropertyWriter {
                 extensionAttribute,
                 "http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd " +
                         "http://www.jboss.org/drools drools.xsd " +
-                        "http://www.bpsim.org/schemas/1.0 bpsim.xsd");
+                        "http://www.bpsim.org/schemas/1.0 bpsim.xsd " +
+                        "http://www.omg.org/spec/DD/20100524/DC DC.xsd " +
+                        "http://www.omg.org/spec/DD/20100524/DI DI.xsd ");
         definitions.getAnyAttribute().add(extensionEntry);
     }
 
