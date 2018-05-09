@@ -188,4 +188,43 @@ public class PomEditorTest {
             Files.delete(pathCopy);
         }
     }
+
+    @Test
+    public void updateGenericWithCheckVersionOfExistingDep() {
+        String prj = "/target/test-classes/generic_with_version/";
+        Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
+        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        Files.copy(path, pathCopy);
+        try {
+
+            Model original = editor.getModel(path);
+            assertEquals(original.getPackaging(), "kjar");
+            assertTrue(original.getDependencies().size() == 1);
+            assertTrue(original.getRepositories().size() == 0);
+            assertTrue(original.getPluginRepositories().size() == 0);
+
+            Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
+            assertNotNull(modelUpdated);
+            assertEquals(modelUpdated.getPackaging(), "kjar");
+            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
+            assertTrue(modelUpdated.getDependencies().size() == 7);
+            assertTrue(modelUpdated.getRepositories().size() == 2);
+            assertTrue(modelUpdated.getPluginRepositories().size() == 2);
+            for(Dependency dep: modelUpdated.getDependencies()){
+                assertTrue(dep.getVersion() != null);
+                if(dep.getGroupId().equals("org.group") && dep.getArtifactId().equals("workitems")){
+                    assertTrue(dep.getVersion().equals("1.0.0-FINAL"));
+                }
+            }
+
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new AssertionError(e.getMessage());
+        } finally {
+            Files.delete(path);
+            Files.copy(pathCopy, path);
+            Files.delete(pathCopy);
+        }
+    }
 }
