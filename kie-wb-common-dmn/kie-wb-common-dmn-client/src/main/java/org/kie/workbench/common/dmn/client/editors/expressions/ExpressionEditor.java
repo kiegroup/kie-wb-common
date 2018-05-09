@@ -113,6 +113,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
         boolean copyCommandEnabled = false;
         boolean cutCommandEnabled = false;
         boolean pasteCommandEnabled = false;
+        boolean saveCommandEnabled = false;
 
         private ToolbarCommandStateHandler(final DMNEditorToolbar toolbar) {
             this.toolbar = toolbar;
@@ -132,6 +133,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             this.copyCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getCopyToolbarCommand());
             this.cutCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getCutToolbarCommand());
             this.pasteCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getPasteToolbarCommand());
+            this.saveCommandEnabled = toolbar.isEnabled((ToolbarCommand) toolbar.getSaveToolbarCommand());
 
             enableToolbarCommand(toolbar.getVisitGraphToolbarCommand(),
                                  false);
@@ -158,6 +160,8 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
             enableToolbarCommand(toolbar.getCutToolbarCommand(),
                                  false);
             enableToolbarCommand(toolbar.getPasteToolbarCommand(),
+                                 false);
+            enableToolbarCommand(toolbar.getSaveToolbarCommand(),
                                  false);
         }
 
@@ -188,6 +192,8 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
                                  cutCommandEnabled);
             enableToolbarCommand(toolbar.getPasteToolbarCommand(),
                                  pasteCommandEnabled);
+            enableToolbarCommand(toolbar.getSaveToolbarCommand(),
+                                 saveCommandEnabled);
         }
 
         private void enableToolbarCommand(final ToolbarCommand command,

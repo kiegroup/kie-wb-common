@@ -35,6 +35,5 @@ public abstract class AbstractCanvasHandlerControl<H extends AbstractCanvasHandl
     @Override
     public void destroy() {
         doDestroy();
-        this.canvasHandler = null;
     }
 }
