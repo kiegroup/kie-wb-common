@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.bpmn2.FlowNode;
 import org.eclipse.bpmn2.SequenceFlow;
 import org.eclipse.bpmn2.di.BPMNEdge;
+import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomElement;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
@@ -84,8 +85,8 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
         bpmnEdge.setId(Ids.bpmnEdge(source.getShape().getId(), target.getShape().getId()));
         bpmnEdge.setBpmnElement(sequenceFlow);
 
-        Point2D sourcePt = sourceConnection.getLocation();
-        Point2D targetPt = targetConnection.getLocation();
+        Point2D sourcePt = getSourceLocation(sourceConnection);
+        Point2D targetPt = getTargetLocation(targetConnection);
 
         org.eclipse.dd.dc.Point sourcePoint = pointOf(
                 source.getShape().getBounds().getX() + sourcePt.getX(),
@@ -107,6 +108,26 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
         waypoints.add(targetPoint);
 
         this.bpmnEdge = bpmnEdge;
+    }
+
+    private Point2D getSourceLocation(Connection sourceConnection) {
+        Point2D location = sourceConnection.getLocation();
+        if (location == null) {
+            location = getDefaultLocation(source.getShape().getBounds());
+        }
+        return location;
+    }
+
+    private Point2D getTargetLocation(Connection targetConnection) {
+        Point2D location = targetConnection.getLocation();
+        if (location == null) {
+            location = getDefaultLocation(target.getShape().getBounds());
+        }
+        return location;
+    }
+
+    private Point2D getDefaultLocation(Bounds bounds) {
+        return Point2D.create(bounds.getX(), bounds.getY());
     }
 
     private org.eclipse.dd.dc.Point pointOf(double x, double y) {

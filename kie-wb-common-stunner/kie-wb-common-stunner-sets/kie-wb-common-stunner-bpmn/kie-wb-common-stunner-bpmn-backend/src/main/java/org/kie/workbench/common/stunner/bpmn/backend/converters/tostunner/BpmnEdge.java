@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 public interface BpmnEdge {
@@ -30,7 +30,7 @@ public interface BpmnEdge {
     static BpmnEdge.Simple of(
             Edge<View<SequenceFlow>, Node> edge,
             BpmnNode source, Connection sourceConnection,
-            List<ControlPoint> controlPoints,
+            List<Point2D> controlPoints,
             BpmnNode target, Connection targetConnection) {
         return new BpmnEdge.Simple(edge, source, sourceConnection, controlPoints, target, targetConnection);
     }
@@ -48,11 +48,11 @@ public interface BpmnEdge {
         private final Edge<View<SequenceFlow>, Node> edge;
         private final BpmnNode source;
         private final Connection sourceConnection;
-        private final List<ControlPoint> controlPoints;
+        private final List<Point2D> controlPoints;
         private final BpmnNode target;
         private final Connection targetConnection;
 
-        private Simple(Edge<View<SequenceFlow>, Node> edge, BpmnNode source, Connection sourceConnection, List<ControlPoint> controlPoints, BpmnNode target, Connection targetConnection) {
+        private Simple(Edge<View<SequenceFlow>, Node> edge, BpmnNode source, Connection sourceConnection, List<Point2D> controlPoints, BpmnNode target, Connection targetConnection) {
             this.edge = edge;
             this.source = source;
             this.sourceConnection = sourceConnection;
@@ -73,7 +73,7 @@ public interface BpmnEdge {
             return sourceConnection;
         }
 
-        public List<ControlPoint> getControlPoints() {
+        public List<Point2D> getControlPoints() {
             return controlPoints;
         }
 
