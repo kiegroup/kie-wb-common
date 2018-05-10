@@ -34,29 +34,40 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class AdHocSubProcessTest extends BPMNDiagramMarshallerBase {
 
     private static final String BPMN_ADHOC_SUBPROCESS_AUTOSTART =
             "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/adHocSubProcessAutostart.bpmn";
-    private static final String ADHOC_SUBPROCESS_ID = "_8D223345-9B6F-4AD3-997B-582C9222CC35";
-    private static final String USER_TASK_ID = "_E386D64B-70FE-45E5-A190-C65EB8695480";
-    private static final String BUSINESS_RULE_TASK_ID = "_5AF47879-8D23-4893-8668-ADF88C3EAD1B";
+    private static final String BPMN_ADHOC_SUBPROCESS_SPECIAL_CHARACTERS =
+            "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/adHocSubProcessSpecialCharacters.bpmn";
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         super.init();
     }
 
     @Test
-    public void testOldMarshaller() throws Exception {
-        testUnmarshallAddHocSubprocessAutostart(oldMarshaller);
+    public void testOldMarshallerAdHocSpecificProperties() throws Exception {
+        unmarshallAddHocSubprocess(oldMarshaller);
     }
 
     @Test
-    public void testNewMarshaller() throws Exception {
-        testUnmarshallAddHocSubprocessAutostart(newMarshaller);
+    public void testNewMarshallerAdHocSpecificProperties() throws Exception {
+        unmarshallAddHocSubprocess(newMarshaller);
+    }
+
+    @Test
+    public void testOldMarshallerSpecialCharacters() throws Exception {
+        unmarshallAddHocSubprocessSpecialCharacters(oldMarshaller);
+    }
+
+    @Test
+    public void testNewMarshallerSpecialCharacters() throws Exception {
+        unmarshallAddHocSubprocessSpecialCharacters(newMarshaller);
     }
 
     @Test
@@ -67,7 +78,21 @@ public class AdHocSubProcessTest extends BPMNDiagramMarshallerBase {
         assertDiagramEquals(oldDiagram, newDiagram, BPMN_ADHOC_SUBPROCESS_AUTOSTART);
     }
 
-    private void testUnmarshallAddHocSubprocessAutostart(final DiagramMarshaller marshaller) throws Exception {
+    @Test
+    public void testMigrationSpecialCharacters() throws Exception {
+        Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, BPMN_ADHOC_SUBPROCESS_SPECIAL_CHARACTERS);
+        Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, BPMN_ADHOC_SUBPROCESS_SPECIAL_CHARACTERS);
+
+        assertDiagramEquals(oldDiagram, newDiagram, BPMN_ADHOC_SUBPROCESS_SPECIAL_CHARACTERS);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void unmarshallAddHocSubprocess(final DiagramMarshaller marshaller) throws Exception {
+
+        final String ADHOC_SUBPROCESS_ID = "_8D223345-9B6F-4AD3-997B-582C9222CC35";
+        final String USER_TASK_ID = "_E386D64B-70FE-45E5-A190-C65EB8695480";
+        final String BUSINESS_RULE_TASK_ID = "_5AF47879-8D23-4893-8668-ADF88C3EAD1B";
+
         Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_ADHOC_SUBPROCESS_AUTOSTART);
 
         Node<? extends Definition, ?> adHocSubProcessNode = diagram.getGraph().getNode(ADHOC_SUBPROCESS_ID);
@@ -78,20 +103,21 @@ public class AdHocSubProcessTest extends BPMNDiagramMarshallerBase {
         BPMNGeneralSet generalSet = adHocSubprocess.getGeneral();
         AdHocSubprocessTaskExecutionSet executionSet = adHocSubprocess.getExecutionSet();
         ProcessData processData = adHocSubprocess.getProcessData();
-        assertNotNull(generalSet);
-        assertNotNull(executionSet);
-        assertNotNull(processData);
 
         assertEquals("AdHoc Sub-process",
                      generalSet.getName().getValue());
         assertEquals("for marshalling test",
                      generalSet.getDocumentation().getValue());
 
-        assertNotNull(executionSet.getAdHocCompletionCondition());
-        assertNotNull(executionSet.getAdHocCompletionCondition().getValue());
-        assertNotNull(executionSet.getAdHocOrdering());
-        assertNotNull(executionSet.getOnEntryAction());
-        assertNotNull(executionSet.getOnExitAction());
+        assertEquals("",
+                     executionSet.getOnEntryAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     executionSet.getOnEntryAction().getValue().getValues().get(0).getLanguage());
+
+        assertEquals("",
+                     executionSet.getOnExitAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     executionSet.getOnExitAction().getValue().getValues().get(0).getLanguage());
 
         assertEquals("varA == null",
                      executionSet.getAdHocCompletionCondition().getValue().getScript());
@@ -106,12 +132,59 @@ public class AdHocSubProcessTest extends BPMNDiagramMarshallerBase {
 
         Node<? extends Definition, ?> userTaskNode = diagram.getGraph().getNode(USER_TASK_ID);
         UserTask userTask = (UserTask) userTaskNode.getContent().getDefinition();
-        assertEquals(true,
-                     userTask.getExecutionSet().getAdHocAutostart().getValue());
+        assertTrue(userTask.getExecutionSet().getAdHocAutostart().getValue());
 
         Node<? extends Definition, ?> businessRuleTaskNode = diagram.getGraph().getNode(BUSINESS_RULE_TASK_ID);
         BusinessRuleTask businessRuleTask = (BusinessRuleTask) businessRuleTaskNode.getContent().getDefinition();
-        assertEquals(true,
-                     businessRuleTask.getExecutionSet().getAdHocAutostart().getValue());
+        assertTrue(businessRuleTask.getExecutionSet().getAdHocAutostart().getValue());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void unmarshallAddHocSubprocessSpecialCharacters(final DiagramMarshaller marshaller) throws Exception {
+        final String ADHOC_SUBPROCESS_ID = "_56770326-5337-4F88-A502-1269AB8E4786";
+        final String USER_TASK_ID = "_1AEB4B8A-4515-404D-A1F3-2FFCA864C4CF";
+
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_ADHOC_SUBPROCESS_SPECIAL_CHARACTERS);
+
+        Node<? extends Definition, ?> adHocSubProcessNode = diagram.getGraph().getNode(ADHOC_SUBPROCESS_ID);
+        AdHocSubprocess adHocSubprocess = (AdHocSubprocess) adHocSubProcessNode.getContent().getDefinition();
+
+        assertNotNull(adHocSubprocess);
+
+        BPMNGeneralSet generalSet = adHocSubprocess.getGeneral();
+        AdHocSubprocessTaskExecutionSet executionSet = adHocSubprocess.getExecutionSet();
+        ProcessData processData = adHocSubprocess.getProcessData();
+
+        assertEquals("~`!@#$%^&*()_+|}{[]\":;'<>?/.,",
+                     generalSet.getName().getValue());
+        assertEquals("式",
+                     generalSet.getDocumentation().getValue());
+
+        assertEquals("String message = \"entering!\";\n" +
+                             "System.out.println(message);",
+                     executionSet.getOnEntryAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     executionSet.getOnEntryAction().getValue().getValues().get(0).getLanguage());
+
+        assertEquals("String message = \"leaving!\";\n" +
+                             "System.out.println(message);",
+                     executionSet.getOnExitAction().getValue().getValues().get(0).getScript());
+        assertEquals("java",
+                     executionSet.getOnExitAction().getValue().getValues().get(0).getLanguage());
+
+        assertEquals("Person(name == \"式\" && age > 18)",
+                     executionSet.getAdHocCompletionCondition().getValue().getScript());
+        assertEquals("drools",
+                     executionSet.getAdHocCompletionCondition().getValue().getLanguage());
+
+        assertEquals("Sequential",
+                     executionSet.getAdHocOrdering().getValue());
+
+        assertEquals("",
+                     processData.getProcessVariables().getValue());
+
+        Node<? extends Definition, ?> userTaskNode = diagram.getGraph().getNode(USER_TASK_ID);
+        UserTask userTask = (UserTask) userTaskNode.getContent().getDefinition();
+        assertFalse(userTask.getExecutionSet().getAdHocAutostart().getValue());
     }
 }
