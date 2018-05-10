@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.bpmn2.FormalExpression;
@@ -29,6 +30,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
+import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.slf4j.Logger;
@@ -80,12 +82,16 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
 
     public Connection getSourceConnection() {
         Point2D sourcePosition = getSourcePosition(element.getId(), getSourceId());
-        return MagnetConnection.Builder.at(sourcePosition.getX(), sourcePosition.getY()).setAuto(isAutoConnectionSource());
+        return MagnetConnection.Builder
+                .at(sourcePosition.getX(), sourcePosition.getY())
+                .setAuto(isAutoConnectionSource());
     }
 
     public Connection getTargetConnection() {
         Point2D targetPosition = getTargetPosition(element.getId(), getTargetId());
-        return MagnetConnection.Builder.at(targetPosition.getX(), targetPosition.getY()).setAuto(isAutoConnectionTarget());
+        return MagnetConnection.Builder
+                .at(targetPosition.getX(), targetPosition.getY())
+                .setAuto(isAutoConnectionTarget());
     }
 
     private Point2D getSourcePosition(String edgeId, String sourceId) {
@@ -124,5 +130,9 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     private Point2D targetPosition(Bounds targetBounds) {
         return Point2D.create(0,
                               targetBounds.getHeight() / 2);
+    }
+
+    public List<Point2D> getWaypoints() {
+        return Collections.emptyList();
     }
 }

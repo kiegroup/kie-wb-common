@@ -64,6 +64,7 @@ public class SequenceFlowConverter {
                 edge,
                 nodes.get(p.getSourceId()),
                 p.getSourceConnection(),
+                p.getWaypoints(),
                 nodes.get(p.getTargetId()),
                 p.getTargetConnection());
     }
