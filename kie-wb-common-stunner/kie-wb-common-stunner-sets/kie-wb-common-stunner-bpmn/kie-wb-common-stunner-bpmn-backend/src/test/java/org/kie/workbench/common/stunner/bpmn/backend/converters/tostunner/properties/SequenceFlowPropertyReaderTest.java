@@ -1,83 +1,28 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.FlowNode;
 import org.eclipse.bpmn2.SequenceFlow;
-import org.eclipse.bpmn2.Task;
-import org.eclipse.bpmn2.di.BPMNDiagram;
-import org.eclipse.bpmn2.di.BPMNEdge;
-import org.eclipse.bpmn2.di.BPMNShape;
 import org.eclipse.dd.dc.Bounds;
 import org.eclipse.dd.dc.Point;
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 
 import static java.util.Arrays.asList;
 import static junit.framework.TestCase.assertEquals;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.dc;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.di;
 
 public class SequenceFlowPropertyReaderTest {
 
     private final String SEQ_ID = "SEQ_ID", SOURCE_ID = "SOURCE_ID", TARGET_ID = "TARGET_ID";
 
-    private static class MockDefinitionResolver extends DefinitionResolver {
-
-        Map<String, FlowNode> nodes = new HashMap<>();
-
-        public MockDefinitionResolver() {
-            super(init());
-        }
-
-        private static Definitions init() {
-            Definitions definitions = bpmn2.createDefinitions();
-            definitions.getRootElements().add(bpmn2.createProcess());
-            BPMNDiagram bpmnDiagram = di.createBPMNDiagram();
-            bpmnDiagram.setPlane(di.createBPMNPlane());
-            definitions.getDiagrams().add(bpmnDiagram);
-            return definitions;
-        }
-
-        public FlowNode mockNode(String id, Bounds bounds) {
-            Task node = bpmn2.createTask();
-            node.setId(id);
-            nodes.put(id, node);
-
-            BPMNShape shape = di.createBPMNShape();
-            shape.setBounds(bounds);
-            shape.setBpmnElement(node);
-            getPlane().getPlaneElement().add(shape);
-
-            return node;
-        }
-
-        public SequenceFlow sequenceFlowOf(String id, FlowNode source, FlowNode target, List<Point> waypoints) {
-            SequenceFlow sequenceFlow = bpmn2.createSequenceFlow();
-            sequenceFlow.setId(id);
-            sequenceFlow.setSourceRef(source);
-            sequenceFlow.setTargetRef(target);
-
-            BPMNEdge edge = di.createBPMNEdge();
-            edge.setBpmnElement(sequenceFlow);
-            getPlane().getPlaneElement().add(edge);
-            edge.getWaypoint().addAll(waypoints);
-
-            return sequenceFlow;
-        }
-    }
-
     @Test
     public void getConnectionsNoWaypoints() {
-        MockDefinitionResolver d = new MockDefinitionResolver();
-        PropertyReaderFactory factory = new PropertyReaderFactory(d);
+        TestDefinitionsWriter d = new TestDefinitionsWriter();
+        PropertyReaderFactory factory = new PropertyReaderFactory(d.getDefinitionResolver());
 
         Bounds sourceBounds = boundsOf(10, 10, 50, 50);
         FlowNode source = d.mockNode(SOURCE_ID, sourceBounds);
@@ -101,8 +46,8 @@ public class SequenceFlowPropertyReaderTest {
 
     @Test
     public void getConnectionsWithWaypoints() {
-        MockDefinitionResolver d = new MockDefinitionResolver();
-        PropertyReaderFactory factory = new PropertyReaderFactory(d);
+        TestDefinitionsWriter d = new TestDefinitionsWriter();
+        PropertyReaderFactory factory = new PropertyReaderFactory(d.getDefinitionResolver());
 
         Bounds sourceBounds = boundsOf(10, 10, 50, 50);
         FlowNode source = d.mockNode(SOURCE_ID, sourceBounds);
@@ -127,8 +72,8 @@ public class SequenceFlowPropertyReaderTest {
 
     @Test
     public void getWaypoints() {
-        MockDefinitionResolver d = new MockDefinitionResolver();
-        PropertyReaderFactory factory = new PropertyReaderFactory(d);
+        TestDefinitionsWriter d = new TestDefinitionsWriter();
+        PropertyReaderFactory factory = new PropertyReaderFactory(d.getDefinitionResolver());
 
         Bounds sourceBounds = boundsOf(10, 10, 50, 50);
         FlowNode source = d.mockNode(SOURCE_ID, sourceBounds);
