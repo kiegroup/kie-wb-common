@@ -30,6 +30,7 @@ import org.guvnor.common.services.backend.util.CommentedOptionFactory;
 import org.guvnor.common.services.shared.metadata.model.Metadata;
 import org.guvnor.common.services.shared.metadata.model.Overview;
 import org.jboss.errai.bus.server.annotations.Service;
+import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.forms.editor.model.FormModelSynchronizationResult;
 import org.kie.workbench.common.forms.editor.model.FormModelerContent;
 import org.kie.workbench.common.forms.editor.model.FormModelerContentError;
@@ -262,6 +263,7 @@ public class FormEditorServiceImpl extends KieService<FormModelerContent> implem
                                                                 Path formPath) {
         FormEditorRenderingContext context = new FormEditorRenderingContext(formPath);
         context.setRootForm(form);
+        context.setRenderMode(RenderMode.READ_ONLY_MODE);
 
         List<FormDefinition> allForms = vfsFormFinderService.findAllForms(formPath);
 
