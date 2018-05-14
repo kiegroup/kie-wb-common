@@ -339,13 +339,7 @@ public class ResizeControlImpl extends AbstractCanvasHandlerRegistrationControl<
             Optional.ofNullable(WiresUtils.isWiresShape(shape.getShapeView()) ? (WiresShape) shape.getShapeView() : null)
                     .ifPresent(wiresShape -> {
                         final WiresMagnet magnet = wiresShape.getMagnets().getMagnet(index);
-                        if (Objects.nonNull(magnetConnection.getLocation())) {
-                            magnetConnection.getLocation().setX(magnet.getX());
-                            magnetConnection.getLocation().setY(magnet.getY());
-                        } else {
-                            magnetConnection.setLocation(new Point2D(magnet.getX(), magnet.getY()));
-                        }
-
+                        magnetConnection.setLocation(new Point2D(magnet.getX(), magnet.getY()));
                         commandBuilder.addCommand(commandSupplier.get());
                     });
         });
