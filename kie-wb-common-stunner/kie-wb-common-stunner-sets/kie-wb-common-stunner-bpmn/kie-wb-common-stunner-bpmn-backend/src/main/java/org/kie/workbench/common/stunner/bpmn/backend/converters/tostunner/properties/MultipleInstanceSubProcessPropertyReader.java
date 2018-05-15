@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.NoSuchElementException;
+
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
@@ -36,7 +38,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .filter(dia -> dia.getTargetRef().equals(ieDataInput))
                 .map(dia -> dia.getSourceRef().get(0).getId())
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new NoSuchElementException("Cannot find collection input"));
     }
 
     public String getCollectionOutput() {
@@ -46,7 +48,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .filter(doa -> doa.getSourceRef().get(0).equals(ieDataOutput))
                 .map(doa -> doa.getTargetRef().getId())
                 .findFirst()
-                .get();
+                .orElseThrow(() -> new NoSuchElementException("Cannot find collection output"));
     }
 
     public String getDataInput() {
@@ -63,10 +65,6 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
         MultiInstanceLoopCharacteristics miloop = getMultiInstanceLoopCharacteristics();
         FormalExpression completionCondition = (FormalExpression) miloop.getCompletionCondition();
         return completionCondition.getBody();
-    }
-
-    public String getTrigger() {
-        return "true";
     }
 
     private MultiInstanceLoopCharacteristics getMultiInstanceLoopCharacteristics() {

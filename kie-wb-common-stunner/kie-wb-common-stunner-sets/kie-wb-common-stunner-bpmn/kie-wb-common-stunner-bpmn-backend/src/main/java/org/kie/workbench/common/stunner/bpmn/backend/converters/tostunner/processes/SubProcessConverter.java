@@ -68,9 +68,9 @@ public class SubProcessConverter extends AbstractProcessConverter {
         BpmnNode subProcessRoot;
         if (subProcess instanceof org.eclipse.bpmn2.AdHocSubProcess) {
             subProcessRoot = convertAdHocSubProcess((org.eclipse.bpmn2.AdHocSubProcess) subProcess);
-        } else if(subProcess.getLoopCharacteristics() != null) {
+        } else if (subProcess.getLoopCharacteristics() != null) {
             subProcessRoot = convertMultInstanceSubprocessNode(subProcess);
-        } else if(subProcess.isTriggeredByEvent()) {
+        } else if (subProcess.isTriggeredByEvent()) {
             subProcessRoot = convertEventSubprocessNode(subProcess);
         } else {
             subProcessRoot = convertEmbeddedSubprocessNode(subProcess);
@@ -110,7 +110,7 @@ public class SubProcessConverter extends AbstractProcessConverter {
                 new MultipleInstanceCompletionCondition(p.getCompletionCondition()),
                 new OnEntryAction(p.getOnEntryAction()),
                 new OnExitAction(p.getOnExitAction()),
-                new MITrigger(p.getTrigger()),
+                new MITrigger("true"),
                 new IsAsync(p.isAsync())
         ));
 

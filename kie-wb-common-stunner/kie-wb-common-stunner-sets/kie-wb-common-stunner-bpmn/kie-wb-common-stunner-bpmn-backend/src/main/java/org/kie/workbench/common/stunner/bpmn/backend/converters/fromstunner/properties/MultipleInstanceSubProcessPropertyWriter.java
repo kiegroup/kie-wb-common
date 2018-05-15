@@ -110,16 +110,11 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         return dataOutput;
     }
 
-    public void setTrigger(String miTrigger) {
-
-    }
-
     public void setCompletionCondition(String expression) {
         FormalExpression formalExpression = bpmn2.createFormalExpression();
         formalExpression.setBody(expression);
         this.miloop.setCompletionCondition(formalExpression);
 
-        // BLAHHH
         this.miloop.setInputDataItem(
                 process.getIoSpecification().getDataInputs().get(0));
         this.miloop.setOutputDataItem(

@@ -104,7 +104,6 @@ public class SubProcessConverter extends AbstractProcessConverter {
         p.setCompletionCondition(executionSet.getMultipleInstanceCompletionCondition().getValue());
         p.setOnEntryAction(executionSet.getOnEntryAction());
         p.setOnExitAction(executionSet.getOnExitAction());
-        p.setTrigger(executionSet.getMiTrigger().getValue());
         p.setAsync(executionSet.getIsAsync().getValue());
 
         p.setSimulationSet(definition.getSimulationSet());
