@@ -212,7 +212,7 @@ public class GraphBuilder {
 
         ControlPoint[] cps = new ControlPoint[controlPoints.size()];
         for (int i = 0; i < cps.length; i++) {
-            cps[i] = new ControlPointImpl(controlPoints.get(i), i);
+            cps[i] = new ControlPointImpl(controlPoints.get(i), i+1);
         }
         AddControlPointCommand addControlPoint = commandFactory.addControlPoint(edge, cps);
 
