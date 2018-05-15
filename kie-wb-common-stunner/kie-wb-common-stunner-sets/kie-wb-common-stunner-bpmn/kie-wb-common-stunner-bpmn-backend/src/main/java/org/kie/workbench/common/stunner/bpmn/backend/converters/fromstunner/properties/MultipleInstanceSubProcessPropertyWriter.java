@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.NoSuchElementException;
+import java.util.List;
 
 import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.DataInput;
@@ -40,16 +40,27 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
 
     private final MultiInstanceLoopCharacteristics miloop;
     private final InputOutputSpecification ioSpec;
+    private final InputSet inputSet;
+    private final OutputSet outputSet;
 
     public MultipleInstanceSubProcessPropertyWriter(SubProcess process, VariableScope variableScope) {
         super(process, variableScope);
         this.miloop = bpmn2.createMultiInstanceLoopCharacteristics();
         process.setLoopCharacteristics(miloop);
         this.ioSpec = bpmn2.createInputOutputSpecification();
+        this.inputSet = bpmn2.createInputSet();
+        this.ioSpec.getInputSets().add(inputSet);
+        this.outputSet = bpmn2.createOutputSet();
+        this.ioSpec.getOutputSets().add(outputSet);
+
         process.setIoSpecification(ioSpec);
     }
 
     public void setInput(String collectionInput, String dataInput) {
+        // ignore empty input
+        if (collectionInput == null) {
+            return;
+        }
         DataInput dataInputElement = setDataInput(dataInput);
         Property prop = findPropertyById(collectionInput);
         miloop.setLoopDataInputRef(prop);
@@ -63,6 +74,10 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
     }
 
     public void setOutput(String collectionOutput, String dataOutput) {
+        // ignore empty input
+        if (collectionOutput == null) {
+            return;
+        }
         DataOutput dataOutputElement = setDataOutput(dataOutput);
         Property prop = findPropertyById(collectionOutput);
         miloop.setLoopDataOutputRef(prop);
@@ -76,21 +91,14 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
     }
 
     private Property findPropertyById(String id) {
-        VariableScope.Variable lookup = variableScope.lookup(id);
-        if (lookup == null) {
-            throw new NoSuchElementException("Cannot find property with id " + id);
-        } else {
-            return lookup.getTypedIdentifier();
-        }
+        return variableScope.lookup(id).getTypedIdentifier();
     }
 
     public DataInput setDataInput(String value) {
         DataInput dataInput = bpmn2.createDataInput();
         dataInput.setId(value);
         this.ioSpec.getDataInputs().add(dataInput);
-        InputSet inputSet = bpmn2.createInputSet();
-        this.ioSpec.getInputSets().add(inputSet);
-        inputSet.getDataInputRefs().add(dataInput);
+        this.inputSet.getDataInputRefs().add(dataInput);
         this.miloop.setLoopDataInputRef(dataInput);
         return dataInput;
     }
@@ -103,9 +111,7 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         this.addItemDefinition(item);
         dataOutput.setItemSubjectRef(item);
         this.ioSpec.getDataOutputs().add(dataOutput);
-        OutputSet outputSet = bpmn2.createOutputSet();
-        this.ioSpec.getOutputSets().add(outputSet);
-        outputSet.getDataOutputRefs().add(dataOutput);
+        this.outputSet.getDataOutputRefs().add(dataOutput);
         this.miloop.setLoopDataOutputRef(dataOutput);
         return dataOutput;
     }
@@ -115,9 +121,17 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         formalExpression.setBody(expression);
         this.miloop.setCompletionCondition(formalExpression);
 
-        this.miloop.setInputDataItem(
-                process.getIoSpecification().getDataInputs().get(0));
-        this.miloop.setOutputDataItem(
-                process.getIoSpecification().getDataOutputs().get(0));
+        List<DataInput> dataInputs =
+                process.getIoSpecification().getDataInputs();
+        if (!dataInputs.isEmpty()) {
+            this.miloop.setInputDataItem(
+                    dataInputs.get(0));
+        }
+        List<DataOutput> dataOutputs =
+                process.getIoSpecification().getDataOutputs();
+        if (!dataOutputs.isEmpty()) {
+            this.miloop.setOutputDataItem(
+                    dataOutputs.get(0));
+        }
     }
 }

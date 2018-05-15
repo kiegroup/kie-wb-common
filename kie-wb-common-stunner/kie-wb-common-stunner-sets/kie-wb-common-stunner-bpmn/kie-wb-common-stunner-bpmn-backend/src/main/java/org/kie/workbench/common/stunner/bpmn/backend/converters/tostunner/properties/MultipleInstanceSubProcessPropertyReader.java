@@ -16,8 +16,10 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
+import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
@@ -32,42 +34,46 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
     }
 
     public String getCollectionInput() {
-        MultiInstanceLoopCharacteristics loopCharacteristics = getMultiInstanceLoopCharacteristics();
-        ItemAwareElement ieDataInput = loopCharacteristics.getLoopDataInputRef();
+        ItemAwareElement ieDataInput = getMultiInstanceLoopCharacteristics()
+                .map(MultiInstanceLoopCharacteristics::getLoopDataInputRef)
+                .orElse(null);
         return process.getDataInputAssociations().stream()
                 .filter(dia -> dia.getTargetRef().equals(ieDataInput))
                 .map(dia -> dia.getSourceRef().get(0).getId())
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Cannot find collection input"));
+                .orElse(null);
     }
 
     public String getCollectionOutput() {
-        MultiInstanceLoopCharacteristics loopCharacteristics = getMultiInstanceLoopCharacteristics();
-        ItemAwareElement ieDataOutput = loopCharacteristics.getLoopDataOutputRef();
+        ItemAwareElement ieDataOutput = getMultiInstanceLoopCharacteristics()
+                .map(MultiInstanceLoopCharacteristics::getLoopDataOutputRef)
+                .orElse(null);
         return process.getDataOutputAssociations().stream()
                 .filter(doa -> doa.getSourceRef().get(0).equals(ieDataOutput))
                 .map(doa -> doa.getTargetRef().getId())
                 .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Cannot find collection output"));
+                .orElse(null);
     }
 
     public String getDataInput() {
-        MultiInstanceLoopCharacteristics miloop = getMultiInstanceLoopCharacteristics();
-        return miloop.getInputDataItem().getId();
+        return getMultiInstanceLoopCharacteristics()
+                .map(MultiInstanceLoopCharacteristics::getInputDataItem)
+                .map(DataInput::getId).orElse("");
     }
 
     public String getDataOutput() {
-        MultiInstanceLoopCharacteristics miloop = getMultiInstanceLoopCharacteristics();
-        return miloop.getOutputDataItem().getId();
+        return getMultiInstanceLoopCharacteristics()
+                .map(MultiInstanceLoopCharacteristics::getOutputDataItem)
+                .map(DataOutput::getId).orElse("");
     }
 
     public String getCompletionCondition() {
-        MultiInstanceLoopCharacteristics miloop = getMultiInstanceLoopCharacteristics();
-        FormalExpression completionCondition = (FormalExpression) miloop.getCompletionCondition();
-        return completionCondition.getBody();
+        return getMultiInstanceLoopCharacteristics()
+                .map(miloop -> (FormalExpression) miloop.getCompletionCondition())
+                .map(FormalExpression::getBody).orElse("");
     }
 
-    private MultiInstanceLoopCharacteristics getMultiInstanceLoopCharacteristics() {
-        return (MultiInstanceLoopCharacteristics) process.getLoopCharacteristics();
+    private Optional<MultiInstanceLoopCharacteristics> getMultiInstanceLoopCharacteristics() {
+        return Optional.ofNullable((MultiInstanceLoopCharacteristics) process.getLoopCharacteristics());
     }
 }
