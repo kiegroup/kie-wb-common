@@ -56,7 +56,7 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
                 // New (un)marshaller is disabled for now due to found incompleteness
-                {OLD}//, {NEW}
+                {OLD}, {NEW}
         });
     }
 
@@ -72,7 +72,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
         }
     }
 
-    @Ignore
     @Test
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnTaskFilePath());

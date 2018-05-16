@@ -141,7 +141,11 @@ public class TaskConverter {
         task.setId(n.getUUID());
         NoneTask definition = n.getContent().getDefinition();
         ActivityPropertyWriter p = propertyWriterFactory.of(task);
-        p.setName(definition.getGeneral().getName().getValue());
+
+        TaskGeneralSet general = definition.getGeneral();
+        p.setName(general.getName().getValue());
+        p.setDocumentation(general.getDocumentation().getValue());
+
         p.setBounds(n.getContent().getBounds());
 
         p.setSimulationSet(definition.getSimulationSet());
