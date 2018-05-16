@@ -149,11 +149,12 @@ public class Scripts {
     public static void setOnExitAction(FlowElement flowElement, OnExitAction onExitAction) {
         ScriptTypeListValue value = onExitAction.getValue();
         for (ScriptTypeValue scriptTypeValue : value.getValues()) {
-            if (scriptTypeValue.getScript() == null && scriptTypeValue.getScript().isEmpty()) {
+            String scriptText = scriptTypeValue.getScript();
+            if (scriptText == null || scriptText.isEmpty()) {
                 continue;
             }
             OnExitScriptType script = droolsFactory.createOnExitScriptType();
-            script.setScript(asCData(scriptTypeValue.getScript()));
+            script.setScript(asCData(scriptText));
             String scriptLanguage = Scripts.scriptLanguageToUri(scriptTypeValue.getLanguage());
             script.setScriptFormat(scriptLanguage);
             addExtensionValue(flowElement, DOCUMENT_ROOT__ON_EXIT_SCRIPT, script);

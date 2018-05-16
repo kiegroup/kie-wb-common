@@ -33,7 +33,10 @@ public class ScriptTaskPropertyWriter extends ActivityPropertyWriter {
     public void setScript(ScriptTypeValue script) {
         scriptTask.setScriptFormat(
                 Scripts.scriptLanguageToUri(script.getLanguage()));
-        scriptTask.setScript(asCData(script.getScript()));
+        String scriptText = script.getScript();
+        if (scriptText != null && !scriptText.isEmpty()) {
+            scriptTask.setScript(asCData(scriptText));
+        }
     }
 
     public void setAsync(Boolean async) {
