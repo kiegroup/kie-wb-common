@@ -34,6 +34,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * This test case uses a valid graph structure with different nodes and connectors
@@ -148,7 +153,10 @@ public class SafeDeleteNodeCommandTest {
             add(graphHolder.edge1.getUUID());
             add(graphHolder.edge2.getUUID());
         }};
+        SafeDeleteNodeCommand.SafeDeleteNodeCommandCallback callback =
+                mock(SafeDeleteNodeCommand.SafeDeleteNodeCommandCallback.class);
         this.tested = new SafeDeleteNodeCommand(graphHolder.intermNode,
+                                                callback,
                                                 SafeDeleteNodeCommand.Options.exclude(excluded));
         final CommandResult<RuleViolation> result = tested.allow(graphTestHandler.graphCommandExecutionContext);
         final List<Command<GraphCommandExecutionContext, RuleViolation>> commands = tested.getCommands();
@@ -166,5 +174,8 @@ public class SafeDeleteNodeCommandTest {
                      deleteNode.getNode());
         assertEquals(CommandResult.Type.INFO,
                      result.getType());
+        verify(callback, times(1)).deleteNode(eq(graphHolder.intermNode));
+        verify(callback, never()).deleteConnector(eq(graphHolder.edge1));
+        verify(callback, never()).deleteConnector(eq(graphHolder.edge2));
     }
 }

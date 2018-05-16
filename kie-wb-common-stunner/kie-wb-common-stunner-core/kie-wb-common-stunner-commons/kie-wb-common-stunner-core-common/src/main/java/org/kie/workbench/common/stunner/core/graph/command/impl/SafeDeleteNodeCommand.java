@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.core.graph.command.impl;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -65,11 +64,11 @@ public final class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
         private final Set<String> exclusions;
 
         public static Options defaults() {
-            return new Options(true, Collections.emptySet());
+            return new Options(true, new HashSet<>());
         }
 
         public static Options doNotShortcutConnector() {
-            return new Options(false, Collections.emptySet());
+            return new Options(false, new HashSet<>());
         }
 
         public static Options exclude(final Set<String> ids) {
@@ -153,8 +152,8 @@ public final class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
                     }
 
                     @Override
-                    public void deleteConnector(final Edge<? extends View<?>, Node> edge) {
-                        doDeleteConnector(edge);
+                    public boolean deleteConnector(final Edge<? extends View<?>, Node> edge) {
+                        return doDeleteConnector(edge);
                     }
 
                     @Override
@@ -183,11 +182,13 @@ public final class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
                     }
 
                     @Override
-                    public void deleteNode(final Node<?, Edge> node) {
+                    public boolean deleteNode(final Node<?, Edge> node) {
                         if (!isElementExcluded(node)) {
                             addCommand(new DeregisterNodeCommand(node));
                             safeDeleteCallback.ifPresent(c -> c.deleteNode(node));
+                            return true;
                         }
+                        return false;
                     }
 
                     private void processCandidateConnectors() {
@@ -220,12 +221,14 @@ public final class SafeDeleteNodeCommand extends AbstractGraphCompositeCommand {
                                                                               in));
                     }
 
-                    private void doDeleteConnector(final Edge<? extends View<?>, Node> edge) {
+                    private boolean doDeleteConnector(final Edge<? extends View<?>, Node> edge) {
                         if (!isElementExcluded(edge) && !processedConnectors.contains(edge.getUUID())) {
                             addCommand(new DeleteConnectorCommand(edge));
                             safeDeleteCallback.ifPresent(c -> c.deleteConnector(edge));
                             processedConnectors.add(edge.getUUID());
+                            return true;
                         }
+                        return false;
                     }
                 });
 
