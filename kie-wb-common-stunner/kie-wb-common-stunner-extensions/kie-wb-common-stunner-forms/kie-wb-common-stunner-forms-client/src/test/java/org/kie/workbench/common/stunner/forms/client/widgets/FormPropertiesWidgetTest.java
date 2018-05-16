@@ -27,7 +27,6 @@ import org.jboss.errai.databinding.client.BindableProxyProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.forms.dynamic.service.shared.RenderMode;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
@@ -141,7 +140,7 @@ public class FormPropertiesWidgetTest {
         verify(formsCanvasSessionHandler).bind(session);
         verify(formsCanvasSessionHandler).show(callback);
 
-        verify(formsContainer, never()).render(anyString(), any(), any(), any());
+        verify(formsContainer, never()).render(anyString(), any(), any(), any(), any());
     }
 
     /**
