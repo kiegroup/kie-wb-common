@@ -249,8 +249,8 @@
       <bpmn2:ioSpecification id="_k1AQBklMEei0RfsoyHE9qw">
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_TaskNameInputX" drools:dtype="String" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_TaskNameInputXItem" name="TaskName"/>
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_inputInputX" drools:dtype="String" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_inputInputXItem" name="input"/>
-        <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_GroupIdInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_GroupIdInputXItem" name="GroupId"/>
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_SkippableInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_SkippableInputXItem" name="Skippable"/>
+        <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_GroupIdInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_GroupIdInputXItem" name="GroupId"/>
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_CommentInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_CommentInputXItem" name="Comment"/>
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_DescriptionInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_DescriptionInputXItem" name="Description"/>
         <bpmn2:dataInput id="7799D66F-5754-4850-AF35-D60E78105D88_PriorityInputX" drools:dtype="Object" itemSubjectRef="_7799D66F-5754-4850-AF35-D60E78105D88_PriorityInputXItem" name="Priority"/>
