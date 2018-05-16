@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
 import org.eclipse.bpmn2.FlowElement;
 import org.eclipse.bpmn2.Task;
@@ -36,7 +37,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptType
 
 import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__ON_ENTRY_SCRIPT;
 import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__ON_EXIT_SCRIPT;
-import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.droolsFactory;
 
 public class Scripts {
@@ -172,9 +172,17 @@ public class Scripts {
     }
 
     private static void addExtensionValue(FlowElement flowElement, FeatureMap.Entry value) {
-        ExtensionAttributeValue eav = bpmn2.createExtensionAttributeValue();
-        flowElement.getExtensionValues().add(eav);
-        eav.getValue().add(value);
+        extensionFor(flowElement).getValue().add(value);
+    }
+
+    private static ExtensionAttributeValue extensionFor(FlowElement flowElement) {
+        if (flowElement.getExtensionValues() == null || flowElement.getExtensionValues().isEmpty()) {
+            ExtensionAttributeValue eav = Bpmn2Factory.eINSTANCE.createExtensionAttributeValue();
+            flowElement.getExtensionValues().add(eav);
+            return eav;
+        } else {
+            return flowElement.getExtensionValues().get(0);
+        }
     }
 
     // apparently the only way to wrap into CDATA is to do it with string concatenation
