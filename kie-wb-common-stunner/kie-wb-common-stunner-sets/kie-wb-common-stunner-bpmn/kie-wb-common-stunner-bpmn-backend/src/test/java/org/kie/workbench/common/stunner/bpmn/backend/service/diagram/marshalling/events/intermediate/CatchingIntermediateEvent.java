@@ -77,7 +77,6 @@ public abstract class CatchingIntermediateEvent<T extends BaseCatchingIntermedia
     }
 
     @Test
-    @Ignore
     public void testMigration() throws Exception {
         Diagram<Graph, Metadata> oldDiagram = Unmarshalling.unmarshall(oldMarshaller, getBpmnCatchingIntermediateEventFilePath());
         Diagram<Graph, Metadata> newDiagram = Unmarshalling.unmarshall(newMarshaller, getBpmnCatchingIntermediateEventFilePath());
