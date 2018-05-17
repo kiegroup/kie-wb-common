@@ -32,6 +32,12 @@ public class LienzoPanelView extends FocusableLienzoPanelView implements LienzoP
         super(width,
               height);
         handlerRegistrationManager.register(
+                addFocusHandler(focusEvent -> presenter.onFocus())
+        );
+        handlerRegistrationManager.register(
+                addBlurHandler(blurEvent -> presenter.onBlur())
+        );
+        handlerRegistrationManager.register(
                 addMouseOverHandler(mouseOverEvent -> presenter.onMouseOver())
         );
         handlerRegistrationManager.register(
