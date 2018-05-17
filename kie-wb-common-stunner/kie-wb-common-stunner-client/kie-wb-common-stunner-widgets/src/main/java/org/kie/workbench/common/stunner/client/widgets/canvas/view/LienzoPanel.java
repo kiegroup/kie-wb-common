@@ -48,6 +48,7 @@ public class LienzoPanel implements IsWidget {
     private final Event<CanvasMouseUpEvent> mouseUpEvent;
     private View view;
 
+    private boolean focused;
     private boolean listening;
 
     @Inject
@@ -61,6 +62,7 @@ public class LienzoPanel implements IsWidget {
         this.keyUpEvent = keyUpEvent;
         this.mouseDownEvent = mouseDownEvent;
         this.mouseUpEvent = mouseUpEvent;
+        this.focused = false;
         this.listening = false;
     }
 
@@ -84,9 +86,18 @@ public class LienzoPanel implements IsWidget {
     }
 
     public void destroy() {
+        this.focused = false;
         this.listening = false;
         view.destroy();
         view = null;
+    }
+
+    void onFocus() {
+        focused = true;
+    }
+
+    void onBlur() {
+        focused = false;
     }
 
     void onMouseDown() {
@@ -110,7 +121,7 @@ public class LienzoPanel implements IsWidget {
     }
 
     void onKeyPress(final int unicodeChar) {
-        if (listening) {
+        if (focused && listening) {
             final KeyboardEvent.Key key = getKey(unicodeChar);
             if (null != key) {
                 keyPressEvent.fire(new KeyPressEvent(key));
@@ -119,7 +130,7 @@ public class LienzoPanel implements IsWidget {
     }
 
     void onKeyDown(final int unicodeChar) {
-        if (listening) {
+        if (focused && listening) {
             final KeyboardEvent.Key key = getKey(unicodeChar);
             if (null != key) {
                 keyDownEvent.fire(new KeyDownEvent(key));
@@ -128,7 +139,7 @@ public class LienzoPanel implements IsWidget {
     }
 
     void onKeyUp(final int unicodeChar) {
-        if (listening) {
+        if (focused && listening) {
             final KeyboardEvent.Key key = getKey(unicodeChar);
             if (null != key) {
                 keyUpEvent.fire(new KeyUpEvent(key));
