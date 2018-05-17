@@ -46,7 +46,6 @@ public class LienzoPanel implements IsWidget {
     private final Event<KeyUpEvent> keyUpEvent;
     private final Event<CanvasMouseDownEvent> mouseDownEvent;
     private final Event<CanvasMouseUpEvent> mouseUpEvent;
-
     private View view;
 
     protected View getView() {
