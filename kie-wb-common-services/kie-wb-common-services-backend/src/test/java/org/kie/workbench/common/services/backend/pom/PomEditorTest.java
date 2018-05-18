@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.guvnor.ala.source.Repository;
 import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
@@ -150,6 +151,58 @@ public class PomEditorTest {
             assertTrue(modelUpdated.getDependencies().size() == 6);
             assertTrue(modelUpdated.getRepositories().size() == 2);
             assertTrue(modelUpdated.getPluginRepositories().size() == 2);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new AssertionError(e.getMessage());
+        } finally {
+            Files.delete(path);
+            Files.copy(pathCopy, path);
+            Files.delete(pathCopy);
+        }
+    }
+
+    @Test
+    public void updateGenericPomWithUpdateRepo() {
+        String prj = "/target/test-classes/generic_update_repo/";
+        Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
+        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        Files.copy(path, pathCopy);
+        try {
+
+            Model original = editor.getModel(path);
+            assertEquals(original.getPackaging(), "jar");
+            assertTrue(original.getBuild().getPlugins().size() == 1);
+            assertTrue(original.getDependencies().size() == 3);
+            assertTrue(original.getRepositories().size() == 2);
+            assertTrue(original.getPluginRepositories().size() == 1);
+            List<org.apache.maven.model.Repository> repos = original.getRepositories();
+            for(org.apache.maven.model.Repository repo : repos){
+                if(repo.getId().equals("guvnor-m2-repo")){
+                    assertTrue(repo.getUrl().equals("http://localhost:8080/business-central/maven2/"));
+                }
+                if(repo.getId().equals("productization-repository")){
+                    assertTrue(repo.getUrl().equals("http://download.lab.bos.redhat.com/brewroot/repos/jb-ip-6.1-build/latest/maven/"));
+                }
+            }
+
+            Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
+            assertNotNull(modelUpdated);
+            assertEquals(modelUpdated.getPackaging(), "kjar");
+            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
+            assertTrue(modelUpdated.getDependencies().size() == 6);
+            assertTrue(modelUpdated.getRepositories().size() == 3);
+            assertTrue(modelUpdated.getPluginRepositories().size() == 3);
+
+            List<org.apache.maven.model.Repository> reposUpdated = modelUpdated.getRepositories();
+            for(org.apache.maven.model.Repository repo : reposUpdated){
+                if(repo.getId().equals("guvnor-m2-repo")){
+                    assertTrue(repo.getUrl().equals("http://127.0.0.1:8080/business-central/maven3/"));
+                }
+                if(repo.getId().equals("productization-repository")){
+                    throw new AssertionError("repositories not removed");
+                }
+            }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());

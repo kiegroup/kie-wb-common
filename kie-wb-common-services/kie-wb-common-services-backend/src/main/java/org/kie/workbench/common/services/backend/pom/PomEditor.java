@@ -107,12 +107,14 @@ public class PomEditor implements PomEnhancer {
 
     public Model updatePomWithoutWrite(Path pom, String pathJsonFile) {
         try {
+            Model model = getModel(pom);
             jsonReader = new PomJsonReader(pathJsonFile, JSON_POM_MIGRATION);
-            jsonConf = jsonReader.readDepsAndRepos();
-            return updatePomWithoutWrite(pom);
+            jsonConf = jsonReader.readDepsAndRepos(model);
+            process(model);
+            return model;
         } catch (Exception e) {
             System.err.println("Error occurred during POMs migration:" + e.getMessage());
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return new Model();
         }
     }
@@ -258,8 +260,8 @@ public class PomEditor implements PomEnhancer {
 
     private void applyMigrationRepos(List<Repository> repos) {
         if (jsonConf != null) {
-            for (Repository repoFromJson : jsonConf.getRepositories()) {
-                repos.add(repoFromJson);
+            for (RepositoryKey repoFromJson : jsonConf.getRepositories()) {
+                repos.add(repoFromJson.getRepository());
             }
         }
     }
@@ -275,8 +277,8 @@ public class PomEditor implements PomEnhancer {
 
     private void applyMigrationPluginRepos(List<Repository> repos) {
         if (jsonConf != null) {
-            for (Repository repoFromJson : jsonConf.getPluginRepositories()) {
-                repos.add(repoFromJson);
+            for (RepositoryKey repoFromJson : jsonConf.getPluginRepositories()) {
+                repos.add(repoFromJson.getRepository());
             }
         }
     }
