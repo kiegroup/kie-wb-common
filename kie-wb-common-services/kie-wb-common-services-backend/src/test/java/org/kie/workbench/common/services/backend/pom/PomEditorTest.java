@@ -161,6 +161,38 @@ public class PomEditorTest {
     }
 
     @Test
+    public void updateGenericPomNoOptionalJson() {
+        String prj = "/target/test-classes/generic_no_json/";
+        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        Files.copy(path, pathCopy);
+        try {
+
+            Model original = editor.getModel(path);
+            assertEquals(original.getPackaging(), "jar");
+            assertTrue(original.getBuild().getPlugins().size() == 1);
+            assertTrue(original.getDependencies().size() == 3);
+            assertTrue(original.getRepositories().size() == 2);
+            assertTrue(original.getPluginRepositories().size() == 1);
+
+            Model modelUpdated = editor.updatePomWithoutWrite(path);
+            assertNotNull(modelUpdated);
+            assertEquals(modelUpdated.getPackaging(), "kjar");
+            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
+            assertTrue(modelUpdated.getDependencies().size() == 6);
+            assertTrue(modelUpdated.getRepositories().size() == 0);
+            assertTrue(modelUpdated.getPluginRepositories().size() == 0);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new AssertionError(e.getMessage());
+        } finally {
+            Files.delete(path);
+            Files.copy(pathCopy, path);
+            Files.delete(pathCopy);
+        }
+    }
+
+    @Test
     public void updateGenericPomWithBrokenParams() {
         String prj = "/target/test-classes/generic/";
         Path path = Paths.get("file:" + currentDir + prj + "pom.xml");

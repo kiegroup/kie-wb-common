@@ -79,7 +79,7 @@ public class PomEditor implements PomEnhancer {
             return model;
         } catch (Exception e) {
             System.err.println("Error occurred during POMs migration:" + e.getMessage());
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return new Model();
         }
     }
@@ -100,7 +100,7 @@ public class PomEditor implements PomEnhancer {
             return model;
         } catch (Exception e) {
             System.err.println("Error occurred during POMs migration:" + e.getMessage());
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
             return new Model();
         }
     }
@@ -251,15 +251,12 @@ public class PomEditor implements PomEnhancer {
     /***************************************** Start Repositories TAG *****************************************/
 
     private void updateRepositories(Model model) {
-        List<Repository> repos = model.getRepositories();
-        if (repos == null) {
-            repos = new ArrayList<>();
-        }
-        applyMandatoryRepos(repos);
+        List<Repository> repos = new ArrayList<>();
+        applyMigrationRepos(repos);
         model.setRepositories(repos);
     }
 
-    private void applyMandatoryRepos(List<Repository> repos) {
+    private void applyMigrationRepos(List<Repository> repos) {
         if (jsonConf != null) {
             for (Repository repoFromJson : jsonConf.getRepositories()) {
                 repos.add(repoFromJson);
@@ -271,15 +268,12 @@ public class PomEditor implements PomEnhancer {
     /***************************************** Start PluginRepositories TAG *****************************************/
 
     private void updatePluginRepositories(Model model) {
-        List<Repository> repos = model.getPluginRepositories();
-        if (repos == null) {
-            repos = new ArrayList<>();
-        }
-        applyMandatoryPluginRepos(repos, jsonConf);
+        List<Repository> repos = new ArrayList<>();
+        applyMigrationPluginRepos(repos);
         model.setPluginRepositories(repos);
     }
 
-    private void applyMandatoryPluginRepos(List<Repository> repos, JSONDTO jsonConf) {
+    private void applyMigrationPluginRepos(List<Repository> repos) {
         if (jsonConf != null) {
             for (Repository repoFromJson : jsonConf.getPluginRepositories()) {
                 repos.add(repoFromJson);
