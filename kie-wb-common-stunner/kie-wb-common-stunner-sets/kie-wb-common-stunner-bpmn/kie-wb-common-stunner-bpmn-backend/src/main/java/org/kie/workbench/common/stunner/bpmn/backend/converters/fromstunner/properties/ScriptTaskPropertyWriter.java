@@ -21,6 +21,8 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
+
 public class ScriptTaskPropertyWriter extends ActivityPropertyWriter {
 
     private final ScriptTask scriptTask;

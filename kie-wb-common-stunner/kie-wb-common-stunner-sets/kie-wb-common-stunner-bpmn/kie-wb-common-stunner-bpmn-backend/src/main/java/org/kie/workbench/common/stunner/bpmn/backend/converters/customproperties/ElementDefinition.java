@@ -30,6 +30,7 @@ import org.jboss.drools.MetaDataType;
 import org.kie.workbench.common.stunner.bpmn.backend.legacy.util.Utils;
 
 import static org.jboss.drools.DroolsPackage.Literals.DOCUMENT_ROOT__META_DATA;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
 public abstract class ElementDefinition<T> {
 
@@ -84,10 +85,6 @@ public abstract class ElementDefinition<T> {
 
     public CustomElement<T> of(BaseElement element) {
         return new CustomElement<>(this, element);
-    }
-
-    protected String asCData(String original) {
-        return "<![CDATA[" + original + "]]>";
     }
 }
 
