@@ -46,10 +46,24 @@ public class LienzoPanel implements IsWidget {
     private final Event<KeyUpEvent> keyUpEvent;
     private final Event<CanvasMouseDownEvent> mouseDownEvent;
     private final Event<CanvasMouseUpEvent> mouseUpEvent;
+
     private View view;
 
+    protected View getView() {
+        return view;
+    }
+
     private boolean focused;
+
+    protected boolean isFocused() {
+        return focused;
+    }
+
     private boolean listening;
+
+    protected boolean isListening() {
+        return listening;
+    }
 
     @Inject
     public LienzoPanel(final Event<KeyPressEvent> keyPressEvent,
