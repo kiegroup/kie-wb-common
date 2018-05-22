@@ -43,6 +43,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.Tool
 import org.kie.workbench.common.stunner.core.client.canvas.controls.zoom.ZoomControl;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
+import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.registry.RegistryFactory;
 import org.kie.workbench.common.stunner.core.registry.command.CommandRegistry;
@@ -98,7 +99,8 @@ public class DefaultEditorSessionTest {
                                           registryFactory,
                                           canvasCommandManager,
                                           sessionCommandManager,
-                                          requestCommandManage);
+                                          requestCommandManage,
+                                          mock(StunnerPreferencesRegistry.class)); // TODO
     }
 
     @Test

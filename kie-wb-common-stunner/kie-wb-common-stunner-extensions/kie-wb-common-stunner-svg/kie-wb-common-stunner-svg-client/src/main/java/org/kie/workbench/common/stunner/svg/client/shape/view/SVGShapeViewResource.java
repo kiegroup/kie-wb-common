@@ -16,7 +16,11 @@
 
 package org.kie.workbench.common.stunner.svg.client.shape.view;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
+import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
 public final class SVGShapeViewResource {
 
@@ -27,13 +31,40 @@ public final class SVGShapeViewResource {
     }
 
     public SVGShapeView build(final boolean resizable) {
-        return builder.apply(new Arguments(resizable));
+        return build(new Arguments(resizable));
+    }
+
+    public SVGShapeView build(final Point2D scaleRatio,
+                              final boolean resizable) {
+        final Arguments arguments = new Arguments(resizable);
+
+        return build(arguments,
+                     v -> {
+                         if (v instanceof SVGShapeViewImpl) {
+                             ((SVGShapeViewImpl) v).setScaleRatio(scaleRatio.getX(),
+                                                                  scaleRatio.getY());
+                         }
+                     });
     }
 
     public SVGShapeView build(final Double width,
                               final Double height,
                               final boolean resizable) {
-        return builder.apply(new Arguments(width, height, resizable));
+        return build(new Arguments(width, height, resizable));
+    }
+
+    private SVGShapeView build(final Arguments arguments) {
+        return build(arguments,
+                     view -> {
+                     });
+    }
+
+    private SVGShapeView build(final Arguments arguments,
+                               final Consumer<SVGShapeView> viewConsumer) {
+        final SVGShapeView view = builder.apply(arguments);
+        viewConsumer.accept(view);
+        view.refresh();
+        return view;
     }
 
     public static final class Arguments {

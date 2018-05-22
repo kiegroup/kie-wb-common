@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.svg.client.shape.view.impl;
 
 import java.util.Collection;
 
+import com.ait.lienzo.client.core.types.Point2D;
 import org.kie.workbench.common.stunner.client.lienzo.shape.impl.ShapeStateDefaultHandler;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.DecoratedShapeView;
@@ -55,6 +56,12 @@ public class SVGShapeViewImpl
         this.shapeStateHandler = new ShapeStateDefaultHandler()
                 .setBorderShape((() -> this))
                 .setBackgroundShape(() -> this);
+    }
+
+    public SVGShapeViewImpl setScaleRatio(final double rx,
+                                          final double ry) {
+        ((WiresScalableContainer) getLayoutContainer()).setScaleRatio(new Point2D(rx, ry));
+        return this;
     }
 
     @Override
