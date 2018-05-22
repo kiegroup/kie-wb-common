@@ -87,7 +87,34 @@ public class SequenceFlowPropertyReaderTest {
     }
 
     @Test
-    public void getWaypoints() {
+    public void get1Waypoint() {
+        TestDefinitionsWriter d = new TestDefinitionsWriter();
+        PropertyReaderFactory factory = new PropertyReaderFactory(d.getDefinitionResolver());
+
+        Bounds sourceBounds = boundsOf(10, 10, 50, 50);
+        FlowNode source = d.mockNode(SOURCE_ID, sourceBounds);
+        Bounds targetBounds = boundsOf(100, 100, 60, 60);
+        FlowNode target = d.mockNode(TARGET_ID, targetBounds);
+        Point sourcePoint = pointOf(10, 20);
+        Point mid1 = pointOf(15, 25);
+        Point targetPoint = pointOf(100, 120);
+        List<Point> waypoints = asList(sourcePoint,
+                                       mid1,
+                                       targetPoint);
+
+        SequenceFlow el = d.sequenceFlowOf(SEQ_ID, source, target, waypoints);
+
+        SequenceFlowPropertyReader p = factory.of(el);
+        List<Point2D> controlPoints = p.getControlPoints();
+        List<Point2D> expected =
+                Collections.singletonList(
+                        Point2D.create(mid1.getX(), mid1.getY()));
+
+        assertEquals(expected, controlPoints);
+    }
+
+    @Test
+    public void get2Waypoints() {
         TestDefinitionsWriter d = new TestDefinitionsWriter();
         PropertyReaderFactory factory = new PropertyReaderFactory(d.getDefinitionResolver());
 

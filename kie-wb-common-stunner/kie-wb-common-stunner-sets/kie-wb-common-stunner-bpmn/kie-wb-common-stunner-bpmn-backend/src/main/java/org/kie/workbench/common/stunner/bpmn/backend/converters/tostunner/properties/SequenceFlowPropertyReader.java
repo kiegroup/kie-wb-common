@@ -128,7 +128,7 @@ public class SequenceFlowPropertyReader extends BasePropertyReader {
     public List<Point2D> getControlPoints() {
         List<Point> waypoint = definitionResolver.getEdge(element.getId()).getWaypoint();
         List<Point2D> result = new ArrayList<>();
-        if (waypoint.size() > 3) {
+        if (waypoint.size() > 2) {
             List<Point> points = waypoint.subList(1, waypoint.size() - 1);
             for (Point p : points) {
                 result.add(Point2D.create(p.getX(), p.getY()));
