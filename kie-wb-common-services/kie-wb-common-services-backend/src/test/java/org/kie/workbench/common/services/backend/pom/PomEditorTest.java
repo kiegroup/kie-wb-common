@@ -22,8 +22,6 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.guvnor.ala.source.Repository;
-import org.jboss.weld.environment.se.WeldContainer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,9 +31,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.*;
 
 public class PomEditorTest {
 
@@ -49,7 +45,8 @@ public class PomEditorTest {
     private final Logger logger = LoggerFactory.getLogger(PomEditorTest.class);
     private PomEditor editor;
     private String currentDir;
-    private WeldContainer weldContainer;
+    private Path path;
+    private Path pathCopy;
 
     @Before
     public void setUp() {
@@ -59,26 +56,26 @@ public class PomEditorTest {
 
     @After
     public void tearDown() {
-        if (weldContainer != null) {
-            weldContainer.close();
-        }
+        Files.delete(path);
+        Files.copy(pathCopy, path);
+        Files.delete(pathCopy);
     }
 
     private void testDefault(String prj) {
-        Path path = Paths.get("file://" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file://" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file://" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file://" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
             Model original = editor.getModel(path);
-            assertTrue(original.getBuild().getPlugins().size() == 1);
+            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);;
 
             Model modelUpdated = editor.updatePomWithoutWrite(path);
-            assertEquals(modelUpdated.getPackaging(), "kjar");
-            assertNotNull(modelUpdated);
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
+            assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(modelUpdated).isNotNull();
+            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
             List<Dependency> deps = modelUpdated.getDependencies();
             for (Dependency dep : deps) {
-                assertTrue(dep.getVersion() != null);
+                assertThat(dep.getVersion()).isNotNull();
             }
         } catch (IOException ioex) {
             logger.error(ioex.getMessage(), ioex);
@@ -86,11 +83,7 @@ public class PomEditorTest {
         } catch (XmlPullParserException xmlEx) {
             logger.error(xmlEx.getMessage(), xmlEx);
             throw new AssertionError(xmlEx.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
-        }
+        } 
     }
 
     @Test
@@ -132,32 +125,28 @@ public class PomEditorTest {
     public void updateGenericPom() {
         String prj = "/target/test-classes/generic/";
         Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
 
             Model original = editor.getModel(path);
-            assertEquals(original.getPackaging(), "jar");
-            assertTrue(original.getBuild().getPlugins().size() == 1);
-            assertTrue(original.getDependencies().size() == 3);
-            assertTrue(original.getRepositories().size() == 0);
-            assertTrue(original.getPluginRepositories().size() == 0);
+            assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
+            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(original.getDependencies().size()).isEqualTo(3);
+            assertThat(original.getRepositories().size()).isEqualTo(0);
+            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
-            assertNotNull(modelUpdated);
-            assertEquals(modelUpdated.getPackaging(), "kjar");
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
-            assertTrue(modelUpdated.getDependencies().size() == 6);
-            assertTrue(modelUpdated.getRepositories().size() == 2);
-            assertTrue(modelUpdated.getPluginRepositories().size() == 2);
+            assertThat(modelUpdated).isNotNull();
+            assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
+            assertThat(modelUpdated.getRepositories().size()).isEqualTo(2);
+            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(2);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
         }
     }
 
@@ -165,39 +154,39 @@ public class PomEditorTest {
     public void updateGenericPomWithUpdateRepo() {
         String prj = "/target/test-classes/generic_update_repo/";
         Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
 
             Model original = editor.getModel(path);
-            assertEquals(original.getPackaging(), "jar");
-            assertTrue(original.getBuild().getPlugins().size() == 1);
-            assertTrue(original.getDependencies().size() == 3);
-            assertTrue(original.getRepositories().size() == 2);
-            assertTrue(original.getPluginRepositories().size() == 1);
+            assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
+            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(original.getDependencies().size()).isEqualTo(3);
+            assertThat(original.getRepositories().size()).isEqualTo(2);
+            assertThat(original.getPluginRepositories().size()).isEqualTo(1);
             List<org.apache.maven.model.Repository> repos = original.getRepositories();
             for(org.apache.maven.model.Repository repo : repos){
                 if(repo.getId().equals("guvnor-m2-repo")){
-                    assertTrue(repo.getUrl().equals("http://localhost:8080/business-central/maven2/"));
+                    assertThat(repo.getUrl()).isEqualToIgnoringCase("http://localhost:8080/business-central/maven2/");
                 }
                 if(repo.getId().equals("productization-repository")){
-                    assertTrue(repo.getUrl().equals("http://download.lab.bos.redhat.com/brewroot/repos/jb-ip-6.1-build/latest/maven/"));
+                    assertThat(repo.getUrl()).isEqualToIgnoringCase("http://download.lab.bos.redhat.com/brewroot/repos/jb-ip-6.1-build/latest/maven/");
                 }
             }
 
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
-            assertNotNull(modelUpdated);
-            assertEquals(modelUpdated.getPackaging(), "kjar");
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
-            assertTrue(modelUpdated.getDependencies().size() == 6);
-            assertTrue(modelUpdated.getRepositories().size() == 3);
-            assertTrue(modelUpdated.getPluginRepositories().size() == 3);
+            assertThat(modelUpdated).isNotNull();
+            assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
+            assertThat(modelUpdated.getRepositories().size()).isEqualTo(3);
+            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(3);
 
             List<org.apache.maven.model.Repository> reposUpdated = modelUpdated.getRepositories();
             for(org.apache.maven.model.Repository repo : reposUpdated){
                 if(repo.getId().equals("guvnor-m2-repo")){
-                    assertTrue(repo.getUrl().equals("http://127.0.0.1:8080/business-central/maven3/"));
+                    assertThat(repo.getUrl()).isEqualToIgnoringCase("http://127.0.0.1:8080/business-central/maven3/");
                 }
                 if(repo.getId().equals("productization-repository")){
                     throw new AssertionError("repositories not removed");
@@ -206,71 +195,58 @@ public class PomEditorTest {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
         }
     }
 
     @Test
     public void updateGenericPomNoOptionalJson() {
         String prj = "/target/test-classes/generic_no_json/";
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
 
             Model original = editor.getModel(path);
-            assertEquals(original.getPackaging(), "jar");
-            assertTrue(original.getBuild().getPlugins().size() == 1);
-            assertTrue(original.getDependencies().size() == 3);
-            assertTrue(original.getRepositories().size() == 2);
-            assertTrue(original.getPluginRepositories().size() == 1);
+            assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
+            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(original.getDependencies().size()).isEqualTo(3);
+            assertThat(original.getRepositories().size()).isEqualTo(2);
+            assertThat(original.getPluginRepositories().size()).isEqualTo(1);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path);
-            assertNotNull(modelUpdated);
-            assertEquals(modelUpdated.getPackaging(), "kjar");
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
-            assertTrue(modelUpdated.getDependencies().size() == 6);
-            assertTrue(modelUpdated.getRepositories().size() == 0);
-            assertTrue(modelUpdated.getPluginRepositories().size() == 0);
+            assertThat(modelUpdated).isNotNull();
+            assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
+            assertThat(modelUpdated.getRepositories().size()).isEqualTo(0);
+            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(0);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
         }
     }
 
     @Test
     public void updateGenericPomWithBrokenParams() {
         String prj = "/target/test-classes/generic/";
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
-
             Model original = editor.getModel(path);
-            assertTrue(original.getBuild().getPlugins().size() == 1);
-            assertTrue(original.getDependencies().size() == 3);
-            assertTrue(original.getRepositories().size() == 0);
-            assertTrue(original.getPluginRepositories().size() == 0);
+            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(original.getDependencies().size()).isEqualTo(3);
+            assertThat(original.getRepositories().size()).isEqualTo(0);
+            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
 
             Model modelUpdated;
             modelUpdated = editor.updatePomWithoutWrite(path, null);
-            assertTrue(modelUpdated.getGroupId() == null);
+            assertThat(modelUpdated.getGroupId()).isNullOrEmpty();
             modelUpdated = editor.updatePomWithoutWrite(null, null);
-            assertTrue(modelUpdated.getGroupId() == null);
+            assertThat(modelUpdated.getGroupId()).isNullOrEmpty();
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
         }
     }
 
@@ -278,38 +254,34 @@ public class PomEditorTest {
     public void updateGenericWithCheckVersionOfExistingDep() {
         String prj = "/target/test-classes/generic_with_version/";
         Path jsonPath = Paths.get("file:" + currentDir + prj + "/pom-migration.json");
-        Path path = Paths.get("file:" + currentDir + prj + "pom.xml");
-        Path pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
+        path = Paths.get("file:" + currentDir + prj + "pom.xml");
+        pathCopy = Paths.get("file:" + currentDir + prj + "copy_pom.xml");
         Files.copy(path, pathCopy);
         try {
 
             Model original = editor.getModel(path);
-            assertEquals(original.getPackaging(), "kjar");
-            assertTrue(original.getDependencies().size() == 1);
-            assertTrue(original.getRepositories().size() == 0);
-            assertTrue(original.getPluginRepositories().size() == 0);
+            assertThat(original.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(original.getDependencies().size()).isEqualTo(1);
+            assertThat(original.getRepositories().size()).isEqualTo(0);
+            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
-            assertNotNull(modelUpdated);
-            assertEquals(modelUpdated.getPackaging(), "kjar");
-            assertTrue(modelUpdated.getBuild().getPlugins().size() == 1);
-            assertTrue(modelUpdated.getDependencies().size() == 7);
-            assertTrue(modelUpdated.getRepositories().size() == 2);
-            assertTrue(modelUpdated.getPluginRepositories().size() == 2);
+            assertThat(modelUpdated).isNotNull();
+            assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
+            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(modelUpdated.getDependencies().size()).isEqualTo(7);
+            assertThat(modelUpdated.getRepositories().size()).isEqualTo(2);
+            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(2);
             for(Dependency dep: modelUpdated.getDependencies()){
-                assertTrue(dep.getVersion() != null);
+                assertThat(dep.getVersion()).isNotNull();
                 if(dep.getGroupId().equals("org.group") && dep.getArtifactId().equals("workitems")){
-                    assertTrue(dep.getVersion().equals("1.0.0-FINAL"));
+                    assertThat(dep.getVersion()).isEqualTo("1.0.0-FINAL");
                 }
             }
 
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
-        } finally {
-            Files.delete(path);
-            Files.copy(pathCopy, path);
-            Files.delete(pathCopy);
         }
     }
 }
