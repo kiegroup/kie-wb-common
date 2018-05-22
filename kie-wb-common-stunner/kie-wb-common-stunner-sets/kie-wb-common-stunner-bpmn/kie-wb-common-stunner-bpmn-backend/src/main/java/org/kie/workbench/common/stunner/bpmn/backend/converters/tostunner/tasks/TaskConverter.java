@@ -223,6 +223,8 @@ public class TaskConverter {
         String taskName = CustomAttribute.serviceTaskName.of(task).get();
         if (taskName.isEmpty()) {
             return noneTask(task);
+        } else if (taskName.equals("BusinessRuleTask")) {
+            return noneTask(task);
         } else {
             return serviceTask(task);
         }
