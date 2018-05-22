@@ -62,9 +62,16 @@ public class AssociationDeclaration {
         this.type = type;
     }
 
+    public Type getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
-        return direction.prefix() + source + type.op() + target;
+        return direction.prefix() +
+                (type.equals(Type.FromTo) ?
+                        (target + type.op() + source)
+                        : (source + type.op() + target));
     }
 
     public enum Direction {
@@ -112,11 +119,16 @@ class AssociationParser {
     }
 
     private static AssociationDeclaration parseAssociation(AssociationDeclaration.Direction direction, String rest) {
-        for (AssociationDeclaration.Type type : AssociationDeclaration.Type.values()) {
-            if (rest.contains(type.op())) {
-                String[] association = rest.split(type.op());
-                return new AssociationDeclaration(direction, type, association[0], association[1]);
-            }
+        AssociationDeclaration.Type type;
+        type = AssociationDeclaration.Type.SourceTarget;
+        if (rest.contains(type.op())) {
+            String[] association = rest.split(type.op());
+            return new AssociationDeclaration(direction, type, association[0], association[1]);
+        }
+        type = AssociationDeclaration.Type.FromTo;
+        if (rest.contains(type.op())) {
+            String[] association = rest.split(type.op());
+            return new AssociationDeclaration(direction, type, association[1], association[0]);
         }
 
         throw new IllegalArgumentException("Cannot parse " + rest);

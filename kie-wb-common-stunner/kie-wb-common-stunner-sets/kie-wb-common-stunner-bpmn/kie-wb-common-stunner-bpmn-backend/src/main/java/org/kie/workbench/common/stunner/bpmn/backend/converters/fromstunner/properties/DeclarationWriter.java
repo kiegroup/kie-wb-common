@@ -56,7 +56,6 @@ public class DeclarationWriter {
     }
 
     private ItemDefinition typedefInput(VariableDeclaration decl) {
-        Objects.requireNonNull(decl.getType(), "Cannot declare " + decl + ": no type");
         ItemDefinition typeDef = bpmn2.createItemDefinition();
         typeDef.setId(Ids.dataInputItem(parentId, decl.getIdentifier()));
         typeDef.setStructureRef(decl.getType());

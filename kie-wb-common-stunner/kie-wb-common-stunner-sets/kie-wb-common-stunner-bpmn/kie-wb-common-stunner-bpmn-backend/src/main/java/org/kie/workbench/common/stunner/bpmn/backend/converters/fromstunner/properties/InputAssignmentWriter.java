@@ -16,11 +16,15 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Property;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
@@ -30,21 +34,41 @@ public class InputAssignmentWriter {
     private final DataInputAssociation association;
     private final DeclarationWriter declarationWriter;
 
+    public static InputAssignmentWriter fromDeclaration(
+            AssociationDeclaration declaration,
+            DeclarationWriter dw,
+            VariableScope variableScope) {
+
+
+        switch (declaration.getType()) {
+            case SourceTarget:
+                return new InputAssignmentWriter(
+                        dw,
+                        variableScope.lookup(declaration.getSource()));
+
+            case FromTo:
+                return new InputAssignmentWriter(
+                        dw,
+                        declaration.getSource());
+            default:
+                throw new IllegalArgumentException("Unrecognized association type " + declaration.getType() +
+                                                           " in declaration " + declaration);
+        }
+    }
+
     public InputAssignmentWriter(DeclarationWriter dw, VariableScope.Variable variable) {
         this.declarationWriter = dw;
         this.association = associationOf(variable.getTypedIdentifier(), declarationWriter.getDataInput());
     }
 
     public InputAssignmentWriter(
-            String parentId,
-            VariableScope.Variable variable,
-            VariableDeclaration decl) {
-
-        this.declarationWriter = new DeclarationWriter(parentId, decl);
+            DeclarationWriter dw,
+            String expression) {
+        this.declarationWriter = dw;
 
         // then we create the actual association between the two
-        // e.g. mySource := myTarget (or, to put it differently, myTarget -> mySource)
-        this.association = associationOf(variable.getTypedIdentifier(), declarationWriter.getDataInput());
+        // e.g. myTarget = expression
+        this.association = associationOf(expression, declarationWriter.getDataInput());
     }
 
     private DataInputAssociation associationOf(Property source, DataInput dataInput) {
@@ -54,6 +78,29 @@ public class InputAssignmentWriter {
         dataInputAssociation
                 .getSourceRef()
                 .add(source);
+
+        dataInputAssociation
+                .setTargetRef(dataInput);
+        return dataInputAssociation;
+    }
+
+    private DataInputAssociation associationOf(String expression, DataInput dataInput) {
+        DataInputAssociation dataInputAssociation =
+                bpmn2.createDataInputAssociation();
+
+        Assignment assignment = bpmn2.createAssignment();
+        String id = dataInput.getId();
+
+        FormalExpression toExpr = bpmn2.createFormalExpression();
+        toExpr.setBody(id);
+        assignment.setTo(toExpr);
+
+        FormalExpression fromExpr = bpmn2.createFormalExpression();
+        fromExpr.setBody(expression);
+        assignment.setFrom(fromExpr);
+
+        dataInputAssociation
+                .getAssignment().add(assignment);
 
         dataInputAssociation
                 .setTargetRef(dataInput);

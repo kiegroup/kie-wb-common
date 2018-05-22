@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.Objects;
 import java.util.stream.Stream;
 
 import bpsim.ElementParameters;
@@ -60,7 +59,6 @@ public class ActivityPropertyWriter extends PropertyWriter {
         assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
-                .filter(varDecl -> varDecl.getType() != null)
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
                 .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());
@@ -94,9 +92,9 @@ public class ActivityPropertyWriter extends PropertyWriter {
 
     private Stream<InputAssignmentWriter> toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
         return assignmentsInfo.getAssociations().lookupInput(dw.getVarId())
-                .map(targetVar -> variableScope.lookup(targetVar.getSource()))
-                .filter(Objects::nonNull)
-                .map(targetVar -> new InputAssignmentWriter(dw, targetVar));
+                .map(targetVar ->
+                             InputAssignmentWriter.fromDeclaration(
+                                     targetVar, dw, variableScope));
     }
 
     private InputOutputSpecification getIoSpecification() {

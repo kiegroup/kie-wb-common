@@ -39,7 +39,6 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
         assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
-                .filter(varDecl -> varDecl.getType() != null)
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
                 .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());

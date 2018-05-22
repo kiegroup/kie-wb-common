@@ -40,7 +40,7 @@
       <bpmn2:dataInputAssociation id="_jNRaaT1dEeiXT_TFLmcM5g">
         <bpmn2:targetRef>A3C25100-DFAB-4867-9282-08381BD69C6B_BodyInputX</bpmn2:targetRef>
         <bpmn2:assignment id="_jNRaaj1dEeiXT_TFLmcM5g">
-          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_jNRaaz1dEeiXT_TFLmcM5g"><![CDATA[Please, you're always sending me emails for demonstration. Do you really not know anybody else?]]></bpmn2:from>
+          <bpmn2:from xsi:type="bpmn2:tFormalExpression" id="_jNRaaz1dEeiXT_TFLmcM5g"><![CDATA[Please you're always sending me emails for demonstration. Do you really not know anybody else?]]></bpmn2:from>
           <bpmn2:to xsi:type="bpmn2:tFormalExpression" id="_jNSBcD1dEeiXT_TFLmcM5g">A3C25100-DFAB-4867-9282-08381BD69C6B_BodyInputX</bpmn2:to>
         </bpmn2:assignment>
       </bpmn2:dataInputAssociation>
