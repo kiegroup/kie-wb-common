@@ -72,7 +72,7 @@ public class PomEditorTest {
             Model modelUpdated = editor.updatePomWithoutWrite(path);
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
             assertThat(modelUpdated).isNotNull();
-            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
+            assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
             List<Dependency> deps = modelUpdated.getDependencies();
             for (Dependency dep : deps) {
                 assertThat(dep.getVersion()).isNotNull();
@@ -83,7 +83,7 @@ public class PomEditorTest {
         } catch (XmlPullParserException xmlEx) {
             logger.error(xmlEx.getMessage(), xmlEx);
             throw new AssertionError(xmlEx.getMessage());
-        } 
+        }
     }
 
     @Test
@@ -132,18 +132,18 @@ public class PomEditorTest {
 
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
-            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(original.getDependencies().size()).isEqualTo(3);
-            assertThat(original.getRepositories().size()).isEqualTo(0);
-            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
+            assertThat(original.getBuild().getPlugins()).hasSize(1);
+            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getRepositories()).hasSize(0);
+            assertThat(original.getPluginRepositories()).hasSize(0);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
-            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
-            assertThat(modelUpdated.getRepositories().size()).isEqualTo(2);
-            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(2);
+            assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
+            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getRepositories()).hasSize(2);
+            assertThat(modelUpdated.getPluginRepositories()).hasSize(2);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
@@ -161,10 +161,10 @@ public class PomEditorTest {
 
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
-            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(original.getDependencies().size()).isEqualTo(3);
-            assertThat(original.getRepositories().size()).isEqualTo(2);
-            assertThat(original.getPluginRepositories().size()).isEqualTo(1);
+            assertThat(original.getBuild().getPlugins()).hasSize(1);
+            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getRepositories()).hasSize(2);
+            assertThat(original.getPluginRepositories()).hasSize(1);
             List<org.apache.maven.model.Repository> repos = original.getRepositories();
             for(org.apache.maven.model.Repository repo : repos){
                 if(repo.getId().equals("guvnor-m2-repo")){
@@ -178,10 +178,10 @@ public class PomEditorTest {
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
-            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
-            assertThat(modelUpdated.getRepositories().size()).isEqualTo(3);
-            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(3);
+            assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
+            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getRepositories()).hasSize(3);
+            assertThat(modelUpdated.getPluginRepositories()).hasSize(3);
 
             List<org.apache.maven.model.Repository> reposUpdated = modelUpdated.getRepositories();
             for(org.apache.maven.model.Repository repo : reposUpdated){
@@ -208,18 +208,18 @@ public class PomEditorTest {
 
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("jar");
-            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(original.getDependencies().size()).isEqualTo(3);
-            assertThat(original.getRepositories().size()).isEqualTo(2);
-            assertThat(original.getPluginRepositories().size()).isEqualTo(1);
+            assertThat(original.getBuild().getPlugins()).hasSize(1);
+            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getRepositories()).hasSize(2);
+            assertThat(original.getPluginRepositories()).hasSize(1);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path);
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
-            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(modelUpdated.getDependencies().size()).isEqualTo(6);
-            assertThat(modelUpdated.getRepositories().size()).isEqualTo(0);
-            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(0);
+            assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
+            assertThat(modelUpdated.getDependencies()).hasSize(6);
+            assertThat(modelUpdated.getRepositories()).hasSize(0);
+            assertThat(modelUpdated.getPluginRepositories()).hasSize(0);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new AssertionError(e.getMessage());
@@ -234,10 +234,10 @@ public class PomEditorTest {
         Files.copy(path, pathCopy);
         try {
             Model original = editor.getModel(path);
-            assertThat(original.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(original.getDependencies().size()).isEqualTo(3);
-            assertThat(original.getRepositories().size()).isEqualTo(0);
-            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
+            assertThat(original.getBuild().getPlugins()).hasSize(1);
+            assertThat(original.getDependencies()).hasSize(3);
+            assertThat(original.getRepositories()).hasSize(0);
+            assertThat(original.getPluginRepositories()).hasSize(0);
 
             Model modelUpdated;
             modelUpdated = editor.updatePomWithoutWrite(path, null);
@@ -261,17 +261,17 @@ public class PomEditorTest {
 
             Model original = editor.getModel(path);
             assertThat(original.getPackaging()).isEqualToIgnoringCase("kjar");
-            assertThat(original.getDependencies().size()).isEqualTo(1);
-            assertThat(original.getRepositories().size()).isEqualTo(0);
-            assertThat(original.getPluginRepositories().size()).isEqualTo(0);
+            assertThat(original.getDependencies()).hasSize(1);
+            assertThat(original.getRepositories()).hasSize(0);
+            assertThat(original.getPluginRepositories()).hasSize(0);
 
             Model modelUpdated = editor.updatePomWithoutWrite(path, jsonPath.toAbsolutePath().toString());
             assertThat(modelUpdated).isNotNull();
             assertThat(modelUpdated.getPackaging()).isEqualToIgnoringCase("kjar");
-            assertThat(modelUpdated.getBuild().getPlugins().size()).isEqualTo(1);
-            assertThat(modelUpdated.getDependencies().size()).isEqualTo(7);
-            assertThat(modelUpdated.getRepositories().size()).isEqualTo(2);
-            assertThat(modelUpdated.getPluginRepositories().size()).isEqualTo(2);
+            assertThat(modelUpdated.getBuild().getPlugins()).hasSize(1);
+            assertThat(modelUpdated.getDependencies()).hasSize(7);
+            assertThat(modelUpdated.getRepositories()).hasSize(2);
+            assertThat(modelUpdated.getPluginRepositories()).hasSize(2);
             for(Dependency dep: modelUpdated.getDependencies()){
                 assertThat(dep.getVersion()).isNotNull();
                 if(dep.getGroupId().equals("org.group") && dep.getArtifactId().equals("workitems")){
