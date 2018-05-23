@@ -40,6 +40,9 @@ import static org.mockito.Mockito.when;
 public class QNameFieldConverterTest {
 
     private static final String ENCODED_FEEL_DATE = "[][date][" + DMNModelInstrumentedBase.PREFIX_FEEL + "]";
+    private static final String ENCODED_DMN_UNKNOWN = "[" + org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN + "]" +
+            "[unknown]" +
+            "[" + DMNModelInstrumentedBase.PREFIX_DMN + "]";
 
     @Mock
     private DMNGraphUtils dmnGraphUtils;
@@ -91,6 +94,16 @@ public class QNameFieldConverterTest {
     }
 
     @Test
+    public void testToWidgetValueWhenDMNDiagramDoesNotDefinesNameSpaces() {
+        converter.setDMNModel(new Decision());
+
+        final String encoding = converter.toWidgetValue(new QName(org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN,
+                                                                  "unknown",
+                                                                  "dmn"));
+        assertEquals(ENCODED_DMN_UNKNOWN, encoding);
+    }
+
+    @Test
     public void testToModelValueWithCorrectlyEncodedValue() {
         final QName typeRef = converter.toModelValue(ENCODED_FEEL_DATE);
         assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
@@ -104,5 +117,35 @@ public class QNameFieldConverterTest {
     @Test(expected = IllegalArgumentException.class)
     public void testToModelValueWithIncorrectlyEncodedValue() {
         converter.toModelValue("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_NotEnoughBrackets() {
+        converter.toModelValue("[][]");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_UnclosedBrackets() {
+        converter.toModelValue("[][[]");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_UnopenBrackets() {
+        converter.toModelValue("[]][]");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_TextOutside() {
+        converter.toModelValue("a[]b[]c[]d");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_TextAtStart() {
+        converter.toModelValue("a[][][]");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testToModelValueWithIncorrectlyEncodedValue_TextAtEnd() {
+        converter.toModelValue("[][][]d");
     }
 }
