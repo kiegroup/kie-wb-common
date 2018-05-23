@@ -87,7 +87,6 @@ import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.mvp.impl.PathPlaceRequest;
 import org.uberfire.preferences.shared.impl.PreferenceScopeResolutionStrategyInfo;
 import org.uberfire.workbench.events.NotificationEvent;
-import org.uberfire.workbench.events.ResourceCopiedEvent;
 import org.uberfire.workbench.events.ResourceDeletedEvent;
 import org.uberfire.workbench.model.impl.PartDefinitionImpl;
 
@@ -867,11 +866,4 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.placeManager.closePlace(new PathPlaceRequest(path));
     }
 
-    public void onResourceCopiedEvent(@Observes final ResourceCopiedEvent resourceCopiedEvent) {
-        if (this.isLibraryPerspectiveOpen()) {
-            Path path = resourceCopiedEvent.getDestinationPath();
-            this.goToAsset(path);
-            setupLibraryBreadCrumbsForAsset(path);
-        }
-    }
 }
