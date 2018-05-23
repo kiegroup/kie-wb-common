@@ -889,17 +889,4 @@ public class LibraryPlacesTest {
                              any());
     }
 
-    @Test
-    public void testOnResourceCopiedEvent() {
-
-        doReturn(PlaceStatus.OPEN).when(placeManager).getStatus(LibraryPlaces.LIBRARY_PERSPECTIVE);
-
-        Path path = mock(Path.class);
-        ResourceCopiedEvent event = mock(ResourceCopiedEvent.class);
-        when(event.getDestinationPath()).thenReturn(path);
-
-        this.libraryPlaces.onResourceCopiedEvent(event);
-
-        verify(this.libraryPlaces).goToAsset(path);
-    }
 }
