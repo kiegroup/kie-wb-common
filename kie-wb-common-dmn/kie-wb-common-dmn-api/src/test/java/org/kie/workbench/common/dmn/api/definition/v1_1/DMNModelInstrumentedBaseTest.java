@@ -19,6 +19,7 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 import java.util.Optional;
 
 import org.junit.Test;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -43,19 +44,19 @@ public class DMNModelInstrumentedBaseTest {
         final MockDMNModelClass parent = new MockDMNModelClass();
         final MockDMNModelClass child = new MockDMNModelClass();
 
-        parent.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
-                                  DMNModelInstrumentedBase.URI_FEEL);
+        parent.getNsContext().put(Namespace.FEEL.getPrefix(),
+                                  Namespace.FEEL.getUri());
 
         child.setParent(parent);
 
-        final Optional<String> parentFeelPrefix = parent.getPrefixForNamespaceURI(DMNModelInstrumentedBase.URI_FEEL);
+        final Optional<String> parentFeelPrefix = parent.getPrefixForNamespaceURI(Namespace.FEEL.getUri());
         assertTrue(parentFeelPrefix.isPresent());
-        assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
+        assertEquals(Namespace.FEEL.getPrefix(),
                      parentFeelPrefix.get());
 
-        final Optional<String> childFeelPrefix = child.getPrefixForNamespaceURI(DMNModelInstrumentedBase.URI_FEEL);
+        final Optional<String> childFeelPrefix = child.getPrefixForNamespaceURI(Namespace.FEEL.getUri());
         assertTrue(childFeelPrefix.isPresent());
-        assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
+        assertEquals(Namespace.FEEL.getPrefix(),
                      childFeelPrefix.get());
     }
 
@@ -64,21 +65,21 @@ public class DMNModelInstrumentedBaseTest {
         final MockDMNModelClass parent = new MockDMNModelClass();
         final MockDMNModelClass child = new MockDMNModelClass();
 
-        parent.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
-                                  DMNModelInstrumentedBase.URI_FEEL);
-        child.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
+        parent.getNsContext().put(Namespace.FEEL.getPrefix(),
+                                  Namespace.FEEL.getUri());
+        child.getNsContext().put(Namespace.FEEL.getPrefix(),
                                  DUMMY_URI);
 
         child.setParent(parent);
 
-        final Optional<String> parentFeelPrefix = parent.getPrefixForNamespaceURI(DMNModelInstrumentedBase.URI_FEEL);
+        final Optional<String> parentFeelPrefix = parent.getPrefixForNamespaceURI(Namespace.FEEL.getUri());
         assertTrue(parentFeelPrefix.isPresent());
-        assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
+        assertEquals(Namespace.FEEL.getPrefix(),
                      parentFeelPrefix.get());
 
         final Optional<String> childFeelPrefix = child.getPrefixForNamespaceURI(DUMMY_URI);
         assertTrue(childFeelPrefix.isPresent());
-        assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
+        assertEquals(Namespace.FEEL.getPrefix(),
                      childFeelPrefix.get());
     }
 

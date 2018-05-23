@@ -16,6 +16,7 @@
 package org.kie.workbench.common.dmn.api.factory;
 
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
@@ -67,17 +68,9 @@ public abstract class AbstractDMNDiagramFactory<M extends Metadata, D extends Di
     private void updateDefaultNameSpaces(final Node<Definition<DMNDiagram>, ?> diagramNode) {
         final DMNDiagram dmnDiagram = diagramNode.getContent().getDefinition();
         final Definitions dmnDefinitions = dmnDiagram.getDefinitions();
-        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_FEEL)) {
-            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
-                                              DMNModelInstrumentedBase.URI_FEEL);
-        }
-        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_DMN)) {
-            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_DMN,
-                                              DMNModelInstrumentedBase.URI_DMN);
-        }
-        if (!dmnDefinitions.getNsContext().containsValue(DMNModelInstrumentedBase.URI_KIE)) {
-            dmnDefinitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_KIE,
-                                              DMNModelInstrumentedBase.URI_KIE);
-        }
+
+        Stream.of(DMNModelInstrumentedBase.Namespace.values())
+                .filter(namespace -> !dmnDefinitions.getNsContext().containsValue(namespace.getUri()))
+                .forEach(namespace -> dmnDefinitions.getNsContext().put(namespace.getPrefix(), namespace.getUri()));
     }
 }

@@ -84,16 +84,16 @@ public class DMNDiagramFactoryImplTest {
         final Definitions dmnDefinitions = dmnDiagram.getDefinitions();
         final Map<String, String> dmnDefaultNameSpaces = dmnDefinitions.getNsContext();
 
-        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.PREFIX_FEEL));
-        assertEquals(DMNModelInstrumentedBase.URI_FEEL,
-                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.PREFIX_FEEL));
+        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix()));
+        assertEquals(DMNModelInstrumentedBase.Namespace.FEEL.getUri(),
+                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix()));
 
-        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.PREFIX_DMN));
-        assertEquals(DMNModelInstrumentedBase.URI_DMN,
-                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.PREFIX_DMN));
+        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.Namespace.DMN.getPrefix()));
+        assertEquals(DMNModelInstrumentedBase.Namespace.DMN.getUri(),
+                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.Namespace.DMN.getPrefix()));
 
-        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.PREFIX_KIE));
-        assertEquals(DMNModelInstrumentedBase.URI_KIE,
-                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.PREFIX_KIE));
+        assertTrue(dmnDefaultNameSpaces.containsKey(DMNModelInstrumentedBase.Namespace.KIE.getPrefix()));
+        assertEquals(DMNModelInstrumentedBase.Namespace.KIE.getUri(),
+                     dmnDefaultNameSpaces.get(DMNModelInstrumentedBase.Namespace.KIE.getPrefix()));
     }
 }

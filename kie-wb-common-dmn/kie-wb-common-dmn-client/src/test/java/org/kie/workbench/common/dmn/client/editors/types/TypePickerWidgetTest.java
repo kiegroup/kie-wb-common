@@ -134,13 +134,17 @@ public class TypePickerWidgetTest {
         final BuiltInType[] bits = BuiltInType.values();
         verify(picker, times(bits.length)).makeTypeSelector(builtInTypeCaptor.capture());
 
+        //Checks all BuiltInTypes were handled by makeTypeSelector(BuiltInType)
         final List<BuiltInType> builtInTypes = new ArrayList<>(Arrays.asList(bits));
+        assertFalse(builtInTypes.isEmpty());
         builtInTypes.removeAll(builtInTypeCaptor.getAllValues());
         assertTrue(builtInTypes.isEmpty());
 
         final List<ItemDefinition> itemDefinitions = definitions.getItemDefinition();
         verify(picker, times(itemDefinitions.size())).makeTypeSelector(itemDefinitionCaptor.capture());
 
+        //Checks all ItemDefinitions were handled by makeTypeSelector(ItemDefinition)
+        assertFalse(itemDefinitions.isEmpty());
         itemDefinitions.removeAll(itemDefinitionCaptor.getAllValues());
         assertTrue(itemDefinitions.isEmpty());
     }

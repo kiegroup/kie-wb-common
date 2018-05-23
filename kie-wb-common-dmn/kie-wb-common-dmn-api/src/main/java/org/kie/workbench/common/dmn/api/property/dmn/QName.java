@@ -17,7 +17,7 @@ package org.kie.workbench.common.dmn.api.property.dmn;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.soup.commons.validation.PortablePreconditions;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.property.DMNProperty;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 
@@ -35,7 +35,7 @@ public class QName implements DMNProperty {
     private String prefix;
 
     public QName() {
-        this(DMNModelInstrumentedBase.URI_FEEL,
+        this(Namespace.FEEL.getUri(),
              BuiltInType.STRING.getName());
     }
 

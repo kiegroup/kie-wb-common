@@ -19,7 +19,7 @@ package org.kie.workbench.common.dmn.api.property.dmn.types;
 import java.util.Arrays;
 
 import org.junit.Test;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase.Namespace;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +35,7 @@ public class BuiltInTypeTest {
         final QName typeRef = bit.asQName();
         assertEquals(bit.getName(),
                      typeRef.getLocalPart());
-        assertEquals(DMNModelInstrumentedBase.URI_FEEL,
+        assertEquals(Namespace.FEEL.getUri(),
                      typeRef.getNamespaceURI());
     }
 }

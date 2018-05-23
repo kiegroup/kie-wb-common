@@ -39,11 +39,11 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class QNameFieldConverterTest {
 
-    private static final String ENCODED_FEEL_DATE = "[][date][" + DMNModelInstrumentedBase.PREFIX_FEEL + "]";
+    private static final String ENCODED_FEEL_DATE = "[][date][" + DMNModelInstrumentedBase.Namespace.FEEL.getPrefix() + "]";
 
     private static final String ENCODED_DMN_UNKNOWN = "[" + org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN + "]" +
             "[unknown]" +
-            "[" + DMNModelInstrumentedBase.PREFIX_DMN + "]";
+            "[" + DMNModelInstrumentedBase.Namespace.DMN.getPrefix() + "]";
 
     @Mock
     private DMNGraphUtils dmnGraphUtils;
@@ -68,8 +68,8 @@ public class QNameFieldConverterTest {
         };
 
         final Definitions definitions = new Definitions();
-        definitions.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
-                                       DMNModelInstrumentedBase.URI_FEEL);
+        definitions.getNsContext().put(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix(),
+                                       DMNModelInstrumentedBase.Namespace.FEEL.getUri());
 
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
     }
@@ -77,8 +77,8 @@ public class QNameFieldConverterTest {
     @Test
     public void testToWidgetValueWhenDMNElementDefinesNameSpaces() {
         final Decision decision = new Decision();
-        decision.getNsContext().put(DMNModelInstrumentedBase.PREFIX_FEEL,
-                                    DMNModelInstrumentedBase.URI_FEEL);
+        decision.getNsContext().put(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix(),
+                                    DMNModelInstrumentedBase.Namespace.FEEL.getUri());
         converter.setDMNModel(decision);
 
         final String encoding = converter.toWidgetValue(BuiltInType.DATE.asQName());
@@ -100,14 +100,14 @@ public class QNameFieldConverterTest {
 
         final String encoding = converter.toWidgetValue(new QName(org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN,
                                                                   "unknown",
-                                                                  DMNModelInstrumentedBase.PREFIX_DMN));
+                                                                  DMNModelInstrumentedBase.Namespace.DMN.getPrefix()));
         assertEquals(ENCODED_DMN_UNKNOWN, encoding);
     }
 
     @Test
     public void testToModelValueWithCorrectlyEncodedValue() {
         final QName typeRef = converter.toModelValue(ENCODED_FEEL_DATE);
-        assertEquals(DMNModelInstrumentedBase.PREFIX_FEEL,
+        assertEquals(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix(),
                      typeRef.getPrefix());
         assertEquals("",
                      typeRef.getNamespaceURI());

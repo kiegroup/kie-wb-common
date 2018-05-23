@@ -44,7 +44,7 @@ public class QNamePropertyType implements PropertyType {
 
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return ~~name.hashCode();
     }
 
     @Override

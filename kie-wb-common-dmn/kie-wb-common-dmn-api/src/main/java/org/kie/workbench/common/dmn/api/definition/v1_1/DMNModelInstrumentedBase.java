@@ -17,27 +17,47 @@ package org.kie.workbench.common.dmn.api.definition.v1_1;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.jboss.errai.common.client.api.annotations.NonPortable;
+import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 
 public abstract class DMNModelInstrumentedBase implements DMNDefinition {
 
-    public static final String PREFIX_FEEL = "feel";
-    public static final String PREFIX_DMN = "dmn";
-    public static final String PREFIX_KIE = "kie";
-
-    public static final String URI_FEEL = org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_FEEL;
-    public static final String URI_DMN = org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN;
-    public static final String URI_KIE = org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_KIE;
-
     private Map<String, String> nsContext = new HashMap<>();
     private Map<QName, String> additionalAttributes = new HashMap<>();
 
     private DMNModelInstrumentedBase parent;
+
+    @Portable
+    public enum Namespace {
+
+        FEEL("feel", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_FEEL),
+        DMN("dmn", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN),
+        KIE("kie", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_KIE);
+
+        private String prefix;
+        private String uri;
+
+        Namespace(final String prefix,
+                  final String uri) {
+            this.prefix = prefix;
+            this.uri = uri;
+        }
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public String getUri() {
+            return uri;
+        }
+
+    }
 
     @NonPortable
     protected static abstract class BaseNodeBuilder<T extends DMNModelInstrumentedBase> implements Builder<T> {
@@ -70,8 +90,11 @@ public abstract class DMNModelInstrumentedBase implements DMNDefinition {
     }
 
     public Optional<String> getPrefixForNamespaceURI(final String namespaceURI) {
-        if (this.nsContext != null && this.nsContext.containsValue(namespaceURI)) {
-            return this.nsContext.entrySet().stream().filter(kv -> kv.getValue().equals(namespaceURI)).findFirst().map(Map.Entry::getKey);
+        if (nsContext != null && nsContext.containsValue(namespaceURI)) {
+            return nsContext.entrySet().stream()
+                    .filter(kv -> Objects.equals(kv.getValue(), namespaceURI))
+                    .findFirst()
+                    .map(Map.Entry::getKey);
         }
         if (this.parent != null) {
             return parent.getPrefixForNamespaceURI(namespaceURI);
