@@ -28,7 +28,6 @@ import org.kie.workbench.common.stunner.bpmn.definition.IntermediateErrorEventCa
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateMessageEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateSignalEventCatching;
 import org.kie.workbench.common.stunner.bpmn.definition.IntermediateTimerEvent;
-import org.kie.workbench.common.stunner.core.client.shape.SvgDataUriGlyph;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.CompositeShapeViewHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.FontHandler;

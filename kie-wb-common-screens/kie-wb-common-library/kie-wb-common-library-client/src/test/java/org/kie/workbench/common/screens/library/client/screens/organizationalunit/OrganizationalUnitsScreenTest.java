@@ -24,7 +24,6 @@ import javax.enterprise.event.Event;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
-import org.guvnor.structure.events.AfterCreateOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.NewOrganizationalUnitEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.RemoveOrganizationalUnitEvent;
@@ -45,10 +44,7 @@ import org.kie.workbench.common.screens.library.client.widgets.common.TileWidget
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.mocks.CallerMock;
-import org.uberfire.mocks.EventSourceMock;
 
-import static org.junit.Assert.*;
-import static org.kie.workbench.common.screens.contributors.model.ContributorsDataSetColumns.COLUMN_DATE;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
@@ -141,15 +137,14 @@ public class OrganizationalUnitsScreenTest {
     }
 
     @Test
-    public void initWithoutReadOrgUnitsPermissionTest() {
+    public void initWithoutReadAllOrgUnitsPermissionTest() {
         doReturn(false).when(organizationalUnitController).canReadOrgUnits();
 
         presenter.init();
 
+        verify(view).clearOrganizationalUnits();
         verify(view,
-               never()).clearOrganizationalUnits();
-        verify(view,
-               never()).addOrganizationalUnit(any());
+               times(3)).addOrganizationalUnit(any());
     }
 
     @Test
