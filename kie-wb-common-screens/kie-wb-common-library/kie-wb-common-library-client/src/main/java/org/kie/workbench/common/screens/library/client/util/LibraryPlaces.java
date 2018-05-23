@@ -865,14 +865,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.placeManager.closePlace(new PathPlaceRequest(path));
     }
 
-    public void onResourceCopiedEvent(@Observes final ResourceCopiedEvent resourceCopiedEvent) {
-        if (this.isLibraryPerspectiveOpen()) {
-            Path path = resourceCopiedEvent.getDestinationPath();
-            this.goToAsset(path);
-            setupLibraryBreadCrumbsForAsset(path);
-        }
-    }
-
     private boolean isStandalone() {
         final Map<String, List<String>> parameterMap = getParameterMap();
         if (parameterMap == null) {
