@@ -24,8 +24,6 @@ import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.DeclarationList;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
@@ -38,7 +36,6 @@ public class InputAssignmentWriter {
             AssociationDeclaration declaration,
             DeclarationWriter dw,
             VariableScope variableScope) {
-
 
         switch (declaration.getType()) {
             case SourceTarget:
