@@ -17,6 +17,9 @@
 package org.kie.workbench.common.dmn.client.editors.types;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
@@ -51,6 +54,10 @@ import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 @Templated
 public class TypePickerWidget extends Composite implements HasValue<String>,
                                                            HasEnabled {
+
+    static final Comparator<BuiltInType> BUILT_IN_TYPE_COMPARATOR = (o1, o2) -> o1.getName().compareTo(o2.getName());
+
+    static final Comparator<ItemDefinition> ITEM_DEFINITION_COMPARATOR = (o1, o2) -> o1.getName().getValue().compareTo(o2.getName().getValue());
 
     @DataField
     private Button typeButton;
@@ -91,11 +98,17 @@ public class TypePickerWidget extends Composite implements HasValue<String>,
     public void setDMNModel(final DMNModelInstrumentedBase dmnModel) {
         this.qNameFieldConverter.setDMNModel(dmnModel);
         typeSelector.clear();
-        Arrays.asList(BuiltInType.values()).stream()
-                .map(this::makeTypeSelector)
-                .filter(Optional::isPresent)
-                .forEach(o -> typeSelector.add(o.get()));
-        dmnGraphUtils.getDefinitions().getItemDefinition().stream()
+
+        addBuiltInTypes();
+        addItemDefinitions();
+    }
+
+    private void addBuiltInTypes() {
+        final BuiltInType[] bits = BuiltInType.values();
+        final List<BuiltInType> builtInTypes = Arrays.asList(bits);
+        Collections.sort(builtInTypes, BUILT_IN_TYPE_COMPARATOR);
+
+        builtInTypes.stream()
                 .map(this::makeTypeSelector)
                 .filter(Optional::isPresent)
                 .forEach(o -> typeSelector.add(o.get()));
@@ -106,6 +119,27 @@ public class TypePickerWidget extends Composite implements HasValue<String>,
         o.setText(bit.getName());
         o.setValue(qNameFieldConverter.toWidgetValue(bit.asQName()));
         return Optional.of(o);
+    }
+
+    private void addItemDefinitions() {
+        final List<ItemDefinition> itemDefinitions = dmnGraphUtils.getDefinitions().getItemDefinition();
+        Collections.sort(itemDefinitions, ITEM_DEFINITION_COMPARATOR);
+
+        //There will always be BuiltInTypes so it safe to add a divider
+        if (itemDefinitions.size() > 0) {
+            addDivider();
+        }
+
+        itemDefinitions.stream()
+                .map(this::makeTypeSelector)
+                .filter(Optional::isPresent)
+                .forEach(o -> typeSelector.add(o.get()));
+    }
+
+    void addDivider() {
+        final Option o = GWT.create(Option.class);
+        o.setDivider(true);
+        typeSelector.add(o);
     }
 
     Optional<Option> makeTypeSelector(final ItemDefinition id) {
