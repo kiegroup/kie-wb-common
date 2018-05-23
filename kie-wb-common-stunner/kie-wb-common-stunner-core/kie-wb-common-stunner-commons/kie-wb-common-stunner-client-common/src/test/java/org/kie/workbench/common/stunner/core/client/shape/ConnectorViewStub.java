@@ -166,4 +166,14 @@ public class ConnectorViewStub implements ShapeView<Object>,
                           Connection _tailMagnetsIndex) {
         return this;
     }
+
+    @Override
+    public Object getUserData() {
+        return null;
+    }
+
+    @Override
+    public void setUserData(Object userData) {
+
+    }
 }
