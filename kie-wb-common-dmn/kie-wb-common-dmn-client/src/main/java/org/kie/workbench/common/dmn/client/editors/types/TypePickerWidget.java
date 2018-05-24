@@ -16,11 +16,10 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -55,9 +54,9 @@ import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 public class TypePickerWidget extends Composite implements HasValue<String>,
                                                            HasEnabled {
 
-    static final Comparator<BuiltInType> BUILT_IN_TYPE_COMPARATOR = (o1, o2) -> o1.getName().compareTo(o2.getName());
+    static final Comparator<BuiltInType> BUILT_IN_TYPE_COMPARATOR = Comparator.comparing(o -> o.getName());
 
-    static final Comparator<ItemDefinition> ITEM_DEFINITION_COMPARATOR = (o1, o2) -> o1.getName().getValue().compareTo(o2.getName().getValue());
+    static final Comparator<ItemDefinition> ITEM_DEFINITION_COMPARATOR = Comparator.comparing(o -> o.getName().getValue());
 
     @DataField
     private Button typeButton;
@@ -104,11 +103,8 @@ public class TypePickerWidget extends Composite implements HasValue<String>,
     }
 
     private void addBuiltInTypes() {
-        final BuiltInType[] bits = BuiltInType.values();
-        final List<BuiltInType> builtInTypes = Arrays.asList(bits);
-        Collections.sort(builtInTypes, BUILT_IN_TYPE_COMPARATOR);
-
-        builtInTypes.stream()
+        Stream.of(BuiltInType.values())
+                .sorted(BUILT_IN_TYPE_COMPARATOR)
                 .map(this::makeTypeSelector)
                 .filter(Optional::isPresent)
                 .forEach(o -> typeSelector.add(o.get()));
@@ -123,7 +119,6 @@ public class TypePickerWidget extends Composite implements HasValue<String>,
 
     private void addItemDefinitions() {
         final List<ItemDefinition> itemDefinitions = dmnGraphUtils.getDefinitions().getItemDefinition();
-        Collections.sort(itemDefinitions, ITEM_DEFINITION_COMPARATOR);
 
         //There will always be BuiltInTypes so it safe to add a divider
         if (itemDefinitions.size() > 0) {
@@ -131,6 +126,7 @@ public class TypePickerWidget extends Composite implements HasValue<String>,
         }
 
         itemDefinitions.stream()
+                .sorted(ITEM_DEFINITION_COMPARATOR)
                 .map(this::makeTypeSelector)
                 .filter(Optional::isPresent)
                 .forEach(o -> typeSelector.add(o.get()));

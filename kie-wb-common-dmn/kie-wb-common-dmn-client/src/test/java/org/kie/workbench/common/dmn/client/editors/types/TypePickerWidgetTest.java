@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
+import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
@@ -156,6 +157,10 @@ public class TypePickerWidgetTest {
 
     @Test
     public void testSetDMNModel_ItemDefinitions() {
+        definitions.getItemDefinition().add(new ItemDefinition() {{
+            setName(new Name("user_defined_data_type"));
+        }});
+
         picker.setDMNModel(dmnModel);
 
         final List<ItemDefinition> itemDefinitions = definitions.getItemDefinition();
@@ -169,6 +174,16 @@ public class TypePickerWidgetTest {
 
         //Check the items were sorted correctly
         assertTrue(Ordering.from(TypePickerWidget.ITEM_DEFINITION_COMPARATOR).isOrdered(itemDefinitionsAddedToWidget));
+    }
+
+    @Test
+    public void testSetDMNModel_NoItemDefinitions() {
+        definitions.getItemDefinition().clear();
+
+        picker.setDMNModel(dmnModel);
+
+        verify(picker, never()).addDivider();
+        verify(picker, never()).makeTypeSelector(any(ItemDefinition.class));
     }
 
     @Test
