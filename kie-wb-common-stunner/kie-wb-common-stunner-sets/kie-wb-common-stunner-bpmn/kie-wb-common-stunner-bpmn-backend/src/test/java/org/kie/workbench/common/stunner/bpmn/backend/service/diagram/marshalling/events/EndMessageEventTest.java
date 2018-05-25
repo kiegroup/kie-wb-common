@@ -31,13 +31,13 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
 
     private static final String BPMN_END_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endMessageEvents.bpmn";
 
-    private static final String EMPTY_TOP_LEVEL_EVENT_ID = "_C16E011F-1891-48C9-8619-2FEF678DEA39";//
-    private static final String FILLED_TOP_LEVEL_EVENT_ID = "_86928E1F-5B98-43F3-AF00-FF92A2D8C19C";//
-    private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "_1A5F9123-053C-46D7-BBC9-BBB5AB794609";//
-    private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "_8FD9C393-5605-4451-B8F6-EB5E79BC9922";//
+    private static final String EMPTY_TOP_LEVEL_EVENT_ID = "_C16E011F-1891-48C9-8619-2FEF678DEA39";
+    private static final String FILLED_TOP_LEVEL_EVENT_ID = "_86928E1F-5B98-43F3-AF00-FF92A2D8C19C";
+    private static final String EMPTY_SUBPROCESS_LEVEL_EVENT_ID = "_1A5F9123-053C-46D7-BBC9-BBB5AB794609";
+    private static final String FILLED_SUBPROCESS_LEVEL_EVENT_ID = "_8FD9C393-5605-4451-B8F6-EB5E79BC9922";
 
-    private static final String EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID = "_97C6413B-F73E-4D41-8AA8-D23F30691B27";//
-    private static final String FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID = "_DC2F1675-18E8-4918-9B61-8D8AD26799C0";//
+    private static final String EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID = "_97C6413B-F73E-4D41-8AA8-D23F30691B27";
+    private static final String FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID = "_DC2F1675-18E8-4918-9B61-8D8AD26799C0";
     private static final String EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID = "_D4D69CB0-46B6-47DA-AFB2-DF4A0AEFECA2";
     private static final String FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID = "_6131912B-1ED5-454F-ACB4-EC623EE0C3A3";
 
@@ -59,8 +59,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent filledTopEvent = getEndNodeById(diagram,
-                                                      FILLED_TOP_LEVEL_EVENT_ID,
-                                                      HAS_NO_INCOME_EDGE);
+                                                        FILLED_TOP_LEVEL_EVENT_ID,
+                                                        HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledTopEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -73,8 +73,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent emptyTopEvent = getEndNodeById(diagram,
-                                                     EMPTY_TOP_LEVEL_EVENT_ID,
-                                                     HAS_NO_INCOME_EDGE);
+                                                       EMPTY_TOP_LEVEL_EVENT_ID,
+                                                       HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptyTopEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
     }
 
@@ -90,8 +90,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
-                                                             FILLED_SUBPROCESS_LEVEL_EVENT_ID,
-                                                             HAS_NO_INCOME_EDGE);
+                                                               FILLED_SUBPROCESS_LEVEL_EVENT_ID,
+                                                               HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -104,8 +104,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent emptySubprocessEvent = getEndNodeById(diagram,
-                                                            EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
-                                                            HAS_NO_INCOME_EDGE);
+                                                              EMPTY_SUBPROCESS_LEVEL_EVENT_ID,
+                                                              HAS_NO_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
     }
 
@@ -121,8 +121,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
-                                                             FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
-                                                             HAS_INCOME_EDGE);
+                                                               FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
+                                                               HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
@@ -135,8 +135,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent emptyEvent = getEndNodeById(diagram,
-                                                  EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
-                                                  HAS_INCOME_EDGE);
+                                                    EMPTY_WITH_INCOME_TOP_LEVEL_EVENT_ID,
+                                                    HAS_INCOME_EDGE);
         assertGeneralSet(emptyEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
     }
 
@@ -147,8 +147,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent emptySubprocessEvent = getEndNodeById(diagram,
-                                                            EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
-                                                            HAS_INCOME_EDGE);
+                                                              EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
+                                                              HAS_INCOME_EDGE);
         assertGeneralSet(emptySubprocessEvent.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
     }
 
@@ -164,8 +164,8 @@ public class EndMessageEventTest extends EndEvent<EndMessageEvent> {
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndMessageEvent filledSubprocessEvent = getEndNodeById(diagram,
-                                                             FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
-                                                             HAS_INCOME_EDGE);
+                                                               FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
+                                                               HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
         assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
