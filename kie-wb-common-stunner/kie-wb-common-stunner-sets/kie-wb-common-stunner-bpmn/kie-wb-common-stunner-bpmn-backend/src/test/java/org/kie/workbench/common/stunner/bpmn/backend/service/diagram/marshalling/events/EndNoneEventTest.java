@@ -25,7 +25,7 @@ import org.kie.workbench.common.stunner.core.graph.Graph;
 
 public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
 
-    private static final String BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endNoneEvents.bpmn";
+    private static final String BPMN_END_EVENT_FILE_PATH = "org/kie/workbench/common/stunner/bpmn/backend/service/diagram/endNoneEvents.bpmn";
 
     private static final String EMPTY_TOP_LEVEL_EVENT_ID = "_AA76CC5D-C353-4356-8688-5868A1D37EC7";
     private static final String FILLED_TOP_LEVEL_EVENT_ID = "_D868D848-CBD6-447A-BD6C-105E15129672";
@@ -49,7 +49,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
         final String EVENT_NAME = "end event01 ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String EVENT_DOCUMENTATION = "end event01 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent filledTopEvent = getEndNodeById(diagram,
@@ -61,7 +61,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
     @Test
     @Override
     public void testUnmarshallTopLevelEmptyEventProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent emptyTopEvent = getEndNodeById(diagram,
@@ -76,7 +76,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
         final String EVENT_NAME = "end event03 ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String EVENT_DOCUMENTATION = "end event03 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent filledSubprocessEvent = getEndNodeById(diagram,
@@ -88,7 +88,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent emptySubprocessEvent = getEndNodeById(diagram,
@@ -103,7 +103,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
         final String EVENT_NAME = "end event02 ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String EVENT_DOCUMENTATION = "end event02 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent filledSubprocessEvent = getEndNodeById(diagram,
@@ -115,7 +115,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
     @Test
     @Override
     public void testUnmarshallTopLevelEventWithIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent emptyEvent = getEndNodeById(diagram,
@@ -127,7 +127,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
     @Test
     @Override
     public void testUnmarshallSubprocessLevelEventWithIncomeEmptyProperties() throws Exception {
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent emptySubprocessEvent = getEndNodeById(diagram,
@@ -142,7 +142,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
         final String EVENT_NAME = "end event04 ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./";
         final String EVENT_DOCUMENTATION = "end event04 doc\n ~!@#$%^&*()_+`1234567890-={}|[]\\:\";'<>?,./";
 
-        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH);
+        Diagram<Graph, Metadata> diagram = unmarshall(marshaller, BPMN_END_EVENT_FILE_PATH);
         assertDiagram(diagram, AMOUNT_OF_NODES_IN_DIAGRAM);
 
         EndNoneEvent filledSubprocessEvent = getEndNodeById(diagram,
@@ -153,7 +153,7 @@ public class EndNoneEventTest extends EndEvent<EndNoneEvent> {
 
     @Override
     String getBpmnEndEventFilePath() {
-        return BPMN_THROWING_INTERMEDIATE_EVENT_FILE_PATH;
+        return BPMN_END_EVENT_FILE_PATH;
     }
 
     @Override
