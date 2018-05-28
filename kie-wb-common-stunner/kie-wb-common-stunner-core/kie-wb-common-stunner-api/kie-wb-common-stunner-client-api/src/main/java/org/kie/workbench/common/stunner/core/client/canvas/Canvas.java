@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,9 +44,9 @@ public interface Canvas<S extends Shape> {
     Canvas draw();
 
     /**
-     * Get a list of all Shapes on the Canvas
+     * Get all Shapes on the Canvas
      */
-    List<S> getShapes();
+    Collection<S> getShapes();
 
     /**
      * Returns the shape with the given identifier.
