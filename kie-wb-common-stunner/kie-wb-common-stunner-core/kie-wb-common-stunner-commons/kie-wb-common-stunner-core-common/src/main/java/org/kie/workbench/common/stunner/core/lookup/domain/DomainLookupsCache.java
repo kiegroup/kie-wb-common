@@ -64,10 +64,7 @@ class DomainLookupsCache {
 
     public Set<String> getDefinitions(final String label) {
         final Set<String> ids = definitionsByLabel.get(label);
-        if (null == ids) {
-            return Collections.emptySet();
-        }
-        return ids;
+        return null != ids ? ids : Collections.emptySet();
     }
 
     public void clear() {
