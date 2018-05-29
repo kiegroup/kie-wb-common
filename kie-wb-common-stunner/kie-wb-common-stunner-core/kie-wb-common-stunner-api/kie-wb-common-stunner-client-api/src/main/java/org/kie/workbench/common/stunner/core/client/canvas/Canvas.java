@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.core.client.canvas;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
