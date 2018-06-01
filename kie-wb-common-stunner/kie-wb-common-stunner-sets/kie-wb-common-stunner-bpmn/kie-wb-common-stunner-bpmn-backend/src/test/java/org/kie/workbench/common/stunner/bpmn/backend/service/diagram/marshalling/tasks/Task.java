@@ -54,7 +54,6 @@ public abstract class Task<T extends BaseTask> extends BPMNDiagramMarshallerBase
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
-                // New (un)marshaller is disabled for now due to found incompleteness
                 {OLD}, {NEW}
         });
     }
