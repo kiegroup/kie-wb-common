@@ -20,20 +20,6 @@
             <updatePolicy>never</updatePolicy>
           </snapshots>
         </repository>
-        <repository>
-          <id>kie-internal-staging-repository-group</id>
-          <name>KIE Internal Staging Repositories</name>
-          <url>https://origin-repository.jboss.org/nexus/content/groups/kie-internal-group</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
-            <updatePolicy>never</updatePolicy>
-          </snapshots>
-        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
@@ -46,20 +32,6 @@
           </releases>
           <snapshots>
             <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </snapshots>
-        </pluginRepository>
-        <pluginRepository>
-          <id>kie-internal-staging-repository-group</id>
-          <name>KIE Internal Staging Repositories</name>
-          <url>https://origin-repository.jboss.org/nexus/content/groups/kie-internal-group</url>
-          <layout>default</layout>
-          <releases>
-            <enabled>true</enabled>
-            <updatePolicy>never</updatePolicy>
-          </releases>
-          <snapshots>
-            <enabled>false</enabled>
             <updatePolicy>never</updatePolicy>
           </snapshots>
         </pluginRepository>
