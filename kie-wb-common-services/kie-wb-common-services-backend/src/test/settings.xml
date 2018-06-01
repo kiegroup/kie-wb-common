@@ -23,7 +23,21 @@
         <repository>
           <id>kie-internal-staging-repository-group</id>
           <name>KIE Internal Staging Repositories</name>
-          <url>https://origin-repository.jboss.org/nexus/content/groups/kie-internal-group</url>
+          <url>https://repository.jboss.org/nexus/content/groups/kie-internal-group</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>qa-nexus</id>
+          <name>kieAllBuild qa nexus</name>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/kieAllBuild/</url>
           <layout>default</layout>
           <releases>
             <enabled>true</enabled>
@@ -53,6 +67,20 @@
           <id>kie-internal-staging-repository-group</id>
           <name>KIE Internal Staging Repositories</name>
           <url>https://origin-repository.jboss.org/nexus/content/groups/kie-internal-group</url>
+          <layout>default</layout>
+          <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+          </releases>
+          <snapshots>
+            <enabled>false</enabled>
+            <updatePolicy>never</updatePolicy>
+          </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+          <id>qa-nexus</id>
+          <name>kieAllBuild qa nexus</name>
+          <url>http://bxms-qe.rhev-ci-vms.eng.rdu2.redhat.com:8081/nexus/content/repositories/kieAllBuild/</url>
           <layout>default</layout>
           <releases>
             <enabled>true</enabled>
