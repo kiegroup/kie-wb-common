@@ -457,4 +457,8 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String ProjectScreenSettings = "ProjectScreenSettings";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DuplicatedProjectName = "DuplicatedProjectName";
+
 }
