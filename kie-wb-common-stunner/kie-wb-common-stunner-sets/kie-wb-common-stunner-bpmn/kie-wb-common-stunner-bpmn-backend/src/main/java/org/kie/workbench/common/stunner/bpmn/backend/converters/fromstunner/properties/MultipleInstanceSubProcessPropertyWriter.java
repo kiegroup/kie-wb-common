@@ -16,8 +16,6 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.List;
-
 import org.eclipse.bpmn2.Bpmn2Factory;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -71,6 +69,7 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         dia.getSourceRef().add(ie);
         dia.setTargetRef(dataInputElement);
         process.getDataInputAssociations().add(dia);
+
     }
 
     public void setOutput(String collectionOutput, String dataOutput) {
@@ -97,9 +96,14 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
     public DataInput setDataInput(String value) {
         DataInput dataInput = bpmn2.createDataInput();
         dataInput.setId(value);
+        ItemDefinition item = bpmn2.createItemDefinition();
+        item.setId(Ids.multiInstanceItemType(process.getId(), "IN"));
+        this.addItemDefinition(item);
+        dataInput.setItemSubjectRef(item);
         this.ioSpec.getDataInputs().add(dataInput);
         this.inputSet.getDataInputRefs().add(dataInput);
         this.miloop.setLoopDataInputRef(dataInput);
+        this.miloop.setInputDataItem(dataInput);
         return dataInput;
     }
 
@@ -107,12 +111,13 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         DataOutput dataOutput = bpmn2.createDataOutput();
         dataOutput.setId(value);
         ItemDefinition item = bpmn2.createItemDefinition();
-        item.setId(Ids.multiInstanceItemType(process.getId()));
+        item.setId(Ids.multiInstanceItemType(process.getId(), "OUT"));
         this.addItemDefinition(item);
         dataOutput.setItemSubjectRef(item);
         this.ioSpec.getDataOutputs().add(dataOutput);
         this.outputSet.getDataOutputRefs().add(dataOutput);
         this.miloop.setLoopDataOutputRef(dataOutput);
+        this.miloop.setOutputDataItem(dataOutput);
         return dataOutput;
     }
 
@@ -120,18 +125,5 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         FormalExpression formalExpression = bpmn2.createFormalExpression();
         formalExpression.setBody(expression);
         this.miloop.setCompletionCondition(formalExpression);
-
-        List<DataInput> dataInputs =
-                process.getIoSpecification().getDataInputs();
-        if (!dataInputs.isEmpty()) {
-            this.miloop.setInputDataItem(
-                    dataInputs.get(0));
-        }
-        List<DataOutput> dataOutputs =
-                process.getIoSpecification().getDataOutputs();
-        if (!dataOutputs.isEmpty()) {
-            this.miloop.setOutputDataItem(
-                    dataOutputs.get(0));
-        }
     }
 }

@@ -38,7 +38,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .map(MultiInstanceLoopCharacteristics::getLoopDataInputRef)
                 .orElse(null);
         return process.getDataInputAssociations().stream()
-                .filter(dia -> dia.getTargetRef().equals(ieDataInput))
+                .filter(dia -> dia.getTargetRef().getId().equals(ieDataInput.getId()))
                 .map(dia -> dia.getSourceRef().get(0).getId())
                 .findFirst()
                 .orElse(null);
@@ -49,7 +49,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .map(MultiInstanceLoopCharacteristics::getLoopDataOutputRef)
                 .orElse(null);
         return process.getDataOutputAssociations().stream()
-                .filter(doa -> doa.getSourceRef().get(0).equals(ieDataOutput))
+                .filter(doa -> doa.getSourceRef().get(0).getId().equals(ieDataOutput.getId()))
                 .map(doa -> doa.getTargetRef().getId())
                 .findFirst()
                 .orElse(null);

@@ -34,7 +34,9 @@ public class Ids {
     }
 
     public static String typedIdentifier(String parentScopeId, String identifier) {
-        return "var_" + parentScopeId + "_" + identifier;
+        // TODO we cannot use this strategy until UI is migrated:
+        // "var_" + parentScopeId + "_" + identifier;
+        return identifier;
     }
 
     public static String dataInput(String parentId, String inputId) {
@@ -61,7 +63,7 @@ public class Ids {
         return "edge_" + source + "_to_" + target;
     }
 
-    public static String multiInstanceItemType(String parentId) {
-        return parentId + "_multiInstanceItemType";
+    public static String multiInstanceItemType(String parentId, String id) {
+        return parentId + "_multiInstanceItemType_"+id;
     }
 }

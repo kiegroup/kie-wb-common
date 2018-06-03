@@ -98,7 +98,7 @@ public class SubProcessConverter extends AbstractProcessConverter {
         MultipleInstanceSubProcessPropertyReader p = propertyReaderFactory.ofMultipleInstance(subProcess);
 
         definition.setGeneral(new BPMNGeneralSet(
-                new Name(subProcess.getName()),
+                new Name(p.getName()),
                 new Documentation(p.getDocumentation())
         ));
 
