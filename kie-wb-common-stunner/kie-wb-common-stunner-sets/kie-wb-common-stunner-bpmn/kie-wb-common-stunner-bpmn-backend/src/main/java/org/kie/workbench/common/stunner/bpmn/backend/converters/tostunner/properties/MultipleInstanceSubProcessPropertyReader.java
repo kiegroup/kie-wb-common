@@ -23,6 +23,7 @@ import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
+import org.eclipse.bpmn2.Property;
 import org.eclipse.bpmn2.SubProcess;
 import org.eclipse.bpmn2.di.BPMNPlane;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.DefinitionResolver;
@@ -39,7 +40,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataInputAssociations().stream()
                 .filter(dia -> dia.getTargetRef().getId().equals(ieDataInput.getId()))
-                .map(dia -> dia.getSourceRef().get(0).getId())
+                .map(dia -> ((Property)dia.getSourceRef().get(0)).getName())
                 .findFirst()
                 .orElse(null);
     }
@@ -50,7 +51,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataOutputAssociations().stream()
                 .filter(doa -> doa.getSourceRef().get(0).getId().equals(ieDataOutput.getId()))
-                .map(doa -> doa.getTargetRef().getId())
+                .map(doa -> ((Property)doa.getTargetRef()).getName())
                 .findFirst()
                 .orElse(null);
     }
@@ -58,13 +59,15 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
     public String getDataInput() {
         return getMultiInstanceLoopCharacteristics()
                 .map(MultiInstanceLoopCharacteristics::getInputDataItem)
-                .map(DataInput::getId).orElse("");
+                .map(d -> Optional.ofNullable(d.getName()).orElse(d.getId()))
+                .orElse("");
     }
 
     public String getDataOutput() {
         return getMultiInstanceLoopCharacteristics()
                 .map(MultiInstanceLoopCharacteristics::getOutputDataItem)
-                .map(DataOutput::getId).orElse("");
+                .map(d -> Optional.ofNullable(d.getName()).orElse(d.getId()))
+                .orElse("");
     }
 
     public String getCompletionCondition() {

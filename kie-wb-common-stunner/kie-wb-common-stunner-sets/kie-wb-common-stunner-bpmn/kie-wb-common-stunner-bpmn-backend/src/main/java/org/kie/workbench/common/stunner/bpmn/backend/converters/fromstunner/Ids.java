@@ -35,8 +35,7 @@ public class Ids {
 
     public static String typedIdentifier(String parentScopeId, String identifier) {
         // TODO we cannot use this strategy until UI is migrated:
-        // "var_" + parentScopeId + "_" + identifier;
-        return identifier;
+        return "var_" + parentScopeId + "_" + identifier;
     }
 
     public static String dataInput(String parentId, String inputId) {

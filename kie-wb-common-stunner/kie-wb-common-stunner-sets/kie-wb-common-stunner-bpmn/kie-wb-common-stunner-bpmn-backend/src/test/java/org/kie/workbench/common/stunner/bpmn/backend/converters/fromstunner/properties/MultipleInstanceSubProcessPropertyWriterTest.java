@@ -32,10 +32,10 @@ public class MultipleInstanceSubProcessPropertyWriterTest {
                         subProcess, new FlatVariableScope());
 
         assertThatCode(() -> {
-            p.setInput(null, "");
-            p.setOutput(null, "");
-            p.setDataInput(null);
-            p.setDataOutput(null);
+            p.setInput(null);
+            p.setOutput(null);
+            p.createDataInput(null);
+            p.createDataOutput(null);
             p.setCompletionCondition(null);
         }).doesNotThrowAnyException();
     }

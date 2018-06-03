@@ -95,12 +95,10 @@ public class SubProcessConverter extends AbstractProcessConverter {
         p.setProcessVariables(processData.getProcessVariables());
 
         MultipleInstanceSubprocessTaskExecutionSet executionSet = definition.getExecutionSet();
-        p.setInput(
-                executionSet.getMultipleInstanceCollectionInput().getValue(),
-                executionSet.getMultipleInstanceDataInput().getValue());
-        p.setOutput(
-                executionSet.getMultipleInstanceCollectionOutput().getValue(),
-                executionSet.getMultipleInstanceDataOutput().getValue());
+        p.setCollectionInput(executionSet.getMultipleInstanceCollectionInput().getValue());
+        p.setInput(executionSet.getMultipleInstanceDataInput().getValue());
+        p.setCollectionOutput(executionSet.getMultipleInstanceCollectionOutput().getValue());
+        p.setOutput(executionSet.getMultipleInstanceDataOutput().getValue());
         p.setCompletionCondition(executionSet.getMultipleInstanceCompletionCondition().getValue());
         p.setOnEntryAction(executionSet.getOnEntryAction());
         p.setOnExitAction(executionSet.getOnExitAction());

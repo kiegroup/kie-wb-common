@@ -24,7 +24,6 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.InputSet;
-import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
 import org.eclipse.bpmn2.OutputSet;
@@ -54,70 +53,75 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         process.setIoSpecification(ioSpec);
     }
 
-    public void setInput(String collectionInput, String dataInput) {
+    public void setCollectionInput(String collectionInput) {
         // ignore empty input
         if (collectionInput == null) {
             return;
         }
-        DataInput dataInputElement = setDataInput(dataInput);
+        DataInput dataInputElement = createDataInput("COLLECTION");
         Property prop = findPropertyById(collectionInput); // check whether this exist or throws
         miloop.setLoopDataInputRef(dataInputElement);
 
         DataInputAssociation dia = Bpmn2Factory.eINSTANCE.createDataInputAssociation();
-        ItemAwareElement ie = Bpmn2Factory.eINSTANCE.createItemAwareElement();
-        ie.setId(collectionInput);
-        dia.getSourceRef().add(ie);
+        dia.getSourceRef().add(prop);
         dia.setTargetRef(dataInputElement);
         process.getDataInputAssociations().add(dia);
-
     }
 
-    public void setOutput(String collectionOutput, String dataOutput) {
+    public void setInput(String value) {
+        DataInput dataInput = createDataInput(value);
+        miloop.setInputDataItem(dataInput);
+    }
+
+    public void setCollectionOutput(String collectionOutput) {
         // ignore empty input
         if (collectionOutput == null) {
             return;
         }
-        DataOutput dataOutputElement = setDataOutput(dataOutput);
+        DataOutput dataOutputElement = createDataOutput("COLLECTION");
         Property prop = findPropertyById(collectionOutput); // check whether this exist or throws
         miloop.setLoopDataOutputRef(dataOutputElement);
 
         DataOutputAssociation doa = Bpmn2Factory.eINSTANCE.createDataOutputAssociation();
-        ItemAwareElement ie = Bpmn2Factory.eINSTANCE.createItemAwareElement();
-        ie.setId(collectionOutput);
         doa.getSourceRef().add(dataOutputElement);
-        doa.setTargetRef(ie);
+        doa.setTargetRef(prop);
         process.getDataOutputAssociations().add(doa);
+    }
+
+    public void setOutput(String name) {
+        DataOutput dataOutput = createDataOutput(name);
+        miloop.setOutputDataItem(dataOutput);
     }
 
     private Property findPropertyById(String id) {
         return variableScope.lookup(id).getTypedIdentifier();
     }
 
-    public DataInput setDataInput(String value) {
+    public DataInput createDataInput(String name) {
         DataInput dataInput = bpmn2.createDataInput();
-        dataInput.setId(value);
+        dataInput.setId(Ids.dataInput(process.getId(), "IN"));
+        dataInput.setName(name);
+
         ItemDefinition item = bpmn2.createItemDefinition();
         item.setId(Ids.multiInstanceItemType(process.getId(), "IN"));
         this.addItemDefinition(item);
         dataInput.setItemSubjectRef(item);
         this.ioSpec.getDataInputs().add(dataInput);
         this.inputSet.getDataInputRefs().add(dataInput);
-        this.miloop.setLoopDataInputRef(dataInput);
-        this.miloop.setInputDataItem(dataInput);
         return dataInput;
     }
 
-    public DataOutput setDataOutput(String value) {
+    public DataOutput createDataOutput(String value) {
         DataOutput dataOutput = bpmn2.createDataOutput();
-        dataOutput.setId(value);
+        dataOutput.setId(Ids.dataOutput(process.getId(), value));
+        dataOutput.setName(value);
+
         ItemDefinition item = bpmn2.createItemDefinition();
         item.setId(Ids.multiInstanceItemType(process.getId(), "OUT"));
         this.addItemDefinition(item);
         dataOutput.setItemSubjectRef(item);
         this.ioSpec.getDataOutputs().add(dataOutput);
         this.outputSet.getDataOutputRefs().add(dataOutput);
-        this.miloop.setLoopDataOutputRef(dataOutput);
-        this.miloop.setOutputDataItem(dataOutput);
         return dataOutput;
     }
 
