@@ -58,9 +58,11 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         if (collectionInput == null) {
             return;
         }
-        DataInput dataInputElement = createDataInput("COLLECTION");
+
+        DataInput dataInputElement = createDataInput("IN_COLLECTION");
         Property prop = findPropertyById(collectionInput); // check whether this exist or throws
         miloop.setLoopDataInputRef(dataInputElement);
+        this.inputSet.getDataInputRefs().add(dataInputElement);
 
         DataInputAssociation dia = Bpmn2Factory.eINSTANCE.createDataInputAssociation();
         dia.getSourceRef().add(prop);
@@ -78,9 +80,15 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         if (collectionOutput == null) {
             return;
         }
-        DataOutput dataOutputElement = createDataOutput("COLLECTION");
+
+        DataOutput dataOutputElement = createDataOutput("OUT_COLLECTION");
         Property prop = findPropertyById(collectionOutput); // check whether this exist or throws
         miloop.setLoopDataOutputRef(dataOutputElement);
+        ItemDefinition item = bpmn2.createItemDefinition();
+        item.setId(Ids.multiInstanceItemType(process.getId(), "OUT_COLLECTION"));
+        dataOutputElement.setItemSubjectRef(item);
+        this.addItemDefinition(item);
+        this.outputSet.getDataOutputRefs().add(dataOutputElement);
 
         DataOutputAssociation doa = Bpmn2Factory.eINSTANCE.createDataOutputAssociation();
         doa.getSourceRef().add(dataOutputElement);
@@ -91,6 +99,10 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
     public void setOutput(String name) {
         DataOutput dataOutput = createDataOutput(name);
         miloop.setOutputDataItem(dataOutput);
+        ItemDefinition item = bpmn2.createItemDefinition();
+        item.setId(Ids.multiInstanceItemType(process.getId(), name));
+        dataOutput.setItemSubjectRef(item);
+        this.addItemDefinition(item);
     }
 
     private Property findPropertyById(String id) {
@@ -99,15 +111,10 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
 
     public DataInput createDataInput(String name) {
         DataInput dataInput = bpmn2.createDataInput();
-        dataInput.setId(Ids.dataInput(process.getId(), "IN"));
+        dataInput.setId(Ids.dataInput(process.getId(), name));
         dataInput.setName(name);
 
-        ItemDefinition item = bpmn2.createItemDefinition();
-        item.setId(Ids.multiInstanceItemType(process.getId(), "IN"));
-        this.addItemDefinition(item);
-        dataInput.setItemSubjectRef(item);
         this.ioSpec.getDataInputs().add(dataInput);
-        this.inputSet.getDataInputRefs().add(dataInput);
         return dataInput;
     }
 
@@ -116,12 +123,7 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
         dataOutput.setId(Ids.dataOutput(process.getId(), value));
         dataOutput.setName(value);
 
-        ItemDefinition item = bpmn2.createItemDefinition();
-        item.setId(Ids.multiInstanceItemType(process.getId(), "OUT"));
-        this.addItemDefinition(item);
-        dataOutput.setItemSubjectRef(item);
         this.ioSpec.getDataOutputs().add(dataOutput);
-        this.outputSet.getDataOutputRefs().add(dataOutput);
         return dataOutput;
     }
 

@@ -40,7 +40,7 @@ class ProcessVariableReader {
                 .orElse(processVariableName);
     }
 
-    private static String getProcessVariableName(Property p) {
+    public static String getProcessVariableName(Property p) {
         String name = p.getName();
         // legacy uses ID instead of name
         return name == null? p.getId() : name;

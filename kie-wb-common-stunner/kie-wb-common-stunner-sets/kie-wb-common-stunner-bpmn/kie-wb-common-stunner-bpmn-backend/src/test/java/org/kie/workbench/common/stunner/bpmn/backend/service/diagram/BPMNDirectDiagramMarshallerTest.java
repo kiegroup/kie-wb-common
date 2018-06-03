@@ -22,6 +22,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.Activity;
@@ -2179,6 +2183,8 @@ public class BPMNDirectDiagramMarshallerTest {
                       1,
                       0);
 
+        assertEquals("There are too many extensionElements sections. Some would be ignored!",
+                     3, countOccurrences(result, "<bpmn2:extensionElements>"));
         assertTrue(result.contains("<bpmn2:subProcess id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571\""));
         assertTrue(result.contains("name=\"MultipleInstanceSubprocess\""));
         assertTrue(result.contains("<drools:onEntry-script scriptFormat=\"http://www.java.com/java\">"));
@@ -2191,13 +2197,24 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(result.contains("<drools:metaValue><![CDATA[true]]></drools:metaValue>"));
         assertTrue(result.contains("</drools:metaData>"));
         assertTrue(result.contains("<bpmn2:multiInstanceLoopCharacteristics"));
-        assertTrue(result.contains("<bpmn2:loopDataInputRef>var_MultipleInstanceSubprocess_var1</bpmn2:loopDataInputRef>"));
-        assertTrue(result.contains("<bpmn2:loopDataOutputRef>var_MultipleInstanceSubprocess_var2</bpmn2:loopDataOutputRef>"));
-        assertTrue(result.contains("<bpmn2:inputDataItem xsi:type=\"bpmn2:tDataInput\" id=\"dataInput\"/>"));
-        assertTrue(result.contains("<bpmn2:outputDataItem xsi:type=\"bpmn2:tDataOutput\" id=\"dataOutput\" itemSubjectRef=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_multiInstanceItemType\"/>"));
+        assertTrue(result.contains("<bpmn2:loopDataInputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_IN_COLLECTIONInputX</bpmn2:loopDataInputRef>"));
+        assertTrue(result.contains("<bpmn2:loopDataOutputRef>_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_OUT_COLLECTIONOutputX</bpmn2:loopDataOutputRef>"));
+        assertTrue(result.contains("<bpmn2:dataOutput id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_OUT_COLLECTIONOutputX\" itemSubjectRef=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_multiInstanceItemType_OUT_COLLECTION\" name=\"OUT_COLLECTION\"/>"));
+        assertTrue(result.contains("<bpmn2:inputDataItem xsi:type=\"bpmn2:tDataInput\" id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_dataInputInputX\" name=\"dataInput\"/>"));
+        assertTrue(result.contains("<bpmn2:outputDataItem xsi:type=\"bpmn2:tDataOutput\" id=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_dataOutputOutputX\" itemSubjectRef=\"_2316CEC1-C1F7-41B1-8C91-3CE73ADE5571_multiInstanceItemType_dataOutput\" name=\"dataOutput\"/>"));
         assertTrue(result.contains("<bpmn2:completionCondition xsi:type=\"bpmn2:tFormalExpression\""));
         assertTrue(result.contains("a=b</bpmn2:completionCondition>"));
         assertTrue(result.contains("</bpmn2:multiInstanceLoopCharacteristics>"));
+    }
+
+    private int countOccurrences(String input, String lookup) {
+        Pattern p = Pattern.compile(lookup);
+        Matcher matcher = p.matcher(input);
+        int count = 0;
+        while (matcher.find()) {
+            count+=1;
+        }
+        return count;
     }
 
     @Test

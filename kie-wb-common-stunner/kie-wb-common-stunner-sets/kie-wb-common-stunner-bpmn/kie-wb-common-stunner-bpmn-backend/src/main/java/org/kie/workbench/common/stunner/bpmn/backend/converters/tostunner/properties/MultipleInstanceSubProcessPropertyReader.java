@@ -40,7 +40,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataInputAssociations().stream()
                 .filter(dia -> dia.getTargetRef().getId().equals(ieDataInput.getId()))
-                .map(dia -> ((Property)dia.getSourceRef().get(0)).getName())
+                .map(dia -> ProcessVariableReader.getProcessVariableName((Property)dia.getSourceRef().get(0)))
                 .findFirst()
                 .orElse(null);
     }
@@ -51,7 +51,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataOutputAssociations().stream()
                 .filter(doa -> doa.getSourceRef().get(0).getId().equals(ieDataOutput.getId()))
-                .map(doa -> ((Property)doa.getTargetRef()).getName())
+                .map(doa -> ProcessVariableReader.getProcessVariableName((Property)doa.getTargetRef()))
                 .findFirst()
                 .orElse(null);
     }
