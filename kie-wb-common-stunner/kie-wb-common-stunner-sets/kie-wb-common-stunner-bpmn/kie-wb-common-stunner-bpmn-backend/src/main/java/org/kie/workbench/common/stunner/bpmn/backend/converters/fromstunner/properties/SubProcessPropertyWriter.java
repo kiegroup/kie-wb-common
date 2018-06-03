@@ -104,6 +104,7 @@ public class SubProcessPropertyWriter extends PropertyWriter implements ElementC
             VariableScope.Variable variable =
                     variableScope.declare(this.process.getId(), decl.getIdentifier(), decl.getType());
             properties.add(variable.getTypedIdentifier());
+            this.itemDefinitions.add(variable.getTypeDeclaration());
         });
     }
 

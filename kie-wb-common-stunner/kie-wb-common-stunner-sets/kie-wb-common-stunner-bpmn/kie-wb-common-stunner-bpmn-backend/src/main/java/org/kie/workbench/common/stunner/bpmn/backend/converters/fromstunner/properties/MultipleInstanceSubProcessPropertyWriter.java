@@ -60,8 +60,8 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
             return;
         }
         DataInput dataInputElement = setDataInput(dataInput);
-        Property prop = findPropertyById(collectionInput);
-        miloop.setLoopDataInputRef(prop);
+        Property prop = findPropertyById(collectionInput); // check whether this exist or throws
+        miloop.setLoopDataInputRef(dataInputElement);
 
         DataInputAssociation dia = Bpmn2Factory.eINSTANCE.createDataInputAssociation();
         ItemAwareElement ie = Bpmn2Factory.eINSTANCE.createItemAwareElement();
@@ -78,8 +78,8 @@ public class MultipleInstanceSubProcessPropertyWriter extends SubProcessProperty
             return;
         }
         DataOutput dataOutputElement = setDataOutput(dataOutput);
-        Property prop = findPropertyById(collectionOutput);
-        miloop.setLoopDataOutputRef(prop);
+        Property prop = findPropertyById(collectionOutput); // check whether this exist or throws
+        miloop.setLoopDataOutputRef(dataOutputElement);
 
         DataOutputAssociation doa = Bpmn2Factory.eINSTANCE.createDataOutputAssociation();
         ItemAwareElement ie = Bpmn2Factory.eINSTANCE.createItemAwareElement();
