@@ -80,10 +80,18 @@ public class AssignmentsInfos {
                 inputs, outputs, associations, alternativeEncoding).toString());
     }
 
+    public static boolean isReservedDeclaration(DataInput o) {
+        return RESERVED_DECLARATIONS.contains(o.getName());
+    }
+
+    public static boolean isReservedIdentifier(String targetName) {
+        return RESERVED_ASSIGNMENTS.contains(targetName);
+    }
+
     private static DeclarationList dataInputDeclarations(List<DataInput> dataInputs) {
         return new DeclarationList(
                 dataInputs.stream()
-                        .filter(o -> !RESERVED_DECLARATIONS.contains(o.getName()))
+                        .filter(o -> !isReservedDeclaration(o))
                         .map(in -> new VariableDeclaration(
                                 in.getName(),
                                 CustomAttribute.dtype.of(in).get()))
@@ -106,7 +114,7 @@ public class AssignmentsInfos {
             List<ItemAwareElement> sourceList = in.getSourceRef();
             List<Assignment> assignmentList = in.getAssignment();
             String targetName = ((DataInput) in.getTargetRef()).getName();
-            if (RESERVED_ASSIGNMENTS.contains(targetName)) {
+            if (isReservedIdentifier(targetName)) {
                 continue;
             }
 

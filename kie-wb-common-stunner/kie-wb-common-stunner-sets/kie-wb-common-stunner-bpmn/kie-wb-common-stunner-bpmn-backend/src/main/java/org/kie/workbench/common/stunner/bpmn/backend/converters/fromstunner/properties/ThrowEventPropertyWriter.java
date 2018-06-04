@@ -24,6 +24,8 @@ import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AssignmentsInfos.isReservedIdentifier;
+
 public class ThrowEventPropertyWriter extends EventPropertyWriter {
 
     private final ThrowEvent throwEvent;
@@ -39,6 +41,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
         assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
+                .filter(varDecl -> !isReservedIdentifier(varDecl.getIdentifier()))
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
                 .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());

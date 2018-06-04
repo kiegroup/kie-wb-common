@@ -27,6 +27,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.Assignme
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationSet;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AssignmentsInfos.isReservedIdentifier;
 
 public class ActivityPropertyWriter extends PropertyWriter {
 
@@ -59,6 +60,7 @@ public class ActivityPropertyWriter extends PropertyWriter {
         assignmentsInfo
                 .getInputs().getDeclarations()
                 .stream()
+                .filter(varDecl -> !isReservedIdentifier(varDecl.getIdentifier()))
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
                 .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());
