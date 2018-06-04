@@ -102,7 +102,7 @@ public class EndEventConverter {
         ));
 
         definition.setExecutionSet(new MessageEventExecutionSet(
-                new MessageRef(e.getMessageRef().getName())
+                new MessageRef(EventDefinitionReader.messageRefOf(e))
         ));
 
         node.getContent().setBounds(p.getBounds());
