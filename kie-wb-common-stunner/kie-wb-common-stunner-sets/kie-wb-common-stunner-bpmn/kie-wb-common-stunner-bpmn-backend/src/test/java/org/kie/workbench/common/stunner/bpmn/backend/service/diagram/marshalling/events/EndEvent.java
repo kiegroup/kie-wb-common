@@ -53,7 +53,6 @@ public abstract class EndEvent<T extends BaseEndEvent> extends BPMNDiagramMarsha
     @Parameterized.Parameters
     public static List<Object[]> marshallers() {
         return Arrays.asList(new Object[][]{
-                // New (un)marshaller is disabled for now due to found incompleteness
                 {OLD}, {NEW}
         });
     }
