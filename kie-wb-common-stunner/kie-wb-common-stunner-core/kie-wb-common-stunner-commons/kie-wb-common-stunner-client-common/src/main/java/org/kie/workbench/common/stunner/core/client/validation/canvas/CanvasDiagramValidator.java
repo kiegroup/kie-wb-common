@@ -109,7 +109,6 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
                                          violation.getUUID());
             if (null != shape) {
                 shape.applyState(ShapeState.INVALID);
-                canvas.draw();
             }
             return true;
         }

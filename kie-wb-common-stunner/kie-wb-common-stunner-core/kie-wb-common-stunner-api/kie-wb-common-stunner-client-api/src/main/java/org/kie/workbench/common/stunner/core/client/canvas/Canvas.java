@@ -36,12 +36,6 @@ public interface Canvas<S extends Shape> {
      */
     Canvas initialize(final int width,
                       final int height);
-
-    /**
-     * Draws or batches the updates on the canvas.
-     */
-    Canvas draw();
-
     /**
      * Get all Shapes on the Canvas
      */
