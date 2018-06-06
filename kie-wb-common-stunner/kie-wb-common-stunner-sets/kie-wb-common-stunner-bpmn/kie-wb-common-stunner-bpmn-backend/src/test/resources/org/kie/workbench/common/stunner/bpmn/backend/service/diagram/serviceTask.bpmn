@@ -6,11 +6,11 @@
   <bpmn2:itemDefinition id="_A3C25100-DFAB-4867-9282-08381BD69C6B_SubjectInputXItem" structureRef="String"/>
   <bpmn2:itemDefinition id="_A3C25100-DFAB-4867-9282-08381BD69C6B_ToInputXItem" structureRef="String"/>
   <bpmn2:process id="example.workitem" drools:packageName="com.myteam.example" drools:version="1.0" name="workitem" isExecutable="true">
-    <bpmn2:serviceTask id="A3C25100-DFAB-4867-9282-08381BD69C6B" drools:taskName="Email" name="Email">
+    <bpmn2:serviceTask id="A3C25100-DFAB-4867-9282-08381BD69C6B" drools:taskName="Email" name="Custom Email">
       <bpmn2:documentation id="_jNRaYT1dEeiXT_TFLmcM5g"><![CDATA[This is an email task]]></bpmn2:documentation>
       <bpmn2:extensionElements>
         <drools:metaData name="elementname">
-          <drools:metaValue><![CDATA[Email]]></drools:metaValue>
+          <drools:metaValue><![CDATA[Custom Email]]></drools:metaValue>
         </drools:metaData>
       </bpmn2:extensionElements>
       <bpmn2:incoming>F1A882A9-1BF4-4E56-AF81-D7E67C0C1786</bpmn2:incoming>

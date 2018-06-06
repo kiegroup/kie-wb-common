@@ -47,7 +47,8 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
         Diagram<Graph, Metadata> d = unmarshall(newMarshaller, BPMN_SERVICE_TASK_PROPERTIES_FILE_PATH);
         Node<View<ServiceTask>, ?> node = d.getGraph().getNode(SERVICE_TASK_ID);
         ServiceTask definition = node.getContent().getDefinition();
-        assertEquals("Email", definition.getGeneral().getName().getValue());
+        assertEquals("Custom Email", definition.getGeneral().getName().getValue());
+        assertEquals("This is an email task", definition.getGeneral().getDocumentation().getValue());
     }
 
     @Test
@@ -64,7 +65,8 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
                         .map(org.eclipse.bpmn2.Task.class::cast)
                         .findFirst().get();
 
-        assertEquals("Email", serviceTask.getName());
+        assertEquals("Custom Email", serviceTask.getName());
+        assertEquals("<![CDATA[This is an email task]]>", serviceTask.getDocumentation().get(0).getText());
     }
 
     @Test
@@ -75,6 +77,7 @@ public class ServiceTaskTest extends BPMNDiagramMarshallerBase {
 
         Node<View<ServiceTask>, ?> node = d2.getGraph().getNode(SERVICE_TASK_ID);
         ServiceTask definition = node.getContent().getDefinition();
-        assertEquals("Email", definition.getGeneral().getName().getValue());
+        assertEquals("Custom Email", definition.getGeneral().getName().getValue());
+        assertEquals("This is an email task", definition.getGeneral().getDocumentation().getValue());
     }
 }

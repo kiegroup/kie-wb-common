@@ -38,16 +38,6 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
         this.workItemDefinition = workItemDefinition;
     }
 
-    @Override
-    public String getName() {
-        return workItemDefinition.getName();
-    }
-
-    @Override
-    public String getDocumentation() {
-        return workItemDefinition.getDocumentation();
-    }
-
     public String getTaskName() {
         return CustomInput.taskName.of(task).get();
     }
