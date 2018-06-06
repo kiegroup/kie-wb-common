@@ -104,7 +104,6 @@ public class CanvasDiagramValidator<H extends AbstractCanvasHandler> {
     private boolean applyViolation(final H canvasHandler,
                                    final RuleViolation violation) {
         if (hasViolations(violation)) {
-            final Canvas canvas = canvasHandler.getCanvas();
             final Shape shape = getShape(canvasHandler,
                                          violation.getUUID());
             if (null != shape) {
