@@ -67,4 +67,9 @@ public class ScriptTypeListFieldEditorPresenter
     public void setMode(ScriptTypeMode mode) {
         scriptTypePresenter.setMode(mode);
     }
+
+    @Override
+    public void setReadOnly(boolean readOnly) {
+        scriptTypePresenter.setReadOnly(readOnly);
+    }
 }
