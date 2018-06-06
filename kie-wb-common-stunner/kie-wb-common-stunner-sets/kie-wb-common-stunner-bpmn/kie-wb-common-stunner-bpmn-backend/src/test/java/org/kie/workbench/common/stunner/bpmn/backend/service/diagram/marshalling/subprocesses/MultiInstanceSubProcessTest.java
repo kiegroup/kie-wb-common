@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.subprocesses;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.Unmarshalling;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.BPMNDiagramMarshallerBase;

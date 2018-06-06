@@ -18,8 +18,6 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.prope
 
 import java.util.Optional;
 
-import org.eclipse.bpmn2.DataInput;
-import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.FormalExpression;
 import org.eclipse.bpmn2.ItemAwareElement;
 import org.eclipse.bpmn2.MultiInstanceLoopCharacteristics;
@@ -40,7 +38,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataInputAssociations().stream()
                 .filter(dia -> dia.getTargetRef().getId().equals(ieDataInput.getId()))
-                .map(dia -> ProcessVariableReader.getProcessVariableName((Property)dia.getSourceRef().get(0)))
+                .map(dia -> ProcessVariableReader.getProcessVariableName((Property) dia.getSourceRef().get(0)))
                 .findFirst()
                 .orElse(null);
     }
@@ -51,7 +49,7 @@ public class MultipleInstanceSubProcessPropertyReader extends SubProcessProperty
                 .orElse(null);
         return process.getDataOutputAssociations().stream()
                 .filter(doa -> doa.getSourceRef().get(0).getId().equals(ieDataOutput.getId()))
-                .map(doa -> ProcessVariableReader.getProcessVariableName((Property)doa.getTargetRef()))
+                .map(doa -> ProcessVariableReader.getProcessVariableName((Property) doa.getTargetRef()))
                 .findFirst()
                 .orElse(null);
     }

@@ -22,8 +22,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -2212,7 +2210,7 @@ public class BPMNDirectDiagramMarshallerTest {
         Matcher matcher = p.matcher(input);
         int count = 0;
         while (matcher.find()) {
-            count+=1;
+            count += 1;
         }
         return count;
     }
@@ -2596,7 +2594,6 @@ public class BPMNDirectDiagramMarshallerTest {
         assertTrue(multipleInstanceSubprocess.getExecutionSet().getIsAsync().getValue());
         assertEquals("mi-var1:String", multipleInstanceSubprocess.getProcessData().getProcessVariables().getValue());
     }
-
 
     @Test
     @SuppressWarnings("unchecked")
