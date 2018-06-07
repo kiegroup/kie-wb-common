@@ -14,7 +14,7 @@
 */
 package org.kie.workbench.common.screens.projecteditor.client.wizard;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 
 import org.guvnor.common.services.project.model.POM;
@@ -58,7 +58,7 @@ public class POMBuilderTest {
     public void testContainsKieMavenPlugin() throws Exception {
         pomBuilder.setBuildPlugins(pomDefaultOptions.getBuildPlugins());
 
-        ArrayList<Plugin> plugins = pomBuilder.build().getBuild().getPlugins();
+        List<Plugin> plugins = pomBuilder.build().getBuild().getPlugins();
 
         assertEquals(1,
                      plugins.size());
