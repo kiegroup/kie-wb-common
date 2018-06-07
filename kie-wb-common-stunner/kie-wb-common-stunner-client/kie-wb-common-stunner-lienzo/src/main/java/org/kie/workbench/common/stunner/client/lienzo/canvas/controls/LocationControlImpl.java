@@ -256,7 +256,7 @@ public class LocationControlImpl
             //check connectors
             ShapeView shapeView = canvasHandler.getCanvas().getShape(element.getUUID()).getShapeView();
             if (shapeView instanceof WiresShape) {
-                ShapeControlUtils.getConnectors((WiresShape) shapeView).values()
+                ShapeControlUtils.getChildConnectorWithinShape((WiresShape) shapeView).values()
                         .stream()
                         .forEach(wiresConnector -> {
                             Optional.ofNullable(canvasHandler.getGraphIndex().getEdge(WiresUtils.getShapeUUID(wiresConnector.getGroup())))

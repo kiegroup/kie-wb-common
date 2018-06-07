@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.ILocationAcceptor;
 import com.ait.lienzo.client.core.shape.wires.MagnetManager;
 import com.ait.lienzo.client.core.shape.wires.SelectionManager;
@@ -243,7 +244,7 @@ public class LocationControlImplTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testMove() {
+    public void testMove() throws Exception {
         final WiresShapeView wiresShape = mock(WiresShapeView.class);
         final WiresShapeView childWiresShape = mock(WiresShapeView.class);
         final MagnetManager.Magnets magnets = mock(MagnetManager.Magnets.class);
@@ -260,8 +261,17 @@ public class LocationControlImplTest {
         final ControlPoint controlPoint = new ControlPointImpl(new Point2D(0, 0), 0);
         final List<ControlPoint> controlPoints = Arrays.asList(controlPoint);
         final ViewConnector viewConnector = mock(ViewConnector.class);
+        Group parentGroup = mock(Group.class);
+        BoundingBox parentBB = new BoundingBox(0, 0, 200, 200);
+        MultiPath head = mock(MultiPath.class);
+        MultiPath tail = mock(MultiPath.class);
 
         when(childWiresShape.getMagnets()).thenReturn(magnets);
+        when(childWiresShape.getParent()).thenReturn(wiresShape);
+        when(wiresShape.getGroup()).thenReturn(parentGroup);
+        when(parentGroup.getBoundingBox()).thenReturn(parentBB);
+        when(wiresShape.getX()).thenReturn(0d);
+        when(wiresShape.getY()).thenReturn(0d);
         when(magnets.size()).thenReturn(1);
         when(magnets.getMagnet(0)).thenReturn(magnet);
         when(magnet.getConnectionsSize()).thenReturn(connections.size());
@@ -270,6 +280,10 @@ public class LocationControlImplTest {
         when(connector.getGroup()).thenReturn(connectorGroup);
         when(connectorGroup.uuid()).thenReturn(connectorUUID);
         when(connector.getControlPoints()).thenReturn(controlPointsLienzo);
+        when(connector.getHead()).thenReturn(head);
+        when(connector.getTail()).thenReturn(tail);
+        when(head.getLocation()).thenReturn(new com.ait.lienzo.client.core.types.Point2D(1, 1));
+        when(tail.getLocation()).thenReturn(new com.ait.lienzo.client.core.types.Point2D(2, 2));
         when(wiresShape.getChildShapes()).thenReturn(children);
         when(shape.getShapeView()).thenReturn(wiresShape);
         when(graphIndex.getEdge(connectorUUID)).thenReturn(connectorEdge);
