@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Modal;
+import org.jboss.errai.databinding.client.BindableProxy;
+import org.jboss.errai.databinding.client.api.DataBinder;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DataBindingEditor;
@@ -35,7 +37,6 @@ import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingC
 import org.kie.workbench.common.forms.model.DynamicModel;
 import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormModel;
-import org.kie.workbench.common.forms.service.shared.FieldManager;
 
 @Dependent
 public class FieldPropertiesRenderer implements IsWidget {
@@ -65,21 +66,17 @@ public class FieldPropertiesRenderer implements IsWidget {
 
     protected FieldPropertiesRendererHelper helper;
 
-    private FieldManager fieldManager;
-
     private boolean acceptChanges = false;
 
     @Inject
     public FieldPropertiesRenderer(FieldPropertiesRendererView view,
                                    DynamicFormModelGenerator dynamicFormModelGenerator,
                                    @StaticFormModel DataBindingEditor staticDataBindingEditor,
-                                   @DynamicFormModel DataBindingEditor dynamicDataBindingEditor,
-                                   FieldManager fieldManager) {
+                                   @DynamicFormModel DataBindingEditor dynamicDataBindingEditor) {
         this.view = view;
         this.dynamicFormModelGenerator = dynamicFormModelGenerator;
         this.staticDataBindingEditor = staticDataBindingEditor;
         this.dynamicDataBindingEditor = dynamicDataBindingEditor;
-        this.fieldManager = fieldManager;
     }
 
     @PostConstruct
@@ -90,7 +87,7 @@ public class FieldPropertiesRenderer implements IsWidget {
     public void render(final FieldPropertiesRendererHelper helper) {
         this.helper = helper;
         this.originalField = helper.getCurrentField();
-        this.fieldCopy = resetFieldCopy(originalField);
+        this.fieldCopy = doCopy(originalField);
         this.acceptChanges = false;
         render();
     }
@@ -102,18 +99,13 @@ public class FieldPropertiesRenderer implements IsWidget {
             renderingContext.setRootForm(context.getRootForm());
             renderingContext.getAvailableForms().putAll(context.getAvailableForms());
             renderingContext.setModel(fieldCopy);
-            doRender(helper,
-                     renderingContext);
+            doRender(helper, renderingContext);
         }
     }
 
-    public FieldDefinition resetFieldCopy(final FieldDefinition originalField) {
-        fieldCopy = fieldManager.getFieldFromProvider(originalField.getFieldType().getTypeName(),
-                                                      originalField.getFieldTypeInfo());
-        fieldCopy.copyFrom(originalField);
-        fieldCopy.setId(originalField.getId());
-        fieldCopy.setName(originalField.getName());
-        return fieldCopy;
+    @SuppressWarnings("unchecked")
+    public FieldDefinition doCopy(final FieldDefinition originalField) {
+        return ((BindableProxy<FieldDefinition>)DataBinder.forModel(originalField).getModel()).deepUnwrap();
     }
 
     public void onPressOk() {
