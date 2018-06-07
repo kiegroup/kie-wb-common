@@ -271,8 +271,11 @@ public class ProjectScreen {
 
     public void showSettings() {
         if (userCanUpdateProject()) {
-            SettingsPresenter.View settingsView = this.settingsPresenter.getView();
-            this.view.setContent(settingsView.getElement());
+            settingsPresenter.setupUsingCurrentSection().then(i -> {
+                SettingsPresenter.View settingsView = this.settingsPresenter.getView();
+                this.view.setContent(settingsView.getElement());
+                return promises.resolve();
+            });
         }
     }
 
