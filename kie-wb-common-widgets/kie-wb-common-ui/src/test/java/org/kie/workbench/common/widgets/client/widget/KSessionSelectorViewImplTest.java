@@ -16,16 +16,22 @@
 
 package org.kie.workbench.common.widgets.client.widget;
 
+import java.util.Collections;
+import java.util.List;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.jboss.errai.common.client.dom.Document;
 import org.jboss.errai.common.client.dom.Label;
+import org.jboss.errai.common.client.dom.Option;
 import org.jboss.errai.common.client.dom.Select;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class KSessionSelectorViewImplTest {
@@ -44,6 +50,9 @@ public class KSessionSelectorViewImplTest {
 
     @Mock
     private KSessionSelector presenter;
+
+    @Mock
+    private Option option;
 
     private KSessionSelectorViewImpl kSessionSelectorView;
 
@@ -69,5 +78,18 @@ public class KSessionSelectorViewImplTest {
         kSessionSelectorView.onKSessionSelected(null);
 
         verify(kSessionSelectorView).onSelectionChange();
+    }
+
+    @Test
+    public void testSetKSessions() {
+        final String sessionName = "defaultSession";
+        final List<String> sessions = Collections.singletonList(sessionName);
+        doReturn(option).when(document).createElement("option");
+
+        kSessionSelectorView.setKSessions(sessions);
+
+        verify(kSessionSelect).add(option);
+        verify(option).setText(sessionName);
+        verify(option).setValue(sessionName);
     }
 }
