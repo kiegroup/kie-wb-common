@@ -17,6 +17,7 @@
 package org.kie.workbench.common.widgets.client.widget;
 
 import java.util.List;
+
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ChangeEvent;
@@ -90,6 +91,7 @@ public class KSessionSelectorViewImpl implements KSessionSelectorView {
     private Option createOption(final String value) {
         Option option = (Option) document.createElement("option");
         option.setText(value);
+        option.setValue(value);
         return option;
     }
 
