@@ -36,6 +36,7 @@ public interface Canvas<S extends Shape> {
      */
     Canvas initialize(final int width,
                       final int height);
+
     /**
      * Get all Shapes on the Canvas
      */
