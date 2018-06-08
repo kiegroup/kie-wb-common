@@ -65,6 +65,8 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @EdgeOccurrences(role = "IntermediateEventOnActivityBoundary", type = EdgeOccurrences.EdgeType.OUTGOING, max = 1)
 @EdgeOccurrences(role = "IntermediateEventThrowing", type = EdgeOccurrences.EdgeType.OUTGOING, min = 1)
 @EdgeOccurrences(role = "IntermediateEventThrowing", type = EdgeOccurrences.EdgeType.OUTGOING, max = 1)
+@EdgeOccurrences(role = "IntermediateEventCatching", type = EdgeOccurrences.EdgeType.INCOMING, max = 1)
+@EdgeOccurrences(role = "IntermediateEventThrowing", type = EdgeOccurrences.EdgeType.INCOMING, max = 1)
 // Sequence flows cannot exceed bounds when any of the nodes are in an embedded subprocess context.
 @RuleExtension(handler = ConnectorParentsMatchHandler.class,
         typeArguments = {EmbeddedSubprocess.class},
