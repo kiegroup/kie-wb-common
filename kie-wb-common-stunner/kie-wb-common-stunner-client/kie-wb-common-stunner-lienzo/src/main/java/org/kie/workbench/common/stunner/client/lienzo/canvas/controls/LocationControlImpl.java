@@ -249,9 +249,10 @@ public class LocationControlImpl
         final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
                 new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
                         .forward();
-        int i = 0;
-        for (final Element element : elements) {
-            builder.addCommand(createMoveCommand(element, locations[i++]));
+
+        for (int i = 0; i < elements.length; i++) {
+            final Element element = elements[i];
+            builder.addCommand(createMoveCommand(element, locations[i]));
 
             //check connectors
             ShapeView shapeView = canvasHandler.getCanvas().getShape(element.getUUID()).getShapeView();
