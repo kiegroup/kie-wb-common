@@ -86,6 +86,11 @@ public class DefaultViewerSession
     }
 
     @Override
+    public String getSessionUUID() {
+        return session.getSessionUUID();
+    }
+
+    @Override
     public AbstractCanvas getCanvas() {
         return session.getCanvas();
     }

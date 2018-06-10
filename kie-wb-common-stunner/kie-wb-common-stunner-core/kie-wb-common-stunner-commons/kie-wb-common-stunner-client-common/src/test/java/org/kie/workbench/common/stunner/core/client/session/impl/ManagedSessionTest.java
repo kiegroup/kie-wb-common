@@ -29,15 +29,12 @@ import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasElementListener;
 import org.kie.workbench.common.stunner.core.client.canvas.listener.CanvasShapeListener;
-import org.kie.workbench.common.stunner.core.client.preferences.StunnerPreferencesRegistry;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import org.uberfire.mvp.Command;
 import org.uberfire.mvp.ParameterizedCommand;
 
@@ -73,9 +70,7 @@ public class ManagedSessionTest {
     private CanvasControl<AbstractCanvasHandler> canvasHandlerControl;
     private ManagedInstance<CanvasControl<AbstractCanvasHandler>> canvasHandlerControlInstances;
     @Mock
-    private StunnerPreferences stunnerPreferences;
-    @Mock
-    private StunnerPreferencesRegistry stunnerPreferencesRegistry;
+    private SessionLoader sessionLoader;
     @Mock
     private Diagram diagram;
     @Mock
@@ -94,22 +89,18 @@ public class ManagedSessionTest {
         canvasHandlerControlInstances = spy(new ManagedInstanceStub<>(canvasHandlerControl));
         when(metadata.getDefinitionSetId()).thenReturn(DEF_SET_ID);
         when(definitionUtils.getQualifier(eq(DEF_SET_ID))).thenReturn(qualifier);
-        doAnswer(new Answer() {
-            @Override
-            public Object answer(InvocationOnMock invocation) throws Throwable {
-                ParameterizedCommand callback = (ParameterizedCommand) invocation.getArguments()[0];
-                callback.execute(stunnerPreferences);
-                return null;
-            }
-        }).when(stunnerPreferences).load(any(ParameterizedCommand.class),
-                                         any(ParameterizedCommand.class));
+        doAnswer(invocation -> {
+            ((ParameterizedCommand) invocation.getArguments()[1]).execute(mock(StunnerPreferences.class));
+            return null;
+        }).when(sessionLoader).load(any(Metadata.class),
+                                    any(ParameterizedCommand.class),
+                                    any(ParameterizedCommand.class));
         tested = new ManagedSession(definitionUtils,
+                                    sessionLoader,
                                     canvasInstances,
                                     canvasHandlerInstances,
                                     canvasControlInstances,
-                                    canvasHandlerControlInstances,
-                                    stunnerPreferences,
-                                    stunnerPreferencesRegistry);
+                                    canvasHandlerControlInstances);
     }
 
     @Test
@@ -128,6 +119,9 @@ public class ManagedSessionTest {
         assertEquals(canvasHandler, tested.getCanvasHandler());
         assertEquals(canvasControl, tested.getCanvasControls().get(0));
         assertEquals(canvasHandlerControl, tested.getCanvasHandlerControls().get(0));
+        verify(sessionLoader, times(1)).load(eq(metadata),
+                                             any(ParameterizedCommand.class),
+                                             any(ParameterizedCommand.class));
         verify(canvasInstances, times(1)).select(eq(qualifier));
         verify(canvasHandlerInstances, times(1)).select(eq(qualifier));
         verify(canvasControlInstances, times(1)).select(eq(SomeTestControl.class),
@@ -136,7 +130,6 @@ public class ManagedSessionTest {
                                                                eq(qualifier));
         verify(canvasControlConsumer, times(1)).accept(eq(canvasControl));
         verify(canvasHandlerControlConsumer, times(1)).accept(eq(canvasHandlerControl));
-        verify(stunnerPreferencesRegistry, times(1)).register(eq(stunnerPreferences));
         verify(callback, times(1)).execute();
     }
 

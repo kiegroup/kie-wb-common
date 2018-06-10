@@ -38,7 +38,7 @@ import org.kie.workbench.common.stunner.lienzo.toolbox.items.tooltip.ToolboxText
 public abstract class AbstractActionsToolboxView<V extends AbstractActionsToolboxView>
         implements ActionsToolboxView<V> {
 
-    public static final double BUTTON_SIZE = 15;
+    public static final double BUTTON_SIZE = 16;
     public static final double BUTTON_PADDING = 5;
 
     private final LienzoGlyphRenderers glyphRenderers;

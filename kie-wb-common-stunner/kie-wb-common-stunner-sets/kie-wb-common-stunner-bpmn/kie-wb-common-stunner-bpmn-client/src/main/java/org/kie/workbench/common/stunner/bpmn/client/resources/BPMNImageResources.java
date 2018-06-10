@@ -71,6 +71,15 @@ public interface BPMNImageResources extends ClientBundleWithLookup {
     @DataResource.MimeType("image/svg+xml")
     DataResource categoryServiceTasks();
 
+    // **** Icons Sprite ****
+    @ClientBundle.Source("images/icons/bpmn-icons-sprite.png")
+    ImageResource bpmnIconsSprite();
+
+    @ClientBundle.Source("images/icons/bpmn-icons-sprite.css")
+    BPMNCssResource bpmnIconsSpriteCss();
+
+    // TODO: CLEAR UNUSED RESOURCES
+
     // ******* Task *******
     @ClientBundle.Source("images/icons/task/task.png")
     ImageResource task();
@@ -91,9 +100,6 @@ public interface BPMNImageResources extends ClientBundleWithLookup {
     ImageResource taskService();
 
     // ******* Event *******
-    @ClientBundle.Source("images/icons/event/event-end.png")
-    ImageResource eventEnd();
-
     @ClientBundle.Source("images/icons/event/event-end-none.png")
     ImageResource eventEndNone();
 

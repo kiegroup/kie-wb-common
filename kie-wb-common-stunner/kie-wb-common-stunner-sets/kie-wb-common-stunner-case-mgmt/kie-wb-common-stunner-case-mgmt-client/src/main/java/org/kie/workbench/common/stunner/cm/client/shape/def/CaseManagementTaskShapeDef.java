@@ -17,17 +17,21 @@
 package org.kie.workbench.common.stunner.cm.client.shape.def;
 
 import com.google.gwt.safehtml.shared.SafeUri;
-import org.kie.workbench.common.stunner.bpmn.client.shape.def.TaskShapeDef;
+import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNImageResources;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
 import org.kie.workbench.common.stunner.cm.client.shape.view.ActivityView;
+import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
 import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
 
 public final class CaseManagementTaskShapeDef
         implements CaseManagementActivityShapeDef<BaseTask, ActivityView> {
 
+    ImageDataUriGlyph NONE_TASK_GLYPH = ImageDataUriGlyph.create(BPMNImageResources.INSTANCE.task().getSafeUri());
+
+    // TODO: Use the rigth icon for the task type
     @Override
     public SafeUri getIconUri(final Class<? extends BaseTask> task) {
-        return TaskShapeDef.GLYPHS.get(task).getUri();
+        return NONE_TASK_GLYPH.getUri();
     }
 
     @Override
