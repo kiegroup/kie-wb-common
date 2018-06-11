@@ -136,6 +136,9 @@ public class CreateNodeActionTest {
     @Mock
     private Index<Node<View<?>, Edge>, Edge<ViewConnector<?>, Node>> graphIndex;
 
+    @Mock
+    private BPMNCreateNodeAction bpmnCreateNodeAction;
+
     private CreateNodeAction tested;
 
     @Before
@@ -185,12 +188,8 @@ public class CreateNodeActionTest {
         CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory = new DefaultCanvasCommandFactory(null,
                                                                                                            null);
         this.tested = new CreateNodeAction(definitionUtils,
-                                           clientFactoryManager,
-                                           canvasLayoutUtils,
-                                           canvasElementSelectedEvent,
                                            translationService,
-                                           sessionCommandManager,
-                                           canvasCommandFactory)
+                                           bpmnCreateNodeAction)
                 .setEdgeId(EDGE_ID)
                 .setNodeId(TARGET_NODE_ID);
     }
