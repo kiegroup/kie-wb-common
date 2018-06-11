@@ -192,14 +192,6 @@ public class AbstractCanvasTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testDraw() {
-        tested.draw();
-        verify(layer,
-               times(1)).draw();
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
     public void testClear() {
         tested.shapes.add(parentShape);
         tested.shapes.add(childShape);

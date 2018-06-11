@@ -86,7 +86,6 @@ public class ObserverBuilderControl extends AbstractElementBuilderControl
                                                   new BuildCallback() {
                                                       @Override
                                                       public void onSuccess(final String uuid) {
-                                                          canvasHandler.getCanvas().draw();
                                                           canvasSelectionEvent.fire(new CanvasSelectionEvent(canvasHandler,
                                                                                                              uuid));
                                                       }
