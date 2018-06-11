@@ -24,6 +24,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import elemental2.dom.HTMLElement;
+import elemental2.dom.HTMLInputElement;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
@@ -50,6 +51,9 @@ public class GitUrlsPresenter {
 
     Map<String, GitUrl> gitUrlsByProtocol;
     String selectedProtocol;
+
+    @Inject
+    private Clipboard clipboard;
 
     @Inject
     public GitUrlsPresenter(final View view,
@@ -93,8 +97,8 @@ public class GitUrlsPresenter {
         view.setUrl(gitUrlsByProtocol.get(selectedProtocol).getUrl());
     }
 
-    public void copyToClipboard() {
-        if (copy()) {
+    public void copyToClipboard(final HTMLInputElement element) {
+        if (clipboard.copy(element)) {
             notificationEventEvent.fire(new NotificationEvent(
                     translationService.format(GitUrlSuccessfullyCopiedToClipboard), SUCCESS));
         } else {
@@ -102,14 +106,6 @@ public class GitUrlsPresenter {
                     translationService.format(GitUrlFailedToBeCopiedToClipboard), WARNING));
         }
     }
-
-    boolean copy() {
-        return copyNative();
-    }
-
-    private native boolean copyNative() /*-{
-        return $doc.execCommand("Copy");
-    }-*/;
 
     public View getView() {
         return view;

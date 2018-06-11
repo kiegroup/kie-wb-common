@@ -17,7 +17,7 @@
 package org.kie.workbench.common.workbench.client.entrypoint;
 
 import java.util.Map;
-import javax.annotation.PostConstruct;
+
 import javax.inject.Inject;
 
 import com.google.gwt.animation.client.Animation;
@@ -25,32 +25,36 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
 import org.guvnor.common.services.shared.config.AppConfigService;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.framework.AbstractRpcProxy;
+import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.jboss.errai.common.client.api.Caller;
-import org.jboss.errai.common.client.api.RemoteCallback;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.UncaughtExceptionHandler;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
 import org.kie.workbench.common.widgets.client.resources.RoundedCornersResource;
 import org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback;
-import org.slf4j.Logger;
 import org.uberfire.client.mvp.ActivityBeansCache;
 
 public abstract class DefaultWorkbenchEntryPoint {
-
-    @Inject
-    private Logger logger;
 
     protected Caller<AppConfigService> appConfigService;
 
     protected ActivityBeansCache activityBeansCache;
 
-    private DefaultWorkbenchErrorCallback defaultErrorCallback = new DefaultWorkbenchErrorCallback();
+    private DefaultWorkbenchErrorCallback defaultErrorCallback;
 
     @Inject
-    public DefaultWorkbenchEntryPoint(Caller<AppConfigService> appConfigService,
-                                      ActivityBeansCache activityBeansCache) {
+    private GenericErrorPopup genericErrorPopup;
+
+    @Inject
+    public DefaultWorkbenchEntryPoint(final Caller<AppConfigService> appConfigService,
+                                      final ActivityBeansCache activityBeansCache,
+                                      final DefaultWorkbenchErrorCallback defaultErrorCallback) {
+
         this.appConfigService = appConfigService;
         this.activityBeansCache = activityBeansCache;
+        this.defaultErrorCallback = defaultErrorCallback;
     }
 
     protected abstract void setupMenu();
@@ -67,22 +71,15 @@ public abstract class DefaultWorkbenchEntryPoint {
     }
 
     @UncaughtExceptionHandler
-    private void handleUncaughtException(Throwable t) {
-        defaultErrorCallback.error(null,
-                                   t);
-
-        logger.error("Uncaught exception encountered",
-                     t);
+    private void handleUncaughtException(final Throwable t) {
+        defaultErrorCallback.error(t);
     }
 
     void loadPreferences() {
-        appConfigService.call(new RemoteCallback<Map<String, String>>() {
-            @Override
-            public void callback(final Map<String, String> response) {
-                ApplicationPreferences.setUp(response);
-                setupMenu();
-                setupAdminPage();
-            }
+        appConfigService.call((final Map<String, String> response) -> {
+            ApplicationPreferences.setUp(response);
+            setupMenu();
+            setupAdminPage();
         }).loadPreferences();
     }
 
@@ -109,7 +106,35 @@ public abstract class DefaultWorkbenchEntryPoint {
     }
 
     protected void initializeWorkbench() {
+        setupRpcDefaultErrorCallback();
         loadPreferences();
         loadStyles();
+    }
+
+    private void setupRpcDefaultErrorCallback() {
+        //FIXME: Some RPC calls are made before this callback has the chance to be registered.
+        //TODO: Investigate and fix.
+        AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK = (final Message m, final Throwable t) -> {
+
+            //Removing parameter/return information because sensitive data might be encoded.
+            //Also, this is safe because this message is not going to be used anymore.
+            m.remove("MethodParms");
+            m.remove("MethodReply");
+
+            genericErrorPopup.setup("[\n" + BusToolsCli.encodeMessage(m) +
+                                            ",\n\"" +
+                                            msg(t) +
+                                            "\"]");
+            genericErrorPopup.show();
+            return false;
+        };
+    }
+
+    private String msg(final Throwable t) {
+        if (t.getCause() == null) {
+            return t.getMessage();
+        }
+
+        return t.getMessage() + " Caused by: " + msg(t.getCause());
     }
 }

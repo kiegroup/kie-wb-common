@@ -105,7 +105,7 @@ public class SettingsPresenterTest {
         doNothing().when(projectContext).updateProjectModule(any());
         presenter = spy(new SettingsPresenter(
                 view,
-                promises,
+                null,
                 notificationEvent,
                 settingsSections,
                 savePopUpPresenter,

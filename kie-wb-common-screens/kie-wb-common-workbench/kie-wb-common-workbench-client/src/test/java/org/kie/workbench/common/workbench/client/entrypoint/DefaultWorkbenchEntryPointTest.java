@@ -55,7 +55,8 @@ public class DefaultWorkbenchEntryPointTest {
         mockActivityBeansCache();
 
         entryPoint = spy(new DefaultWorkbenchEntryPoint(appConfigServiceCallerMock,
-                                                        activityBeansCache) {
+                                                        activityBeansCache,
+                                                        null) {
             @Override
             protected void setupMenu() {
             }

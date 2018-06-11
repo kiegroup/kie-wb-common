@@ -18,6 +18,7 @@ package org.kie.workbench.common.screens.library.client.settings;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -27,6 +28,7 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
@@ -43,16 +45,17 @@ import org.kie.workbench.common.screens.library.client.settings.util.sections.Se
 import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionManager;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
+import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.uberfire.annotations.Customizable;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.mvp.UberElemental;
-import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
 import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
+import static org.jboss.errai.bus.client.framework.AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
@@ -134,6 +137,47 @@ public class SettingsPresenter {
                             view.getContentContainer());
 
         setupUsingCurrentSection();
+    }
+//
+//    @Inject
+//    private GenericErrorPopup genericErrorPopup;
+
+    @Inject
+    private Event<Bla> ev;
+
+    public void asd(final @Observes Bla a) {
+        String b = null;
+        b.length();
+    }
+
+    public static class Bla {
+
+    }
+
+    public void btntop() {
+//        ev.fire(new Bla());
+
+        projectScreenService.call(a -> {
+            String b = null;
+            b.length();
+        }).load(pathToPom);
+
+//        DomGlobal.console.info("gonna");
+//
+//        promises.promisify(projectScreenService, s -> {
+//            return s.load(pathToPom);
+//        }).then(i -> {
+//            String a = null;
+//            a.length();
+//            DomGlobal.console.info("success");
+//            return promises.resolve();
+//        }).catch_(e -> promises.catchOrExecute(e, f -> {
+//            DomGlobal.console.info("caught ex");
+//            return promises.reject(e);
+//        }, a -> {
+//            DomGlobal.console.info("caught expected rejected object");
+//            return promises.resolve();
+//        }));
     }
 
     public Promise<Void> setupUsingCurrentSection() {

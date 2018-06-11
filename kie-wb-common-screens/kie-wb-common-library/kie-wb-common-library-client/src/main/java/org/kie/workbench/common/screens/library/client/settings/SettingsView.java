@@ -23,7 +23,6 @@ import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLUListElement;
-import org.jboss.errai.common.client.dom.elemental2.Elemental2DomUtil;
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -42,9 +41,6 @@ public class SettingsView implements SettingsPresenter.View,
     private TranslationService translationService;
 
     @Inject
-    private Elemental2DomUtil elemental2DomUtil;
-
-    @Inject
     @DataField("save")
     private HTMLButtonElement save;
 
@@ -60,6 +56,10 @@ public class SettingsView implements SettingsPresenter.View,
     @DataField("menu-items-container")
     private HTMLUListElement menuItemsContainer;
 
+    @Inject
+    @DataField("btn-top")
+    private HTMLButtonElement button;
+
     @Override
     public void init(final SettingsPresenter presenter) {
         this.presenter = presenter;
@@ -73,6 +73,12 @@ public class SettingsView implements SettingsPresenter.View,
     @EventHandler("reset")
     public void reset(final ClickEvent event) {
         presenter.reset();
+    }
+
+
+    @EventHandler("btn-top")
+    public void btmtop(final ClickEvent event) {
+        presenter.btntop();
     }
 
     @Override
