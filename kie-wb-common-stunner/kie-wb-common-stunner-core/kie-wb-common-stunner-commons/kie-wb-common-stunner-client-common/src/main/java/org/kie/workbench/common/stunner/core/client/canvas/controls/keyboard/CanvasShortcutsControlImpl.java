@@ -29,6 +29,7 @@ import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
 
 @Dependent
@@ -122,18 +123,30 @@ public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistratio
     }
 
     private boolean selectedNodeIsStart() {
-        // TODO
-        return true;
+        if (selectedNodeElement().getContent() instanceof Definition) {
+            final Definition definition = (Definition) selectedNodeElement().getContent();
+            return (definitionFQNContainsSubstring(definition, "Start"));
+        } else {
+            return false;
+        }
     }
 
     private boolean selectedNodeIsTask() {
-        // TODO
-        return true;
+        if (selectedNodeElement().getContent() instanceof Definition) {
+            final Definition definition = (Definition) selectedNodeElement().getContent();
+            return (definitionFQNContainsSubstring(definition, "Task"));
+        } else {
+            return false;
+        }
     }
 
     private boolean selectedNodeIsGateway() {
-        // TODO
-        return true;
+        if (selectedNodeElement().getContent() instanceof Definition) {
+            final Definition definition = (Definition) selectedNodeElement().getContent();
+            return (definitionFQNContainsSubstring(definition, "Gateway"));
+        } else {
+            return false;
+        }
     }
 
     protected String selectedNodeId() {
@@ -142,5 +155,13 @@ public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistratio
         } else {
             return null;
         }
+    }
+
+    private Element selectedNodeElement() {
+        return canvasHandler.getGraphIndex().get(selectedNodeId());
+    }
+
+    private static boolean definitionFQNContainsSubstring(final Definition definition, final String subString) {
+        return definition.getDefinition().getClass().getName().contains(subString);
     }
 }
