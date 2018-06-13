@@ -18,7 +18,6 @@ package org.kie.workbench.common.screens.library.client.settings;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -28,7 +27,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.JavaScriptObject;
 import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
@@ -37,7 +35,6 @@ import org.guvnor.common.services.project.client.repositories.ConflictingReposit
 import org.guvnor.common.services.project.client.security.ProjectController;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.GAVAlreadyExistsException;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.screens.library.client.settings.sections.SettingsSections;
@@ -45,17 +42,15 @@ import org.kie.workbench.common.screens.library.client.settings.util.sections.Se
 import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionManager;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
-import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.uberfire.annotations.Customizable;
 import org.uberfire.backend.vfs.ObservablePath;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.client.promise.Promises;
 import org.uberfire.ext.editor.commons.client.file.popups.SavePopUpPresenter;
-import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.HasBusyIndicator;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.stream.Collectors.toList;
-import static org.jboss.errai.bus.client.framework.AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK;
 import static org.uberfire.ext.widgets.common.client.common.ConcurrentChangePopup.newConcurrentUpdate;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.ERROR;
 import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
@@ -138,9 +133,6 @@ public class SettingsPresenter {
 
         setupUsingCurrentSection();
     }
-//
-//    @Inject
-//    private GenericErrorPopup genericErrorPopup;
 
     @Inject
     private Event<Bla> ev;
@@ -157,27 +149,29 @@ public class SettingsPresenter {
     public void btntop() {
 //        ev.fire(new Bla());
 
-        projectScreenService.call(a -> {
-            String b = null;
-            b.length();
-        }).load(pathToPom);
+//        projectScreenService.call(a -> {
+//            projectScreenService.call(c -> {
+//                String b = null;
+//                b.length();
+//            }).reImport(pathToPom);
+//        }).load(pathToPom);
 
 //        DomGlobal.console.info("gonna");
 //
-//        promises.promisify(projectScreenService, s -> {
-//            return s.load(pathToPom);
-//        }).then(i -> {
-//            String a = null;
-//            a.length();
-//            DomGlobal.console.info("success");
-//            return promises.resolve();
-//        }).catch_(e -> promises.catchOrExecute(e, f -> {
-//            DomGlobal.console.info("caught ex");
-//            return promises.reject(e);
-//        }, a -> {
-//            DomGlobal.console.info("caught expected rejected object");
-//            return promises.resolve();
-//        }));
+        promises.promisify(projectScreenService, s -> {
+            return s.load(pathToPom);
+        }).then(i -> {
+            String a = null;
+            a.length();
+            DomGlobal.console.info("success");
+            return promises.resolve();
+        }).catch_(o -> promises.catchOrExecute(o, e -> {
+            DomGlobal.console.info("caught ex");
+            return promises.reject(e);
+        }, a -> {
+            DomGlobal.console.info("caught expected rejected object");
+            return promises.resolve();
+        }));
     }
 
     public Promise<Void> setupUsingCurrentSection() {
@@ -216,7 +210,10 @@ public class SettingsPresenter {
             } else {
                 return sectionManager.goToFirstAvailable();
             }
-        }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, i -> {
+        }).catch_(o -> promises.catchOrExecute(o, e -> {
+            view.hideBusyIndicator();
+            return promises.reject(e);
+        }, i -> {
             notificationEvent.fire(new NotificationEvent(view.getLoadErrorMessage(), ERROR));
             view.hideBusyIndicator();
             return promises.resolve();
@@ -261,18 +258,19 @@ public class SettingsPresenter {
             sectionManager.validateAll().then(i -> {
                 savePopUpPresenter.show(this::save);
                 return promises.resolve();
-            }).catch_(e -> promises.catchOrExecute(e,
-                                                   this::defaultErrorResolution,
-                                                   (final Section<ProjectScreenModel> section) -> {
-                                                       view.hideBusyIndicator();
-                                                       return sectionManager.goTo(section);
-                                                   }));
+            }).catch_(o -> promises.catchOrExecute(o, e -> {
+                view.hideBusyIndicator();
+                return promises.reject(e);
+            }, (final Section<ProjectScreenModel> section) -> {
+                view.hideBusyIndicator();
+                return sectionManager.goTo(section);
+            }));
         }
     }
 
     void save(final String comment) {
         promises.reduceLazilyChaining(getSavingSteps(comment), this::executeSavingStep)
-                .catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, sectionManager::goTo));
+                .catch_(o -> promises.catchOrExecute(o, promises::reject, sectionManager::goTo));
     }
 
     private Promise<Void> executeSavingStep(final Supplier<Promise<Void>> chain,
@@ -314,21 +312,17 @@ public class SettingsPresenter {
         }).then(workspaceProject -> {
             projectContext.updateProjectModule(workspaceProject.getMainModule());
             return promises.resolve();
-        }).catch_(e -> promises.catchOrExecute(e, this::defaultErrorResolution, (final Promises.Error<Message> error) -> {
-            DomGlobal.console.info(e);
-            return handleSaveProjectScreenModelError(comment, chain, error.getThrowable());
+        }).catch_(o -> promises.catchOrExecute(o, e -> {
+            if (e instanceof GAVAlreadyExistsException) {
+                return handlePomConcurrentUpdate(comment, chain, (GAVAlreadyExistsException) e);
+            } else {
+                view.hideBusyIndicator();
+                return promises.reject(e);
+            }
+        }, x -> {
+            view.hideBusyIndicator();
+            return promises.reject(x);
         }));
-    }
-
-    Promise<Void> handleSaveProjectScreenModelError(final String comment,
-                                                    final Supplier<Promise<Void>> chain,
-                                                    final Throwable throwable) {
-
-        if (throwable instanceof GAVAlreadyExistsException) {
-            return handlePomConcurrentUpdate(comment, chain, (GAVAlreadyExistsException) throwable);
-        } else {
-            return defaultErrorResolution(throwable);
-        }
     }
 
     void handlePomConcurrentUpdate(final String comment,
@@ -363,12 +357,6 @@ public class SettingsPresenter {
         concurrentPomUpdateInfo = null;
         conflictingRepositoriesPopup.hide();
         saveProjectScreenModel(comment, DeploymentMode.FORCED, chain).then(i -> chain.get());
-    }
-
-    Promise<Void> defaultErrorResolution(final Throwable e) {
-        new DefaultErrorCallback().error(null, e);
-        view.hideBusyIndicator();
-        return promises.resolve();
     }
 
     public void onSettingsSectionChanged(@Observes final SettingsSectionChange<ProjectScreenModel> settingsSectionChange) {

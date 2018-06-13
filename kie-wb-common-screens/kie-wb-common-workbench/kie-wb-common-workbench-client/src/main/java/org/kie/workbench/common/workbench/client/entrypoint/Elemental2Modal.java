@@ -39,6 +39,8 @@ public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
 
     private BaseModal modal;
 
+    private boolean isShowing;
+
     public Elemental2Modal(final V view) {
         this.view = view;
     }
@@ -51,11 +53,13 @@ public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
 
         view.init(this);
 
-        this.modal = new CommonModalBuilder()
+        modal = new CommonModalBuilder()
                 .addHeader(getHeader())
                 .addBody(getBody())
                 .addFooter(getFooter())
                 .build();
+
+        modal.addHideHandler(i -> isShowing = false);
     }
 
     private String getHeader() {
@@ -71,7 +75,10 @@ public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
     }
 
     public void show() {
-        modal.show();
+        if (!isShowing) {
+            modal.show();
+            isShowing = true;
+        }
     }
 
     protected void setWidth(final String width) {
@@ -80,6 +87,11 @@ public abstract class Elemental2Modal<V extends Elemental2Modal.View> {
 
     public void hide() {
         modal.hide();
+        isShowing = false;
+    }
+
+    public boolean isShowing() {
+        return isShowing;
     }
 
     public V getView() {

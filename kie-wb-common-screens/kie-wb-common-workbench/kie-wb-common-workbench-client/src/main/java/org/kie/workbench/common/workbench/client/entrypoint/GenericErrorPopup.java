@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.workbench.client.entrypoint;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Event;
@@ -68,17 +70,27 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
         this.clipboard = clipboard;
     }
 
+    @PostConstruct
+    public void init() {
+        super.setup();
+    }
+
     @Override
     public void init(final GenericErrorPopup this_) {
     }
 
     public void setup(final String details) {
-        this.errorDetails.textContent = details;
-        super.setup();
+        if (isShowing()) {
+            //If multiple errors occur, we want to know the details of each one of them. In order.
+            errorDetails.textContent += " | " + details;
+        } else {
+            errorDetails.textContent = details;
+        }
     }
 
     @EventHandler("ignore-button")
     private void onIgnoreButtonClicked(final @ForEvent("click") Event e) {
+        console.error(errorDetails.textContent);
         hide();
     }
 

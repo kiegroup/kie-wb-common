@@ -17,22 +17,19 @@
 package org.kie.workbench.common.workbench.client.error;
 
 import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
 import org.jboss.errai.bus.client.api.InvalidBusContentException;
 import org.kie.server.api.exception.KieServicesHttpException;
+import org.kie.workbench.common.workbench.client.entrypoint.GenericErrorPopup;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
-import org.uberfire.ext.widgets.common.client.callbacks.DefaultErrorCallback;
 import org.uberfire.ext.widgets.common.client.common.popups.YesNoCancelPopup;
 import org.uberfire.ext.widgets.common.client.common.popups.errors.ErrorPopup;
 import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class DefaultWorkbenchErrorCallback {
-
-    private DefaultErrorCallback defaultErrorCallback = new DefaultErrorCallback();
 
     public static boolean isKieServerForbiddenException(final Throwable throwable) {
         if (throwable instanceof KieServicesHttpException && ((KieServicesHttpException) throwable).getHttpCode() == 403) {
@@ -62,7 +59,8 @@ public class DefaultWorkbenchErrorCallback {
         return throwable instanceof InvalidBusContentException;
     }
 
-    public boolean error(final Throwable throwable) {
+    public void error(final Throwable throwable,
+                      final GenericErrorPopup genericErrorPopup) {
 
         if (isInvalidBusContentException(throwable)) {
             final YesNoCancelPopup result = YesNoCancelPopup.newYesNoCancelPopup(
@@ -75,25 +73,35 @@ public class DefaultWorkbenchErrorCallback {
 
             result.clearScrollHeight();
             result.show();
-            return false;
+            return;
         }
 
         if (isKieServerForbiddenException(throwable)) {
             ErrorPopup.showMessage(DefaultWorkbenchConstants.INSTANCE.KieServerError403());
-            return false;
+            return;
         }
 
         if (isKieServerUnauthorizedException(throwable)) {
             ErrorPopup.showMessage(DefaultWorkbenchConstants.INSTANCE.KieServerError401());
-            return false;
+            return;
         }
 
         if (throwable instanceof KieServicesHttpException) {
             KieServicesHttpException ex = (KieServicesHttpException) throwable;
             ErrorPopup.showMessage(CommonConstants.INSTANCE.ExceptionGeneric0(ex.getExceptionMessage()));
-            return false;
+            return;
         }
 
-        return defaultErrorCallback.error(null, throwable);
+        genericErrorPopup.setup("Uncaught exception: " + extractMessageRecursively(throwable));
+        genericErrorPopup.show();
+    }
+
+
+    private String extractMessageRecursively(final Throwable t) {
+        if (t.getCause() == null) {
+            return t.getMessage();
+        }
+
+        return t.getMessage() + " Caused by: " + extractMessageRecursively(t.getCause());
     }
 }

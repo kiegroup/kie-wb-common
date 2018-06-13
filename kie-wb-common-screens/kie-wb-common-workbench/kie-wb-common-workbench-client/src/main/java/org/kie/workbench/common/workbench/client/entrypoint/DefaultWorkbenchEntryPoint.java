@@ -24,11 +24,13 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
+import elemental2.dom.DomGlobal;
 import org.guvnor.common.services.shared.config.AppConfigService;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.framework.AbstractRpcProxy;
 import org.jboss.errai.bus.client.util.BusToolsCli;
 import org.jboss.errai.common.client.api.Caller;
+import org.jboss.errai.common.client.api.ErrorCallback;
 import org.jboss.errai.ioc.client.api.AfterInitialization;
 import org.jboss.errai.ioc.client.api.UncaughtExceptionHandler;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
@@ -42,7 +44,7 @@ public abstract class DefaultWorkbenchEntryPoint {
 
     protected ActivityBeansCache activityBeansCache;
 
-    private DefaultWorkbenchErrorCallback defaultErrorCallback;
+    private DefaultWorkbenchErrorCallback defaultWorkbenchErrorCallback;
 
     @Inject
     private GenericErrorPopup genericErrorPopup;
@@ -50,11 +52,11 @@ public abstract class DefaultWorkbenchEntryPoint {
     @Inject
     public DefaultWorkbenchEntryPoint(final Caller<AppConfigService> appConfigService,
                                       final ActivityBeansCache activityBeansCache,
-                                      final DefaultWorkbenchErrorCallback defaultErrorCallback) {
+                                      final DefaultWorkbenchErrorCallback defaultWorkbenchErrorCallback) {
 
         this.appConfigService = appConfigService;
         this.activityBeansCache = activityBeansCache;
-        this.defaultErrorCallback = defaultErrorCallback;
+        this.defaultWorkbenchErrorCallback = defaultWorkbenchErrorCallback;
     }
 
     protected abstract void setupMenu();
@@ -72,7 +74,7 @@ public abstract class DefaultWorkbenchEntryPoint {
 
     @UncaughtExceptionHandler
     private void handleUncaughtException(final Throwable t) {
-        defaultErrorCallback.error(t);
+        defaultWorkbenchErrorCallback.error(t, genericErrorPopup);
     }
 
     void loadPreferences() {
@@ -106,14 +108,23 @@ public abstract class DefaultWorkbenchEntryPoint {
     }
 
     protected void initializeWorkbench() {
+        setupPromiseRejectionErrorCallback();
         setupRpcDefaultErrorCallback();
         loadPreferences();
         loadStyles();
     }
 
+    private native void setupPromiseRejectionErrorCallback() /*-{
+//        window.onunhandledrejection = function(e) {
+//            alert(e.reason);
+//        };
+    }-*/;
+
     private void setupRpcDefaultErrorCallback() {
         //FIXME: Some RPC calls are made before this callback has the chance to be registered.
         //TODO: Investigate and fix.
+        final ErrorCallback<Message> originalRpcErrorCallback = AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK;
+
         AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK = (final Message m, final Throwable t) -> {
 
             //Removing parameter/return information because sensitive data might be encoded.
@@ -121,20 +132,11 @@ public abstract class DefaultWorkbenchEntryPoint {
             m.remove("MethodParms");
             m.remove("MethodReply");
 
-            genericErrorPopup.setup("[\n" + BusToolsCli.encodeMessage(m) +
-                                            ",\n\"" +
-                                            msg(t) +
-                                            "\"]");
+            genericErrorPopup.setup(BusToolsCli.encodeMessage(m));
             genericErrorPopup.show();
-            return false;
+
+            //This will send a message to Errai Bus' error channel.
+            return originalRpcErrorCallback.error(m, t);
         };
-    }
-
-    private String msg(final Throwable t) {
-        if (t.getCause() == null) {
-            return t.getMessage();
-        }
-
-        return t.getMessage() + " Caused by: " + msg(t.getCause());
     }
 }
