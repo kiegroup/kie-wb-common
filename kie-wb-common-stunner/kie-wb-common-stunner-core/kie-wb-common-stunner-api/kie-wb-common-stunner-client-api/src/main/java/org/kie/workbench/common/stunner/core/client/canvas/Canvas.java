@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Optional;
 
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
@@ -38,9 +38,9 @@ public interface Canvas<S extends Shape> {
                       final int height);
 
     /**
-     * Get a list of all Shapes on the Canvas
+     * Get all Shapes on the Canvas
      */
-    List<S> getShapes();
+    Collection<S> getShapes();
 
     /**
      * Returns the shape with the given identifier.
