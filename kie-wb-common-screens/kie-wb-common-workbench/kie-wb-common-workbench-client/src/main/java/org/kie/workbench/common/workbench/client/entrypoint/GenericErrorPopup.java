@@ -18,7 +18,6 @@ package org.kie.workbench.common.workbench.client.entrypoint;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import elemental2.dom.Event;
@@ -30,6 +29,8 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.uberfire.client.util.Clipboard;
+import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
 
 import static elemental2.dom.DomGlobal.console;
 

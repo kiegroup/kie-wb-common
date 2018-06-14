@@ -24,7 +24,6 @@ import com.google.gwt.animation.client.Animation;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.user.client.ui.RootPanel;
-import elemental2.dom.DomGlobal;
 import org.guvnor.common.services.shared.config.AppConfigService;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.framework.AbstractRpcProxy;

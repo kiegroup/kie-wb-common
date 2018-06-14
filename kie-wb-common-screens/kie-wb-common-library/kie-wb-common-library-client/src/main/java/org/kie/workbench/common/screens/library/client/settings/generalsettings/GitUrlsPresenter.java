@@ -30,6 +30,7 @@ import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 import org.kie.workbench.common.widgets.client.widget.KieSelectElement;
 import org.uberfire.client.mvp.UberElemental;
+import org.uberfire.client.util.Clipboard;
 import org.uberfire.workbench.events.NotificationEvent;
 
 import static java.util.function.Function.identity;
