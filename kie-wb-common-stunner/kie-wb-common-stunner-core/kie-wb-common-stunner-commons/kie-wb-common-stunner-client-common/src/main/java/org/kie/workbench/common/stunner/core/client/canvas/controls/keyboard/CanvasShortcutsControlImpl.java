@@ -31,6 +31,7 @@ import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
+import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 
 @Dependent
 public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
@@ -40,12 +41,16 @@ public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistratio
 
     private final CommonDomainLookups commonDomainLookups;
 
+    private final DefinitionsCacheRegistry definitionsCacheRegistry;
+
     private final GeneralCreateNodeAction createNodeAction;
 
     @Inject
     public CanvasShortcutsControlImpl(final CommonDomainLookups commonDomainLookups,
+                                      final DefinitionsCacheRegistry definitionsCacheRegistry,
                                       final GeneralCreateNodeAction createNodeAction) {
         this.commonDomainLookups = commonDomainLookups;
+        this.definitionsCacheRegistry = definitionsCacheRegistry;
         this.createNodeAction = createNodeAction;
     }
 
@@ -98,52 +103,53 @@ public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistratio
         final Node sourceNode = CanvasLayoutUtils.getElement(canvasHandler, sourceNodeId).asNode();
 
         commonDomainLookups.setDomain(canvasHandler.getDiagram().getMetadata().getDefinitionSetId());
-        final Set<String> connectors = commonDomainLookups.lookupTargetConnectors(sourceNode);
+        final Set<String> connectorDefinitionIds = commonDomainLookups.lookupTargetConnectors(sourceNode);
 
-        connectors
-                .stream()
-                .filter(connector -> {
-                    final Set<String> targetNodes =
-                            commonDomainLookups.lookupTargetNodes(canvasHandler.getDiagram().getGraph(),
-                                                                  sourceNode,
-                                                                  connector);
-                    return targetNodes.size() > 0;
-                })
-                .findFirst()
-                .ifPresent(connector -> {
-                    final Set<String> targetNodes =
-                            commonDomainLookups.lookupTargetNodes(canvasHandler.getDiagram().getGraph(),
-                                                                  sourceNode,
-                                                                  connector);
-                    createNodeAction.executeAction(canvasHandler,
-                                                   sourceNodeId,
-                                                   targetNodes.iterator().next(),
-                                                   connector);
-                });
+        for (final String connectorDefinitionId : connectorDefinitionIds) {
+            final Set<String> targetNodesDefinitionIds =
+                    commonDomainLookups.lookupTargetNodes(canvasHandler.getDiagram().getGraph(),
+                                                          sourceNode,
+                                                          connectorDefinitionId);
+
+            for (final String targetNodeDefinitionId : targetNodesDefinitionIds) {
+                final Object definition = definitionsCacheRegistry.getDefinitionById(targetNodeDefinitionId);
+                if (definition != null && definition instanceof Definition) {
+                    if (definitionFQNContainsSubstring(((Definition) definition), "Task")) {
+                        createNodeAction.executeAction(canvasHandler,
+                                                       sourceNodeId,
+                                                       targetNodeDefinitionId,
+                                                       connectorDefinitionId);
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     private boolean selectedNodeIsStart() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
-            final Definition definition = (Definition) selectedNodeElement().getContent();
-            return (definitionFQNContainsSubstring(definition, "Start"));
-        } else {
-            return false;
-        }
+        return selectedNodeIs("Start");
     }
 
     private boolean selectedNodeIsTask() {
+        return selectedNodeIs("Task");
+    }
+
+    private boolean selectedNodeIsGateway() {
+        return selectedNodeIs("Gateway");
+    }
+
+    private boolean selectedNodeIs(final String nodeType) {
         if (selectedNodeElement().getContent() instanceof Definition) {
             final Definition definition = (Definition) selectedNodeElement().getContent();
-            return (definitionFQNContainsSubstring(definition, "Task"));
+            return (definitionFQNContainsSubstring(definition, nodeType));
         } else {
             return false;
         }
     }
 
-    private boolean selectedNodeIsGateway() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
-            final Definition definition = (Definition) selectedNodeElement().getContent();
-            return (definitionFQNContainsSubstring(definition, "Gateway"));
+    private static boolean definitionFQNContainsSubstring(final Definition definition, final String subString) {
+        if (definition != null && definition.getDefinition() != null) {
+            return definition.getDefinition().getClass().getName().contains(subString);
         } else {
             return false;
         }
@@ -159,9 +165,5 @@ public class CanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistratio
 
     private Element selectedNodeElement() {
         return canvasHandler.getGraphIndex().get(selectedNodeId());
-    }
-
-    private static boolean definitionFQNContainsSubstring(final Definition definition, final String subString) {
-        return definition.getDefinition().getClass().getName().contains(subString);
     }
 }
