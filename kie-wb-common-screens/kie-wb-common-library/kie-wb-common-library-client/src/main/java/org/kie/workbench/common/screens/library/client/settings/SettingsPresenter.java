@@ -27,7 +27,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -137,7 +136,7 @@ public class SettingsPresenter {
     @Inject
     private Event<Bla> ev;
 
-    public void asd(final @Observes Bla a) {
+    public void asd(final @Observes Bla k) {
         String b = null;
         b.length();
     }
@@ -147,31 +146,26 @@ public class SettingsPresenter {
     }
 
     public void btntop() {
-//        ev.fire(new Bla());
-
-//        projectScreenService.call(a -> {
-//            projectScreenService.call(c -> {
-//                String b = null;
-//                b.length();
-//            }).reImport(pathToPom);
-//        }).load(pathToPom);
+        projectScreenService.call(a -> {
+            ev.fire(new Bla());
+        }).load(pathToPom);
 
 //        DomGlobal.console.info("gonna");
 //
-        promises.promisify(projectScreenService, s -> {
-            return s.load(pathToPom);
-        }).then(i -> {
-            String a = null;
-            a.length();
-            DomGlobal.console.info("success");
-            return promises.resolve();
-        }).catch_(o -> promises.catchOrExecute(o, e -> {
-            DomGlobal.console.info("caught ex");
-            return promises.reject(e);
-        }, a -> {
-            DomGlobal.console.info("caught expected rejected object");
-            return promises.resolve();
-        }));
+//        promises.promisify(projectScreenService, s -> {
+//            return s.load(pathToPom);
+//        }).then(i -> {
+//            String a = null;
+//            a.length();
+//            DomGlobal.console.info("success");
+//            return promises.resolve();
+//        }).catch_(o -> promises.catchOrExecute(o, e -> {
+//            DomGlobal.console.info("caught ex");
+//            return promises.reject(e);
+//        }, a -> {
+//            DomGlobal.console.info("caught expected rejected object");
+//            return promises.resolve();
+//        }));
     }
 
     public Promise<Void> setupUsingCurrentSection() {

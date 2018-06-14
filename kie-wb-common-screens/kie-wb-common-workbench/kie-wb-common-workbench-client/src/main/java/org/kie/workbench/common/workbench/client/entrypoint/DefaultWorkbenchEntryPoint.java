@@ -108,21 +108,13 @@ public abstract class DefaultWorkbenchEntryPoint {
     }
 
     protected void initializeWorkbench() {
-        setupPromiseRejectionErrorCallback();
         setupRpcDefaultErrorCallback();
         loadPreferences();
         loadStyles();
     }
 
-    private native void setupPromiseRejectionErrorCallback() /*-{
-//        window.onunhandledrejection = function(e) {
-//            alert(e.reason);
-//        };
-    }-*/;
-
     private void setupRpcDefaultErrorCallback() {
-        //FIXME: Some RPC calls are made before this callback has the chance to be registered.
-        //TODO: Investigate and fix.
+        //FIXME: Some RPC calls are made before this callback has the chance to be registered. Investigate and fix.
         final ErrorCallback<Message> originalRpcErrorCallback = AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK;
 
         AbstractRpcProxy.DEFAULT_RPC_ERROR_CALLBACK = (final Message m, final Throwable t) -> {

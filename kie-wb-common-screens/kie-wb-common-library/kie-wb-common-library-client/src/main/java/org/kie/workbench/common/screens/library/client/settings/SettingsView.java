@@ -19,6 +19,7 @@ package org.kie.workbench.common.screens.library.client.settings;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
@@ -78,7 +79,10 @@ public class SettingsView implements SettingsPresenter.View,
 
     @EventHandler("btn-top")
     public void btmtop(final ClickEvent event) {
-        presenter.btntop();
+
+        DomGlobal.setTimeout(i -> {
+            presenter.btntop();
+        }, 10);
     }
 
     @Override
