@@ -46,9 +46,12 @@ public class LienzoPanel implements IsWidget {
     private final Event<KeyUpEvent> keyUpEvent;
     private final Event<CanvasMouseDownEvent> mouseDownEvent;
     private final Event<CanvasMouseUpEvent> mouseUpEvent;
+
     private View view;
 
-    private boolean listening;
+    protected View getView() {
+        return view;
+    }
 
     @Inject
     public LienzoPanel(final Event<KeyPressEvent> keyPressEvent,
@@ -61,7 +64,6 @@ public class LienzoPanel implements IsWidget {
         this.keyUpEvent = keyUpEvent;
         this.mouseDownEvent = mouseDownEvent;
         this.mouseUpEvent = mouseUpEvent;
-        this.listening = false;
     }
 
     @Override
@@ -84,55 +86,36 @@ public class LienzoPanel implements IsWidget {
     }
 
     public void destroy() {
-        this.listening = false;
         view.destroy();
         view = null;
     }
 
     void onMouseDown() {
-        if (listening) {
-            mouseDownEvent.fire(new CanvasMouseDownEvent());
-        }
+        mouseDownEvent.fire(new CanvasMouseDownEvent());
     }
 
     void onMouseUp() {
-        if (listening) {
-            mouseUpEvent.fire(new CanvasMouseUpEvent());
-        }
-    }
-
-    void onMouseOver() {
-        this.listening = true;
-    }
-
-    void onMouseOut() {
-        this.listening = false;
+        mouseUpEvent.fire(new CanvasMouseUpEvent());
     }
 
     void onKeyPress(final int unicodeChar) {
-        if (listening) {
-            final KeyboardEvent.Key key = getKey(unicodeChar);
-            if (null != key) {
-                keyPressEvent.fire(new KeyPressEvent(key));
-            }
+        final KeyboardEvent.Key key = getKey(unicodeChar);
+        if (null != key) {
+            keyPressEvent.fire(new KeyPressEvent(key));
         }
     }
 
     void onKeyDown(final int unicodeChar) {
-        if (listening) {
-            final KeyboardEvent.Key key = getKey(unicodeChar);
-            if (null != key) {
-                keyDownEvent.fire(new KeyDownEvent(key));
-            }
+        final KeyboardEvent.Key key = getKey(unicodeChar);
+        if (null != key) {
+            keyDownEvent.fire(new KeyDownEvent(key));
         }
     }
 
     void onKeyUp(final int unicodeChar) {
-        if (listening) {
-            final KeyboardEvent.Key key = getKey(unicodeChar);
-            if (null != key) {
-                keyUpEvent.fire(new KeyUpEvent(key));
-            }
+        final KeyboardEvent.Key key = getKey(unicodeChar);
+        if (null != key) {
+            keyUpEvent.fire(new KeyUpEvent(key));
         }
     }
 
