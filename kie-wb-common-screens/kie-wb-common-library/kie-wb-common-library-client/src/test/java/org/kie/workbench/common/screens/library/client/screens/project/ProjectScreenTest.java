@@ -20,7 +20,9 @@ package org.kie.workbench.common.screens.library.client.screens.project;
 import javax.enterprise.event.Event;
 
 import elemental2.dom.HTMLElement;
+import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
 import org.guvnor.common.services.project.client.security.ProjectController;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.messageconsole.client.console.widget.button.ViewHideAlertsButtonPresenter;
@@ -169,29 +171,33 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         final Module module = mock(Module.class);
         when(workspaceProject.getName()).thenReturn("module-name");
         when(workspaceProject.getMainModule()).thenReturn(module);
-        when(libraryPlaces.getActiveWorkspaceContext()).thenReturn(workspaceProject);
+        when(libraryPlaces.getActiveWorkspace()).thenReturn(workspaceProject);
 
-        this.presenter = spy(new ProjectScreen(this.view,
-                                               this.libraryPlaces,
-                                               this.assetsScreen,
-                                               this.contributorsListScreen,
-                                               this.projectMetrictsScreen,
-                                               this.projectController,
-                                               this.settingsPresenter,
-                                               this.organizationalUnitController,
-                                               this.newFileUploader,
-                                               this.newResourcePresenter,
-                                               this.buildExecutor,
-                                               this.editContributorsPopUpPresenterInstance,
-                                               this.deleteProjectPopUpScreenInstance,
-                                               this.renameProjectPopUpScreenInstance,
-                                               new CallerMock<>(this.libraryService),
-                                               projectScreenServiceCaller,
-                                               copyPopUpPresenter,
-                                               projectNameValidator,
-                                               promises,
-                                               notificationEvent,
-                                               viewHideAlertsButtonPresenter));
+        final WorkspaceProjectContext projectContext = mock(WorkspaceProjectContext.class);
+        when(libraryPlaces.getWorkbenchContext()).thenReturn(projectContext);
+
+        final ProjectScreen projectScreen = new ProjectScreen(this.view,
+                                                              this.libraryPlaces,
+                                                              this.assetsScreen,
+                                                              this.contributorsListScreen,
+                                                              this.projectMetrictsScreen,
+                                                              this.projectController,
+                                                              this.settingsPresenter,
+                                                              this.organizationalUnitController,
+                                                              this.newFileUploader,
+                                                              this.newResourcePresenter,
+                                                              this.buildExecutor,
+                                                              this.editContributorsPopUpPresenterInstance,
+                                                              this.deleteProjectPopUpScreenInstance,
+                                                              this.renameProjectPopUpScreenInstance,
+                                                              new CallerMock<>(this.libraryService),
+                                                              projectScreenServiceCaller,
+                                                              copyPopUpPresenter,
+                                                              projectNameValidator,
+                                                              promises,
+                                                              notificationEvent,
+                                                              viewHideAlertsButtonPresenter);
+        this.presenter = spy(projectScreen);
 
         this.presenter.workspaceProject = createProject();
     }
@@ -244,14 +250,17 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         SettingsPresenter.View settingsView = mock(SettingsPresenter.View.class);
         when(settingsView.getElement()).thenReturn(new HTMLElement());
         when(this.settingsPresenter.getView()).thenReturn(settingsView);
+        doReturn(promises.resolve()).when(settingsPresenter).setupUsingCurrentSection();
 
         {
             doReturn(false).when(this.presenter).userCanUpdateProject();
             this.presenter.showSettings();
+            verify(view, never()).setContent(any());
         }
         {
             doReturn(true).when(this.presenter).userCanUpdateProject();
             this.presenter.showSettings();
+            verify(view).setContent(any());
         }
     }
 
@@ -402,5 +411,28 @@ public class ProjectScreenTest extends ProjectScreenTestBase {
         doReturn(true).when(projectController).canBuildProject(workspaceProject);
 
         assertFalse(presenter.userCanBuildProject());
+    }
+
+    @Test
+    public void titleIsUpdatedWhenContextModuleIsUpdated() throws Exception {
+        final WorkspaceProject workspaceProject = mock(WorkspaceProject.class);
+        doReturn("module name").when(workspaceProject).getName();
+
+        presenter.changeProjectAndTitleWhenContextChange(new WorkspaceProjectContextChangeEvent(workspaceProject));
+
+        verify(view).setTitle("module name");
+    }
+
+    @Test
+    public void shouldNotChangeProjectAndTitleWhenContextChange() throws Exception {
+
+        presenter.changeProjectAndTitleWhenContextChange(new WorkspaceProjectContextChangeEvent() {
+            @Override
+            public WorkspaceProject getWorkspaceProject() {
+                return null;
+            }
+        });
+
+        verify(view, never()).setTitle(any());
     }
 }

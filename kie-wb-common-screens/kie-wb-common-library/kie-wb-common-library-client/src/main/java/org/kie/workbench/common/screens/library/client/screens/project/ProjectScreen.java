@@ -25,6 +25,7 @@ import com.google.gwt.core.client.Callback;
 import elemental2.dom.HTMLElement;
 import elemental2.promise.Promise;
 import org.guvnor.common.services.project.client.security.ProjectController;
+import org.guvnor.common.services.project.context.WorkspaceProjectContextChangeEvent;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.messageconsole.client.console.widget.button.ViewHideAlertsButtonPresenter;
 import org.guvnor.structure.client.security.OrganizationalUnitController;
@@ -172,10 +173,10 @@ public class ProjectScreen {
 
     @PostConstruct
     public void initialize() {
-        this.workspaceProject = this.libraryPlaces.getActiveWorkspaceContext();
+        this.workspaceProject = this.libraryPlaces.getActiveWorkspace();
         this.view.init(this);
         this.buildExecutor.init(this.view);
-        this.view.setTitle(libraryPlaces.getActiveWorkspaceContext().getName());
+        this.view.setTitle(libraryPlaces.getActiveWorkspace().getName());
         this.view.addMainAction(viewHideAlertsButtonPresenter.getView());
         this.resolveContributorsCount();
         this.resolveAssetsCount();
@@ -223,6 +224,13 @@ public class ProjectScreen {
         resolveContributorsCount();
     }
 
+    public void changeProjectAndTitleWhenContextChange(@Observes final WorkspaceProjectContextChangeEvent current) {
+        if (current.getWorkspaceProject() != null) {
+            this.workspaceProject = current.getWorkspaceProject();
+            this.view.setTitle(workspaceProject.getName());
+        }
+    }
+
     private void resolveContributorsCount() {
         this.view.setContributorsCount(this.contributorsListScreen.getContributorsCount());
     }
@@ -247,7 +255,7 @@ public class ProjectScreen {
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return this.libraryPlaces.getActiveWorkspaceContext().getName();
+        return this.libraryPlaces.getActiveWorkspace().getName();
     }
 
     public void delete() {
@@ -271,8 +279,11 @@ public class ProjectScreen {
 
     public void showSettings() {
         if (userCanUpdateProject()) {
-            SettingsPresenter.View settingsView = this.settingsPresenter.getView();
-            this.view.setContent(settingsView.getElement());
+            settingsPresenter.setupUsingCurrentSection().then(i -> {
+                SettingsPresenter.View settingsView = this.settingsPresenter.getView();
+                this.view.setContent(settingsView.getElement());
+                return promises.resolve();
+            });
         }
     }
 

@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.pan.PanContr
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.MultipleSelection;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.zoom.ZoomControl;
+import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.uberfire.mvp.Command;
@@ -37,10 +38,14 @@ public class DefaultViewerSession
         extends ViewerSession {
 
     private final ManagedSession session;
+    private final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager;
+
 
     @Inject
-    public DefaultViewerSession(final ManagedSession session) {
+    public DefaultViewerSession(final ManagedSession session,
+                                final CanvasCommandManager<AbstractCanvasHandler> canvasCommandManager) {
         this.session = session;
+        this.canvasCommandManager = canvasCommandManager;
     }
 
     @PostConstruct
@@ -92,17 +97,22 @@ public class DefaultViewerSession
     }
 
     @Override
+    public CanvasCommandManager<AbstractCanvasHandler> getCommandManager() {
+        return canvasCommandManager;
+    }
+
+    @Override
     public ZoomControl<AbstractCanvas> getZoomControl() {
-        return (ZoomControl<AbstractCanvas>) session.getCanvasControls().get(0);
+        return (ZoomControl<AbstractCanvas>) session.getCanvasControl(ZoomControl.class);
     }
 
     @Override
     public PanControl<AbstractCanvas> getPanControl() {
-        return (PanControl<AbstractCanvas>) session.getCanvasControls().get(1);
+        return (PanControl<AbstractCanvas>) session.getCanvasControl(PanControl.class);
     }
 
     @Override
     public SelectionControl<AbstractCanvasHandler, Element> getSelectionControl() {
-        return (SelectionControl<AbstractCanvasHandler, Element>) session.getCanvasHandlerControls().get(0);
+        return (SelectionControl<AbstractCanvasHandler, Element>) session.getCanvasHandlerControl(SelectionControl.class);
     }
 }
