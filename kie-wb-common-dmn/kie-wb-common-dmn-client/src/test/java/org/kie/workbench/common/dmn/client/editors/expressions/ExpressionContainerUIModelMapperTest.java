@@ -148,7 +148,7 @@ public class ExpressionContainerUIModelMapperTest {
                                                       () -> hasExpression,
                                                       () -> Optional.of(hasName),
                                                       expressionEditorDefinitionsSupplier,
-                                                      expressionGridCache,
+                                                      () -> expressionGridCache,
                                                       listSelector);
     }
 
