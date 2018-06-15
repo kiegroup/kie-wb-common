@@ -633,7 +633,7 @@ public class AbstractProjectDiagramEditorTest {
         final Path path = versionRecordManager.getCurrentPath();
         verify(versionRecordManager).reloadVersions(eq(path));
         ArgumentCaptor<NotificationEvent> notificationEventCaptor = ArgumentCaptor.forClass(NotificationEvent.class);
-        verify(notification).fire(notificationEventCaptor.capture());
+        verify(notification, times(2)).fire(notificationEventCaptor.capture());
 
         final NotificationEvent notificationEvent = notificationEventCaptor.getValue();
         assertEquals("ItemSavedSuccessfully",
