@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.tools.ant.ExitException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ResetCommand;
@@ -76,9 +78,37 @@ public class MigrationToolTest {
             new FormModelSerializer(),
             new TestMetaDataEntryManager());
 
+    private static SecurityManager originalSecurityManager;
+
+    private static class NoExitSecurityManager extends SecurityManager {
+        @Override
+        public void checkPermission(Permission perm) {
+        }
+
+        @Override
+        public void checkPermission(Permission perm, Object context) {
+        }
+
+        @Override
+        public void checkExit(int status) {
+            super.checkExit(status);
+            throw new ExitException(status);
+        }
+    }
+
     @BeforeClass
     public static void runToolAndCloneProjectRepos() throws GitAPIException {
-        runMigrationTool();
+        originalSecurityManager = System.getSecurityManager();
+        System.setSecurityManager(new NoExitSecurityManager());
+
+        try {
+            runMigrationTool();
+        } catch (ExitException e ) {
+            assertThat(e.getStatus()).isEqualTo(0);
+        } finally {
+            System.setSecurityManager(originalSecurityManager);
+        }
+
         cloneAllProjectRepos();
     }
 
