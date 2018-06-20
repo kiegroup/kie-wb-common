@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties;
 
+import java.util.Collections;
+
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.di.BPMNDiagram;
 import org.eclipse.bpmn2.di.BPMNPlane;
@@ -45,7 +47,7 @@ public class MultipleInstanceSubProcessPropertyReaderTest {
     static class DummyDefinitionResolver extends DefinitionResolver {
 
         DummyDefinitionResolver() {
-            super(makeDefinitions());
+            super(makeDefinitions(), Collections.emptyList());
         }
 
         public BPMNShape getShape(String elementId) {
