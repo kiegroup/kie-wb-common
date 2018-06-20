@@ -16,7 +16,10 @@
 
 package org.kie.workbench.common.screens.server.management.client.remote;
 
+import static org.kie.workbench.common.screens.server.management.client.util.Convert.toKey;
+
 import java.util.Collection;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
@@ -29,6 +32,8 @@ import org.jboss.errai.common.client.api.RemoteCallback;
 import org.kie.server.controller.api.model.events.ServerInstanceUpdated;
 import org.kie.server.controller.api.model.runtime.Container;
 import org.kie.server.controller.api.model.runtime.ServerInstanceKey;
+import org.kie.server.controller.api.model.spec.Capability;
+import org.kie.server.controller.api.model.spec.ServerTemplate;
 import org.kie.workbench.common.screens.server.management.client.events.ServerInstanceSelected;
 import org.kie.workbench.common.screens.server.management.client.remote.empty.RemoteEmptyPresenter;
 import org.kie.workbench.common.screens.server.management.service.RuntimeManagementService;
@@ -36,8 +41,6 @@ import org.kie.workbench.common.screens.server.management.service.SpecManagement
 import org.slf4j.Logger;
 import org.uberfire.client.mvp.UberView;
 import org.uberfire.workbench.events.NotificationEvent;
-
-import static org.kie.workbench.common.screens.server.management.client.util.Convert.*;
 
 @ApplicationScoped
 public class RemotePresenter {
@@ -152,13 +155,30 @@ public class RemotePresenter {
 
         view.clear();
         view.setServerName( serverInstanceKey.getServerName() );
-        view.setServerURL( serverInstanceKey.getUrl() );
+        specManagementServiceCaller.call(new RemoteCallback<ServerTemplate>() {
+
+            @Override
+            public void callback(ServerTemplate response) {
+                if(response.getCapabilities().contains(Capability.SWAGGER.toString())) {
+                    view.setServerURL( extractContextRoot(serverInstanceKey.getUrl()) + "/docs");
+
+                } else {
+                    view.setServerURL( serverInstanceKey.getUrl() );
+                }
+            }
+
+        }).getServerTemplate(serverInstanceKey.getServerTemplateId());
         if ( containers.isEmpty() ) {
             view.setEmptyView( remoteEmptyPresenter.getView() );
         } else {
             remoteStatusPresenter.setup( containers );
             view.setStatusPresenter( remoteStatusPresenter.getView() );
         }
+    }
+
+    public String extractContextRoot (String location) {
+        int idx = location.indexOf("/services/rest/server");
+        return idx > 0 ? location.substring(0, idx) : location;
     }
 
 }
