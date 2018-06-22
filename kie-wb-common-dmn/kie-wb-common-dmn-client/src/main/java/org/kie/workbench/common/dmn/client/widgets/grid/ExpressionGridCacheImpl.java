@@ -42,7 +42,7 @@ public class ExpressionGridCacheImpl extends AbstractCanvasControl<AbstractCanva
 
     @Override
     public Optional<BaseExpressionGrid> getExpressionGrid(final String nodeUUID) {
-        return cache.containsKey(nodeUUID) ? cache.get(nodeUUID) : Optional.empty();
+        return cache.getOrDefault(nodeUUID, Optional.empty());
     }
 
     @Override

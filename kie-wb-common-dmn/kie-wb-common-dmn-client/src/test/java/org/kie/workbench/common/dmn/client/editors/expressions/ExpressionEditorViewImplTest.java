@@ -196,6 +196,13 @@ public class ExpressionEditorViewImplTest {
     }
 
     @Test
+    public void testInit() {
+        verify(view).setupGridPanel();
+        verify(view).setupGridWidget();
+        verify(view).setupGridWidgetPanControl();
+    }
+
+    @Test
     public void testSetupGridPanel() {
         verify(viewport).setTransform(transformArgumentCaptor.capture());
         final Transform transform = transformArgumentCaptor.getValue();
