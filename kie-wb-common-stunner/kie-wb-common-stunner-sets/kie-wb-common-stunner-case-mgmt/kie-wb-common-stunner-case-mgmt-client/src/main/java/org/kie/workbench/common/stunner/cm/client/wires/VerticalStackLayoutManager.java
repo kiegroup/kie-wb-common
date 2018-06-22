@@ -21,6 +21,7 @@ import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.client.core.types.Point2D;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 
 public class VerticalStackLayoutManager extends AbstractNestedLayoutHandler {
 
@@ -28,12 +29,14 @@ public class VerticalStackLayoutManager extends AbstractNestedLayoutHandler {
     static final double PADDING_Y = 15.0;
 
     @Override
-    protected void orderChildren(final WiresShape shape,
+    protected void orderChildren(final WiresShape wiresShape,
                                  final WiresContainer container,
                                  final Point2D mouseRelativeLoc) {
         if (container == null) {
             return;
         }
+
+        CaseManagementShapeView shape = (CaseManagementShapeView) wiresShape;
         final double my = mouseRelativeLoc.getY();
 
         final NFastArrayList<WiresShape> nChildren = container.getChildShapes().copy();
@@ -49,11 +52,11 @@ public class VerticalStackLayoutManager extends AbstractNestedLayoutHandler {
             }
         }
 
-        if (container instanceof AbstractCaseManagementShape) {
-            final int currentIndex = ((AbstractCaseManagementShape) container).getIndex(shape);
+        if (container instanceof CaseManagementShapeView) {
+            final int currentIndex = ((CaseManagementShapeView) container).getIndex(shape);
             if (currentIndex != targetIndex) {
-                ((AbstractCaseManagementShape) container).addShape(shape,
-                                                                   targetIndex);
+                ((CaseManagementShapeView) container).addShape(shape,
+                                                               targetIndex);
             }
         }
     }

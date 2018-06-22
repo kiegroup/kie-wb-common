@@ -16,72 +16,59 @@
 
 package org.kie.workbench.common.stunner.cm.factory;
 
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.bpmn.factory.BPMNDiagramFactory;
-import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
-import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class CaseManagementDiagramFactoryImplTest {
 
-    private static final String NAME = "diagram1";
-
-    @Mock
-    private Graph graph;
-
-    @Mock
-    private Metadata metadata;
-
-    @Mock
-    private BPMNDiagramFactory bpmnDiagramFactory;
-
-    private CaseManagementDiagramFactoryImpl factory;
-
-    @Before
-    public void setup() {
-        factory = new CaseManagementDiagramFactoryImpl(bpmnDiagramFactory);
-    }
-
-    @Test
-    public void assertSetDiagramType() {
-        factory.init();
-        verify(bpmnDiagramFactory,
-               times(1)).setDiagramType(eq(CaseManagementDiagram.class));
-    }
-
-    @Test
-    public void assertDefSetType() {
-        assertEquals(CaseManagementDefinitionSet.class,
-                     factory.getDefinitionSetType());
-    }
-
-    @Test
-    public void assertMetadataType() {
-        assertEquals(Metadata.class,
-                     factory.getMetadataType());
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void testBuild() {
-        factory.init();
-        factory.build(NAME,
-                      metadata,
-                      graph);
-        verify(bpmnDiagramFactory,
-               times(1)).build(eq(NAME),
-                               eq(metadata),
-                               eq(graph));
-    }
+//    private static final String NAME = "diagram1";
+//
+//    @Mock
+//    private Graph graph;
+//
+//    @Mock
+//    private Metadata metadata;
+//
+//    @Mock
+//    private BPMNDiagramFactory bpmnDiagramFactory;
+//
+//    private CaseManagementDiagramFactoryImpl factory;
+//
+//    @Before
+//    public void setup() {
+//        factory = new CaseManagementDiagramFactoryImpl(bpmnDiagramFactory);
+//    }
+//
+//    @Test
+//    public void assertSetDiagramType() {
+//        factory.init();
+//        verify(bpmnDiagramFactory,
+//               times(1)).setDiagramType(eq(CaseManagementDiagram.class));
+//    }
+//
+//    @Test
+//    public void assertDefSetType() {
+//        assertEquals(CaseManagementDefinitionSet.class,
+//                     factory.getDefinitionSetType());
+//    }
+//
+//    @Test
+//    public void assertMetadataType() {
+//        assertEquals(Metadata.class,
+//                     factory.getMetadataType());
+//    }
+//
+//    @Test
+//    @SuppressWarnings("unchecked")
+//    public void testBuild() {
+//        factory.init();
+//        factory.build(NAME,
+//                      metadata,
+//                      graph);
+//        verify(bpmnDiagramFactory,
+//               times(1)).build(eq(NAME),
+//                               eq(metadata),
+//                               eq(graph));
+//    }
 }

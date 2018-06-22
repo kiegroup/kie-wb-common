@@ -45,70 +45,70 @@ import static org.mockito.Mockito.when;
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementCanvasPresenterTest {
 
-    @Spy
-    private Event<CanvasClearEvent> canvasClearEvent = new EventSourceMock<>();
-
-    @Spy
-    private Event<CanvasShapeAddedEvent> canvasShapeAddedEvent = new EventSourceMock<>();
-
-    @Spy
-    private Event<CanvasShapeRemovedEvent> canvasShapeRemovedEvent = new EventSourceMock<>();
-
-    @Spy
-    private Event<CanvasDrawnEvent> canvasDrawnEvent = new EventSourceMock<>();
-
-    @Spy
-    private Event<CanvasFocusedEvent> canvasFocusedEvent = new EventSourceMock<>();
-
-    @Mock
-    private Layer layer;
-
-    @Mock
-    private LienzoPanel lienzoPanel;
-
-    @Mock
-    private Shape parent;
-
-    @Mock
-    private ShapeView parentView;
-
-    @Mock
-    private Shape child;
-
-    @Mock
-    private ShapeView childView;
-
-    @Mock
-    private CaseManagementCanvasView view;
-
-    private CaseManagementCanvasPresenter presenter;
-
-    @Before
-    public void setup() {
-        when(parent.getShapeView()).thenReturn(parentView);
-        when(child.getShapeView()).thenReturn(childView);
-
-        when(view.getWiresManager()).thenReturn(mock(WiresManager.class));
-
-        this.presenter = new CaseManagementCanvasPresenter(canvasClearEvent,
-                                                           canvasShapeAddedEvent,
-                                                           canvasShapeRemovedEvent,
-                                                           canvasDrawnEvent,
-                                                           canvasFocusedEvent,
-                                                           layer,
-                                                           view,
-                                                           lienzoPanel);
-    }
-
-    @Test
-    public void addChildShapeToCaseManagementCanvasView() {
-        presenter.addChildShape(parent,
-                                child,
-                                1);
-
-        verify(view,
-               times(1)).addChildShape(eq(parentView),
-                                       eq(childView),
-                                       eq(1));
-    }
+//    @Spy
+//    private Event<CanvasClearEvent> canvasClearEvent = new EventSourceMock<>();
+//
+//    @Spy
+//    private Event<CanvasShapeAddedEvent> canvasShapeAddedEvent = new EventSourceMock<>();
+//
+//    @Spy
+//    private Event<CanvasShapeRemovedEvent> canvasShapeRemovedEvent = new EventSourceMock<>();
+//
+//    @Spy
+//    private Event<CanvasDrawnEvent> canvasDrawnEvent = new EventSourceMock<>();
+//
+//    @Spy
+//    private Event<CanvasFocusedEvent> canvasFocusedEvent = new EventSourceMock<>();
+//
+//    @Mock
+//    private Layer layer;
+//
+//    @Mock
+//    private LienzoPanel lienzoPanel;
+//
+//    @Mock
+//    private Shape parent;
+//
+//    @Mock
+//    private ShapeView parentView;
+//
+//    @Mock
+//    private Shape child;
+//
+//    @Mock
+//    private ShapeView childView;
+//
+//    @Mock
+//    private CaseManagementCanvasView view;
+//
+//    private CaseManagementCanvasPresenter presenter;
+//
+//    @Before
+//    public void setup() {
+//        when(parent.getShapeView()).thenReturn(parentView);
+//        when(child.getShapeView()).thenReturn(childView);
+//
+//        when(view.getWiresManager()).thenReturn(mock(WiresManager.class));
+//
+//        this.presenter = new CaseManagementCanvasPresenter(canvasClearEvent,
+//                                                           canvasShapeAddedEvent,
+//                                                           canvasShapeRemovedEvent,
+//                                                           canvasDrawnEvent,
+//                                                           canvasFocusedEvent,
+//                                                           layer,
+//                                                           view,
+//                                                           lienzoPanel);
+//    }
+//
+//    @Test
+//    public void addChildShapeToCaseManagementCanvasView() {
+//        presenter.addChildShape(parent,
+//                                child,
+//                                1);
+//
+//        verify(view,
+//               times(1)).addChildShape(eq(parentView),
+//                                       eq(childView),
+//                                       eq(1));
+//    }
 }

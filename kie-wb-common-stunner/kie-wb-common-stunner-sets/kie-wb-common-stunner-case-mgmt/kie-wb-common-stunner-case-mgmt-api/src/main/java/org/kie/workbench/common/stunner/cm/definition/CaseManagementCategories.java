@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.client.shape.def;
+package org.kie.workbench.common.stunner.cm.definition;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.cm.client.shape.view.NullView;
-import org.kie.workbench.common.stunner.core.definition.shape.ShapeDef;
+public class CaseManagementCategories {
 
-public class NullShapeDef implements CaseManagementShapeDef<BPMNViewDefinition, NullView> {
+    public static final String CONTAINERS = "Containers";
 
-    @Override
-    public Class<? extends ShapeDef> getType() {
-        return NullShapeDef.class;
-    }
+    public static final String STAGES = "Stages";
+
+    public static final String TASKS = "Tasks";
+
+    public static final String SUBPROCESSES = "SubProcesses";
+
+    public static final String SUBCASES = "Subcases";
 }

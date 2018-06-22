@@ -68,6 +68,7 @@ public class WiresCanvasView extends CanvasView implements WiresCanvas.View {
 
     @Override
     public WiresCanvas.View addShape(final ShapeView<?> shapeView) {
+
         if (WiresUtils.isWiresShape(shapeView)) {
             WiresShape wiresShape = (WiresShape) shapeView;
             wiresManager.register(wiresShape);

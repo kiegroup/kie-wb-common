@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@
 
 package org.kie.workbench.common.stunner.cm.client.shape;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.client.lienzo.shape.view.LienzoShapeView;
-import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementShapeDef;
+import org.kie.workbench.common.stunner.svg.client.shape.impl.SVGShapeImpl;
+import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
-public class CMContainerShape<W extends BPMNViewDefinition, V extends LienzoShapeView<?>>
-        extends AbstractCMContainerShape<W, CaseManagementShapeDef<W, V>, V> {
+public class CaseManagementShape extends SVGShapeImpl {
 
-    public CMContainerShape(final CaseManagementShapeDef<W, V> shapeDef,
-                            final V view) {
-        super(shapeDef,
-              view);
+    public CaseManagementShape(SVGShapeViewImpl view) {
+        super(view);
     }
 }

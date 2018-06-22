@@ -49,6 +49,8 @@ public abstract class AbstractFactoryManager {
     @SuppressWarnings("unchecked")
     public <T> T newDefinition(final String id) {
         final DefinitionFactory<T> factory = factoryRegistry.getDefinitionFactory(id);
+        if (null == factory) {
+        }
         return factory.build(id);
     }
 

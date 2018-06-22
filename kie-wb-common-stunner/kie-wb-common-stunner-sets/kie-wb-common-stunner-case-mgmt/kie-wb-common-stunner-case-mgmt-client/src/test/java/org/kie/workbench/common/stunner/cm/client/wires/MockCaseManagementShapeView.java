@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.cm.client.shape.view;
-
-import com.ait.lienzo.client.core.shape.MultiPath;
-import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresShapeViewExt;
-import org.kie.workbench.common.stunner.core.client.shape.view.event.ViewEventType;
+package org.kie.workbench.common.stunner.cm.client.wires;
 
 /**
- * The Lienzo view implementation for the "null" shapes.
+ * Mock implementation of CaseManagementShapeView for Unit Tests
  */
-public class NullView extends WiresShapeViewExt<NullView> {
+public class MockCaseManagementShapeView {
 
-    public NullView() {
-        super(new ViewEventType[]{},
-              new MultiPath());
-        setResizable(false);
-    }
 }

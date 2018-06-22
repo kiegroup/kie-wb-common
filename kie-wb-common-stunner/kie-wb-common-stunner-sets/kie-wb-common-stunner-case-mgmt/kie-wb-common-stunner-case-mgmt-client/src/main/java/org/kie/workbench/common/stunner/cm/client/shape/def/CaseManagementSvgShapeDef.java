@@ -16,26 +16,33 @@
 
 package org.kie.workbench.common.stunner.cm.client.shape.def;
 
-import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNImageResources;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+
 import org.kie.workbench.common.stunner.bpmn.client.shape.def.BPMNShapeDef;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
-import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory;
 import org.kie.workbench.common.stunner.core.client.shape.view.handler.SizeHandler;
-import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
+import org.kie.workbench.common.stunner.core.graph.content.view.View;
+import org.kie.workbench.common.stunner.svg.client.shape.def.SVGShapeViewDef;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public interface CaseManagementShapeDef<W extends BPMNViewDefinition, V extends ShapeView>
-        extends BPMNShapeDef<W, V> {
+public interface CaseManagementSvgShapeDef<W extends BPMNViewDefinition>
+        extends BPMNShapeDef<W, SVGShapeView>,
+                SVGShapeViewDef<W, CaseManagementSVGViewFactory> {
 
-    ImageDataUriGlyph GLYPH_OOME_HACK = ImageDataUriGlyph.create(BPMNImageResources.INSTANCE.glyphOOMEHack().getSafeUri());
+    SizeHandler<W, SVGShapeView> newSizeHandler();
 
-    default SizeHandler.Builder<W, V> newSizeHandlerBuilder() {
+    default SizeHandler.Builder<W, SVGShapeView> newSizeHandlerBuilder() {
         return new SizeHandler.Builder<>();
     }
 
     @Override
-    default Glyph getGlyph(final Class<? extends W> type,
-                           final String defId) {
-        return GLYPH_OOME_HACK;
+    default Optional<BiConsumer<View<W>, SVGShapeView>> sizeHandler() {
+        return Optional.of(newSizeHandler()::handle);
+    }
+
+    default Class<CaseManagementSVGViewFactory> getViewFactoryType() {
+        return CaseManagementSVGViewFactory.class;
     }
 }

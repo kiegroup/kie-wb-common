@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.client.lienzo.canvas.controls.AbstractAc
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory;
-import org.kie.workbench.common.stunner.cm.client.wires.AbstractCaseManagementShape;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.cm.client.wires.CaseManagementContainmentStateHolder;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -173,8 +173,8 @@ public class CaseManagementContainmentAcceptorControlImpl extends AbstractAccept
             if (state.getGhost().isPresent() &&
                     containmentAllowed(wiresContainer,
                                        wiresShapes)) {
-                final AbstractCaseManagementShape container = (AbstractCaseManagementShape) wiresContainer;
-                final AbstractCaseManagementShape ghost = state.getGhost().get();
+                final CaseManagementShapeView container = (CaseManagementShapeView) wiresContainer;
+                final CaseManagementShapeView ghost = state.getGhost().get();
                 final int index = container.getIndex(ghost);
                 if (index >= 0) {
                     final Optional<Integer> newIndex = Optional.of(index);

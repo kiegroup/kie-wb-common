@@ -22,6 +22,7 @@ import java.util.List;
 
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
@@ -30,7 +31,7 @@ public abstract class BaseLayoutManagerTest {
 
     protected static final double PADDING = 5.0;
 
-    protected AbstractCaseManagementShape container;
+    protected CaseManagementShapeView container;
 
     protected List<WiresShape> shapes;
 
@@ -39,7 +40,7 @@ public abstract class BaseLayoutManagerTest {
     public void setup() {
         this.shapes = new ArrayList<>();
         this.handler = getLayoutHandler();
-        this.container = spy(new MockCaseManagementShape());
+//        this.container = spy(new MockCaseManagementShapeView());
         this.container.setLayoutHandler(handler);
 
         //Shapes are at (0,15), (0,30) and (0,45) by default. Set by LayoutManager.
