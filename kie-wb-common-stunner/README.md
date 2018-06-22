@@ -54,24 +54,21 @@ Here are the instructions for setting up the Stunner environment on **IntelliJ I
   - Use [kie-wb-common-stunner](./) as for the project's root folder (instead of the whole [kie-wb-common](../) one)
   - Import using _from Maven_ option
   - Use all default settings in the wizard, so just click on next, next, next and remember to use Java8+
-  - Once the wizard is completed, I'll take a while to load and index
+  - Once the wizard is completed, It will take a while to load and index
 
 
 2.- Open the _Settings_ from the _File_ menu
   - *Maven*:
     - Do not use the built-in JDK given by default, use the one from your system path, which must be version 3.3.9+
-    - [TIP] In the Maven -> Importing - Also use your Maven version, instead of the default one, and increase the heap size on the VM settings parameters
+    - [TIP] In the Maven -> Importing - Also use your Maven version, instead of the default one, and increase the default given heap size in the `VM options for importer` field
   - *Version control*
     - Configure Version Control (Git) root folder
     - Do not use the built-in JDK given by default, use the one from your system path, which must be version 3.3.9+
   - *Code style*
     - Download the [KIE code-style](https://github.com/kiegroup/droolsjbpm-build-bootstrap/tree/master/ide-configuration) XML file
-    - Copy the XML file into `~/.IntellijIdeaXX/config/codestyles/`
-    - Restart the IDE and set as default code-style conventions the KIE ones
+    - Settings -> Code Style -> Scheme -> Manage -> Import
   - *License (copy-right)*
-    - Copy the [license template](https://github.com/kiegroup/droolsjbpm-build-bootstrap/blob/master/ide-configuration/LICENSE-ASL-2.0-HEADER.txt)
-    - Create a new copy-right profile for the template
-    - Set the recently new profile as the default one
+    - Follow the [IntelliJ installation instructions](https://github.com/kiegroup/droolsjbpm-build-bootstrap#configuring-intellij) at section _Set the correct license header_
 
 3.- Configure the GWT run configurations
   - Choose a showcase and follow [this instructions](https://github.com/kiegroup/kie-wb-common/tree/master/kie-wb-common-stunner/kie-wb-common-stunner-showcase) for creating an application's run configuration
@@ -96,6 +93,8 @@ Once your Stunner project is setup correctly, you can also import external modul
 **Working with the environment**
 
 This section assumes the Stunner environment is already setup as the above steps describe. At this point, the user is ready for starting the development, so here are a few recommendations about how to successfully build and run the application also using SDM.
+
+[INFO] This section assumes some GWT run configuration has been already created and configured for any of the Stunner's showcases. See [the showcase module](./kie-wb-common-stunner-showcase) for more information.
 
 0.- [RECOMMENDED] Once a day, build from the command line (`mvn clean install -DskipTests`) in order to ensure all snapshots are already downloaded (it's faster than using the IDE)
 
