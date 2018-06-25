@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import com.google.gwt.user.client.Window;
 import org.ext.uberfire.social.activities.model.ExtendedTypes;
 import org.ext.uberfire.social.activities.model.SocialFileSelectedEvent;
 import org.guvnor.common.services.project.client.context.WorkspaceProjectContext;
@@ -422,10 +424,6 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     PlaceRequest getLibraryPlaceRequestWithoutRefresh() {
         return getPlaceRequestWithoutRefresh(LIBRARY_PERSPECTIVE);
-    }
-
-    PlaceRequest getProjectScreenRequestWithoutRefresh() {
-        return getPlaceRequestWithoutRefresh(PROJECT_SCREEN);
     }
 
     private PlaceRequest getPlaceRequestWithoutRefresh(String placeId) {
@@ -846,7 +844,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
     @Override
     public void onChange(WorkspaceProjectContextChangeEvent previous,
                          WorkspaceProjectContextChangeEvent current) {
-        if (current.getWorkspaceProject() != null) {
+        if (current.getWorkspaceProject() != null && !isStandalone()) {
             if (Utils.hasRepositoryChanged(previous.getWorkspaceProject(),
                                            current.getWorkspaceProject())) {
                 closeAllPlacesOrNothing(this::goToProject);
@@ -866,4 +864,16 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         this.placeManager.closePlace(new PathPlaceRequest(path));
     }
 
+    private boolean isStandalone() {
+        final Map<String, List<String>> parameterMap = getParameterMap();
+        if (parameterMap == null) {
+            return false;
+        } else {
+            return parameterMap.containsKey("standalone");
+        }
+    }
+
+    protected Map<String, List<String>> getParameterMap() {
+        return Window.Location.getParameterMap();
+    }
 }

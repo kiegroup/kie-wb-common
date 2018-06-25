@@ -17,7 +17,9 @@
 package org.kie.workbench.common.screens.library.client.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.enterprise.event.Event;
@@ -88,7 +90,16 @@ import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LibraryPlacesTest {
@@ -180,9 +191,11 @@ public class LibraryPlacesTest {
     private Branch activeBranch;
     private Module activeModule;
     private WorkspaceProject activeProject;
+    private HashMap<String, List<String>> windowParameters;
 
     @Before
     public void setup() {
+        windowParameters = new HashMap<>();
         libraryServiceCaller = new CallerMock<>(libraryService);
         vfsServiceCaller = new CallerMock<>(vfsService);
 
@@ -210,7 +223,13 @@ public class LibraryPlacesTest {
                                               importRepositoryPopUpPresenters,
                                               assetListUpdateEvent,
                                               closeUnsavedProjectAssetsPopUpPresenter,
-                                              projectsSetupEvent));
+                                              projectsSetupEvent){
+
+            @Override
+            protected Map<String, List<String>> getParameterMap() {
+                return windowParameters;
+            }
+        });
         libraryPlaces.setup();
 
         verify(libraryToolBarView).getElement();
@@ -303,6 +322,16 @@ public class LibraryPlacesTest {
                never()).goToProject();
         verify(libraryPlaces,
                never()).closeAllPlacesOrNothing(any());
+    }
+
+    @Test
+    public void onChangeStandaloneActive() {
+        windowParameters.put("standalone", null);
+        when(current.getModule()).thenReturn(null);
+        libraryPlaces.onChange(previous,
+                               current);
+
+        verify(libraryPlaces, never()).goToProject();
     }
 
     @Test
