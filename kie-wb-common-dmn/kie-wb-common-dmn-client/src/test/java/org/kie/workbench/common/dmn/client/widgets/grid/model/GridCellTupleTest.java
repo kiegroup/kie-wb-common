@@ -90,6 +90,18 @@ public class GridCellTupleTest {
     }
 
     @Test
+    public void testProposeContainingColumnWidthWhenLargerThanExistingEditor() {
+        gridData.setCell(0, 0, () -> new DMNGridCell<>(new ExpressionCellValue(Optional.of(existingEditor))));
+        when(existingEditor.getPadding()).thenReturn(BaseExpressionGrid.DEFAULT_PADDING);
+        when(existingEditor.getMinimumWidth()).thenReturn(200.0);
+        when(gridColumn.getWidth()).thenReturn(100.0);
+
+        tuple.proposeContainingColumnWidth(300.0);
+
+        verify(gridColumn).setWidth(300.0);
+    }
+
+    @Test
     public void testOnResizeSetsColumnWidth() {
         when(gridColumn.getWidth()).thenReturn(100.0);
 
