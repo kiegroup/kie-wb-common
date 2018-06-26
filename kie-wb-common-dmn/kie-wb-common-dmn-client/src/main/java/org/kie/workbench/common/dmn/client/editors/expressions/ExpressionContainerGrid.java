@@ -169,7 +169,7 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
         return spy;
     }
 
-    Optional<HasName> spyHasName(Optional<HasName> hasName) {
+    Optional<HasName> spyHasName(final Optional<HasName> hasName) {
         final Name name = new Name() {
             @Override
             public String getValue() {
