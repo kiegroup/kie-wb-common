@@ -98,21 +98,38 @@ public class MorphNodeAction extends AbstractToolboxAction {
         clearSelectionEventEvent.fire(new CanvasClearSelectionEvent(canvasHandler));
 
         //delay is used to overcome the toolbar animation while morphing the node
-        final CommandResult<CanvasViolation> result =
-                sessionCommandManager.execute(canvasHandler,
-                                              commandFactory.morphNode(sourceNode,
-                                                                       morphDefinition,
-                                                                       targetDefinitionId,
-                                                                       ssid));
-        if (CommandUtils.isError(result)) {
-            LOGGER.log(Level.SEVERE,
-                       result.toString());
-        } else {
-            CanvasLayoutUtils.fireElementSelectedEvent(selectionEvent,
-                                                       canvasHandler,
-                                                       uuid);
-        }
+        executeWithDelay(() -> {
+            final CommandResult<CanvasViolation> result =
+                    sessionCommandManager.execute(canvasHandler,
+                                                  commandFactory.morphNode(sourceNode,
+                                                                           morphDefinition,
+                                                                           targetDefinitionId,
+                                                                           ssid));
+            if (CommandUtils.isError(result)) {
+                LOGGER.log(Level.SEVERE,
+                           result.toString());
+            } else {
+                CanvasLayoutUtils.fireElementSelectedEvent(selectionEvent,
+                                                           canvasHandler,
+                                                           uuid);
+            }
+        }, commandDelay);
+
+
         return this;
+    }
+
+    private void executeWithDelay(Runnable execute, int delay) {
+        if (delay > 0) {
+            new Timer() {
+                @Override
+                public void run() {
+                    execute.run();
+                }
+            }.schedule(delay);
+        } else {
+            execute.run();
+        }
     }
 
     @Override

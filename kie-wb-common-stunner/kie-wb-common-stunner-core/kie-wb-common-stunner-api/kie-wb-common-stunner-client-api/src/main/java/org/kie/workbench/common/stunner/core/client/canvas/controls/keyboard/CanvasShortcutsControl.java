@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import java.util.function.Function;
+
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -36,6 +38,6 @@ public interface CanvasShortcutsControl<C extends CanvasHandler, S extends Clien
      * generic implementation for both DMN and BPMN
      * @param sourceNodeId
      */
-    void appendNode(final String sourceNodeId);
+    void appendNode(final String sourceNodeId, final Function<String, Boolean> canBeNodeAppended);
 
 }
