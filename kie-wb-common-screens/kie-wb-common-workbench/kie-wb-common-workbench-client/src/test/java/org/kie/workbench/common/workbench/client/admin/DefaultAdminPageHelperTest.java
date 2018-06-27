@@ -28,8 +28,10 @@ import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbench
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
+import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
+import org.uberfire.mvp.Command;
 import org.uberfire.preferences.shared.PreferenceScope;
 import org.uberfire.preferences.shared.PreferenceScopeFactory;
 import org.uberfire.rpc.SessionInfo;
@@ -37,9 +39,14 @@ import org.uberfire.security.ResourceRef;
 import org.uberfire.security.authz.AuthorizationManager;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEFAULTS;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class DefaultAdminPageHelperTest {
@@ -47,6 +54,7 @@ public class DefaultAdminPageHelperTest {
     private static String LIBRARY_PREFERENCES = "LibraryPreferences";
     private static String ARTIFACT_REPOSITORY_PREFERENCES = "ArtifactRepositoryPreference";
     private static String STUNNER_PREFERENCES = "StunnerPreferences";
+    private static String EXPERIMENTAL_SETTINGS = "ExperimentalSettings";
     private static String MANAGE_PREFERENCES = "ManagePreferences";
 
     @Mock
@@ -63,6 +71,9 @@ public class DefaultAdminPageHelperTest {
 
     @Mock
     private PreferenceScopeFactory scopeFactory;
+
+    @Mock
+    private ClientExperimentalFeaturesRegistryService experimentalFeaturesRegistryService;
 
     @InjectMocks
     private DefaultAdminPageHelper defaultAdminPageHelper;
@@ -302,6 +313,31 @@ public class DefaultAdminPageHelperTest {
         verifyStunnerPreferencesWasAdded(0);
     }
 
+    @Test
+    public void experimentalFeaturesAddedTest() {
+        verifyExperimentalFeatureAdded(true);
+    }
+
+    @Test
+    public void experimentalFeaturesWasNotAddedTest() {
+        verifyExperimentalFeatureAdded(false);
+    }
+
+    private void verifyExperimentalFeatureAdded(final boolean addExperimental) {
+        doReturn(true).when(authorizationManager).authorize(any(ResourceRef.class), any(User.class));
+
+        when(experimentalFeaturesRegistryService.isExperimentalEnabled()).thenReturn(addExperimental);
+
+        defaultAdminPageHelper.setup();
+
+        verify(adminPage,
+               addExperimental ? times(1) : never()).addTool(eq("root"),
+                                                             eq(EXPERIMENTAL_SETTINGS),
+                                                             any(),
+                                                             eq("general"),
+                                                             any(Command.class));
+    }
+
     private void verifyLibraryPreferencesWasAddedInGlobalScope() {
         verify(adminPage,
                times(1)).addPreference(eq("root"),
@@ -371,12 +407,12 @@ public class DefaultAdminPageHelperTest {
     private void verifyStunnerPreferencesWasAdded(int timesAdded) {
         verify(adminPage,
                times(timesAdded)).addPreference(eq("root"),
-                                           eq(STUNNER_PREFERENCES),
-                                           any(),
-                                           any(),
-                                           any(),
-                                           any(PreferenceScope.class),
-                                           eq(AdminPageOptions.WITH_BREADCRUMBS));
+                                                eq(STUNNER_PREFERENCES),
+                                                any(),
+                                                any(),
+                                                any(),
+                                                any(PreferenceScope.class),
+                                                eq(AdminPageOptions.WITH_BREADCRUMBS));
     }
 
     private void mockConstants() {
