@@ -42,7 +42,7 @@ import org.kie.workbench.common.stunner.lienzo.toolbox.items.tooltip.ToolboxText
 public class MorphActionsToolboxView
         extends AbstractActionsToolboxView<MorphActionsToolboxView> {
 
-    static final double GRID_BUTTON_SIZE = 16;
+    static final double GRID_BUTTON_SIZE = 15;
     static final double GRID_BUTTON_PADDING = 5;
     static final double GRID_DECORATOR_PADDING = 10;
     static final Direction TOOLBOX_AT = Direction.SOUTH_WEST;

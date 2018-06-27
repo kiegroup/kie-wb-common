@@ -16,42 +16,26 @@
 
 package org.kie.workbench.common.stunner.core.client.preferences;
 
-import java.lang.annotation.Annotation;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
-import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.uberfire.mvp.ParameterizedCommand;
 
 @ApplicationScoped
 public class StunnerPreferencesRegistryLoader {
 
-    private final DefinitionUtils definitionUtils;
     private final StunnerPreferencesRegistry stunnerPreferencesRegistry;
     private final StunnerPreferences preferences;
 
     @Inject
-    public StunnerPreferencesRegistryLoader(final DefinitionUtils definitionUtils,
-                                            final StunnerPreferencesRegistry stunnerPreferencesRegistry,
+    public StunnerPreferencesRegistryLoader(final StunnerPreferencesRegistry stunnerPreferencesRegistry,
                                             final StunnerPreferences preferences) {
-        this.definitionUtils = definitionUtils;
         this.stunnerPreferencesRegistry = stunnerPreferencesRegistry;
         this.preferences = preferences;
     }
 
-    public void load(final String definitionSetId,
-                     final ParameterizedCommand<StunnerPreferences> loadCompleteCallback,
-                     final ParameterizedCommand<Throwable> errorCallback) {
-        final Annotation qualifier = definitionUtils.getQualifier(definitionSetId);
-        load(qualifier,
-             loadCompleteCallback,
-             errorCallback);
-    }
-
-    public void load(final Annotation qualifier,
-                     final ParameterizedCommand<StunnerPreferences> loadCompleteCallback,
+    public void load(final ParameterizedCommand<StunnerPreferences> loadCompleteCallback,
                      final ParameterizedCommand<Throwable> errorCallback) {
         preferences.load(prefs -> {
                              stunnerPreferencesRegistry.register(prefs);

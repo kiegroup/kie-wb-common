@@ -77,11 +77,10 @@ public class SessionLoaderTest {
         when(definitionUtils.getQualifier(eq(DEF_SET_ID))).thenReturn(qualifier);
         initializerInstances = spy(new ManagedInstanceStub<>(initializer));
         doAnswer(invocation -> {
-            ParameterizedCommand<StunnerPreferences> callback = (ParameterizedCommand<StunnerPreferences>) invocation.getArguments()[1];
+            ParameterizedCommand<StunnerPreferences> callback = (ParameterizedCommand<StunnerPreferences>) invocation.getArguments()[0];
             callback.execute(preferences);
             return null;
-        }).when(preferencesRegistryLoader).load(eq(qualifier),
-                                                any(ParameterizedCommand.class),
+        }).when(preferencesRegistryLoader).load(any(ParameterizedCommand.class),
                                                 any(ParameterizedCommand.class));
         sessionLoader = new SessionLoader(definitionUtils,
                                           preferencesRegistryLoader,

@@ -56,8 +56,7 @@ public class SessionLoader {
                      final ParameterizedCommand<Throwable> errorCallback) {
         final String definitionSetId = metadata.getDefinitionSetId();
         final Annotation qualifier = definitionUtils.getQualifier(definitionSetId);
-        preferencesRegistryLoader.load(qualifier,
-                                       prefs -> {
+        preferencesRegistryLoader.load(prefs -> {
                                            loadInitializers(metadata,
                                                             qualifier,
                                                             () -> {

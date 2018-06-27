@@ -67,7 +67,7 @@ public class ImageStripRegistry {
                 result.add(i.get());
             }
         }
-        return result.stream().toArray(ImageStrip[]::new);
+        return result.toArray(new ImageStrip[result.size()]);
     }
 
     @PreDestroy

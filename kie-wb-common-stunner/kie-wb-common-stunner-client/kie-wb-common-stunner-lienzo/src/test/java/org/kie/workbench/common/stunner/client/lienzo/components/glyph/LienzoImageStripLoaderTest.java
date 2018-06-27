@@ -149,7 +149,7 @@ public class LienzoImageStripLoaderTest {
                                                          any(Runnable.class));
         final com.ait.lienzo.client.core.image.ImageStrip[] strips = stripsCaptor.getValue();
         assertNotNull(strips);
-        assertTrue(strips.length == 1);
+        assertEquals(1, strips.length);
         assertEquals("someUri", strips[0].getUrl());
         assertEquals(16, strips[0].getWide());
         assertEquals(16, strips[0].getHigh());
