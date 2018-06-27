@@ -23,7 +23,6 @@ import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.FormalExpression;
-import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Property;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
@@ -119,17 +118,13 @@ public class InputAssignmentWriter {
         return declarationWriter.getItemDefinition();
     }
 
-    public InputSet getInputSet() {
-        return declarationWriter.getInputSet();
-    }
-
     public DataInputAssociation getAssociation() {
         return association;
     }
 
     private String decode(String text) {
         try {
-            return URLDecoder.decode(text,"UTF-8");
+            return URLDecoder.decode(text, "UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(text, e);
         }
