@@ -19,7 +19,6 @@ package org.kie.workbench.common.screens.library.client.settings;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.ClickEvent;
-import elemental2.dom.DomGlobal;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
