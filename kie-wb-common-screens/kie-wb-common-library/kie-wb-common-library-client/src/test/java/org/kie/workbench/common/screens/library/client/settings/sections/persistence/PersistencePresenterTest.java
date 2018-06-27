@@ -162,15 +162,10 @@ public class PersistencePresenterTest {
         persistencePresenter.setup(mock(ProjectScreenModel.class)).then(i -> {
             Assert.fail("Promise should've not been resolved!");
             return promises.resolve();
-        }).catch_(o -> promises.catchOrExecute(o,
-                                               e -> {
-                                                   Assert.fail("Promise should've not thrown exception outside Caller");
-                                                   return promises.resolve();
-                                               },
-                                               e -> {
-                                                   Assert.fail("RPC failed so default RPC error handler was called.");
-                                                   return promises.resolve();
-                                               }));
+        }).catch_(o -> promises.catchOrExecute(o, e -> promises.resolve(), e -> {
+            Assert.fail("RPC failed so default RPC error handler was called.");
+            return promises.resolve();
+        }));
     }
 
     @Test

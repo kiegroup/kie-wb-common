@@ -276,7 +276,7 @@ public class SettingsPresenter {
                 return handlePomConcurrentUpdate(comment, chain, (GAVAlreadyExistsException) e);
             } else {
                 view.hideBusyIndicator();
-                return promises.reject(e);
+                return promises.resolve();
             }
         }, x -> {
             view.hideBusyIndicator();
