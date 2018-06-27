@@ -49,23 +49,24 @@ public class GitUrlsPresenter {
     private final Event<NotificationEvent> notificationEventEvent;
     private final TranslationService translationService;
     private final KieSelectElement protocolSelect;
+    private final Clipboard clipboard;
 
     Map<String, GitUrl> gitUrlsByProtocol;
     String selectedProtocol;
 
-    @Inject
-    private Clipboard clipboard;
 
     @Inject
     public GitUrlsPresenter(final View view,
                             final Event<NotificationEvent> notificationEventEvent,
                             final KieSelectElement protocolSelect,
-                            final TranslationService translationService) {
+                            final TranslationService translationService,
+                            final Clipboard clipboard) {
 
         this.view = view;
         this.notificationEventEvent = notificationEventEvent;
         this.protocolSelect = protocolSelect;
         this.translationService = translationService;
+        this.clipboard = clipboard;
     }
 
     @PostConstruct

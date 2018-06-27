@@ -2,6 +2,8 @@ package org.kie.workbench.common.screens.library.client.settings.generalsettings
 
 import java.util.Arrays;
 
+import elemental2.dom.HTMLInputElement;
+import elemental2.dom.HTMLTextAreaElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,7 @@ import org.kie.workbench.common.widgets.client.widget.KieSelectElement;
 import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.uberfire.client.util.Clipboard;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -39,6 +42,9 @@ public class GitUrlsPresenterTest {
     @Mock
     private KieSelectElement kieSelectElement;
 
+    @Mock
+    private Clipboard clipboard;
+
     private GitUrlsPresenter presenter;
 
     @Before
@@ -46,7 +52,8 @@ public class GitUrlsPresenterTest {
         presenter = spy(new GitUrlsPresenter(view,
                                              notificationEvent,
                                              kieSelectElement,
-                                             translationService));
+                                             translationService,
+                                             clipboard));
     }
 
     @Test
@@ -105,25 +112,25 @@ public class GitUrlsPresenterTest {
         verify(view, times(2)).setUrl(eq(gitUrl.getUrl()));
     }
 
-//    @Test
-//    public void testCopyToClipboardSuccess() {
-//        final GitUrl gitUrl = new GitUrl("git", "url");
-//        presenter.setup(singletonList(gitUrl));
-//
-////        doReturn(true).when(presenter).copy(element);
-//
-//        presenter.copyToClipboard();
-//        verify(notificationEvent).fire(any());
-//    }
-//
-//    @Test
-//    public void testCopyToClipboardFail() {
-//        final GitUrl gitUrl = new GitUrl("git", "url");
-//        presenter.setup(singletonList(gitUrl));
-//
-////        doReturn(false).when(presenter).copy(element);
-//
-//        presenter.copyToClipboard();
-//        verify(notificationEvent).fire(any());
-//    }
+    @Test
+    public void testCopyToClipboardSuccess() {
+        final GitUrl gitUrl = new GitUrl("git", "url");
+        presenter.setup(singletonList(gitUrl));
+
+        doReturn(true).when(clipboard).copy((HTMLInputElement) any());
+
+        presenter.copyToClipboard(null);
+        verify(notificationEvent).fire(any());
+    }
+
+    @Test
+    public void testCopyToClipboardFail() {
+        final GitUrl gitUrl = new GitUrl("git", "url");
+        presenter.setup(singletonList(gitUrl));
+
+        doReturn(false).when(clipboard).copy((HTMLInputElement) any());
+
+        presenter.copyToClipboard(null);
+        verify(notificationEvent).fire(any());
+    }
 }

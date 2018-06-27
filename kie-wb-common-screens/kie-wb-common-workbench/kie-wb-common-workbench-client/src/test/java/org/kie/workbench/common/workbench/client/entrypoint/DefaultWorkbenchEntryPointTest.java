@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.services.shared.preferences.ApplicationPreferences;
+import org.kie.workbench.common.workbench.client.error.DefaultWorkbenchErrorCallback;
 import org.mockito.Mock;
 import org.uberfire.client.callbacks.Callback;
 import org.uberfire.client.mvp.ActivityBeansCache;
@@ -49,6 +50,9 @@ public class DefaultWorkbenchEntryPointTest {
     @Mock
     private Callback<String> callback2;
 
+    @Mock
+    private DefaultWorkbenchErrorCallback defaultWorkbenchErrorCallback;
+
     @Before
     public void setup() {
         mockAppConfigService();
@@ -56,7 +60,7 @@ public class DefaultWorkbenchEntryPointTest {
 
         entryPoint = spy(new DefaultWorkbenchEntryPoint(appConfigServiceCallerMock,
                                                         activityBeansCache,
-                                                        null) {
+                                                        defaultWorkbenchErrorCallback) {
             @Override
             protected void setupMenu() {
             }
