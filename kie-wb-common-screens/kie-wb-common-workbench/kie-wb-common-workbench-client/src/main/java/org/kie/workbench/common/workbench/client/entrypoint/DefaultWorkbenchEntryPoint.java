@@ -73,7 +73,7 @@ public abstract class DefaultWorkbenchEntryPoint {
 
     @UncaughtExceptionHandler
     private void handleUncaughtException(final Throwable t) {
-        defaultWorkbenchErrorCallback.error(t, genericErrorPopup);
+        defaultWorkbenchErrorCallback.error(t);
     }
 
     void loadPreferences() {

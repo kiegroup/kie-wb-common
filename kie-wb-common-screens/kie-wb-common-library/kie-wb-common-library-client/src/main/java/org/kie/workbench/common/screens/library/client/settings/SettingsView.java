@@ -57,10 +57,6 @@ public class SettingsView implements SettingsPresenter.View,
     @DataField("menu-items-container")
     private HTMLUListElement menuItemsContainer;
 
-    @Inject
-    @DataField("btn-top")
-    private HTMLButtonElement button;
-
     @Override
     public void init(final SettingsPresenter presenter) {
         this.presenter = presenter;
@@ -74,15 +70,6 @@ public class SettingsView implements SettingsPresenter.View,
     @EventHandler("reset")
     public void reset(final ClickEvent event) {
         presenter.reset();
-    }
-
-
-    @EventHandler("btn-top")
-    public void btmtop(final ClickEvent event) {
-
-        DomGlobal.setTimeout(i -> {
-            presenter.btntop();
-        }, 10);
     }
 
     @Override

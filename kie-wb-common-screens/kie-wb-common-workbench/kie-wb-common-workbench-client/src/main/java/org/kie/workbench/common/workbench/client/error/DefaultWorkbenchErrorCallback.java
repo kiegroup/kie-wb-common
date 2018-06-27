@@ -17,6 +17,7 @@
 package org.kie.workbench.common.workbench.client.error;
 
 import javax.enterprise.context.Dependent;
+import javax.inject.Inject;
 
 import com.google.gwt.user.client.Window;
 import org.dashbuilder.dataset.exception.DataSetLookupException;
@@ -30,6 +31,9 @@ import org.uberfire.ext.widgets.common.client.resources.i18n.CommonConstants;
 
 @Dependent
 public class DefaultWorkbenchErrorCallback {
+
+    @Inject
+    private GenericErrorPopup genericErrorPopup;
 
     public static boolean isKieServerForbiddenException(final Throwable throwable) {
         if (throwable instanceof KieServicesHttpException && ((KieServicesHttpException) throwable).getHttpCode() == 403) {
@@ -59,8 +63,7 @@ public class DefaultWorkbenchErrorCallback {
         return throwable instanceof InvalidBusContentException;
     }
 
-    public void error(final Throwable throwable,
-                      final GenericErrorPopup genericErrorPopup) {
+    public void error(final Throwable throwable) {
 
         if (isInvalidBusContentException(throwable)) {
             final YesNoCancelPopup result = YesNoCancelPopup.newYesNoCancelPopup(

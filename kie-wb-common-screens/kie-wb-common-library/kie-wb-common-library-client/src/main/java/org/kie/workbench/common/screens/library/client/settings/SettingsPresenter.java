@@ -133,41 +133,6 @@ public class SettingsPresenter {
         setupUsingCurrentSection();
     }
 
-    @Inject
-    private Event<Bla> ev;
-
-    public void asd(final @Observes Bla k) {
-        String b = null;
-        b.length();
-    }
-
-    public static class Bla {
-
-    }
-
-    public void btntop() {
-        projectScreenService.call(a -> {
-            ev.fire(new Bla());
-        }).load(pathToPom);
-
-//        DomGlobal.console.info("gonna");
-//
-//        promises.promisify(projectScreenService, s -> {
-//            return s.load(pathToPom);
-//        }).then(i -> {
-//            String a = null;
-//            a.length();
-//            DomGlobal.console.info("success");
-//            return promises.resolve();
-//        }).catch_(o -> promises.catchOrExecute(o, e -> {
-//            DomGlobal.console.info("caught ex");
-//            return promises.reject(e);
-//        }, a -> {
-//            DomGlobal.console.info("caught expected rejected object");
-//            return promises.resolve();
-//        }));
-    }
-
     public Promise<Void> setupUsingCurrentSection() {
         view.init(this);
 
