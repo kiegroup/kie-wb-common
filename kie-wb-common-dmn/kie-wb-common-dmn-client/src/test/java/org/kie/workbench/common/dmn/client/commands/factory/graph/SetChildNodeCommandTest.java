@@ -84,7 +84,7 @@ public class SetChildNodeCommandTest extends org.kie.workbench.common.stunner.co
 
         final String name = candidateDefinitionNameCaptor.getValue();
         assertThat(name).startsWith(Decision.class.getSimpleName());
-        assertThat(name).endsWith("-0");
+        assertThat(name).endsWith("-1");
     }
 
     @Override

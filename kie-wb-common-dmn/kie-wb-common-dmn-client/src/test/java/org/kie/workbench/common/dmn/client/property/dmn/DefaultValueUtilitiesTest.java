@@ -71,12 +71,23 @@ public class DefaultValueUtilitiesTest {
 
         final BusinessKnowledgeModel bkm1 = new BusinessKnowledgeModel();
         final BusinessKnowledgeModel bkm2 = new BusinessKnowledgeModel();
+        final BusinessKnowledgeModel bkm3 = new BusinessKnowledgeModel();
+        final BusinessKnowledgeModel bkm4 = new BusinessKnowledgeModel();
 
         assertUpdateNewNodeName(bkm1,
                                 bkm2,
                                 (bkm) -> bkm.getName().getValue(),
                                 () -> BusinessKnowledgeModel.class.getSimpleName() + "-1",
                                 () -> BusinessKnowledgeModel.class.getSimpleName() + "-2");
+
+        //Update existing names manually and add two more
+        bkm1.getName().setValue("bkm");
+        bkm2.getName().setValue(BusinessKnowledgeModel.class.getSimpleName() + "-5");
+        assertUpdateNewNodeName(bkm3,
+                                bkm4,
+                                (bkm) -> bkm.getName().getValue(),
+                                () -> BusinessKnowledgeModel.class.getSimpleName() + "-6",
+                                () -> BusinessKnowledgeModel.class.getSimpleName() + "-7");
     }
 
     @Test
@@ -89,12 +100,23 @@ public class DefaultValueUtilitiesTest {
 
         final Decision decision1 = new Decision();
         final Decision decision2 = new Decision();
+        final Decision decision3 = new Decision();
+        final Decision decision4 = new Decision();
 
         assertUpdateNewNodeName(decision1,
                                 decision2,
                                 (decision) -> decision.getName().getValue(),
                                 () -> Decision.class.getSimpleName() + "-1",
                                 () -> Decision.class.getSimpleName() + "-2");
+
+        //Update existing names manually and add two more
+        decision1.getName().setValue("decision");
+        decision2.getName().setValue(Decision.class.getSimpleName() + "-5");
+        assertUpdateNewNodeName(decision3,
+                                decision4,
+                                (decision) -> decision.getName().getValue(),
+                                () -> Decision.class.getSimpleName() + "-6",
+                                () -> Decision.class.getSimpleName() + "-7");
     }
 
     @Test
@@ -107,12 +129,23 @@ public class DefaultValueUtilitiesTest {
 
         final InputData inputData1 = new InputData();
         final InputData inputData2 = new InputData();
+        final InputData inputData3 = new InputData();
+        final InputData inputData4 = new InputData();
 
         assertUpdateNewNodeName(inputData1,
                                 inputData2,
                                 (inputData) -> inputData.getName().getValue(),
                                 () -> InputData.class.getSimpleName() + "-1",
                                 () -> InputData.class.getSimpleName() + "-2");
+
+        //Update existing names manually and add two more
+        inputData1.getName().setValue("inputData");
+        inputData2.getName().setValue(InputData.class.getSimpleName() + "-5");
+        assertUpdateNewNodeName(inputData3,
+                                inputData4,
+                                (inputData) -> inputData.getName().getValue(),
+                                () -> InputData.class.getSimpleName() + "-6",
+                                () -> InputData.class.getSimpleName() + "-7");
     }
 
     @Test
@@ -125,12 +158,23 @@ public class DefaultValueUtilitiesTest {
 
         final KnowledgeSource knowledgeSource1 = new KnowledgeSource();
         final KnowledgeSource knowledgeSource2 = new KnowledgeSource();
+        final KnowledgeSource knowledgeSource3 = new KnowledgeSource();
+        final KnowledgeSource knowledgeSource4 = new KnowledgeSource();
 
         assertUpdateNewNodeName(knowledgeSource1,
                                 knowledgeSource2,
                                 (knowledgeSource) -> knowledgeSource.getName().getValue(),
                                 () -> KnowledgeSource.class.getSimpleName() + "-1",
                                 () -> KnowledgeSource.class.getSimpleName() + "-2");
+
+        //Update existing names manually and add two more
+        knowledgeSource1.getName().setValue("knowledgeSource");
+        knowledgeSource2.getName().setValue(KnowledgeSource.class.getSimpleName() + "-5");
+        assertUpdateNewNodeName(knowledgeSource3,
+                                knowledgeSource4,
+                                (knowledgeSource) -> knowledgeSource.getName().getValue(),
+                                () -> KnowledgeSource.class.getSimpleName() + "-6",
+                                () -> KnowledgeSource.class.getSimpleName() + "-7");
     }
 
     @Test
@@ -143,12 +187,23 @@ public class DefaultValueUtilitiesTest {
 
         final TextAnnotation textAnnotation1 = new TextAnnotation();
         final TextAnnotation textAnnotation2 = new TextAnnotation();
+        final TextAnnotation textAnnotation3 = new TextAnnotation();
+        final TextAnnotation textAnnotation4 = new TextAnnotation();
 
         assertUpdateNewNodeName(textAnnotation1,
                                 textAnnotation2,
                                 (textAnnotation) -> textAnnotation.getText().getValue(),
                                 () -> TextAnnotation.class.getSimpleName() + "-1",
                                 () -> TextAnnotation.class.getSimpleName() + "-2");
+
+        //Update existing names manually and add two more
+        textAnnotation1.getText().setValue("textAnnotation");
+        textAnnotation2.getText().setValue(TextAnnotation.class.getSimpleName() + "-5");
+        assertUpdateNewNodeName(textAnnotation3,
+                                textAnnotation4,
+                                (textAnnotation) -> textAnnotation.getText().getValue(),
+                                () -> TextAnnotation.class.getSimpleName() + "-6",
+                                () -> TextAnnotation.class.getSimpleName() + "-7");
     }
 
     private <T extends DMNModelInstrumentedBase> void assertUpdateNewNodeName(final T content1,
