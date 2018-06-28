@@ -69,10 +69,7 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
 
     @Inject
     private Event<NotificationEvent> notificationEvent;
-
-    @Inject
-    private TranslationService translationService;
-
+    
     private final Clipboard clipboard;
 
     @Inject
