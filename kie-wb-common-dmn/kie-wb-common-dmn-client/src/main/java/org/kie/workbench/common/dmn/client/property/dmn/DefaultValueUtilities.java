@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.property.dmn;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
@@ -64,6 +65,17 @@ public class DefaultValueUtilities {
         } catch (NumberFormatException nfe) {
             return Optional.empty();
         }
+    }
+
+    public static long getMaxUnusedIndex(final Collection<String> values, final String prefix) {
+        int maxIndex = 0;
+        for (final String value : values) {
+            final Optional<Integer> index = extractIndex(value, prefix);
+            if (index.isPresent()) {
+                maxIndex = Math.max(maxIndex, index.get());
+            }
+        }
+        return maxIndex + 1;
     }
 
     private static void updateBusinessKnowledgeModelDefaultName(final Graph<?, Node> graph,

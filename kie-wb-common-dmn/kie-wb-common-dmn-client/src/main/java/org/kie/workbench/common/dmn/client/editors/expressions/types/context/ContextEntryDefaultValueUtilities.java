@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
@@ -29,22 +29,13 @@ public class ContextEntryDefaultValueUtilities {
     public static final String PREFIX = ContextEntry.class.getSimpleName() + "-";
 
     public static String getNewContextEntryName(final Context context) {
-        return PREFIX + getMaxUnusedIndex(context);
-    }
-
-    private static long getMaxUnusedIndex(final Context context) {
-        int maxIndex = 0;
-        for (ContextEntry ce : context.getContextEntry()) {
-            final InformationItem informationItem = ce.getVariable();
-            if (informationItem != null) {
-                final Name name = informationItem.getName();
-                final String value = name.getValue();
-                final Optional<Integer> informationItemIndex = DefaultValueUtilities.extractIndex(value, PREFIX);
-                if (informationItemIndex.isPresent()) {
-                    maxIndex = Math.max(maxIndex, informationItemIndex.get());
-                }
-            }
-        }
-        return maxIndex + 1;
+        return PREFIX + DefaultValueUtilities.getMaxUnusedIndex(context.getContextEntry().stream()
+                                                                        .map(ContextEntry::getVariable)
+                                                                        .filter(informationItem -> informationItem != null)
+                                                                        .map(InformationItem::getName)
+                                                                        .filter(name -> name != null)
+                                                                        .map(Name::getValue)
+                                                                        .collect(Collectors.toList()),
+                                                                PREFIX);
     }
 }

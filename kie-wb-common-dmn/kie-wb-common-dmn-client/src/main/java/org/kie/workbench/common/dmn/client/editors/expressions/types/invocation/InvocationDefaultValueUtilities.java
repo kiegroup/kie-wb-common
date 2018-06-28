@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.invocation;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.Binding;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
@@ -29,22 +29,13 @@ public class InvocationDefaultValueUtilities {
     public static final String PREFIX = "p-";
 
     public static String getNewParameterName(final Invocation invocation) {
-        return PREFIX + getMaxUnusedIndex(invocation);
-    }
-
-    private static long getMaxUnusedIndex(final Invocation invocation) {
-        int maxIndex = 0;
-        for (Binding binding : invocation.getBinding()) {
-            final InformationItem informationItem = binding.getParameter();
-            if (informationItem != null) {
-                final Name name = informationItem.getName();
-                final String value = name.getValue();
-                final Optional<Integer> informationItemIndex = DefaultValueUtilities.extractIndex(value, PREFIX);
-                if (informationItemIndex.isPresent()) {
-                    maxIndex = Math.max(maxIndex, informationItemIndex.get());
-                }
-            }
-        }
-        return maxIndex + 1;
+        return PREFIX + DefaultValueUtilities.getMaxUnusedIndex(invocation.getBinding().stream()
+                                                                        .map(Binding::getParameter)
+                                                                        .filter(informationItem -> informationItem != null)
+                                                                        .map(InformationItem::getName)
+                                                                        .filter(name -> name != null)
+                                                                        .map(Name::getValue)
+                                                                        .collect(Collectors.toList()),
+                                                                PREFIX);
     }
 }

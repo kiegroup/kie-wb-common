@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.relation;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
@@ -28,19 +28,12 @@ public class RelationDefaultValueUtilities {
     public static final String PREFIX = "column-";
 
     public static String getNewColumnName(final Relation relation) {
-        return PREFIX + getMaxUnusedIndex(relation);
-    }
-
-    private static long getMaxUnusedIndex(final Relation relation) {
-        int maxIndex = 0;
-        for (InformationItem informationItem : relation.getColumn()) {
-            final Name name = informationItem.getName();
-            final String value = name.getValue();
-            final Optional<Integer> informationItemIndex = DefaultValueUtilities.extractIndex(value, PREFIX);
-            if (informationItemIndex.isPresent()) {
-                maxIndex = Math.max(maxIndex, informationItemIndex.get());
-            }
-        }
-        return maxIndex + 1;
+        return PREFIX + DefaultValueUtilities.getMaxUnusedIndex(relation.getColumn().stream()
+                                                                        .filter(informationItem -> informationItem != null)
+                                                                        .map(InformationItem::getName)
+                                                                        .filter(name -> name != null)
+                                                                        .map(Name::getValue)
+                                                                        .collect(Collectors.toList()),
+                                                                PREFIX);
     }
 }

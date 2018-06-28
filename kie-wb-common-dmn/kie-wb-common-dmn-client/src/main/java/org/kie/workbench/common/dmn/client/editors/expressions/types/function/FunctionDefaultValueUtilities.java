@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.function;
 
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
@@ -28,21 +28,12 @@ public class FunctionDefaultValueUtilities {
     public static final String PREFIX = "p-";
 
     public static String getNewParameterName(final FunctionDefinition function) {
-        return PREFIX + getMaxUnusedIndex(function);
-    }
-
-    private static long getMaxUnusedIndex(final FunctionDefinition function) {
-        int maxIndex = 0;
-        for (InformationItem informationItem : function.getFormalParameter()) {
-            if (informationItem != null) {
-                final Name name = informationItem.getName();
-                final String value = name.getValue();
-                final Optional<Integer> informationItemIndex = DefaultValueUtilities.extractIndex(value, PREFIX);
-                if (informationItemIndex.isPresent()) {
-                    maxIndex = Math.max(maxIndex, informationItemIndex.get());
-                }
-            }
-        }
-        return maxIndex + 1;
+        return PREFIX + DefaultValueUtilities.getMaxUnusedIndex(function.getFormalParameter().stream()
+                                                                        .filter(informationItem -> informationItem != null)
+                                                                        .map(InformationItem::getName)
+                                                                        .filter(name -> name != null)
+                                                                        .map(Name::getValue)
+                                                                        .collect(Collectors.toList()),
+                                                                PREFIX);
     }
 }
