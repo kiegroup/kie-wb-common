@@ -18,21 +18,26 @@ package org.kie.workbench.common.workbench.client.entrypoint;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import elemental2.dom.Event;
 import elemental2.dom.HTMLButtonElement;
 import elemental2.dom.HTMLDivElement;
 import elemental2.dom.HTMLElement;
 import elemental2.dom.HTMLTextAreaElement;
+import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.ForEvent;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
+import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.util.Clipboard;
 import org.uberfire.ext.editor.commons.client.file.popups.elemental2.Elemental2Modal;
+import org.uberfire.workbench.events.NotificationEvent;
 
 import static elemental2.dom.DomGlobal.console;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.SUCCESS;
+import static org.uberfire.workbench.events.NotificationEvent.NotificationType.WARNING;
 
 @Templated
 @ApplicationScoped
@@ -62,6 +67,12 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
     @DataField("error-details")
     private HTMLTextAreaElement errorDetails;
 
+    @Inject
+    private Event<NotificationEvent> notificationEvent;
+
+    @Inject
+    private TranslationService translationService;
+
     private final Clipboard clipboard;
 
     @Inject
@@ -90,14 +101,21 @@ public class GenericErrorPopup extends Elemental2Modal<GenericErrorPopup> implem
     }
 
     @EventHandler("ignore-button")
-    private void onIgnoreButtonClicked(final @ForEvent("click") Event e) {
+    private void onIgnoreButtonClicked(final @ForEvent("click") elemental2.dom.Event e) {
         console.error(errorDetails.textContent);
         hide();
     }
 
     @EventHandler("copy-details-button")
-    private void onCopyDetailsButtonClicked(final @ForEvent("click") Event e) {
-        clipboard.copy(errorDetails);
+    private void onCopyDetailsButtonClicked(final @ForEvent("click") elemental2.dom.Event e) {
+        final boolean copySucceeded = clipboard.copy(errorDetails);
+
+        if (copySucceeded) {
+            notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsSuccessfullyCopiedToClipboard(), SUCCESS));
+        } else {
+            notificationEvent.fire(new NotificationEvent(DefaultWorkbenchConstants.INSTANCE.ErrorDetailsFailedToBeCopiedToClipboard(), WARNING));
+        }
+
         console.error(errorDetails.textContent);
         hide();
     }

@@ -296,13 +296,11 @@ public class GeneralSettingsPresenterTest {
     public void testShowErrorAndRejectWithException() {
         final RuntimeException testException = new RuntimeException("Test message");
         doNothing().when(view).showError(any());
-//        GWT.setUncaughtExceptionHandler(i -> {});
 
         generalSettingsPresenter.showErrorAndReject(testException).then(i -> {
             Assert.fail("Promise should've not been resolved!");
             return promises.resolve();
         }).catch_(e -> {
-            ((Exception) e).printStackTrace();
             verify(view).showError(eq("Test message"));
             Assert.assertEquals(e, generalSettingsPresenter);
             return promises.resolve();
