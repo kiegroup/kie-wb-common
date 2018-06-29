@@ -207,7 +207,7 @@ public class AssignmentListItemWidgetViewImpl extends Composite implements Assig
                                 true,
                                 CONSTANT_PROMPT,
                                 ENTER_CONSTANT_PROMPT);
-        name.setRegExp("^[a-zA-Z0-9\\-\\.\\_]*$",
+        name.setRegExp("^[a-zA-Z0-9\\-\\_]*$",
                        StunnerFormsClientFieldsConstants.INSTANCE.Removed_invalid_characters_from_name(),
                        StunnerFormsClientFieldsConstants.INSTANCE.Invalid_character_in_name());
         customDataType.addKeyDownHandler(new KeyDownHandler() {
