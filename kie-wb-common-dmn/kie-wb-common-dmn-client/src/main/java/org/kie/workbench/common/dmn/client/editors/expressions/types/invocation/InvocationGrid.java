@@ -251,7 +251,10 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationGri
                                                                          new DMNGridRow(),
                                                                          index,
                                                                          uiModelMapper,
-                                                                         this::resize));
+                                                                         () -> {
+                                                                             resize();
+                                                                             startEditingCell(index, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX);
+                                                                         }));
         });
     }
 

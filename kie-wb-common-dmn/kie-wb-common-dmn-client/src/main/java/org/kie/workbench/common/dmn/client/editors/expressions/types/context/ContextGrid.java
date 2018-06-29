@@ -250,7 +250,10 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                                                                      new DMNGridRow(),
                                                                      index,
                                                                      uiModelMapper,
-                                                                     this::resize));
+                                                                     () -> {
+                                                                         resize();
+                                                                         startEditingCell(index, ContextUIModelMapperHelper.NAME_COLUMN_COUNT);
+                                                                     }));
         });
     }
 

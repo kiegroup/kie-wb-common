@@ -213,6 +213,7 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
         expression.ifPresent(relation -> {
             final InformationItem informationItem = new InformationItem();
             final RelationColumn relationColumn = makeRelationColumn(informationItem);
+            informationItem.setName(new Name("Column"));
 
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new AddRelationColumnCommand(relation,
@@ -221,7 +222,10 @@ public class RelationGrid extends BaseExpressionGrid<Relation, RelationGridData,
                                                                        relationColumn,
                                                                        index,
                                                                        uiModelMapper,
-                                                                       this::resize));
+                                                                       () -> {
+                                                                           resize();
+                                                                           relationColumn.startEditingHeaderCell(0);
+                                                                       }));
         });
     }
 

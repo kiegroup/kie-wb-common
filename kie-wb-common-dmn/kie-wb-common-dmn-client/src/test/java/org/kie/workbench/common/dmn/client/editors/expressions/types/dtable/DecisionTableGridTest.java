@@ -16,11 +16,16 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.ait.lienzo.client.core.shape.Viewport;
+import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwt.user.client.ui.AbsolutePanel;
+import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,6 +82,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
+import org.uberfire.ext.wires.core.grids.client.model.impl.BaseBounds;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseHeaderMetaData;
@@ -99,6 +105,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -124,10 +131,19 @@ public class DecisionTableGridTest {
     private static final String NODE_UUID = "uuid";
 
     @Mock
+    private Viewport viewport;
+
+    @Mock
+    private Transform transform;
+
+    @Mock
     private DMNGridPanel gridPanel;
 
     @Mock
     private DMNGridLayer gridLayer;
+
+    @Mock
+    private AbsolutePanel gridLayerDomElementContainer;
 
     @Mock
     private GridWidget gridWidget;
@@ -216,6 +232,9 @@ public class DecisionTableGridTest {
     @Captor
     private ArgumentCaptor<SetOrientationCommand> setOrientationCommandCaptor;
 
+    @Captor
+    private ArgumentCaptor<GridLayerRedrawManager.PrioritizedCommand> redrawCommandCaptor;
+
     private Optional<DecisionTable> expression = Optional.empty();
 
     private DecisionTableEditorDefinition definition;
@@ -244,6 +263,12 @@ public class DecisionTableGridTest {
         doReturn(graphCommandContext).when(canvasHandler).getGraphExecutionContext();
 
         when(gridWidget.getModel()).thenReturn(new BaseGridData(false));
+        when(gridLayer.getDomElementContainer()).thenReturn(gridLayerDomElementContainer);
+        when(gridLayerDomElementContainer.iterator()).thenReturn(mock(Iterator.class));
+        when(gridLayer.getVisibleBounds()).thenReturn(new BaseBounds(0, 0, 1000, 2000));
+        when(gridLayer.getViewport()).thenReturn(viewport);
+        when(viewport.getTransform()).thenReturn(transform);
+
         when(canvasHandler.getGraphIndex()).thenReturn(index);
         when(index.get(anyString())).thenReturn(element);
         when(element.getContent()).thenReturn(mock(Definition.class));
@@ -621,7 +646,7 @@ public class DecisionTableGridTest {
         addInputClause(1);
 
         verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
-        verifyGridPanelRefresh();
+        verifyGridPanelRefreshAndEditHeaderCell();
     }
 
     private void addInputClause(final int index) {
@@ -657,7 +682,7 @@ public class DecisionTableGridTest {
         addOutputClause(2);
 
         verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
-        verifyGridPanelRefresh();
+        verifyGridPanelRefreshAndEditHeaderCell();
     }
 
     private void addOutputClause(final int index) {
@@ -785,6 +810,26 @@ public class DecisionTableGridTest {
         verify(gridLayer).batch(any(GridLayerRedrawManager.PrioritizedCommand.class));
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
+    }
+
+    private void verifyGridPanelRefreshAndEditHeaderCell() {
+        verify(gridLayer, times(2)).batch(redrawCommandCaptor.capture());
+        verify(gridPanel).refreshScrollPosition();
+        verify(gridPanel).updatePanelSize();
+
+        final java.util.List<GridLayerRedrawManager.PrioritizedCommand> redrawCommands = redrawCommandCaptor.getAllValues();
+
+        //First call redraws grid following addition of new row
+        final GridLayerRedrawManager.PrioritizedCommand redrawCommand0 = redrawCommands.get(0);
+        redrawCommand0.execute();
+
+        verify(gridLayer).draw();
+
+        //Second call displays the inline editor for the new row
+        final GridLayerRedrawManager.PrioritizedCommand redrawCommand1 = redrawCommands.get(1);
+        redrawCommand1.execute();
+
+        verify(gridLayerDomElementContainer).add(any(Widget.class));
     }
 
     @Test

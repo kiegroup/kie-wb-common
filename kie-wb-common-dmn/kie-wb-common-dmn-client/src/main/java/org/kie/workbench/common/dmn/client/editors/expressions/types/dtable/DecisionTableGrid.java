@@ -346,6 +346,7 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
         expression.ifPresent(dtable -> {
             final InputClause clause = new InputClause();
             final LiteralExpression le = new LiteralExpression();
+            final InputClauseColumn inputClauseColumn = makeInputClauseColumn(clause);
             le.setText("input");
             clause.setInputExpression(le);
 
@@ -353,10 +354,13 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                                           new AddInputClauseCommand(dtable,
                                                                     clause,
                                                                     model,
-                                                                    makeInputClauseColumn(clause),
+                                                                    inputClauseColumn,
                                                                     index,
                                                                     uiModelMapper,
-                                                                    this::resize));
+                                                                    () -> {
+                                                                        resize();
+                                                                        inputClauseColumn.startEditingHeaderCell(0);
+                                                                    }));
         });
     }
 
@@ -374,16 +378,20 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     void addOutputClause(final int index) {
         expression.ifPresent(dtable -> {
             final OutputClause clause = new OutputClause();
+            final OutputClauseColumn outputClauseColumn = makeOutputClauseColumn(clause);
             clause.setName("output");
 
             sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
                                           new AddOutputClauseCommand(dtable,
                                                                      clause,
                                                                      model,
-                                                                     makeOutputClauseColumn(clause),
+                                                                     outputClauseColumn,
                                                                      index,
                                                                      uiModelMapper,
-                                                                     this::resize));
+                                                                     () -> {
+                                                                         resize();
+                                                                         outputClauseColumn.startEditingHeaderCell(1);
+                                                                     }));
         });
     }
 
