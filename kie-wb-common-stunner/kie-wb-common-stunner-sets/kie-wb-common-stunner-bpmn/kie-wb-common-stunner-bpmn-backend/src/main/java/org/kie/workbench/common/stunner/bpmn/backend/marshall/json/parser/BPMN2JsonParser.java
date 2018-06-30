@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.base.ParserMinimalBase;
+import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.BPMNGraphGenerator;
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -45,9 +46,13 @@ import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.AbstractChildrenTraverseCallback;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.content.ChildrenTraverseProcessorImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.traverse.tree.TreeWalkTraverseProcessorImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 // See org.codehaus.jackson.impl.ReaderBasedParser
 
 public class BPMN2JsonParser extends ParserMinimalBase {
+
+    private static final Logger LOG = LoggerFactory.getLogger(BPMN2JsonParser.class);
 
     private Diagram<Graph, Metadata> diagram;
     private NodeParser rootParser;
@@ -142,7 +147,7 @@ public class BPMN2JsonParser extends ParserMinimalBase {
         }
         // Initialize all the element parsers added in the tree.
         BPMN2JsonParser.this.rootParser.initialize(parsingContext);
-        System.out.println("End of children and view traverse");
+        LOG.debug("End of children and view traverse");
     }
 
 
