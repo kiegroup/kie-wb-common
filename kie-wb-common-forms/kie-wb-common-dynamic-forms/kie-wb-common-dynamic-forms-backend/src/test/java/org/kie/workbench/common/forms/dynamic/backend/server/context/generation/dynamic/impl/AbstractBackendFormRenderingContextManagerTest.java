@@ -25,7 +25,7 @@ import javax.enterprise.inject.Instance;
 import org.junit.After;
 import org.junit.Before;
 import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.FieldValueMarshaller;
-import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.FieldValueMarshallerRegistry;
+import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.FieldValueMarshallerRegistryImpl;
 import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.TextAreaFormFieldValueMarshaller;
 import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.models.MultipleSubFormFieldValueMarshaller;
 import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling.models.SubFormFieldValueMarshaller;
@@ -36,6 +36,7 @@ import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.
 import org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.validation.impl.ContextModelConstraintsExtractorImpl;
 import org.kie.workbench.common.forms.dynamic.service.context.generation.dynamic.BackendFormRenderingContext;
 import org.kie.workbench.common.forms.fields.test.TestFieldManager;
+import org.kie.workbench.common.forms.model.FieldDefinition;
 import org.kie.workbench.common.forms.model.FormDefinition;
 
 import static org.junit.Assert.assertNotNull;
@@ -45,11 +46,11 @@ import static org.mockito.Mockito.when;
 
 public abstract class AbstractBackendFormRenderingContextManagerTest {
 
-    protected Instance<FieldValueMarshaller> marshallersInstance;
+    protected Instance<FieldValueMarshaller<?, ?, ? extends FieldDefinition>> marshallersInstance;
 
     protected TestFieldManager fieldManager = new TestFieldManager();
 
-    private FieldValueMarshallerRegistry registry;
+    private FieldValueMarshallerRegistryImpl registry;
 
     protected BackendFormRenderingContextManagerImpl contextManager;
 
@@ -76,7 +77,7 @@ public abstract class AbstractBackendFormRenderingContextManagerTest {
 
         when(marshallersInstance.iterator()).then(proc -> marshallers.iterator());
 
-        registry = new FieldValueMarshallerRegistry(marshallersInstance);
+        registry = new FieldValueMarshallerRegistryImpl(marshallersInstance);
 
         subFormFieldValueMarshaller.setRegistry(registry);
         multipleSubFormFieldValueMarshaller.setRegistry(registry);

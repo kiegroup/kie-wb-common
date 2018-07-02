@@ -16,38 +16,9 @@
 
 package org.kie.workbench.common.forms.dynamic.backend.server.context.generation.dynamic.impl.marshalling;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-
 import org.kie.workbench.common.forms.model.FieldDefinition;
 
-@ApplicationScoped
-public class FieldValueMarshallerRegistry {
+public interface FieldValueMarshallerRegistry {
 
-    private Map<Class<? extends FieldDefinition>, Supplier<FieldValueMarshaller>> marshallers = new HashMap<>();
-
-    @Inject
-    public FieldValueMarshallerRegistry(Instance<FieldValueMarshaller> marshallerInstance) {
-        for (FieldValueMarshaller marshaller : marshallerInstance) {
-            marshallers.put(marshaller.getSupportedField(), marshaller.newInstanceSupplier());
-        }
-    }
-
-    protected FieldValueMarshallerRegistry() {
-        this(null);
-    }
-
-    public FieldValueMarshaller getMarshaller(FieldDefinition fieldDefinition) {
-        Optional<Supplier<FieldValueMarshaller>> optional = Optional.ofNullable(marshallers.get(fieldDefinition.getClass()));
-        if (optional.isPresent()) {
-            return optional.get().get();
-        }
-        return null;
-    }
+    FieldValueMarshaller getMarshaller(FieldDefinition fieldDefinition);
 }
