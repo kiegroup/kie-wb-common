@@ -106,20 +106,28 @@ public class JavaFunctionEditorDefinition extends BaseEditorDefinition<Context, 
     @Override
     public Optional<Context> getModelClass() {
         final Context context = new Context();
-        final ContextEntry classEntry = new ContextEntry();
-        final InformationItem classEntryVariable = new InformationItem();
-        classEntryVariable.setName(new Name(VARIABLE_CLASS));
-        classEntry.setVariable(classEntryVariable);
-        classEntry.setExpression(new LiteralExpression());
-        context.getContextEntry().add(classEntry);
 
-        final ContextEntry methodSignatureEntry = new ContextEntry();
-        final InformationItem methodSignatureEntryVariable = new InformationItem();
-        methodSignatureEntryVariable.setName(new Name(VARIABLE_METHOD_SIGNATURE));
-        methodSignatureEntry.setVariable(methodSignatureEntryVariable);
-        methodSignatureEntry.setExpression(new LiteralExpression());
-        context.getContextEntry().add(methodSignatureEntry);
         return Optional.of(context);
+    }
+
+    @Override
+    public void enrichModelClass(final Optional<String> nodeUUID,
+                                 final Optional<Context> expression) {
+        expression.ifPresent(context -> {
+            final ContextEntry classEntry = new ContextEntry();
+            final InformationItem classEntryVariable = new InformationItem();
+            classEntryVariable.setName(new Name(VARIABLE_CLASS));
+            classEntry.setVariable(classEntryVariable);
+            classEntry.setExpression(new LiteralExpression());
+            context.getContextEntry().add(classEntry);
+
+            final ContextEntry methodSignatureEntry = new ContextEntry();
+            final InformationItem methodSignatureEntryVariable = new InformationItem();
+            methodSignatureEntryVariable.setName(new Name(VARIABLE_METHOD_SIGNATURE));
+            methodSignatureEntry.setVariable(methodSignatureEntryVariable);
+            methodSignatureEntry.setExpression(new LiteralExpression());
+            context.getContextEntry().add(methodSignatureEntry);
+        });
     }
 
     @Override

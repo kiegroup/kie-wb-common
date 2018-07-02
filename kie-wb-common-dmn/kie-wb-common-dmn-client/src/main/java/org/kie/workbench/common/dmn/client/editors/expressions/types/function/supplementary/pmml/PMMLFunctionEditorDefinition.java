@@ -106,20 +106,28 @@ public class PMMLFunctionEditorDefinition extends BaseEditorDefinition<Context, 
     @Override
     public Optional<Context> getModelClass() {
         final Context context = new Context();
-        final ContextEntry documentEntry = new ContextEntry();
-        final InformationItem documentEntryVariable = new InformationItem();
-        documentEntryVariable.setName(new Name(VARIABLE_DOCUMENT));
-        documentEntry.setVariable(documentEntryVariable);
-        documentEntry.setExpression(new LiteralExpression());
-        context.getContextEntry().add(documentEntry);
 
-        final ContextEntry modelEntry = new ContextEntry();
-        final InformationItem modelEntryVariable = new InformationItem();
-        modelEntryVariable.setName(new Name(VARIABLE_MODEL));
-        modelEntry.setVariable(modelEntryVariable);
-        modelEntry.setExpression(new LiteralExpression());
-        context.getContextEntry().add(modelEntry);
         return Optional.of(context);
+    }
+
+    @Override
+    public void enrichModelClass(final Optional<String> nodeUUID,
+                                 final Optional<Context> expression) {
+        expression.ifPresent(context -> {
+            final ContextEntry documentEntry = new ContextEntry();
+            final InformationItem documentEntryVariable = new InformationItem();
+            documentEntryVariable.setName(new Name(VARIABLE_DOCUMENT));
+            documentEntry.setVariable(documentEntryVariable);
+            documentEntry.setExpression(new LiteralExpression());
+            context.getContextEntry().add(documentEntry);
+
+            final ContextEntry modelEntry = new ContextEntry();
+            final InformationItem modelEntryVariable = new InformationItem();
+            modelEntryVariable.setName(new Name(VARIABLE_MODEL));
+            modelEntry.setVariable(modelEntryVariable);
+            modelEntry.setExpression(new LiteralExpression());
+            context.getContextEntry().add(modelEntry);
+        });
     }
 
     @Override

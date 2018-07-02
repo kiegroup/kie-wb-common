@@ -38,4 +38,8 @@ public interface ExpressionEditorDefinition<T extends Expression> {
                                            final Optional<T> expression,
                                            final Optional<HasName> hasName,
                                            final int nesting);
+
+    default void enrichModelClass(final Optional<String> nodeUUID,
+                                  final Optional<T> expression) {
+    }
 }

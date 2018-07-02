@@ -203,6 +203,7 @@ public class RelationGridTest {
         decision.setName(new Name("name"));
         hasName = Optional.of(decision);
         expression = definition.getModelClass();
+        definition.enrichModelClass(Optional.empty(), expression);
 
         doReturn(canvasHandler).when(dmnEditorSession).getCanvasHandler();
         doReturn(dmnEditorSession).when(sessionManager).getCurrentSession();

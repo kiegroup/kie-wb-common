@@ -97,21 +97,28 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
     @Override
     public Optional<Invocation> getModelClass() {
         final Invocation invocation = new Invocation();
-        final LiteralExpression literalExpression = new LiteralExpression();
-        invocation.setExpression(literalExpression);
-
-        final InformationItem parameter = new InformationItem();
-        parameter.getName().setValue(InvocationDefaultValueUtilities.getNewParameterName(invocation));
-        final Binding binding = new Binding();
-        binding.setParameter(parameter);
-        invocation.getBinding().add(binding);
-
-        //Setup parent relationships
-        literalExpression.setParent(invocation);
-        binding.setParent(invocation);
-        parameter.setParent(binding);
 
         return Optional.of(invocation);
+    }
+
+    @Override
+    public void enrichModelClass(final Optional<String> nodeUUID,
+                                 final Optional<Invocation> expression) {
+        expression.ifPresent(invocation -> {
+            final LiteralExpression literalExpression = new LiteralExpression();
+            invocation.setExpression(literalExpression);
+
+            final InformationItem parameter = new InformationItem();
+            parameter.getName().setValue(InvocationDefaultValueUtilities.getNewParameterName(invocation));
+            final Binding binding = new Binding();
+            binding.setParameter(parameter);
+            invocation.getBinding().add(binding);
+
+            //Setup parent relationships
+            literalExpression.setParent(invocation);
+            binding.setParent(invocation);
+            parameter.setParent(binding);
+        });
     }
 
     @Override

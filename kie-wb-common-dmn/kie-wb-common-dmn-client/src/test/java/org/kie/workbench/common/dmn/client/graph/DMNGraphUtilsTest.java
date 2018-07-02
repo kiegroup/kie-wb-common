@@ -67,15 +67,14 @@ public class DMNGraphUtilsTest {
 
     private DMNGraphUtils utils;
 
-    private ProjectDiagramImpl diagram;
-
     private GraphImpl graph;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setup() {
         this.utils = new DMNGraphUtils(sessionManager);
         this.graph = new GraphImpl(UUID.uuid(), new GraphNodeStoreImpl());
-        this.diagram = new ProjectDiagramImpl(NAME, graph, metadata);
+        final ProjectDiagramImpl diagram = new ProjectDiagramImpl(NAME, graph, metadata);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
         when(canvasHandler.getDiagram()).thenReturn(diagram);
