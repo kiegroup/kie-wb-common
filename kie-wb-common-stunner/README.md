@@ -204,13 +204,13 @@ __IMPORTANT - EACH TIME THE RUN/DEBUG INSTANCE IS STOPPED, REPEAT THE 'BUILD/REB
 8. GWT compilation will now take place, after which the rest of the showcase application GUI will load.
 9. To debug in Chrome, open the tool with *Ctrl+Shift+i* (Linux/Win) or *Cmd+Opt+i* (Mac).
 10. When debugging an exception and accompanying stack trace is desired, within the debugger's Sources tab, click the *Pause on caught exceptions* checkbox on the right-hand side.
-11. Use Ctrl/Cmd+O to open files by name, then set breakpoints in the left-hand margin as you normally would
+11. To set breakpoints, use Ctrl/Cmd+O to open a file by name, then set breakpoints in the left-hand margin similarly to how it's done in IntelliJ.
 
 Additional information on debugging with Chrome Dev Tools can be found [here](https://developers.google.com/web/tools/chrome-devtools/javascript/).
 
 **Troubleshooting**
 
-  - If ever the showcase loads and only the top menu bar is visible, no section title/links are added to the page, you will likely also see a JavaScript error about no Home pespective being available. If this occurs, stop the run/debug instance, repeat the step above, and start it again.
+  - If ever the showcase loads and only the top menu bar is visible, no section title/links are added to the page, you will likely also see a JavaScript error about no Home pespective being available. If this occurs, perform a *Build/Rebuild Project*, then start the run/debug process again.
   - Oftentimes when working with just client/frontend GWT code, a Run can be performed in lieu of Debug and Javascript runtime compilation/hotswapping will not be affected, yet doing so will save some compilation time.
 
 **[OPTIONAL/ADVANCED] IDEA Multi-module Environment Setup**
