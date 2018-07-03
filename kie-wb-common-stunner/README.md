@@ -203,7 +203,7 @@ __IMPORTANT - EACH TIME THE RUN/DEBUG INSTANCE IS STOPPED, REPEAT THE 'BUILD/REB
 7. Enter the 'admin'/'admin' credentials, then enter.
 8. GWT compilation will now take place, after which the rest of the showcase application GUI will load.
 9. To debug in Chrome, open the tool with *Ctrl+Shift+i* (Linux/Win) or *Cmd+Opt+i* (Mac).
-10. When debugging an exception and it's stack trace is needed, in the debugger's Sources tab, click the *Pause on caught exceptions* checkbox on the right-hand side.
+10. When debugging an exception and accompanying stack trace is desired, within the debugger's Sources tab, click the *Pause on caught exceptions* checkbox on the right-hand side.
 11. Use Ctrl/Cmd+O to open files by name, then set breakpoints in the left-hand margin as you normally would
 
 Additional information on debugging with Chrome Dev Tools can be found [here](https://developers.google.com/web/tools/chrome-devtools/javascript/).
