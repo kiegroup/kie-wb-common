@@ -58,14 +58,10 @@ public abstract class AbstractDiagramViewer<D extends Diagram, H extends Abstrac
         callback.onOpen(diagram);
 
         final String definitionSetId = diagram.getMetadata().getDefinitionSetId();
-        StunnerPreferences preferences = getPreferencesRegistry().get(definitionSetId);
-
+        final StunnerPreferences preferences = getPreferencesRegistry().get(definitionSetId);
         final StunnerDiagramEditorPreferences editorPreferences = preferences.getDiagramEditorPreferences();
 
-        boolean isHiDPIEnabled = false;
-        if (editorPreferences!=null) {
-            isHiDPIEnabled = editorPreferences.isHiDPIEnabled();
-        }
+        final boolean isHiDPIEnabled = editorPreferences != null && editorPreferences.isHiDPIEnabled();
 
         final int[] ds = getDiagramSize(diagram);
 
