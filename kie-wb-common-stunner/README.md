@@ -102,7 +102,7 @@ If you have not run the step from **Before Working with the IDE** above, do so b
 5. Click *Import*.
 6. In the *Import From* popup, select "IntelliJ IDEA code style XML". If this option is not available, proceed to **Manually Importing the Code Style** below at this time.
 7. Navigate to the downloaded XML file and select it.
-8. Click *Apply* and/or *OK*.
+8. Click *Apply* and/or *OK*. 
 
 ***Manually Importing the Code Style***
 
