@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.generalsettings.GitUrlsPresenter.View;
+import org.kie.workbench.common.screens.projecteditor.model.GitUrl;
 import org.kie.workbench.common.widgets.client.widget.KieSelectElement;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
