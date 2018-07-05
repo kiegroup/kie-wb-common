@@ -198,6 +198,8 @@ public class VariableNameTextBoxTest {
                      isValidResult);
         isValidResult = textBox.isValidValue("-",
                                              false);
+        assertEquals(null,
+                     isValidResult);
         isValidResult = textBox.isValidValue("_",
                                              true);
         assertEquals(null,
