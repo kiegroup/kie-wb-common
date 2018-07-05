@@ -27,12 +27,12 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import org.gwtbootstrap3.client.ui.Modal;
 import org.jboss.errai.databinding.client.BindableProxy;
-import org.jboss.errai.databinding.client.api.DataBinder;
 import org.kie.workbench.common.forms.dynamic.service.shared.FormRenderingContext;
 import org.kie.workbench.common.forms.dynamic.service.shared.adf.DynamicFormModelGenerator;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DataBindingEditor;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.DynamicFormModel;
 import org.kie.workbench.common.forms.editor.client.editor.properties.binding.StaticFormModel;
+import org.kie.workbench.common.forms.editor.client.editor.properties.util.DeepCloneHelper;
 import org.kie.workbench.common.forms.editor.service.shared.FormEditorRenderingContext;
 import org.kie.workbench.common.forms.model.DynamicModel;
 import org.kie.workbench.common.forms.model.FieldDefinition;
@@ -105,7 +105,7 @@ public class FieldPropertiesRenderer implements IsWidget {
 
     @SuppressWarnings("unchecked")
     public FieldDefinition doCopy(final FieldDefinition originalField) {
-        return ((BindableProxy<FieldDefinition>)DataBinder.forModel(originalField).getModel()).deepUnwrap();
+        return DeepCloneHelper.deepClone(originalField);
     }
 
     public void onPressOk() {
@@ -121,7 +121,7 @@ public class FieldPropertiesRenderer implements IsWidget {
     }
 
     private void doAcceptChanges() {
-        helper.onPressOk(fieldCopy);
+        helper.onPressOk(unwrap(fieldCopy));
     }
 
     private void doCancel() {
@@ -129,9 +129,17 @@ public class FieldPropertiesRenderer implements IsWidget {
     }
 
     public void onFieldTypeChange(final String typeCode) {
-        fieldCopy = helper.onFieldTypeChange(fieldCopy,
-                                             typeCode);
+        fieldCopy = helper.onFieldTypeChange(unwrap(fieldCopy), typeCode);
+
         render();
+    }
+
+    private FieldDefinition unwrap(FieldDefinition fieldDefinition) {
+        if (fieldDefinition instanceof BindableProxy) {
+            return ((BindableProxy<FieldDefinition>) fieldDefinition).deepUnwrap();
+        }
+
+        return fieldDefinition;
     }
 
     public void onFieldBindingChange(final String bindingExpression) {
