@@ -228,8 +228,12 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
                                                   if (values == null) {
                                                       values = new ArrayList<>();
                                                   }
-                                                  values.add(formRenderer.getModel());
-                                                  tableValues.add((HasProperties) formRenderer.getModel());
+
+                                                  BindableProxy proxy = (BindableProxy) formRenderer.getModel();
+
+                                                  values.add(proxy.deepUnwrap());
+                                                  tableValues.add(proxy);
+
                                                   refreshCrud();
                                                   fireFieldChange();
                                                   formRenderer.unBind();
@@ -266,10 +270,8 @@ public class MultipleSubFormWidget extends Composite implements TakesValue<List<
 
                                                   bindingHelper.afterEdit(realProxy);
 
-                                                  values.set(index,
-                                                             realProxy);
-                                                  tableValues.set(index,
-                                                                  realProxy);
+                                                  values.set(index, realProxy.deepUnwrap());
+                                                  tableValues.set(index, realProxy);
 
                                                   refreshCrud();
                                                   fireFieldChange();
