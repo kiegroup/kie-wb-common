@@ -31,6 +31,7 @@ import org.guvnor.common.services.project.builder.model.BuildMessage;
 import org.guvnor.common.services.project.builder.model.BuildResults;
 import org.guvnor.common.services.project.builder.service.BuildService;
 import org.guvnor.common.services.project.builder.service.BuildValidationHelper;
+import org.guvnor.common.services.project.model.Module;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Project;
 import org.guvnor.common.services.shared.validation.model.ValidationMessage;
@@ -351,6 +352,32 @@ public class BuilderTest
         final KieSession kieSession1 = kieContainer1.newKieSession();
         kieSession1.setGlobal( "list",
                                new ArrayList<String>() );
+    }
+
+    @Test
+    public void buildDetectsFilesWithSpecialCharacters() throws Exception {
+        LRUPomModelCache pomModelCache = getReference(LRUPomModelCache.class);
+
+        URL url = this.getClass().getResource("/ModuleBuildTestFileWithSpecialCharacter");
+        SimpleFileSystemProvider p = new SimpleFileSystemProvider();
+        org.uberfire.java.nio.file.Path path = p.getPath(url.toURI());
+
+        final Project project = projectService.resolveProject(Paths.convert(path));
+
+        final Builder builder = new Builder(project,
+                                            ioService,
+                                            projectService,
+                                            importsService,
+                                            new ArrayList<BuildValidationHelper>(),
+                                            dependenciesClassLoaderCache,
+                                            pomModelCache,
+                                            getPackageNameWhiteListService(),
+                                            alwaysTrue);
+
+        BuildResults buildResults = builder.build();
+        List<BuildMessage> errorMessages = buildResults.getErrorMessages();
+        assertEquals(2, errorMessages.size());
+        assertTrue(errorMessages.get(0).getText().contains("mismatched input 'Build' expecting one of the following tokens:"));
     }
 
     private PackageNameWhiteListService getPackageNameWhiteListService() {
