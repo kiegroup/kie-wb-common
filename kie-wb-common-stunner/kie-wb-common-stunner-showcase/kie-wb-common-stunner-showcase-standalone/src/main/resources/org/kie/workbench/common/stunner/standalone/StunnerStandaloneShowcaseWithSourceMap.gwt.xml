@@ -29,4 +29,6 @@
   <set-property name="compiler.useSourceMaps" value="true"/>
   <set-configuration-property name="includeSourceMapUrl"
                               value="sourcemaps/__HASH___sourceMap__FRAGMENT__.json"/>
+
+  <set-property name="buildmode" value="showcase"/>
 </module>

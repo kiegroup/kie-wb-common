@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.client.splash;
+package org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build;
 
-public class ProductionModeIndicator extends GWTModeIndicator {
+public class FullModeIndicator extends BuildModeIndicator {
 
     @Override
-    public GWTMode getGwtMode() {
-        return GWTMode.Production;
+    public BuildMode getMode() {
+        return BuildMode.Full;
     }
 }

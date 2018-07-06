@@ -28,4 +28,17 @@
 
   <source path="widgets"/>
 
+  <define-property name="buildmode" values="full, showcase"/>
+  <set-property name="buildmode" value="full"/>
+
+  <replace-with class="org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build.FullModeIndicator">
+    <when-type-is class="org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build.BuildModeIndicator"/>
+    <when-property-is name="buildmode" value="full"/>
+  </replace-with>
+
+  <replace-with class="org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build.ShowcaseModeIndicator">
+    <when-type-is class="org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build.BuildModeIndicator"/>
+    <when-property-is name="buildmode" value="showcase"/>
+  </replace-with>
+
 </module>

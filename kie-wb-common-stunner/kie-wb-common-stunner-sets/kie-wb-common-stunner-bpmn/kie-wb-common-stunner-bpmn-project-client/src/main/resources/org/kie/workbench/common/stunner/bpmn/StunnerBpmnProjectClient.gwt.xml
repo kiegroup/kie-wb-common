@@ -24,14 +24,4 @@
 
   <source path="project/client"/>
 
-  <replace-with class="org.kie.workbench.common.stunner.bpmn.project.client.splash.SuperDevModeIndicator">
-    <when-type-is class="org.kie.workbench.common.stunner.bpmn.project.client.splash.GWTModeIndicator"/>
-    <when-property-is name="superdevmode" value="on"/>
-  </replace-with>
-
-  <replace-with class="org.kie.workbench.common.stunner.bpmn.project.client.splash.ProductionModeIndicator">
-    <when-type-is class="org.kie.workbench.common.stunner.bpmn.project.client.splash.GWTModeIndicator"/>
-    <when-property-is name="superdevmode" value="off"/>
-  </replace-with>
-
 </module>

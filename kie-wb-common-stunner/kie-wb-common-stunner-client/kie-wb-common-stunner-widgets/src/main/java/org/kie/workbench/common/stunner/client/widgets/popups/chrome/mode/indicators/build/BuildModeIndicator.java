@@ -14,12 +14,25 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.bpmn.project.client.splash;
+package org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build;
 
-public class SuperDevModeIndicator extends GWTModeIndicator {
+import com.google.gwt.core.client.GWT;
 
-    @Override
-    public GWTMode getGwtMode() {
-        return GWTMode.SuperDev;
+public class BuildModeIndicator {
+
+    public enum BuildMode {
+        Full,
+        Showcase,
+        Undefined
+    }
+
+    protected BuildMode getMode() {
+        return BuildMode.Undefined;
+    }
+
+    public static BuildMode getBuildMode() {
+        BuildModeIndicator modeIndicator = GWT.create(BuildModeIndicator.class);
+        return modeIndicator.getMode();
     }
 }
+

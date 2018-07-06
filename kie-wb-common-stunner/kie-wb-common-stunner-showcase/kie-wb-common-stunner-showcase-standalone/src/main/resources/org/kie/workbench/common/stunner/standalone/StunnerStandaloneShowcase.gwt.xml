@@ -62,4 +62,5 @@
   <!-- Specify the paths for translatable code -->
   <source path='client'/>
 
+  <set-property name="buildmode" value="showcase"/>
 </module>

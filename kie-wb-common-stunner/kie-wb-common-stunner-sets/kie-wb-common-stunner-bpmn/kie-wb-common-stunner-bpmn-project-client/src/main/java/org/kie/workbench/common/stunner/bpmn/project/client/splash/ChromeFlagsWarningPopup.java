@@ -18,40 +18,42 @@ package org.kie.workbench.common.stunner.bpmn.project.client.splash;
 
 import java.util.Arrays;
 
-import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.Widget;
+import org.jboss.errai.common.client.ui.ElementWrapperWidget;
 import org.kie.workbench.common.stunner.bpmn.project.client.editor.BPMNDiagramEditor;
-import org.kie.workbench.common.stunner.bpmn.project.client.resources.i18n.ChromeFlagsSplashScreenConstants;
+import org.kie.workbench.common.stunner.client.widgets.popups.chrome.ChromeFlagsWarningPopupPresenter;
 import org.uberfire.client.annotations.SplashBodyHeight;
 import org.uberfire.client.annotations.SplashFilter;
 import org.uberfire.client.annotations.WorkbenchPartTitle;
 import org.uberfire.client.annotations.WorkbenchPartView;
 import org.uberfire.client.annotations.WorkbenchSplashScreen;
-import org.uberfire.workbench.events.NotificationEvent;
 import org.uberfire.workbench.model.SplashScreenFilter;
 import org.uberfire.workbench.model.impl.SplashScreenFilterImpl;
 
-@WorkbenchSplashScreen(identifier = "chromeFlags.splash")
-public class ChromeFlagsSplashScreen {
+@WorkbenchSplashScreen(identifier = ChromeFlagsWarningPopup.SPLASH_ID)
+public class ChromeFlagsWarningPopup {
+
+    public static final String SPLASH_ID = "ChromeFlagsWarningPopup.splash";
 
     @Inject
-    protected Event<NotificationEvent> notification;
+    private ChromeFlagsWarningPopupPresenter presenter;
 
     @WorkbenchPartTitle
     public String getTitle() {
-        return ChromeFlagsSplashScreenConstants.INSTANCE.flagsTitle();
+        return presenter.getTitle();
     }
 
     @WorkbenchPartView
     public Widget getView() {
-        return new ChromeFlagsWidget(notification);
+        return ElementWrapperWidget.getWidget(presenter.getView().getElement());
     }
 
     @SplashFilter
     public SplashScreenFilter getFilter() {
-        if (isDevelopmentMode() && isGoogleChrome()) {
+        if (presenter.isFullBuildMode() &&
+                presenter.isGoogleChrome()) {
             return new SplashScreenFilterImpl("chromeFlags.splash",
                                               true,
                                               Arrays.asList(BPMNDiagramEditor.EDITOR_ID));
@@ -64,32 +66,4 @@ public class ChromeFlagsSplashScreen {
     public Integer getBodySize() {
         return 310;
     }
-
-    private static native boolean isGoogleChrome()/*-{
-        var isChromium = window.chrome;
-        var winNav = window.navigator;
-        var vendorName = winNav.vendor;
-        var isOpera = typeof window.opr !== "undefined";
-        var isIEedge = winNav.userAgent.indexOf("Edge") > -1;
-        var isIOSChrome = winNav.userAgent.match("CriOS");
-        var isYandex = winNav.userAgent.match("YaBrowser");
-
-        if (isIOSChrome) {
-            return true;
-        } else if (isChromium !== null &&
-                typeof isChromium !== "undefined" &&
-                vendorName === "Google Inc." &&
-                isOpera === false &&
-                isIEedge === false &&
-                isYandex === null) {
-            return true;
-        } else {
-            return false;
-        }
-    }-*/;
-
-    private boolean isDevelopmentMode() {
-        return GWTModeIndicator.getGWTMode() == GWTModeIndicator.GWTMode.SuperDev;
-    }
 }
-
