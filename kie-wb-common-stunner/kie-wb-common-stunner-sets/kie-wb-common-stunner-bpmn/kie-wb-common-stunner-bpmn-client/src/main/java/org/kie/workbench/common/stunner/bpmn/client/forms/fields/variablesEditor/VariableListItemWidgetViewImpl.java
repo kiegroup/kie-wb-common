@@ -154,7 +154,7 @@ public class VariableListItemWidgetViewImpl implements VariableListItemWidgetVie
                               true,
                               CUSTOM_PROMPT,
                               ENTER_TYPE_PROMPT);
-        name.setRegExp("^[a-zA-Z0-9\\-\\.\\_]*$",
+        name.setRegExp("^[a-zA-Z0-9\\-\\_]*$",
                        "Removed invalid characters from name",
                        "Invalid character in name");
         customDataType.addKeyDownHandler(new KeyDownHandler() {
