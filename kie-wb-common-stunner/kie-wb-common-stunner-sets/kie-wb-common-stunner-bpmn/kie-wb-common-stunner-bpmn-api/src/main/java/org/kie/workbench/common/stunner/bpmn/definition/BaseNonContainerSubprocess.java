@@ -33,4 +33,8 @@ public abstract class BaseNonContainerSubprocess extends BaseSubprocess {
     public BaseNonContainerSubprocess(BPMNGeneralSet general, BackgroundSet backgroundSet, FontSet fontSet, RectangleDimensionsSet dimensionsSet, SimulationSet simulationSet) {
         super(general, backgroundSet, fontSet, dimensionsSet, simulationSet);
     }
+
+    public BaseNonContainerSubprocess() {
+        super();
+    }
 }

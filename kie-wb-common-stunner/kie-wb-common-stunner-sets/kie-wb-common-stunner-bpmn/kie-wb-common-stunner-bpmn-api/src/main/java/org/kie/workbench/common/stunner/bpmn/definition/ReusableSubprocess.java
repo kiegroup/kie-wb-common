@@ -87,6 +87,10 @@ public class ReusableSubprocess extends BaseNonContainerSubprocess implements Da
         }
     }
 
+    public ReusableSubprocess() {
+        super();
+    }
+
     public ReusableSubprocess(final @MapsTo("general") BPMNGeneralSet general,
                               final @MapsTo("executionSet") ReusableSubprocessTaskExecutionSet executionSet,
                               final @MapsTo("dataIOSet") DataIOSet dataIOSet,
