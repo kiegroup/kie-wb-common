@@ -76,7 +76,6 @@ public class KieMetadataTest {
     }
 
     @Test
-    @Ignore("See https://issues.jboss.org/browse/AF-1144")
     public void compileAndLoadKieJarMetadataAllResourcesPackagedJar() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
@@ -111,10 +110,10 @@ public class KieMetadataTest {
         assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
-        assertThat(rulesBP).hasSize(7);
+        assertThat(rulesBP).hasSize(8);
         Map<String, TypeMetaInfo> typesMI = kieModuleMetaInfo.getTypeMetaInfos();
         Assert.assertEquals(typesMI.size(),
-                            21);
+                            35);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         assertThat(kieModuleOptional.isPresent()).isTrue();

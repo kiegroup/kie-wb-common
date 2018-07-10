@@ -141,6 +141,7 @@ public class MavenRestClientTest {
                 loadPomFromFile("./pom.xml")
                 .resolve(
                         "org.kie.workbench.services:kie-wb-common-compiler-core:?",
+                        "org.kie.workbench.services:kie-wb-common-compiler-service:?",
                         "org.kie.workbench.services:kie-wb-common-services-backend:?",
                         "org.kie.soup:kie-soup-project-datamodel-commons:?",
 
