@@ -37,7 +37,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.List;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
-import org.kie.workbench.common.dmn.client.commands.expressions.types.relation.AddRelationColumnCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.relation.AddRelationRowCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.relation.DeleteRelationColumnCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.relation.DeleteRelationRowCommand;
@@ -59,6 +58,7 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
@@ -174,9 +174,6 @@ public class RelationGridTest {
 
     @Mock
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
-
-    @Captor
-    private ArgumentCaptor<AddRelationColumnCommand> addColumnCommand;
 
     @Captor
     private ArgumentCaptor<DeleteRelationColumnCommand> deleteColumnCommand;
@@ -394,6 +391,7 @@ public class RelationGridTest {
     @Test
     public void testOnItemSelectedInsertColumnBefore() {
         setupGrid(0);
+        mockInsertColumnCommandExecution();
 
         final java.util.List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 0);
         final HasListSelectorControl.ListSelectorTextItem ti = (HasListSelectorControl.ListSelectorTextItem) items.get(INSERT_COLUMN_BEFORE);
@@ -407,6 +405,7 @@ public class RelationGridTest {
     @Test
     public void testOnItemSelectedInsertColumnAfter() {
         setupGrid(0);
+        mockInsertColumnCommandExecution();
 
         final java.util.List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 0);
         final HasListSelectorControl.ListSelectorTextItem ti = (HasListSelectorControl.ListSelectorTextItem) items.get(INSERT_COLUMN_AFTER);
@@ -585,11 +584,18 @@ public class RelationGridTest {
     }
 
     private void addColumn(final int index) {
+        mockInsertColumnCommandExecution();
+
         grid.addColumn(index);
+    }
 
-        verify(sessionCommandManager).execute(eq(canvasHandler), addColumnCommand.capture());
-
-        addColumnCommand.getValue().execute(canvasHandler);
+    private void mockInsertColumnCommandExecution() {
+        when(sessionCommandManager.execute(eq(canvasHandler),
+                                           any(AbstractCanvasGraphCommand.class))).thenAnswer((i) -> {
+            final AbstractCanvasHandler handler = (AbstractCanvasHandler) i.getArguments()[0];
+            final AbstractCanvasGraphCommand command = (AbstractCanvasGraphCommand) i.getArguments()[1];
+            return command.execute(handler);
+        });
     }
 
     @Test

@@ -39,8 +39,6 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation
 import org.kie.workbench.common.dmn.api.definition.v1_1.HitPolicy;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddDecisionRuleCommand;
-import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddInputClauseCommand;
-import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.AddOutputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteDecisionRuleCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteInputClauseCommand;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.dtable.DeleteOutputClauseCommand;
@@ -66,6 +64,7 @@ import org.kie.workbench.common.dmn.client.widgets.layer.DMNGridLayer;
 import org.kie.workbench.common.dmn.client.widgets.panel.DMNGridPanel;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.command.AbstractCanvasGraphCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPropertyCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
@@ -206,13 +205,7 @@ public class DecisionTableGridTest {
     private EventSourceMock<ExpressionEditorChanged> editorSelectedEvent;
 
     @Captor
-    private ArgumentCaptor<AddInputClauseCommand> addInputClauseCommandCaptor;
-
-    @Captor
     private ArgumentCaptor<DeleteInputClauseCommand> deleteInputClauseCommandCaptor;
-
-    @Captor
-    private ArgumentCaptor<AddOutputClauseCommand> addOutputClauseCommandCaptor;
 
     @Captor
     private ArgumentCaptor<DeleteOutputClauseCommand> deleteOutputClauseCommandCaptor;
@@ -439,6 +432,7 @@ public class DecisionTableGridTest {
     @Test
     public void testGetItemsInputClauseColumn() {
         setupGrid(makeHasNameForDecision(), 0);
+        mockInsertColumnCommandExecution();
 
         final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 1);
 
@@ -469,6 +463,7 @@ public class DecisionTableGridTest {
     @Test
     public void testGetItemsOutputClauseColumn() {
         setupGrid(makeHasNameForDecision(), 0);
+        mockInsertColumnCommandExecution();
 
         final List<HasListSelectorControl.ListSelectorItem> items = grid.getItems(0, 2);
 
@@ -650,13 +645,18 @@ public class DecisionTableGridTest {
     }
 
     private void addInputClause(final int index) {
+        mockInsertColumnCommandExecution();
+
         grid.addInputClause(index);
+    }
 
-        verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              addInputClauseCommandCaptor.capture());
-
-        final AddInputClauseCommand addInputClauseCommand = addInputClauseCommandCaptor.getValue();
-        addInputClauseCommand.execute(canvasHandler);
+    private void mockInsertColumnCommandExecution() {
+        when(sessionCommandManager.execute(eq(canvasHandler),
+                                           any(AbstractCanvasGraphCommand.class))).thenAnswer((i) -> {
+            final AbstractCanvasHandler handler = (AbstractCanvasHandler) i.getArguments()[0];
+            final AbstractCanvasGraphCommand command = (AbstractCanvasGraphCommand) i.getArguments()[1];
+            return command.execute(handler);
+        });
     }
 
     @Test
@@ -686,13 +686,9 @@ public class DecisionTableGridTest {
     }
 
     private void addOutputClause(final int index) {
+        mockInsertColumnCommandExecution();
+
         grid.addOutputClause(index);
-
-        verify(sessionCommandManager).execute(eq(canvasHandler),
-                                              addOutputClauseCommandCaptor.capture());
-
-        final AddOutputClauseCommand addOutputClauseCommand = addOutputClauseCommandCaptor.getValue();
-        addOutputClauseCommand.execute(canvasHandler);
     }
 
     @Test

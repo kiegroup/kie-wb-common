@@ -583,17 +583,17 @@ public class InvocationGridTest {
 
         final List<GridLayerRedrawManager.PrioritizedCommand> redrawCommands = redrawCommandCaptor.getAllValues();
 
-        //First call redraws grid following addition of new row
+        //First call displays the inline editor for the new row
         final GridLayerRedrawManager.PrioritizedCommand redrawCommand0 = redrawCommands.get(0);
         redrawCommand0.execute();
 
-        verify(gridLayer).draw();
+        verify(gridLayerDomElementContainer).add(any(Widget.class));
 
-        //Second call displays the inline editor for the new row
+        //Second call redraws grid following addition of new row
         final GridLayerRedrawManager.PrioritizedCommand redrawCommand1 = redrawCommands.get(1);
         redrawCommand1.execute();
 
-        verify(gridLayerDomElementContainer).add(any(Widget.class));
+        verify(gridLayer).draw();
     }
 
     private void addParameterBinding(final int index) {
