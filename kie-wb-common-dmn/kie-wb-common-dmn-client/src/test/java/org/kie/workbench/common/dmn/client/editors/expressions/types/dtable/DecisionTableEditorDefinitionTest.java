@@ -51,7 +51,7 @@ public class DecisionTableEditorDefinitionTest extends BaseDecisionTableEditorDe
     @Test
     public void testModelEnrichment() {
         final Optional<DecisionTable> oModel = definition.getModelClass();
-        definition.enrichModelClass(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), oModel);
 
         final DecisionTable model = oModel.get();
         assertBasicEnrichment(model);

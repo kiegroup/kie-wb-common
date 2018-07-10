@@ -130,7 +130,7 @@ public class RelationEditorDefinitionTest {
     @Test
     public void testModelEnrichment() {
         final Optional<Relation> oModel = definition.getModelClass();
-        definition.enrichModelClass(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), oModel);
 
         final Relation model = oModel.get();
 

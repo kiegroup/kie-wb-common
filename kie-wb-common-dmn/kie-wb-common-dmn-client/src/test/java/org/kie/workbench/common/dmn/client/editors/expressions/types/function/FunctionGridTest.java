@@ -269,7 +269,7 @@ public class FunctionGridTest {
                                                                                       translationService));
 
         expression = definition.getModelClass();
-        definition.enrichModelClass(Optional.empty(), expression);
+        definition.enrich(Optional.empty(), expression);
         expression.get().getFormalParameter().add(parameter);
         parameter.getName().setValue(PARAMETER_NAME);
 

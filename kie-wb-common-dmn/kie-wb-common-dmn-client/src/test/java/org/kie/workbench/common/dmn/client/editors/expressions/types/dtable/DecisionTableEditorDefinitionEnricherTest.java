@@ -52,8 +52,8 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final Node<Definition, Edge> node = new NodeImpl<>(uuid);
         final Node<Definition, Edge> sourceNode1 = new NodeImpl<>(UUID.uuid());
         final Node<Definition, Edge> sourceNode2 = new NodeImpl<>(UUID.uuid());
-        final String inputData1Name = "inputData1";
-        final String inputData2Name = "inputData2";
+        final String inputData1Name = "z-inputData1";
+        final String inputData2Name = "a-inputData2";
         final InputData inputData1 = new InputData();
         final InputData inputData2 = new InputData();
         inputData1.getName().setValue(inputData1Name);
@@ -85,7 +85,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         graph.addNode(sourceNode2);
 
         final Optional<DecisionTable> oModel = definition.getModelClass();
-        definition.enrichModelClass(Optional.of(uuid), oModel);
+        definition.enrich(Optional.of(uuid), oModel);
 
         final DecisionTable model = oModel.get();
         assertBasicEnrichment(model);
@@ -93,11 +93,11 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final List<InputClause> input = model.getInput();
         assertThat(input.size()).isEqualTo(2);
         assertThat(input.get(0).getInputExpression()).isInstanceOf(LiteralExpression.class);
-        assertThat(input.get(0).getInputExpression().getText()).isEqualTo(inputData1Name);
-        assertThat(input.get(0).getInputExpression().getTypeRef()).isEqualTo(inputData1QName);
+        assertThat(input.get(0).getInputExpression().getText()).isEqualTo(inputData2Name);
+        assertThat(input.get(0).getInputExpression().getTypeRef()).isEqualTo(inputData2QName);
         assertThat(input.get(1).getInputExpression()).isInstanceOf(LiteralExpression.class);
-        assertThat(input.get(1).getInputExpression().getText()).isEqualTo(inputData2Name);
-        assertThat(input.get(1).getInputExpression().getTypeRef()).isEqualTo(inputData2QName);
+        assertThat(input.get(1).getInputExpression().getText()).isEqualTo(inputData1Name);
+        assertThat(input.get(1).getInputExpression().getTypeRef()).isEqualTo(inputData1QName);
 
         assertStandardOutputClauseEnrichment(model);
         assertStandardDecisionRuleEnrichment(model, 2, 1);
@@ -111,7 +111,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         graph.addNode(node);
 
         final Optional<DecisionTable> oModel = definition.getModelClass();
-        definition.enrichModelClass(Optional.of(uuid), oModel);
+        definition.enrich(Optional.of(uuid), oModel);
 
         final DecisionTable model = oModel.get();
         assertBasicEnrichment(model);
@@ -132,7 +132,7 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
         final Optional<DecisionTable> oModel = definition.getModelClass();
         oModel.get().setParent(ce);
 
-        definition.enrichModelClass(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), oModel);
 
         final DecisionTable model = oModel.get();
         assertBasicEnrichment(model);

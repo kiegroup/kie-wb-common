@@ -95,8 +95,8 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
     }
 
     @Override
-    public void enrichModelClass(final Optional<String> nodeUUID,
-                                 final Optional<Relation> expression) {
+    public void enrich(final Optional<String> nodeUUID,
+                       final Optional<Relation> expression) {
         expression.ifPresent(relation -> {
             final InformationItem column = new InformationItem();
             column.getName().setValue(RelationDefaultValueUtilities.getNewColumnName(relation));

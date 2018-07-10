@@ -101,9 +101,9 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
     }
 
     @Override
-    public void enrichModelClass(final Optional<String> nodeUUID,
-                                 final Optional<DecisionTable> expression) {
-        expression.ifPresent(dtable -> enricher.enrichModelClass(nodeUUID, dtable));
+    public void enrich(final Optional<String> nodeUUID,
+                       final Optional<DecisionTable> expression) {
+        enricher.enrich(nodeUUID, expression);
     }
 
     @Override

@@ -111,8 +111,8 @@ public class JavaFunctionEditorDefinition extends BaseEditorDefinition<Context, 
     }
 
     @Override
-    public void enrichModelClass(final Optional<String> nodeUUID,
-                                 final Optional<Context> expression) {
+    public void enrich(final Optional<String> nodeUUID,
+                       final Optional<Context> expression) {
         expression.ifPresent(context -> {
             final ContextEntry classEntry = new ContextEntry();
             final InformationItem classEntryVariable = new InformationItem();

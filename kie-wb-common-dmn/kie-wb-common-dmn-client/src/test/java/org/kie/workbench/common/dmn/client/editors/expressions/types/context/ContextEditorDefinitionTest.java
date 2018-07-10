@@ -144,7 +144,7 @@ public class ContextEditorDefinitionTest {
     @Test
     public void testModelEnrichment() {
         final Optional<Context> oModel = definition.getModelClass();
-        definition.enrichModelClass(Optional.empty(), oModel);
+        definition.enrich(Optional.empty(), oModel);
 
         final Context model = oModel.get();
         assertEquals(2,

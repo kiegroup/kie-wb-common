@@ -111,8 +111,8 @@ public class PMMLFunctionEditorDefinition extends BaseEditorDefinition<Context, 
     }
 
     @Override
-    public void enrichModelClass(final Optional<String> nodeUUID,
-                                 final Optional<Context> expression) {
+    public void enrich(final Optional<String> nodeUUID,
+                       final Optional<Context> expression) {
         expression.ifPresent(context -> {
             final ContextEntry documentEntry = new ContextEntry();
             final InformationItem documentEntryVariable = new InformationItem();

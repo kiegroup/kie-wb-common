@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,6 +39,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.OutputClause;
 import org.kie.workbench.common.dmn.api.definition.v1_1.UnaryTests;
 import org.kie.workbench.common.dmn.api.property.dmn.Description;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionEditorModelEnricher;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
 import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.graph.Edge;
@@ -46,7 +48,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 
 @ApplicationScoped
-public class DecisionTableEditorDefinitionEnricher {
+public class DecisionTableEditorDefinitionEnricher implements ExpressionEditorModelEnricher<DecisionTable> {
 
     private SessionManager sessionManager;
     private DMNGraphUtils dmnGraphUtils;
@@ -74,49 +76,52 @@ public class DecisionTableEditorDefinitionEnricher {
         this.dmnGraphUtils = dmnGraphUtils;
     }
 
-    public void enrichModelClass(final Optional<String> nodeUUID,
-                                 final DecisionTable dtable) {
-        dtable.setHitPolicy(HitPolicy.ANY);
-        dtable.setPreferredOrientation(DecisionTableOrientation.RULE_AS_ROW);
+    @Override
+    public void enrich(final Optional<String> nodeUUID,
+                       final Optional<DecisionTable> expression) {
+        expression.ifPresent(dtable -> {
+            dtable.setHitPolicy(HitPolicy.ANY);
+            dtable.setPreferredOrientation(DecisionTableOrientation.RULE_AS_ROW);
 
-        final InputClause ic = new InputClause();
-        final LiteralExpression le = new LiteralExpression();
-        le.setText(DecisionTableDefaultValueUtilities.getNewInputClauseName(dtable));
-        ic.setInputExpression(le);
-        dtable.getInput().add(ic);
+            final InputClause ic = new InputClause();
+            final LiteralExpression le = new LiteralExpression();
+            le.setText(DecisionTableDefaultValueUtilities.getNewInputClauseName(dtable));
+            ic.setInputExpression(le);
+            dtable.getInput().add(ic);
 
-        final OutputClause oc = new OutputClause();
-        oc.setName(DecisionTableDefaultValueUtilities.getNewOutputClauseName(dtable));
-        dtable.getOutput().add(oc);
+            final OutputClause oc = new OutputClause();
+            oc.setName(DecisionTableDefaultValueUtilities.getNewOutputClauseName(dtable));
+            dtable.getOutput().add(oc);
 
-        final DecisionRule dr = new DecisionRule();
-        final UnaryTests drut = new UnaryTests();
-        drut.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
-        dr.getInputEntry().add(drut);
+            final DecisionRule dr = new DecisionRule();
+            final UnaryTests drut = new UnaryTests();
+            drut.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+            dr.getInputEntry().add(drut);
 
-        final LiteralExpression drle = new LiteralExpression();
-        drle.setText(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
-        dr.getOutputEntry().add(drle);
+            final LiteralExpression drle = new LiteralExpression();
+            drle.setText(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
+            dr.getOutputEntry().add(drle);
 
-        final Description d = new Description();
-        d.setValue(DecisionTableDefaultValueUtilities.RULE_DESCRIPTION);
-        dr.setDescription(d);
+            final Description d = new Description();
+            d.setValue(DecisionTableDefaultValueUtilities.RULE_DESCRIPTION);
+            dr.setDescription(d);
 
-        dtable.getRule().add(dr);
+            dtable.getRule().add(dr);
 
-        //Setup parent relationships
-        ic.setParent(dtable);
-        oc.setParent(dtable);
-        dr.setParent(dtable);
-        le.setParent(ic);
-        drut.setParent(dr);
-        drle.setParent(dr);
+            //Setup parent relationships
+            ic.setParent(dtable);
+            oc.setParent(dtable);
+            dr.setParent(dtable);
+            le.setParent(ic);
+            drut.setParent(dr);
+            drle.setParent(dr);
 
-        if (nodeUUID.isPresent()) {
-            enrichInputClauses(nodeUUID.get(), dtable);
-        } else {
-            enrichOutputClauses(dtable);
-        }
+            if (nodeUUID.isPresent()) {
+                enrichInputClauses(nodeUUID.get(), dtable);
+            } else {
+                enrichOutputClauses(dtable);
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -150,27 +155,30 @@ public class DecisionTableEditorDefinitionEnricher {
                                                              inputClauseRequirements,
                                                              id.getName().getValue()));
 
-        //Add InputClause columns for each InputData TypeRef component
+        //Add InputClause columns for each InputData TypeRef component, sorted alphabetically
         dtable.getInput().clear();
         dtable.getRule().stream().forEach(dr -> dr.getInputEntry().clear());
-        inputClauseRequirements.forEach(icr -> {
-            final InputClause ic = new InputClause();
-            final LiteralExpression le = new LiteralExpression();
-            le.setText(icr.text);
-            le.setTypeRef(icr.typeRef);
-            ic.setInputExpression(le);
-            dtable.getInput().add(ic);
+        inputClauseRequirements
+                .stream()
+                .sorted(Comparator.comparing(icr -> icr.text))
+                .forEach(icr -> {
+                    final InputClause ic = new InputClause();
+                    final LiteralExpression le = new LiteralExpression();
+                    le.setText(icr.text);
+                    le.setTypeRef(icr.typeRef);
+                    ic.setInputExpression(le);
+                    dtable.getInput().add(ic);
 
-            dtable.getRule().stream().forEach(dr -> {
-                final UnaryTests drut = new UnaryTests();
-                drut.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
-                dr.getInputEntry().add(drut);
-                drut.setParent(dr);
-            });
+                    dtable.getRule().stream().forEach(dr -> {
+                        final UnaryTests drut = new UnaryTests();
+                        drut.setText(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+                        dr.getInputEntry().add(drut);
+                        drut.setParent(dr);
+                    });
 
-            ic.setParent(dtable);
-            le.setParent(ic);
-        });
+                    ic.setParent(dtable);
+                    le.setParent(ic);
+                });
     }
 
     private void addInputClauseRequirement(final QName typeRef,
