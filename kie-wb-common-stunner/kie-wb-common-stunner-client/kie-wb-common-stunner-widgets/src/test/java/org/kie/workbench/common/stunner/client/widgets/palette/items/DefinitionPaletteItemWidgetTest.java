@@ -84,6 +84,8 @@ public class DefinitionPaletteItemWidgetTest {
         widget.initialize(item,
                           shapeFactory,
                           itemMouseDownCallback);
+        verify(shapeFactory).getGlyph(ITEM_DEFINITION_ID,
+                                      AbstractPalette.PaletteGlyphConsumer.class);
         verify(view,
                times(1)).render(glyph,
                                 ITEM_ICON_SIZE,
