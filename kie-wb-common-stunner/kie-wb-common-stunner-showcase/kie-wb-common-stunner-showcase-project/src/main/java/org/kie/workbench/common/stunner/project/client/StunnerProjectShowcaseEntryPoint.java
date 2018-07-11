@@ -21,6 +21,7 @@ import org.guvnor.common.services.shared.config.AppConfigService;
 import org.guvnor.common.services.shared.preferences.GuvnorPreferenceScopes;
 import org.jboss.errai.common.client.api.Caller;
 import org.jboss.errai.ioc.client.api.EntryPoint;
+import org.kie.workbench.common.stunner.bpmn.project.client.splash.ChromeFlagsWarning;
 import org.kie.workbench.common.stunner.project.client.resources.i18n.AppConstants;
 import org.kie.workbench.common.widgets.client.handlers.workbench.configuration.LanguageConfigurationHandler;
 import org.kie.workbench.common.widgets.client.handlers.workbench.configuration.WorkbenchConfigurationPresenter;
@@ -80,6 +81,7 @@ public class StunnerProjectShowcaseEntryPoint extends DefaultWorkbenchEntryPoint
         this.scopeFactory = scopeFactory;
         this.workbenchConfigurationPresenter = workbenchConfigurationPresenter;
         this.languageConfigurationHandler = languageConfigurationHandler;
+        ChromeFlagsWarning.getInstance().disablePopup();
     }
 
     @Override
