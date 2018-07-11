@@ -69,7 +69,9 @@ import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.GridRow;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseBounds;
@@ -99,6 +101,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -606,6 +609,21 @@ public class ContextGridTest {
         redrawCommand1.execute();
 
         verify(gridLayer).draw();
+    }
+
+    @Test
+    public void testAddContextEntryAutoEditContextEntryName() {
+        setupGrid(0);
+        final InOrder inOrder = Mockito.inOrder(grid);
+
+        // add entries
+        addContextEntry(0);
+        // needed because util method addContextEntry assumes just one invocation in test method
+        reset(sessionCommandManager);
+        addContextEntry(1);
+
+        inOrder.verify(grid).startEditingCell(0, ContextUIModelMapperHelper.NAME_COLUMN_INDEX);
+        inOrder.verify(grid).startEditingCell(1, ContextUIModelMapperHelper.NAME_COLUMN_INDEX);
     }
 
     private void addContextEntry(final int index) {
