@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
-import org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build.BuildModeIndicator;
 import org.kie.workbench.common.stunner.client.widgets.resources.i18n.ChromeFlagsWarningPopupConstants;
 import org.uberfire.client.mvp.UberElement;
 import org.uberfire.workbench.events.NotificationEvent;
@@ -105,10 +104,6 @@ public class ChromeFlagsWarningPopupPresenter {
             return false;
         }
     }-*/;
-
-    public static boolean isFullBuildMode() {
-        return BuildModeIndicator.getBuildMode() == BuildModeIndicator.BuildMode.Full;
-    }
 
     private static native boolean copyStringToClipboard(String string)/*-{
         if (window.clipboardData && window.clipboardData.setData) {

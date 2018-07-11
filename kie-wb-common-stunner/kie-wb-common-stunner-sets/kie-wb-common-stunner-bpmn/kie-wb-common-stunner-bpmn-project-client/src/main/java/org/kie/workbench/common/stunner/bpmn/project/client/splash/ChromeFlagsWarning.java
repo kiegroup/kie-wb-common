@@ -14,12 +14,30 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.client.widgets.popups.chrome.mode.indicators.build;
+package org.kie.workbench.common.stunner.bpmn.project.client.splash;
 
-public class ShowcaseModeIndicator extends BuildModeIndicator {
+public class ChromeFlagsWarning {
 
-    @Override
-    public BuildMode getMode() {
-        return BuildMode.Showcase;
+    private static ChromeFlagsWarning instance;
+
+    private boolean enabled = true;
+
+    private ChromeFlagsWarning() {
+    }
+
+    public static ChromeFlagsWarning getInstance() {
+        if (instance == null) {
+            instance = new ChromeFlagsWarning();
+        }
+
+        return instance;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void disablePopup() {
+        enabled = false;
     }
 }

@@ -52,7 +52,7 @@ public class ChromeFlagsWarningPopup {
 
     @SplashFilter
     public SplashScreenFilter getFilter() {
-        if (presenter.isFullBuildMode() &&
+        if (ChromeFlagsWarning.getInstance().isEnabled() &&
                 presenter.isGoogleChrome()) {
             return new SplashScreenFilterImpl("chromeFlags.splash",
                                               true,
