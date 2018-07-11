@@ -579,6 +579,7 @@ public class InvocationGridTest {
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
         verify(gridLayer, times(2)).batch(redrawCommandCaptor.capture());
+        verify(grid).selectCell(eq(0), eq(InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX), eq(false), eq(false));
         verify(grid).startEditingCell(eq(0), eq(InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX));
 
         final List<GridLayerRedrawManager.PrioritizedCommand> redrawCommands = redrawCommandCaptor.getAllValues();

@@ -258,6 +258,7 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationGri
                                                                                                                        this::resize));
 
             if (!CommandUtils.isError(result)) {
+                selectCell(index, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX, false, false);
                 startEditingCell(index, InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX);
             }
         });

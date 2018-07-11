@@ -82,7 +82,8 @@ public abstract class DMNGridColumn<G extends GridWidget, T> extends BaseGridCol
 
         final BaseGridRendererHelper rendererHelper = gridWidget.getRendererHelper();
         final BaseGridRendererHelper.RenderingInformation ri = rendererHelper.getRenderingInformation();
-        final BaseGridRendererHelper.ColumnInformation ci = rendererHelper.getColumnInformation(rendererHelper.getColumnOffset(this) + this.getWidth() / 2);
+        final double columnXCoordinate = rendererHelper.getColumnOffset(this) + this.getWidth() / 2;
+        final BaseGridRendererHelper.ColumnInformation ci = rendererHelper.getColumnInformation(columnXCoordinate);
         final EditableHeaderMetaData headerMetaData = (EditableHeaderMetaData) this.getHeaderMetaData().get(uiHeaderRowIndex);
         final GridBodyCellEditContext context = EditableHeaderUtilities.makeRenderContext(gridWidget,
                                                                                           ri,

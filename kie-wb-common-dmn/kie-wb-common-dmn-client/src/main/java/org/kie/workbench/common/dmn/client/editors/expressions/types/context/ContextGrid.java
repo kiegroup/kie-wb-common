@@ -260,6 +260,7 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
                                                                                                                    this::resize));
 
             if (!CommandUtils.isError(result)) {
+                selectCell(index, ContextUIModelMapperHelper.NAME_COLUMN_INDEX, false, false);
                 startEditingCell(index, ContextUIModelMapperHelper.NAME_COLUMN_INDEX);
             }
         });
