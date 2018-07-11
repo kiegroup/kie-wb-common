@@ -28,6 +28,7 @@ import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.Bounds;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewImpl;
 import org.kie.workbench.common.stunner.core.graph.impl.EdgeImpl;
@@ -67,13 +68,12 @@ public class DMNGraphUtilsTest {
 
     private DMNGraphUtils utils;
 
-    private GraphImpl graph;
+    private GraphImpl<DefinitionSet> graph;
 
     @Before
-    @SuppressWarnings("unchecked")
     public void setup() {
         this.utils = new DMNGraphUtils(sessionManager);
-        this.graph = new GraphImpl(UUID.uuid(), new GraphNodeStoreImpl());
+        this.graph = new GraphImpl<>(UUID.uuid(), new GraphNodeStoreImpl());
         final ProjectDiagramImpl diagram = new ProjectDiagramImpl(NAME, graph, metadata);
         when(sessionManager.getCurrentSession()).thenReturn(clientSession);
         when(clientSession.getCanvasHandler()).thenReturn(canvasHandler);
