@@ -80,9 +80,7 @@ public abstract class BaseSupplementaryFunctionEditorDefinition extends BaseEdit
 
     @Override
     public Optional<Context> getModelClass() {
-        final Context context = new Context();
-
-        return Optional.of(context);
+        return Optional.of(new Context());
     }
 
     @Override

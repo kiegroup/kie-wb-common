@@ -89,9 +89,7 @@ public class RelationEditorDefinition extends BaseEditorDefinition<Relation, Rel
 
     @Override
     public Optional<Relation> getModelClass() {
-        final Relation relation = new Relation();
-
-        return Optional.of(relation);
+        return Optional.of(new Relation());
     }
 
     @Override

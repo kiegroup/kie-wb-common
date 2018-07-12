@@ -96,9 +96,7 @@ public class InvocationEditorDefinition extends BaseEditorDefinition<Invocation,
 
     @Override
     public Optional<Invocation> getModelClass() {
-        final Invocation invocation = new Invocation();
-
-        return Optional.of(invocation);
+        return Optional.of(new Invocation());
     }
 
     @Override

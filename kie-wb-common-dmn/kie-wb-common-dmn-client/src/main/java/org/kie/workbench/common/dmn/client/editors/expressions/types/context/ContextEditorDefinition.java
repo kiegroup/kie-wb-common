@@ -96,10 +96,7 @@ public class ContextEditorDefinition extends BaseEditorDefinition<Context, Conte
 
     @Override
     public Optional<Context> getModelClass() {
-        //Add one ContextEntry for the User to start with
-        final Context context = new Context();
-
-        return Optional.of(context);
+        return Optional.of(new Context());
     }
 
     @Override

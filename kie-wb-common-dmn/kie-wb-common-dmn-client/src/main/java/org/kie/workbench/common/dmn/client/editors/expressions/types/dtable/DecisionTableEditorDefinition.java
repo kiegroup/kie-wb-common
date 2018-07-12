@@ -95,9 +95,7 @@ public class DecisionTableEditorDefinition extends BaseEditorDefinition<Decision
 
     @Override
     public Optional<DecisionTable> getModelClass() {
-        final DecisionTable dtable = new DecisionTable();
-
-        return Optional.of(dtable);
+        return Optional.of(new DecisionTable());
     }
 
     @Override

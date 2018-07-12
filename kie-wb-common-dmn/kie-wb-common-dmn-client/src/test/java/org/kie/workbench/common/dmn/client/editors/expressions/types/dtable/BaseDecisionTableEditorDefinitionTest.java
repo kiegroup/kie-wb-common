@@ -167,15 +167,15 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
 
         final DecisionRule rule = rules.get(0);
         assertThat(rule.getInputEntry().size()).isEqualTo(inputClauseCount);
-        rule.getInputEntry().forEach(ie -> {
-            assertThat(ie).isInstanceOf(UnaryTests.class);
-            assertThat(ie.getText()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
+        rule.getInputEntry().forEach(inputEntry -> {
+            assertThat(inputEntry).isInstanceOf(UnaryTests.class);
+            assertThat(inputEntry.getText()).isEqualTo(DecisionTableDefaultValueUtilities.INPUT_CLAUSE_UNARY_TEST_TEXT);
         });
 
         assertThat(rule.getOutputEntry().size()).isEqualTo(outputClauseCount);
-        rule.getOutputEntry().forEach(oe -> {
-            assertThat(oe).isInstanceOf(LiteralExpression.class);
-            assertThat(oe.getText()).isEqualTo(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
+        rule.getOutputEntry().forEach(outputEntry -> {
+            assertThat(outputEntry).isInstanceOf(LiteralExpression.class);
+            assertThat(outputEntry.getText()).isEqualTo(DecisionTableDefaultValueUtilities.OUTPUT_CLAUSE_EXPRESSION_TEXT);
         });
 
         assertThat(rule.getDescription()).isNotNull();
@@ -190,22 +190,22 @@ public abstract class BaseDecisionTableEditorDefinitionTest {
 
         final List<InputClause> inputClauses = model.getInput();
         assertThat(inputClauses.size()).isEqualTo(inputClauseCount);
-        inputClauses.forEach(ic -> {
-            assertThat(ic.getParent()).isEqualTo(model);
-            assertThat(ic.getInputExpression().getParent()).isEqualTo(ic);
+        inputClauses.forEach(inputClause -> {
+            assertThat(inputClause.getParent()).isEqualTo(model);
+            assertThat(inputClause.getInputExpression().getParent()).isEqualTo(inputClause);
         });
 
         final List<OutputClause> outputClauses = model.getOutput();
         assertThat(outputClauses.size()).isEqualTo(outputClauseCount);
-        outputClauses.forEach(oc -> assertThat(oc.getParent()).isEqualTo(model));
+        outputClauses.forEach(outputClause -> assertThat(outputClause.getParent()).isEqualTo(model));
 
         assertThat(rule.getParent()).isEqualTo(model);
         final List<UnaryTests> inputEntries = rule.getInputEntry();
         assertThat(inputEntries.size()).isEqualTo(inputClauseCount);
-        inputEntries.forEach(ie -> assertThat(ie.getParent()).isEqualTo(rule));
+        inputEntries.forEach(inputEntry -> assertThat(inputEntry.getParent()).isEqualTo(rule));
 
         final List<LiteralExpression> outputEntries = rule.getOutputEntry();
         assertThat(outputEntries.size()).isEqualTo(outputClauseCount);
-        outputEntries.forEach(oe -> assertThat(oe.getParent()).isEqualTo(rule));
+        outputEntries.forEach(outputEntry -> assertThat(outputEntry.getParent()).isEqualTo(rule));
     }
 }

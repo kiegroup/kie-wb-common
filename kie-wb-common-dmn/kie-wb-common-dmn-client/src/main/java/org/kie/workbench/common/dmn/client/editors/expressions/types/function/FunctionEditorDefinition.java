@@ -101,9 +101,7 @@ public class FunctionEditorDefinition extends BaseEditorDefinition<FunctionDefin
 
     @Override
     public Optional<FunctionDefinition> getModelClass() {
-        final FunctionDefinition function = new FunctionDefinition();
-
-        return Optional.of(function);
+        return Optional.of(new FunctionDefinition());
     }
 
     @Override

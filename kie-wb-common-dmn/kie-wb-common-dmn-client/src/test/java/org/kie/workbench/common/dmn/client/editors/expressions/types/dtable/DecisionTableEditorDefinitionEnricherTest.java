@@ -124,13 +124,13 @@ public class DecisionTableEditorDefinitionEnricherTest extends BaseDecisionTable
     @Test
     public void testModelEnrichmentWhenParentIsContextEntry() {
         final String NAME = "context-entry";
-        final ContextEntry ce = new ContextEntry();
+        final ContextEntry contextEntry = new ContextEntry();
         final InformationItem variable = new InformationItem();
         variable.getName().setValue(NAME);
-        ce.setVariable(variable);
+        contextEntry.setVariable(variable);
 
         final Optional<DecisionTable> oModel = definition.getModelClass();
-        oModel.get().setParent(ce);
+        oModel.get().setParent(contextEntry);
 
         definition.enrich(Optional.empty(), oModel);
 
