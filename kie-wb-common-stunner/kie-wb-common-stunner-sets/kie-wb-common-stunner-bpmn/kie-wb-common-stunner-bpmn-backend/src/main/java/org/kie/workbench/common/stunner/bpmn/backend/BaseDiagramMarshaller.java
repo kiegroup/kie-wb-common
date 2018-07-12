@@ -189,6 +189,10 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
     private String getTitle(final Graph graph) {
         final Node<Definition<BPMNDiagram>, ?> diagramNode = getFirstDiagramNode(graph);
         final BPMNDiagram diagramBean = null != diagramNode ? (BPMNDiagram) ((Definition) diagramNode.getContent()).getDefinition() : null;
+        if (diagramBean == null) {
+            return null;
+        }
+
         return getTitle(diagramBean);
     }
 

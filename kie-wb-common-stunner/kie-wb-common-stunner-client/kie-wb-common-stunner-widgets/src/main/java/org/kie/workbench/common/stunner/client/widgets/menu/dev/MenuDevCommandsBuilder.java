@@ -34,6 +34,10 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.gwtbootstrap3.client.ui.constants.Toggle;
 import org.jboss.errai.ioc.client.api.ManagedInstance;
 import org.kie.workbench.common.stunner.client.widgets.menu.MenuUtils;
+import org.kie.workbench.common.stunner.core.util.AnchorListItems;
+import org.kie.workbench.common.stunner.core.util.ButtonGroups;
+import org.kie.workbench.common.stunner.core.util.Buttons;
+import org.kie.workbench.common.stunner.core.util.DropDownMenus;
 import org.uberfire.workbench.model.menu.MenuItem;
 
 /**
@@ -57,25 +61,25 @@ public class MenuDevCommandsBuilder {
     }
 
     public MenuItem build() {
-        final DropDownMenu menu = new DropDownMenu() {{
-            addStyleName("pull-right");
-        }};
+        final DropDownMenus.Builder menuBuilder = new DropDownMenus.Builder().addStyleName("pull-right");
         for (final MenuDevCommand command : devCommands) {
-            menu.add(new AnchorListItem(command.getText()) {{
-                setIcon(command.getIcon());
-                addClickHandler(event -> command.execute());
-            }});
+            menuBuilder.add(new AnchorListItems.Builder(command.getText())
+                                    .setIcon(command.getIcon())
+                                    .addClickHandler(event -> command.execute())
+                                    .build());
         }
-        final IsWidget group = new ButtonGroup() {{
-            add(new Button() {{
-                setToggleCaret(false);
-                setDataToggle(Toggle.DROPDOWN);
-                setIcon(IconType.COG);
-                setSize(ButtonSize.SMALL);
-                setTitle("Development");
-            }});
-            add(menu);
-        }};
+
+        final IsWidget group = new ButtonGroups.Builder()
+                .add(new Buttons.Builder()
+                             .setToggleCaret(false)
+                             .setDataToggle(Toggle.DROPDOWN)
+                             .setIcon(IconType.COG)
+                             .setSize(ButtonSize.SMALL)
+                             .setTitle("Development")
+                             .build())
+                .add(menuBuilder.build())
+                .build();
+
         return MenuUtils.buildItem(group);
     }
 
