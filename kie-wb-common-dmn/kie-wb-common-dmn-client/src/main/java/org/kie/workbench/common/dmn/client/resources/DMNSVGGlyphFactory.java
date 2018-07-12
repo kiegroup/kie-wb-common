@@ -20,33 +20,33 @@ import org.kie.workbench.common.stunner.core.client.shape.ImageDataUriGlyph;
 
 public interface DMNSVGGlyphFactory {
 
-    ImageDataUriGlyph DIAGRAM_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.diagram().getSafeUri());
+    ImageDataUriGlyph DIAGRAM_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.diagramToolbox().getSafeUri());
 
-    ImageDataUriGlyph BUSINESS_KNOWLEDGE_MODEL_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.businessKnowledgeModelToolbox().getSafeUri());
+    ImageDataUriGlyph BUSINESS_KNOWLEDGE_MODEL_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.businessKnowledgeModelToolbox().getSafeUri());
 
-    ImageDataUriGlyph DECISION_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.decisionToolbox().getSafeUri());
+    ImageDataUriGlyph DECISION_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.decisionToolbox().getSafeUri());
 
-    ImageDataUriGlyph INPUT_DATA_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.inputDataToolbox().getSafeUri());
+    ImageDataUriGlyph INPUT_DATA_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.inputDataToolbox().getSafeUri());
 
-    ImageDataUriGlyph KNOWLEDGE_SOURCE_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeSourceToolbox().getSafeUri());
+    ImageDataUriGlyph KNOWLEDGE_SOURCE_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeSourceToolbox().getSafeUri());
 
-    ImageDataUriGlyph TEXT_ANNOTATION_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.textAnnotationToolbox().getSafeUri());
+    ImageDataUriGlyph TEXT_ANNOTATION_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.textAnnotationToolbox().getSafeUri());
 
-    ImageDataUriGlyph ASSOCIATION_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.associationToolbox().getSafeUri());
+    ImageDataUriGlyph ASSOCIATION_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.associationToolbox().getSafeUri());
 
-    ImageDataUriGlyph AUTHORITY_REQUIREMENT_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.authorityRequirementToolbox().getSafeUri());
+    ImageDataUriGlyph AUTHORITY_REQUIREMENT_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.authorityRequirementToolbox().getSafeUri());
 
-    ImageDataUriGlyph INFORMATION_REQUIREMENT_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.informationRequirementToolbox().getSafeUri());
+    ImageDataUriGlyph INFORMATION_REQUIREMENT_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.informationRequirementToolbox().getSafeUri());
 
-    ImageDataUriGlyph KNOWLEDGE_REQUIREMENT_GLYPH = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeRequirementToolbox().getSafeUri());
+    ImageDataUriGlyph KNOWLEDGE_REQUIREMENT_TOOLBOX = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeRequirementToolbox().getSafeUri());
 
-    ImageDataUriGlyph BUSINESS_KNOWLEDGE_MODEL_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.businessKnowledgeModelGlyph().getSafeUri());
+    ImageDataUriGlyph BUSINESS_KNOWLEDGE_MODEL_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.businessKnowledgeModelPalette().getSafeUri());
 
-    ImageDataUriGlyph DECISION_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.decisionGlyph().getSafeUri());
+    ImageDataUriGlyph DECISION_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.decisionPalette().getSafeUri());
 
-    ImageDataUriGlyph INPUT_DATA_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.inputDataGlyph().getSafeUri());
+    ImageDataUriGlyph INPUT_DATA_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.inputDataPalette().getSafeUri());
 
-    ImageDataUriGlyph KNOWLEDGE_SOURCE_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeSourceGlyph().getSafeUri());
+    ImageDataUriGlyph KNOWLEDGE_SOURCE_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.knowledgeSourcePalette().getSafeUri());
 
-    ImageDataUriGlyph TEXT_ANNOTATION_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.textAnnotationGlyph().getSafeUri());
+    ImageDataUriGlyph TEXT_ANNOTATION_PALETTE = ImageDataUriGlyph.create(DMNImageResources.INSTANCE.textAnnotationPalette().getSafeUri());
 }

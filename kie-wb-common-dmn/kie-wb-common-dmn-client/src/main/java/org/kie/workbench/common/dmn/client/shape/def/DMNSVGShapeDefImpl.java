@@ -51,20 +51,20 @@ public class DMNSVGShapeDefImpl implements DMNSVGShapeDef<DMNViewDefinition> {
                     .put(TextAnnotation.class,
                          DMNSVGViewFactory::textAnnotation);
 
-    public static final Map<Class<? extends DMNViewDefinition>, Glyph> GLYPHS =
+    public static final Map<Class<? extends DMNViewDefinition>, Glyph> GLYPHS_TOOLBOX =
             new HashMap<Class<? extends DMNViewDefinition>, Glyph>() {{
                 put(BusinessKnowledgeModel.class,
-                    DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_GLYPH);
+                    DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_TOOLBOX);
                 put(Decision.class,
-                    DMNSVGGlyphFactory.DECISION_GLYPH);
+                    DMNSVGGlyphFactory.DECISION_TOOLBOX);
                 put(DMNDiagram.class,
-                    DMNSVGGlyphFactory.DIAGRAM_GLYPH);
+                    DMNSVGGlyphFactory.DIAGRAM_TOOLBOX);
                 put(InputData.class,
-                    DMNSVGGlyphFactory.INPUT_DATA_GLYPH);
+                    DMNSVGGlyphFactory.INPUT_DATA_TOOLBOX);
                 put(KnowledgeSource.class,
-                    DMNSVGGlyphFactory.KNOWLEDGE_SOURCE_GLYPH);
+                    DMNSVGGlyphFactory.KNOWLEDGE_SOURCE_TOOLBOX);
                 put(TextAnnotation.class,
-                    DMNSVGGlyphFactory.TEXT_ANNOTATION_GLYPH);
+                    DMNSVGGlyphFactory.TEXT_ANNOTATION_TOOLBOX);
             }};
 
     public static final Map<Class<? extends DMNViewDefinition>, Glyph> GLYPHS_PALETTE =
@@ -92,7 +92,7 @@ public class DMNSVGShapeDefImpl implements DMNSVGShapeDef<DMNViewDefinition> {
     @Override
     public Glyph getGlyph(final Class<? extends DMNViewDefinition> type,
                           final String defId) {
-        return GLYPHS.computeIfAbsent(type, (t) -> ShapeGlyph.create());
+        return GLYPHS_TOOLBOX.computeIfAbsent(type, (t) -> ShapeGlyph.create());
     }
 
     @Override

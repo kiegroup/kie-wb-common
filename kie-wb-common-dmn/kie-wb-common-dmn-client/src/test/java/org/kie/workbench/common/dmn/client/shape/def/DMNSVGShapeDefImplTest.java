@@ -99,17 +99,17 @@ public class DMNSVGShapeDefImplTest {
 
     @Test
     public void testGetGlyph() {
-        assertEquals(DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.BUSINESS_KNOWLEDGE_MODEL_TOOLBOX,
                      shapeDef.getGlyph(BusinessKnowledgeModel.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.DECISION_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.DECISION_TOOLBOX,
                      shapeDef.getGlyph(Decision.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.DIAGRAM_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.DIAGRAM_TOOLBOX,
                      shapeDef.getGlyph(DMNDiagram.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.INPUT_DATA_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.INPUT_DATA_TOOLBOX,
                      shapeDef.getGlyph(InputData.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.KNOWLEDGE_SOURCE_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.KNOWLEDGE_SOURCE_TOOLBOX,
                      shapeDef.getGlyph(KnowledgeSource.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.TEXT_ANNOTATION_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.TEXT_ANNOTATION_TOOLBOX,
                      shapeDef.getGlyph(TextAnnotation.class, DEFINITION_ID));
 
         assertTrue(shapeDef.getGlyph(DMNViewDefinition.class, DEFINITION_ID) instanceof ShapeGlyph);
@@ -121,7 +121,7 @@ public class DMNSVGShapeDefImplTest {
                      shapeDef.getGlyph(BusinessKnowledgeModel.class, PaletteGlyphConsumer.class, DEFINITION_ID));
         assertEquals(DMNSVGGlyphFactory.DECISION_PALETTE,
                      shapeDef.getGlyph(Decision.class, PaletteGlyphConsumer.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.DIAGRAM_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.DIAGRAM_TOOLBOX,
                      shapeDef.getGlyph(DMNDiagram.class, PaletteGlyphConsumer.class, DEFINITION_ID));
         assertEquals(DMNSVGGlyphFactory.INPUT_DATA_PALETTE,
                      shapeDef.getGlyph(InputData.class, PaletteGlyphConsumer.class, DEFINITION_ID));
@@ -129,5 +129,7 @@ public class DMNSVGShapeDefImplTest {
                      shapeDef.getGlyph(KnowledgeSource.class, PaletteGlyphConsumer.class, DEFINITION_ID));
         assertEquals(DMNSVGGlyphFactory.TEXT_ANNOTATION_PALETTE,
                      shapeDef.getGlyph(TextAnnotation.class, PaletteGlyphConsumer.class, DEFINITION_ID));
+
+        assertTrue(shapeDef.getGlyph(DMNViewDefinition.class, PaletteGlyphConsumer.class, DEFINITION_ID) instanceof ShapeGlyph);
     }
 }

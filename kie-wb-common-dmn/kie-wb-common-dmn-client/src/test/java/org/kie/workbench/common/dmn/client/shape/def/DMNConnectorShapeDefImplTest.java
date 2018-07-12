@@ -45,13 +45,13 @@ public class DMNConnectorShapeDefImplTest {
 
     @Test
     public void testGetGlyph() {
-        assertEquals(DMNSVGGlyphFactory.ASSOCIATION_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.ASSOCIATION_TOOLBOX,
                      connectorShapeDef.getGlyph(Association.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.AUTHORITY_REQUIREMENT_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.AUTHORITY_REQUIREMENT_TOOLBOX,
                      connectorShapeDef.getGlyph(AuthorityRequirement.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.INFORMATION_REQUIREMENT_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.INFORMATION_REQUIREMENT_TOOLBOX,
                      connectorShapeDef.getGlyph(InformationRequirement.class, DEFINITION_ID));
-        assertEquals(DMNSVGGlyphFactory.KNOWLEDGE_REQUIREMENT_GLYPH,
+        assertEquals(DMNSVGGlyphFactory.KNOWLEDGE_REQUIREMENT_TOOLBOX,
                      connectorShapeDef.getGlyph(KnowledgeRequirement.class, DEFINITION_ID));
 
         assertTrue(connectorShapeDef.getGlyph(Decision.class, DEFINITION_ID) instanceof ShapeGlyph);

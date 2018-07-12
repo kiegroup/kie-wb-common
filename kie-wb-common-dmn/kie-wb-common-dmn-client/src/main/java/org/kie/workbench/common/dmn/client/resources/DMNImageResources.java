@@ -49,7 +49,7 @@ public interface DMNImageResources extends ClientBundleWithLookup {
 
     @ClientBundle.Source(DMNSVGViewFactory.DIAGRAM)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource diagram();
+    DataResource diagramToolbox();
 
     @ClientBundle.Source(BUSINESS_KNOWLEDGE_MODEL_TOOLBOX)
     ImageResource businessKnowledgeModelToolbox();
@@ -78,23 +78,23 @@ public interface DMNImageResources extends ClientBundleWithLookup {
     @ClientBundle.Source(KNOWLEDGE_REQUIREMENT_TOOLBOX)
     ImageResource knowledgeRequirementToolbox();
 
-    @ClientBundle.Source(DMNSVGViewFactory.BUSINESS_KNOWLEDGE_MODEL_GLYPH)
+    @ClientBundle.Source(DMNSVGViewFactory.BUSINESS_KNOWLEDGE_MODEL_PALETTE)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource businessKnowledgeModelGlyph();
+    DataResource businessKnowledgeModelPalette();
 
-    @ClientBundle.Source(DMNSVGViewFactory.DECISION_GLYPH)
+    @ClientBundle.Source(DMNSVGViewFactory.DECISION_PALETTE)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource decisionGlyph();
+    DataResource decisionPalette();
 
-    @ClientBundle.Source(DMNSVGViewFactory.INPUT_DATA_GLYPH)
+    @ClientBundle.Source(DMNSVGViewFactory.INPUT_DATA_PALETTE)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource inputDataGlyph();
+    DataResource inputDataPalette();
 
-    @ClientBundle.Source(DMNSVGViewFactory.KNOWLEDGE_SOURCE_GLYPH)
+    @ClientBundle.Source(DMNSVGViewFactory.KNOWLEDGE_SOURCE_PALETTE)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource knowledgeSourceGlyph();
+    DataResource knowledgeSourcePalette();
 
-    @ClientBundle.Source(DMNSVGViewFactory.TEXT_ANNOTATION_GLYPH)
+    @ClientBundle.Source(DMNSVGViewFactory.TEXT_ANNOTATION_PALETTE)
     @DataResource.MimeType(SVG_MIME_TYPE)
-    DataResource textAnnotationGlyph();
+    DataResource textAnnotationPalette();
 }

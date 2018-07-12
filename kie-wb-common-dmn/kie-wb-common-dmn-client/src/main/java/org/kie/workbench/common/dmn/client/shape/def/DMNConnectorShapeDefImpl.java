@@ -36,13 +36,13 @@ public class DMNConnectorShapeDefImpl implements DMNConnectorShapeDef<DMNDefinit
     public static final Map<Class<? extends DMNDefinition>, Glyph> GLYPHS =
             new HashMap<Class<? extends DMNDefinition>, Glyph>() {{
                 put(Association.class,
-                    DMNSVGGlyphFactory.ASSOCIATION_GLYPH);
+                    DMNSVGGlyphFactory.ASSOCIATION_TOOLBOX);
                 put(AuthorityRequirement.class,
-                    DMNSVGGlyphFactory.AUTHORITY_REQUIREMENT_GLYPH);
+                    DMNSVGGlyphFactory.AUTHORITY_REQUIREMENT_TOOLBOX);
                 put(InformationRequirement.class,
-                    DMNSVGGlyphFactory.INFORMATION_REQUIREMENT_GLYPH);
+                    DMNSVGGlyphFactory.INFORMATION_REQUIREMENT_TOOLBOX);
                 put(KnowledgeRequirement.class,
-                    DMNSVGGlyphFactory.KNOWLEDGE_REQUIREMENT_GLYPH);
+                    DMNSVGGlyphFactory.KNOWLEDGE_REQUIREMENT_TOOLBOX);
             }};
 
     @Override

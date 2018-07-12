@@ -30,23 +30,23 @@ public interface DMNSVGViewFactory {
 
     String BUSINESS_KNOWLEDGE_MODEL = "images/shapes/business-knowledge-model.svg";
 
-    String BUSINESS_KNOWLEDGE_MODEL_GLYPH = "images/shapes/business-knowledge-model-palette.svg";
+    String BUSINESS_KNOWLEDGE_MODEL_PALETTE = "images/shapes/business-knowledge-model-palette.svg";
 
     String DECISION = "images/shapes/decision.svg";
 
-    String DECISION_GLYPH = "images/shapes/decision-palette.svg";
+    String DECISION_PALETTE = "images/shapes/decision-palette.svg";
 
     String INPUT_DATA = "images/shapes/input-data.svg";
 
-    String INPUT_DATA_GLYPH = "images/shapes/input-data-palette.svg";
+    String INPUT_DATA_PALETTE = "images/shapes/input-data-palette.svg";
 
     String KNOWLEDGE_SOURCE = "images/shapes/knowledge-source.svg";
 
-    String KNOWLEDGE_SOURCE_GLYPH = "images/shapes/knowledge-source-palette.svg";
+    String KNOWLEDGE_SOURCE_PALETTE = "images/shapes/knowledge-source-palette.svg";
 
     String TEXT_ANNOTATION = "images/shapes/text-annotation.svg";
 
-    String TEXT_ANNOTATION_GLYPH = "images/shapes/text-annotation-palette.svg";
+    String TEXT_ANNOTATION_PALETTE = "images/shapes/text-annotation-palette.svg";
 
     @SVGSource(DIAGRAM)
     SVGShapeViewResource diagram();

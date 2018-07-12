@@ -32,7 +32,7 @@ public class DMNPictureProvider implements PictureProvider<DMNPictures> {
     private static final Map<DMNPictures, SafeUri> PICTURE_URIS =
             new HashMap<DMNPictures, SafeUri>() {{
                 put(DMNPictures.DIAGRAM,
-                    DMNImageResources.INSTANCE.diagram().getSafeUri());
+                    DMNImageResources.INSTANCE.diagramToolbox().getSafeUri());
                 put(DMNPictures.INPUT_DATA,
                     DMNImageResources.INSTANCE.inputDataToolbox().getSafeUri());
                 put(DMNPictures.KNOWLEDGE_SOURCE,
