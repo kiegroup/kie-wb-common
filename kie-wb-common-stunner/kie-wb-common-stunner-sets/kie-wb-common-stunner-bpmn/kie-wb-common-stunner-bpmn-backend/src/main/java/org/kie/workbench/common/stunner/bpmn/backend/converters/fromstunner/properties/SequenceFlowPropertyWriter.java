@@ -113,7 +113,11 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
     private Point2D getSourceLocation(Connection sourceConnection) {
         Point2D location = sourceConnection.getLocation();
         if (location == null) {
-            location = getDefaultLocation(source.getShape().getBounds());
+            Bounds bounds = source.getShape().getBounds();
+            location = Point2D.create(
+                    bounds.getX() + bounds.getWidth(),
+                    bounds.getHeight() / 2
+            );
         }
         return location;
     }
@@ -121,7 +125,11 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
     private Point2D getTargetLocation(Connection targetConnection) {
         Point2D location = targetConnection.getLocation();
         if (location == null) {
-            location = getDefaultLocation(target.getShape().getBounds());
+            Bounds bounds = source.getShape().getBounds();
+            location = Point2D.create(
+                    bounds.getX(),
+                    bounds.getY() + bounds.getHeight() / 2
+            );
         }
         return location;
     }
