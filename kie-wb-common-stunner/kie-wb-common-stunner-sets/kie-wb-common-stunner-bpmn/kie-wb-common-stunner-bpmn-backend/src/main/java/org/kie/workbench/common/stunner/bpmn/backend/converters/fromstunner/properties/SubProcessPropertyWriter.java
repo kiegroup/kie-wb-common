@@ -41,7 +41,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.property.variables.Proce
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
-public class SubProcessPropertyWriter extends PropertyWriter implements ElementContainer {
+public class SubProcessPropertyWriter extends ActivityPropertyWriter implements ElementContainer {
 
     protected final SubProcess process;
     private Collection<ElementParameters> simulationParameters = new ArrayList<>();
