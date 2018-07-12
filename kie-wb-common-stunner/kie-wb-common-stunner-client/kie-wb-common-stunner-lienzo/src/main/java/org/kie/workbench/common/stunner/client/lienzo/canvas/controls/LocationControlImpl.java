@@ -45,6 +45,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanv
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.drag.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -58,6 +59,8 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasDragBounds;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseEnterEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseEnterHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseExitEvent;
@@ -97,6 +100,7 @@ public class LocationControlImpl
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
     private double[] boundsConstraint;
     private final Collection<String> selectedIDs = new LinkedList<>();
+    private SelectionControl selectionControl;
 
     protected LocationControlImpl() {
         this(null,
@@ -114,6 +118,7 @@ public class LocationControlImpl
     public void bind(final EditorSession session) {
         // Keyboard event handling.
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        this.selectionControl = session.getSelectionControl();
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
@@ -226,6 +231,34 @@ public class LocationControlImpl
                                                 outHandler);
                     registerHandler(shape.getUUID(),
                                     outHandler);
+
+                    //Adding DragHandler on the shape to check whether the moving shape is not selected, th
+                    final DragHandler dragHandler = new DragHandler() {
+                        @Override
+                        public void start(DragEvent event) {
+                            if (selectionControl != null) {
+                                final Element item = canvasHandler.getGraphIndex().get(shape.getUUID());
+                                if (!selectionControl.isSelected(item)) {
+                                    selectionControl.getSelectedItems()
+                                            .forEach(uuid -> selectionControl.deselect(String.valueOf(uuid)));
+                                    selectionControl.select(item);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void end(DragEvent event) {
+
+                        }
+
+                        @Override
+                        public void handle(DragEvent event) {
+
+                        }
+                    };
+
+                    hasEventHandlers.addHandler(ViewEventType.DRAG, dragHandler);
+                    registerHandler(shape.getUUID(), dragHandler);
                 }
             }
         }

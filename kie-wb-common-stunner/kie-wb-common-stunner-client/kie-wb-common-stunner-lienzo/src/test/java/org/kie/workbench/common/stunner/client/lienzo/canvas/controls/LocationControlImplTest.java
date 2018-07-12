@@ -344,7 +344,7 @@ public class LocationControlImplTest {
         tested.register(element);
         tested.deregister(element);
         verify(shapeEventHandler,
-               times(1)).removeHandler(any(ViewHandler.class));
+               times(3)).removeHandler(any(ViewHandler.class));
         assertFalse(tested.isRegistered(element));
     }
 

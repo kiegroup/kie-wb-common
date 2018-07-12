@@ -108,6 +108,7 @@ public class DeleteNodeCommand extends AbstractCanvasGraphCommand {
         public void removeDock(final Node<?, Edge> parent,
                                final Node<?, Edge> candidate) {
             // No action required on the canvas side, as the shape for candidate is ensured to be deleted.
+            getCommand().addCommand(new CanvasUndockNodeCommand(parent, candidate));
         }
 
         @Override

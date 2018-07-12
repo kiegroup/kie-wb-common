@@ -241,7 +241,7 @@ public class MapSelectionControlTest {
         tested.init(canvasHandler);
         tested.register(element);
         tested.select(element);
-        tested.deselect(element);
+        tested.deselect(element.getUUID());
         assertTrue(tested.getSelectedItems().isEmpty());
         verify(shape, times(1)).applyState(eq(ShapeState.SELECTED));
         verify(shape, times(1)).applyState(eq(ShapeState.NONE));

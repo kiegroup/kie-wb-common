@@ -30,7 +30,7 @@ public interface SelectionControl<C extends CanvasHandler, E extends Element>
 
     SelectionControl<C, E> select(final E item);
 
-    SelectionControl<C, E> deselect(final E item);
+    SelectionControl<C, E> deselect(final String item);
 
     boolean isSelected(final E item);
 

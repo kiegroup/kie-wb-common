@@ -103,8 +103,8 @@ public abstract class AbstractSelectionControl<H extends AbstractCanvasHandler>
     }
 
     @Override
-    public SelectionControl<H, Element> deselect(final Element element) {
-        selectionControl.deselect(element);
+    public SelectionControl<H, Element> deselect(final String uuid) {
+        selectionControl.deselect(uuid);
         return this;
     }
 

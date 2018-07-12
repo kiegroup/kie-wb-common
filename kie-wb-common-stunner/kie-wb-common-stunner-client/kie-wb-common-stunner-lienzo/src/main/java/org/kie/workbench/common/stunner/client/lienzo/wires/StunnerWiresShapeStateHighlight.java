@@ -57,9 +57,10 @@ public class StunnerWiresShapeStateHighlight implements WiresShapeHighlight<Pick
         if (null != current) {
             current.applyState(ShapeState.NONE);
             setCurrent(null);
-        } else {
-            delegate.restore();
         }
+
+        //always restore because the highlightBorder is not applying state, it is only delegating.
+        delegate.restore();
     }
 
     private void highlight(final WiresShape shape,
