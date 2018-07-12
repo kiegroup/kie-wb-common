@@ -39,7 +39,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AbstractProcessConverter {
+public abstract class AbstractProcessConverter {
 
     private final ConverterFactory converterFactory;
 
