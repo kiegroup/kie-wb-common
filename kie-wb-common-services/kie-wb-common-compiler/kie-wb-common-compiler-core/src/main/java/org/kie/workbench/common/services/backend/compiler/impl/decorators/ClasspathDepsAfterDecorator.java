@@ -77,12 +77,12 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
             List<String> deps =CompilerClassloaderUtils.readItemsFromClasspathString(depsModules);
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
-                                                   res.getWorkingDir().isPresent() ? res.getWorkingDir().get() : null,
+                                                   res.getWorkingDir().orElse(null),
                                                    deps);
         }else{
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
-                                                   res.getWorkingDir().isPresent() ? res.getWorkingDir().get() : null);
+                                                   res.getWorkingDir().orElse(null));
         }
         return t;
     }
