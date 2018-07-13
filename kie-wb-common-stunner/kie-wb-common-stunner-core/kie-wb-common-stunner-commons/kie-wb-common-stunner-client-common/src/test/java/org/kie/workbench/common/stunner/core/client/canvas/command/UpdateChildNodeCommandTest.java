@@ -139,6 +139,7 @@ public class UpdateChildNodeCommandTest {
                      c5.getParent());
         assertEquals(dockNode,
                      c5.getCandidate());
+
         final DockNodeCommand c6 = (DockNodeCommand) commands.get(5);
         assertNotNull(c6);
         assertEquals(graphHolder.endNode,
