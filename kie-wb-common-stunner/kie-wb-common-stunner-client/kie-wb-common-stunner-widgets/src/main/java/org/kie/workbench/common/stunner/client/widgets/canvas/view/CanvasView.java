@@ -155,8 +155,8 @@ public class CanvasView extends Composite implements AbstractCanvas.View<com.ait
                                   final WiresShape childShape) {
         final WiresDockingControl dockingControl = childShape.getControl().getDockingControl();
         dockingControl.dock(parentShape);
-        //setting the candidate location in case adjusted after docking
-        childShape.setLocation(dockingControl.getAdjustedCandidateLocation(parentShape));
+        //setting the candidate location after docking
+        childShape.setLocation(dockingControl.getCandidateLocation());
         return this;
     }
 
