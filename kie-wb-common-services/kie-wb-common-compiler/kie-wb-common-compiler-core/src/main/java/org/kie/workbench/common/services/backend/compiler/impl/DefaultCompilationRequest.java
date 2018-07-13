@@ -44,18 +44,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
     public DefaultCompilationRequest(String mavenRepo,
                                      WorkspaceCompilationInfo info,
                                      String[] args) {
-        this.mavenRepo = mavenRepo;
-        this.info = info;
-        this.skipPrjDependenciesCreationList = Boolean.TRUE;
-        this.requestUUID = UUID.randomUUID().toString();
-
-        this.originalArgs = args;
-        Map internalMap = new HashMap();
-        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
-        this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                    args,
-                                    internalMap,
-                                    this.requestUUID);
+        this(mavenRepo,info, args, UUID.randomUUID().toString());
     }
 
     /***
@@ -67,18 +56,8 @@ public class DefaultCompilationRequest implements CompilationRequest {
     public DefaultCompilationRequest(String mavenRepo,
                                      WorkspaceCompilationInfo info,
                                      String[] args, String uuid) {
-        this.mavenRepo = mavenRepo;
-        this.info = info;
-        this.skipPrjDependenciesCreationList = Boolean.TRUE;
-        this.requestUUID = uuid;
 
-        this.originalArgs = args;
-        Map internalMap = new HashMap();
-        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
-        this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                    args,
-                                    internalMap,
-                                    this.requestUUID);
+        this(mavenRepo, info, args, Boolean.TRUE, Boolean.FALSE, uuid);
     }
 
     /***
@@ -132,19 +111,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
                                      String[] args,
                                      Boolean skipPrjDependenciesCreationList,
                                      boolean restoreOverride) {
-        this.mavenRepo = mavenRepo;
-        this.info = info;
-        this.skipPrjDependenciesCreationList = skipPrjDependenciesCreationList;
-        this.requestUUID = UUID.randomUUID().toString();
-        this.restoreOverride = restoreOverride;
-
-        this.originalArgs = args;
-        Map internalMap = new HashMap();
-        internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
-        this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
-                                    args,
-                                    internalMap,
-                                    this.requestUUID);
+        this(mavenRepo,info,args, skipPrjDependenciesCreationList, restoreOverride, UUID.randomUUID().toString());
     }
 
     @Override

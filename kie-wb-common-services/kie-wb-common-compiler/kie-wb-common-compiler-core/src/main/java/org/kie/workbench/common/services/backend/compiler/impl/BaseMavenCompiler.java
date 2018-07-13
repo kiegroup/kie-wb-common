@@ -116,7 +116,7 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
                 Files.write(path, readAllBytes(input), StandardOpenOption.CREATE,
                             StandardOpenOption.TRUNCATE_EXISTING);
             } catch (IOException e) {
-                logger.error("Path not writed:" + entry.getKey() + "\n");
+                logger.error("Path not written:" + entry.getKey() + "\n");
                 logger.error(e.getMessage());
                 logger.error("\n");
             }
@@ -138,10 +138,10 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
     }
 
     public byte[] readAllBytes(InputStream in) throws IOException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        copy(in, out);
-        out.close();
-        return out.toByteArray();
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            copy(in, out);
+            return out.toByteArray();
+        }
     }
 
     public void copy(InputStream in, OutputStream out) throws IOException {
