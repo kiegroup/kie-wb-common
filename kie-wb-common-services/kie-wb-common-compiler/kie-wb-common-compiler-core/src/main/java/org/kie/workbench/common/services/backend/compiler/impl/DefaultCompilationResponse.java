@@ -124,7 +124,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
     }
 
     private List<URI> getProjectDependenciesAsURIs() {
-        if (!projectDependencies.isEmpty() && !projectDependencies.isEmpty()) {
+        if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUris(projectDependencies);
         }
         return EMPTY_LIST;
@@ -132,7 +132,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URL> getDependenciesAsURL() {
-        if (projectDependenciesAsURL.isEmpty()) {
+        if (projectDependencies != null && !projectDependenciesAsURL.isEmpty()) {
             projectDependenciesAsURL = getProjectDependenciesAsURLs();
         }
         return projectDependenciesAsURL;
