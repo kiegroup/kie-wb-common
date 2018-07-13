@@ -84,14 +84,4 @@ public class JGitUtils {
             throw new RuntimeException(e);
         }
     }
-
-    private static boolean deleteDirectory(File directoryToBeDeleted) {
-        final File[] allContents = directoryToBeDeleted.listFiles();
-        if (allContents != null) {
-            for (File file : allContents) {
-                deleteDirectory(file);
-            }
-        }
-        return directoryToBeDeleted.delete();
-    }
 }
