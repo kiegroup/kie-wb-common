@@ -39,8 +39,18 @@ import org.uberfire.mvp.PlaceRequest;
 import org.uberfire.mvp.impl.DefaultPlaceRequest;
 import org.uberfire.rpc.SessionInfo;
 
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyBoolean;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AuthoringWorkbenchDocksTest {
@@ -107,11 +117,9 @@ public class AuthoringWorkbenchDocksTest {
                times(1)).hide(any(UberfireDockPosition.class),
                               anyString());
         //no other docks operations should have been invoked.
-        verify(uberfireDocks).show(any(UberfireDockPosition.class),
+        verify(uberfireDocks, times(2)).show(any(UberfireDockPosition.class),
                                    anyString());
-        verify(uberfireDocks,
-               times(1)).add(any(),
-                             any());
+        verify(uberfireDocks).add(any(), any());
     }
 
     @Test
@@ -161,22 +169,15 @@ public class AuthoringWorkbenchDocksTest {
         handler.refresh(true,
                         true);
 
-        verify(uberfireDocks,
-               never()).remove(any(),
-                               any());
-        verify(uberfireDocks,
-               times(1)).show(any(),
-                              any());
-        verify(uberfireDocks,
-               times(1)).add(any(),
-                             any());
+        verify(uberfireDocks, never()).remove(any(), any());
 
-        verify(uberfireDocks).show(UberfireDockPosition.EAST,
-                                   "authoring");
+        verify(uberfireDocks, times(2)).show(any(), any());
+
+        verify(uberfireDocks).add(any(), any());
+
+        verify(uberfireDocks).show(UberfireDockPosition.EAST, "authoring");
         // it's also disabled on setup!
-        verify(uberfireDocks,
-               times(2)).hide(any(),
-                              any());
+        verify(uberfireDocks, times(3)).hide(any(), any());
     }
 
     @Test
@@ -198,16 +199,23 @@ public class AuthoringWorkbenchDocksTest {
     }
 
     protected TestWorkbenchDocksHandler createNewWorkbenchDocksHandler() {
-        List<UberfireDock> docks = new ArrayList<>();
+        List<WorkbenchDockEntry> docks = new ArrayList<>();
 
-        docks.add(new UberfireDock(UberfireDockPosition.EAST,
-                                   "RANDOM",
-                                   placeRequest,
-                                   AUTHORING_PERSPECTIVE));
-        docks.add(new UberfireDock(UberfireDockPosition.EAST,
-                                   "RANDOM",
-                                   placeRequest,
-                                   AUTHORING_PERSPECTIVE));
+        UberfireDock firstDock = new UberfireDock(UberfireDockPosition.EAST,
+                                                  "RANDOM",
+                                                  placeRequest,
+                                                  AUTHORING_PERSPECTIVE);
+
+        WorkbenchDockEntry firstEntry = new WorkbenchDockEntry(firstDock, false);
+        docks.add(firstEntry);
+
+        UberfireDock secondDock = new UberfireDock(UberfireDockPosition.EAST,
+                                                   "RANDOM",
+                                                   placeRequest,
+                                                   AUTHORING_PERSPECTIVE);
+
+        WorkbenchDockEntry secondEntry = new WorkbenchDockEntry(secondDock, false);
+        docks.add(secondEntry);
 
         return new TestWorkbenchDocksHandler(docks);
     }

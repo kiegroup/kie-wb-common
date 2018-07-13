@@ -45,5 +45,5 @@ public interface WorkbenchDocksHandler {
     /**
      * Provides a Collection containing the {@link UberfireDock} that should be displayed when this handler is active
      */
-    Collection<UberfireDock> provideDocks(String perspectiveIdentifier);
+    Collection<WorkbenchDockEntry> provideDocks(String perspectiveIdentifier);
 }

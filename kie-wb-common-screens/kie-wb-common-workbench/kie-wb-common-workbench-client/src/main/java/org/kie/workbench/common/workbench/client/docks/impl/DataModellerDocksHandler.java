@@ -28,6 +28,7 @@ import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerW
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchContextChangeEvent;
 import org.kie.workbench.common.screens.datamodeller.client.context.DataModelerWorkbenchFocusEvent;
 import org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures;
+import org.kie.workbench.common.workbench.client.docks.WorkbenchDockEntry;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.kie.workbench.common.workbench.client.resources.images.WorkbenchImageResources;
 import org.uberfire.client.workbench.docks.UberfireDock;
@@ -67,37 +68,50 @@ public class DataModellerDocksHandler extends AbstractWorkbenchDocksHandler {
     }
 
     @Override
-    public Collection<UberfireDock> provideDocks(String perspectiveIdentifier) {
-        List<UberfireDock> result = new ArrayList<>();
+    public Collection<WorkbenchDockEntry> provideDocks(String perspectiveIdentifier) {
+        List<WorkbenchDockEntry> result = new ArrayList<>();
 
         if (lastActiveContext == null) {
             lastActiveContext = dataModelerWBContext.getActiveContext();
         }
 
         if (isGraphicMode(lastActiveContext)) {
-            result.add(new UberfireDock(UberfireDockPosition.EAST,
-                                        "RANDOM",
-                                        new DefaultPlaceRequest("DroolsDomainScreen"),
-                                        perspectiveIdentifier).withSize(450).withLabel(constants.DocksDroolsJBPMTitle()));
 
-            result.add(new UberfireDock(UberfireDockPosition.EAST,
+            UberfireDock drollsJBPMDock = new UberfireDock(UberfireDockPosition.EAST,
+                             "RANDOM",
+                             new DefaultPlaceRequest("DroolsDomainScreen"),
+                             perspectiveIdentifier);
+            drollsJBPMDock.withSize(450);
+            drollsJBPMDock.withLabel(constants.DocksDroolsJBPMTitle());
+            result.add(new WorkbenchDockEntry(drollsJBPMDock, false));
+
+            UberfireDock persistenceDock = new UberfireDock(UberfireDockPosition.EAST,
                                         "BRIEFCASE",
                                         new DefaultPlaceRequest("JPADomainScreen"),
-                                        perspectiveIdentifier).withSize(450).withLabel(constants.DocksPersistenceTitle()));
+                                        perspectiveIdentifier);
+            persistenceDock.withSize(450);
+            persistenceDock.withLabel(constants.DocksPersistenceTitle());
+            result.add(new WorkbenchDockEntry(persistenceDock, false));
 
-            result.add(new UberfireDock(UberfireDockPosition.EAST,
+            UberfireDock advancedDock = new UberfireDock(UberfireDockPosition.EAST,
                                         "COG",
                                         new DefaultPlaceRequest("AdvancedDomainScreen"),
-                                        perspectiveIdentifier).withSize(450).withLabel(constants.DocksAdvancedTitle()));
+                                        perspectiveIdentifier);
+            advancedDock.withSize(450);
+            advancedDock.withLabel(constants.DocksAdvancedTitle());
+            result.add(new WorkbenchDockEntry(advancedDock, false));
 
             if (authorizationManager.authorize(WorkbenchFeatures.PLANNER_AVAILABLE,
                                                sessionInfo.getIdentity())) {
-                result.add(new UberfireDock(UberfireDockPosition.EAST,
+                UberfireDock optaPlannerDock = new UberfireDock(UberfireDockPosition.EAST,
                                             WorkbenchImageResources.INSTANCE.optaPlannerDisabledIcon(),
                                             WorkbenchImageResources.INSTANCE.optaPlannerEnabledIcon(),
                                             new DefaultPlaceRequest("PlannerDomainScreen"),
-                                            perspectiveIdentifier)
-                                   .withSize(450).withLabel(constants.DocksOptaPlannerTitle()));
+                                            perspectiveIdentifier);
+
+                optaPlannerDock.withSize(450);
+                optaPlannerDock.withLabel(constants.DocksOptaPlannerTitle());
+                result.add(new WorkbenchDockEntry(optaPlannerDock, false));
             }
         }
         return result;

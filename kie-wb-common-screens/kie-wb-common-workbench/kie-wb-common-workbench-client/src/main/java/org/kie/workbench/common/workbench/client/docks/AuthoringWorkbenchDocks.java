@@ -17,6 +17,7 @@
 package org.kie.workbench.common.workbench.client.docks;
 
 import java.util.Collection;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;
@@ -105,7 +106,7 @@ public class AuthoringWorkbenchDocks {
 
         uberfireDocks.add(projectExplorerDock);
         uberfireDocks.hide(UberfireDockPosition.EAST,
-                              authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
     }
 
     public void setActiveHandler(WorkbenchDocksHandler handler) {
@@ -126,7 +127,9 @@ public class AuthoringWorkbenchDocks {
         if (activeHandler.shouldDisableDocks()) {
             // disable docks
             uberfireDocks.hide(UberfireDockPosition.EAST,
-                                  currentPerspectiveIdentifier);
+                               currentPerspectiveIdentifier);
+            uberfireDocks.hide(UberfireDockPosition.WEST,
+                               currentPerspectiveIdentifier);
         } else {
             // first remove the existing docks
             if (activeDocks != null) {
@@ -134,11 +137,21 @@ public class AuthoringWorkbenchDocks {
             }
 
             // getting docks from the handler and  refreshing
-            Collection<UberfireDock> docks = activeHandler.provideDocks(currentPerspectiveIdentifier);
-            activeDocks = docks.toArray(new UberfireDock[docks.size()]);
+            Collection<WorkbenchDockEntry> docks = activeHandler.provideDocks(currentPerspectiveIdentifier);
+
+            activeDocks = docks.stream()
+                    .map(entry -> entry.getDock())
+                    .toArray(size -> new UberfireDock[size]);
             uberfireDocks.add(activeDocks);
+
             uberfireDocks.show(UberfireDockPosition.EAST,
-                                 currentPerspectiveIdentifier);
+                               currentPerspectiveIdentifier);
+            uberfireDocks.show(UberfireDockPosition.WEST,
+                               currentPerspectiveIdentifier);
+
+            docks.stream().forEach(entry -> { if (entry.getOpenOnInitialization()) {
+                uberfireDocks.open(entry.getDock());
+            }});
         }
     }
 
@@ -153,13 +166,13 @@ public class AuthoringWorkbenchDocks {
             componentPaletteEnabled = false;
         }
         uberfireDocks.hide(UberfireDockPosition.WEST,
-                              authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
         projectExplorerEnabled = false;
     }
 
     public void show() {
         uberfireDocks.show(UberfireDockPosition.WEST,
-                             authoringPerspectiveIdentifier);
+                           authoringPerspectiveIdentifier);
         projectExplorerEnabled = true;
 
         libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {

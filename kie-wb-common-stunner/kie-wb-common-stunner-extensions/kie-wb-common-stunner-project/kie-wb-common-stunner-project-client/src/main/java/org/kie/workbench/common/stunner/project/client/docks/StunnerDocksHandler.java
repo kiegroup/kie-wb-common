@@ -26,6 +26,7 @@ import javax.enterprise.event.Observes;
 import org.kie.workbench.common.stunner.core.client.event.screen.ScreenMaximizedEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramFocusEvent;
 import org.kie.workbench.common.stunner.project.client.editor.event.OnDiagramLoseFocusEvent;
+import org.kie.workbench.common.workbench.client.docks.WorkbenchDockEntry;
 import org.kie.workbench.common.workbench.client.docks.impl.AbstractWorkbenchDocksHandler;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.workbench.docks.UberfireDock;
@@ -38,17 +39,29 @@ public class StunnerDocksHandler extends AbstractWorkbenchDocksHandler {
     protected DefaultWorkbenchConstants constants = DefaultWorkbenchConstants.INSTANCE;
 
     @Override
-    public Collection<UberfireDock> provideDocks(String perspectiveIdentifier) {
-        List<UberfireDock> result = new ArrayList<>();
+    public Collection<WorkbenchDockEntry> provideDocks(String perspectiveIdentifier) {
+        List<WorkbenchDockEntry> result = new ArrayList<>();
 
-        result.add(new UberfireDock(UberfireDockPosition.EAST,
-                                    "PENCIL_SQUARE_O",
-                                    new DefaultPlaceRequest("ProjectDiagramPropertiesScreen"),
-                                    perspectiveIdentifier).withSize(450).withLabel(constants.DocksStunnerPropertiesTitle()));
-        result.add(new UberfireDock(UberfireDockPosition.EAST,
-                                    "EYE",
-                                    new DefaultPlaceRequest("ProjectDiagramExplorerScreen"),
-                                    perspectiveIdentifier).withSize(450).withLabel(constants.DocksStunnerExplorerTitle()));
+        UberfireDock propertiesDock = new UberfireDock(UberfireDockPosition.EAST,
+                                                       "PENCIL_SQUARE_O",
+                                                       new DefaultPlaceRequest("ProjectDiagramPropertiesScreen"),
+                                                       perspectiveIdentifier);
+        propertiesDock.withSize(450);
+        propertiesDock.withLabel(constants.DocksStunnerPropertiesTitle());
+
+        WorkbenchDockEntry propertiesEntry = new WorkbenchDockEntry(propertiesDock, true);
+        result.add(propertiesEntry);
+
+        UberfireDock explorerDock = new UberfireDock(UberfireDockPosition.WEST,
+                                                     "EYE",
+                                                     new DefaultPlaceRequest("ProjectDiagramExplorerScreen"),
+                                                     perspectiveIdentifier);
+        explorerDock.withSize(450);
+        explorerDock.withLabel(constants.DocksStunnerExplorerTitle());
+
+        WorkbenchDockEntry explorerEntry = new WorkbenchDockEntry(explorerDock, true);
+        result.add(explorerEntry);
+
         return result;
     }
 
