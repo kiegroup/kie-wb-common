@@ -94,7 +94,6 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
         final KieTuple kieModuleMetaInfoTuple = read(req, KieModuleMetaInfo.class.getName(), "kieModuleMetaInfo not present in the map");
         final KieTuple kieModuleTuple = read(req, FileKieModule.class.getName(), "kieModule not present in the map");
-        final List<String> mavenOutput = getMavenOutput(res);
 
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
             final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
@@ -107,7 +106,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
                                                      (KieModuleMetaInfo) kieModuleMetaInfoTuple.getOptionalObject().get(),
                                                      (KieModule) kieModuleTuple.getOptionalObject().get(),
                                                      store,
-                                                     mavenOutput,
+                                                     res.getMavenOutput(),
                                                      targetContent,
                                                      res.getDependencies(),
                                                      req.getInfo().getPrjPath(),
@@ -120,7 +119,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
             if (kieModuleTuple.getErrorMsg().isPresent()) {
                 msgs.add("[ERROR] Error in the kieModule :" + kieModuleTuple.getErrorMsg().get());
             }
-            msgs.addAll(mavenOutput);
+            msgs.addAll(res.getMavenOutput());
             return new DefaultKieCompilationResponse(Boolean.FALSE, msgs, req.getInfo().getPrjPath());
         }
     }
@@ -136,21 +135,14 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     private KieCompilationResponse handleNormalBuild(final CompilationRequest req,
                                                      final CompilationResponse res) {
 
-        final List<String> mavenOutput = getMavenOutput(res);
         final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
         if (res.isSuccessful()) {
-            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, mavenOutput, targetContent, res.getDependencies(), req.getInfo().getPrjPath(), null);
+            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, res.getMavenOutput(), targetContent, res.getDependencies(), req.getInfo().getPrjPath(), null);
         } else {
-            List<String> msgs = new ArrayList<>();
-            msgs.addAll(mavenOutput);
-            return new DefaultKieCompilationResponse(res.isSuccessful(), msgs, req.getInfo().getPrjPath());
+            return new DefaultKieCompilationResponse(res.isSuccessful(), new ArrayList<>(res.getMavenOutput()), req.getInfo().getPrjPath());
         }
     }
-
-    private List<String> getMavenOutput(CompilationResponse res) {
-        return res.getMavenOutput();
-    }
-
+    
     private KieTuple read(CompilationRequest req, String keyName, String errorMsg) {
         final StringBuilder sb = new StringBuilder(req.getKieCliRequest().getRequestUUID()).append(".").append(keyName);
         Object o = req.getKieCliRequest().getMap().get(sb.toString());
