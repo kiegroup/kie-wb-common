@@ -16,12 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -39,37 +35,11 @@ public class TestUtil {
     }
 
     public static void rm(File f) {
-        if (f.isDirectory()) {
-            for (File c : f.listFiles()) {
-                rm(c);
-            }
-        }
-        if (!f.delete()) {
+        try {
+            FileUtils.deleteDirectory(f);
+        } catch (Exception e) {
             logger.error("Couldn't delete file {}", f);
-        }
-    }
-
-    public static void writeMavenOutputIntoTargetFolder(final Path tmp,
-                                                        final List<String> mavenOutput,
-                                                        final String testName) throws Exception {
-        File dir = tmp.toAbsolutePath().toFile();
-        File target = new File(dir.toString() + "/target/");
-        if (!target.exists()) {
-            logger.info("Creating target folder");
-            target.mkdir();
-        }
-        if (mavenOutput.size() > 0) {
-            StringBuilder sb = new StringBuilder(target.toString()).append(testName).append(".test.log");
-
-            File fileOut = new File(sb.toString());
-            logger.info("Writing error output on {}", fileOut.toString());
-            FileOutputStream fos = new FileOutputStream(fileOut);
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
-            for (String item : mavenOutput) {
-                bw.write(item);
-                bw.newLine();
-            }
-            bw.close();
+            logger.error(e.getMessage(), e);
         }
     }
 }
