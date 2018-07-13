@@ -52,7 +52,7 @@ public class AFCliRequest {
                         Map<String, Object> map,
                         String requestUUID) {
         this.multiModuleProjectDirectory = multiModuleProjectDirectory;
-        this.workingDirectory = multiModuleProjectDirectory.toString();
+        this.workingDirectory = multiModuleProjectDirectory;
         this.request = new DefaultMavenExecutionRequest();
         this.args = args;
         this.map = new HashMap<>(map);
