@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
 
 /**
  * Strategy implementation to create the Configuration from properties file
@@ -37,20 +36,17 @@ import org.uberfire.java.nio.file.Paths;
 public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationPropertiesStrategy.class);
-
-    protected Map<ConfigurationKey, String> conf;
-
     private static final String PROPERTIES_FILE = "IncrementalCompiler.properties";
-
+    protected Map<ConfigurationKey, String> conf;
     private Boolean valid = Boolean.FALSE;
 
     public ConfigurationPropertiesStrategy() {
-       loadProperties(PROPERTIES_FILE);
+        loadProperties(PROPERTIES_FILE);
     }
 
     /**
      * Useful if an alternative properties file is needed
-     * */
+     */
     public ConfigurationPropertiesStrategy(Path propertiesFilePath) {
         loadProperties(propertiesFilePath);
     }
@@ -69,7 +65,6 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
     public Integer getOrder() {
         return Integer.valueOf(100);
     }
-
 
     private void setUpValues(Properties props) {
         conf = new HashMap<>();
@@ -109,19 +104,17 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
 
     private Properties loadProperties(Path propertiesPath) {
         Properties prop = new Properties();
-        try{
-            try (InputStream propFileInpStream = Files.newInputStream(propertiesPath)) {
-                if (propFileInpStream == null) {
-                    logger.info("{} not available, skip to the next ConfigurationStrategy. \n", propertiesPath.toString());
-                    valid = Boolean.FALSE;
-                } else {
-                        prop.load(propFileInpStream);
-                        propFileInpStream.close();
-                        valid = Boolean.TRUE;
-                        setUpValues(prop);
-                }
+        try (InputStream propFileInpStream = Files.newInputStream(propertiesPath)) {
+            if (propFileInpStream == null) {
+                logger.info("{} not available, skip to the next ConfigurationStrategy. \n", propertiesPath.toString());
+                valid = Boolean.FALSE;
+            } else {
+                prop.load(propFileInpStream);
+                propFileInpStream.close();
+                valid = Boolean.TRUE;
+                setUpValues(prop);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getMessage());
         }
         return prop;
