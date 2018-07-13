@@ -104,7 +104,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URL> getTargetContentAsURL() {
-        if (targetContentAsURL.equals(EMPTY_LIST)) {
+        if (targetContentAsURL.isEmpty()) {
             targetContentAsURL = getRawAsURLs(targetContent);
         }
         return targetContentAsURL;
@@ -117,14 +117,14 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URI> getDependenciesAsURI() {
-        if (projectDependenciesAsURI.equals(EMPTY_LIST)) {
+        if (projectDependenciesAsURI.isEmpty()) {
             projectDependenciesAsURI = getProjectDependenciesAsURIs();
         }
         return projectDependenciesAsURI;
     }
 
     private List<URI> getProjectDependenciesAsURIs() {
-        if (!projectDependencies.equals(EMPTY_LIST) && !projectDependencies.isEmpty()) {
+        if (!projectDependencies.isEmpty() && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUris(projectDependencies);
         }
         return EMPTY_LIST;
@@ -132,7 +132,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URL> getDependenciesAsURL() {
-        if (projectDependenciesAsURL.equals(EMPTY_LIST)) {
+        if (projectDependenciesAsURL.isEmpty()) {
             projectDependenciesAsURL = getProjectDependenciesAsURLs();
         }
         return projectDependenciesAsURL;
