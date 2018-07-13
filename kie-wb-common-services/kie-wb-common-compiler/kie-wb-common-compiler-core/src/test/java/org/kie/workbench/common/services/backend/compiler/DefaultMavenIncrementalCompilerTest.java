@@ -210,7 +210,7 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER, MavenCLIArgs.DEBUG},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         if (!res.isSuccessful()) {
