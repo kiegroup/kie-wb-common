@@ -94,7 +94,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
         final KieTuple kieModuleMetaInfoTuple = read(req, KieModuleMetaInfo.class.getName(), "kieModuleMetaInfo not present in the map");
         final KieTuple kieModuleTuple = read(req, FileKieModule.class.getName(), "kieModule not present in the map");
-        final List<String> mavenOutput = getMavenOutput(req, res);
+        final List<String> mavenOutput = getMavenOutput(res);
 
         if (kieModuleMetaInfoTuple.getOptionalObject().isPresent() && kieModuleTuple.getOptionalObject().isPresent()) {
             final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
@@ -126,25 +126,17 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
     }
 
     private Map<String, byte[]> getDroolsGeneratedClasses(KieTuple kieProjectClassloaderStore) {
-        Map<String, byte[]> store = Collections.emptyMap();
-        if (kieProjectClassloaderStore.getOptionalObject().isPresent()) {
-            store = (Map<String, byte[]>) kieProjectClassloaderStore.getOptionalObject().get();
-        }
-        return store;
+        return (Map<String, byte[]>) kieProjectClassloaderStore.getOptionalObject().orElse(Collections.emptyMap());
     }
 
     private Set<String> getEventTypes(final KieTuple eventClasses) {
-        Set<String> events = Collections.emptySet();
-        if (eventClasses.getOptionalObject().isPresent()) {
-            events = (Set<String>) eventClasses.getOptionalObject().get();
-        }
-        return events;
+        return (Set<String>) eventClasses.getOptionalObject().orElse(Collections.emptySet());
     }
 
     private KieCompilationResponse handleNormalBuild(final CompilationRequest req,
                                                      final CompilationResponse res) {
 
-        final List<String> mavenOutput = getMavenOutput(req, res);
+        final List<String> mavenOutput = getMavenOutput(res);
         final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
         if (res.isSuccessful()) {
             return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, mavenOutput, targetContent, res.getDependencies(), req.getInfo().getPrjPath(), null);
@@ -155,8 +147,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
     }
 
-    private List<String> getMavenOutput(CompilationRequest req,
-                                        CompilationResponse res) {
+    private List<String> getMavenOutput(CompilationResponse res) {
         return res.getMavenOutput();
     }
 
