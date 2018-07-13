@@ -93,7 +93,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     @Override
     public List<URL> getTargetContentAsURL() {
-        if (targetContentAsURL == null) {
+        if (targetContentAsURL.isEmpty()) {
             targetContentAsURL = getRawAsURLs(targetContent);
         }
         return targetContentAsURL;
@@ -106,7 +106,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     @Override
     public List<URI> getDependenciesAsURI() {
-        if (projectDependenciesAsURI == null) {
+        if (projectDependenciesAsURI.isEmpty()) {
             projectDependenciesAsURI = getRawAsURIs(projectDependencies);
         }
         return projectDependenciesAsURI;
@@ -114,7 +114,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     @Override
     public List<URL> getDependenciesAsURL() {
-        if (projectDependenciesAsURL == null) {
+        if (projectDependenciesAsURL.isEmpty()) {
             projectDependenciesAsURL = getRawAsURLs(projectDependencies);
         }
         return projectDependenciesAsURL;
