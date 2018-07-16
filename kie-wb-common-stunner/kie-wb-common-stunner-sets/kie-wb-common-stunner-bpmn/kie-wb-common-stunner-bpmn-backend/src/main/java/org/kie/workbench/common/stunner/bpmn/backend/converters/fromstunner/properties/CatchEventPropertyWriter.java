@@ -18,8 +18,8 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.CatchEvent;
+import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
-import org.eclipse.bpmn2.OutputSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -30,33 +30,31 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 public class CatchEventPropertyWriter extends EventPropertyWriter {
 
     private final CatchEvent event;
-    private final OutputSet outputSet;
     private ElementParameters simulationParameters;
 
     public CatchEventPropertyWriter(CatchEvent event, VariableScope variableScope) {
         super(event, variableScope);
         this.event = event;
-        this.outputSet = bpmn2.createOutputSet();
-        event.setOutputSet(outputSet);
+        event.setOutputSet(bpmn2.createOutputSet());
     }
 
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        assignmentsInfo.getAssociations()
-                .getOutputs()
-                .stream()
-                .map(declaration -> new OutputAssignmentWriter(
+        assignmentsInfo
+                .getOutputAssociations()
+                .map(initializedVariable -> new OutputAssignmentWriter(
                         flowElement.getId(),
-                        assignmentsInfo
-                                .getOutputs()
-                                .lookup(declaration.getSource()),
-                        variableScope.lookup(declaration.getTarget())
+                        initializedVariable.getVariableDeclaration(),
+                        variableScope.lookup(initializedVariable.getInitializationValue())
                 ))
                 .forEach(doa -> {
-                    this.addItemDefinition(doa.getItemDefinition());
                     event.getDataOutputs().add(doa.getDataOutput());
-                    event.getDataOutputAssociation().add(doa.getAssociation());
-                    outputSet.getDataOutputRefs().add(doa.getDataOutput());
+                    event.getOutputSet().getDataOutputRefs().add(doa.getDataOutput());
+                    this.addItemDefinition(doa.getItemDefinition());
+                    DataOutputAssociation association = doa.getAssociation();
+                    if (association != null) {
+                        event.getDataOutputAssociation().add(association);
+                    }
                 });
     }
 

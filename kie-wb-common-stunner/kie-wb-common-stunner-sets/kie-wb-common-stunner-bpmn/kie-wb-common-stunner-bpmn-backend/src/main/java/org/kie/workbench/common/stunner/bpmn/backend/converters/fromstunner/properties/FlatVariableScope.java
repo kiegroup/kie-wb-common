@@ -64,6 +64,7 @@ public class FlatVariableScope implements VariableScope {
     }
 
     public Variable lookup(String identifier) {
+        if (identifier == null) return null;
         Variable variable = variables.get(identifier);
         if (variable == null) {
             throw new NoSuchElementException("Undeclared variable " + identifier);

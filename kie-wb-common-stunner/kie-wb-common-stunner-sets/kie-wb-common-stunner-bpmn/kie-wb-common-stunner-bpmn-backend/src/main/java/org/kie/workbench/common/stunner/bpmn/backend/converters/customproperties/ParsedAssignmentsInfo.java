@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -177,6 +178,20 @@ public class ParsedAssignmentsInfo {
 
     public AssociationList getAssociations() {
         return associations;
+    }
+
+    public Stream<InitializedVariable> getInputAssociations() {
+        return getInputs()
+                .getDeclarations()
+                .stream()
+                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupInput(varDecl.getIdentifier())));
+    }
+
+    public Stream<InitializedVariable> getOutputAssociations() {
+        return getOutputs()
+                .getDeclarations()
+                .stream()
+                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupOutput(varDecl.getIdentifier())));
     }
 
     public boolean isEmpty() {

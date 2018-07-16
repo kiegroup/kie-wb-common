@@ -16,14 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.Objects;
 
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputOutputSpecification;
-import org.eclipse.bpmn2.InputSet;
-import org.eclipse.bpmn2.OutputSet;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -59,9 +58,6 @@ public class ActivityPropertyWriter extends PropertyWriter {
     public void setAssignmentsInfo(AssignmentsInfo info) {
         final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
-        final InputSet inputSet = getInputSet();
-        final OutputSet outputSet = getOutputSet();
-        ioSpec.getOutputSets().add(outputSet);
 
         assignmentsInfo
                 .getInputs().getDeclarations()
@@ -70,10 +66,11 @@ public class ActivityPropertyWriter extends PropertyWriter {
                 .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
                 .peek(dw -> {
                     this.addItemDefinition(dw.getItemDefinition());
-                    inputSet.getDataInputRefs().add(dw.getDataInput());
+                    ioSpec.getInputSets().add(dw.getInputSet());
                     ioSpec.getDataInputs().add(dw.getDataInput());
                 })
-                .flatMap(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .map(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .filter(Objects::nonNull)
                 .forEach(dia -> {
                     activity.getDataInputAssociations().add(dia.getAssociation());
                 });
@@ -92,19 +89,21 @@ public class ActivityPropertyWriter extends PropertyWriter {
                 ))
                 .forEach(doa -> {
                     this.addItemDefinition(doa.getItemDefinition());
-                    outputSet.getDataOutputRefs().add(doa.getDataOutput());
+                    ioSpec.getOutputSets().add(doa.getOutputSet());
                     ioSpec.getDataOutputs().add(doa.getDataOutput());
-                    activity.getDataOutputAssociations().add(doa.getAssociation());
+                    DataOutputAssociation association = doa.getAssociation();
+                    if (association != null) {
+                        activity.getDataOutputAssociations().add(association);
+                    }
                 });
-
     }
 
-
-    private Stream<InputAssignmentWriter> toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
-        return assignmentsInfo.getAssociations().lookupInput(dw.getVarId())
-                .map(targetVar ->
-                             InputAssignmentWriter.fromDeclaration(
-                                     targetVar, dw, variableScope));
+    private InputAssignmentWriter toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
+        AssociationDeclaration targetVar = assignmentsInfo.getAssociations().lookupInput(dw.getVarId());
+        if (targetVar == null) {
+            return null;
+        }
+        return InputAssignmentWriter.fromDeclaration(targetVar, dw, variableScope);
     }
 
     private InputOutputSpecification getIoSpecification() {
@@ -114,30 +113,5 @@ public class ActivityPropertyWriter extends PropertyWriter {
             activity.setIoSpecification(ioSpecification);
         }
         return ioSpecification;
-    }
-
-
-    public InputSet getInputSet() {
-        InputSet inputSet;
-        List<InputSet> inputSets = getIoSpecification().getInputSets();
-        if (inputSets.isEmpty()) {
-            inputSet = bpmn2.createInputSet();
-            inputSets.add(inputSet);
-        } else {
-            inputSet = inputSets.get(0);
-        }
-        return inputSet;
-    }
-
-    public OutputSet getOutputSet() {
-        OutputSet outputSet;
-        List<OutputSet> outputSets = getIoSpecification().getOutputSets();
-        if (outputSets.isEmpty()) {
-            outputSet = bpmn2.createOutputSet();
-            outputSets.add(outputSet);
-        } else {
-            outputSet = outputSets.get(0);
-        }
-        return outputSet;
     }
 }

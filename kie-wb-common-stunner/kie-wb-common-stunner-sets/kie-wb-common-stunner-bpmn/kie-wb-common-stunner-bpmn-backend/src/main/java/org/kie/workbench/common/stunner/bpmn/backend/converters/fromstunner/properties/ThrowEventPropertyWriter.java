@@ -17,11 +17,11 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ThrowEvent;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
@@ -53,17 +53,22 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
                     throwEvent.getDataInputs().add(dw.getDataInput());
                     inputSet.getDataInputRefs().add(dw.getDataInput());
                 })
-                .flatMap(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .map(dw -> toInputAssignmentStream(assignmentsInfo, dw))
+                .filter(Objects::nonNull)
                 .forEach(dia -> {
                     throwEvent.getDataInputAssociation().add(dia.getAssociation());
                 });
     }
 
-    private Stream<InputAssignmentWriter> toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
-        return assignmentsInfo.getAssociations().lookupInput(dw.getVarId())
-                .map(targetVar -> variableScope.lookup(targetVar.getSource()))
-                .filter(Objects::nonNull)
-                .map(targetVar -> new InputAssignmentWriter(dw, targetVar));
+    private InputAssignmentWriter toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
+        AssociationDeclaration targetVar = assignmentsInfo.getAssociations().lookupInput(dw.getVarId());
+        if (targetVar == null) return null;
+        VariableScope.Variable lookup = variableScope.lookup(targetVar.getSource());
+        if (lookup != null) {
+            return new InputAssignmentWriter(dw, lookup);
+        } else {
+            return null;
+        }
     }
 
     @Override

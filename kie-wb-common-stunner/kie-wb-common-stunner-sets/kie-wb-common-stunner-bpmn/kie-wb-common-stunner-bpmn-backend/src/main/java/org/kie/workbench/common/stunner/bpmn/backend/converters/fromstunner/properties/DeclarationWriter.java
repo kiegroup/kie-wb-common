@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.ItemDefinition;
+import org.eclipse.bpmn2.OutputSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.CustomAttribute;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
