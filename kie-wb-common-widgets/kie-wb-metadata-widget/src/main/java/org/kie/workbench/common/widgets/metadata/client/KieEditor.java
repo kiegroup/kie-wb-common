@@ -273,8 +273,12 @@ public abstract class KieEditor<T>
             addRename(fileMenuBuilder);
             addDelete(fileMenuBuilder);
         }
-
+        addDownloadMenuItem(fileMenuBuilder);
         addCommonActions(fileMenuBuilder);
+    }
+
+    public void addDownloadMenuItem(final FileMenuBuilder fileMenuBuilder) {
+        fileMenuBuilder.addNewTopLevelMenu(downloadMenuItem());
     }
 
     void addSave(final FileMenuBuilder fileMenuBuilder) {

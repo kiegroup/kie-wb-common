@@ -498,6 +498,8 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                    assetUpdateValidator);
             }
 
+            addDownloadMenuItem(fileMenuBuilder);
+
             fileMenuBuilder
                     .addNewTopLevelMenu(versionRecordManager.buildMenu())
                     .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
