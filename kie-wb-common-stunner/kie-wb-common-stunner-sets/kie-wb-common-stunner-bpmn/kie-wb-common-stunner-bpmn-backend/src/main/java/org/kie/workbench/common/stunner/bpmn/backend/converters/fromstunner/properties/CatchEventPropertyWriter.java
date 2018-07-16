@@ -25,8 +25,8 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.OutputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.simulation.SimulationAttributeSet;
@@ -44,34 +44,12 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
         event.setOutputSet(bpmn2.createOutputSet());
     }
 
-//    public void setAssignmentsInfo_(AssignmentsInfo info) {
-//        ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-//        List<InitializedVariable> outputAssociations = assignmentsInfo.getOutputAssociations();
-//        if (outputAssociations.isEmpty()) {
-//            return;
-//        }
-//        if (outputAssociations.size() > 1) {
-//            throw new IllegalArgumentException("Output Associations should be at most 1 in Catch Events");
-//        }
-//
-//        InitializedVariable.OutputVariableReference initializedVariable = (InitializedVariable.OutputVariableReference) outputAssociations.get(0);
-//        OutputAssignmentWriter doa = new OutputAssignmentWriter(
-//                flowElement.getId(),
-//                new VariableDeclaration(initializedVariable.getIdentifier(), initializedVariable.getType()),
-//                variableScope.lookup(initializedVariable.targetVariable));
-//
-//        event.getDataOutputs().add(doa.getDataOutput());
-//        event.getOutputSet().getDataOutputRefs().add(doa.getDataOutput());
-//        this.addItemDefinition(doa.getItemDefinition());
-//        DataOutputAssociation association = doa.getAssociation();
-//        if (association != null) {
-//            event.getDataOutputAssociation().add(association);
-//        }
-//    }
-//
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedVariable> outputAssociations = assignmentsInfo.getOutputAssociations();
+        List<InitializedVariable> outputAssociations =
+                assignmentsInfo.createInitializedOutputVariables(
+                        getId(), variableScope);
+
         if (outputAssociations.isEmpty()) {
             return;
         }
@@ -79,8 +57,8 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
             throw new IllegalArgumentException("Output Associations should be at most 1 in Catch Events");
         }
 
-        InitializedVariable.OutputVariableReference initializedVariable = (InitializedVariable.OutputVariableReference) outputAssociations.get(0);
-        initializedVariable.setParentId(getId());
+        OutputVariableReference initializedVariable = (OutputVariableReference) outputAssociations.get(0);
+
         DataOutput dataOutput = initializedVariable.getDataOutput();
         event.getDataOutputs().add(dataOutput);
         event.getOutputSet().getDataOutputRefs().add(dataOutput);
@@ -88,7 +66,7 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
         ItemDefinition itemDefinition = dataOutput.getItemSubjectRef();
         this.addItemDefinition(itemDefinition);
 
-        DataOutputAssociation association = initializedVariable.getDataOutputAssociation(variableScope);
+        DataOutputAssociation association = initializedVariable.getDataOutputAssociation();
         event.getDataOutputAssociation().add(association);
     }
 

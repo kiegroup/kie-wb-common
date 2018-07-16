@@ -52,7 +52,7 @@ public abstract class InitializedVariable {
         return type;
     }
 
-    static InitializedVariable of(VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
+    static InitializedVariable of(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
         if (associationDeclaration == null) {
             return new Empty(varDecl);
         } else {
@@ -64,9 +64,9 @@ public abstract class InitializedVariable {
                     AssociationDeclaration.Direction direction = associationDeclaration.getDirection();
                     switch (direction) {
                         case Input:
-                            return new InputVariableReference(varDecl, associationDeclaration.getSource());
+                            return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
                         case Output:
-                            return new OutputVariableReference(varDecl, associationDeclaration.getTarget());
+                            return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget());
                         default:
                             throw new IllegalArgumentException("Unknown direction " + direction);
                     }
@@ -91,17 +91,21 @@ public abstract class InitializedVariable {
 
         private final DataInput dataInput;
         private final String sourceVariable;
+        private final String parentId;
+        private final VariableScope scope;
 
-        public InputVariableReference(VariableDeclaration varDecl, String sourceVariable) {
+        public InputVariableReference(String parentId, VariableScope variableScope, VariableDeclaration varDecl, String sourceVariable) {
             super(varDecl);
+            this.parentId = parentId;
+            this.scope = variableScope;
             String identifier = varDecl.getIdentifier();
             this.sourceVariable = sourceVariable;
             this.dataInput = bpmn2.createDataInput();
-            dataInput.setId(Ids.dataInput("PARENT", identifier));
+            dataInput.setId(Ids.dataInput(parentId, identifier));
             dataInput.setName(identifier);
 
             ItemDefinition itemDefinition = getItemDefinition();
-            itemDefinition.setId(Ids.dataInputItem("PARENT", identifier));
+            itemDefinition.setId(Ids.dataInputItem(parentId, identifier));
             dataInput.setItemSubjectRef(itemDefinition);
             CustomAttribute.dtype.of(dataInput).set(itemDefinition.getStructureRef());
         }
@@ -110,15 +114,9 @@ public abstract class InitializedVariable {
             return dataInput;
         }
 
-        public DataInputAssociation getDataInputAssociation(VariableScope variableScope) {
-            return associationOf(variableScope.lookup(sourceVariable).getTypedIdentifier(), dataInput);
+        public DataInputAssociation getDataInputAssociation() {
+            return associationOf(scope.lookup(sourceVariable).getTypedIdentifier(), dataInput);
         }
-
-        public void setParentId(String parentId) {
-            getItemDefinition().setId(Ids.dataInputItem(parentId, getIdentifier()));
-            dataInput.setId(Ids.dataInput(parentId, getIdentifier()));
-        }
-
 
         private DataInputAssociation associationOf(String expression, DataInput dataInput) {
             DataInputAssociation dataInputAssociation =
@@ -162,18 +160,22 @@ public abstract class InitializedVariable {
     public static class OutputVariableReference extends InitializedVariable {
 
         private final DataOutput dataOutput;
-        public final String targetVariable;
+        private final String targetVariable;
+        private final String parentId;
+        private final VariableScope scope;
 
-        public OutputVariableReference(VariableDeclaration varDecl, String targetVariable) {
+        public OutputVariableReference(String parentId, VariableScope scope, VariableDeclaration varDecl, String targetVariable) {
             super(varDecl);
+            this.parentId = parentId;
+            this.scope = scope;
             this.targetVariable = targetVariable;
             String identifier = varDecl.getIdentifier();
 
             ItemDefinition itemDefinition = getItemDefinition();
-            itemDefinition.setId(Ids.dataOutputItem("PARENT_ID", identifier));
+            itemDefinition.setId(Ids.dataOutputItem(parentId, identifier));
 
             this.dataOutput = bpmn2.createDataOutput();
-            dataOutput.setId(Ids.dataOutput("PARENT_ID", identifier));
+            dataOutput.setId(Ids.dataOutput(parentId, identifier));
             dataOutput.setName(identifier);
             dataOutput.setItemSubjectRef(itemDefinition);
             CustomAttribute.dtype.of(dataOutput).set(getType());
@@ -183,14 +185,16 @@ public abstract class InitializedVariable {
             return dataOutput;
         }
 
-        public void setParentId(String parentId) {
-            dataOutput.setId(Ids.dataOutput(parentId, getIdentifier()));
-            ItemDefinition itemSubjectRef = getItemDefinition();
-            itemSubjectRef.setId(Ids.dataOutputItem(parentId, getIdentifier()));
-        }
+//        public void setScope(String parentId, VariableScope scope) {
+//            this.parentId = parentId;
+//            this.scope = scope;
+//            dataOutput.setId(Ids.dataOutput(parentId, getIdentifier()));
+//            ItemDefinition itemSubjectRef = getItemDefinition();
+//            itemSubjectRef.setId(Ids.dataOutputItem(parentId, getIdentifier()));
+//        }
 
-        public DataOutputAssociation getDataOutputAssociation(VariableScope variableScope) {
-            VariableScope.Variable variable = variableScope.lookup(targetVariable);
+        public DataOutputAssociation getDataOutputAssociation() {
+            VariableScope.Variable variable = scope.lookup(targetVariable);
             return associationOf(variable.getTypedIdentifier(), dataOutput);
         }
 

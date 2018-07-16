@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.VariableScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
 /**
@@ -180,19 +181,27 @@ public class ParsedAssignmentsInfo {
         return associations;
     }
 
-    public List<InitializedVariable> getInputAssociations() {
+    public List<InitializedVariable> createInitializedInputVariables(String parentId, VariableScope variableScope) {
         return getInputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> InitializedVariable.of(varDecl, associations.lookupInput(varDecl.getIdentifier())))
+                .map(varDecl -> InitializedVariable.of(
+                        parentId,
+                        variableScope,
+                        varDecl,
+                        associations.lookupInput(varDecl.getIdentifier())))
                 .collect(Collectors.toList());
     }
 
-    public List<InitializedVariable> getOutputAssociations() {
+    public List<InitializedVariable> createInitializedOutputVariables(String parentId, VariableScope variableScope) {
         return getOutputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> InitializedVariable.of(varDecl, associations.lookupOutput(varDecl.getIdentifier())))
+                .map(varDecl -> InitializedVariable.of(
+                        parentId,
+                        variableScope,
+                        varDecl,
+                        associations.lookupOutput(varDecl.getIdentifier())))
                 .collect(Collectors.toList());
     }
 

@@ -22,7 +22,6 @@ import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
@@ -44,7 +43,9 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     @Override
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedVariable> inputAssociations = assignmentsInfo.getInputAssociations();
+        List<InitializedVariable> inputAssociations =
+                assignmentsInfo.createInitializedInputVariables(getId(), variableScope);
+
         if (inputAssociations.isEmpty()) {
             return;
         }
@@ -53,7 +54,6 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
         }
 
         InputVariableReference initializedVariable = (InputVariableReference) inputAssociations.get(0);
-        initializedVariable.setParentId(getId());
         String identifier = initializedVariable.getIdentifier();
 
         if (isReservedIdentifier(identifier)) {
@@ -65,7 +65,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
         throwEvent.getDataInputs().add(dataInput);
         throwEvent.getInputSet().getDataInputRefs().add(dataInput);
 
-        DataInputAssociation dia = initializedVariable.getDataInputAssociation(variableScope);
+        DataInputAssociation dia = initializedVariable.getDataInputAssociation();
         if (dia != null) {
             throwEvent.getDataInputAssociation().add(dia);
         }
