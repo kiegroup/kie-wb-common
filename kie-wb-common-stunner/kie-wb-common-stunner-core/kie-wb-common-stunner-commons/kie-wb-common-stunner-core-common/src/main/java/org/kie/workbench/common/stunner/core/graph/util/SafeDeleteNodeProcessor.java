@@ -110,6 +110,8 @@ public class SafeDeleteNodeProcessor {
                              final Callback callback,
                              final boolean candidate) {
         log("Deleting node [" + node.getUUID() + "]");
+        GraphUtils.getDockParent(node).ifPresent(parent -> callback.removeDock(parent, node));
+
         Stream.concat(node.getOutEdges().stream(),
                       node.getInEdges().stream())
                 .filter(e -> e.getContent() instanceof View)
@@ -121,9 +123,7 @@ public class SafeDeleteNodeProcessor {
                 .forEach(e -> callback.removeChild(e.getSourceNode(),
                                                    node));
 
-        GraphUtils.getDockParent(node).ifPresent(parent ->  callback.removeDock(parent, node));
-
-        GraphUtils.getDockedNodes(node).forEach(docked -> processNode(docked, callback, false));
+        GraphUtils.getDockedNodes(node).forEach(docked -> processNode(docked, callback, true));
 
         if (candidate) {
             callback.deleteCandidateNode(node);
@@ -144,7 +144,6 @@ public class SafeDeleteNodeProcessor {
             processedConnectors.add(edge.getUUID());
         }
     }
-
     private void log(final String message) {
         LOGGER.log(Level.FINE,
                    message);
