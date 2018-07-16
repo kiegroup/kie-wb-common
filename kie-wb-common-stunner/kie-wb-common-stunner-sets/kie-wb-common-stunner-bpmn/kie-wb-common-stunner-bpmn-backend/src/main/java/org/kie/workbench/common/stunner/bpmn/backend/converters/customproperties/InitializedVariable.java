@@ -31,17 +31,48 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public abstract class InitializedVariable {
 
+    private final String parentId;
     private final String identifier;
     private final String type;
     private ItemDefinition itemDefinition;
 
-    public InitializedVariable(VariableDeclaration varDecl) {
+    public InitializedVariable(String parentId, VariableDeclaration varDecl) {
+        this.parentId = parentId;
         this.identifier = varDecl.getIdentifier();
         this.type = varDecl.getType();
         this.itemDefinition = bpmn2.createItemDefinition();
-        itemDefinition.setId(getIdentifier());
+        itemDefinition.setId(parentId);
         itemDefinition.setStructureRef(getType());
+    }
 
+    public static InitializedInputVariable inputOf(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
+        if (associationDeclaration == null) {
+            return (InitializedInputVariable) of(
+                    parentId,
+                    variableScope,
+                    varDecl,
+                    new AssociationDeclaration(
+                            AssociationDeclaration.Direction.Input,
+                            AssociationDeclaration.Type.FromTo,
+                            varDecl.getIdentifier(),
+                            null));
+        }
+        return (InitializedInputVariable) of(parentId, variableScope, varDecl, associationDeclaration);
+    }
+
+    public static InitializedOutputVariable outputOf(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
+        if (associationDeclaration == null) {
+            return (InitializedOutputVariable) of(
+                    parentId,
+                    variableScope,
+                    varDecl,
+                    new AssociationDeclaration(
+                            AssociationDeclaration.Direction.Output,
+                            AssociationDeclaration.Type.FromTo,
+                            varDecl.getIdentifier(),
+                            null));
+        }
+        return (InitializedOutputVariable) of(parentId, variableScope, varDecl, associationDeclaration);
     }
 
     public String getIdentifier() {
@@ -54,14 +85,30 @@ public abstract class InitializedVariable {
 
     static InitializedVariable of(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
         if (associationDeclaration == null) {
-            return new Empty(varDecl);
+            return new Empty(parentId, varDecl);
         } else {
             AssociationDeclaration.Type type = associationDeclaration.getType();
+            AssociationDeclaration.Direction direction = associationDeclaration.getDirection();
             switch (type) {
                 case FromTo:
-                    return new Constant(varDecl, associationDeclaration.getTarget());
+                    switch (direction) {
+                        case Input:
+                            if (associationDeclaration.getTarget() == null) {
+                                return new InputEmpty(parentId, varDecl);
+                            } else {
+                                return new InputConstant(parentId, varDecl, associationDeclaration.getTarget());
+                            }
+                        case Output:
+                            if (associationDeclaration.getTarget() == null) {
+                                return new OutputEmpty(parentId, varDecl);
+                            } else {
+                                throw new IllegalArgumentException("Cannot assign constant to output variable");
+                            }
+                        default:
+                            throw new IllegalArgumentException("Unknown direction " + direction);
+                    }
+
                 case SourceTarget:
-                    AssociationDeclaration.Direction direction = associationDeclaration.getDirection();
                     switch (direction) {
                         case Input:
                             return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
@@ -82,48 +129,125 @@ public abstract class InitializedVariable {
 
     public static class Empty extends InitializedVariable {
 
-        public Empty(VariableDeclaration varDecl) {
-            super(varDecl);
+        public Empty(String parentId, VariableDeclaration varDecl) {
+            super(parentId, varDecl);
         }
     }
 
-    public static class InputVariableReference extends InitializedVariable {
+    public static abstract class InitializedInputVariable extends InitializedVariable {
 
         private final DataInput dataInput;
-        private final String sourceVariable;
-        private final String parentId;
-        private final VariableScope scope;
 
-        public InputVariableReference(String parentId, VariableScope variableScope, VariableDeclaration varDecl, String sourceVariable) {
-            super(varDecl);
-            this.parentId = parentId;
-            this.scope = variableScope;
-            String identifier = varDecl.getIdentifier();
-            this.sourceVariable = sourceVariable;
-            this.dataInput = bpmn2.createDataInput();
-            dataInput.setId(Ids.dataInput(parentId, identifier));
-            dataInput.setName(identifier);
-
-            ItemDefinition itemDefinition = getItemDefinition();
-            itemDefinition.setId(Ids.dataInputItem(parentId, identifier));
-            dataInput.setItemSubjectRef(itemDefinition);
-            CustomAttribute.dtype.of(dataInput).set(itemDefinition.getStructureRef());
+        public InitializedInputVariable(String parentId, VariableDeclaration varDecl) {
+            super(parentId, varDecl);
+            this.dataInput = dataInputOf(
+                    parentId, varDecl.getIdentifier(), getItemDefinition());
         }
 
         public DataInput getDataInput() {
             return dataInput;
         }
 
-        public DataInputAssociation getDataInputAssociation() {
-            return associationOf(scope.lookup(sourceVariable).getTypedIdentifier(), dataInput);
+        public abstract DataInputAssociation getDataInputAssociation();
+    }
+
+    public static abstract class InitializedOutputVariable extends InitializedVariable {
+
+        private final DataOutput dataOutput;
+
+        public InitializedOutputVariable(String parentId, VariableDeclaration varDecl) {
+            super(parentId, varDecl);
+            this.dataOutput = dataOutputOf(
+                    parentId,
+                    varDecl.getIdentifier(),
+                    getItemDefinition());
         }
 
-        private DataInputAssociation associationOf(String expression, DataInput dataInput) {
+        public DataOutput getDataOutput() {
+            return dataOutput;
+        }
+
+        public abstract DataOutputAssociation getDataOutputAssociation();
+    }
+
+    public static class InputVariableReference extends InitializedInputVariable {
+
+        private final String sourceVariable;
+        private final VariableScope scope;
+
+        public InputVariableReference(String parentId, VariableScope variableScope, VariableDeclaration varDecl, String sourceVariable) {
+            super(parentId, varDecl);
+            this.scope = variableScope;
+            this.sourceVariable = sourceVariable;
+        }
+
+        public DataInputAssociation getDataInputAssociation() {
+            DataInputAssociation dataInputAssociation =
+                    bpmn2.createDataInputAssociation();
+
+            dataInputAssociation
+                    .getSourceRef()
+                    .add(scope.lookup(sourceVariable).getTypedIdentifier());
+
+            dataInputAssociation
+                    .setTargetRef(getDataInput());
+            return dataInputAssociation;
+        }
+    }
+
+    public static class OutputVariableReference extends InitializedOutputVariable {
+
+        private final DataOutput dataOutput;
+        private final String targetVariable;
+        private final VariableScope scope;
+
+        public OutputVariableReference(String parentId, VariableScope scope, VariableDeclaration varDecl, String targetVariable) {
+            super(parentId, varDecl);
+            this.scope = scope;
+            this.targetVariable = targetVariable;
+            this.dataOutput = dataOutputOf(
+                    parentId,
+                    varDecl.getIdentifier(),
+                    getItemDefinition());
+        }
+
+        public DataOutput getDataOutput() {
+            return dataOutput;
+        }
+
+        public DataOutputAssociation getDataOutputAssociation() {
+            VariableScope.Variable variable = scope.lookup(targetVariable);
+            return associationOf(variable.getTypedIdentifier(), dataOutput);
+        }
+    }
+
+    public static class InputEmpty extends InitializedInputVariable {
+
+        public InputEmpty(String parentId, VariableDeclaration varDecl) {
+            super(parentId, varDecl);
+        }
+
+        @Override
+        public DataInputAssociation getDataInputAssociation() {
+            return null;
+        }
+    }
+
+    public static class InputConstant extends InitializedInputVariable {
+
+        final String expression;
+
+        InputConstant(String parentId, VariableDeclaration varDecl, String expression) {
+            super(parentId, varDecl);
+            this.expression = expression;
+        }
+
+        public DataInputAssociation getDataInputAssociation() {
             DataInputAssociation dataInputAssociation =
                     bpmn2.createDataInputAssociation();
 
             Assignment assignment = bpmn2.createAssignment();
-            String id = dataInput.getId();
+            String id = getDataInput().getId();
 
             FormalExpression toExpr = bpmn2.createFormalExpression();
             toExpr.setBody(id);
@@ -137,88 +261,51 @@ public abstract class InitializedVariable {
                     .getAssignment().add(assignment);
 
             dataInputAssociation
-                    .setTargetRef(dataInput);
+                    .setTargetRef(getDataInput());
             return dataInputAssociation;
-        }
-
-        private DataInputAssociation associationOf(Property source, DataInput dataInput) {
-            DataInputAssociation dataInputAssociation =
-                    bpmn2.createDataInputAssociation();
-
-            dataInputAssociation
-                    .getSourceRef()
-                    .add(source);
-
-            dataInputAssociation
-                    .setTargetRef(dataInput);
-            return dataInputAssociation;
-        }
-
-
-    }
-
-    public static class OutputVariableReference extends InitializedVariable {
-
-        private final DataOutput dataOutput;
-        private final String targetVariable;
-        private final String parentId;
-        private final VariableScope scope;
-
-        public OutputVariableReference(String parentId, VariableScope scope, VariableDeclaration varDecl, String targetVariable) {
-            super(varDecl);
-            this.parentId = parentId;
-            this.scope = scope;
-            this.targetVariable = targetVariable;
-            String identifier = varDecl.getIdentifier();
-
-            ItemDefinition itemDefinition = getItemDefinition();
-            itemDefinition.setId(Ids.dataOutputItem(parentId, identifier));
-
-            this.dataOutput = bpmn2.createDataOutput();
-            dataOutput.setId(Ids.dataOutput(parentId, identifier));
-            dataOutput.setName(identifier);
-            dataOutput.setItemSubjectRef(itemDefinition);
-            CustomAttribute.dtype.of(dataOutput).set(getType());
-        }
-
-        public DataOutput getDataOutput() {
-            return dataOutput;
-        }
-
-//        public void setScope(String parentId, VariableScope scope) {
-//            this.parentId = parentId;
-//            this.scope = scope;
-//            dataOutput.setId(Ids.dataOutput(parentId, getIdentifier()));
-//            ItemDefinition itemSubjectRef = getItemDefinition();
-//            itemSubjectRef.setId(Ids.dataOutputItem(parentId, getIdentifier()));
-//        }
-
-        public DataOutputAssociation getDataOutputAssociation() {
-            VariableScope.Variable variable = scope.lookup(targetVariable);
-            return associationOf(variable.getTypedIdentifier(), dataOutput);
-        }
-
-        private DataOutputAssociation associationOf(Property source, DataOutput dataOutput) {
-            DataOutputAssociation dataOutputAssociation =
-                    bpmn2.createDataOutputAssociation();
-
-            dataOutputAssociation
-                    .getSourceRef()
-                    .add(dataOutput);
-
-            dataOutputAssociation
-                    .setTargetRef(source);
-            return dataOutputAssociation;
         }
     }
 
-    public static class Constant extends InitializedVariable {
+    public static class OutputEmpty extends InitializedInputVariable {
 
-        final String expression;
-
-        Constant(VariableDeclaration varDecl, String expression) {
-            super(varDecl);
-            this.expression = expression;
+        public OutputEmpty(String parentId, VariableDeclaration varDecl) {
+            super(parentId, varDecl);
         }
+
+        @Override
+        public DataInputAssociation getDataInputAssociation() {
+            return null;
+        }
+    }
+
+    private static DataInput dataInputOf(String parentId, String identifier, ItemDefinition itemDefinition) {
+        DataInput dataInput = bpmn2.createDataInput();
+        dataInput.setId(Ids.dataInput(parentId, identifier));
+        dataInput.setName(identifier);
+        dataInput.setItemSubjectRef(itemDefinition);
+        CustomAttribute.dtype.of(dataInput).set(itemDefinition.getStructureRef());
+        return dataInput;
+    }
+
+    private static DataOutput dataOutputOf(String parentId, String identifier, ItemDefinition itemDefinition) {
+        DataOutput dataOutput = bpmn2.createDataOutput();
+        dataOutput.setId(Ids.dataOutput(parentId, identifier));
+        dataOutput.setName(identifier);
+        dataOutput.setItemSubjectRef(itemDefinition);
+        CustomAttribute.dtype.of(dataOutput).set(itemDefinition.getStructureRef());
+        return dataOutput;
+    }
+
+    private static DataOutputAssociation associationOf(Property source, DataOutput dataOutput) {
+        DataOutputAssociation dataOutputAssociation =
+                bpmn2.createDataOutputAssociation();
+
+        dataOutputAssociation
+                .getSourceRef()
+                .add(dataOutput);
+
+        dataOutputAssociation
+                .setTargetRef(source);
+        return dataOutputAssociation;
     }
 }

@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.VariableScope;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
@@ -181,11 +183,11 @@ public class ParsedAssignmentsInfo {
         return associations;
     }
 
-    public List<InitializedVariable> createInitializedInputVariables(String parentId, VariableScope variableScope) {
+    public List<InitializedInputVariable> createInitializedInputVariables(String parentId, VariableScope variableScope) {
         return getInputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> InitializedVariable.of(
+                .map(varDecl -> InitializedVariable.inputOf(
                         parentId,
                         variableScope,
                         varDecl,
@@ -193,11 +195,11 @@ public class ParsedAssignmentsInfo {
                 .collect(Collectors.toList());
     }
 
-    public List<InitializedVariable> createInitializedOutputVariables(String parentId, VariableScope variableScope) {
+    public List<InitializedOutputVariable> createInitializedOutputVariables(String parentId, VariableScope variableScope) {
         return getOutputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> InitializedVariable.of(
+                .map(varDecl -> InitializedVariable.outputOf(
                         parentId,
                         variableScope,
                         varDecl,

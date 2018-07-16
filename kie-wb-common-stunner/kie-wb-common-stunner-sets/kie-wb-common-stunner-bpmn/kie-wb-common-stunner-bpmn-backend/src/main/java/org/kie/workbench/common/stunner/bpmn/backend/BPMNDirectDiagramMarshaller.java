@@ -119,7 +119,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
 
         LOG.debug("Diagram marshalling completed successfully.");
         String outputString = renderToString(resource);
-        LOG.info(outputString);
+        LOG.trace(outputString);
         return outputString;
     }
 

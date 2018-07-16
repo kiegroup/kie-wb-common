@@ -25,6 +25,7 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ItemDefinition;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.OutputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
@@ -46,7 +47,7 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
 
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedVariable> outputAssociations =
+        List<InitializedOutputVariable> outputAssociations =
                 assignmentsInfo.createInitializedOutputVariables(
                         getId(), variableScope);
 
@@ -57,17 +58,14 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
             throw new IllegalArgumentException("Output Associations should be at most 1 in Catch Events");
         }
 
-        OutputVariableReference initializedVariable = (OutputVariableReference) outputAssociations.get(0);
+        InitializedOutputVariable initializedVariable = outputAssociations.get(0);
 
         DataOutput dataOutput = initializedVariable.getDataOutput();
         event.getDataOutputs().add(dataOutput);
         event.getOutputSet().getDataOutputRefs().add(dataOutput);
 
-        ItemDefinition itemDefinition = dataOutput.getItemSubjectRef();
-        this.addItemDefinition(itemDefinition);
-
-        DataOutputAssociation association = initializedVariable.getDataOutputAssociation();
-        event.getDataOutputAssociation().add(association);
+        this.addItemDefinition(dataOutput.getItemSubjectRef());
+        event.getDataOutputAssociation().add(initializedVariable.getDataOutputAssociation());
     }
 
     public void setSimulationSet(SimulationAttributeSet simulationSet) {

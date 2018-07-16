@@ -19,10 +19,9 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.List;
 
 import org.eclipse.bpmn2.DataInput;
-import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -43,7 +42,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     @Override
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedVariable> inputAssociations =
+        List<InitializedInputVariable> inputAssociations =
                 assignmentsInfo.createInitializedInputVariables(getId(), variableScope);
 
         if (inputAssociations.isEmpty()) {
@@ -60,15 +59,12 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
             return;
         }
 
-        this.addItemDefinition(initializedVariable.getItemDefinition());
         DataInput dataInput = initializedVariable.getDataInput();
         throwEvent.getDataInputs().add(dataInput);
         throwEvent.getInputSet().getDataInputRefs().add(dataInput);
 
-        DataInputAssociation dia = initializedVariable.getDataInputAssociation();
-        if (dia != null) {
-            throwEvent.getDataInputAssociation().add(dia);
-        }
+        this.addItemDefinition(initializedVariable.getItemDefinition());
+        throwEvent.getDataInputAssociation().add(initializedVariable.getDataInputAssociation());
     }
 
     @Override
