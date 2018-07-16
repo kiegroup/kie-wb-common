@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import java.util.List;
 
 import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
@@ -64,7 +65,10 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
         throwEvent.getInputSet().getDataInputRefs().add(dataInput);
 
         this.addItemDefinition(initializedVariable.getItemDefinition());
-        throwEvent.getDataInputAssociation().add(initializedVariable.getDataInputAssociation());
+        DataInputAssociation dataInputAssociation = initializedVariable.getDataInputAssociation();
+        if (dataInputAssociation != null) {
+            throwEvent.getDataInputAssociation().add(dataInputAssociation);
+        }
     }
 
     @Override

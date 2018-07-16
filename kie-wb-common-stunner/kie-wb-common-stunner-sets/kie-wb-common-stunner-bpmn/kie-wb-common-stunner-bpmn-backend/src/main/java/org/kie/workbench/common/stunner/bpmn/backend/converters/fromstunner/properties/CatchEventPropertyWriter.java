@@ -23,10 +23,7 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
-import org.eclipse.bpmn2.ItemDefinition;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.OutputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -65,7 +62,10 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
         event.getOutputSet().getDataOutputRefs().add(dataOutput);
 
         this.addItemDefinition(dataOutput.getItemSubjectRef());
-        event.getDataOutputAssociation().add(initializedVariable.getDataOutputAssociation());
+        DataOutputAssociation dataOutputAssociation = initializedVariable.getDataOutputAssociation();
+        if (dataOutputAssociation != null) {
+            event.getDataOutputAssociation().add(dataOutputAssociation);
+        }
     }
 
     public void setSimulationSet(SimulationAttributeSet simulationSet) {

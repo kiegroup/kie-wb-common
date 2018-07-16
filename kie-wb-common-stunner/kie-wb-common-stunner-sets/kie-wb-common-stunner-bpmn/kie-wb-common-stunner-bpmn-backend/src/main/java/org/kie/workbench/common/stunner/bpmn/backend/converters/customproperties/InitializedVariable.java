@@ -266,14 +266,14 @@ public abstract class InitializedVariable {
         }
     }
 
-    public static class OutputEmpty extends InitializedInputVariable {
+    public static class OutputEmpty extends InitializedOutputVariable {
 
         public OutputEmpty(String parentId, VariableDeclaration varDecl) {
             super(parentId, varDecl);
         }
 
         @Override
-        public DataInputAssociation getDataInputAssociation() {
+        public DataOutputAssociation getDataOutputAssociation() {
             return null;
         }
     }
