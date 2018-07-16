@@ -18,13 +18,17 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 
 import java.util.List;
 
+import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.AssignmentsInfos.isReservedIdentifier;
 
 public class ThrowEventPropertyWriter extends EventPropertyWriter {
@@ -34,6 +38,7 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     public ThrowEventPropertyWriter(ThrowEvent flowElement, VariableScope variableScope) {
         super(flowElement, variableScope);
         this.throwEvent = flowElement;
+        throwEvent.setInputSet(bpmn2.createInputSet());
     }
 
     @Override
@@ -47,33 +52,22 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
             throw new IllegalArgumentException("Input Associations should be at most 1 in Throw Events");
         }
 
-        InitializedVariable initializedVariable = inputAssociations.get(0);
-        String identifier = initializedVariable.getVariableDeclaration().getIdentifier();
+        InputVariableReference initializedVariable = (InputVariableReference) inputAssociations.get(0);
+        initializedVariable.setParentId(getId());
+        String identifier = initializedVariable.getIdentifier();
+
         if (isReservedIdentifier(identifier)) {
             return;
         }
-        DeclarationWriter dw = new DeclarationWriter(flowElement.getId(), initializedVariable.getVariableDeclaration());
 
-        this.addItemDefinition(dw.getItemDefinition());
-        throwEvent.setInputSet(dw.getInputSet());
-        throwEvent.getDataInputs().add(dw.getDataInput());
+        this.addItemDefinition(initializedVariable.getItemDefinition());
+        DataInput dataInput = initializedVariable.getDataInput();
+        throwEvent.getDataInputs().add(dataInput);
+        throwEvent.getInputSet().getDataInputRefs().add(dataInput);
 
-        InputAssignmentWriter dia = toInputAssignment(assignmentsInfo, dw);
+        DataInputAssociation dia = initializedVariable.getDataInputAssociation(variableScope);
         if (dia != null) {
-            throwEvent.getDataInputAssociation().add(dia.getAssociation());
-        }
-    }
-
-    private InputAssignmentWriter toInputAssignment(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
-        AssociationDeclaration targetVar = assignmentsInfo.getAssociations().lookupInput(dw.getVarId());
-        if (targetVar == null) {
-            return null;
-        }
-        VariableScope.Variable lookup = variableScope.lookup(targetVar.getSource());
-        if (lookup != null) {
-            return new InputAssignmentWriter(dw, lookup);
-        } else {
-            return null;
+            throwEvent.getDataInputAssociation().add(dia);
         }
     }
 

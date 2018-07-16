@@ -184,7 +184,7 @@ public class ParsedAssignmentsInfo {
         return getInputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupInput(varDecl.getIdentifier())))
+                .map(varDecl -> InitializedVariable.of(varDecl, associations.lookupInput(varDecl.getIdentifier())))
                 .collect(Collectors.toList());
     }
 
@@ -192,7 +192,7 @@ public class ParsedAssignmentsInfo {
         return getOutputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupOutput(varDecl.getIdentifier())))
+                .map(varDecl -> InitializedVariable.of(varDecl, associations.lookupOutput(varDecl.getIdentifier())))
                 .collect(Collectors.toList());
     }
 
