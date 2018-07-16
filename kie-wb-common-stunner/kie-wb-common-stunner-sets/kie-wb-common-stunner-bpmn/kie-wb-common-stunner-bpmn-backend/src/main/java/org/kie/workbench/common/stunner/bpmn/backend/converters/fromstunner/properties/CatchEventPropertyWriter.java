@@ -16,10 +16,13 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
+import java.util.List;
+
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -40,22 +43,27 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
 
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        assignmentsInfo
-                .getOutputAssociations()
-                .map(initializedVariable -> new OutputAssignmentWriter(
-                        flowElement.getId(),
-                        initializedVariable.getVariableDeclaration(),
-                        variableScope.lookup(initializedVariable.getInitializationValue())
-                ))
-                .forEach(doa -> {
-                    event.getDataOutputs().add(doa.getDataOutput());
-                    event.getOutputSet().getDataOutputRefs().add(doa.getDataOutput());
-                    this.addItemDefinition(doa.getItemDefinition());
-                    DataOutputAssociation association = doa.getAssociation();
-                    if (association != null) {
-                        event.getDataOutputAssociation().add(association);
-                    }
-                });
+        List<InitializedVariable> outputAssociations = assignmentsInfo.getOutputAssociations();
+        if (outputAssociations.isEmpty()) {
+            return;
+        }
+        if (outputAssociations.size() > 1) {
+            throw new IllegalArgumentException("Output Associations should be at most 1 in Catch Events");
+        }
+
+        InitializedVariable initializedVariable = outputAssociations.get(0);
+        OutputAssignmentWriter doa = new OutputAssignmentWriter(
+                flowElement.getId(),
+                initializedVariable.getVariableDeclaration(),
+                variableScope.lookup(initializedVariable.getInitializationValue()));
+
+        event.getDataOutputs().add(doa.getDataOutput());
+        event.getOutputSet().getDataOutputRefs().add(doa.getDataOutput());
+        this.addItemDefinition(doa.getItemDefinition());
+        DataOutputAssociation association = doa.getAssociation();
+        if (association != null) {
+            event.getDataOutputAssociation().add(association);
+        }
     }
 
     public void setSimulationSet(SimulationAttributeSet simulationSet) {

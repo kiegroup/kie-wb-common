@@ -180,18 +180,20 @@ public class ParsedAssignmentsInfo {
         return associations;
     }
 
-    public Stream<InitializedVariable> getInputAssociations() {
+    public List<InitializedVariable> getInputAssociations() {
         return getInputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupInput(varDecl.getIdentifier())));
+                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupInput(varDecl.getIdentifier())))
+                .collect(Collectors.toList());
     }
 
-    public Stream<InitializedVariable> getOutputAssociations() {
+    public List<InitializedVariable> getOutputAssociations() {
         return getOutputs()
                 .getDeclarations()
                 .stream()
-                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupOutput(varDecl.getIdentifier())));
+                .map(varDecl -> new InitializedVariable(varDecl, associations.lookupOutput(varDecl.getIdentifier())))
+                .collect(Collectors.toList());
     }
 
     public boolean isEmpty() {
