@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
@@ -28,6 +31,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.VariableScope;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
+import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts.asCData;
 
 public abstract class InitializedVariable {
 
@@ -210,7 +214,7 @@ public abstract class InitializedVariable {
 
         final String expression;
 
-        InputConstant(String parentId, VariableDeclaration varDecl, String expression) {
+        public InputConstant(String parentId, VariableDeclaration varDecl, String expression) {
             super(parentId, varDecl);
             this.expression = expression;
         }
@@ -227,7 +231,10 @@ public abstract class InitializedVariable {
             assignment.setTo(toExpr);
 
             FormalExpression fromExpr = bpmn2.createFormalExpression();
-            fromExpr.setBody(expression);
+            // this should be handled **outside** the marshallers!
+            String decodedExpression = decode(expression);
+            String cdataExpression = asCData(decodedExpression);
+            fromExpr.setBody(cdataExpression);
             assignment.setFrom(fromExpr);
 
             dataInputAssociation
@@ -236,6 +243,14 @@ public abstract class InitializedVariable {
             dataInputAssociation
                     .setTargetRef(getDataInput());
             return dataInputAssociation;
+        }
+
+        private String decode(String text) {
+            try {
+                return URLDecoder.decode(text, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new IllegalArgumentException(text, e);
+            }
         }
     }
 
