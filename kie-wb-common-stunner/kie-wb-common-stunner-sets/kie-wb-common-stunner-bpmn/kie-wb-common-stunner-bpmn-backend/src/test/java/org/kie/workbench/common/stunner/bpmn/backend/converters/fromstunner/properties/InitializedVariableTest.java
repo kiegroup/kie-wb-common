@@ -22,7 +22,6 @@ import java.net.URLEncoder;
 import org.eclipse.bpmn2.Assignment;
 import org.eclipse.bpmn2.FormalExpression;
 import org.junit.Test;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InputConstant;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.VariableDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Ids;
