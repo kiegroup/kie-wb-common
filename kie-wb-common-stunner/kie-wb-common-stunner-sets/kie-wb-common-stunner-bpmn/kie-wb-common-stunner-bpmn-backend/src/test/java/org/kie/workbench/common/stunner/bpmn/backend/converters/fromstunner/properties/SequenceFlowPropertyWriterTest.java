@@ -60,13 +60,16 @@ public class SequenceFlowPropertyWriterTest {
 
         BPMNEdge edge = p.getEdge();
         List<Point> expected = asList(
-                pointOf(sWidth / 2 + sx,
+                pointOf(sWidth + sx,
                         sHeight / 2 + sy),
-                pointOf(tWidth / 2 + tx,
+                pointOf(tx,
                         tHeight / 2 + ty));
         List<Point> waypoints = edge.getWaypoint();
 
-        assertPointsEqual(expected, waypoints, "when magnet location is null, waypoints should be located at the center of their node");
+        assertPointsEqual(expected, waypoints,
+                          "when magnet location is null: " +
+                                  "source magnet should be right/middle, " +
+                                  "target magnet should left/middle");
     }
 
     @Test
