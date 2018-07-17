@@ -60,7 +60,7 @@ public class RootProcessConverter extends AbstractProcessConverter {
         p.setName(diagramSet.getName().getValue());
         p.setDocumentation(diagramSet.getDocumentation().getValue());
 
-        process.setId(diagramSet.getId().getValue());
+        p.setId(diagramSet.getId().getValue());
         p.setPackage(diagramSet.getPackageProperty().getValue());
         p.setVersion(diagramSet.getVersion().getValue());
         p.setAdHoc(diagramSet.getAdHoc().getValue());
