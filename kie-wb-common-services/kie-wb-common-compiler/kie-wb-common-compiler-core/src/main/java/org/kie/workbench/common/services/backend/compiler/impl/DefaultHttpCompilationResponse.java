@@ -38,15 +38,13 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
     private List<String> mavenOutput;
     private String workingDir;
 
-    private List EMPTY_LIST = Collections.EMPTY_LIST;
+    private List<String> projectDependencies = Collections.emptyList();
+    private List<URI> projectDependenciesAsURI = Collections.emptyList();
+    private List<URL> projectDependenciesAsURL= Collections.emptyList();
 
-    private List<String> projectDependencies = EMPTY_LIST;
-    private List<URI> projectDependenciesAsURI = EMPTY_LIST;
-    private List<URL> projectDependenciesAsURL= EMPTY_LIST;
-
-    private List<String> targetContent = EMPTY_LIST;
-    private List<URI> targetContentAsURI = EMPTY_LIST;
-    private List<URL> targetContentAsURL = EMPTY_LIST;
+    private List<String> targetContent = Collections.emptyList();
+    private List<URI> targetContentAsURI = Collections.emptyList();
+    private List<URL> targetContentAsURL = Collections.emptyList();
 
     public DefaultHttpCompilationResponse(KieCompilationResponse res) {
         this.successful = res.isSuccessful();
@@ -85,7 +83,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     @Override
     public List<URI> getTargetContentAsURI() {
-        if (targetContentAsURI == null) {
+        if (targetContentAsURI.isEmpty()) {
             targetContentAsURI = getRawAsURIs(targetContent);
         }
         return targetContentAsURI;

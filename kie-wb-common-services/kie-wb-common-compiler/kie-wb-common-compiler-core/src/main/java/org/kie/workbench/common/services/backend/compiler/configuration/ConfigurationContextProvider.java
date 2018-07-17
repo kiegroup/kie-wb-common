@@ -29,15 +29,15 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This implementation first try to load configuration keys from environment variables then load properties with a files
- * called IncrementalCompiler.properties then an hard coded configuration like the following example
+ * called IncrementalCompiler.properties then an hard coded configuration
  * <p>
  * MAVEN_PLUGINS =org.apache.maven.plugins
  * MAVEN_COMPILER_PLUGIN =maven-compiler-plugin
- * MAVEN_COMPILER_PLUGIN_VERSION=3.7.0
+ * MAVEN_COMPILER_PLUGIN_VERSION=....
  * <p>
  * ALTERNATIVE_COMPILER_PLUGINS =io.takari.maven.plugins
  * ALTERNATIVE_COMPILER_PLUGIN =takari-lifecycle-plugin
- * ALTERNATIVE_COMPILER_PLUGIN_VERSION =1.13.5
+ * ALTERNATIVE_COMPILER_PLUGIN_VERSION =....
  * <p>
  * KIE_MAVEN_PLUGINS=org.kie
  * KIE_MAVEN_PLUGIN=kie-maven-plugin

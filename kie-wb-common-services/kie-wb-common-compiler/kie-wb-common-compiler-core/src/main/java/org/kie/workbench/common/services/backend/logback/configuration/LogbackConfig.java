@@ -60,23 +60,15 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
 
         Logger mavenLog = loggerContext.getLogger("org.apache.maven");
         mavenLog.setLevel(Level.INFO);
-        //mavenLog.addAppender(appender);
-        //mavenLog.addAppender(consoleAppender);
 
         Logger droolsLog = loggerContext.getLogger("org.drools");
         droolsLog.setLevel(Level.INFO);
-        //droolsLog.addAppender(appender);
-        //droolsLog.addAppender(consoleAppender);
 
         Logger kieLog = loggerContext.getLogger("org.kie");
         kieLog.setLevel(Level.INFO);
-        //kieLog.addAppender(appender);
-        //kieLog.addAppender(consoleAppender);
 
         Logger compilerLog = loggerContext.getLogger("org.kie.workbench.common.services.backend.compiler");
-        compilerLog.setLevel(Level.DEBUG);
-        //compilerLog.addAppender(appender);
-        //compilerLog.addAppender(consoleAppender);
+        compilerLog.setLevel(Level.INFO);
 
         StatusPrinter.print(loggerContext);
     }
@@ -91,7 +83,6 @@ public class LogbackConfig extends ContextAwareBase implements Configurator {
         PatternLayoutEncoder pl = new PatternLayoutEncoder();
         pl.setContext(context);
         pl.setPattern("%d [%thread] %level %logger{35} - %msg%n");
-        //pl.setPattern("%d [%thread] %level %mdc %logger{35} - %msg%n");
         pl.start();
         return pl;
     }

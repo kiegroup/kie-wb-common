@@ -31,21 +31,20 @@ import org.uberfire.java.nio.file.Path;
  * it contains a boolean flag as a result of the build, an optional String error message,
  * and an optional List of String with the maven output
  */
-public class DefaultCompilationResponse implements CompilationResponse, Serializable {
+public class DefaultCompilationResponse implements CompilationResponse,
+                                                   Serializable {
 
     private Boolean successful;
     private List<String> mavenOutput;
     private Path workingDir;
 
-    private List EMPTY_LIST = Collections.EMPTY_LIST;
+    private List<String> projectDependencies = Collections.emptyList();
+    private List<URI> projectDependenciesAsURI = Collections.emptyList();
+    private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> projectDependencies = EMPTY_LIST;
-    private List<URI> projectDependenciesAsURI = EMPTY_LIST;
-    private List<URL> projectDependenciesAsURL = EMPTY_LIST;
-
-    private List<String> targetContent = EMPTY_LIST;
-    private List<URI> targetContentAsURI = EMPTY_LIST;
-    private List<URL> targetContentAsURL = EMPTY_LIST;
+    private List<String> targetContent = Collections.emptyList();
+    private List<URI> targetContentAsURI = Collections.emptyList();
+    private List<URL> targetContentAsURL = Collections.emptyList();
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,
@@ -96,7 +95,7 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
 
     @Override
     public List<URI> getTargetContentAsURI() {
-        if (targetContentAsURI == null) {
+        if (targetContentAsURI.isEmpty()) {
             targetContentAsURI = getRawAsURIs(targetContent);
         }
         return targetContentAsURI;
@@ -127,37 +126,35 @@ public class DefaultCompilationResponse implements CompilationResponse, Serializ
         if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUris(projectDependencies);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
     public List<URL> getDependenciesAsURL() {
-        if (projectDependencies != null && !projectDependenciesAsURL.isEmpty()) {
+        if (projectDependenciesAsURL.isEmpty()) {
             projectDependenciesAsURL = getProjectDependenciesAsURLs();
         }
         return projectDependenciesAsURL;
     }
 
     private List<URL> getProjectDependenciesAsURLs() {
-        if(projectDependencies != null && !projectDependencies.isEmpty()){
+        if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUrls(projectDependencies);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private List<URL> getRawAsURLs(final List<String> targetContent) {
-        if(targetContent != null && !targetContent.isEmpty()){
+        if (targetContent != null && !targetContent.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURLs(targetContent);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
-
-
 
     private List<URI> getRawAsURIs(final List<String> targetContent) {
         if (targetContent != null && !targetContent.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURIs(targetContent);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 }

@@ -42,15 +42,13 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     private List<String> mavenOutput;
     private String workingDir;
 
-    private List EMPTY_LIST = Collections.EMPTY_LIST;
-
     private List<String> projectDependencies;
-    private List<URI> projectDependenciesAsURI = EMPTY_LIST;
-    private List<URL> projectDependenciesAsURL = EMPTY_LIST;
+    private List<URI> projectDependenciesAsURI = Collections.emptyList();
+    private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> targetContent = EMPTY_LIST;
-    private List<URI> targetContentAsURI = EMPTY_LIST;
-    private List<URL> targetContentAsURL = EMPTY_LIST;
+    private List<String> targetContent ;
+    private List<URI> targetContentAsURI = Collections.emptyList();
+    private List<URL> targetContentAsURL = Collections.emptyList();
 
 
     public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res){
@@ -118,7 +116,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUris(projectDependencies);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -133,7 +131,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         if(projectDependencies != null && !projectDependencies.isEmpty()){
             return CompilerClassloaderUtils.readAllDepsAsUrls(projectDependencies);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     @Override
@@ -159,16 +157,16 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     }
 
     private List<URL> getRawAsURLs(final List<String> targetContent) {
-        if(!targetContent.isEmpty()){
+        if(targetContent != null && !targetContent.isEmpty()){
             return CompilerClassloaderUtils.processScannedFilesAsURLs(targetContent);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 
     private List<URI> getRawAsURIs(final List<String> targetContent) {
-        if (!targetContent.isEmpty()) {
+        if (targetContent != null && !targetContent.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURIs(targetContent);
         }
-        return EMPTY_LIST;
+        return Collections.emptyList();
     }
 }
