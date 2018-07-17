@@ -15,9 +15,14 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -58,5 +63,53 @@ public class DefaultIncrementalCompilerEnablerTest extends BaseCompilerTest {
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
         assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+    }
+
+    @Test
+    public void processDisabledMavenDefaultCompilerTest() {
+
+        Properties props = loadProperties("IncrementalCompiler.properties");
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+                                                               info,
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               Boolean.FALSE);
+
+        byte[] encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
+        String pomAsAstring = new String(encoded,
+                                         StandardCharsets.UTF_8);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).doesNotContain(TestConstants.MAVEN_ARTIFACT);
+
+        IncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
+        ProcessedPoms poms = enabler.process(req);
+        assertThat(poms).isNotNull();
+        assertThat(poms.getResult()).isTrue();
+        assertThat(poms.getProjectPoms()).hasSize(1);
+        String pom = poms.getProjectPoms().get(0);
+        assertThat(pom).isEqualTo(tmpRoot.toString() + "/dummy/pom.xml");
+        encoded = Files.readAllBytes(Paths.get(tmpRoot + "/dummy/pom.xml"));
+        pomAsAstring = new String(encoded,
+                                  StandardCharsets.UTF_8);
+        assertThat(pomAsAstring).contains(TestConstants.KIE_TAKARI_LIFECYCLE_ARTIFACT);
+        assertThat(pomAsAstring).contains(TestConstants.MAVEN_ARTIFACT);
+        String mavenCompilerVersion = props.getProperty(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION.name());
+        assertThat(pomAsAstring).contains("<version>"+ mavenCompilerVersion +"</version>");
+    }
+
+
+    private Properties loadProperties(String propName) {
+        Properties prop = new Properties();
+        InputStream in = getClass().getClassLoader().getResourceAsStream(propName);
+        if (in == null) {
+            logger.info("{} not available with the classloader, skip to the next ConfigurationStrategy. \n", propName);
+        } else {
+            try {
+                prop.load(in);
+                in.close();
+            } catch (IOException e) {
+                logger.error(e.getMessage());
+            }
+        }
+        return prop;
     }
 }

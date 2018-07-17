@@ -167,6 +167,7 @@ public class DefaultPomEditor implements PomEditor {
             //if default maven compiler is not present we add the skip and phase none  to avoid its use
             Plugin disabledDefaultCompiler = new Plugin();
             disabledDefaultCompiler.setArtifactId(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT));
+            disabledDefaultCompiler.setVersion(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION));
             disableMavenCompilerAlreadyPresent(disabledDefaultCompiler);
             build.addPlugin(disabledDefaultCompiler);
             defaultCompilerPluginPresent = Boolean.TRUE;

@@ -56,6 +56,8 @@ public class DefaultPomEditorTest extends BaseCompilerTest {
         });
     }
 
+
+
     @Test
     public void writeTest() {
         assertThat(editor.getHistory()).isEmpty();
