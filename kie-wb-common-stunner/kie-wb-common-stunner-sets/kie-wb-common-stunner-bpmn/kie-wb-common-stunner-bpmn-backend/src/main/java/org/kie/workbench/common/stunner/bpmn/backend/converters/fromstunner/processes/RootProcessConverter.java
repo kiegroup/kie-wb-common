@@ -29,13 +29,14 @@ import org.kie.workbench.common.stunner.core.graph.content.definition.Definition
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class RootProcessConverter extends AbstractProcessConverter {
+public class RootProcessConverter {
 
+    private final ProcessConverterDelegate delegate;
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;
 
     public RootProcessConverter(DefinitionsBuildingContext context, PropertyWriterFactory propertyWriterFactory, ConverterFactory converterFactory) {
-        super(converterFactory);
+        this.delegate = new ProcessConverterDelegate(converterFactory);
         this.context = context;
         this.propertyWriterFactory = propertyWriterFactory;
     }
@@ -43,8 +44,8 @@ public class RootProcessConverter extends AbstractProcessConverter {
     public ProcessPropertyWriter convertProcess() {
         ProcessPropertyWriter processRoot = convertProcessNode(context.firstNode());
 
-        super.convertChildNodes(processRoot, context);
-        super.convertEdges(processRoot, context);
+        delegate.convertChildNodes(processRoot, context);
+        delegate.convertEdges(processRoot, context);
 
         return processRoot;
     }

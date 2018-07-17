@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -35,7 +35,7 @@ import org.kie.workbench.common.stunner.core.graph.store.GraphNodeStoreImpl;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class AbstractProcessConverterTest {
+public class ProcessConverterDelegateTest {
 
     @Test
     public void convertDockedEdges() {
@@ -81,7 +81,7 @@ public class AbstractProcessConverterTest {
         }).doesNotThrowAnyException();
     }
 
-    static class MyProcessConverter extends AbstractProcessConverter {
+    static class MyProcessConverter extends ProcessConverterDelegate {
 
         public MyProcessConverter(ConverterFactory converterFactory) {
             super(converterFactory);
