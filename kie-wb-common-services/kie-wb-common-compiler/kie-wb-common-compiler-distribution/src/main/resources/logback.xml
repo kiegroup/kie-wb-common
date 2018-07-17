@@ -3,9 +3,6 @@
 
   <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <!-- %l lowers performance -->
-      <!--<pattern>%d [%t] %-5p %l%n  %m%n</pattern>-->
-      <!--<pattern>%d [%t] %-5p %m%n</pattern>-->
       <pattern>%d [%thread] %level %logger{35} - %msg%n</pattern>
     </encoder>
   </appender>
@@ -20,18 +17,6 @@
       </appender>
     </sift>
   </appender>
-
-  <!--<logger name="org.kie.workbench.common.services.backend.compiler" level="INFO" additivity="false">
-    <appender-ref ref="consoleAppender"/>
-  </logger>-->
-
-  <!--<logger name="org.apache.maven" level="INFO" additivity="false">
-    <appender-ref ref="KieSift"/>
-  </logger>-->
-
-  <!--<logger name="org.apache.maven" level="INFO" additivity="false">
-    <appender-ref ref="consoleAppender"/>
-  </logger>-->
 
   <logger name="org.jboss.resteasy" level="INFO"/>
   <logger name="org.drools" level="INFO"/>
