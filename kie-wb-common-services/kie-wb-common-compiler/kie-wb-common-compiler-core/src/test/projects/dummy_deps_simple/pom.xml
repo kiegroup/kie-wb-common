@@ -31,29 +31,6 @@
         <version>1.13.5</version>
         <executions>
           <execution>
-            <id>compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <configuration>
-              <compilerId>jdt</compilerId>
-            </configuration>
-          </execution>
-        </executions>
-        <configuration>
-          <compilerId>jdt</compilerId>
-          <source>1.8</source>
-          <target>1.8</target>
-          <failOnError>true</failOnError>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-lifecycle-plugin</artifactId>
-        <version>1.13.5</version>
-        <executions>
-          <execution>
             <id>default-compile</id>
             <phase>compile</phase>
             <goals>
@@ -65,11 +42,12 @@
           <compilerId>jdt</compilerId>
           <source>1.8</source>
           <target>1.8</target>
-          <failOnError>false</failOnError>
+          <failOnError>true</failOnError>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
         <executions>
           <execution>
             <id>default-compile</id>

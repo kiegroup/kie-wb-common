@@ -30,7 +30,7 @@
                             <goal>compile</goal>
                         </goals>
                         <configuration>
-                            <compilerId>javac</compilerId>
+                            <compilerId>jdt</compilerId>
                         </configuration>
                     </execution>
                 </executions>
