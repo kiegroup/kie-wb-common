@@ -23,7 +23,6 @@ import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InputVariableReference;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
 

@@ -27,7 +27,6 @@ import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputOutputSpecification;
 import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.OutputSet;
-import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
@@ -99,7 +98,6 @@ public class ActivityPropertyWriter extends PropertyWriter {
                 activity.getDataOutputAssociations().add(dataOutputAssociation);
             }
         }
-
     }
 
     private InputOutputSpecification getIoSpecification() {
