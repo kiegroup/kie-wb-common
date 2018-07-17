@@ -45,34 +45,52 @@ public abstract class InitializedVariable {
         itemDefinition.setStructureRef(getType());
     }
 
-    public static InitializedInputVariable inputOf(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
+    public static InitializedInputVariable inputOf(
+            String parentId,
+            VariableScope variableScope,
+            VariableDeclaration varDecl,
+            AssociationDeclaration associationDeclaration) {
+
         if (associationDeclaration == null) {
-            return (InitializedInputVariable) of(
-                    parentId,
-                    variableScope,
-                    varDecl,
-                    new AssociationDeclaration(
-                            AssociationDeclaration.Direction.Input,
-                            AssociationDeclaration.Type.FromTo,
-                            varDecl.getIdentifier(),
-                            null));
+            return new InputEmpty(parentId, varDecl);
         }
-        return (InitializedInputVariable) of(parentId, variableScope, varDecl, associationDeclaration);
+        AssociationDeclaration.Type type = associationDeclaration.getType();
+        switch (type) {
+            case FromTo:
+                if (associationDeclaration.getTarget() == null) {
+                    return new InputEmpty(parentId, varDecl);
+                } else {
+                    return new InputConstant(parentId, varDecl, associationDeclaration.getSource());
+                }
+            case SourceTarget:
+                return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
+            default:
+                throw new IllegalArgumentException("Unknown type " + type);
+        }
     }
 
-    public static InitializedOutputVariable outputOf(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
+    public static InitializedOutputVariable outputOf(
+            String parentId,
+            VariableScope variableScope,
+            VariableDeclaration varDecl,
+            AssociationDeclaration associationDeclaration) {
+
         if (associationDeclaration == null) {
-            return (InitializedOutputVariable) of(
-                    parentId,
-                    variableScope,
-                    varDecl,
-                    new AssociationDeclaration(
-                            AssociationDeclaration.Direction.Output,
-                            AssociationDeclaration.Type.FromTo,
-                            varDecl.getIdentifier(),
-                            null));
+            return new OutputEmpty(parentId, varDecl);
         }
-        return (InitializedOutputVariable) of(parentId, variableScope, varDecl, associationDeclaration);
+        AssociationDeclaration.Type type = associationDeclaration.getType();
+        switch (type) {
+            case FromTo:
+                if (associationDeclaration.getTarget() == null) {
+                    return new OutputEmpty(parentId, varDecl);
+                } else {
+                    throw new IllegalArgumentException("Cannot assign constant to output variable");
+                }
+            case SourceTarget:
+                return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget());
+            default:
+                throw new IllegalArgumentException("Unknown type " + type);
+        }
     }
 
     public String getIdentifier() {
@@ -83,55 +101,8 @@ public abstract class InitializedVariable {
         return type;
     }
 
-    static InitializedVariable of(String parentId, VariableScope variableScope, VariableDeclaration varDecl, AssociationDeclaration associationDeclaration) {
-        if (associationDeclaration == null) {
-            return new Empty(parentId, varDecl);
-        } else {
-            AssociationDeclaration.Type type = associationDeclaration.getType();
-            AssociationDeclaration.Direction direction = associationDeclaration.getDirection();
-            switch (type) {
-                case FromTo:
-                    switch (direction) {
-                        case Input:
-                            if (associationDeclaration.getTarget() == null) {
-                                return new InputEmpty(parentId, varDecl);
-                            } else {
-                                return new InputConstant(parentId, varDecl, associationDeclaration.getSource());
-                            }
-                        case Output:
-                            if (associationDeclaration.getTarget() == null) {
-                                return new OutputEmpty(parentId, varDecl);
-                            } else {
-                                throw new IllegalArgumentException("Cannot assign constant to output variable");
-                            }
-                        default:
-                            throw new IllegalArgumentException("Unknown direction " + direction);
-                    }
-
-                case SourceTarget:
-                    switch (direction) {
-                        case Input:
-                            return new InputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getSource());
-                        case Output:
-                            return new OutputVariableReference(parentId, variableScope, varDecl, associationDeclaration.getTarget());
-                        default:
-                            throw new IllegalArgumentException("Unknown direction " + direction);
-                    }
-                default:
-                    throw new IllegalArgumentException("Unknown type " + type);
-            }
-        }
-    }
-
     public ItemDefinition getItemDefinition() {
         return itemDefinition;
-    }
-
-    public static class Empty extends InitializedVariable {
-
-        public Empty(String parentId, VariableDeclaration varDecl) {
-            super(parentId, varDecl);
-        }
     }
 
     public static abstract class InitializedInputVariable extends InitializedVariable {
