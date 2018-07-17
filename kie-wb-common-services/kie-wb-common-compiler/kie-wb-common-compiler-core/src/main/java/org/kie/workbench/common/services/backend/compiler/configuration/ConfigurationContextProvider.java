@@ -58,8 +58,7 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
 
     private void initializeWorkingConfig() {
         final List<ConfigurationStrategy> confs = new ArrayList<>(Arrays.asList(new ConfigurationEnvironmentStrategy(),
-                                                                                new ConfigurationPropertiesStrategy(),
-                                                                                new ConfigurationStaticStrategy()));
+                                                                                new ConfigurationPropertiesStrategy()));
         confs.sort(Comparator.comparing(Order::getOrder));
         for (ConfigurationStrategy item : confs) {
             if (item.isValid()) {
