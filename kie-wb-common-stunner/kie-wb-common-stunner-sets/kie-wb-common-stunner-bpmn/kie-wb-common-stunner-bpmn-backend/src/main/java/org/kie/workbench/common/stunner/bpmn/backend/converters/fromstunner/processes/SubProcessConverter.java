@@ -41,7 +41,7 @@ import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.Factories.bpmn2;
 
-public class SubProcessConverter extends AbstractProcessConverter {
+public class SubProcessConverter extends ProcessConverterDelegate {
 
     private final DefinitionsBuildingContext context;
     private final PropertyWriterFactory propertyWriterFactory;

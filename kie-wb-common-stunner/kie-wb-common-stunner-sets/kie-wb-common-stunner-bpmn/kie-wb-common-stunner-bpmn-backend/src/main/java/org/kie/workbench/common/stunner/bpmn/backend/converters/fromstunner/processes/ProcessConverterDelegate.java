@@ -39,15 +39,15 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AbstractProcessConverter {
+class ProcessConverterDelegate {
 
     private final ConverterFactory converterFactory;
 
-    public AbstractProcessConverter(ConverterFactory converterFactory) {
+    ProcessConverterDelegate(ConverterFactory converterFactory) {
         this.converterFactory = converterFactory;
     }
 
-    public void convertChildNodes(
+    void convertChildNodes(
             ElementContainer p,
             DefinitionsBuildingContext context) {
 
@@ -85,7 +85,7 @@ public class AbstractProcessConverter {
         p.addLaneSet(collect.values());
     }
 
-    public void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {
+    void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {
         context.childEdges()
                 .forEach(e -> {
                     BasePropertyWriter pSrc = p.getChildElement(e.getSourceNode().getUUID());
