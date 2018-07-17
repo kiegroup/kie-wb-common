@@ -16,13 +16,20 @@
 
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties;
 
-import java.util.Objects;
+import java.util.List;
 
 import bpsim.ElementParameters;
 import org.eclipse.bpmn2.Activity;
+import org.eclipse.bpmn2.DataInput;
+import org.eclipse.bpmn2.DataInputAssociation;
+import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.InputOutputSpecification;
+import org.eclipse.bpmn2.InputSet;
+import org.eclipse.bpmn2.OutputSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.AssociationDeclaration;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationSets;
 import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.AssignmentsInfo;
@@ -59,51 +66,40 @@ public class ActivityPropertyWriter extends PropertyWriter {
         final ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
         final InputOutputSpecification ioSpec = getIoSpecification();
 
-        assignmentsInfo
-                .getInputs().getDeclarations()
-                .stream()
-                .filter(varDecl -> !isReservedIdentifier(varDecl.getIdentifier()))
-                .map(varDecl -> new DeclarationWriter(flowElement.getId(), varDecl))
-                .peek(dw -> {
-                    this.addItemDefinition(dw.getItemDefinition());
-                    ioSpec.getInputSets().add(dw.getInputSet());
-                    ioSpec.getDataInputs().add(dw.getDataInput());
-                })
-                .map(dw -> toInputAssignmentStream(assignmentsInfo, dw))
-                .filter(Objects::nonNull)
-                .forEach(dia -> {
-                    activity.getDataInputAssociations().add(dia.getAssociation());
-                });
+        List<InitializedInputVariable> inputs =
+                assignmentsInfo.createInitializedInputVariables(getId(), variableScope);
 
-        assignmentsInfo.getAssociations()
-                .getOutputs()
-                .stream()
-                .map(declaration -> new OutputAssignmentWriter(
-                        flowElement.getId(),
-                        // source is an output
-                        assignmentsInfo
-                                .getOutputs()
-                                .lookup(declaration.getSource()),
-                        // target is a variable
-                        variableScope.lookup(declaration.getTarget())
-                ))
-                .forEach(doa -> {
-                    this.addItemDefinition(doa.getItemDefinition());
-                    ioSpec.getOutputSets().add(doa.getOutputSet());
-                    ioSpec.getDataOutputs().add(doa.getDataOutput());
-                    DataOutputAssociation association = doa.getAssociation();
-                    if (association != null) {
-                        activity.getDataOutputAssociations().add(association);
-                    }
-                });
-    }
+        for (InitializedInputVariable input : inputs) {
+            if (isReservedIdentifier(input.getIdentifier())) {
+                continue;
+            }
 
-    private InputAssignmentWriter toInputAssignmentStream(ParsedAssignmentsInfo assignmentsInfo, DeclarationWriter dw) {
-        AssociationDeclaration targetVar = assignmentsInfo.getAssociations().lookupInput(dw.getVarId());
-        if (targetVar == null) {
-            return null;
+            DataInput dataInput = input.getDataInput();
+            getInputSet(ioSpec).getDataInputRefs().add(dataInput);
+            ioSpec.getDataInputs().add(dataInput);
+
+            this.addItemDefinition(input.getItemDefinition());
+            DataInputAssociation dataInputAssociation = input.getDataInputAssociation();
+            if (dataInputAssociation != null) {
+                activity.getDataInputAssociations().add(dataInputAssociation);
+            }
         }
-        return InputAssignmentWriter.fromDeclaration(targetVar, dw, variableScope);
+
+        List<InitializedOutputVariable> outputs =
+                assignmentsInfo.createInitializedOutputVariables(getId(), variableScope);
+
+        for (InitializedOutputVariable output : outputs) {
+            DataOutput dataOutput = output.getDataOutput();
+            getOutputSet(ioSpec).getDataOutputRefs().add(dataOutput);
+            ioSpec.getDataOutputs().add(dataOutput);
+
+            this.addItemDefinition(output.getItemDefinition());
+            DataOutputAssociation dataOutputAssociation = output.getDataOutputAssociation();
+            if (dataOutputAssociation != null) {
+                activity.getDataOutputAssociations().add(dataOutputAssociation);
+            }
+        }
+
     }
 
     private InputOutputSpecification getIoSpecification() {
@@ -113,5 +109,29 @@ public class ActivityPropertyWriter extends PropertyWriter {
             activity.setIoSpecification(ioSpecification);
         }
         return ioSpecification;
+    }
+
+    private InputSet getInputSet(InputOutputSpecification ioSpecification) {
+        List<InputSet> inputSets = ioSpecification.getInputSets();
+        InputSet inputSet;
+        if (inputSets.isEmpty()) {
+            inputSet = bpmn2.createInputSet();
+            inputSets.add(inputSet);
+        } else {
+            inputSet = inputSets.get(0);
+        }
+        return inputSet;
+    }
+
+    private OutputSet getOutputSet(InputOutputSpecification ioSpecification) {
+        List<OutputSet> outputSets = ioSpecification.getOutputSets();
+        OutputSet outputSet;
+        if (outputSets.isEmpty()) {
+            outputSet = bpmn2.createOutputSet();
+            outputSets.add(outputSet);
+        } else {
+            outputSet = outputSets.get(0);
+        }
+        return outputSet;
     }
 }

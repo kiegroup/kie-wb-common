@@ -44,25 +44,25 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
 
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedOutputVariable> outputAssociations =
+        List<InitializedOutputVariable> outputs =
                 assignmentsInfo.createInitializedOutputVariables(
                         getId(), variableScope);
 
-        if (outputAssociations.isEmpty()) {
+        if (outputs.isEmpty()) {
             return;
         }
-        if (outputAssociations.size() > 1) {
+        if (outputs.size() > 1) {
             throw new IllegalArgumentException("Output Associations should be at most 1 in Catch Events");
         }
 
-        InitializedOutputVariable initializedVariable = outputAssociations.get(0);
+        InitializedOutputVariable output = outputs.get(0);
 
-        DataOutput dataOutput = initializedVariable.getDataOutput();
+        DataOutput dataOutput = output.getDataOutput();
         event.getDataOutputs().add(dataOutput);
         event.getOutputSet().getDataOutputRefs().add(dataOutput);
 
         this.addItemDefinition(dataOutput.getItemSubjectRef());
-        DataOutputAssociation dataOutputAssociation = initializedVariable.getDataOutputAssociation();
+        DataOutputAssociation dataOutputAssociation = output.getDataOutputAssociation();
         if (dataOutputAssociation != null) {
             event.getDataOutputAssociation().add(dataOutputAssociation);
         }

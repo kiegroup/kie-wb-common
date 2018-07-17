@@ -43,29 +43,28 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     @Override
     public void setAssignmentsInfo(AssignmentsInfo info) {
         ParsedAssignmentsInfo assignmentsInfo = ParsedAssignmentsInfo.of(info);
-        List<InitializedInputVariable> inputAssociations =
+        List<InitializedInputVariable> inputs =
                 assignmentsInfo.createInitializedInputVariables(getId(), variableScope);
 
-        if (inputAssociations.isEmpty()) {
+        if (inputs.isEmpty()) {
             return;
         }
-        if (inputAssociations.size() > 1) {
+        if (inputs.size() > 1) {
             throw new IllegalArgumentException("Input Associations should be at most 1 in Throw Events");
         }
 
-        InputVariableReference initializedVariable = (InputVariableReference) inputAssociations.get(0);
-        String identifier = initializedVariable.getIdentifier();
+        InitializedInputVariable input = inputs.get(0);
 
-        if (isReservedIdentifier(identifier)) {
+        if (isReservedIdentifier(input.getIdentifier())) {
             return;
         }
 
-        DataInput dataInput = initializedVariable.getDataInput();
+        DataInput dataInput = input.getDataInput();
         throwEvent.getDataInputs().add(dataInput);
         throwEvent.getInputSet().getDataInputRefs().add(dataInput);
 
-        this.addItemDefinition(initializedVariable.getItemDefinition());
-        DataInputAssociation dataInputAssociation = initializedVariable.getDataInputAssociation();
+        this.addItemDefinition(input.getItemDefinition());
+        DataInputAssociation dataInputAssociation = input.getDataInputAssociation();
         if (dataInputAssociation != null) {
             throwEvent.getDataInputAssociation().add(dataInputAssociation);
         }

@@ -41,7 +41,7 @@ public abstract class InitializedVariable {
         this.identifier = varDecl.getIdentifier();
         this.type = varDecl.getType();
         this.itemDefinition = bpmn2.createItemDefinition();
-        itemDefinition.setId(parentId);
+        itemDefinition.setId(Ids.item(parentId));
         itemDefinition.setStructureRef(getType());
     }
 
@@ -96,7 +96,7 @@ public abstract class InitializedVariable {
                             if (associationDeclaration.getTarget() == null) {
                                 return new InputEmpty(parentId, varDecl);
                             } else {
-                                return new InputConstant(parentId, varDecl, associationDeclaration.getTarget());
+                                return new InputConstant(parentId, varDecl, associationDeclaration.getSource());
                             }
                         case Output:
                             if (associationDeclaration.getTarget() == null) {
@@ -140,6 +140,7 @@ public abstract class InitializedVariable {
 
         public InitializedInputVariable(String parentId, VariableDeclaration varDecl) {
             super(parentId, varDecl);
+            getItemDefinition().setId(Ids.dataInputItem(parentId, varDecl.getIdentifier()));
             this.dataInput = dataInputOf(
                     parentId, varDecl.getIdentifier(), getItemDefinition());
         }
@@ -157,6 +158,7 @@ public abstract class InitializedVariable {
 
         public InitializedOutputVariable(String parentId, VariableDeclaration varDecl) {
             super(parentId, varDecl);
+            getItemDefinition().setId(Ids.dataOutputItem(parentId, varDecl.getIdentifier()));
             this.dataOutput = dataOutputOf(
                     parentId,
                     varDecl.getIdentifier(),
