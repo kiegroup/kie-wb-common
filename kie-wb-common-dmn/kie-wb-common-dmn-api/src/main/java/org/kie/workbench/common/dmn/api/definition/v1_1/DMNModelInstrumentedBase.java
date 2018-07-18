@@ -28,6 +28,10 @@ import org.kie.workbench.common.stunner.core.definition.builder.Builder;
 
 public abstract class DMNModelInstrumentedBase implements DMNDefinition {
 
+    public static final String URI_FEEL = "http://www.omg.org/spec/FEEL/20140401";
+    public static final String URI_DMN = "http://www.omg.org/spec/DMN/20151101/dmn.xsd";
+    public static final String URI_KIE = "http://www.drools.org/kie/dmn/1.1";
+
     private Map<String, String> nsContext = new HashMap<>();
     private Map<QName, String> additionalAttributes = new HashMap<>();
 
@@ -36,9 +40,9 @@ public abstract class DMNModelInstrumentedBase implements DMNDefinition {
     @Portable
     public enum Namespace {
 
-        FEEL("feel", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_FEEL),
-        DMN("dmn", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN),
-        KIE("kie", org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_KIE);
+        FEEL("feel", URI_FEEL),
+        DMN("dmn", URI_DMN),
+        KIE("kie", URI_KIE);
 
         private String prefix;
         private String uri;
