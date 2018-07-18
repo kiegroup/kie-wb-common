@@ -53,8 +53,8 @@ public class DefinitionsConverter {
         p.setProcess(pp.getProcess());
         p.setDiagram(pp.getBpmnDiagram());
         p.setRelationship(pp.getRelationship());
-        p.addAllRootElements(pp.getRootElements());
         p.addAllRootElements(pp.getItemDefinitions());
+        p.addAllRootElements(pp.getRootElements());
 
         return definitions;
     }

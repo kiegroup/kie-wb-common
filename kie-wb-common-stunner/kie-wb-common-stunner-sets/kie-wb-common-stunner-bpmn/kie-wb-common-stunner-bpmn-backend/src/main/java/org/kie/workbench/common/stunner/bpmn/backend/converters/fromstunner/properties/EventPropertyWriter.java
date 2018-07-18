@@ -21,6 +21,7 @@ import org.eclipse.bpmn2.ErrorEventDefinition;
 import org.eclipse.bpmn2.Event;
 import org.eclipse.bpmn2.EventDefinition;
 import org.eclipse.bpmn2.FormalExpression;
+import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.Message;
 import org.eclipse.bpmn2.MessageEventDefinition;
 import org.eclipse.bpmn2.Signal;
@@ -49,7 +50,6 @@ public abstract class EventPropertyWriter extends PropertyWriter {
     public abstract void setAssignmentsInfo(AssignmentsInfo assignmentsInfo);
 
     public void addMessage(MessageRef messageRef) {
-        Message message = bpmn2.createMessage();
         MessageEventDefinition messageEventDefinition =
                 bpmn2.createMessageEventDefinition();
         addEventDefinition(messageEventDefinition);
@@ -59,9 +59,16 @@ public abstract class EventPropertyWriter extends PropertyWriter {
             return;
         }
 
-        message.setName(name);
-        messageEventDefinition.setMessageRef(message);
+        ItemDefinition itemDefinition = bpmn2.createItemDefinition();
+        itemDefinition.setId(Ids.messageItem(name));
 
+        Message message = bpmn2.createMessage();
+        message.setName(name);
+        message.setItemRef(itemDefinition);
+        messageEventDefinition.setMessageRef(message);
+        CustomAttribute.msgref.of(messageEventDefinition).set(name);
+
+        addItemDefinition(itemDefinition);
         addRootElement(message);
     }
 
