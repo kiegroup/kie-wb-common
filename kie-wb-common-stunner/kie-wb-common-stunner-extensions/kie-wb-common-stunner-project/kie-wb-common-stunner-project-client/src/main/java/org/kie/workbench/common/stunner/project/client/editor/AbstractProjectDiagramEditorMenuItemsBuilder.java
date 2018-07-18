@@ -15,9 +15,6 @@
  */
 package org.kie.workbench.common.stunner.project.client.editor;
 
-import javax.enterprise.context.Dependent;
-import javax.inject.Inject;
-
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -36,21 +33,19 @@ import org.kie.workbench.common.stunner.project.client.resources.i18n.StunnerPro
 import org.uberfire.mvp.Command;
 import org.uberfire.workbench.model.menu.MenuItem;
 
-@Dependent
-public class ProjectDiagramEditorMenuItemsBuilder {
+public abstract class AbstractProjectDiagramEditorMenuItemsBuilder {
 
-    private final ClientTranslationService translationService;
+    protected final ClientTranslationService translationService;
 
-    private final PopupUtil popupUtil;
+    protected final PopupUtil popupUtil;
 
-    protected ProjectDiagramEditorMenuItemsBuilder() {
+    protected AbstractProjectDiagramEditorMenuItemsBuilder() {
         this(null,
              null);
     }
 
-    @Inject
-    public ProjectDiagramEditorMenuItemsBuilder(final ClientTranslationService translationService,
-                                                final PopupUtil popupUtil) {
+    public AbstractProjectDiagramEditorMenuItemsBuilder(final ClientTranslationService translationService,
+                                                        final PopupUtil popupUtil) {
         this.translationService = translationService;
         this.popupUtil = popupUtil;
     }
@@ -99,10 +94,10 @@ public class ProjectDiagramEditorMenuItemsBuilder {
                     setIcon(IconType.ERASER);
                     setTitle(translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM));
                     addClickHandler(clickEvent ->
-                                            ProjectDiagramEditorMenuItemsBuilder.this.executeWithConfirm(command,
-                                                                                                         translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
-                                                                                                         translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
-                                                                                                         translationService.getValue(CoreTranslationMessages.CONFIRM_CLEAR_DIAGRAM)));
+                                            AbstractProjectDiagramEditorMenuItemsBuilder.this.executeWithConfirm(command,
+                                                                                                                 translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
+                                                                                                                 translationService.getValue(CoreTranslationMessages.CLEAR_DIAGRAM),
+                                                                                                                 translationService.getValue(CoreTranslationMessages.CONFIRM_CLEAR_DIAGRAM)));
                 }});
     }
 
@@ -198,7 +193,7 @@ public class ProjectDiagramEditorMenuItemsBuilder {
                                    final Command exportJPGCommand,
                                    final Command exportSVGCommand,
                                    final Command exportPDFCommand,
-                                   final Command exportBPMNCommand) {
+                                   final Command exportAsRawCommand) {
         final DropDownMenu menu = new DropDownMenu() {{
             setPull(Pull.RIGHT);
         }};
@@ -226,11 +221,12 @@ public class ProjectDiagramEditorMenuItemsBuilder {
             setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_PDF));
             addClickHandler(event -> exportPDFCommand.execute());
         }});
-        menu.add(new AnchorListItem(translationService.getValue(CoreTranslationMessages.EXPORT_BPMN)) {{
+        final String exportAsRawLabel = getExportAsRawLabel();
+        menu.add(new AnchorListItem(exportAsRawLabel) {{
             setIcon(IconType.FILE_TEXT_O);
             setIconPosition(IconPosition.LEFT);
-            setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_BPMN));
-            addClickHandler(event -> exportBPMNCommand.execute());
+            setTitle(exportAsRawLabel);
+            addClickHandler(event -> exportAsRawCommand.execute());
         }});
 
         final Button button = new Button() {{
@@ -247,6 +243,8 @@ public class ProjectDiagramEditorMenuItemsBuilder {
                                                                button);
         return buildItem(group);
     }
+
+    protected abstract String getExportAsRawLabel();
 
     public MenuItem newValidateItem(final Command command) {
         return buildItem(buildValidateItem(command));
