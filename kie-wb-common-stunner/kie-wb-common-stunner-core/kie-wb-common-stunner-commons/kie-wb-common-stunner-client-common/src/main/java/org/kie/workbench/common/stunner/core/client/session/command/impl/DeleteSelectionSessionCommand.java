@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.session.command.impl;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -108,14 +109,14 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
             if (selectedItems != null && !selectedItems.isEmpty()) {
                 selectionControl.clearSelection();
 
-                timerUtils.executeWithDelay(()-> {
+                timerUtils.executeWithDelay(() -> {
                     // Execute the commands.
                     final CommandResult<CanvasViolation> result =
                             sessionCommandManager.execute(canvasHandler,
-                                                          canvasCommandFactory
-                                                                  .delete(selectedItems.stream()
-                                                                                  .map(uuid -> canvasHandler.getGraphIndex().get(uuid))
-                                                                                  .collect(Collectors.toList())));
+                                                          canvasCommandFactory.delete(selectedItems.stream()
+                                                                                              .map(uuid -> canvasHandler.getGraphIndex().get(uuid))
+                                                                                              .filter(Objects::nonNull)
+                                                                                              .collect(Collectors.toList())));
                     // Check the results.
                     if (!CommandUtils.isError(result)) {
                         callback.onSuccess();
