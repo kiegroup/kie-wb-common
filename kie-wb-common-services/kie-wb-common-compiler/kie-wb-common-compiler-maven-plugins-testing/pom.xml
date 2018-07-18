@@ -105,6 +105,38 @@
           <groupId>com.google.collections</groupId>
           <artifactId>google-collections</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.shared</groupId>
+          <artifactId>maven-common-artifact-filters</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.doxia</groupId>
+          <artifactId>doxia-site-renderer</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>classworlds</groupId>
+          <artifactId>classworlds</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-container-default</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.shared</groupId>
+          <artifactId>maven-artifact-transfer</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.reporting</groupId>
+          <artifactId>maven-reporting-impl</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.maven.reporting</groupId>
+          <artifactId>maven-reporting-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -141,6 +173,16 @@
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-test-utils</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jboss.spec.javax.el</groupId>
+          <artifactId>jboss-el-api_3.0_spec</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jboss.spec.javax.interceptor</groupId>
+          <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
