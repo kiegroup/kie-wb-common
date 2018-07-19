@@ -30,7 +30,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Id;
 import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
-import org.kie.workbench.common.forms.adf.definitions.annotations.FormField;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
@@ -73,17 +72,16 @@ public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefin
     @Property
     protected Id id;
 
-    @PropertySet
-    @FormField
     @Valid
+    @PropertySet
     protected BackgroundSet backgroundSet;
 
+    @Valid
     @PropertySet
-    @FormField
     protected FontSet fontSet;
 
+    @Valid
     @PropertySet
-    @FormField
     protected RectangleDimensionsSet dimensionsSet;
 
     public DMNDiagram() {
@@ -134,23 +132,11 @@ public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefin
         return backgroundSet;
     }
 
-    public void setBackgroundSet(final BackgroundSet backgroundSet) {
-        this.backgroundSet = backgroundSet;
-    }
-
     public FontSet getFontSet() {
         return fontSet;
     }
 
-    public void setFontSet(final FontSet fontSet) {
-        this.fontSet = fontSet;
-    }
-
     public RectangleDimensionsSet getDimensionsSet() {
         return dimensionsSet;
-    }
-
-    public void setDimensionsSet(final RectangleDimensionsSet dimensionsSet) {
-        this.dimensionsSet = dimensionsSet;
     }
 }
