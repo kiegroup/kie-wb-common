@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -49,7 +50,6 @@ import static org.mockito.Mockito.when;
 @RunWith(Parameterized.class)
 public class VariableNameTextBoxTest {
 
-    private static final String ALPHA_NUM_REGEXP = "^[a-zA-Z0-9\\-\\_]*$";
     private static final String ERROR_MESSAGE = "some error";
     private static final String ERROR_REMOVED = "some error reg exp";
     private static final String ERROR_TYPED = "some error reg exp2";
@@ -100,7 +100,7 @@ public class VariableNameTextBoxTest {
         doCallRealMethod().when(textBox).setup();
         doCallRealMethod().when(textBox).addBlurHandler(any(BlurHandler.class));
         doCallRealMethod().when(textBox).addKeyPressHandler(any(KeyPressHandler.class));
-        textBox.setRegExp(ALPHA_NUM_REGEXP,
+        textBox.setRegExp(StringUtils.ALPHA_NUM_REGEXP,
                           ERROR_REMOVED,
                           ERROR_TYPED);
         INVALID_VALUES.clear();
