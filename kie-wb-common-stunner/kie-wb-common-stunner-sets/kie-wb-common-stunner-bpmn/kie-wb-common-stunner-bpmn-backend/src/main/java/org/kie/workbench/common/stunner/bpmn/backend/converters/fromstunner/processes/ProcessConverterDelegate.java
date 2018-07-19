@@ -105,8 +105,10 @@ class ProcessConverterDelegate {
                             (ActivityPropertyWriter) p.getChildElement(e.getSourceNode().getUUID());
                     BoundaryEventPropertyWriter pTgt =
                             (BoundaryEventPropertyWriter) p.getChildElement(e.getTargetNode().getUUID());
-
-                    pTgt.setParentActivity(pSrc);
+                    // if it's null, then this edge is not related to this process. ignore.
+                    if (pTgt != null) {
+                        pTgt.setParentActivity(pSrc);
+                    }
                 });
 
         context.edges()

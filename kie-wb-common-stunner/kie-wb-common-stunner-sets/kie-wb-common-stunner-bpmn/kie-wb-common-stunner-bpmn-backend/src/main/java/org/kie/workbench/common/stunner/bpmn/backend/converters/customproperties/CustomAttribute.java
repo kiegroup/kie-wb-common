@@ -101,7 +101,7 @@ public class CustomAttribute<T> {
 
         @Override
         public void setValue(BaseElement element, Point2D value) {
-            throw new UnsupportedOperationException("not yet implemented");
+            setStringValue(element, String.format("%.1f^%.1f|", value.getX(), value.getY()));
         }
     };
 
