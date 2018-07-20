@@ -23,17 +23,13 @@ import javax.validation.Valid;
 import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
-import org.kie.workbench.common.dmn.api.definition.DMNViewDefinition;
-import org.kie.workbench.common.dmn.api.property.background.BackgroundSet;
-import org.kie.workbench.common.dmn.api.property.dimensions.RectangleDimensionsSet;
+import org.kie.workbench.common.dmn.api.definition.DMNDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Id;
-import org.kie.workbench.common.dmn.api.property.font.FontSet;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FieldParam;
 import org.kie.workbench.common.forms.adf.definitions.annotations.FormDefinition;
 import org.kie.workbench.common.forms.adf.definitions.settings.FieldPolicy;
 import org.kie.workbench.common.stunner.core.definition.annotation.Definition;
 import org.kie.workbench.common.stunner.core.definition.annotation.Property;
-import org.kie.workbench.common.stunner.core.definition.annotation.PropertySet;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Category;
 import org.kie.workbench.common.stunner.core.definition.annotation.definition.Labels;
 import org.kie.workbench.common.stunner.core.factory.graph.NodeFactory;
@@ -57,7 +53,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
         "knowledge-requirement",
         "authority-requirement"
 })
-public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefinition {
+public class DMNDiagram extends DMNModelInstrumentedBase implements DMNDefinition {
 
     @Category
     public static final transient String stunnerCategory = Categories.DIAGRAM;
@@ -69,39 +65,19 @@ public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefin
 
     protected Definitions definitions;
 
+    @Valid
     @Property
     protected Id id;
 
-    @Valid
-    @PropertySet
-    protected BackgroundSet backgroundSet;
-
-    @Valid
-    @PropertySet
-    protected FontSet fontSet;
-
-    @Valid
-    @PropertySet
-    protected RectangleDimensionsSet dimensionsSet;
-
     public DMNDiagram() {
         this(new Id(),
-             new Definitions(),
-             new BackgroundSet(),
-             new FontSet(),
-             new RectangleDimensionsSet());
+             new Definitions());
     }
 
     public DMNDiagram(final @MapsTo("id") Id id,
-                      final @MapsTo("definitions") Definitions definitions,
-                      final @MapsTo("backgroundSet") BackgroundSet backgroundSet,
-                      final @MapsTo("fontSet") FontSet fontSet,
-                      final @MapsTo("dimensionsSet") RectangleDimensionsSet dimensionsSet) {
+                      final @MapsTo("definitions") Definitions definitions) {
         this.id = id;
         this.definitions = definitions;
-        this.backgroundSet = backgroundSet;
-        this.fontSet = fontSet;
-        this.dimensionsSet = dimensionsSet;
     }
 
     public Id getId() {
@@ -126,17 +102,5 @@ public class DMNDiagram extends DMNModelInstrumentedBase implements DMNViewDefin
 
     public Set<String> getStunnerLabels() {
         return stunnerLabels;
-    }
-
-    public BackgroundSet getBackgroundSet() {
-        return backgroundSet;
-    }
-
-    public FontSet getFontSet() {
-        return fontSet;
-    }
-
-    public RectangleDimensionsSet getDimensionsSet() {
-        return dimensionsSet;
     }
 }
