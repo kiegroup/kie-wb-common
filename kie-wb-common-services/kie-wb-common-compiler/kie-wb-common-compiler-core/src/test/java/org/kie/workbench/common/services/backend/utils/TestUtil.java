@@ -96,7 +96,7 @@ public class TestUtil {
         return mavenRepository;
     }
 
-    public static Path createAndCopyToDircetory(Path root, String dirName, String copyTree) throws IOException {
+    public static Path createAndCopyToDirectory(Path root, String dirName, String copyTree) throws IOException {
         //NIO creation and copy content
         Path dir = Files.createDirectories(Paths.get(root.toString(), dirName));
         TestUtil.copyTree(Paths.get(copyTree), dir);

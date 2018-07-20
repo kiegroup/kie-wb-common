@@ -16,6 +16,10 @@
 package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 
 import java.io.File;
+import java.net.URLClassLoader;
+import java.util.Optional;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,8 +28,10 @@ import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
+import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,14 +75,14 @@ public class BuildInMemoryClasspathMojoTest {
 
 
     @Test
-    public void getClassloaderFromAllDependenciesTestSimple(){
+    public void getClassloaderFromAllDependenciesSimpleTest(){
 
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{ MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{ MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);
@@ -86,20 +92,31 @@ public class BuildInMemoryClasspathMojoTest {
     }
 
     @Test
-    public void getClassloaderFromAllDependenciesTestComplex() {
+    public void getClassloaderFromAllDependenciesComplexTest() {
 
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
                                                                Boolean.FALSE);
 
         CompilationResponse res = compiler.compile(req);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getDependencies().isEmpty()).isFalse();
         assertThat(res.getDependencies().size()).isEqualTo(7);
+    }
+
+    @Test
+    public void testCompilerClassloaderUtilsTests(){
+        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
+        Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
+                                                                                                               mavenRepo.toAbsolutePath().toString());
+        assertThat(classloaderOptional.isPresent()).isTrue();
+        ClassLoader classloader = classloaderOptional.get();
+        URLClassLoader urlsc = (URLClassLoader) classloader;
+        assertThat(urlsc.getURLs()).hasSize(7);
     }
 
     @AfterClass
@@ -110,13 +127,11 @@ public class BuildInMemoryClasspathMojoTest {
     }
 
     public static void rm(File f) {
-        if (f.isDirectory()) {
-            for (File c : f.listFiles()) {
-                rm(c);
-            }
-        }
-        if (!f.delete()) {
+        try{
+            FileUtils.deleteDirectory(f);
+        }catch (Exception e){
             logger.error("Couldn't delete file {}", f);
+            logger.error(e.getMessage(), e);
         }
     }
 

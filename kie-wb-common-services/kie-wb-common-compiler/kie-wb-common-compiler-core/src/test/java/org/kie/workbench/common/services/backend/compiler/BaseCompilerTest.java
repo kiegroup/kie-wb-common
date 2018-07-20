@@ -47,7 +47,7 @@ public class BaseCompilerTest {
             mavenRepo = TestUtil.createMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
             alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
-            Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", prjName);
+            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", prjName);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -73,7 +73,7 @@ public class BaseCompilerTest {
     }
 
     protected WorkspaceCompilationInfo createdNewPrjInRepo(String dirName, String prjName) throws IOException {
-        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, dirName, prjName);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, dirName, prjName);
         return new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
     }
 

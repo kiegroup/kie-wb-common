@@ -62,7 +62,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
 
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         tmpRoot = Files.createTempDirectory("repo");
-        temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -101,7 +101,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
         tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
         //end NIO
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
@@ -134,7 +134,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_INCREMENTAL);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_INCREMENTAL);
         //end NIO
 
         //compiler

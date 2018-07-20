@@ -66,7 +66,7 @@ public class ClassLoaderProviderTest {
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
         tmpRoot = Files.createTempDirectory("repo");
-        tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR);
+        tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR);
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
@@ -173,7 +173,7 @@ public class ClassLoaderProviderTest {
          * */
         String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -225,7 +225,7 @@ public class ClassLoaderProviderTest {
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));

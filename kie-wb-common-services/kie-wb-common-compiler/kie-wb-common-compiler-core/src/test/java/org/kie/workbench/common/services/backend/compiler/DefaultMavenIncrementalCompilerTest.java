@@ -57,7 +57,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testIsValidMavenHome() throws Exception {
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -76,7 +76,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testIncrementalWithPluginEnabled() throws Exception {
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -100,7 +100,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
 
@@ -130,7 +130,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_INCREMENTAL_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_INCREMENTAL_DIR);
 
         //compiler
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
@@ -203,7 +203,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testError() throws Exception {
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot,"dummy",ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
 
         //compiler
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);

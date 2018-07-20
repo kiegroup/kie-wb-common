@@ -56,7 +56,7 @@ public class KieClassLoaderProviderTest {
 
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         tmpRoot = Files.createTempDirectory("repo");
-        tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR);
+        tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR);
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 

@@ -44,7 +44,7 @@ public class KieMavenOutputTest {
     @Test
     public void testOutputWithTakari() throws Exception {
         Path tmpRoot = Files.createTempDirectory("repo");
-        Path tmpNio = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
+        Path tmpNio = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 

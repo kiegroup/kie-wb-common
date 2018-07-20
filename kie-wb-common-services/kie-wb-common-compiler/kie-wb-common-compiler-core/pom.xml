@@ -73,6 +73,22 @@
     </plugins>
   </build>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-io</artifactId>
+        <version>3.0.0</version>
+      </dependency>
+
+      <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-artifact-transfer</artifactId>
+      <version>0.9.1</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
 
     <!-- Transitive deps -->
@@ -106,16 +122,6 @@
           <artifactId>uberfire-commons</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-api</artifactId>
     </dependency>
 
     <dependency>
@@ -298,6 +304,10 @@
           <groupId>org.kie.soup</groupId>
           <artifactId>kie-soup-maven-integration</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.aether</groupId>
+          <artifactId>aether-util</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -368,8 +378,8 @@
       <artifactId>kie-ci</artifactId>
       <exclusions>
         <exclusion>
-          <groupId>org.apache.ant</groupId>
-          <artifactId>ant</artifactId>
+          <groupId>org.kie.soup</groupId>
+          <artifactId>kie-soup-maven-integration</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -388,6 +398,13 @@
           <groupId>uberfire-maven-support</groupId>
         </exclusion>
       </exclusions>
+    </dependency>
+
+    <!-- log -->
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
 
     <dependency>
@@ -412,6 +429,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-component-annotations</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <classifier>no_aop</classifier>
@@ -420,6 +442,12 @@
     <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.aether</groupId>
+          <artifactId>aether-util</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -458,13 +486,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-interpolation</artifactId>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-annotations</artifactId>
+      <artifactId>plexus-interpolation</artifactId>
     </dependency>
 
     <dependency>
@@ -514,7 +542,47 @@
       </exclusions>
     </dependency>
 
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-api</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-impl</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
     <!-- End incremental compiler -->
+
+   <!-- Runtime for maven in memory classpath plugin -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-io</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-artifact-transfer</artifactId>
+      <scope>runtime</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-bean</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.sonatype.sisu</groupId>
+          <artifactId>sisu-inject-plexus</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Test-->
 
     <dependency>
       <groupId>org.assertj</groupId>
@@ -541,6 +609,10 @@
           <groupId>org.jboss.spec.javax.interceptor</groupId>
           <artifactId>jboss-interceptors-api_1.2_spec</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.uberfire</groupId>
+          <artifactId>uberfire-metadata-backend-lucene</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
 
@@ -549,7 +621,6 @@
       <artifactId>uberfire-nio2-fs</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>

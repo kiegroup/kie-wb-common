@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
-import java.util.HashMap;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.drools.core.rule.TypeMetaInfo;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
@@ -80,7 +78,7 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        Path temp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_ALL_RESOURCES);
+        Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_ALL_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
@@ -133,7 +131,7 @@ public class KieMetadataTest {
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
         try {
-            Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+            Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
             AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -181,7 +179,7 @@ public class KieMetadataTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        Path tmp = TestUtil.createAndCopyToDircetory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
