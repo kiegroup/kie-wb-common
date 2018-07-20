@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.stunner.project.client.editor;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.ui.IsWidget;
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Button;
@@ -194,54 +195,44 @@ public abstract class AbstractProjectDiagramEditorMenuItemsBuilder {
                                    final Command exportSVGCommand,
                                    final Command exportPDFCommand,
                                    final Command exportAsRawCommand) {
-        final DropDownMenu menu = new DropDownMenu() {{
-            setPull(Pull.RIGHT);
-        }};
-        menu.add(new AnchorListItem(translationService.getValue(CoreTranslationMessages.EXPORT_PNG)) {{
-            setIcon(IconType.FILE_IMAGE_O);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_PNG));
-            addClickHandler(event -> exportPNGCommand.execute());
-        }});
-        menu.add(new AnchorListItem(translationService.getValue(CoreTranslationMessages.EXPORT_JPG)) {{
-            setIcon(IconType.FILE_IMAGE_O);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_JPG));
-            addClickHandler(event -> exportJPGCommand.execute());
-        }});
-        menu.add(new AnchorListItem(translationService.getValue(CoreTranslationMessages.EXPORT_SVG)) {{
-            setIcon(IconType.FILE_IMAGE_O);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_SVG));
-            addClickHandler(event -> exportSVGCommand.execute());
-        }});
-        menu.add(new AnchorListItem(translationService.getValue(CoreTranslationMessages.EXPORT_PDF)) {{
-            setIcon(IconType.FILE_PDF_O);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(translationService.getValue(CoreTranslationMessages.EXPORT_PDF));
-            addClickHandler(event -> exportPDFCommand.execute());
-        }});
-        final String exportAsRawLabel = getExportAsRawLabel();
-        menu.add(new AnchorListItem(exportAsRawLabel) {{
-            setIcon(IconType.FILE_TEXT_O);
-            setIconPosition(IconPosition.LEFT);
-            setTitle(exportAsRawLabel);
-            addClickHandler(event -> exportAsRawCommand.execute());
-        }});
+        final DropDownMenu menu = GWT.create(DropDownMenu.class);
+        menu.setPull(Pull.RIGHT);
 
-        final Button button = new Button() {{
-            setToggleCaret(true);
-            setDataToggle(Toggle.DROPDOWN);
-            setIcon(IconType.DOWNLOAD);
-            setSize(ButtonSize.SMALL);
-            setTitle(translationService.getValue(StunnerProjectClientConstants.DOWNLOAD_DIAGRAM));
-        }};
-        final IsWidget group = MenuUtils.buildHasEnabledWidget(new ButtonGroup() {{
-                                                                   add(button);
-                                                                   add(menu);
-                                                               }},
+        menu.add(makeExportMenuItemWidget(translationService.getValue(CoreTranslationMessages.EXPORT_PNG),
+                                          exportPNGCommand));
+        menu.add(makeExportMenuItemWidget(translationService.getValue(CoreTranslationMessages.EXPORT_JPG),
+                                          exportJPGCommand));
+        menu.add(makeExportMenuItemWidget(translationService.getValue(CoreTranslationMessages.EXPORT_SVG),
+                                          exportSVGCommand));
+        menu.add(makeExportMenuItemWidget(translationService.getValue(CoreTranslationMessages.EXPORT_PDF),
+                                          exportPDFCommand));
+        menu.add(makeExportMenuItemWidget(getExportAsRawLabel(),
+                                          exportAsRawCommand));
+
+        final Button button = GWT.create(Button.class);
+        final ButtonGroup buttonGroup = GWT.create(ButtonGroup.class);
+        buttonGroup.add(button);
+        buttonGroup.add(menu);
+        button.setToggleCaret(true);
+        button.setDataToggle(Toggle.DROPDOWN);
+        button.setIcon(IconType.DOWNLOAD);
+        button.setSize(ButtonSize.SMALL);
+        button.setTitle(translationService.getValue(StunnerProjectClientConstants.DOWNLOAD_DIAGRAM));
+
+        final IsWidget group = MenuUtils.buildHasEnabledWidget(buttonGroup,
                                                                button);
         return buildItem(group);
+    }
+
+    private AnchorListItem makeExportMenuItemWidget(final String caption,
+                                                    final Command onClickCommand) {
+        final AnchorListItem exportMenuItemWidget = GWT.create(AnchorListItem.class);
+        exportMenuItemWidget.setIcon(IconType.FILE_IMAGE_O);
+        exportMenuItemWidget.setIconPosition(IconPosition.LEFT);
+        exportMenuItemWidget.setText(caption);
+        exportMenuItemWidget.setTitle(caption);
+        exportMenuItemWidget.addClickHandler(event -> onClickCommand.execute());
+        return exportMenuItemWidget;
     }
 
     protected abstract String getExportAsRawLabel();
