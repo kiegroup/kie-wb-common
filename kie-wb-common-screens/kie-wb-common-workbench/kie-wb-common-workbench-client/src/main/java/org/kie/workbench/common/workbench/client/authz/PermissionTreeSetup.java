@@ -22,7 +22,6 @@ import javax.inject.Inject;
 
 import org.guvnor.structure.client.security.OrganizationalUnitTreeProvider;
 import org.guvnor.structure.client.security.RepositoryTreeProvider;
-import org.kie.workbench.common.workbench.client.EditorIds;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.authz.EditorTreeProvider;
 import org.uberfire.client.authz.PerspectiveTreeProvider;
