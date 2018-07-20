@@ -55,6 +55,7 @@ public class SubProcessPropertyWriter extends ActivityPropertyWriter implements 
     public void addChildElement(PropertyWriter p) {
         this.childElements.put(p.getElement().getId(), p);
         process.getFlowElements().add(p.getFlowElement());
+        p.setParent(this);
 
         ElementParameters simulationParameters = p.getSimulationParameters();
         if (simulationParameters != null) {

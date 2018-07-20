@@ -86,19 +86,6 @@ class ProcessConverterDelegate {
     }
 
     void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {
-        context.childEdges()
-                .forEach(e -> {
-                    BasePropertyWriter pSrc = p.getChildElement(e.getSourceNode().getUUID());
-                    // if it's null, then it's a root: skip it
-                    if (pSrc != null) {
-                        BasePropertyWriter pTgt = p.getChildElement(e.getTargetNode().getUUID());
-                        // if it's null, then this edge is not related to this process. ignore.
-                        if (pTgt != null) {
-                            pTgt.setParent(pSrc);
-                        }
-                    }
-                });
-
         context.dockEdges()
                 .forEach(e -> {
                     ActivityPropertyWriter pSrc =
