@@ -164,6 +164,12 @@
       <artifactId>kie-soup-commons</artifactId>
     </dependency>
 
+    <!-- Drools DMN model -->
+    <dependency>
+      <groupId>org.kie</groupId>
+      <artifactId>kie-dmn-model</artifactId>
+    </dependency>
+
   </dependencies>
 
 </project>

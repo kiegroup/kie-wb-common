@@ -41,7 +41,7 @@ public class QNameFieldConverterTest {
 
     private static final String ENCODED_FEEL_DATE = "[][date][" + DMNModelInstrumentedBase.Namespace.FEEL.getPrefix() + "]";
 
-    private static final String ENCODED_DMN_UNKNOWN = "[" + DMNModelInstrumentedBase.URI_DMN + "]" +
+    private static final String ENCODED_DMN_UNKNOWN = "[" + org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN + "]" +
             "[unknown]" +
             "[" + DMNModelInstrumentedBase.Namespace.DMN.getPrefix() + "]";
 
@@ -98,7 +98,7 @@ public class QNameFieldConverterTest {
     public void testToWidgetValueWhenDMNDiagramDoesNotDefinesNameSpaces() {
         converter.setDMNModel(new Decision());
 
-        final String encoding = converter.toWidgetValue(new QName(DMNModelInstrumentedBase.URI_DMN,
+        final String encoding = converter.toWidgetValue(new QName(org.kie.dmn.model.v1_1.DMNModelInstrumentedBase.URI_DMN,
                                                                   "unknown",
                                                                   DMNModelInstrumentedBase.Namespace.DMN.getPrefix()));
         assertEquals(ENCODED_DMN_UNKNOWN, encoding);
