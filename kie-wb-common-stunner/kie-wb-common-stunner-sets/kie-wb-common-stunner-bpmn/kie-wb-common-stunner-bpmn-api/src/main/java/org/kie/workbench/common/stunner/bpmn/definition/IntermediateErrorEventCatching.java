@@ -88,7 +88,7 @@ public class IntermediateErrorEventCatching extends BaseCatchingIntermediateEven
     @Override
     protected void initLabels() {
         super.initLabels();
-        labels.remove("all");
+        labels.remove("base_element");
         labels.remove("lane_child");
         labels.remove("IntermediateEventsMorph");
         labels.remove("sequence_end");
