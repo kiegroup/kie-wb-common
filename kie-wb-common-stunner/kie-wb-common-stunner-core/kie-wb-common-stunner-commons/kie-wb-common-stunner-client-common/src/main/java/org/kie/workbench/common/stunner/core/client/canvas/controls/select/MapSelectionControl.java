@@ -114,8 +114,8 @@ public final class MapSelectionControl<H extends AbstractCanvasHandler>
     }
 
     @Override
-    public SelectionControl<H, Element> select(final Element element) {
-        return select(Collections.singletonList(element.getUUID()));
+    public SelectionControl<H, Element> select(final String uuid) {
+        return select(Collections.singletonList(uuid));
     }
 
     @Override

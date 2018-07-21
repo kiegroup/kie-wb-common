@@ -115,13 +115,14 @@ public abstract class AbstractCanvasHandlerRegistrationControl<H extends Abstrac
     protected Set<String> getRegisteredElements() {
         return handlers.entrySet()
                 .stream()
-                .filter(entry ->  Objects.nonNull(entry.getValue()) && !entry.getValue().isEmpty())
+                .filter(entry -> Objects.nonNull(entry.getValue()))
+                .filter(entry -> !entry.getValue().isEmpty())
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toSet());
     }
 
     protected boolean isRegistered(final String uuid) {
-        return handlers.containsKey(uuid) && !handlers.get(uuid).isEmpty();
+        return handlers.containsKey(uuid);
     }
 
     protected void deregister(final String uuid) {

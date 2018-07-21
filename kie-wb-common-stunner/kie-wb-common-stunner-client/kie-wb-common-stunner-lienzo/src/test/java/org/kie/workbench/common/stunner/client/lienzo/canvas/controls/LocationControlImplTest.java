@@ -47,6 +47,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.Layer;
 import org.kie.workbench.common.stunner.core.client.canvas.command.DefaultCanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.canvas.command.UpdateElementPositionCommand;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
+import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommand;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
@@ -169,6 +170,9 @@ public class LocationControlImplTest {
     @Mock
     private EventSourceMock<ShapeLocationsChangedEvent> shapeLocationsChangedEvent;
 
+    @Mock
+    private EventSourceMock<CanvasSelectionEvent> canvasSelectionEvent;
+
     private CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
     private ShapeViewExtStub shapeView;
     private LocationControlImpl tested;
@@ -207,7 +211,7 @@ public class LocationControlImplTest {
         when(wiresManager.getSelectionManager()).thenReturn(selectionManager);
         when(selectionManager.getControl()).thenReturn(wiresCompositeControl);
 
-        this.tested = new LocationControlImpl(canvasCommandFactory, shapeLocationsChangedEvent);
+        this.tested = new LocationControlImpl(canvasCommandFactory, shapeLocationsChangedEvent, canvasSelectionEvent);
         tested.setCommandManagerProvider(() -> commandManager);
     }
 
@@ -343,8 +347,7 @@ public class LocationControlImplTest {
         tested.init(canvasHandler);
         tested.register(element);
         tested.deregister(element);
-        verify(shapeEventHandler,
-               times(3)).removeHandler(any(ViewHandler.class));
+        verify(shapeEventHandler, atLeastOnce()).removeHandler(any(ViewHandler.class));
         assertFalse(tested.isRegistered(element));
     }
 

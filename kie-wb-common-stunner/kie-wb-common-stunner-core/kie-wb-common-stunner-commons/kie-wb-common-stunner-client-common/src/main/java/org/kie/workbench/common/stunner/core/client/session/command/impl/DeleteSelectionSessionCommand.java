@@ -39,7 +39,6 @@ import org.kie.workbench.common.stunner.core.client.service.ClientRuntimeError;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 import org.kie.workbench.common.stunner.core.client.session.Session;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
-import org.kie.workbench.common.stunner.core.client.util.TimerUtils;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Element;
@@ -60,7 +59,6 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     private final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager;
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
     private final Event<CanvasClearSelectionEvent> clearSelectionEvent;
-    private final TimerUtils timerUtils;
 
     protected DeleteSelectionSessionCommand() {
         this(null,
@@ -72,18 +70,10 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
     public DeleteSelectionSessionCommand(final @Session SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
                                          final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
                                          final Event<CanvasClearSelectionEvent> clearSelectionEvent) {
-        this(sessionCommandManager, canvasCommandFactory, clearSelectionEvent, new TimerUtils());
-    }
-
-    DeleteSelectionSessionCommand(final SessionCommandManager<AbstractCanvasHandler> sessionCommandManager,
-                                  final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                                  final Event<CanvasClearSelectionEvent> clearSelectionEvent,
-                                  final TimerUtils timerUtils) {
         super(false);
         this.sessionCommandManager = sessionCommandManager;
         this.canvasCommandFactory = canvasCommandFactory;
         this.clearSelectionEvent = clearSelectionEvent;
-        this.timerUtils = timerUtils;
     }
 
     @Override
@@ -106,25 +96,24 @@ public class DeleteSelectionSessionCommand extends AbstractSelectionAwareSession
             final AbstractCanvasHandler canvasHandler = getSession().getCanvasHandler();
             final SelectionControl<AbstractCanvasHandler, Element> selectionControl = getSession().getSelectionControl();
             final Collection<String> selectedItems = selectionControl.getSelectedItems();
-            if (selectedItems != null && !selectedItems.isEmpty()) {
-                selectionControl.clearSelection();
 
-                timerUtils.executeWithDelay(() -> {
-                    // Execute the commands.
-                    final CommandResult<CanvasViolation> result =
-                            sessionCommandManager.execute(canvasHandler,
-                                                          canvasCommandFactory.delete(selectedItems.stream()
-                                                                                              .map(uuid -> canvasHandler.getGraphIndex().get(uuid))
-                                                                                              .filter(Objects::nonNull)
-                                                                                              .collect(Collectors.toList())));
-                    // Check the results.
-                    if (!CommandUtils.isError(result)) {
-                        callback.onSuccess();
-                    } else {
-                        callback.onError((V) new ClientRuntimeError("Error deleing elements [message=" +
-                                                                            result.toString() + "]"));
-                    }
-                }, 100);
+            clearSelectionEvent.fire(new CanvasClearSelectionEvent(canvasHandler));
+
+            if (selectedItems != null && !selectedItems.isEmpty()) {
+                // Execute the commands.
+                final CommandResult<CanvasViolation> result =
+                        sessionCommandManager.execute(canvasHandler,
+                                                      canvasCommandFactory.delete(selectedItems.stream()
+                                                                                          .map(uuid -> canvasHandler.getGraphIndex().get(uuid))
+                                                                                          .filter(Objects::nonNull)
+                                                                                          .collect(Collectors.toList())));
+                // Check the results.
+                if (!CommandUtils.isError(result)) {
+                    callback.onSuccess();
+                } else {
+                    callback.onError((V) new ClientRuntimeError("Error deleing elements [message=" +
+                                                                        result.toString() + "]"));
+                }
             } else {
                 callback.onError((V) new ClientRuntimeError("Cannot delete element, no element selected on canvas"));
             }

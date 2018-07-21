@@ -21,6 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +47,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanv
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.drag.LocationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
 import org.kie.workbench.common.stunner.core.client.canvas.event.ShapeLocationsChangedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasClearSelectionEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
@@ -100,25 +101,27 @@ public class LocationControlImpl
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
     private double[] boundsConstraint;
     private final Collection<String> selectedIDs = new LinkedList<>();
-    private SelectionControl selectionControl;
+    private final Event<CanvasSelectionEvent> selectionEvent;
 
     protected LocationControlImpl() {
         this(null,
+             null,
              null);
     }
 
     @Inject
     public LocationControlImpl(final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                               final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent) {
+                               final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent,
+                               final Event<CanvasSelectionEvent> selectionEvent) {
         this.canvasCommandFactory = canvasCommandFactory;
         this.shapeLocationsChangedEvent = shapeLocationsChangedEvent;
+        this.selectionEvent = selectionEvent;
     }
 
     @Override
     public void bind(final EditorSession session) {
         // Keyboard event handling.
         session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
-        this.selectionControl = session.getSelectionControl();
     }
 
     private void onKeyDownEvent(final KeyboardEvent.Key... keys) {
@@ -236,13 +239,9 @@ public class LocationControlImpl
                     final DragHandler dragHandler = new DragHandler() {
                         @Override
                         public void start(DragEvent event) {
-                            if (selectionControl != null) {
-                                final Element item = canvasHandler.getGraphIndex().get(shape.getUUID());
-                                if (!selectionControl.isSelected(item)) {
-                                    selectionControl.getSelectedItems()
-                                            .forEach(uuid -> selectionControl.deselect(String.valueOf(uuid)));
-                                    selectionControl.select(item);
-                                }
+                            if (Objects.nonNull(selectionEvent)) {
+                                //select the moving shape, if not
+                                selectionEvent.fire(new CanvasSelectionEvent(canvasHandler, shape.getUUID()));
                             }
                         }
 
