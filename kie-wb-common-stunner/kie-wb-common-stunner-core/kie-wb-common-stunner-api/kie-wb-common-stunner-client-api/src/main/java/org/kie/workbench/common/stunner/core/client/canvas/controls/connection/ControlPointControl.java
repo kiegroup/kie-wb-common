@@ -30,9 +30,9 @@ import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 public interface ControlPointControl<H extends CanvasHandler> extends CanvasRegistrationControl<H, Element>,
                                                                       RequiresCommandManager<H> {
 
-    void addControlPoint(Edge candidate, ControlPoint... controlPoint);
+    void addControlPoints(Edge candidate, ControlPoint... controlPoints);
 
-    void moveControlPoint(ControlPoint controlPoint, Point2D position);
+    void moveControlPoints(Edge candidate, ControlPoint[] controlPoints, Point2D[] locations);
 
-    void removeControlPoint(ControlPoint selectedControlPoint);
+    void removeControlPoint(Edge candidate, ControlPoint controlPoint);
 }

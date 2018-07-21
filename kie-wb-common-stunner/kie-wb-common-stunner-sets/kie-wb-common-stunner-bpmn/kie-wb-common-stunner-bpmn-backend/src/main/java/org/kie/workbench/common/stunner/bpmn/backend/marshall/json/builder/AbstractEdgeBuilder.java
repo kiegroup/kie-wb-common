@@ -17,22 +17,18 @@
 package org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder;
 
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.Bpmn2OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.command.impl.AddControlPointCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.AddNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.command.impl.SetConnectionTargetNodeCommand;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPointImpl;
 import org.kie.workbench.common.stunner.core.graph.content.view.MagnetConnection;
 import org.kie.workbench.common.stunner.core.graph.content.view.Point2D;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
@@ -153,7 +149,7 @@ public abstract class AbstractEdgeBuilder<W, T extends Edge<View<W>, Node>>
                     .sequential()
                     .map(docker -> (docker.length == 2 ? new Point2D(docker[0], docker[1]) : null))
                     .filter(Objects::nonNull)
-                    .map(point -> new ControlPointImpl(point, indexCounter.increment()))
+                    .map(point -> ControlPoint.build(point, indexCounter.increment()))
                     .toArray(ControlPoint[]::new);
 
             CommandResult<RuleViolation> addControlPointsResult = context.execute(commandFactory.addControlPoint(edge, controlPoints));

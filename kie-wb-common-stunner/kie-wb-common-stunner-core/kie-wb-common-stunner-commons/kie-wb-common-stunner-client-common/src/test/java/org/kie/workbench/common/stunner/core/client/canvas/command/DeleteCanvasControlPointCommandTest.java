@@ -32,22 +32,22 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DeleteCanvasControlPointCommandTest extends AbstractCanvasControlPointCommandTest{
+public class DeleteCanvasControlPointCommandTest extends AbstractCanvasControlPointCommandTest {
 
     private DeleteCanvasControlPointCommand deleteCanvasControlPointCommand;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        this.deleteCanvasControlPointCommand = spy(new DeleteCanvasControlPointCommand(edge,controlPoint1));
+        this.deleteCanvasControlPointCommand = spy(new DeleteCanvasControlPointCommand(edge, controlPoint1));
     }
 
     @Test
     public void execute() {
         CommandResult<CanvasViolation> result = deleteCanvasControlPointCommand.execute(canvasHandler);
         InOrder inOrder = inOrder(shape);
-        inOrder.verify(shape).applyState(ShapeState.NONE);
         inOrder.verify(shape).removeControlPoints(controlPoint1);
+        inOrder.verify(shape).applyState(ShapeState.NONE);
         inOrder.verify(shape).applyState(ShapeState.SELECTED);
         assertFalse(CommandUtils.isError(result));
     }
