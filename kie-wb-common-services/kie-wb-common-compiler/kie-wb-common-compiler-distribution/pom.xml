@@ -287,7 +287,7 @@
 
     <pluginManagement>
       <plugins>
-
+<!--
        <plugin>
           <groupId>org.codehaus.cargo</groupId>
           <artifactId>cargo-maven2-plugin</artifactId>
@@ -338,7 +338,7 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
+        </plugin>-->
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -405,20 +405,21 @@
         <artifactId>maven-failsafe-plugin</artifactId>
       </plugin>
 
-      <plugin>
+     <!-- <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven2-plugin</artifactId>
-      </plugin>
+      </plugin>-->
     </plugins>
   </build>
 
 
   <profiles>
+    <!--
     <profile>
       <id>widlfly-managed</id>
-      <!--<activation>
+      <activation>
         <activeByDefault>true</activeByDefault>
-      </activation>-->
+      </activation>
       <build>
         <testResources>
           <testResource>
@@ -454,6 +455,8 @@
         </plugins>
       </build>
     </profile>
+-->
+
 
     <!-- deployments profiles for testing -->
     <!-- <profile>
@@ -468,18 +471,18 @@
     <!-- end of deployments profiles-->
 
     <!-- Containers -->
-    <profile>
+   <!-- <profile>
       <id>wildfly11</id>
-      <!--<activation>
+      <activation>
         <activeByDefault>true</activeByDefault>
-      </activation>-->
+      </activation>
       <dependencies>
-        <!-- <dependency>
+        <dependency>
            <groupId>org.kie.workbench.services</groupId>
            <artifactId>kie-wb-common-compiler-distribution</artifactId>
            <classifier>${deployable.classifier.wildfly11}</classifier>
            <type>war</type>
-         </dependency>-->
+         </dependency>
       </dependencies>
       <properties>
         <cargo.container.id>wildfly11x</cargo.container.id>
@@ -534,32 +537,32 @@
           </plugins>
         </pluginManagement>
       </build>
-    </profile>
+    </profile>-->
 
 
-    <profile>
+    <!--<profile>
       <id>eap7</id>
-      <!--<activation>
+      <activation>
    <property>
      <name>container</name>
      <value>eap7</value>
    </property>
- </activation>-->
+ </activation>
       <dependencies>
-        <!--<dependency>
+        <dependency>
           <groupId>org.kie.workbench.services</groupId>
           <artifactId>kie-wb-common-compiler-distribution</artifactId>
           <classifier>${deployable.classifier.eap7}</classifier>
           <scope>test</scope>
           <type>war</type>
-        </dependency>-->
+        </dependency>
       </dependencies>
-      <properties>
+      <properties>-->
         <!-- The EAP 7.x binary can't be anonymously downloaded due to license issues. It can be downloaded manually
         and for free (e.g. from http://www.jboss.org/products/eap/download/) and the zip location needs to be specified
         here or via system property when running the build (don't forget to use the `file://` prefix when
         referencing the zip from local filesystem). -->
-        <eap7.download.url>valid-url-for-eap-7-zip-needs-to-be-specified-here-or-via-cmd-line</eap7.download.url>
+       <!-- <eap7.download.url>valid-url-for-eap-7-zip-needs-to-be-specified-here-or-via-cmd-line</eap7.download.url>
       </properties>
       <build>
         <pluginManagement>
@@ -569,9 +572,9 @@
               <artifactId>cargo-maven2-plugin</artifactId>
               <configuration>
                 <container>
-                  <type>installed</type>
+                  <type>installed</type>-->
                   <!-- WildFly ~= EAP 7, so just reuse the wildfly10x containerId -->
-                  <containerId>wildfly11x</containerId>
+                  <!--<containerId>wildfly11x</containerId>
                   <type>installed</type>
                   <zipUrlInstaller>
                     <url>${eap7.download.url}</url>
@@ -596,16 +599,17 @@
           </plugins>
         </pluginManagement>
       </build>
-    </profile>
-    <profile>
+    </profile>-->
+
+
+    <!--<profile>
       <id>wildfly-swarm</id>
-      <!--<activation>
+      <activation>
     <property>
       <name>container</name>
       <value>wildfly-swarm</value>
     </property>
   </activation>
-  -->
       <properties>
         <deployable.context/>
         <cargo.maven.skip>true</cargo.maven.skip>
@@ -637,10 +641,10 @@
                     <goal>multistart</goal>
                   </goals>
                   <configuration>
-                    <properties>
+                    <properties>-->
                       <!-- Not ideal as it relies on the module structure, but for now it is safe to assume that all testing modules
 +                         are children of this one.-->
-                      <swarm.project.stage.file>${project.build.testOutputDirectory}/sample-swarm-config.yml</swarm.project.stage.file>
+                   <!--   <swarm.project.stage.file>${project.build.testOutputDirectory}/sample-swarm-config.yml</swarm.project.stage.file>
                       <swarm.logging>INFO</swarm.logging>
                       <swarm.bind.address>127.0.0.1</swarm.bind.address>
                       <org.uberfire.nio.git.dir>${project.build.directory}/wb-dirs</org.uberfire.nio.git.dir>
@@ -672,8 +676,8 @@
           </plugins>
         </pluginManagement>
       </build>
-    </profile>
-    <profile>
+    </profile>-->
+   <!-- <profile>
       <id>productized</id>
       <activation>
         <property>
@@ -685,6 +689,6 @@
         <deployable.classifier.wildfly11>there-is-no-wildfly11-war-for-product</deployable.classifier.wildfly11>
       </properties>
     </profile>
-
+-->
   </profiles>
 </project>
