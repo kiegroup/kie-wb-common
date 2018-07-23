@@ -69,7 +69,7 @@ public class KieMetadataTest {
     @Before
     public void setUp() throws Exception {
         mavenRepo = TestUtil.createMavenRepo();
-        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        alternateSettingsAbsPath = TestUtil.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");
     }
 

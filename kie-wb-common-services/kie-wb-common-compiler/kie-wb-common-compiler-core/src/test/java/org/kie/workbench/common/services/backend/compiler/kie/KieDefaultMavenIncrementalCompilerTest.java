@@ -131,7 +131,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_INCREMENTAL);

@@ -20,6 +20,7 @@ import java.net.URLClassLoader;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,6 +48,7 @@ public class BuildInMemoryClasspathMojoTest {
     private Path mavenRepo;
     private static Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
     private String alternateSettingsAbsPath;
+    private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     @Before
     public void setUp() throws Exception {
@@ -69,7 +71,7 @@ public class BuildInMemoryClasspathMojoTest {
             }
         }
         tmpRoot = Files.createTempDirectory("repo");
-        alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        alternateSettingsAbsPath = getSettingsFile();
 
     }
 
@@ -133,6 +135,18 @@ public class BuildInMemoryClasspathMojoTest {
             logger.error("Couldn't delete file {}", f);
             logger.error(e.getMessage(), e);
         }
+    }
+
+    public static String getSettingsFile(){
+        String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
+        if(jenkinsFile != null){
+            logger.info("Using settings.xml file provided by JENKINS:{}", jenkinsFile);
+            return jenkinsFile;
+        }else {
+            logger.info("Using local settings.xml file.");
+            return new File("src/test/settings.xml").getAbsolutePath();
+        }
+
     }
 
 }

@@ -24,6 +24,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -33,6 +34,7 @@ import org.uberfire.java.nio.file.Paths;
 public class TestUtil {
 
     private static Logger logger = LoggerFactory.getLogger(TestUtil.class);
+    private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     public static void copyTree(Path source,
                                 Path target) throws IOException {
@@ -102,5 +104,17 @@ public class TestUtil {
         TestUtil.copyTree(Paths.get(copyTree), dir);
         return dir;
         //end NIO
+    }
+
+    public static String getSettingsFile(){
+        String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
+        if(jenkinsFile != null){
+            logger.info("Using settings.xml file provided by JENKINS:{}", jenkinsFile);
+            return jenkinsFile;
+        }else {
+            logger.info("Using local settings.xml file.");
+            return new File("src/test/settings.xml").getAbsolutePath();
+        }
+
     }
 }

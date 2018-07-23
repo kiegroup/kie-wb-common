@@ -171,7 +171,7 @@ public class ClassLoaderProviderTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 

@@ -294,7 +294,7 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
         String MASTER_BRANCH = "master";
 
         //Setup origin in memory
@@ -372,7 +372,7 @@ public class KieDefaultMavenCompilerTest {
     @Test
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
 
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
@@ -434,7 +434,7 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildCompileWithOverrideOnGitVFS() throws Exception {
-        final String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+        final String alternateSettingsAbsPath = TestUtil.getSettingsFile();
 
         final URI originRepo = URI.create("git://buildCompileWithOverrideOnGitVFS");
         final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,
