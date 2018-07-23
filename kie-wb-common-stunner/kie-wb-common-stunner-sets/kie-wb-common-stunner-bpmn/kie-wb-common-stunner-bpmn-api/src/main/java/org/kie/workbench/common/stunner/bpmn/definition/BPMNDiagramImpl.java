@@ -49,7 +49,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class, builder = BPMNDiagramImpl.BPMNDiagramBuilder.class)
-@CanContain(roles = {"all"})
+@CanContain(roles = {"base_element"})
 @FormDefinition(
         startElement = "diagramSet",
         policy = FieldPolicy.ONLY_MARKED,
