@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.widgets.layer;
 
+import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,16 +24,15 @@ import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DMNGridLayerProducerTest {
-
-    @Mock
-    private DMNGridLayer layer;
+@RunWith(LienzoMockitoTestRunner.class)
+public class DMNGridLayerControlImplTest {
 
     @Mock
     private CanvasHandler canvasHandler;
@@ -40,32 +40,47 @@ public class DMNGridLayerProducerTest {
     @Mock
     private Element element;
 
-    private DMNGridLayerProducer producer;
+    private DMNGridLayerControlImpl control;
 
     @Before
     public void setup() {
-        this.producer = new DMNGridLayerProducer() {
-            @Override
-            DMNGridLayer makeGridLayer() {
-                return layer;
-            }
-        };
+        this.control = new DMNGridLayerControlImpl();
+    }
+
+    @Test
+    public void testDoInit() {
+        final DMNGridLayer gridLayer = control.getGridLayer();
+        assertNotNull(gridLayer);
+
+        control.doInit();
+
+        assertEquals(gridLayer,
+                     control.getGridLayer());
+    }
+
+    @Test
+    public void testDoDestroy() {
+        control.doDestroy();
+
+        assertNull(control.getGridLayer());
     }
 
     @Test
     public void testGetGridLayer() {
-        assertThat(producer.getGridLayer()).isEqualTo(layer);
+        final DMNGridLayer gridLayer = control.getGridLayer();
 
         //Check same instance is re-used
-        assertThat(producer.getGridLayer()).isEqualTo(layer);
+        assertEquals(gridLayer,
+                     control.getGridLayer());
     }
 
     @Test
     public void testOnCanvasElementUpdatedEvent() {
+        final DMNGridLayer gridLayer = spy(control.getGridLayer());
         final CanvasElementUpdatedEvent event = new CanvasElementUpdatedEvent(canvasHandler, element);
 
-        producer.onCanvasElementUpdatedEvent(event);
+        control.onCanvasElementUpdatedEvent(event);
 
-        verify(layer).batch();
+        verify(gridLayer).batch();
     }
 }

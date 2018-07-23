@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.dmn.client.editors.expressions.types.function.parameters;
+package org.kie.workbench.common.dmn.client.widgets.layer;
 
-import org.uberfire.mvp.Command;
-import org.uberfire.mvp.ParameterizedCommand;
+import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 
-public interface ParameterView extends org.jboss.errai.ui.client.local.api.IsElement {
+public interface DMNGridLayerControl extends CanvasControl<AbstractCanvas> {
 
-    void setName(final String text);
-
-    void addRemoveClickHandler(final Command command);
-
-    void addParameterNameChangeHandler(final ParameterizedCommand<String> command);
-
-    void focus();
+    DMNGridLayer getGridLayer();
 }
