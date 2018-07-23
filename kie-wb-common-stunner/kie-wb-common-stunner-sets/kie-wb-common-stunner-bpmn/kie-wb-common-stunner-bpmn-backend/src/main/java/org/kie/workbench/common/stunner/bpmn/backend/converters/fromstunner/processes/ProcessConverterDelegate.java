@@ -17,26 +17,20 @@
 package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.processes;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 import org.kie.workbench.common.stunner.bpmn.backend.converters.Result;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ConverterFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.DefinitionsBuildingContext;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.ElementContainer;
+import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.lanes.LaneConverter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.ActivityPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BasePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.BoundaryEventPropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.LanePropertyWriter;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.properties.SubProcessPropertyWriter;
-import org.kie.workbench.common.stunner.bpmn.definition.BPMNViewDefinition;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.view.View;
 
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 class ProcessConverterDelegate {
@@ -70,19 +64,27 @@ class ProcessConverterDelegate {
                 .map(Result::value)
                 .forEach(p::addChildElement);
 
-        convertLanes(context.lanes(), p);
+        convertLanes(context, processed, p);
     }
 
     private void convertLanes(
-            Stream<? extends Node<View<? extends BPMNViewDefinition>, ?>> lanes,
-            ElementContainer p) {
-        Map<String, LanePropertyWriter> collect = lanes
-                .map(converterFactory.laneConverter()::toElement)
-                .filter(Result::notIgnored)
+            DefinitionsBuildingContext context,
+            Set<String> processed, ElementContainer p) {
+        LaneConverter laneConverter = converterFactory.laneConverter();
+        List<LanePropertyWriter> convertedLanes = context.lanes()
+                .map(laneConverter::toElement)
+                .filter(Result::isSuccess)
                 .map(Result::value)
-                .collect(toMap(LanePropertyWriter::getId, Function.identity()));
+                .peek(convertedLane -> {
+                    // for each lane, we get the child nodes in the graph
+                    context.withRootNode(convertedLane.getId()).childNodes()
+                            .filter(n -> !processed.contains(n.getUUID()))
+                            // then for each converted element, we re-set its parent to the converted lane
+                            .forEach(n -> p.getChildElement(n.getUUID()).setParent(convertedLane));
+                })
+                .collect(toList());
 
-        p.addLaneSet(collect.values());
+        p.addLaneSet(convertedLanes);
     }
 
     void convertEdges(ElementContainer p, DefinitionsBuildingContext context) {
