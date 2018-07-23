@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.nio;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.MavenSettingsWorkaroundForTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -155,7 +155,6 @@ public class DefaultMavenIncrementalCompilerTest {
 
     @Test
     public void testCheckIncrementalWithChanges() throws Exception {
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(),
@@ -169,7 +168,7 @@ public class DefaultMavenIncrementalCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

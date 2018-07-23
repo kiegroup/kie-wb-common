@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.MavenSettingsWorkaroundForTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -302,7 +303,6 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        String alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
         AFCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.JGIT_BEFORE_AND_LOG_AFTER);
 
         String MASTER_BRANCH = "master";
@@ -347,7 +347,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);
