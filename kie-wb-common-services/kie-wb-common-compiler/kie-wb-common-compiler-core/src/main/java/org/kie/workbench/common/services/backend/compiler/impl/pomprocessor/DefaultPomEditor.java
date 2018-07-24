@@ -306,7 +306,7 @@ public class DefaultPomEditor implements PomEditor {
 
                 PluginPresents plugs = updatePom(model);
                 request.getInfo().lateAdditionKiePluginPresent(plugs.isKiePluginPresent());
-                if (!request.skipPrjDependenciesCreationList()) {
+                if (!request.skipProjectDependenciesCreationList()) {
                     // we add the mvn cli args to run the dependency:build-classpath
                     String args[] = addCreateClasspathMavenArgs(request.getKieCliRequest().getArgs(), request);
                     request.getKieCliRequest().setArgs(args);

@@ -17,9 +17,13 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
@@ -40,9 +44,9 @@ import org.slf4j.LoggerFactory;
  * ALTERNATIVE_COMPILER_PLUGIN =takari-lifecycle-plugin
  * ALTERNATIVE_COMPILER_PLUGIN_VERSION =....
  * <p>
- * KIE_MAVEN_PLUGINS=org.kie
- * KIE_MAVEN_PLUGIN=kie-maven-plugin
- * KIE_TAKARI_PLUGIN=kie-takari-plugin
+ * KIE_PLUGIN_GROUP=org.kie
+ * KIE_MAVEN_PLUGIN_ARTIFACT=kie-maven-plugin
+ * KIE_TAKARI_PLUGIN_ARTIFACT=kie-takari-plugin
  * <p>
  * KIE_VERSION=${version.org.kie}
  */
@@ -50,7 +54,7 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
 
     private Logger logger = LoggerFactory.getLogger(ConfigurationContextProvider.class);
 
-    private Map<ConfigurationKey, String> conf;
+    private Map<ConfigurationKey, String> conf = Collections.emptyMap();
 
     public ConfigurationContextProvider() {
         initializeWorkingConfig();
@@ -75,7 +79,7 @@ public class ConfigurationContextProvider implements ConfigurationProvider {
 
     @Override
     public boolean isValid() {
-        boolean result = conf.size() == ConfigurationKey.values().length;
+        boolean result = conf.keySet().containsAll(new HashSet<ConfigurationKey>(Arrays.asList(ConfigurationKey.values())));
         if (!result) {
             logger.error("Invalid Compiler configuration");
         }

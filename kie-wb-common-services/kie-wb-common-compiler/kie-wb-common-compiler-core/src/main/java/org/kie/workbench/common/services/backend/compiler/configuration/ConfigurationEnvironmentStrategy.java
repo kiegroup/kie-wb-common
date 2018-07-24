@@ -16,8 +16,10 @@
 
 package org.kie.workbench.common.services.backend.compiler.configuration;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
@@ -69,7 +71,7 @@ public class ConfigurationEnvironmentStrategy implements ConfigurationStrategy {
     }
 
     @Override
-    public Boolean isValid() { return valid && ( conf.size() == ConfigurationKey.values().length ); }
+    public Boolean isValid() { return valid && ( conf.keySet().containsAll(new HashSet<ConfigurationKey>(Arrays.asList(ConfigurationKey.values())))); }
 
     @Override
     public Map<ConfigurationKey, String> loadConfiguration() {

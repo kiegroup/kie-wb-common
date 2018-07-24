@@ -64,20 +64,20 @@ public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
     protected static final DirectoryStream.Filter<Path> dotFileFilter = new DotFileFilter();
-    protected static String DOT = ".";
-    protected static String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
-    protected static String JAVA_CLASS_EXT = ".class";
-    protected static String XML_EXT = ".xml";
-    protected static String DROOLS_EXT = ".drl";
-    protected static String GDROOLS_EXT = ".gdrl";
-    protected static String RDROOLS_EXT = ".rdrl";
-    protected static String SCENARIO_EXT = ".scenario";
-    protected static String FILE_URI = "file://";
-    protected static String FILE = "file:";
-    protected static String MAVEN_TARGET = "target/classes/";
-    protected static String META_INF = "META-INF";
-    protected static String UTF_8 = "UTF-8";
-    protected static String SEPARATOR = "/";
+    protected static final String DOT = ".";
+    protected static final String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
+    protected static final String JAVA_CLASS_EXT = ".class";
+    protected static final String XML_EXT = ".xml";
+    protected static final String DROOLS_EXT = ".drl";
+    protected static final String GDROOLS_EXT = ".gdrl";
+    protected static final String RDROOLS_EXT = ".rdrl";
+    protected static final String SCENARIO_EXT = ".scenario";
+    protected static final String FILE_URI = "file://";
+    protected static final String FILE = "file:";
+    protected static final String MAVEN_TARGET = "target/classes/";
+    protected static final String META_INF = "META-INF";
+    protected static final String UTF_8 = "UTF-8";
+    protected static final String SEPARATOR = "/";
 
     private CompilerClassloaderUtils() { }
 
@@ -118,7 +118,7 @@ public class CompilerClassloaderUtils {
 
         for (String item : keys) {
             byte[] bytez = getBytes(path + SEPARATOR + item);
-            String fqn = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes"
+            String fqn = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length());
             classes.put(fqn, bytez);
         }
         if (!store.isEmpty()) {
@@ -357,7 +357,7 @@ public class CompilerClassloaderUtils {
         Set<String> filtered = new HashSet<>(paths.size());
         for (String item : paths) {
             if (item.endsWith(JAVA_CLASS_EXT)) {
-                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15); // 15 chars are for "target/classes/"
+                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length());
                 if (one.contains(SEPARATOR)) {  //there is a package
                     one = one.substring(0, one.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
                     filtered.add(one);
@@ -376,7 +376,7 @@ public class CompilerClassloaderUtils {
         List<String> filtered = new ArrayList<>(items.size());
         for (String item : items) {
             if (!item.contains(META_INF) && item.endsWith(JAVA_CLASS_EXT)) {
-                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + 15, item.lastIndexOf(DOT)); // 15 chars are for "target/classes/"
+                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length(), item.lastIndexOf(DOT));
                 if (one.contains(packageNameWithSlash)) {
                     if (one.contains(SEPARATOR)) { //there is a package
                         one = one.replace(SEPARATOR, DOT);
