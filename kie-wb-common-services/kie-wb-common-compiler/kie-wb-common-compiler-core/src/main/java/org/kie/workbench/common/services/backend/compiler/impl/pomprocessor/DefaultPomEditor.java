@@ -118,14 +118,14 @@ public class DefaultPomEditor implements PomEditor {
             }
 
             //check if is present the kie maven plugin
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGINS)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN))) {
+            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP)) &&
+                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT))) {
                 kiePluginPresent = Boolean.TRUE;
                 kieMavenPluginPosition = i;
             }
 
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGINS)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN))) {
+            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP)) &&
+                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT))) {
                 kieTakariPresent = Boolean.TRUE;
             }
             i++;
@@ -192,10 +192,10 @@ public class DefaultPomEditor implements PomEditor {
             List<Plugin> plugins = build.getPlugins();
             Plugin kieMavenPlugin = build.getPlugins().get(kieMavenPluginPosition);
 
-            if (kieMavenPlugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN))) {
+            if (kieMavenPlugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP))) {
                 Plugin kieTakariPlugin = new Plugin();
                 kieTakariPlugin.setGroupId(kieMavenPlugin.getGroupId());
-                kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN));
+                kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT));
                 kieTakariPlugin.setVersion(kieMavenPlugin.getVersion());
                 kieTakariPlugin.setExtensions(Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
                 plugins.set(kieMavenPluginPosition,

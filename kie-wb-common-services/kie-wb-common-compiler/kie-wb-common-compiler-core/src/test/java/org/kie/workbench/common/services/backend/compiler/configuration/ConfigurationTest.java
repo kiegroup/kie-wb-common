@@ -134,9 +134,9 @@ public class ConfigurationTest {
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP.name(), "io.takari.maven.plugins");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT.name(), "takari-lifecycle-plugin");
         conf.put(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION.name(), "1.13.5");
-        conf.put(ConfigurationKey.KIE_MAVEN_PLUGINS.name(), "org.kie");
-        conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN.name(), "kie-maven-plugin");
-        conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN.name(), "kie-takari-plugin");
+        conf.put(ConfigurationKey.KIE_PLUGIN_GROUP.name(), "org.kie");
+        conf.put(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT.name(), "kie-maven-plugin");
+        conf.put(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT.name(), "kie-takari-plugin");
         conf.put(ConfigurationKey.KIE_VERSION.name(), prop.getProperty(ConfigurationUtil.KIE_VERSION_KEY));
         return conf;
     }
