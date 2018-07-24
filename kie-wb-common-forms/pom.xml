@@ -24,6 +24,7 @@
     <module>kie-wb-common-forms-editor</module>
     <module>kie-wb-common-forms-integrations</module>
     <module>kie-wb-common-forms-integration-tests</module>
+    <module>kie-wb-common-forms-cms</module>
   </modules>
 
   <properties>
