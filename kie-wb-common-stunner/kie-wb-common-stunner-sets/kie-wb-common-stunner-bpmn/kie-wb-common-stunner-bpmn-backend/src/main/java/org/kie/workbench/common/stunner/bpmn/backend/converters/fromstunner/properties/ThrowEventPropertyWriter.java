@@ -21,6 +21,7 @@ import java.util.List;
 import org.eclipse.bpmn2.DataInput;
 import org.eclipse.bpmn2.DataInputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.InputSet;
 import org.eclipse.bpmn2.ThrowEvent;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedInputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
@@ -36,7 +37,6 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
     public ThrowEventPropertyWriter(ThrowEvent flowElement, VariableScope variableScope) {
         super(flowElement, variableScope);
         this.throwEvent = flowElement;
-        throwEvent.setInputSet(bpmn2.createInputSet());
     }
 
     @Override
@@ -60,13 +60,22 @@ public class ThrowEventPropertyWriter extends EventPropertyWriter {
 
         DataInput dataInput = input.getDataInput();
         throwEvent.getDataInputs().add(dataInput);
-        throwEvent.getInputSet().getDataInputRefs().add(dataInput);
+        getInputSet().getDataInputRefs().add(dataInput);
 
         this.addItemDefinition(input.getItemDefinition());
         DataInputAssociation dataInputAssociation = input.getDataInputAssociation();
         if (dataInputAssociation != null) {
             throwEvent.getDataInputAssociation().add(dataInputAssociation);
         }
+    }
+
+    private InputSet getInputSet() {
+        InputSet inputSet = throwEvent.getInputSet();
+        if (inputSet == null) {
+            inputSet = bpmn2.createInputSet();
+            throwEvent.setInputSet(inputSet);
+        }
+        return inputSet;
     }
 
     @Override

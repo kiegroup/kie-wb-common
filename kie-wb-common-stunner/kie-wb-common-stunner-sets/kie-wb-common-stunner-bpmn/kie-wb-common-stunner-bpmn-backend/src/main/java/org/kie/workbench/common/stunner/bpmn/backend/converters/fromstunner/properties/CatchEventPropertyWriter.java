@@ -23,6 +23,7 @@ import org.eclipse.bpmn2.CatchEvent;
 import org.eclipse.bpmn2.DataOutput;
 import org.eclipse.bpmn2.DataOutputAssociation;
 import org.eclipse.bpmn2.EventDefinition;
+import org.eclipse.bpmn2.OutputSet;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.InitializedVariable.InitializedOutputVariable;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.customproperties.ParsedAssignmentsInfo;
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.SimulationAttributeSets;
@@ -39,7 +40,6 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
     public CatchEventPropertyWriter(CatchEvent event, VariableScope variableScope) {
         super(event, variableScope);
         this.event = event;
-        event.setOutputSet(bpmn2.createOutputSet());
     }
 
     public void setAssignmentsInfo(AssignmentsInfo info) {
@@ -59,13 +59,22 @@ public class CatchEventPropertyWriter extends EventPropertyWriter {
 
         DataOutput dataOutput = output.getDataOutput();
         event.getDataOutputs().add(dataOutput);
-        event.getOutputSet().getDataOutputRefs().add(dataOutput);
+        getOutputSet().getDataOutputRefs().add(dataOutput);
 
         this.addItemDefinition(dataOutput.getItemSubjectRef());
         DataOutputAssociation dataOutputAssociation = output.getDataOutputAssociation();
         if (dataOutputAssociation != null) {
             event.getDataOutputAssociation().add(dataOutputAssociation);
         }
+    }
+
+    private OutputSet getOutputSet() {
+        OutputSet outputSet = event.getOutputSet();
+        if (outputSet == null) {
+            outputSet = bpmn2.createOutputSet();
+            event.setOutputSet(outputSet);
+        }
+        return outputSet;
     }
 
     public void setSimulationSet(SimulationAttributeSet simulationSet) {
