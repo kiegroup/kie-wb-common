@@ -32,7 +32,6 @@ import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.impl.ConnectorShape;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
-import org.kie.workbench.common.stunner.core.graph.content.view.ControlPointImpl;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -89,7 +88,7 @@ public class ShapeUtilsTest {
         when(edge1Shape.getShapeView()).thenReturn(edge1ShapeView);
         when(edge2Shape.getShapeView()).thenReturn(edge2ShapeView);
 
-        controlPoint1 = new ControlPointImpl(0,0);
+        controlPoint1 = ControlPoint.build(0, 0);
         controlPointList = Arrays.asList(controlPoint1);
         when(edge1Shape.getControlPoints()).thenReturn(controlPointList);
         when(edge1Shape.addControlPoints(controlPoint1)).thenReturn(controlPointList);
@@ -131,20 +130,20 @@ public class ShapeUtilsTest {
     }
 
     @Test
-    public void testAddControlPoints(){
+    public void testAddControlPoints() {
         List<ControlPoint> addedControlPoints = ShapeUtils.addControlPoints(instance2.edge1, canvasHandler, controlPoint1);
         verify(edge1Shape).addControlPoints(controlPoint1);
         assertEquals(addedControlPoints, controlPointList);
     }
 
     @Test
-    public void testRemoveControlPoints(){
+    public void testRemoveControlPoints() {
         ShapeUtils.removeControlPoints(instance2.edge1, canvasHandler, controlPoint1);
         verify(edge1Shape).removeControlPoints(controlPoint1);
     }
 
     @Test
-    public void testGetControlPoints(){
+    public void testGetControlPoints() {
         List<ControlPoint> controlPoints = ShapeUtils.getControlPoints(instance2.edge1, canvasHandler);
         verify(edge1Shape).getControlPoints();
         assertEquals(controlPoints, controlPointList);
