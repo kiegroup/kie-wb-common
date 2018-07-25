@@ -35,8 +35,8 @@ public class DeleteCanvasControlPointCommand extends AbstractCanvasCommand {
 
     @Override
     public CommandResult<CanvasViolation> execute(AbstractCanvasHandler context) {
-        ShapeUtils.removeControlPoints(candidate, context, controlPoints);
         ShapeUtils.hideControlPoints(candidate, context);
+        ShapeUtils.removeControlPoints(candidate, context, controlPoints);
         ShapeUtils.showControlPoints(candidate, context);
         return buildResult();
     }

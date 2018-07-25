@@ -103,15 +103,16 @@ public class WiresConnectorView<T> extends WiresConnector
     @Override
     public List<ControlPoint> addControlPoints(final ControlPoint... controlPoint) {
         if (validateControlPointShape()) {
-            return Stream.of(controlPoint)
+            final List<ControlPoint> result = Stream.of(controlPoint)
                     .map(cp -> {
                         double x = cp.getLocation().getX();
                         double y = cp.getLocation().getY();
                         addControlPoint(x, y, cp.getIndex() + 1);
                         return cp;
                     }).collect(Collectors.toList());
+            refrehControlPoints();
+            return result;
         }
-        refrehControlPoints();
         return Collections.emptyList();
     }
 
@@ -129,7 +130,9 @@ public class WiresConnectorView<T> extends WiresConnector
 
     private void refrehControlPoints() {
         getLine().refresh();
-        getGroup().getLayer().batch();
+        if (null != getGroup().getLayer()) {
+            getGroup().getLayer().batch();
+        }
     }
 
     @Override

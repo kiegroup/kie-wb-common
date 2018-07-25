@@ -36,7 +36,7 @@ public final class Point2D {
                            y);
     }
 
-    public static Point2D create(final Point2D point) {
+    public static Point2D clone(final Point2D point) {
         return new Point2D(point.getX(),
                            point.getY());
     }

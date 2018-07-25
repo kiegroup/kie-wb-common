@@ -46,8 +46,8 @@ public class DeleteCanvasControlPointCommandTest extends AbstractCanvasControlPo
     public void execute() {
         CommandResult<CanvasViolation> result = deleteCanvasControlPointCommand.execute(canvasHandler);
         InOrder inOrder = inOrder(shape);
-        inOrder.verify(shape).removeControlPoints(controlPoint1);
         inOrder.verify(shape).applyState(ShapeState.NONE);
+        inOrder.verify(shape).removeControlPoints(controlPoint1);
         inOrder.verify(shape).applyState(ShapeState.SELECTED);
         assertFalse(CommandUtils.isError(result));
     }

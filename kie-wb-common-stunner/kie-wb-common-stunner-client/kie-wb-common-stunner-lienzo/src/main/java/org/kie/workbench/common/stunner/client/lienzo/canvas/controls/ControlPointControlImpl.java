@@ -16,7 +16,9 @@
 
 package org.kie.workbench.common.stunner.client.lienzo.canvas.controls;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -25,9 +27,9 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 
-import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
 import com.ait.lienzo.client.core.shape.wires.IControlPointsAcceptor;
 import com.ait.lienzo.client.core.shape.wires.WiresConnector;
+import com.ait.lienzo.client.core.types.Point2DArray;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresConnectorView;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
@@ -42,7 +44,6 @@ import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.command.Command;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
 import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
-import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.content.view.ControlPoint;
@@ -85,7 +86,7 @@ public class ControlPointControlImpl
 
     @Override
     public void addControlPoints(Edge candidate, ControlPoint... controlPoint) {
-        checkAndExecuteCommand(canvasCommandFactory.addControlPoint(candidate, controlPoint));
+        execute(canvasCommandFactory.addControlPoint(candidate, controlPoint));
     }
 
     @Override
@@ -98,40 +99,39 @@ public class ControlPointControlImpl
 
     @Override
     public void moveControlPoints(final Edge candidate,
-                                  final ControlPoint[] cps,
-                                  final Point2D[] locations) {
-        if (cps.length != locations.length) {
-            throw new IllegalArgumentException("Arguments length differ for ControlPointControlImpl.moveControlPoints()");
+                                  final Map<ControlPoint, Point2D> pointsLocation) {
+        Command<AbstractCanvasHandler, CanvasViolation> command = null;
+        if (pointsLocation.size() == 1) {
+            final Map.Entry<ControlPoint, Point2D> entry = pointsLocation.entrySet().iterator().next();
+            command = newUpdateCPCommand(candidate,
+                                         entry.getKey(),
+                                         entry.getValue());
+        } else if (pointsLocation.size() > 0) {
+            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
+                    new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>().forward();
+            pointsLocation
+                    .forEach((cp, location) -> builder.addCommand(newUpdateCPCommand(candidate,
+                                                                                     cp,
+                                                                                     location)));
+            command = builder.build();
         }
-        if (cps.length > 0) {
-            Command<AbstractCanvasHandler, CanvasViolation> command = null;
-            if (cps.length == 1) {
-                command = canvasCommandFactory.updateControlPointPosition(candidate,
-                                                                          cps[0],
-                                                                          locations[0]);
-            } else {
-                final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> builder =
-                        new CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation>()
-                                .forward();
-                for (int i = 0; i < cps.length; i++) {
-                    final Point2D location = locations[i];
-                    final CanvasCommand<AbstractCanvasHandler> c =
-                            canvasCommandFactory.updateControlPointPosition(candidate,
-                                                                            cps[i],
-                                                                            Point2D.create(location.getX(),
-                                                                                           location.getY()));
-                    builder.addCommand(c);
-                }
-                command = builder.build();
-            }
-            checkAndExecuteCommand(command);
+        if (null != command) {
+            execute(command);
         }
+    }
+
+    private CanvasCommand<AbstractCanvasHandler> newUpdateCPCommand(final Edge candidate,
+                                                                    final ControlPoint controlPoint,
+                                                                    final Point2D location) {
+        return canvasCommandFactory.updateControlPointPosition(candidate,
+                                                               controlPoint,
+                                                               Point2D.clone(location));
     }
 
     public void removeControlPoint(final Edge candidate,
                                    final ControlPoint controlPoint) {
         if (validateControlPointState(candidate)) {
-            checkAndExecuteCommand(canvasCommandFactory.deleteControlPoint(candidate, controlPoint));
+            execute(canvasCommandFactory.deleteControlPoint(candidate, controlPoint));
         }
     }
 
@@ -149,11 +149,11 @@ public class ControlPointControlImpl
         @Override
         public boolean add(final WiresConnector connector,
                            final int index,
-                           final double x,
-                           final double y) {
+                           final com.ait.lienzo.client.core.types.Point2D locatoin) {
             final Edge edge = getEdge(connector);
             if (validateControlPointState(edge)) {
-                control.addControlPoints(edge, ControlPoint.build(x, y, index - 1));
+                control.addControlPoints(edge, ControlPoint.build(locatoin.getX(), locatoin.getY(),
+                                                                  index - 1));
                 return true;
             }
             return false;
@@ -161,45 +161,32 @@ public class ControlPointControlImpl
 
         @Override
         public boolean move(final WiresConnector connector,
-                            final int index,
-                            final double tx,
-                            final double ty) {
-            final Edge edge = getEdge(connector);
-            if (validateControlPointState(edge)) {
-                final Optional<ControlPoint> cp = getControlPointyByIndex(edge,
-                                                                          index);
-                cp.ifPresent(instance -> control.moveControlPoints(edge,
-                                                                   new ControlPoint[]{instance},
-                                                                   new Point2D[]{new Point2D(tx, ty)}));
-                return cp.isPresent();
-            }
-            return false;
-        }
-
-        @Override
-        public void update(final WiresConnector connector) {
+                            final Point2DArray pointsLocation) {
             final Edge edge = getEdge(connector);
             if (validateControlPointState(edge)) {
                 final ViewConnector viewConnector = (ViewConnector) edge.getContent();
                 final List<ControlPoint> controlPoints = viewConnector.getControlPoints();
-                final IControlHandleList pointHandles = connector.getPointHandles();
-                final int size = pointHandles.size();
-                if (size > 2) {
-                    final ControlPoint[] points = new ControlPoint[size - 2];
-                    final Point2D[] locations = new Point2D[size - 2];
-                    for (int i = 1; i < size - 1; i++) {
-                        final com.ait.lienzo.client.core.types.Point2D location =
-                                pointHandles.getHandle(i).getControl().getLocation();
-                        final ControlPoint controlPoint = controlPoints.get(i - 1);
-                        locations[i - 1] = Point2D.create(location.getX(),
-                                                          location.getY());
-                        points[i - 1] = controlPoint;
+                final Map<ControlPoint, Point2D> updatedCPs = new HashMap<>(controlPoints.size());
+                for (int i = 1; i < (pointsLocation.size() - 1); i++) {
+                    final com.ait.lienzo.client.core.types.Point2D targetLocation = pointsLocation.get(i);
+                    final ControlPoint controlPoint = controlPoints.get(i - 1);
+                    if (!isAt(controlPoint, targetLocation)) {
+                        updatedCPs.put(controlPoint,
+                                       Point2D.create(targetLocation.getX(),
+                                                      targetLocation.getY()));
                     }
-                    control.moveControlPoints(edge,
-                                              points,
-                                              locations);
                 }
+                control.moveControlPoints(edge,
+                                          updatedCPs);
+                return true;
             }
+            return false;
+        }
+
+        private static boolean isAt(final ControlPoint controlPoint,
+                                    final com.ait.lienzo.client.core.types.Point2D location) {
+            final Point2D cpLocation = controlPoint.getLocation();
+            return cpLocation.getX() == location.getX() && cpLocation.getY() == location.getY();
         }
 
         @Override
@@ -233,11 +220,7 @@ public class ControlPointControlImpl
         return commandManagerProvider;
     }
 
-    private CommandResult<CanvasViolation> checkAndExecuteCommand(Command<AbstractCanvasHandler, CanvasViolation> command) {
-        CommandResult<CanvasViolation> allowResult = getCommandManager().allow(canvasHandler, command);
-        if (CommandUtils.isError(allowResult)) {
-            return allowResult;
-        }
+    private CommandResult<CanvasViolation> execute(Command<AbstractCanvasHandler, CanvasViolation> command) {
         return getCommandManager().execute(canvasHandler, command);
     }
 

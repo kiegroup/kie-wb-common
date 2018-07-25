@@ -41,11 +41,10 @@ public class AddControlPointCommand extends AbstractControlPointCommand {
     }
 
     @Override
-    protected CommandResult<RuleViolation> check(GraphCommandExecutionContext context) {
-        if (validateControlPoints()) {
-            return GraphCommandResultBuilder.SUCCESS;
-        }
-        return GraphCommandResultBuilder.FAILED;
+    protected CommandResult<RuleViolation> check(final GraphCommandExecutionContext context) {
+        return validateControlPoints() ?
+                GraphCommandResultBuilder.SUCCESS :
+                GraphCommandResultBuilder.FAILED;
     }
 
     private boolean validateControlPoints() {
@@ -53,7 +52,7 @@ public class AddControlPointCommand extends AbstractControlPointCommand {
     }
 
     @Override
-    public CommandResult<RuleViolation> execute(GraphCommandExecutionContext context) {
+    public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
         CommandResult<RuleViolation> allowResult = allow(context);
         if (CommandUtils.isError(allowResult)) {
             return allowResult;

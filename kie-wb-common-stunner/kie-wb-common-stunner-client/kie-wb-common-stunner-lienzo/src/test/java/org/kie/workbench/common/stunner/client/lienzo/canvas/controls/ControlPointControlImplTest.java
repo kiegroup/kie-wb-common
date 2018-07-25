@@ -25,6 +25,7 @@ import com.ait.lienzo.client.core.shape.wires.IControlHandle;
 import com.ait.lienzo.client.core.shape.wires.IControlHandleList;
 import com.ait.lienzo.client.core.shape.wires.IControlPointsAcceptor;
 import com.ait.lienzo.client.core.shape.wires.WiresConnector;
+import com.ait.lienzo.client.core.types.Point2DArray;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -174,8 +175,7 @@ public class ControlPointControlImplTest {
                                                                                                 eq(location));
         tested.init(canvasHandler);
         tested.moveControlPoints(edge,
-                                 new ControlPoint[]{CONTROL_POINT},
-                                 new Point2D[]{location});
+                                 Collections.singletonMap(CONTROL_POINT, location));
         ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
         verify(commandManager, times(1)).execute(eq(canvasHandler),
                                                  commandArgumentCaptor.capture());
@@ -188,7 +188,7 @@ public class ControlPointControlImplTest {
         ControlPointControl control = mock(ControlPointControl.class);
         ControlPointControlImpl.StunnerControlPointsAcceptor acceptor = createStunnerControlPointsAcceptor(control);
         ControlPoint cp = ControlPoint.build(1, 3, 0);
-        final boolean addResult = acceptor.add(connector, 1, 1, 3);
+        final boolean addResult = acceptor.add(connector, 1, new com.ait.lienzo.client.core.types.Point2D(1, 3));
         assertTrue(addResult);
         verify(control, times(1)).addControlPoints(eq(edge),
                                                    eq(cp));
@@ -209,32 +209,21 @@ public class ControlPointControlImplTest {
         ControlPointControl control = mock(ControlPointControl.class);
         ControlPointControlImpl.StunnerControlPointsAcceptor acceptor = createStunnerControlPointsAcceptor(control);
         Point2D location = new Point2D(200, 500);
-        final boolean moveResult = acceptor.move(connector,
-                                                 1,
-                                                 location.getX(),
-                                                 location.getY());
+        Point2DArray locationArray =
+                new Point2DArray(new com.ait.lienzo.client.core.types.Point2D(0,
+                                                                              0),
+                                 new com.ait.lienzo.client.core.types.Point2D(location.getX(),
+                                                                              location.getY()),
+                                 new com.ait.lienzo.client.core.types.Point2D(1000,
+                                                                              2000));
+        final boolean moveResult = acceptor.move(connector, locationArray);
         assertTrue(moveResult);
         verify(control, times(1)).moveControlPoints(eq(edge),
-                                                    eq(new ControlPoint[]{CONTROL_POINT}),
-                                                    eq(new Point2D[]{location}));
-    }
-
-    @Test
-    public void testStunnerControlPointsAcceptorUpdate() {
-        ControlPointControl control = mock(ControlPointControl.class);
-        ControlPointControlImpl.StunnerControlPointsAcceptor acceptor = createStunnerControlPointsAcceptor(control);
-        Point2D location = new Point2D(200, 500);
-        when(wiresPointPrimitive.getLocation()).thenReturn(new com.ait.lienzo.client.core.types.Point2D(location.getX(),
-                                                                                                        location.getY()));
-        acceptor.update(connector);
-        verify(control, times(1)).moveControlPoints(eq(edge),
-                                                    eq(new ControlPoint[]{CONTROL_POINT}),
-                                                    eq(new Point2D[]{location}));
+                                                    eq(Collections.singletonMap(CONTROL_POINT, location)));
     }
 
     private ControlPointControlImpl.StunnerControlPointsAcceptor createStunnerControlPointsAcceptor(ControlPointControl controlPointControl) {
         Function<String, Edge> connectorSupplier = uuid -> uuid.equals(EDGE_UUID) ? edge : null;
-        ;
         return new ControlPointControlImpl.StunnerControlPointsAcceptor(controlPointControl,
                                                                         connectorSupplier);
     }

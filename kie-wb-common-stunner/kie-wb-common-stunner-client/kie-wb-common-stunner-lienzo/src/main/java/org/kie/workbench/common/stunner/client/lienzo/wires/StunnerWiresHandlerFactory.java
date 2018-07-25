@@ -28,7 +28,7 @@ import com.ait.lienzo.client.core.shape.wires.handlers.WiresControlPointHandler;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresHandlerFactory;
 import com.ait.lienzo.client.core.shape.wires.handlers.WiresShapeHighlight;
 import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresConnectorHandlerImpl;
-import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresConnectorHandlerImpl.DefaultClickHandlers;
+import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresConnectorHandlerImpl.WiresConnectorEventConsumers;
 import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresHandlerFactoryImpl;
 import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresShapeHandler;
 
@@ -47,9 +47,9 @@ public class StunnerWiresHandlerFactory implements WiresHandlerFactory {
                                                      final WiresManager wiresManager) {
         return new WiresConnectorHandlerImpl(wiresConnector,
                                              wiresManager,
-                                             new DefaultClickHandlers(wiresManager,
-                                                                      wiresConnector,
-                                                                      false));
+                                             e -> {
+                                             },
+                                             new WiresConnectorEventConsumers(wiresConnector).addControlPoint());
     }
 
     @Override

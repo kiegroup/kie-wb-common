@@ -52,7 +52,7 @@ public class UpdateControlPointPositionCommand extends AbstractControlPointComma
     public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
         if (areArgumentsValid()) {
             final int index = getControlPoint().getIndex();
-            oldPosition = Point2D.create(getControlPoint().getLocation());
+            oldPosition = Point2D.clone(getControlPoint().getLocation());
             getEdgeContent().getControlPoints().get(index).setLocation(position);
             return GraphCommandResultBuilder.SUCCESS;
         }
