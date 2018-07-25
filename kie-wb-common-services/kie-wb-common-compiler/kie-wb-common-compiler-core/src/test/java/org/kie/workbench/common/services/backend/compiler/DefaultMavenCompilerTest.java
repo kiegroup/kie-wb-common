@@ -209,10 +209,6 @@ public class DefaultMavenCompilerTest {
 
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
-        }*/
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -339,10 +335,7 @@ public class DefaultMavenCompilerTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
-        }*/
+
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -384,11 +377,11 @@ public class DefaultMavenCompilerTest {
                                                       "pom.xml"));
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
-        assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>");
-        assertThat(pomAsAstring).doesNotContain("<packaging>kjar</packaging>");
-        assertThat(pomAsAstring).doesNotContain("<compilerId>jdt</compilerId>");
-        assertThat(pomAsAstring).doesNotContain("<source>1.8</source>");
-        assertThat(pomAsAstring).doesNotContain("<target>1.8</target>");
+        assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>")
+                                .doesNotContain("<packaging>kjar</packaging>")
+                                .doesNotContain("<compilerId>jdt</compilerId>")
+                                .doesNotContain("<source>1.8</source>")
+                                .doesNotContain("<target>1.8</target>");
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -402,9 +395,9 @@ public class DefaultMavenCompilerTest {
         pomAsAstring = new String(encoded,
                                   StandardCharsets.UTF_8);
 
-        assertThat(pomAsAstring).contains("<compilerId>jdt</compilerId>");
-        assertThat(pomAsAstring).contains("<source>1.8</source>");
-        assertThat(pomAsAstring).contains("<target>1.8</target>");
+        assertThat(pomAsAstring).contains("<compilerId>jdt</compilerId>")
+                                .contains("<source>1.8</source>")
+                                .contains("<target>1.8</target>");
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -453,10 +446,6 @@ public class DefaultMavenCompilerTest {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/"), res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
-        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());

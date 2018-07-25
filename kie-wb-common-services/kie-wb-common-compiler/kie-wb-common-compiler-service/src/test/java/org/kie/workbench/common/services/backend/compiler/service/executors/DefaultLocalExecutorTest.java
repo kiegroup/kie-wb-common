@@ -98,7 +98,7 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
                                                                                        mavenRepo.toString());
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isEmpty()).isFalse();
+        assertThat(res.getDependencies()).isEmpty();
         assertThat(res.getDependencies().size()).isGreaterThan(0);
     }
 

@@ -88,10 +88,6 @@ public class KieDefaultMavenIncrementalCompilerTest {
     public void testIncrementalWithPluginEnabled() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "KieDefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
-        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),

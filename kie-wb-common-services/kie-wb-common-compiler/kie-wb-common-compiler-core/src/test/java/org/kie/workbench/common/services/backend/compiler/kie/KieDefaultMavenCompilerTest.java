@@ -209,10 +209,6 @@ public class KieDefaultMavenCompilerTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildWithPullRebaseUberfireTest");
-        }*/
 
         assertThat(res.isSuccessful()).isTrue();
 
@@ -338,10 +334,6 @@ public class KieDefaultMavenCompilerTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");
-        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -393,10 +385,7 @@ public class KieDefaultMavenCompilerTest {
 
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
-        }*/
+
         assertThat(res.isSuccessful()).isTrue();
         assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class")).doesNotExist();
 

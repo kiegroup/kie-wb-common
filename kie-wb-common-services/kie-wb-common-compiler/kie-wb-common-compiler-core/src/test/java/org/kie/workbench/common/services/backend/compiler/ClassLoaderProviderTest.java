@@ -108,10 +108,7 @@ public class ClassLoaderProviderTest {
     public void loadProjectClassloaderFromStringTest() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
-       /* if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
-        }*/
+
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
@@ -173,10 +170,7 @@ public class ClassLoaderProviderTest {
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
-        }*/
+
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {

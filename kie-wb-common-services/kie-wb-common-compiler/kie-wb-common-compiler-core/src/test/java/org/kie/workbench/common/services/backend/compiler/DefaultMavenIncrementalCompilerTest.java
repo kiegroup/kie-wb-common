@@ -87,10 +87,6 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
-        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
@@ -139,10 +135,6 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
-        }*/
 
         //checks
         assertThat(res.isSuccessful()).isTrue();

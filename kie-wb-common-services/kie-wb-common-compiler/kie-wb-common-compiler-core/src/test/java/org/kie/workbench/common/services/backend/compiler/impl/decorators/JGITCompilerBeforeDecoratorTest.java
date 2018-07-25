@@ -126,10 +126,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
-        /*if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tempPath.toFile(), res.getMavenOutput(),
-                                                      "JGITCompilerBeforeDecoratorTest.compileWithOverrideTest");
-        }*/
+
         assertThat(res.isSuccessful()).isTrue();
 
         final Path incrementalConfiguration = Paths.get(tempPath.toUri() + TARGET_TAKARI_PLUGIN);

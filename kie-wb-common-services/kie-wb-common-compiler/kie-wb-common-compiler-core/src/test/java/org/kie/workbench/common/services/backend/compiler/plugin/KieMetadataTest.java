@@ -139,10 +139,6 @@ public class KieMetadataTest {
                                                                    Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
             TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
-            /*if (!res.isSuccessful()) {
-                TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                          "KieMetadataTest.compileAndloadKieJarSingleMetadata");
-            }*/
 
             if (!res.isSuccessful()) {
                 List<String> msgs = res.getMavenOutput();
