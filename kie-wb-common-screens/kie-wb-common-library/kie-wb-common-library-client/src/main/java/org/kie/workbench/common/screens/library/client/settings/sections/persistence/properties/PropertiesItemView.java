@@ -36,6 +36,11 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     private HTMLAnchorElement removeButton;
 
     @Inject
+    @DataField("edit-button")
+    @SuppressWarnings("PMD.UnusedPrivateField")
+    private HTMLAnchorElement editButton;
+    
+    @Inject
     @Named("span")
     @DataField("name")
     private HTMLElement name;
@@ -56,6 +61,11 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     public void onRemove(final ClickEvent ignore) {
         presenter.remove();
     }
+    
+    @EventHandler("edit-button")
+    public void onEdit(final ClickEvent ignore) {
+        presenter.openEditModal(name.textContent, value.textContent);
+    }
 
     @Override
     public void setName(final String name) {
@@ -66,4 +76,14 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     public void setValue(final String value) {
         this.value.textContent = value;
     }
+
+//    @Override
+//    public String getName() {
+//        return this.name.textContent;
+//    }
+//
+//    @Override
+//    public String getValue() {
+//        return this.value.textContent;
+//    }
 }

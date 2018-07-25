@@ -42,7 +42,7 @@ public abstract class Section<T> {
     public abstract SectionView<?> getView();
 
     public abstract int currentHashCode();
-
+    
     public void setDirty(final boolean dirty) {
         menuItem.markAsDirty(dirty);
     }

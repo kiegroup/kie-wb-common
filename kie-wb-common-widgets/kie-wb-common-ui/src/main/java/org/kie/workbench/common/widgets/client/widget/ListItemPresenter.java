@@ -38,6 +38,10 @@ public abstract class ListItemPresenter<T, ParentPresenter, View extends ListIte
     public void setListPresenter(final ListPresenter<T, ? extends ListItemPresenter<T, ?, ?>> listPresenter) {
         this.listPresenter = listPresenter;
     }
+    
+    public ListPresenter<T, ? extends ListItemPresenter<T, ?, ?>> getListPresenter(){
+        return this.listPresenter;
+    }
 
     public void remove() {
         listPresenter.remove(this);
