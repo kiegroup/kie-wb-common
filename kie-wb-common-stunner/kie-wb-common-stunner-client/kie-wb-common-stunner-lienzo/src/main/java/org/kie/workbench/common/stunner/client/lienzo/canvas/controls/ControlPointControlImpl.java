@@ -215,14 +215,17 @@ public class ControlPointControlImpl
         }
 
         private Edge getEdge(final WiresConnector connector) {
-            final String uuid = connector instanceof WiresConnectorView ?
-                    ((WiresConnectorView) connector).getUUID() :
-                    connector.uuid();
-            return getEdge(uuid);
+            return getEdge(getUUID(connector));
         }
 
         private Edge getEdge(final String uuid) {
             return connectorSupplier.apply(uuid);
+        }
+
+        private static String getUUID(final WiresConnector connector) {
+            return connector instanceof WiresConnectorView ?
+                    ((WiresConnectorView) connector).getUUID() :
+                    connector.uuid();
         }
     }
 
