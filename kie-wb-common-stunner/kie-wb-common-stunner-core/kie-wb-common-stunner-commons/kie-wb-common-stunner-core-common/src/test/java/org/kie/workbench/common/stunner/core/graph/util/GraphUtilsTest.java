@@ -113,4 +113,13 @@ public class GraphUtilsTest {
         assertEquals(dockedNodes.size(), 1);
         assertEquals(dockedNodes.get(0), graphInstance.dockedNode);
     }
+
+    @Test
+    public void getChildNodesTest() {
+        List<Node> dockedNodes = GraphUtils.getChildNodes(graphInstance.parentNode);
+        assertEquals(dockedNodes.size(), 3);
+        assertEquals(dockedNodes.get(0), graphInstance.startNode);
+        assertEquals(dockedNodes.get(1), graphInstance.intermNode);
+        assertEquals(dockedNodes.get(2), graphInstance.endNode);
+    }
 }
