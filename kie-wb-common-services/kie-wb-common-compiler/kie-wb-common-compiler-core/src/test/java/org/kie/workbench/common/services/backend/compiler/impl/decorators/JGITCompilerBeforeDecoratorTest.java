@@ -27,7 +27,9 @@ import org.eclipse.jgit.api.Git;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -50,6 +52,9 @@ public class JGITCompilerBeforeDecoratorTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private Path mavenRepo;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @BeforeClass
     public static void setupSystemProperties() {
@@ -90,15 +95,12 @@ public class JGITCompilerBeforeDecoratorTest {
         CompilationResponse res = compiler.compile(req);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
 
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tempPath.toFile(), res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
-        }
         assertThat(res.isSuccessful()).isTrue();
 
         final Path incrementalConfiguration = Paths.get(tempPath.toUri() + TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         TestUtil.rm(tempPath.toFile());
     }
@@ -123,11 +125,11 @@ public class JGITCompilerBeforeDecoratorTest {
         CompilationResponse res = compiler.compile(req, override);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
-
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tempPath.toFile(), res.getMavenOutput(),
                                                       "JGITCompilerBeforeDecoratorTest.compileWithOverrideTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         final Path incrementalConfiguration = Paths.get(tempPath.toUri() + TARGET_TAKARI_PLUGIN);
@@ -155,14 +157,11 @@ public class JGITCompilerBeforeDecoratorTest {
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
 
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tempPath.toFile(), res.getMavenOutput(),
-                                                      "JGITCompilerBeforeDecoratorTest.compileWithEmpryOverrideTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tempPath, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(tempPath.toUri() + TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         TestUtil.rm(tempPath.toFile());
     }

@@ -17,7 +17,9 @@ package org.kie.workbench.common.services.backend.compiler.kie;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -35,6 +37,9 @@ import org.uberfire.java.nio.file.Paths;
 public class KieMavenOutputTest {
 
     private Path mavenRepo;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -55,10 +60,7 @@ public class KieMavenOutputTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieMavenOutputTest.testOutputWithTakari");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput().size()).isGreaterThan(0);
 

@@ -33,7 +33,9 @@ import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -62,6 +64,9 @@ public class KieDefaultMavenCompilerTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private Path mavenRepo;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -130,14 +135,10 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildWithCloneTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
@@ -207,16 +208,16 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithPullRebaseUberfireTest");
-        }
+        }*/
 
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
@@ -268,11 +269,7 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/"), res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildWithJGitDecoratorTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -340,11 +337,11 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -360,10 +357,7 @@ public class KieDefaultMavenCompilerTest {
 
         //recompile
         res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildWithAllDecoratorsTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         TestUtil.rm(tmpRootCloned.toFile());
@@ -398,12 +392,13 @@ public class KieDefaultMavenCompilerTest {
                                                                Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class").exists()).isFalse();
+        assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class")).doesNotExist();
 
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
@@ -421,7 +416,7 @@ public class KieDefaultMavenCompilerTest {
         assertThat(res.isSuccessful()).isTrue();
 
         assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/Dummy.class").exists()).isFalse();
-        assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class").exists()).isTrue();
+        assertThat(new File(req.getInfo().getPrjPath() + "/target/classes/dummy/DummyOverride.class")).exists();
 
         encoded = Files.readAllBytes(Paths.get(req.getInfo().getPrjPath().toString(),
                                                "/src/main/java/dummy/Dummy.java"));
@@ -472,15 +467,11 @@ public class KieDefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(res.getWorkingDir().get(), res, this.getClass(), testName);
 
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(res.getWorkingDir().get(),
-                                                      res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerTest.buildCompileWithOverrideTest");
-        }
         assertThat(res.isSuccessful()).isTrue();
 
-        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class").exists()).isFalse(); ///file:///User/temp8998876986179/dummy//target/classes/dummy/DummyOverride.class
+        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class")).doesNotExist(); ///file:///User/temp8998876986179/dummy//target/classes/dummy/DummyOverride.class
 
         //change some files
         Map<org.uberfire.java.nio.file.Path, InputStream> override = new HashMap<>();
@@ -497,8 +488,8 @@ public class KieDefaultMavenCompilerTest {
         res = compiler.compile(req, override);
         assertThat(res.isSuccessful()).isTrue();
 
-        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/Dummy.class").exists()).isFalse();
-        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class").exists()).isTrue();
+        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/Dummy.class")).doesNotExist();
+        assertThat(new File(res.getWorkingDir().get() + "/target/classes/dummy/DummyOverride.class")).exists();
 
         encoded = Files.readAllBytes(Paths.get(res.getWorkingDir().get().toString(),
                                                "/src/main/java/dummy/Dummy.java"));

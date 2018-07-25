@@ -28,7 +28,9 @@ import org.drools.core.rule.TypeMetaInfo;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
@@ -55,8 +57,10 @@ public class KieMetadataTest {
     private Path mavenRepo;
     private String alternateSettingsAbsPath;
     private Path tmpRoot;
-
     private Logger logger = LoggerFactory.getLogger(KieMetadataTest.class);
+
+    @Rule
+    public TestName testName = new TestName();
 
     @After
     public void tearDown() {
@@ -87,12 +91,7 @@ public class KieMetadataTest {
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "KieMetadataTest.compileAndLoadKieJarMetadataAllResourcesPackagedJar");
-        }
-
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {
@@ -103,18 +102,17 @@ public class KieMetadataTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        assertThat(metaDataOptional.isPresent()).isTrue();
+        assertThat(metaDataOptional).isPresent();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
         assertThat(kieModuleMetaInfo).isNotNull();
 
         Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
         assertThat(rulesBP).hasSize(8);
         Map<String, TypeMetaInfo> typesMI = kieModuleMetaInfo.getTypeMetaInfos();
-        Assert.assertEquals(typesMI.size(),
-                            35);
+        assertThat(typesMI).hasSize(35);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        assertThat(kieModuleOptional.isPresent()).isTrue();
+        assertThat(kieModuleOptional).isPresent();
 
         assertThat(res.getDependenciesAsURI()).hasSize(4);
         KieModule kModule = kieModuleOptional.get();
@@ -140,11 +138,11 @@ public class KieMetadataTest {
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-
-            if (!res.isSuccessful()) {
+            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+            /*if (!res.isSuccessful()) {
                 TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                           "KieMetadataTest.compileAndloadKieJarSingleMetadata");
-            }
+            }*/
 
             if (!res.isSuccessful()) {
                 List<String> msgs = res.getMavenOutput();
@@ -156,7 +154,7 @@ public class KieMetadataTest {
             assertThat(res.isSuccessful()).isTrue();
 
             Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-            assertThat(metaDataOptional.isPresent()).isTrue();
+            assertThat(metaDataOptional).isPresent();
             KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
             assertThat(kieModuleMetaInfo).isNotNull();
 
@@ -164,7 +162,7 @@ public class KieMetadataTest {
             assertThat(rulesBP).hasSize(1);
 
             Optional<KieModule> kieModuleOptional = res.getKieModule();
-            assertThat(kieModuleOptional.isPresent()).isTrue();
+            assertThat(kieModuleOptional).isPresent();
 
             assertThat(res.getDependenciesAsURI()).hasSize(4);
 
@@ -188,11 +186,8 @@ public class KieMetadataTest {
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
 
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
-        }
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {
@@ -203,7 +198,7 @@ public class KieMetadataTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        assertThat(metaDataOptional.isPresent()).isTrue();
+        assertThat(metaDataOptional).isPresent();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
         assertThat(kieModuleMetaInfo).isNotNull();
 
@@ -211,7 +206,7 @@ public class KieMetadataTest {
         assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        assertThat(kieModuleOptional.isPresent()).isTrue();
+        assertThat(kieModuleOptional).isPresent();
         KieModule kModule = kieModuleOptional.get();
 
         assertThat(res.getDependenciesAsURI()).hasSize(4);

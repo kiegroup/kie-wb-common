@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import java.util.ArrayList;
@@ -42,6 +44,9 @@ public class DefaultMavenIncrementalCompilerTest {
     private Path tmpRoot;
     private Logger logger = LoggerFactory.getLogger(DefaultMavenIncrementalCompilerTest.class);
 
+    @Rule
+    public TestName testName = new TestName();
+
     @Before
     public void setUp() throws Exception {
         mavenRepo = TestUtil.createMavenRepo();
@@ -66,11 +71,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.VERSION},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "DefaultMavenIncrementalCompilerTest.testIsValidMavenHome");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
     }
 
@@ -85,16 +86,16 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabled");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
     }
 
@@ -110,10 +111,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "DefaultMavenIncrementalCompilerTest.testIncrementalWithPluginEnabledThreeTime");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         res = compiler.compile(req);
@@ -124,7 +122,7 @@ public class DefaultMavenIncrementalCompilerTest {
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
                                                   "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
     }
 
@@ -140,10 +138,11 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
                                                       "DefaultMavenIncrementalCompilerTest.testCheckIncrementalWithChanges");
-        }
+        }*/
 
         //checks
         assertThat(res.isSuccessful()).isTrue();
@@ -164,10 +163,12 @@ public class DefaultMavenIncrementalCompilerTest {
         long dummyJavaSize = Paths.get(dummyJava).toFile().length();
 
         List<String> output = res.getMavenOutput();
-        assertThat(isPresent(output,
-                                    "Previous incremental build state does not exist, performing full build")).isTrue();
-        assertThat(isPresent(output,
-                                    "Compiled 2 out of 2 sources ")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Previous incremental build state does not exist, performing full build")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Previous incremental build state does not exist, performing full build")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Compiled 2 out of 2 sources ")).isTrue();
 
         Files.delete(Paths.get(temp + "/src/main/java/dummy/DummyA.java"));
         //overwrite the class with a new version with two additional methods and one int variable
@@ -194,10 +195,10 @@ public class DefaultMavenIncrementalCompilerTest {
         assertThat(dummyJavaSize).isLessThan(dummyJavaSizeAfterChanges);
 
         output = res.getMavenOutput();
-        assertThat(isPresent(output,
-                                    "Performing incremental build")).isTrue();
-        assertThat(isPresent(output,
-                                    "Compiled 1 out of 1 sources ")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Performing incremental build")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Compiled 1 out of 1 sources ")).isTrue();
 
     }
 
@@ -213,11 +214,7 @@ public class DefaultMavenIncrementalCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(temp, res.getMavenOutput(),
-                                                      "DefaultMavenIncrementalCompilerTest.testError");
-        }
-
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);
         //checks
         assertThat(res.isSuccessful()).isTrue();
 
@@ -249,17 +246,17 @@ public class DefaultMavenIncrementalCompilerTest {
         assertThat(dummyBJava).isNotNull();
 
         List<String> output = res.getMavenOutput();
-        assertThat(isPresent(output,
-                                   "Previous incremental build state does not exist, performing full build")).isTrue();
-        assertThat(isPresent(output,
-                                    "Compiled 2 out of 2 sources ")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Previous incremental build state does not exist, performing full build")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Compiled 2 out of 2 sources ")).isTrue();
 
-        assertThat(isPresent(output,
-                                    "Compiled 1 out of 1 sources ")).isTrue();
+        assertThat(isTextPresent(output,
+                                 "Compiled 1 out of 1 sources ")).isTrue();
     }
 
-    private boolean isPresent(List<String> output,
-                              String text) {
+    private boolean isTextPresent(List<String> output,
+                                  String text) {
         return output.stream().anyMatch(s -> s.contains(text));
     }
 }

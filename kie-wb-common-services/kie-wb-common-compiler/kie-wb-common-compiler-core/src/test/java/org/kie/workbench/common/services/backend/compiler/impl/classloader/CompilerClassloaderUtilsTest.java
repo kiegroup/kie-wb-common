@@ -118,7 +118,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     @Test
     public void loadDependenciesClassloaderFromProject() {
         Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(), mavenRepo.toString());
-        assertThat(classloader.isPresent()).isTrue();
+        assertThat(classloader).isPresent();
     }
 
     @Test
@@ -126,34 +126,34 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
         assertThat(pomList).hasSize(1);
         Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList, mavenRepo.toString());
-        assertThat(classloader.isPresent()).isTrue();
+        assertThat(classloader).isPresent();
     }
 
     @Test
     public void getClassloaderFromProjectTargets() {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        assertThat(classLoader.isPresent()).isTrue();
+        assertThat(classLoader).isPresent();
     }
 
     @Test
     public void getClassloaderFromAllDependencies() {
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo.toString());
-        assertThat(classLoader.isPresent()).isTrue();
+        assertThat(classLoader).isPresent();
     }
 
     @Test
     public void createClassloaderFromCpFiles() {
         assertThat(res.getDependencies()).hasSize(4);
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
-        assertThat(classLoader.isPresent()).isTrue();
+        assertThat(classLoader).isPresent();
         assertThat(classLoader.get()).isNotNull();
 
     }
 
     @Test
     public void readFileAsURI() {
-        assertThat(!res.getDependencies().isEmpty()).isTrue();
+        assertThat(res.getDependencies()).isNotEmpty();
         List<String> projectDeps = res.getDependencies();
         List<URI> uris = CompilerClassloaderUtils.readAllDepsAsUris(projectDeps);
         assertThat(uris).hasSize(4);

@@ -126,45 +126,6 @@
 
     <dependency>
       <groupId>org.uberfire</groupId>
-      <artifactId>uberfire-project-api</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-client-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-social-activities-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-bus</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jboss.errai</groupId>
-          <artifactId>errai-common</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-commons</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-preferences-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.uberfire</groupId>
-          <artifactId>uberfire-preferences-processors</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.uberfire</groupId>
       <artifactId>uberfire-commons</artifactId>
     </dependency>
 
@@ -289,6 +250,10 @@
           <artifactId>uberfire-backend-cdi</artifactId>
         </exclusion>
         <exclusion>
+          <groupId>org.uberfire</groupId>
+          <artifactId>uberfire-project-api</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>org.jboss.errai</groupId>
           <artifactId>errai-security-server</artifactId>
         </exclusion>
@@ -369,6 +334,10 @@
         <exclusion>
           <groupId>org.uberfire</groupId>
           <artifactId>uberfire-social-activities-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.uberfire</groupId>
+          <artifactId>uberfire-project-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

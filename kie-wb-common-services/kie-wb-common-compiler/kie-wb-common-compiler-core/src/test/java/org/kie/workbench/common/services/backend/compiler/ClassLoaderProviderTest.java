@@ -17,10 +17,11 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import org.junit.After;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.utils.LoadProjectDependencyUtil;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -56,8 +57,10 @@ public class ClassLoaderProviderTest {
     Path tmpRoot;
     Path tmp;
     Path uberfireTmp;
-
     private Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -90,66 +93,45 @@ public class ClassLoaderProviderTest {
     @Test
     public void loadProjectClassloaderTest() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "ClassLoaderProviderTest.loadProjectClassloaderTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR));
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertThat(clazzLoader).isNotNull();
         assertThat(clazzLoader).isPresent();
 
         LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
-
-        /*if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }*/
     }
 
     @Test
     public void loadProjectClassloaderFromStringTest() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+       /* if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "ClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertThat(clazzLoader).isNotNull();
-        assertThat(clazzLoader.isPresent()).isTrue();
+        assertThat(clazzLoader).isPresent();
 
         LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
-
-        /*if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }*/
     }
 
     @Test
     public void loadTargetFolderClassloaderTest() throws Exception {
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "ClassLoaderProviderTest.loadTargetFolderClassloaderTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        assertThat(clazzLoader).isNotNull();
-        assertThat(clazzLoader.isPresent()).isTrue();
+        assertThat(clazzLoader).isPresent();
 
         LoadProjectDependencyUtil.loadDummyB(clazzLoader.get());
-
-        /*if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }*/
     }
 
     @Test
@@ -157,7 +139,7 @@ public class ClassLoaderProviderTest {
         Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_SIMPLE_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertThat(classloaderOptional.isPresent()).isTrue();
+        assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
         assertThat(urlsc.getURLs()).hasSize(4);
@@ -168,7 +150,7 @@ public class ClassLoaderProviderTest {
         Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_COMPLEX_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertThat(classloaderOptional.isPresent()).isTrue();
+        assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
         assertThat(urlsc.getURLs()).hasSize(7);
@@ -190,10 +172,11 @@ public class ClassLoaderProviderTest {
                                                                new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
-        }
+        }*/
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {
@@ -204,7 +187,7 @@ public class ClassLoaderProviderTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        assertThat(metaDataOptional.isPresent()).isTrue();
+        assertThat(metaDataOptional).isPresent();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
         assertThat(kieModuleMetaInfo).isNotNull();
 
@@ -212,7 +195,7 @@ public class ClassLoaderProviderTest {
         assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        assertThat(kieModuleOptional.isPresent()).isTrue();
+        assertThat(kieModuleOptional).isPresent();
         KieModule kModule = kieModuleOptional.get();
 
         assertThat(res.getDependenciesAsURI()).hasSize(4);
@@ -242,11 +225,7 @@ public class ClassLoaderProviderTest {
                                                                new String[]{MavenCLIArgs.INSTALL},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieMetadataTest.getResourcesFromADroolsPRJWithError");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         if (!res.isSuccessful()) {
             List<String> msgs = res.getMavenOutput();
             for (String msg : msgs) {
@@ -257,7 +236,7 @@ public class ClassLoaderProviderTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
-        assertThat(metaDataOptional.isPresent()).isTrue();
+        assertThat(metaDataOptional).isPresent();
         KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
         assertThat(kieModuleMetaInfo).isNotNull();
 
@@ -265,8 +244,7 @@ public class ClassLoaderProviderTest {
         assertThat(rulesBP).hasSize(1);
 
         Optional<KieModule> kieModuleOptional = res.getKieModule();
-        assertThat(kieModuleOptional.isPresent()).isTrue();
-
+        assertThat(kieModuleOptional).isPresent();
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(classloaderOptional).hasSize(3);
         TestUtil.rm(tmpRoot.toFile());

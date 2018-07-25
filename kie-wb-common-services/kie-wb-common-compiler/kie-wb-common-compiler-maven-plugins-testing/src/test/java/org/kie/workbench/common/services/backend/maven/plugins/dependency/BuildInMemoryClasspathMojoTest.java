@@ -89,8 +89,8 @@ public class BuildInMemoryClasspathMojoTest {
 
         CompilationResponse res = compiler.compile(req);
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isEmpty()).isFalse();
-        assertThat(res.getDependencies().size()).isEqualTo(4);
+        assertThat(res.getDependencies()).isNotEmpty();
+        assertThat(res.getDependencies()).hasSize(4);
     }
 
     @Test
@@ -106,8 +106,8 @@ public class BuildInMemoryClasspathMojoTest {
 
         CompilationResponse res = compiler.compile(req);
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isEmpty()).isFalse();
-        assertThat(res.getDependencies().size()).isEqualTo(7);
+        assertThat(res.getDependencies()).isNotEmpty();
+        assertThat(res.getDependencies()).hasSize(7);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class BuildInMemoryClasspathMojoTest {
         Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertThat(classloaderOptional.isPresent()).isTrue();
+        assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
         assertThat(urlsc.getURLs()).hasSize(7);

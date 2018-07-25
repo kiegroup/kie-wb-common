@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import java.io.File;
@@ -58,6 +60,9 @@ public class DefaultMavenCompilerTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private Path mavenRepo;
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -127,15 +132,11 @@ public class DefaultMavenCompilerTest {
 
         CompilationResponse res = compiler.compile(req);
 
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithCloneTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
@@ -207,15 +208,16 @@ public class DefaultMavenCompilerTest {
                                                                Boolean.TRUE);
 
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithPullRebaseUberfireTest");
-        }
+        }*/
 
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(prjFolder + TestConstants.TARGET_TAKARI_PLUGIN);
-        assertThat(incrementalConfiguration.toFile().exists()).isTrue();
+        assertThat(incrementalConfiguration.toFile()).exists();
 
         encoded = Files.readAllBytes(Paths.get(prjFolder + "/pom.xml"));
         pomAsAstring = new String(encoded,
@@ -268,10 +270,7 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/"), res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -339,10 +338,11 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
@@ -358,10 +358,7 @@ public class DefaultMavenCompilerTest {
 
         //recompile
         res = compiler.compile(req);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpCloned, res.getMavenOutput(),
-                                                      "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithAllDecoratorsTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpCloned, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         TestUtil.rm(tmpRootCloned.toFile());
@@ -455,10 +452,11 @@ public class DefaultMavenCompilerTest {
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(origin.getPath("/"), res.getMavenOutput(),
                                                       "KieDefaultMavenCompilerOnInMemoryFSTest.buildWithJGitDecoratorTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());

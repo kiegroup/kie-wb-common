@@ -16,7 +16,9 @@
 package org.kie.workbench.common.services.backend.maven.common;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -40,6 +42,9 @@ public class ArchetypeTest {
     private String groupId = "org.kie.wonderland";
     private String artifactId = "maven.archetype";
     private String archetypeArtifactId = "maven-archetype-quickstart";
+
+    @Rule
+    public TestName testName = new TestName();
 
     @Before
     public void setUp() throws Exception {
@@ -76,10 +81,7 @@ public class ArchetypeTest {
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
 
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmpRoot, res.getMavenOutput(),
-                                                      "MavenOutputTest.testArchetype");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput().size()).isGreaterThan(0);
         assertThat(isDirEmpty(tmpRoot)).isFalse();

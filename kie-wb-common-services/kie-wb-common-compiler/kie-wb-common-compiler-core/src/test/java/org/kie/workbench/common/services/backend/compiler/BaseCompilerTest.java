@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.junit.Rule;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +44,9 @@ public class BaseCompilerTest {
     protected AFCompiler compiler;
     protected KieCompilationResponse res;
 
+    @Rule
+    public TestName testName = new TestName();
+
     public BaseCompilerTest(String prjName) {
         try {
             mavenRepo = TestUtil.createMavenRepo();
@@ -63,10 +68,7 @@ public class BaseCompilerTest {
                                                                    new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
             res = (KieCompilationResponse) compiler.compile(req);
-            if (!res.isSuccessful()) {
-                TestUtil.writeMavenOutputIntoTargetFolder(tmpRoot, res.getMavenOutput(),
-                                                          "KieMetadataTest.compileAndloadKieJarSingleMetadataWithPackagedJar");
-            }
+            TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot, res, this.getClass(), testName);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

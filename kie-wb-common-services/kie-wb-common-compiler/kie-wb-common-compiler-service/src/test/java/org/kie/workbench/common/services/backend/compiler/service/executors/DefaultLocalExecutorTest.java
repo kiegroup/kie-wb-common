@@ -56,8 +56,8 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
                                                                              Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies().isEmpty()).isTrue();
-        assertThat(res.getDependencies().size()).isEqualTo(0);
+        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
@@ -76,8 +76,8 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
                                                                                        Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
-        assertThat(res.getDependencies().isEmpty()).isTrue();
-        assertThat(res.getDependencies().size()).isEqualTo(0);
+        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
@@ -110,8 +110,8 @@ public class DefaultLocalExecutorTest extends BaseCompilerTest {
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getDependencies().isEmpty()).isTrue();
-        assertThat(res.getDependencies().size()).isEqualTo(0);
+        assertThat(res.getDependencies()).isEmpty();
+        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test

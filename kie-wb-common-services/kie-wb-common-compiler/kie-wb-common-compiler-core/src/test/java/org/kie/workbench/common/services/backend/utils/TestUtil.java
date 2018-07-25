@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.junit.rules.TestName;
+import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Files;
@@ -115,6 +117,19 @@ public class TestUtil {
             logger.info("Using local settings.xml file.");
             return new File("src/test/settings.xml").getAbsolutePath();
         }
+    }
 
+    public static void saveMavenLogIfCompilationResponseNotSuccessfull(Path tmp, CompilationResponse response, Class<?> testClass, TestName testName) throws Exception{
+        String logName = testClass.getSimpleName() + "." + testName.getMethodName();
+        if (!response.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, response.getMavenOutput(), logName);
+        }
+    }
+
+    public static void saveMavenLogIfCompilationResponseNotSuccessfull(java.nio.file.Path tmp, CompilationResponse response, Class<?> testClass, TestName testName) throws Exception{
+        String logName = testClass.getSimpleName() + "." + testName.getMethodName();
+        if (!response.isSuccessful()) {
+            TestUtil.writeMavenOutputIntoTargetFolder(tmp, response.getMavenOutput(), logName);
+        }
     }
 }

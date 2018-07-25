@@ -53,7 +53,7 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
-            softly.assertThat(res.getDependencies().size()).isEqualTo(4);
+            softly.assertThat(res.getDependencies()).hasSize(4);
         });
     }
 
@@ -71,7 +71,7 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();
-            softly.assertThat(res.getDependencies().size()).isEqualTo(0);
+            softly.assertThat(res.getDependencies()).hasSize(0);
         });
     }
 

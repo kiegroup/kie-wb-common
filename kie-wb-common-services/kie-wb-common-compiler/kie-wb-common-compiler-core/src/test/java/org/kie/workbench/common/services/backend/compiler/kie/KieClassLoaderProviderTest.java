@@ -21,8 +21,11 @@ import java.net.URLClassLoader;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -49,9 +52,19 @@ public class KieClassLoaderProviderTest {
     private Path uberfireTmp;
     private Path tmp;
 
+    @Rule
+    public TestName testName = new TestName();
+
     @Before
     public void setUp() throws Exception {
         mavenRepo = TestUtil.createMavenRepo();
+    }
+
+    @After
+    public void clean() throws Exception{
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
     }
 
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
@@ -73,70 +86,48 @@ public class KieClassLoaderProviderTest {
     public void loadProjectClassloaderTest() throws Exception {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
         CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
-
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieClassLoaderProviderTest.loadProjectClassloaderTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(Paths.get(ResourcesConstants.DUMMY_KIE_MULTIMODULE_CLASSLOADER_DIR));
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList,
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertThat(clazzLoader).isNotNull();
-        assertThat(clazzLoader.isPresent()).isTrue();
+        assertThat(clazzLoader).isPresent();
         ClassLoader prjClassloader = clazzLoader.get();
 
         LoadProjectDependencyUtil.loadLoggerFactory(prjClassloader);
-
-        if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }
     }
 
     @Test
     public void loadProjectClassloaderFromStringTest() throws Exception {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
         CompilationResponse res =  compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
-
-        if (!res.isSuccessful()) {
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        /*if (!res.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
                                                       "KieClassLoaderProviderTest.loadProjectClassloaderFromStringTest");
-        }
+        }*/
         assertThat(res.isSuccessful()).isTrue();
 
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(uberfireTmp.toAbsolutePath().toString(),
                                                                                                             mavenRepo.toAbsolutePath().toString());
-        assertThat(clazzLoader).isNotNull();
-        assertThat(clazzLoader.isPresent()).isTrue();
+        assertThat(clazzLoader).isPresent();
 
         LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
-
-        if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }
     }
 
     @Test
     public void loadTargetFolderClassloaderTest() throws Exception {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
         CompilationResponse res =  compileProjectInRepo(MavenCLIArgs.COMPILE);
-        if (!res.isSuccessful()) {
-            TestUtil.writeMavenOutputIntoTargetFolder(tmp, res.getMavenOutput(),
-                                                      "KieClassLoaderProviderTest.loadTargetFolderClassloaderTest");
-        }
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
         List<String> pomList = MavenUtils.searchPoms(uberfireTmp);
         Optional<ClassLoader> clazzLoader = CompilerClassloaderUtils.getClassloaderFromProjectTargets(pomList);
-        assertThat(clazzLoader).isNotNull();
-        assertThat(clazzLoader.isPresent()).isTrue();
+        assertThat(clazzLoader).isPresent();
 
         LoadProjectDependencyUtil.loadDummyB(clazzLoader.get());
-
-        if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }
     }
 
     @Test
@@ -144,7 +135,7 @@ public class KieClassLoaderProviderTest {
         Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_SIMPLE_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertThat(classloaderOptional.isPresent()).isTrue();
+        assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
         assertThat(urlsc.getURLs()).hasSize(4);
@@ -155,7 +146,7 @@ public class KieClassLoaderProviderTest {
         Path path = Paths.get(".").resolve(ResourcesConstants.DUMMY_DEPS_COMPLEX_DIR);
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
-        assertThat(classloaderOptional.isPresent()).isTrue();
+        assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
         assertThat(urlsc.getURLs()).hasSize(7);
