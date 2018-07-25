@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import org.junit.After;
 import org.kie.workbench.common.services.backend.utils.LoadProjectDependencyUtil;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
@@ -63,6 +64,13 @@ public class ClassLoaderProviderTest {
         mavenRepo = TestUtil.createMavenRepo();
     }
 
+    @After
+    public void clean() throws Exception{
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
+    }
+
     private CompilationResponse compileProjectInRepo(String... mavenPhases) throws IOException {
         //we use NIO for this part of the test because Uberfire lack the implementation to copy a tree
         tmpRoot = Files.createTempDirectory("repo");
@@ -97,9 +105,9 @@ public class ClassLoaderProviderTest {
 
         LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
 
-        if (tmpRoot != null) {
+        /*if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
-        }
+        }*/
     }
 
     @Test
@@ -118,9 +126,9 @@ public class ClassLoaderProviderTest {
 
         LoadProjectDependencyUtil.loadLoggerFactory(clazzLoader.get());
 
-        if (tmpRoot != null) {
+        /*if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
-        }
+        }*/
     }
 
     @Test
@@ -139,9 +147,9 @@ public class ClassLoaderProviderTest {
 
         LoadProjectDependencyUtil.loadDummyB(clazzLoader.get());
 
-        if (tmpRoot != null) {
+        /*if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
-        }
+        }*/
     }
 
     @Test

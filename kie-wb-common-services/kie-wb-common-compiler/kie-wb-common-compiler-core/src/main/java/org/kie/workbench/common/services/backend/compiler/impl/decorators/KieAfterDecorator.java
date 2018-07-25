@@ -139,7 +139,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         if (res.isSuccessful()) {
             return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, res.getMavenOutput(), targetContent, res.getDependencies(), req.getInfo().getPrjPath(), null);
         } else {
-            return new DefaultKieCompilationResponse(res.isSuccessful(), new ArrayList<>(res.getMavenOutput()), req.getInfo().getPrjPath());
+            return new DefaultKieCompilationResponse(res.isSuccessful(), res.getMavenOutput(), req.getInfo().getPrjPath());
         }
     }
 

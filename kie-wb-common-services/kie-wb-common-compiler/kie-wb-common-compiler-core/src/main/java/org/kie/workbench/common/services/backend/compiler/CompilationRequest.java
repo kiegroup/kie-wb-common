@@ -26,21 +26,61 @@ import org.kie.workbench.common.services.backend.compiler.impl.external339.AFCli
  */
 public interface CompilationRequest {
 
+    /**
+     * It contains the CLI request for Maven
+     * @return Request for the CLI
+     */
     AFCliRequest getKieCliRequest();
 
+    /**
+     * It contains informations like the Project path  and if the kiePluginIsPresent
+     * @return the information container
+     */
     WorkspaceCompilationInfo getInfo();
 
+    /**
+     * Maven repo used for this build
+     * @return the absolute path of the maven repo used in the current build
+     */
     String getMavenRepo();
 
+    /**
+     * The origianl arguments for this build without ours additional Maven args
+     * @return the arguments received for this build invocation
+     */
     String[] getOriginalArgs();
 
+    /**
+     * The map used to share information with the Maven infrastructure
+     * @return the map with the arguments needed for our infrastructure
+     */
     Map<String, Object> getMap();
 
+    /**
+     *  This contains the identifier used in all objects related to this build
+     * @return the unique identifier for this build
+     */
     String getRequestUUID();
 
+    /**
+     * True if no git operation is required,
+     * false if update is required before build
+     * @return
+     */
     Boolean skipAutoSourceUpdate();
 
-    Boolean skipPrjDependenciesCreationList();
+    /**
+     * True if the list of the project's dependencies isn't required,
+     * false if the list of project's dependencies is required.
+     * @return
+     */
+    Boolean skipProjectDependenciesCreationList();
 
+    /**
+     * True if we want to restore the overrided files in a build
+     * with temporary files for test,
+     * false if we don't want restore the files, is effective in the compile with override map
+     * @return
+     */
     Boolean getRestoreOverride();
 }

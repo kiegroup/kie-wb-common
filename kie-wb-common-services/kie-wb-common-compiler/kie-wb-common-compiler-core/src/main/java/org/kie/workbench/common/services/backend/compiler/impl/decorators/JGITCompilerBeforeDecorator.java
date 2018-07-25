@@ -104,7 +104,7 @@ public class JGITCompilerBeforeDecorator<T extends CompilationResponse, C extend
                 return new DefaultCompilationRequest(req.getMavenRepo(),
                                                      new WorkspaceCompilationInfo(Paths.get(git.getRepository().getDirectory().getParentFile().getCanonicalFile().toPath().toUri())),
                                                      req.getOriginalArgs(),
-                                                     req.skipPrjDependenciesCreationList(),
+                                                     req.skipProjectDependenciesCreationList(),
                                                      false);
             }
 

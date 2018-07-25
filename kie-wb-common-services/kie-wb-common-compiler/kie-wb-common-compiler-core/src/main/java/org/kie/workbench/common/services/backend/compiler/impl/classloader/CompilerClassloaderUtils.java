@@ -250,11 +250,7 @@ public class CompilerClassloaderUtils {
                 logger.error(e.getMessage());
             }
         }
-        if(deps.size()>0) {
-            return  deps;
-        }else{
-            return Collections.emptyList();
-        }
+        return  deps;
     }
 
     public static List<URI> readAllDepsAsUris(List<String> prjDeps) {
@@ -266,11 +262,7 @@ public class CompilerClassloaderUtils {
                 logger.error(e.getMessage());
             }
         }
-        if(deps.size()>0) {
-            return  deps;
-        }else{
-            return Collections.emptyList();
-        }
+        return  deps;
     }
 
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
@@ -309,7 +301,7 @@ public class CompilerClassloaderUtils {
             if (FilenameUtils.getName(file).startsWith(".")) {
                 continue;
             }
-                if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+            if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
                 //the jar is added as is with file:// prefix
                 if (file.startsWith(FILE_URI)) {
                     deps.add(URI.create(file));

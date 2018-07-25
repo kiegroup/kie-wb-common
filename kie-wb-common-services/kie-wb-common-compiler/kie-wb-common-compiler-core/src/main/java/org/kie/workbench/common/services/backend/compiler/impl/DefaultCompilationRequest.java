@@ -154,7 +154,7 @@ public class DefaultCompilationRequest implements CompilationRequest {
     }
 
     @Override
-    public Boolean skipPrjDependenciesCreationList() {
+    public Boolean skipProjectDependenciesCreationList() {
         return skipPrjDependenciesCreationList;
     }
 
