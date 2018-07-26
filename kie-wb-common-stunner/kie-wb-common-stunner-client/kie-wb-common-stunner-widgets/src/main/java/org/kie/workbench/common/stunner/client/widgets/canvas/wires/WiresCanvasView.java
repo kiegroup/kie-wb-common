@@ -57,6 +57,13 @@ public class WiresCanvasView extends CanvasView implements WiresCanvas.View {
         super.init();
         wiresManager = wiresManagerFactory.newWiresManager(getCanvasLayer());
         wiresManager.setSpliceEnabled(false);
+        // Set the default NONE acceptors for wires capabilities.
+        // Each of these ones is being handled by each of the canvas controls associated
+        wiresManager.setLocationAcceptor(ILocationAcceptor.NONE);
+        wiresManager.setContainmentAcceptor(IContainmentAcceptor.NONE);
+        wiresManager.setDockingAcceptor(IDockingAcceptor.NONE);
+        wiresManager.setConnectionAcceptor(IConnectionAcceptor.NONE);
+        wiresManager.setControlPointsAcceptor(IControlPointsAcceptor.NONE);
     }
 
     @Override
