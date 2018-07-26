@@ -100,7 +100,7 @@ public class ConfigurationTest {
 
         strategy = new ConfigurationEnvironmentStrategy(getMapForEnv());
         conf = strategy.loadConfiguration();
-        assertThat(conf).isEmpty();
+        assertThat(conf).isNotEmpty();
         assertThat(strategy.isValid()).isTrue();
         assertThat(conf.keySet()).hasSize(14);
     }

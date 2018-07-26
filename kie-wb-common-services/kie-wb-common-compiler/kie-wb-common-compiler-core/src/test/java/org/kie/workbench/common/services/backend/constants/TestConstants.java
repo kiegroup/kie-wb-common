@@ -17,8 +17,6 @@ package org.kie.workbench.common.services.backend.constants;
 
 public class TestConstants {
 
-    public static final String OUTPUT_TEST_LOG = "target/test-classes/output-test.log";
-
     public static final String TARGET_TAKARI_PLUGIN = "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_default-compile";
 
     public static final String TAKARI_LIFECYCLE_ARTIFACT = "<artifactId>takari-lifecycle-plugin</artifactId>";

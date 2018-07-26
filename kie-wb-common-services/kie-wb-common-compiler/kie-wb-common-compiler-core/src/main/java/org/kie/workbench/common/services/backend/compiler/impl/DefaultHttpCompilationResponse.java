@@ -72,8 +72,8 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
         return Optional.ofNullable(workingDir);
     }
 
-    public Optional<List<String>> getProjectDependencies(){
-        return Optional.ofNullable(projectDependencies);
+    public List<String> getProjectDependencies(){
+        return projectDependencies != null ? projectDependencies : Collections.emptyList();
     }
 
     @Override
