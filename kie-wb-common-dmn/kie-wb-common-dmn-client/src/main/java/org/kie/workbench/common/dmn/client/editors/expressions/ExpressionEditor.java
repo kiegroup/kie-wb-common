@@ -26,7 +26,11 @@ import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
 import org.kie.workbench.common.dmn.client.decision.DecisionNavigatorPresenter;
 import org.kie.workbench.common.dmn.client.editors.toolbar.ToolbarStateHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasElementUpdatedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.selection.CanvasSelectionEvent;
+import org.kie.workbench.common.stunner.core.graph.Element;
+import org.kie.workbench.common.stunner.core.graph.Node;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.uberfire.mvp.Command;
 
 @Dependent
@@ -37,6 +41,8 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     private Optional<Command> exitCommand = Optional.empty();
 
     private Optional<ToolbarStateHandler> toolbarStateHandler;
+
+    private Optional<HasExpression> hasExpression = Optional.empty();
 
     private DecisionNavigatorPresenter decisionNavigator;
 
@@ -72,6 +78,7 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     public void setExpression(final String nodeUUID,
                               final HasExpression hasExpression,
                               final Optional<HasName> hasName) {
+        this.hasExpression = Optional.ofNullable(hasExpression);
         view.setExpression(nodeUUID,
                            hasExpression,
                            hasName);
@@ -94,8 +101,24 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
         });
     }
 
-    public void onCanvasFocusedSelectionEvent(@Observes CanvasSelectionEvent event) {
+    @SuppressWarnings("unused")
+    void onCanvasFocusedSelectionEvent(final @Observes CanvasSelectionEvent event) {
         exit();
+    }
+
+    void onCanvasElementUpdated(final @Observes CanvasElementUpdatedEvent event) {
+        final Element<?> element = event.getElement();
+        if ((element instanceof Node)) {
+            final Node node = (Node) element;
+            if (node.getContent() instanceof Definition) {
+                final Definition definition = (Definition) node.getContent();
+                hasExpression.ifPresent(e -> {
+                    if (e.equals(definition.getDefinition())) {
+                        view.setReturnToDRGText(Optional.ofNullable((HasName) definition.getDefinition()));
+                    }
+                });
+            }
+        }
     }
 
     Optional<Command> getExitCommand() {
