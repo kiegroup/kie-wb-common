@@ -202,25 +202,4 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
         }
     }
 
-    static class KieTuple {
-
-        private Object optionalObj;
-        private String errorMsg;
-
-        public KieTuple(Object optionalObj) {
-            this.optionalObj = optionalObj;
-        }
-
-        public KieTuple(String errorMsg) {
-            this.errorMsg = errorMsg;
-        }
-
-        public Optional<Object> getOptionalObject() {
-            return Optional.ofNullable(optionalObj);
-        }
-
-        public Optional<String> getErrorMsg() {
-            return Optional.ofNullable(errorMsg);
-        }
-    }
 }

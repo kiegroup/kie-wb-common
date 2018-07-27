@@ -116,7 +116,7 @@ public class MavenRestClientTest {
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
         final File[] metaInfFilesFiles;
         if (runIntoMavenCLI) {
-            war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
+           // war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
         } else {

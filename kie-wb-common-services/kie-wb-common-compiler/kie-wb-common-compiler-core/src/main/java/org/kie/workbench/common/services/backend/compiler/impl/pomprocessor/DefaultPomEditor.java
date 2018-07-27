@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +29,11 @@ import java.util.Set;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationProvider;
-import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,195 +76,6 @@ public class DefaultPomEditor implements PomEditor {
         return Boolean.TRUE;
     }
 
-    private PluginPresents updatePom(Model model) {
-
-        Build build = model.getBuild();
-        if (build == null) {  //pom without build tag
-            model.setBuild(new Build());
-            build = model.getBuild();
-        }
-
-        Boolean defaultCompilerPluginPresent = Boolean.FALSE;
-        Boolean alternativeCompilerPluginPresent = Boolean.FALSE;
-        Boolean kiePluginPresent = Boolean.FALSE;
-        Boolean kieTakariPresent = Boolean.FALSE;
-        int alternativeCompilerPosition = 0;
-        int defaultMavenCompilerPosition = 0;
-        int kieMavenPluginPosition = 0;
-
-        if (model.getPackaging().equals(KJAR_EXT)) {
-            kiePluginPresent = Boolean.TRUE;
-        }
-
-        int i = 0;
-        for (Plugin plugin : build.getPlugins()) {
-            // check if is present the default maven compiler
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT))) {
-
-                defaultCompilerPluginPresent = Boolean.TRUE;
-                defaultMavenCompilerPosition = i;
-            }
-
-            //check if is present the alternative maven compiler
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT))) {
-                alternativeCompilerPluginPresent = Boolean.TRUE;
-                alternativeCompilerPosition = i;
-            }
-
-            //check if is present the kie maven plugin
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT))) {
-                kiePluginPresent = Boolean.TRUE;
-                kieMavenPluginPosition = i;
-            }
-
-            if (plugin.getGroupId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP)) &&
-                    plugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT))) {
-                kieTakariPresent = Boolean.TRUE;
-            }
-            i++;
-        }
-
-        Boolean overwritePOM = updatePOMModel(build,
-                                              defaultCompilerPluginPresent,
-                                              alternativeCompilerPluginPresent,
-                                              kiePluginPresent,
-                                              kieTakariPresent,
-                                              defaultMavenCompilerPosition,
-                                              alternativeCompilerPosition,
-                                              kieMavenPluginPosition);
-
-        return new DefaultPluginPresents(defaultCompilerPluginPresent,
-                                         alternativeCompilerPluginPresent,
-                                         kiePluginPresent,
-                                         overwritePOM);
-    }
-
-    private Boolean updatePOMModel(Build build,
-                                   Boolean defaultCompilerPluginPresent,
-                                   Boolean alternativeCompilerPluginPresent,
-                                   Boolean kiePluginPresent,
-                                   Boolean kieTakariPresent,
-                                   int defaultMavenCompilerPosition,
-                                   int alternativeCompilerPosition,
-                                   int kieMavenPluginPosition) {
-
-        Boolean overwritePOM = Boolean.FALSE;
-
-        if (!alternativeCompilerPluginPresent) {
-            build.addPlugin(getNewCompilerPlugin());
-            alternativeCompilerPluginPresent = Boolean.TRUE;
-            overwritePOM = Boolean.TRUE;
-        }
-
-        if (!defaultCompilerPluginPresent) {
-            //if default maven compiler is not present we add the skip and phase none  to avoid its use
-            Plugin disabledDefaultCompiler = new Plugin();
-            disabledDefaultCompiler.setArtifactId(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT));
-            disabledDefaultCompiler.setVersion(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION));
-            disableMavenCompilerAlreadyPresent(disabledDefaultCompiler);
-            build.addPlugin(disabledDefaultCompiler);
-            defaultCompilerPluginPresent = Boolean.TRUE;
-            overwritePOM = Boolean.TRUE;
-        }
-
-        if (defaultCompilerPluginPresent && alternativeCompilerPluginPresent) {
-            if (defaultMavenCompilerPosition <= alternativeCompilerPosition) {
-                //swap the positions
-                Plugin defaultMavenCompiler = build.getPlugins().get(defaultMavenCompilerPosition);
-                Plugin alternativeCompiler = build.getPlugins().get(alternativeCompilerPosition);
-                build.getPlugins().set(defaultMavenCompilerPosition,
-                                       alternativeCompiler);
-                build.getPlugins().set(alternativeCompilerPosition,
-                                       defaultMavenCompiler);
-                overwritePOM = Boolean.TRUE;
-            }
-        }
-
-        // Change the kie-maven-plugin into kie-takari-plugin
-        if (kiePluginPresent && !kieTakariPresent) {
-            List<Plugin> plugins = build.getPlugins();
-            Plugin kieMavenPlugin = build.getPlugins().get(kieMavenPluginPosition);
-
-            if (kieMavenPlugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP))) {
-                Plugin kieTakariPlugin = new Plugin();
-                kieTakariPlugin.setGroupId(kieMavenPlugin.getGroupId());
-                kieTakariPlugin.setArtifactId(conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT));
-                kieTakariPlugin.setVersion(kieMavenPlugin.getVersion());
-                kieTakariPlugin.setExtensions(Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
-                plugins.set(kieMavenPluginPosition,
-                            kieTakariPlugin);
-                build.setPlugins(plugins);
-                overwritePOM = Boolean.TRUE;
-            }
-        }
-        return overwritePOM;
-    }
-
-    private Plugin getNewCompilerPlugin() {
-
-        Plugin newCompilerPlugin = new Plugin();
-        newCompilerPlugin.setGroupId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP));
-        newCompilerPlugin.setArtifactId(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT));
-        newCompilerPlugin.setVersion(conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_VERSION));
-
-        Xpp3Dom compilerId = new Xpp3Dom(MavenConfig.MAVEN_COMPILER_ID);
-        compilerId.setValue(conf.get(ConfigurationKey.COMPILER));
-        Xpp3Dom sourceVersion = new Xpp3Dom(MavenConfig.MAVEN_SOURCE);
-        sourceVersion.setValue(conf.get(ConfigurationKey.SOURCE_VERSION));
-        Xpp3Dom targetVersion = new Xpp3Dom(MavenConfig.MAVEN_TARGET);
-        targetVersion.setValue(conf.get(ConfigurationKey.TARGET_VERSION));
-
-        Xpp3Dom failOnError = new Xpp3Dom(MavenConfig.FAIL_ON_ERROR);
-        failOnError.setValue(conf.get(ConfigurationKey.FAIL_ON_ERROR));
-
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(compilerId);
-        configuration.addChild(sourceVersion);
-        configuration.addChild(targetVersion);
-        configuration.addChild(failOnError);
-        newCompilerPlugin.setConfiguration(configuration);
-
-        PluginExecution execution = new PluginExecution();
-        execution.setId(MavenCLIArgs.DEFAULT_COMPILE);
-        execution.setGoals(Arrays.asList(MavenCLIArgs.COMPILE));
-        execution.setPhase(MavenCLIArgs.COMPILE);
-
-        newCompilerPlugin.setExecutions(Arrays.asList(execution));
-
-        return newCompilerPlugin;
-    }
-
-    private void disableMavenCompilerAlreadyPresent(Plugin plugin) {
-        Xpp3Dom skipMain = new Xpp3Dom(MavenConfig.MAVEN_SKIP_MAIN);
-        skipMain.setValue(TRUE);
-        Xpp3Dom skip = new Xpp3Dom(MavenConfig.MAVEN_SKIP);
-        skip.setValue(TRUE);
-
-        Xpp3Dom configuration = new Xpp3Dom(MavenConfig.MAVEN_PLUGIN_CONFIGURATION);
-        configuration.addChild(skipMain);
-        configuration.addChild(skip);
-
-        plugin.setConfiguration(configuration);
-
-        PluginExecution exec = new PluginExecution();
-        exec.setId(MavenConfig.MAVEN_DEFAULT_COMPILE);
-        exec.setPhase(MavenConfig.MAVEN_PHASE_NONE);
-        List<PluginExecution> executions = new ArrayList<>();
-        executions.add(exec);
-        plugin.setExecutions(executions);
-    }
-
-
-    private String[] addCreateClasspathMavenArgs(String[] args, CompilationRequest req) {
-        String[] newArgs = Arrays.copyOf(args, args.length + 2);
-        newArgs[args.length] = MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH;
-        newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_PLUGING_LOCAL_REPOSITORY + req.getMavenRepo();
-        return newArgs;
-    }
-
     public PomPlaceHolder readSingle(Path pom) {
         PomPlaceHolder holder = new PomPlaceHolder();
         try {
@@ -285,7 +92,7 @@ public class DefaultPomEditor implements PomEditor {
     }
 
     public boolean write(Path pom,
-                      CompilationRequest request) {
+                         CompilationRequest request) {
 
         try {
             Model model = reader.read(new ByteArrayInputStream(Files.readAllBytes(pom)));
@@ -339,5 +146,138 @@ public class DefaultPomEditor implements PomEditor {
             logger.error(e.getMessage());
             return false;
         }
+    }
+
+
+
+    /* Pom's Plugin manipulation methods*/
+
+    private PluginPresents updatePom(Model model) {
+
+        Build build = model.getBuild();
+        if (build == null) {  //pom without build tag
+            model.setBuild(new Build());
+            build = model.getBuild();
+        }
+
+        PluginsContainer dto = checkPlugins(model, build,
+                                            conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP),
+                                            conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT),
+                                            conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_GROUP),
+                                            conf.get(ConfigurationKey.TAKARI_COMPILER_PLUGIN_ARTIFACT),
+                                            conf.get(ConfigurationKey.KIE_PLUGIN_GROUP),
+                                            conf.get(ConfigurationKey.KIE_MAVEN_PLUGIN_ARTIFACT),
+                                            conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT));
+
+        return updatePOMModel(build, dto);
+    }
+
+    private PluginsContainer checkPlugins(Model model, Build build, String MAVEN_COMPILER_GROUP_ID, String MAVEN_COMPILER_ARTIFACT_ID, String TAKARI_COMPILER_GROUP_ID, String TAKARI_COMPILER_ARTIFACT_ID, String KIE_PLUGIN_GROUP_ID, String KIE_PLUGIN_ARTIFACT_ID, String KIE_TAKARI_PLUGIN_ARTIFACT_ID) {
+        PluginsContainer dto = new PluginsContainer();
+        if (model.getPackaging().equals(KJAR_EXT)) {
+            dto.setKiePluginPresent(Boolean.TRUE);
+        }
+        Integer i = 0;
+        for (Plugin plugin : build.getPlugins()) {
+            // check if is present the default maven compiler
+            if (plugin.getGroupId().equals(MAVEN_COMPILER_GROUP_ID) && plugin.getArtifactId().equals(MAVEN_COMPILER_ARTIFACT_ID)) {
+                dto.setDefaultCompilerPluginPresent(Boolean.TRUE);
+                dto.setDefaultMavenCompilerPosition(i);
+            }
+
+            //check if is present the alternative maven compiler
+            if (plugin.getGroupId().equals(TAKARI_COMPILER_GROUP_ID) && plugin.getArtifactId().equals(TAKARI_COMPILER_ARTIFACT_ID)) {
+                dto.setAlternativeCompilerPluginPresent(Boolean.TRUE);
+                dto.setAlternativeCompilerPosition(i);
+            }
+
+            //check if is present the kie maven plugin
+            if (plugin.getGroupId().equals(KIE_PLUGIN_GROUP_ID) && plugin.getArtifactId().equals(KIE_PLUGIN_ARTIFACT_ID)) {
+                dto.setKiePluginPresent(Boolean.TRUE);
+                dto.setKieMavenPluginPosition(i);
+            }
+
+            if (plugin.getGroupId().equals(KIE_PLUGIN_GROUP_ID) && plugin.getArtifactId().equals(KIE_TAKARI_PLUGIN_ARTIFACT_ID)) {
+                dto.setKieTakariPresent(Boolean.TRUE);
+            }
+            i++;
+        }
+        return dto;
+    }
+
+    private DefaultPluginPresents updatePOMModel(Build build, PluginsContainer dto) {
+
+        checkAlternativeCompilerPlugin(build, dto);
+
+        checkDefaultCompilerPlugin(build, dto);
+
+        checkCompilerPluginsPositions(build, dto);
+
+        changeKieMavenIntoKieTakariPlugin(build, dto);
+
+        return new DefaultPluginPresents(dto.getDefaultCompilerPluginPresent(),
+                                         dto.getAlternativeCompilerPluginPresent(),
+                                         dto.getKiePluginPresent(),
+                                         dto.getOverwritePOM());
+    }
+
+    private void changeKieMavenIntoKieTakariPlugin(Build build, PluginsContainer dto) {
+        // Change the kie-maven-plugin into kie-takari-plugin
+        if (dto.getKiePluginPresent() && !dto.getKieTakariPresent()) {
+            List<Plugin> plugins = build.getPlugins();
+            Plugin kieMavenPlugin = build.getPlugins().get(dto.getKieMavenPluginPosition());
+
+            if (kieMavenPlugin.getArtifactId().equals(conf.get(ConfigurationKey.KIE_PLUGIN_GROUP))) {
+                Plugin kieTakariPlugin = MavenAPIUtil.getPlugin(kieMavenPlugin.getGroupId(),
+                                                                conf.get(ConfigurationKey.KIE_TAKARI_PLUGIN_ARTIFACT),
+                                                                kieMavenPlugin.getVersion(),
+                                                                Boolean.parseBoolean(kieMavenPlugin.getExtensions()));
+                plugins.set(dto.getKieMavenPluginPosition(), kieTakariPlugin);
+                build.setPlugins(plugins);
+                dto.setOverwritePOM(Boolean.TRUE);
+            }
+        }
+    }
+
+    private void checkCompilerPluginsPositions(Build build, PluginsContainer dto) {
+        if (dto.getDefaultCompilerPluginPresent() && dto.getAlternativeCompilerPluginPresent()) {
+            if (dto.getDefaultMavenCompilerPosition() <= dto.getAlternativeCompilerPosition()) {
+                //swap the positions
+                Plugin defaultMavenCompiler = build.getPlugins().get(dto.getDefaultMavenCompilerPosition());
+                Plugin alternativeCompiler = build.getPlugins().get(dto.getAlternativeCompilerPosition());
+                build.getPlugins().set(dto.getDefaultMavenCompilerPosition(), alternativeCompiler);
+                build.getPlugins().set(dto.getAlternativeCompilerPosition(), defaultMavenCompiler);
+                dto.setOverwritePOM(Boolean.TRUE);
+            }
+        }
+    }
+
+    private void checkDefaultCompilerPlugin(Build build, PluginsContainer dto) {
+        if (!dto.getDefaultCompilerPluginPresent()) {
+            //if default maven compiler is not present we add the skip and phase none  to avoid its use
+            Plugin disabledDefaultCompiler = MavenAPIUtil.getPlugin(conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_GROUP),
+                                                                    conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_ARTIFACT),
+                                                                    conf.get(ConfigurationKey.MAVEN_COMPILER_PLUGIN_VERSION));
+
+            MavenAPIUtil.disableMavenCompilerAlreadyPresent(disabledDefaultCompiler);
+            build.addPlugin(disabledDefaultCompiler);
+            dto.setDefaultCompilerPluginPresent(Boolean.TRUE);
+            dto.setOverwritePOM(Boolean.TRUE);
+        }
+    }
+
+    private void checkAlternativeCompilerPlugin(Build build, PluginsContainer dto) {
+        if (!dto.getAlternativeCompilerPluginPresent()) {
+            build.addPlugin(MavenAPIUtil.getNewCompilerPlugin(conf));
+            dto.setAlternativeCompilerPluginPresent(Boolean.TRUE);
+            dto.setOverwritePOM(Boolean.TRUE);
+        }
+    }
+
+    private String[] addCreateClasspathMavenArgs(String[] args, CompilationRequest req) {
+        String[] newArgs = Arrays.copyOf(args, args.length + 2);
+        newArgs[args.length] = MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH;
+        newArgs[args.length + 1] = MavenConfig.MAVEN_DEP_PLUGING_LOCAL_REPOSITORY + req.getMavenRepo();
+        return newArgs;
     }
 }
