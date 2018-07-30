@@ -47,9 +47,12 @@ public class DefinitionsConverter {
         Definitions definitions = bpmn2.createDefinitions();
         DefinitionsPropertyWriter p = propertyWriterFactory.of(definitions);
 
+
         ProcessPropertyWriter pp =
                 processConverter.convertProcess();
 
+        p.setExporter("jBPM Process Modeler");
+        p.setExporterVersion("2.0");
         p.setProcess(pp.getProcess());
         p.setDiagram(pp.getBpmnDiagram());
         p.setRelationship(pp.getRelationship());
