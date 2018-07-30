@@ -39,6 +39,9 @@ public class PropertyWriter extends BasePropertyWriter {
     }
 
     public void setName(String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
         flowElement.setName(StringEscapeUtils.escapeXml10(value.trim()));
         CustomElement.name.of(flowElement).set(value);
     }

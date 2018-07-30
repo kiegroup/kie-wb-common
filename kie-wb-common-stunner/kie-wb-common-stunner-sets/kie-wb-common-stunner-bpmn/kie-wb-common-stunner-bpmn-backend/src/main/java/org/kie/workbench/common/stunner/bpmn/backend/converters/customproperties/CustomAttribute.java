@@ -118,6 +118,8 @@ public class CustomAttribute<T> {
     }
 
     public void set(T value) {
-        attributeDefinition.setValue(element, value);
+        if (value != null) {
+            attributeDefinition.setValue(element, value);
+        }
     }
 }
