@@ -25,6 +25,7 @@ import org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.prop
 import org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner.properties.Scripts;
 import org.kie.workbench.common.stunner.bpmn.definition.SequenceFlow;
 import org.kie.workbench.common.stunner.bpmn.definition.property.connectors.SequenceFlowExecutionSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.BPMNGeneralSet;
 import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -64,23 +65,16 @@ public class SequenceFlowConverter {
         p.setSource(pSrc);
         p.setTarget(pTgt);
 
-        seq.setId(edge.getUUID());
-        seq.setName(definition.getGeneral().getName().getValue());
-
         p.setConnection(connector);
 
-        SequenceFlowExecutionSet executionSet = definition.getExecutionSet();
-        ScriptTypeValue scriptTypeValue = executionSet.getConditionExpression().getValue();
-        String language = scriptTypeValue.getLanguage();
-        String script = scriptTypeValue.getScript();
+        BPMNGeneralSet general = definition.getGeneral();
+        p.setName(general.getName().getValue());
+        p.setDocumentation(general.getDocumentation().getValue());
 
-        if (script != null) {
-            FormalExpression formalExpression = bpmn2.createFormalExpression();
-            String uri = Scripts.scriptLanguageToUri(language);
-            formalExpression.setLanguage(uri);
-            formalExpression.setBody(asCData(script));
-            seq.setConditionExpression(formalExpression);
-        }
+
+        SequenceFlowExecutionSet executionSet = definition.getExecutionSet();
+        p.setPriority(executionSet.getPriority().getValue());
+        p.setConditionExpression(executionSet.getConditionExpression().getValue());
 
         return Result.of(p);
     }
