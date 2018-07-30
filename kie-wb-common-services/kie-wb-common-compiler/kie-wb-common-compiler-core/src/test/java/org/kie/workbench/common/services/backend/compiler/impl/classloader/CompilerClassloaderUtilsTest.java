@@ -78,6 +78,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     @Test
     public void filterFilesFromPackage() {
         List<String> targets = new ArrayList<>(5);
+        targets.add("/target/classes/B.class");
         targets.add("/target/classes/org/kie/test/A.class");
         targets.add("/target/classes/org/kie/test/J.java");
         targets.add("/target/classes/org/kie/test/T.txt");
@@ -85,13 +86,16 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie/test/X.xml");
 
         List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
-        assertThat(orgKie).hasSize(1)
-                .containsExactlyInAnyOrder("org.kie.test.A");
+        assertThat(orgKie).hasSize(1).containsExactlyInAnyOrder("org.kie.test.A");
+
+        List<String> empty = CompilerClassloaderUtils.filterClassesByPackage(targets, "");
+        assertThat(empty).hasSize(2).containsExactlyInAnyOrder("B", "org.kie.test.A");
     }
 
     @Test
     public void filterPathClasses() {
-        List<String> targets = new ArrayList<>(6);
+        List<String> targets = new ArrayList<>(7);
+        targets.add("/target/classes/B.class");
         targets.add("/target/classes/org/kie/test/A.class");
         targets.add("/target/classes/io/akka/test/C.class");
         targets.add("/target/classes/com/acme/test/D.class");
@@ -100,7 +104,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit-4.12.jar");
 
         Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
-        assertThat(orgKie).hasSize(4);
+        assertThat(orgKie).hasSize(5);
     }
 
     @Test

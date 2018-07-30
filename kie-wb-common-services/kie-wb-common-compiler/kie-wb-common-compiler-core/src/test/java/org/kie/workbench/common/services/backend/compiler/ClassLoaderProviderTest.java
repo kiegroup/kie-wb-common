@@ -68,7 +68,7 @@ public class ClassLoaderProviderTest {
     }
 
     @After
-    public void clean() throws Exception{
+    public void clean(){
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }

@@ -49,11 +49,9 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
-import org.kie.workbench.common.services.backend.compiler.impl.utils.DotFileFilter;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
@@ -63,7 +61,6 @@ import org.uberfire.java.nio.file.Paths;
 public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
-    protected static final DirectoryStream.Filter<Path> dotFileFilter = new DotFileFilter();
     protected static final String DOT = ".";
     protected static final String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
     protected static final String JAVA_CLASS_EXT = ".class";
@@ -76,10 +73,10 @@ public class CompilerClassloaderUtils {
     protected static final String FILE = "file:";
     protected static final String MAVEN_TARGET = "target/classes/";
     protected static final String META_INF = "META-INF";
-    protected static final String UTF_8 = "UTF-8";
     protected static final String SEPARATOR = "/";
 
-    private CompilerClassloaderUtils() { }
+    private CompilerClassloaderUtils() {
+    }
 
     /***
      * It run a maven build-classpath in memory and return a classloader with only this deps
@@ -97,12 +94,12 @@ public class CompilerClassloaderUtils {
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {
-        /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
+            /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,
              it override each time and at the end only the last writted is present in  the file,
              for this reason we use a relative path and then we read each file present in each module to build a unique classpath file
              * */
-            if(!res.getDependencies().isEmpty()) {
-                Optional<ClassLoader> urlClassLoader =CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
+            if (!res.getDependencies().isEmpty()) {
+                Optional<ClassLoader> urlClassLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
                 if (urlClassLoader != null) {
                     return urlClassLoader;
                 }
@@ -131,8 +128,8 @@ public class CompilerClassloaderUtils {
 
     public static Predicate<File> filterClasses() {
         return f -> f.toString().contains(MAVEN_TARGET) &&
-                    !f.toString().contains(META_INF) &&
-                    !FilenameUtils.getName(f.toString()).startsWith(DOT);
+                !f.toString().contains(META_INF) &&
+                !FilenameUtils.getName(f.toString()).startsWith(DOT);
     }
 
     public static Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
@@ -224,37 +221,37 @@ public class CompilerClassloaderUtils {
 
     public static List<URL> readAllDepsAsUrls(List<String> prjDeps) {
         List<URL> deps = new ArrayList<>();
-        for(String dep:prjDeps){
+        for (String dep : prjDeps) {
             try {
                 deps.add(new URL(dep));
-            }catch (MalformedURLException e){
+            } catch (MalformedURLException e) {
                 logger.error(e.getMessage());
             }
         }
-        return  deps;
+        return deps;
     }
 
     public static List<URI> readAllDepsAsUris(List<String> prjDeps) {
         List<URI> deps = new ArrayList<>();
-        for(String dep:prjDeps){
+        for (String dep : prjDeps) {
             try {
                 deps.add(new URI(dep));
-            }catch (URISyntaxException e){
+            } catch (URISyntaxException e) {
                 logger.error(e.getMessage());
             }
         }
-        return  deps;
+        return deps;
     }
 
     public static List<String> readItemsFromClasspathString(Set<String> depsModules) {
 
         Set<String> items = new HashSet<>();
         Iterator<String> iter = depsModules.iterator();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             StringTokenizer token = new StringTokenizer(iter.next());
             while (token.hasMoreElements()) {
                 String item = token.nextToken(":");
-                if(item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+                if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
                     StringBuilder sb = new StringBuilder(FILE).append(item);
                     items.add(sb.toString());
                 }
@@ -273,7 +270,7 @@ public class CompilerClassloaderUtils {
                                              SCENARIO_EXT);
     }
 
-    public static List<String> getStringFromTargetWithStream(Path pathIn, String... extensions){
+    public static List<String> getStringFromTargetWithStream(Path pathIn, String... extensions) {
         java.nio.file.Path prjPath = java.nio.file.Paths.get(pathIn.toAbsolutePath().toString());
         List<String> joined = Collections.emptyList();
         try (Stream<java.nio.file.Path> stream = java.nio.file.Files.walk(prjPath)) {
@@ -281,7 +278,7 @@ public class CompilerClassloaderUtils {
                     .map(String::valueOf)
                     .filter(path -> Stream.of(extensions).anyMatch(path::endsWith) && path.contains(MAVEN_TARGET))
                     .collect(Collectors.toList());
-        }catch (IOException ex){
+        } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
         }
         return joined;
@@ -336,40 +333,12 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static Set<String> filterPathClasses(Collection<String> paths, String mavenRpo) {
-        int mavenRepoLength = mavenRpo.length();
-        Set<String> filtered = new HashSet<>(paths.size());
-        for (String item : paths) {
-            if (item.endsWith(JAVA_CLASS_EXT)) {
-                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length());
-                if (one.contains(SEPARATOR)) {  //there is a package
-                    one = one.substring(0, one.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
-                    filtered.add(one);
-                }
-            } else if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
-                String one = item.substring(item.lastIndexOf(mavenRpo) + mavenRepoLength,
-                                            item.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
-                filtered.add(one);
-            }
-        }
-        return filtered;
+    public static Set<String> filterPathClasses(Collection<String> paths, String mavenRepo) {
+        return paths.stream().collect(new FilterPathClassesCollector(mavenRepo, mavenRepo.length()));
     }
 
     public static List<String> filterClassesByPackage(Collection<String> items, String packageName) {
-        String packageNameWithSlash = packageName.replace(DOT, SEPARATOR) + SEPARATOR;//fix for the wildcard
-        List<String> filtered = new ArrayList<>(items.size());
-        for (String item : items) {
-            if (!item.contains(META_INF) && item.endsWith(JAVA_CLASS_EXT)) {
-                String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length(), item.lastIndexOf(DOT));
-                if (one.contains(packageNameWithSlash)) {
-                    if (one.contains(SEPARATOR)) { //there is a package
-                        one = one.replace(SEPARATOR, DOT);
-                    }
-                    filtered.add(one);
-                }
-            }
-        }
-        return filtered;
+        return items.stream().collect(new FilterClassesByPackageCollector(packageName));
     }
 
     public static Class<?> getClass(String pkgName, String className, ClassLoader classloader) {
