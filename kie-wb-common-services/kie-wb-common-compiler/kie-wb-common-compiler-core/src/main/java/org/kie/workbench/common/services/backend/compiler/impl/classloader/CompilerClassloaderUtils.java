@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
@@ -53,7 +54,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
-import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
@@ -133,25 +133,6 @@ public class CompilerClassloaderUtils {
         return f -> f.toString().contains(MAVEN_TARGET) &&
                     !f.toString().contains(META_INF) &&
                     !FilenameUtils.getName(f.toString()).startsWith(DOT);
-    }
-
-    private static void searchTargetFiles(Path file,
-                                          List<String> classPathFiles,
-                                          String... extensions) {
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(file.toAbsolutePath())) {
-            for (Path p : ds) {
-                if (Files.isDirectory(p)) {
-                    searchTargetFiles(p,
-                                      classPathFiles,
-                                      extensions);
-                } else if (Stream.of(extensions).anyMatch(p.toString()::endsWith) && p.toString().contains(MAVEN_TARGET)) {
-                    if (FilenameUtils.getName(p.getFileName().toString()).startsWith(DOT)) {
-                        continue;
-                    }
-                    classPathFiles.add(p.toAbsolutePath().toString());
-                }
-            }
-        }
     }
 
     public static Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
@@ -283,16 +264,27 @@ public class CompilerClassloaderUtils {
     }
 
     public static List<String> getStringFromTargets(Path prjPath) {
-        final List<String> classPathFiles = new ArrayList<>();
-        searchTargetFiles(prjPath,
-                          classPathFiles,
-                          JAVA_CLASS_EXT,
-                          DROOLS_EXT,
-                          GDROOLS_EXT,
-                          RDROOLS_EXT,
-                          XML_EXT,
-                          SCENARIO_EXT);
-        return classPathFiles;
+        return getStringFromTargetWithStream(prjPath,
+                                             JAVA_CLASS_EXT,
+                                             DROOLS_EXT,
+                                             GDROOLS_EXT,
+                                             RDROOLS_EXT,
+                                             XML_EXT,
+                                             SCENARIO_EXT);
+    }
+
+    public static List<String> getStringFromTargetWithStream(Path pathIn, String... extensions){
+        java.nio.file.Path prjPath = java.nio.file.Paths.get(pathIn.toAbsolutePath().toString());
+        List<String> joined = Collections.emptyList();
+        try (Stream<java.nio.file.Path> stream = java.nio.file.Files.walk(prjPath)) {
+            joined = stream
+                    .map(String::valueOf)
+                    .filter(path -> Stream.of(extensions).anyMatch(path::endsWith) && path.contains(MAVEN_TARGET))
+                    .collect(Collectors.toList());
+        }catch (IOException ex){
+            logger.error(ex.getMessage(), ex);
+        }
+        return joined;
     }
 
     public static List<URI> processScannedFilesAsURIs(List<String> classPathFiles) {
