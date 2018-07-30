@@ -130,7 +130,7 @@ public class SubProcessPropertyWriter extends ActivityPropertyWriter implements 
         Scripts.setOnExitAction(process, onExitAction);
     }
 
-    public void setAsync(boolean isAsync) {
+    public void setAsync(Boolean isAsync) {
         CustomElement.async.of(flowElement).set(isAsync);
     }
 }
