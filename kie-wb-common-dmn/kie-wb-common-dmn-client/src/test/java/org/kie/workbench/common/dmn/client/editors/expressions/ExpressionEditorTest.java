@@ -42,8 +42,10 @@ import org.uberfire.mvp.Command;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -191,5 +193,21 @@ public class ExpressionEditorTest {
         assertTrue(optionalHasName.isPresent());
         assertEquals(decision,
                      optionalHasName.get());
+    }
+
+    @Test
+    public void testOnCanvasElementUpdatedDifferentNode() {
+        final CanvasElementUpdatedEvent event = new CanvasElementUpdatedEvent(canvasHandler, node);
+
+        final Decision differentNodeDefinition = mock(Decision.class);
+
+        when(node.getContent()).thenReturn(definition);
+        when(definition.getDefinition()).thenReturn(differentNodeDefinition);
+
+        setupExpression(toolbarStateHandler);
+
+        testedEditor.onCanvasElementUpdated(event);
+
+        verify(view, never()).setReturnToDRGText(any(Optional.class));
     }
 }

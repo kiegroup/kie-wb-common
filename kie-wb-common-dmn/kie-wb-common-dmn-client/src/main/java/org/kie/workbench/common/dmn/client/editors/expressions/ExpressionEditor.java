@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
@@ -109,11 +110,10 @@ public class ExpressionEditor implements ExpressionEditorView.Presenter {
     void onCanvasElementUpdated(final @Observes CanvasElementUpdatedEvent event) {
         final Element<?> element = event.getElement();
         if ((element instanceof Node)) {
-            final Node node = (Node) element;
-            if (node.getContent() instanceof Definition) {
-                final Definition definition = (Definition) node.getContent();
+            if (element.getContent() instanceof Definition) {
+                final Definition definition = (Definition) element.getContent();
                 hasExpression.ifPresent(e -> {
-                    if (e.equals(definition.getDefinition())) {
+                    if (Objects.equals(e, definition.getDefinition())) {
                         view.setReturnToDRGText(Optional.ofNullable((HasName) definition.getDefinition()));
                     }
                 });
