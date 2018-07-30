@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.kie.workbench.screens</groupId>
     <artifactId>kie-wb-common-server-ui</artifactId>
-    <version>7.9.0-SNAPSHOT</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>kie-wb-common-server-ui-backend</artifactId>
@@ -289,6 +289,22 @@
       <groupId>io.undertow</groupId>
       <artifactId>undertow-websockets-jsr</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.kie.server</groupId>
+      <artifactId>kie-server-integ-tests-common</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.kie.server</groupId>
+          <artifactId>kie-server-router-proxy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.cargo</groupId>
+          <artifactId>cargo-core-uberjar</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
