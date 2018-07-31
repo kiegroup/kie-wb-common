@@ -20,10 +20,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
-import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGGlyphFactory;
+import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNGlyphFactory;
 import org.kie.workbench.common.stunner.bpmn.client.resources.BPMNSVGViewFactory;
 import org.kie.workbench.common.stunner.bpmn.client.shape.view.handler.EventInterruptingViewHandler;
 import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.StartConditionalEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartErrorEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartMessageEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.StartNoneEvent;
@@ -52,20 +53,25 @@ public class StartEventShapeDef
                     .put(StartMessageEvent.class,
                          BPMNSVGViewFactory::startMessageEvent)
                     .put(StartErrorEvent.class,
-                         BPMNSVGViewFactory::startErrorEvent);
+                         BPMNSVGViewFactory::startErrorEvent)
+                    .put(StartConditionalEvent.class,
+                         BPMNSVGViewFactory::startConditionalEvent);
+
 
     public static final Map<Class<? extends BaseStartEvent>, Glyph> GLYPHS =
             new HashMap<Class<? extends BaseStartEvent>, Glyph>() {{
                 put(StartNoneEvent.class,
-                    BPMNSVGGlyphFactory.START_NONE_EVENT_GLYPH);
+                    BPMNGlyphFactory.EVENT_START_NONE);
                 put(StartTimerEvent.class,
-                    BPMNSVGGlyphFactory.START_TIMER_EVENT_GLYPH);
+                    BPMNGlyphFactory.EVENT_START_TIMER);
                 put(StartSignalEvent.class,
-                    BPMNSVGGlyphFactory.START_SIGNAL_EVENT_GLYPH);
+                    BPMNGlyphFactory.EVENT_START_SIGNAL);
                 put(StartMessageEvent.class,
-                    BPMNSVGGlyphFactory.START_MESSAGE_EVENT_GLYPH);
+                    BPMNGlyphFactory.EVENT_START_MESSAGE);
                 put(StartErrorEvent.class,
-                    BPMNSVGGlyphFactory.START_ERROR_EVENT_GLYPH);
+                    BPMNGlyphFactory.EVENT_START_ERROR);
+                put(StartConditionalEvent.class,
+                    BPMNGlyphFactory.EVENT_START_CONDITIONAL);
             }};
 
     @Override

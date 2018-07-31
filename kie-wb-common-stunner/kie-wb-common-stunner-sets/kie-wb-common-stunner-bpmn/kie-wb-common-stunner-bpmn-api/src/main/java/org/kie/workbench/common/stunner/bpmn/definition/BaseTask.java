@@ -41,7 +41,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.morph.MorphPr
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.MorphPropertyValueBinding;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
-@MorphBase(defaultType = NoneTask.class, targets = {ReusableSubprocess.class})
+@MorphBase(defaultType = NoneTask.class, targets = {BaseNonContainerSubprocess.class})
 public abstract class BaseTask implements BPMNViewDefinition {
 
     public static final Set<String> TASK_LABELS = new HashSet<String>() {{
@@ -184,13 +184,14 @@ public abstract class BaseTask implements BPMNViewDefinition {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(general.hashCode(),
-                                         taskType.hashCode(),
-                                         backgroundSet.hashCode(),
-                                         fontSet.hashCode(),
-                                         simulationSet.hashCode(),
-                                         dimensionsSet.hashCode(),
-                                         labels.hashCode());
+        return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
+                                         Objects.hashCode(general),
+                                         Objects.hashCode(taskType),
+                                         Objects.hashCode(backgroundSet),
+                                         Objects.hashCode(fontSet),
+                                         Objects.hashCode(simulationSet),
+                                         Objects.hashCode(dimensionsSet),
+                                         Objects.hashCode(labels));
     }
 
     @Override

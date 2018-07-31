@@ -18,6 +18,7 @@ package org.kie.workbench.common.stunner.bpmn.client.workitem;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -115,6 +116,10 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
         }).execute(metadata);
     }
 
+    public void removeRegistry(final Metadata metadata) {
+        Optional.ofNullable(index.remove(metadata)).ifPresent(WorkItemDefinitionCacheRegistry::clear);
+    }
+
     @PreDestroy
     public void destroy() {
         index.clear();
@@ -142,10 +147,6 @@ public class WorkItemDefinitionClientRegistry implements WorkItemDefinitionRegis
                       registryInstanceSupplier.get());
         }
         return index.registries().apply(metadata);
-    }
-
-    private void removeRegistry(final Metadata metadata) {
-        index.remove(metadata);
     }
 
     @SuppressWarnings("all")

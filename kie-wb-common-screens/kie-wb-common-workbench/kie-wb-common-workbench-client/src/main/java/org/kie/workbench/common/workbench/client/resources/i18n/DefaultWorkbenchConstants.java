@@ -151,6 +151,8 @@ public interface DefaultWorkbenchConstants
 
     String StunnerDesigner();
 
+    String DMNDesigner();
+
     String StunnerDesignerPreferences();
 
     String InvalidBusResponseProbablySessionTimeout();
@@ -159,4 +161,7 @@ public interface DefaultWorkbenchConstants
 
     String LayoutEditorComponentPalette();
 
+    String ErrorDetailsSuccessfullyCopiedToClipboard();
+
+    String ErrorDetailsFailedToBeCopiedToClipboard();
 }

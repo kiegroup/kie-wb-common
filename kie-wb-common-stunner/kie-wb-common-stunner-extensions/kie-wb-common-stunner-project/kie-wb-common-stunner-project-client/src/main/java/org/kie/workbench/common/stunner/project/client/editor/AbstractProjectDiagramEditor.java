@@ -117,7 +117,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
     protected ClientProjectDiagramService projectDiagramServices;
     private final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances;
     private final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances;
-    private ProjectEditorMenuSessionItems menuSessionItems;
+    private AbstractProjectEditorMenuSessionItems<?> menuSessionItems;
     private ProjectMessagesListener projectMessagesListener;
 
     private Event<OnDiagramFocusEvent> onDiagramFocusEvent;
@@ -145,7 +145,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                                         final ClientProjectDiagramService projectDiagramServices,
                                         final ManagedInstance<SessionEditorPresenter<EditorSession>> editorSessionPresenterInstances,
                                         final ManagedInstance<SessionViewerPresenter<ViewerSession>> viewerSessionPresenterInstances,
-                                        final ProjectEditorMenuSessionItems menuSessionItems,
+                                        final AbstractProjectEditorMenuSessionItems<?> menuSessionItems,
                                         final Event<OnDiagramFocusEvent> onDiagramFocusEvent,
                                         final Event<OnDiagramLoseFocusEvent> onDiagramLostFocusEvent,
                                         final ProjectMessagesListener projectMessagesListener,
@@ -496,6 +496,9 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
                         .addDelete(versionRecordManager.getPathToLatest(),
                                    assetUpdateValidator);
             }
+
+            addDownloadMenuItem(fileMenuBuilder);
+
             fileMenuBuilder
                     .addNewTopLevelMenu(versionRecordManager.buildMenu())
                     .addNewTopLevelMenu(alertsButtonMenuItemBuilder.build());
@@ -568,7 +571,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         }
     }
 
-    private boolean isSameSession(final ClientSession other) {
+    protected boolean isSameSession(final ClientSession other) {
         return null != other && null != getSession() && other.equals(getSession());
     }
 
@@ -718,7 +721,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
             getView().setWidget(xmlEditorView.asWidget());
             editorProxy = makeXmlEditorProxy();
             hideLoadingViews();
-            notification.fire(new NotificationEvent(translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(),"")),
+            notification.fire(new NotificationEvent(translationService.getValue(DIAGRAM_PARSING_ERROR, Objects.toString(e.getMessage(), "")),
                                                     NotificationEvent.NotificationType.ERROR));
 
             Scheduler.get().scheduleDeferred(xmlEditorView::onResize);
@@ -777,7 +780,7 @@ public abstract class AbstractProjectDiagramEditor<R extends ClientResourceType>
         return null;
     }
 
-    public ProjectEditorMenuSessionItems getMenuSessionItems() {
+    public AbstractProjectEditorMenuSessionItems getMenuSessionItems() {
         return menuSessionItems;
     }
 

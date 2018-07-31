@@ -34,7 +34,7 @@ import org.kie.workbench.common.stunner.core.definition.annotation.definition.La
 import org.kie.workbench.common.stunner.core.definition.annotation.morph.MorphBase;
 import org.kie.workbench.common.stunner.core.util.HashUtil;
 
-@MorphBase(defaultType = ReusableSubprocess.class, targets = {BaseTask.class})
+@MorphBase(defaultType = EmbeddedSubprocess.class)
 public abstract class BaseSubprocess implements BPMNViewDefinition {
 
     @Category
@@ -142,7 +142,8 @@ public abstract class BaseSubprocess implements BPMNViewDefinition {
 
     @Override
     public int hashCode() {
-        return HashUtil.combineHashCodes(Objects.hashCode(general),
+        return HashUtil.combineHashCodes(Objects.hashCode(getClass()),
+                                         Objects.hashCode(general),
                                          Objects.hashCode(backgroundSet),
                                          Objects.hashCode(fontSet),
                                          Objects.hashCode(simulationSet),
