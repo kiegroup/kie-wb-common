@@ -140,10 +140,6 @@ public class SequenceFlowPropertyWriter extends PropertyWriter {
         return location;
     }
 
-    private Point2D getDefaultLocation(Bounds bounds) {
-        return Point2D.create(bounds.getWidth() / 2, bounds.getHeight() / 2);
-    }
-
     private org.eclipse.dd.dc.Point pointOf(double x, double y) {
         org.eclipse.dd.dc.Point pt = dc.createPoint();
         pt.setX((float) x);

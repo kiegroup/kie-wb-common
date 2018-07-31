@@ -35,13 +35,11 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.tostunner
 
 public abstract class InitializedVariable {
 
-    private final String parentId;
     private final String identifier;
     private final String type;
     private ItemDefinition itemDefinition;
 
     public InitializedVariable(String parentId, VariableDeclaration varDecl) {
-        this.parentId = parentId;
         this.identifier = varDecl.getIdentifier();
         this.type = varDecl.getType();
         this.itemDefinition = bpmn2.createItemDefinition();
