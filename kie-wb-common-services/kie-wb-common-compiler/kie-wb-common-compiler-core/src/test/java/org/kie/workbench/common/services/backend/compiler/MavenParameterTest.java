@@ -17,6 +17,8 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
+import java.io.File;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.maven.cli.CLIManager;
@@ -25,15 +27,18 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenParameterTest {
-    //@TODO Alex
     @Test
-    public void cliParameters() throws ParseException {
-        for (int i = 0; i < 600; i++) {
+    public void cliParameters() {
+        String settingsXml = "src/test/settings.xml";
+        File file = new File(settingsXml);
+        String settingPath = "-s" + file.getAbsolutePath();
+
+        for (int i = 0; i < 50; i++) {
             new Thread(() -> {
                 final CLIManager manager = new CLIManager();
 
                 final String[] values = new String[]{"compile",
-                        "-s/Users/porcelli/Sources/kiegroup/kie-wb-common/kie-wb-common-services/kie-wb-common-compiler/src/test/settings.xml",
+                        settingPath,
                         "-Dcompilation.ID=eb678741-0b34-409f-903e-addc083ab2aa",
                         "dependency:build-classpath",
                         "-Dmdep.outputFile=module.cpath"};
