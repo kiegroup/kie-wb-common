@@ -58,6 +58,7 @@ public abstract class BaseGateway implements BPMNViewDefinition {
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{
         add("all");
+        add("diagram_child");
         add("lane_child");
         add("sequence_start");
         add("sequence_end");

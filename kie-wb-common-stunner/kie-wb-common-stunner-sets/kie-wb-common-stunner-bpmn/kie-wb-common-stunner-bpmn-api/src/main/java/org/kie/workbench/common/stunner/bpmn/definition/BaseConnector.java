@@ -56,6 +56,7 @@ public abstract class BaseConnector implements BPMNViewDefinition {
     @Labels
     protected final Set<String> labels = new HashSet<String>() {{
         add("all");
+        add("diagram_child");
         add("lane_child");
         add("ConnectingObjectsMorph");
         add("cm_nop");

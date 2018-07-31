@@ -71,7 +71,7 @@ public abstract class BaseEndEvent implements BPMNViewDefinition,
 
     protected void initLabels() {
         labels.add("all");
-        labels.add("base_element");
+        labels.add("diagram_child");
         labels.add("lane_child");
         labels.add("sequence_end");
         labels.add("to_task_event");

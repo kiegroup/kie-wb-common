@@ -47,7 +47,7 @@ import static org.kie.workbench.common.forms.adf.engine.shared.formGeneration.pr
 @Portable
 @Bindable
 @Definition(graphFactory = NodeFactory.class)
-@CanContain(roles = {"base_element"})
+@CanContain(roles = {"diagram_child"})
 @FormDefinition(
         startElement = "diagramSet",
         policy = FieldPolicy.ONLY_MARKED,
