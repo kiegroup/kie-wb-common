@@ -40,47 +40,44 @@ import org.slf4j.LoggerFactory;
 /**
  * Rest endpoint to ask an async remote compilation
  */
-@Path("/maven/3.3.9/")
+@Path("/maven/")
 @RequestScoped
-public class MavenRestHandler extends Application{
+public class MavenRestHandler extends Application {
 
     private static Logger logger = LoggerFactory.getLogger(MavenRestHandler.class);
 
-    private static String  mvn = "Apache Maven 3.3.9";
+    private static String mvn = "Apache Maven 3.3.9";
 
     private AFCompilerService compilerService;
 
-    public MavenRestHandler(){
+    public MavenRestHandler() {
         compilerService = new DefaultKieCompilerService();
     }
 
     /**
      * Endpoint to know the version of the available Maven
-     * */
+     */
     @GET
     @Produces("text/plain")
     public String get() {
         return mvn;
     }
 
-
     /**
      * Endpoint to ask an async build
-     *
-     * */
+     */
     @POST
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
         CompletableFuture<KieCompilationResponse> response = compilerService.build(projectRepo, mavenRepo);
         response.whenCompleteAsync((kieCompilationResponse, throwable) -> {
-                if(throwable != null){
-                    logger.error(throwable.getMessage());
-                    ar.resume(Response.serverError().build());
-                }else{
-                    byte[] bytes = RestUtils.serialize(new DefaultHttpCompilationResponse(kieCompilationResponse));
-                    ar.resume(Response.ok(bytes).build());
-                }
+            if (throwable != null) {
+                logger.error(throwable.getMessage());
+                ar.resume(Response.serverError().build());
+            } else {
+                byte[] bytes = RestUtils.serialize(new DefaultHttpCompilationResponse(kieCompilationResponse));
+                ar.resume(Response.ok(bytes).build());
+            }
         });
     }
-
 }

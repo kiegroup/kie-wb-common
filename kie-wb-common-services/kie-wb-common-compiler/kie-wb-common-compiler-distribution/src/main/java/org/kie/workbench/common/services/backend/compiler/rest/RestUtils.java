@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Utils for the Rest client/server classes
- * */
+ */
 public class RestUtils {
 
     protected static Logger logger = LoggerFactory.getLogger(RestUtils.class);
@@ -72,17 +72,16 @@ public class RestUtils {
         return new DefaultHttpCompilationResponse(Boolean.FALSE);
     }
 
-
-    public static byte[] serialize(Object obj){
+    public static byte[] serialize(Object obj) {
         byte[] returnArray = null;
-        try(ByteArrayOutputStream b = new ByteArrayOutputStream()){
-            try(ObjectOutputStream o = new ObjectOutputStream(b)){
+        try (ByteArrayOutputStream b = new ByteArrayOutputStream()) {
+            try (ObjectOutputStream o = new ObjectOutputStream(b)) {
                 o.writeObject(obj);
             }
             returnArray = b.toByteArray();
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(e.getLocalizedMessage());
         }
-        return  returnArray;
+        return returnArray;
     }
 }

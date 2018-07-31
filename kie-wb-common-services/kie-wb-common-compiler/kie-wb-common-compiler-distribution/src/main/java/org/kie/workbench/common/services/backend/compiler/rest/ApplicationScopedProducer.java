@@ -1,6 +1,5 @@
 package org.kie.workbench.common.services.backend.compiler.rest;
 
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -9,9 +8,6 @@ import javax.inject.Named;
 
 import org.jboss.errai.security.shared.api.identity.User;
 import org.jboss.errai.security.shared.service.AuthenticationService;
-
-import org.kie.soup.project.datamodel.commons.util.MVELEvaluator;
-import org.kie.soup.project.datamodel.commons.util.RawMVELEvaluator;
 import org.uberfire.commons.services.cdi.Startup;
 import org.uberfire.commons.services.cdi.StartupType;
 import org.uberfire.ext.metadata.MetadataConfig;
@@ -36,8 +32,5 @@ public class ApplicationScopedProducer {
     public MetadataConfig configProducer() {
         return this.config;
     }
-
-
-
 }
 

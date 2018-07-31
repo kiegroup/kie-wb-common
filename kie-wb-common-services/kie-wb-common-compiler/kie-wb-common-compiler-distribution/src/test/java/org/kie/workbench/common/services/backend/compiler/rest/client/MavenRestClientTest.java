@@ -16,37 +16,12 @@
 package org.kie.workbench.common.services.backend.compiler.rest.client;
 
 import java.io.File;
-
-import org.apache.commons.io.IOUtils;
-import org.eclipse.jgit.api.Git;
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.arquillian.test.api.ArquillianResource;
-import org.jboss.shrinkwrap.api.Archive;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.WebArchive;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.TestUtil;
-import org.kie.workbench.common.services.backend.compiler.rest.MVELEvaluatorProducer;
-import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
-import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.uberfire.io.IOService;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
 import java.util.HashMap;
 import java.util.concurrent.Future;
 
@@ -60,12 +35,29 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
+import org.apache.commons.io.IOUtils;
+import org.eclipse.jgit.api.Git;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.Archive;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtil;
+import org.kie.workbench.common.services.backend.compiler.rest.MVELEvaluatorProducer;
+import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
+import org.kie.workbench.common.services.backend.compiler.rest.server.MavenRestHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(Arquillian.class)
 public class MavenRestClientTest {
@@ -74,15 +66,13 @@ public class MavenRestClientTest {
     private static Path mavenRepo;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
-    private Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
-
-    @ArquillianResource
-    private URL deploymentUrl;
-
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
     private static Boolean runIntoMavenCLI = null;
+    private Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
+    @ArquillianResource
+    private URL deploymentUrl;
 
     private static void setRunIntoMavenCLI() {
         if (runIntoMavenCLI == null) {
@@ -116,7 +106,7 @@ public class MavenRestClientTest {
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
         final File[] metaInfFilesFiles;
         if (runIntoMavenCLI) {
-           // war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
+            // war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
         } else {
@@ -126,9 +116,8 @@ public class MavenRestClientTest {
         }
 
         war.addClasses(MavenRestHandler.class);
-         war.addClass(MVELEvaluatorProducer.class);
-         war.addClass(TestUtil.class);
-        //war.addPackages(true, "org.kie.workbench.common.services.backend.compiler");
+        war.addClass(MVELEvaluatorProducer.class);
+        war.addClass(TestUtil.class);
         war.addPackages(true, "org.kie.workbench.common.services.backend.compiler.rest");
         for (final File file : metaInfFilesFiles) {
             war.addAsManifestResource(file);
@@ -140,6 +129,7 @@ public class MavenRestClientTest {
                 fromFile(settings).
                 loadPomFromFile("./pom.xml")
                 .resolve(
+                        "org.assertj:assertj-core:?",
                         "org.kie.workbench.services:kie-wb-common-compiler-core:?",
                         "org.kie.workbench.services:kie-wb-common-compiler-service:?",
                         "org.kie.workbench.services:kie-wb-common-services-backend:?",
@@ -175,13 +165,12 @@ public class MavenRestClientTest {
     @Test
     public void get() {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/3.3.9/");
+        WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
-        Assert.assertEquals(response.getStatusInfo().getStatusCode(), 200);
-        Assert.assertEquals(response.readEntity(String.class), "Apache Maven 3.3.9");
-        //assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
-        //assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
+
+        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
+        assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
         tearDown();
     }
 

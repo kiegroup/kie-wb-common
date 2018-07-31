@@ -16,11 +16,9 @@
 package org.kie.workbench.common.services.backend.compiler.rest.server;
 
 import java.io.File;
-
 import java.net.URI;
+import java.nio.file.Path;
 import java.util.HashMap;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.eclipse.jgit.api.Git;
 import org.jboss.resteasy.core.AsynchronousDispatcher;
@@ -34,21 +32,17 @@ import org.jboss.resteasy.plugins.providers.RegisterBuiltin;
 import org.jboss.resteasy.plugins.server.resourcefactory.POJOResourceFactory;
 import org.jboss.resteasy.spi.ResteasyProviderFactory;
 import org.junit.BeforeClass;
-
 import org.junit.Test;
-
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
-
-import java.nio.file.Path;
-
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenRestHandlerTest {
 
@@ -56,12 +50,11 @@ public class MavenRestHandlerTest {
     private static Path mavenRepo;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
-    private Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
-
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
     private static Boolean runIntoMavenCLI = null;
+    private Logger logger = LoggerFactory.getLogger(MavenRestHandlerTest.class);
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -150,7 +143,7 @@ public class MavenRestHandlerTest {
             Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
             POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
             dispatcher.getRegistry().addResourceFactory(noDefaults);
-            MockHttpRequest request = MockHttpRequest.get("maven/3.3.9/");
+            MockHttpRequest request = MockHttpRequest.get("maven/");
             MockHttpResponse response = new MockHttpResponse();
             dispatcher.invoke(request, response);
             assertThat(response.getStatus()).isEqualTo(200);

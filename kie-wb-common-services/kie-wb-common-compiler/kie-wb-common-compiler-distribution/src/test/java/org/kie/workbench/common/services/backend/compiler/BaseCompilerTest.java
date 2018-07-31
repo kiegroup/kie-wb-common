@@ -26,14 +26,13 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-public class BaseCompilerTest implements Serializable{
+public class BaseCompilerTest implements Serializable {
 
     protected static Path tmpRoot;
     protected Path mavenRepo;
     protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
-    protected AFCompiler compiler;
 
     public BaseCompilerTest(String prjName) {
         try {
@@ -58,7 +57,7 @@ public class BaseCompilerTest implements Serializable{
 
     @AfterClass
     public static void tearDown() {
-        if(tmpRoot != null) {
+        if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }
     }

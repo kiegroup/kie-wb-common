@@ -11,5 +11,4 @@ public class MVELEvaluatorProducer {
 
     @Produces
     public final MVELEvaluator evaluator = new RawMVELEvaluator();
-
 }
