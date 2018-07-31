@@ -36,6 +36,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.DefaultMaven;
 import org.eclipse.jgit.api.Git;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -66,11 +67,13 @@ public class MavenRestClientTest {
     private static Path mavenRepo;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
+    private static String mavenVersion;
+    private static String maven = "Apache Maven ";
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
     private static Boolean runIntoMavenCLI = null;
-    private Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
+    private static Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
     @ArquillianResource
     private URL deploymentUrl;
 
@@ -85,7 +88,16 @@ public class MavenRestClientTest {
         }
     }
 
+    private static String getMavenVersion(){
+        StringBuilder sb = new StringBuilder(maven);
+        org.apache.maven.Maven mvn = new DefaultMaven();
+        sb.append(mvn.getClass().getPackage().getImplementationVersion());
+        logger.info("Maven version used :{}", sb.toString());
+        return sb.toString();
+    }
+
     public static void setup() throws Exception {
+        mavenVersion= getMavenVersion();
         setRunIntoMavenCLI();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
@@ -164,13 +176,13 @@ public class MavenRestClientTest {
 
     @Test
     public void get() {
+        mavenVersion = getMavenVersion();
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
-
         assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
-        assertThat(response.readEntity(String.class)).isEqualTo("Apache Maven 3.3.9");
+        assertThat(response.readEntity(String.class)).isEqualTo(mavenVersion);
         tearDown();
     }
 
@@ -228,7 +240,7 @@ public class MavenRestClientTest {
             tmpRoot = Paths.get(gitClonedFolder + "/dummy/");
 
             Client client = ClientBuilder.newClient();
-            WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/3.3.9/");
+            WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
             MultivaluedMap headersMap = new MultivaluedHashMap();
             headersMap.add("project", tmpRoot.toAbsolutePath().toString() + "/dummy");
             headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());

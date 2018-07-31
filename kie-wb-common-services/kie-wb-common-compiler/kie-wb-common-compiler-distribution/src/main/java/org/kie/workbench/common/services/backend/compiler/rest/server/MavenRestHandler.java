@@ -29,6 +29,8 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.maven.DefaultMaven;
+import org.apache.maven.Maven;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultHttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.rest.RestUtils;
@@ -46,12 +48,15 @@ public class MavenRestHandler extends Application {
 
     private static Logger logger = LoggerFactory.getLogger(MavenRestHandler.class);
 
-    private static String mvn = "Apache Maven 3.3.9";
+    private static String mvn ;
+
+    private static String maven = "Apache Maven ";
 
     private AFCompilerService compilerService;
 
     public MavenRestHandler() {
         compilerService = new DefaultKieCompilerService();
+        mvn = getMavenVersion();
     }
 
     /**
@@ -79,5 +84,13 @@ public class MavenRestHandler extends Application {
                 ar.resume(Response.ok(bytes).build());
             }
         });
+    }
+
+    private String getMavenVersion(){
+        StringBuilder sb = new StringBuilder(maven);
+        Maven mvn = new DefaultMaven();
+        sb.append(mvn.getClass().getPackage().getImplementationVersion());
+        logger.info("Rest Compiler :{}", sb.toString());
+        return sb.toString();
     }
 }
