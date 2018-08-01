@@ -362,10 +362,10 @@ public class KieDefaultMavenCompilerTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
-        TestUtil.copyTree(Paths.get("src/test/projects/dummy"), temp);
+        TestUtil.copyTree(Paths.get("target/test-classes/dummy"), temp);
         //end NIO
 
-        byte[] pomOverride = Files.readAllBytes(Paths.get("src/test/projects/dummy_override/pom.xml"));
+        byte[] pomOverride = Files.readAllBytes(Paths.get("target/test-classes/dummy_override/pom.xml"));
         Files.write(Paths.get(temp.toString(), "pom.xml"), pomOverride);
 
         byte[] encoded = Files.readAllBytes(Paths.get(temp.toString(),

@@ -79,7 +79,7 @@ public class BuildInMemoryClasspathMojoTest {
     @Test
     public void getClassloaderFromAllDependenciesSimpleTest(){
 
-        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_simple");
+        Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -96,7 +96,7 @@ public class BuildInMemoryClasspathMojoTest {
     @Test
     public void getClassloaderFromAllDependenciesComplexTest() {
 
-        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
+        Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
@@ -112,7 +112,7 @@ public class BuildInMemoryClasspathMojoTest {
 
     @Test
     public void testCompilerClassloaderUtilsTests(){
-        Path path = Paths.get(".").resolve("src/test/projects/dummy_deps_complex");
+        Path path = Paths.get(".").resolve("target/test-classes//dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
                                                                                                                mavenRepo.toAbsolutePath().toString());
         assertThat(classloaderOptional).isPresent();
