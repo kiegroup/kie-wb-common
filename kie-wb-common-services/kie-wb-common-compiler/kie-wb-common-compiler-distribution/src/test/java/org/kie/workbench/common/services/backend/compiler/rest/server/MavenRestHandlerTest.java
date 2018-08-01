@@ -143,11 +143,11 @@ public class MavenRestHandlerTest {
             Dispatcher dispatcher = MockDispatcherFactory.createDispatcher();
             POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
             dispatcher.getRegistry().addResourceFactory(noDefaults);
-            MockHttpRequest request = MockHttpRequest.get("maven/");
+            MockHttpRequest request = MockHttpRequest.get("build/maven/");
             MockHttpResponse response = new MockHttpResponse();
             dispatcher.invoke(request, response);
             assertThat(response.getStatus()).isEqualTo(200);
-            assertThat(response.getContentAsString()).isEqualTo("Apache Maven 3.3.9");
+            assertThat(response.getContentAsString()).isEqualTo("Apache Maven");
             //end test
 
             tearDown();
@@ -221,7 +221,7 @@ public class MavenRestHandlerTest {
             POJOResourceFactory noDefaults = new POJOResourceFactory(MavenRestHandler.class);
             dispatcher.getRegistry().addResourceFactory(noDefaults);
 
-            MockHttpRequest request = MockHttpRequest.create("POST", "maven/3.3.9/");
+            MockHttpRequest request = MockHttpRequest.create("POST", "build/maven/");
             request.header("project", tmpRoot.toAbsolutePath().toString() + "/dummy").header("mavenrepo", mavenRepo.toAbsolutePath().toString());
             MockHttpResponse response = new MockHttpResponse();
 

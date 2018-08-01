@@ -36,7 +36,6 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.DefaultMaven;
 import org.eclipse.jgit.api.Git;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -67,13 +66,13 @@ public class MavenRestClientTest {
     private static Path mavenRepo;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
-    private static String mavenVersion;
-    private static String maven = "Apache Maven ";
+    private static String maven = "Apache Maven";
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
     private static Boolean runIntoMavenCLI = null;
     private static Logger logger = LoggerFactory.getLogger(MavenRestClientTest.class);
+
     @ArquillianResource
     private URL deploymentUrl;
 
@@ -88,16 +87,7 @@ public class MavenRestClientTest {
         }
     }
 
-    private static String getMavenVersion(){
-        StringBuilder sb = new StringBuilder(maven);
-        org.apache.maven.Maven mvn = new DefaultMaven();
-        sb.append(mvn.getClass().getPackage().getImplementationVersion());
-        logger.info("Maven version used :{}", sb.toString());
-        return sb.toString();
-    }
-
     public static void setup() throws Exception {
-        mavenVersion= getMavenVersion();
         setRunIntoMavenCLI();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
@@ -118,7 +108,6 @@ public class MavenRestClientTest {
         final WebArchive war = ShrinkWrap.create(WebArchive.class, "compiler.war");
         final File[] metaInfFilesFiles;
         if (runIntoMavenCLI) {
-            // war.addAsResource(new File("src/test/resources/IncrementalCompiler.properties"));
             war.setWebXML(new File("target/test-classes/web.xml"));
             metaInfFilesFiles = new File("target/test-classes/META-INF").listFiles();
         } else {
@@ -176,13 +165,12 @@ public class MavenRestClientTest {
 
     @Test
     public void get() {
-        mavenVersion = getMavenVersion();
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
+        WebTarget target = client.target(deploymentUrl.toString() + "rest/build/maven/");
         Invocation invocation = target.request().buildGet();
         Response response = invocation.invoke();
         assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);
-        assertThat(response.readEntity(String.class)).isEqualTo(mavenVersion);
+        assertThat(response.readEntity(String.class)).isEqualTo(maven);
         tearDown();
     }
 

@@ -42,21 +42,18 @@ import org.slf4j.LoggerFactory;
 /**
  * Rest endpoint to ask an async remote compilation
  */
-@Path("/maven/")
+@Path("/build/maven/")
 @RequestScoped
 public class MavenRestHandler extends Application {
 
     private static Logger logger = LoggerFactory.getLogger(MavenRestHandler.class);
 
-    private static String mvn ;
-
-    private static String maven = "Apache Maven ";
+    private static String maven = "Apache Maven";
 
     private AFCompilerService compilerService;
 
     public MavenRestHandler() {
         compilerService = new DefaultKieCompilerService();
-        mvn = getMavenVersion();
     }
 
     /**
@@ -65,7 +62,7 @@ public class MavenRestHandler extends Application {
     @GET
     @Produces("text/plain")
     public String get() {
-        return mvn;
+        return maven;
     }
 
     /**
@@ -84,13 +81,5 @@ public class MavenRestHandler extends Application {
                 ar.resume(Response.ok(bytes).build());
             }
         });
-    }
-
-    private String getMavenVersion(){
-        StringBuilder sb = new StringBuilder(maven);
-        Maven mvn = new DefaultMaven();
-        sb.append(mvn.getClass().getPackage().getImplementationVersion());
-        logger.info("Rest Compiler :{}", sb.toString());
-        return sb.toString();
     }
 }
