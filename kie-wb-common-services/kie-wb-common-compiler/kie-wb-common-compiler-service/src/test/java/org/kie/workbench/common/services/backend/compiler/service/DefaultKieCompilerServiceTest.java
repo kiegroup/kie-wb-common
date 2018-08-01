@@ -56,7 +56,6 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
         assertThat(res.getDependencies()).isEmpty();
-        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
@@ -108,7 +107,6 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getDependencies()).isEmpty();
-        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
@@ -217,7 +215,6 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
         assertThat(res.getDependencies()).isEmpty();
-        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
@@ -251,7 +248,6 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getDependencies()).isEmpty();
-        assertThat(res.getDependencies()).hasSize(0);
     }
 
     @Test
