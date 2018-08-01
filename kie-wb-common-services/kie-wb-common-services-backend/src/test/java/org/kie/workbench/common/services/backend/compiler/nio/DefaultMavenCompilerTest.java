@@ -33,6 +33,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.MavenSettingsWorkaroundForTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.Decorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -127,7 +128,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
 
@@ -208,7 +209,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
 
@@ -273,7 +274,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/dummy/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                new HashMap<>(),
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compileSync(req);
@@ -346,7 +347,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/dummy"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compileSync(req);

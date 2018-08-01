@@ -33,6 +33,7 @@ import org.kie.api.builder.KieModule;
 import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
 import org.kie.workbench.common.services.backend.compiler.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.MavenSettingsWorkaroundForTest;
 import org.kie.workbench.common.services.backend.compiler.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -92,7 +93,7 @@ public class KieMetadataTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                new HashMap<>(),
                                                                Boolean.TRUE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
@@ -153,7 +154,7 @@ public class KieMetadataTest {
 
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                    info,
-                                                                   new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.OFFLINE},
+                                                                   new String[]{MavenCLIArgs.INSTALL, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                    new HashMap<>(),
                                                                    Boolean.TRUE);
             KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);
@@ -208,7 +209,7 @@ public class KieMetadataTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.OFFLINE},
+                                                               new String[]{MavenCLIArgs.INSTALL, MavenSettingsWorkaroundForTest.MAVEN_SETTINGS_OPTION},
                                                                new HashMap<>(),
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compileSync(req);

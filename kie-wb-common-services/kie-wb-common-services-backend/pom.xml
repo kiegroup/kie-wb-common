@@ -67,38 +67,7 @@
             <nonFilteredFileExtension>xls</nonFilteredFileExtension>
           </nonFilteredFileExtensions>
         </configuration>
-      </plugin>
-      <!-- only added so Maven resolves plugin dependencies to be used in test classes -->
-      <plugin>
-        <groupId>org.kie</groupId>
-        <artifactId>kie-takari-plugin</artifactId>
-        <version>${project.version}</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <phase>none</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-plugin-versions</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requirePluginVersions>
-                  <!-- Allow kie-takari-plugin to use SNAPSHOT version -->
-                  <unCheckedPluginList>org.kie:kie-takari-plugin</unCheckedPluginList>
-                </requirePluginVersions>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+      </plugin>   
     </plugins>
   </build>
 
@@ -487,7 +456,6 @@
       <artifactId>assertj-core</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
 </project>
