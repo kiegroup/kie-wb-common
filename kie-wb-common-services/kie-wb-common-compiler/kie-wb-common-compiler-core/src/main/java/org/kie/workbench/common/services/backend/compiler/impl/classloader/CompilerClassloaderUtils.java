@@ -46,6 +46,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
+import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
@@ -61,20 +62,6 @@ import org.uberfire.java.nio.file.Paths;
 public class CompilerClassloaderUtils {
 
     protected static final Logger logger = LoggerFactory.getLogger(CompilerClassloaderUtils.class);
-    protected static final String DOT = ".";
-    protected static final String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
-    protected static final String JAVA_CLASS_EXT = ".class";
-    protected static final String XML_EXT = ".xml";
-    protected static final String DROOLS_EXT = ".drl";
-    protected static final String GDROOLS_EXT = ".gdrl";
-    protected static final String RDROOLS_EXT = ".rdrl";
-    protected static final String SCENARIO_EXT = ".scenario";
-    protected static final String FILE_URI = "file://";
-    protected static final String FILE = "file:";
-    protected static final String MAVEN_TARGET = "target/classes/";
-    protected static final String META_INF = "META-INF";
-    protected static final String SEPARATOR = "/";
-
     private CompilerClassloaderUtils() {
     }
 
@@ -87,7 +74,7 @@ public class CompilerClassloaderUtils {
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                           String localRepo) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(FILE_URI + prjPath)));
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
                                                                new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
@@ -114,8 +101,8 @@ public class CompilerClassloaderUtils {
         final Map<String, byte[]> classes = new HashMap<>(keys.size() + store.size());
 
         for (String item : keys) {
-            byte[] bytez = getBytes(path + SEPARATOR + item);
-            String fqn = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length());
+            byte[] bytez = getBytes(path + CommonConstants.SEPARATOR + item);
+            String fqn = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length());
             classes.put(fqn, bytez);
         }
         if (!store.isEmpty()) {
@@ -127,15 +114,15 @@ public class CompilerClassloaderUtils {
     }
 
     public static Predicate<File> filterClasses() {
-        return f -> f.toString().contains(MAVEN_TARGET) &&
-                !f.toString().contains(META_INF) &&
-                !FilenameUtils.getName(f.toString()).startsWith(DOT);
+        return f -> f.toString().contains(CommonConstants.MAVEN_TARGET) &&
+                !f.toString().contains(CommonConstants.META_INF) &&
+                !FilenameUtils.getName(f.toString()).startsWith(CommonConstants.DOT);
     }
 
     public static Optional<ClassLoader> loadDependenciesClassloaderFromProject(String prjPath,
                                                                                String localRepo) {
         List<String> poms =
-                MavenUtils.searchPoms(Paths.get(URI.create(FILE_URI + prjPath)));
+                MavenUtils.searchPoms(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         List<URL> urls = getDependenciesURL(poms,
                                             localRepo);
         return buildResult(urls);
@@ -157,10 +144,10 @@ public class CompilerClassloaderUtils {
                                                    List<Artifact> artifacts) throws MalformedURLException {
         List<URL> urls = new ArrayList<>(artifacts.size());
         for (Artifact artifact : artifacts) {
-            StringBuilder sb = new StringBuilder(FILE_URI);
-            sb.append(localRepo).append(SEPARATOR).append(artifact.getGroupId()).
-                    append(SEPARATOR).append(artifact.getVersion()).append(SEPARATOR).append(artifact.getArtifactId()).
-                    append("-").append(artifact.getVersion()).append(DOT).append(artifact.getType());
+            StringBuilder sb = new StringBuilder(CommonConstants.FILE_URI);
+            sb.append(localRepo).append(CommonConstants.SEPARATOR).append(artifact.getGroupId()).
+                    append(CommonConstants.SEPARATOR).append(artifact.getVersion()).append(CommonConstants.SEPARATOR).append(artifact.getArtifactId()).
+                    append("-").append(artifact.getVersion()).append(CommonConstants.DOT).append(artifact.getType());
             URL url = new URL(sb.toString());
             urls.add(url);
         }
@@ -185,10 +172,10 @@ public class CompilerClassloaderUtils {
             List<URL> targetModulesUrls = new ArrayList(pomsPaths.size());
             try {
                 for (String pomPath : pomsPaths) {
-                    Path path = Paths.get(URI.create(FILE_URI + pomPath));
-                    StringBuilder sb = new StringBuilder(FILE_URI)
+                    Path path = Paths.get(URI.create(CommonConstants.FILE_URI + pomPath));
+                    StringBuilder sb = new StringBuilder(CommonConstants.FILE_URI)
                             .append(path.getParent().toAbsolutePath().toString())
-                            .append(SEPARATOR).append(MAVEN_TARGET);
+                            .append(CommonConstants.SEPARATOR).append(CommonConstants.MAVEN_TARGET);
                     targetModulesUrls.add(new URL(sb.toString()));
                 }
             } catch (MalformedURLException ex) {
@@ -251,8 +238,8 @@ public class CompilerClassloaderUtils {
             StringTokenizer token = new StringTokenizer(iter.next());
             while (token.hasMoreElements()) {
                 String item = token.nextToken(":");
-                if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
-                    StringBuilder sb = new StringBuilder(FILE).append(item);
+                if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
+                    StringBuilder sb = new StringBuilder(CommonConstants.FILE).append(item);
                     items.add(sb.toString());
                 }
             }
@@ -262,12 +249,12 @@ public class CompilerClassloaderUtils {
 
     public static List<String> getStringFromTargets(Path prjPath) {
         return getStringFromTargetWithStream(prjPath,
-                                             JAVA_CLASS_EXT,
-                                             DROOLS_EXT,
-                                             GDROOLS_EXT,
-                                             RDROOLS_EXT,
-                                             XML_EXT,
-                                             SCENARIO_EXT);
+                                             CommonConstants.JAVA_CLASS_EXT,
+                                             CommonConstants.DROOLS_EXT,
+                                             CommonConstants.GDROOLS_EXT,
+                                             CommonConstants.RDROOLS_EXT,
+                                             CommonConstants.XML_EXT,
+                                             CommonConstants.SCENARIO_EXT);
     }
 
     public static List<String> getStringFromTargetWithStream(Path pathIn, String... extensions) {
@@ -276,7 +263,7 @@ public class CompilerClassloaderUtils {
         try (Stream<java.nio.file.Path> stream = java.nio.file.Files.walk(prjPath)) {
             joined = stream
                     .map(String::valueOf)
-                    .filter(path -> Stream.of(extensions).anyMatch(path::endsWith) && path.contains(MAVEN_TARGET))
+                    .filter(path -> Stream.of(extensions).anyMatch(path::endsWith) && path.contains(CommonConstants.MAVEN_TARGET))
                     .collect(Collectors.toList());
         } catch (IOException ex) {
             logger.error(ex.getMessage(), ex);
@@ -290,12 +277,12 @@ public class CompilerClassloaderUtils {
             if (FilenameUtils.getName(file).startsWith(".")) {
                 continue;
             }
-            if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+            if (file.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
                 //the jar is added as is with file:// prefix
-                if (file.startsWith(FILE_URI)) {
+                if (file.startsWith(CommonConstants.FILE_URI)) {
                     deps.add(URI.create(file));
                 } else {
-                    deps.add(URI.create(FILE_URI + file));
+                    deps.add(URI.create(CommonConstants.FILE_URI + file));
                 }
             }
         }
@@ -306,15 +293,15 @@ public class CompilerClassloaderUtils {
         List<URL> deps = new ArrayList<>();
         try {
             for (String file : classPathFiles) {
-                if (FilenameUtils.getName(file).startsWith(DOT)) {
+                if (FilenameUtils.getName(file).startsWith(CommonConstants.DOT)) {
                     continue;
                 }
-                if (file.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+                if (file.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
                     //the jar/class is added as is with file:// prefix
-                    if (file.startsWith(FILE_URI)) {
+                    if (file.startsWith(CommonConstants.FILE_URI)) {
                         deps.add(new URL(file));
                     } else {
-                        deps.add(new URL(FILE_URI + file));
+                        deps.add(new URL(CommonConstants.FILE_URI + file));
                     }
                 }
             }

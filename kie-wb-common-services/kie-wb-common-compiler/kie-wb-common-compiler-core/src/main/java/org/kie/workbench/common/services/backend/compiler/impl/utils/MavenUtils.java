@@ -34,6 +34,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.appformer.maven.integration.Aether;
 import org.eclipse.aether.repository.RemoteRepository;
 import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
+import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
@@ -47,8 +48,6 @@ import org.uberfire.java.nio.file.Paths;
 public class MavenUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
-
-    private final static String POM_NAME = "pom.xml";
 
     public static List<Artifact> resolveDependenciesFromMultimodulePrj(List<String> pomsPaths) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
@@ -95,7 +94,7 @@ public class MavenUtils {
             for (Path p : ds) {
                 if (Files.isDirectory(p)) {
                     poms.addAll(searchPoms(p));
-                } else if (p.endsWith(POM_NAME)) {
+                } else if (p.endsWith(CommonConstants.POM_NAME)) {
                     poms.add(p.toAbsolutePath().toString());
                 }
             }
@@ -132,7 +131,7 @@ public class MavenUtils {
     private static String getTempRepo(){
         String tempDir = System.getProperty("java.io.tmpdir");
         StringBuffer sb = new StringBuffer();
-        sb.append(tempDir).append(tempDir.endsWith("/") ? "" : "/").append("maven/repository/");
+        sb.append(tempDir).append(tempDir.endsWith(CommonConstants.SEPARATOR) ? "" : CommonConstants.SEPARATOR).append("maven/repository/");
         return sb.toString();
     }
 

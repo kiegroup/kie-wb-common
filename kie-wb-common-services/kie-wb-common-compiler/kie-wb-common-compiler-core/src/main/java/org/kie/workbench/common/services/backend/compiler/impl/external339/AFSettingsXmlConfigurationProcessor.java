@@ -79,11 +79,18 @@ public class AFSettingsXmlConfigurationProcessor implements AFConfigurationProce
     @Requirement
     private SettingsDecrypter settingsDecrypter;
 
-    static Path resolvePath(Path file,
-                            String workingDirectory) {
-        return file == null ? null : (file.isAbsolute() ? file : (file.getFileName().startsWith(File.separator) ? file.toAbsolutePath() : (Paths.get(workingDirectory,
-                                                                                                                                                     file.getFileName().toString()))));
+    static Path resolvePath(Path file, String workingDirectory) {
+        if(file == null){
+            return null;
+        }else if(file.isAbsolute()){
+            return file;
+        }else if(file.getFileName().startsWith(File.separator)){
+            return file.toAbsolutePath();
+        }else{
+            return Paths.get(workingDirectory, file.getFileName().toString());
+        }
     }
+
 
     @Override
     public void process(AFCliRequest cliRequest)

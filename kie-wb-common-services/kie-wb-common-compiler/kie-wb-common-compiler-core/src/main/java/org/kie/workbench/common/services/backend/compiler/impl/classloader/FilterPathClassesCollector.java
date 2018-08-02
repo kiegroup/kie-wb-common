@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -25,13 +24,9 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public class FilterPathClassesCollector implements Collector<String, Set<String>, Set<String>> {
+import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 
-    protected static final String DOT = ".";
-    protected static final String JAVA_ARCHIVE_RESOURCE_EXT = ".jar";
-    protected static final String JAVA_CLASS_EXT = ".class";
-    protected static final String MAVEN_TARGET = "target/classes/";
-    protected static final String SEPARATOR = "/";
+public class FilterPathClassesCollector implements Collector<String, Set<String>, Set<String>> {
 
     private static String mavenRepo;
     private static int mavenRepoLength;
@@ -49,9 +44,9 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
     @Override
     public BiConsumer<Set<String>, String> accumulator() {
         return (filtered, item) -> {
-            if (item.endsWith(JAVA_CLASS_EXT)) {
+            if (item.endsWith(CommonConstants.JAVA_CLASS_EXT)) {
                 filtered.add(getFilteredOnJavaClass(item));
-            } else if (item.endsWith(JAVA_ARCHIVE_RESOURCE_EXT)) {
+            } else if (item.endsWith(CommonConstants.JAVA_ARCHIVE_RESOURCE_EXT)) {
                 filtered.add(getFilteredOnJar(item, mavenRepo, mavenRepoLength));
             }
         };
@@ -67,7 +62,7 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
 
     @Override
     public Function<Set<String>, Set<String>> finisher() {
-        return (inputSet)-> inputSet;
+        return (inputSet) -> inputSet;
     }
 
     @Override
@@ -76,15 +71,15 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
     }
 
     private String getFilteredOnJavaClass(String item) {
-        String path = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length());
-        if (path.contains(SEPARATOR)) {
-            return path.substring(0, path.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
+        String path = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length());
+        if (path.contains(CommonConstants.SEPARATOR)) {
+            return path.substring(0, path.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR, CommonConstants.DOT);
         } else {
-            return path.substring(0, path.lastIndexOf(DOT));
+            return path.substring(0, path.lastIndexOf(CommonConstants.DOT));
         }
     }
 
     private String getFilteredOnJar(String item, String mavenRepo, int mavenRepoLength) {
-        return item.substring(item.lastIndexOf(mavenRepo) + mavenRepoLength, item.lastIndexOf(SEPARATOR)).replace(SEPARATOR, DOT);
+        return item.substring(item.lastIndexOf(mavenRepo) + mavenRepoLength, item.lastIndexOf(CommonConstants.SEPARATOR)).replace(CommonConstants.SEPARATOR, CommonConstants.DOT);
     }
 }

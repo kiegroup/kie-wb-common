@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kie.workbench.common.services.backend.compiler.HttpCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -37,7 +38,7 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     private Boolean successful;
     private List<String> mavenOutput;
-    private String workingDir;
+    private String workingDir = StringUtils.EMPTY;
 
     private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
@@ -52,6 +53,8 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
         this.mavenOutput = new ArrayList<>(res.getMavenOutput());
         if(res.getWorkingDir().isPresent()){
             this.workingDir = res.getWorkingDir().get().toAbsolutePath().toString();
+        }else {
+            this.workingDir = StringUtils.EMPTY;
         }
         this.targetContent = new ArrayList<>(res.getTargetContent());
         this.projectDependencies = new ArrayList<>(res.getDependencies());

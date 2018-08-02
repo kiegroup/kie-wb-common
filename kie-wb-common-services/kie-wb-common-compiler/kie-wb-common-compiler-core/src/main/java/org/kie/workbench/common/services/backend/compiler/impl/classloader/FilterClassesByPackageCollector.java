@@ -16,7 +16,6 @@
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
@@ -25,19 +24,15 @@ import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
-import java.util.stream.Collectors;
+
+import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 
 public class FilterClassesByPackageCollector implements Collector<String, List<String>, List<String>> {
 
-    protected static final String DOT = ".";
-    protected static final String JAVA_CLASS_EXT = ".class";
-    protected static final String META_INF = "META-INF";
-    protected static final String SEPARATOR = "/";
-    protected static final String MAVEN_TARGET = "target/classes/";
     private String packageNameWithSlash;
 
     public FilterClassesByPackageCollector(String packageName) {
-        this.packageNameWithSlash = packageName.replace(DOT, SEPARATOR) + SEPARATOR;//fix for the wildcard
+        this.packageNameWithSlash = packageName.replace(CommonConstants.DOT, CommonConstants.SEPARATOR) + CommonConstants.SEPARATOR;//fix for the wildcard
     }
 
     @Override
@@ -48,7 +43,7 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
     @Override
     public BiConsumer<List<String>, String> accumulator() {
         return (filtered, item) -> {
-            if (!item.contains(META_INF) && item.endsWith(JAVA_CLASS_EXT) && item.contains(packageNameWithSlash)) {
+            if (!item.contains(CommonConstants.META_INF) && item.endsWith(CommonConstants.JAVA_CLASS_EXT) && item.contains(packageNameWithSlash)) {
                 filtered.add(getFiltered(item));
             }
         };
@@ -64,7 +59,7 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
 
     @Override
     public Function<List<String>, List<String>> finisher() {
-        return (inputList)->inputList;
+        return (inputList) -> inputList;
     }
 
     @Override
@@ -73,7 +68,7 @@ public class FilterClassesByPackageCollector implements Collector<String, List<S
     }
 
     private String getFiltered(String item) {
-        String one = item.substring(item.lastIndexOf(MAVEN_TARGET) + MAVEN_TARGET.length(), item.lastIndexOf(DOT));
-        return one.contains(SEPARATOR) ? one.replace(SEPARATOR, DOT) : one ;
+        String one = item.substring(item.lastIndexOf(CommonConstants.MAVEN_TARGET) + CommonConstants.MAVEN_TARGET.length(), item.lastIndexOf(CommonConstants.DOT));
+        return one.contains(CommonConstants.SEPARATOR) ? one.replace(CommonConstants.SEPARATOR, CommonConstants.DOT) : one;
     }
 }

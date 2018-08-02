@@ -164,7 +164,7 @@ public class MavenRestClientTest {
     }
 
     @Test
-    public void get() {
+    public void getTest() {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target(deploymentUrl.toString() + "rest/build/maven/");
         Invocation invocation = target.request().buildGet();
@@ -175,7 +175,7 @@ public class MavenRestClientTest {
     }
 
     @Test
-    public void post() {
+    public void postTest() {
         try {
             fileSystemTestingUtils.setup();
             ioService = fileSystemTestingUtils.getIoService();
