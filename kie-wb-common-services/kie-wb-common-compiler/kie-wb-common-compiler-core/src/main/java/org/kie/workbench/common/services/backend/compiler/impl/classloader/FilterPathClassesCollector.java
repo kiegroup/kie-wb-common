@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -66,7 +67,7 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
 
     @Override
     public Function<Set<String>, Set<String>> finisher() {
-        return null;
+        return (inputSet)-> inputSet;
     }
 
     @Override

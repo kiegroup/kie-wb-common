@@ -136,7 +136,7 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
 
         final List<String> targetContent = getStringFromTargets(req.getInfo().getPrjPath());
         if (res.isSuccessful()) {
-            return new DefaultKieCompilationResponse(res.isSuccessful(), null, null, null, res.getMavenOutput(), targetContent, res.getDependencies(), req.getInfo().getPrjPath(), null);
+            return new DefaultKieCompilationResponse(res.isSuccessful(), res.getMavenOutput(), targetContent, res.getDependencies(), req.getInfo().getPrjPath());
         } else {
             return new DefaultKieCompilationResponse(res.isSuccessful(), res.getMavenOutput(), req.getInfo().getPrjPath());
         }

@@ -44,11 +44,16 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     private DefaultCompilationResponse defaultResponse;
 
     public DefaultKieCompilationResponse(Boolean successful) {
-        this(successful,
-             null,
-             null,
-             null,
-             null);
+        this(successful, Collections.emptyList());
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         List<String> mavenOutput) {
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              null,
+                                                              Collections.emptyList(),
+                                                              Collections.emptyList());
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
@@ -59,8 +64,21 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               workingDir,
                                                               Collections.emptyList(),
                                                               Collections.emptyList());
-        this.kieModuleMetaInfo = null;
     }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         List<String> mavenOutput,
+                                         List<String> targetContent,
+                                         List<String> projectDependencies,
+                                         Path workingDir) {
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              workingDir,
+                                                              targetContent,
+                                                              projectDependencies);
+    }
+
+
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          KieModuleMetaInfo kieModuleMetaInfo,
@@ -81,21 +99,6 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         this.kieModule = kieModule;
         this.projectClassLoaderStore = projectClassLoaderStore;
         this.eventsTypeClasses = eventTypesClasses;
-    }
-
-
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         KieModuleMetaInfo kieModuleMetaInfo,
-                                         KieModule kieModule,
-                                         Map<String, byte[]> projectClassloaderStore,
-                                         Path workingDir) {
-
-        this.defaultResponse = new DefaultCompilationResponse(successful,
-                                                              Collections.emptyList(),
-                                                              workingDir);
-        this.kieModuleMetaInfo = kieModuleMetaInfo;
-        this.kieModule = kieModule;
-        this.projectClassLoaderStore = projectClassloaderStore;
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +51,7 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final List<String> mavenOutput,
                                       final Path workingDir) {
         this.successful = successful;
-        this.mavenOutput = mavenOutput;
+        this.mavenOutput = new ArrayList<>(mavenOutput);
         this.workingDir = workingDir;
     }
 
@@ -62,8 +63,8 @@ public class DefaultCompilationResponse implements CompilationResponse,
         this.successful = successful;
         this.mavenOutput = mavenOutput;
         this.workingDir = workingDir;
-        this.targetContent = targetContent;
-        this.projectDependencies = projectDependencies;
+        this.targetContent = new ArrayList<>(targetContent);
+        this.projectDependencies = new ArrayList<>(projectDependencies);
     }
 
     public DefaultCompilationResponse(final Boolean successful,
@@ -71,9 +72,9 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final List<String> projectDependencies) {
         this.successful = successful;
-        this.mavenOutput = mavenOutput;
+        this.mavenOutput = new ArrayList<>(mavenOutput);
         this.workingDir = workingDir;
-        this.projectDependencies = projectDependencies;
+        this.projectDependencies = new ArrayList<>(projectDependencies);
     }
 
     public Boolean isSuccessful() {

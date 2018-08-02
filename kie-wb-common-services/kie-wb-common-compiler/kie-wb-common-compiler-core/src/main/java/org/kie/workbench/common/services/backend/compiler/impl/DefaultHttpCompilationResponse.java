@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -48,12 +49,12 @@ public class DefaultHttpCompilationResponse implements HttpCompilationResponse,
 
     public DefaultHttpCompilationResponse(KieCompilationResponse res) {
         this.successful = res.isSuccessful();
-        this.mavenOutput = res.getMavenOutput();
+        this.mavenOutput = new ArrayList<>(res.getMavenOutput());
         if(res.getWorkingDir().isPresent()){
             this.workingDir = res.getWorkingDir().get().toAbsolutePath().toString();
         }
-        this.targetContent = res.getTargetContent();
-        this.projectDependencies = res.getDependencies();
+        this.targetContent = new ArrayList<>(res.getTargetContent());
+        this.projectDependencies = new ArrayList<>(res.getDependencies());
     }
 
     public DefaultHttpCompilationResponse(Boolean successful) {
