@@ -26,7 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -84,6 +86,28 @@ public class DMNGridPanelContainerTest {
         verifyResizableInteractions(widget);
     }
 
+    @Test
+    public void testSetWidgetIsResizableAndResizeWithZeroWidth() {
+        when(containerParentElement.getOffsetWidth()).thenReturn(0);
+
+        final ResizeComposite widget = mock(ResizeComposite.class);
+
+        container.setWidget(widget);
+
+        verifyResizableInteractionsWithZeroDimension(widget);
+    }
+
+    @Test
+    public void testSetWidgetIsResizableAndResizeWithZeroHeight() {
+        when(containerParentElement.getOffsetHeight()).thenReturn(0);
+
+        final ResizeComposite widget = mock(ResizeComposite.class);
+
+        container.setWidget(widget);
+
+        verifyResizableInteractionsWithZeroDimension(widget);
+    }
+
     private void verifyNotResizableInteractions(final IsWidget widget) {
         container.onResize();
 
@@ -95,6 +119,13 @@ public class DMNGridPanelContainerTest {
         container.onResize();
 
         verify(container).setPixelSize(WIDTH, HEIGHT);
+        verify(widget).onResize();
+    }
+
+    private void verifyResizableInteractionsWithZeroDimension(final RequiresResize widget) {
+        container.onResize();
+
+        verify(container, never()).setPixelSize(anyInt(), anyInt());
         verify(widget).onResize();
     }
 }

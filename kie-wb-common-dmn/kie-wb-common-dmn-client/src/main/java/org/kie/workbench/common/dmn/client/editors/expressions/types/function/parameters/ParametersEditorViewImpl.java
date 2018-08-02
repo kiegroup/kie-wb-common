@@ -37,7 +37,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 @ApplicationScoped
 public class ParametersEditorViewImpl implements ParametersEditorView {
 
-    private static final String OPEN = "open";
+    static final String OPEN = "open";
 
     @DataField("parametersContainer")
     private Div parametersContainer;
