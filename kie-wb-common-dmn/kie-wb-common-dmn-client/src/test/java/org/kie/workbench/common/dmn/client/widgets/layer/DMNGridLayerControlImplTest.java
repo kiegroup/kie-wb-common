@@ -28,11 +28,13 @@ import org.mockito.Mock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class DMNGridLayerControlImplTest {
+
+    @Mock
+    private DMNGridLayer gridLayer;
 
     @Mock
     private CanvasHandler canvasHandler;
@@ -44,7 +46,12 @@ public class DMNGridLayerControlImplTest {
 
     @Before
     public void setup() {
-        this.control = new DMNGridLayerControlImpl();
+        this.control = new DMNGridLayerControlImpl() {
+            @Override
+            DMNGridLayer makeGridLayer() {
+                return gridLayer;
+            }
+        };
     }
 
     @Test
@@ -76,7 +83,6 @@ public class DMNGridLayerControlImplTest {
 
     @Test
     public void testOnCanvasElementUpdatedEvent() {
-        final DMNGridLayer gridLayer = spy(control.getGridLayer());
         final CanvasElementUpdatedEvent event = new CanvasElementUpdatedEvent(canvasHandler, element);
 
         control.onCanvasElementUpdatedEvent(event);

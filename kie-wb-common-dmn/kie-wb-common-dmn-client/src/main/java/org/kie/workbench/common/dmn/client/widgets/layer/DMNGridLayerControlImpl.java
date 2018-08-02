@@ -28,8 +28,12 @@ public class DMNGridLayerControlImpl extends AbstractCanvasControl<AbstractCanva
 
     private DMNGridLayer gridLayer;
 
-    protected DMNGridLayerControlImpl() {
-        this.gridLayer = new DMNGridLayer();
+    public DMNGridLayerControlImpl() {
+        this.gridLayer = makeGridLayer();
+    }
+
+    DMNGridLayer makeGridLayer() {
+        return new DMNGridLayer();
     }
 
     @Override

@@ -114,6 +114,8 @@ public class ExpressionEditorControlImplTest {
 
     @Test
     public void testOnCanvasElementUpdated() {
+        control.bind(session);
+
         final CanvasElementUpdatedEvent event = new CanvasElementUpdatedEvent(canvasHandler, node);
 
         control.onCanvasElementUpdated(event);
