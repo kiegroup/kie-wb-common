@@ -19,7 +19,9 @@ package org.kie.workbench.common.dmn.api.property.dmn;
 import java.util.HashSet;
 
 import org.junit.Test;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -62,5 +64,14 @@ public class QNameTest {
 
         assertTrue(qNames.contains(QNAME2));
         assertTrue(qNames.contains(QNAME3));
+    }
+
+    @Test
+    public void testZeroArgumentConstructor() {
+        final QName qName = new QName();
+
+        assertEquals(QName.NULL_NS_URI, qName.getNamespaceURI());
+        assertEquals(BuiltInType.STRING.getName(), qName.getLocalPart());
+        assertEquals(DMNModelInstrumentedBase.Namespace.FEEL.getPrefix(), qName.getPrefix());
     }
 }
