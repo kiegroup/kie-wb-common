@@ -108,7 +108,7 @@ public class ListSelectorViewImplTest {
         reset(presenter);
         doReturn(false).when(textItem).isEnabled();
         commandCaptor.getValue().execute();
-        verify(presenter, never()).onItemSelected(eq(textItem));
+        verify(presenter, never()).onItemSelected(any(HasListSelectorControl.ListSelectorTextItem.class));
     }
 
     @Test
