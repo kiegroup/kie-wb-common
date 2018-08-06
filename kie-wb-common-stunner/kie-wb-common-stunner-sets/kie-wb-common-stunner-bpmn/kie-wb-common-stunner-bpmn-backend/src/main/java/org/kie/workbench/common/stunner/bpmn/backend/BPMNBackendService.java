@@ -60,7 +60,7 @@ public class BPMNBackendService extends AbstractDefinitionSetService {
             final BPMNDirectDiagramMarshaller bpmnDirectDiagramMarshaller) {
 
         Boolean enableExperimentalBpmnMarshaller = Optional.ofNullable(
-                System.getProperty(MARSHALLER_EXPERIMENTAL_PROPERTY))
+                System.getProperty(MARSHALLER_EXPERIMENTAL_PROPERTY, "true"))
                 .map(Boolean::parseBoolean)
                 .orElse(true);
 
