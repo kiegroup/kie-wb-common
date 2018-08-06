@@ -6,9 +6,11 @@ import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.datamodeller.model.persistence.Property;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter.PropertiesListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -47,5 +49,16 @@ public class PropertiesItemPresenterTest {
 
         verify(listPresenter).remove(eq(propertiesItemPresenter));
         verify(parentPresenter).fireChangeEvent();
+    }
+    
+    @Test
+    public void testOpenEditModal() {
+        final PersistencePresenter parentPresenter = mock(PersistencePresenter.class);
+        propertiesItemPresenter.setup(new Property("Name", "Value"), parentPresenter);
+        final SectionListPresenter<Property, PropertiesItemPresenter> listPresenter = mock(SectionListPresenter.class);
+        propertiesItemPresenter.setListPresenter(listPresenter);
+        propertiesItemPresenter.openEditModal("Name", "Value");
+        verify(propertiesItemPresenter).getSectionListPresenter();
+        verify(listPresenter).showDoubleValueEditModal(any(), any(), any());
     }
 }

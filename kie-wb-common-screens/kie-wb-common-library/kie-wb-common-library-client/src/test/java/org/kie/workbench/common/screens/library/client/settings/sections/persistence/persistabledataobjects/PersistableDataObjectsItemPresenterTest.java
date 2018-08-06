@@ -1,17 +1,18 @@
 package org.kie.workbench.common.screens.library.client.settings.sections.persistence.persistabledataobjects;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Matchers.any;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter.PersistableDataObjectsListPresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.sections.SectionListPresenter;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PersistableDataObjectsItemPresenterTest {
@@ -45,5 +46,16 @@ public class PersistableDataObjectsItemPresenterTest {
 
         verify(listPresenter).remove(eq(persistableDataObjectsItemPresenter));
         verify(parentPresenter).fireChangeEvent();
+    }
+    
+    @Test
+    public void testOpenEditModal() {
+        final PersistencePresenter parentPresenter = mock(PersistencePresenter.class);
+        persistableDataObjectsItemPresenter.setup("ClassName", parentPresenter);
+        final SectionListPresenter<String, PersistableDataObjectsItemPresenter> listPresenter = mock(SectionListPresenter.class);
+        persistableDataObjectsItemPresenter.setListPresenter(listPresenter);
+        persistableDataObjectsItemPresenter.openEditModal("ClassName");
+        verify(persistableDataObjectsItemPresenter).getSectionListPresenter();
+        verify(listPresenter).showSingleValueEditModal(any(), any());
     }
 }

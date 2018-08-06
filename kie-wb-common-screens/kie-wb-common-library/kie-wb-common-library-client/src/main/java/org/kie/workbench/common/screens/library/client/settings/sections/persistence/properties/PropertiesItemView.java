@@ -76,14 +76,4 @@ public class PropertiesItemView implements PropertiesItemPresenter.View,
     public void setValue(final String value) {
         this.value.textContent = value;
     }
-
-//    @Override
-//    public String getName() {
-//        return this.name.textContent;
-//    }
-//
-//    @Override
-//    public String getValue() {
-//        return this.value.textContent;
-//    }
 }

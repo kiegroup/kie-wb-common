@@ -136,12 +136,6 @@ public class AddDoubleValueModalView implements AddDoubleValueModal.View {
     }
 
     @Override
-    public HTMLElement getElement() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void setName(String name) {
         this.name.value = name;    
     }

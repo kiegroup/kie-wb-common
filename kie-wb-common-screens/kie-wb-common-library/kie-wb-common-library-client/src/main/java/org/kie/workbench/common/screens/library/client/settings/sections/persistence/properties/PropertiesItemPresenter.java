@@ -35,9 +35,6 @@ public class PropertiesItemPresenter extends SectionListItemPresenter<Property, 
 
         void setValue(String value);
         
-//        String getName();
-//        
-//        String getValue();
     }
 
     PersistencePresenter parentPresenter;
@@ -87,6 +84,5 @@ public class PropertiesItemPresenter extends SectionListItemPresenter<Property, 
         });
         this.getSectionListPresenter().showDoubleValueEditModal(name, value, editConsumer);
         
-//        parentPresenter.showEditPropertyModal(name, value);
     }
 }

@@ -92,5 +92,4 @@ public class ValidationPresenter extends Section<ProjectScreenModel>  {
             super(itemPresenters);
         }
     }
-
 }

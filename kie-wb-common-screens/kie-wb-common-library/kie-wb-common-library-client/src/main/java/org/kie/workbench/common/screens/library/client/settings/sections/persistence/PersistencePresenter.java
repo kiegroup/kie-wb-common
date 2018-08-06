@@ -170,7 +170,9 @@ public class PersistencePresenter extends Section<ProjectScreenModel> {
         persistableDataObjectsListPresenter.setup(
                 view.getPersistableDataObjectsTable(),
                 getPersistenceUnitModel().getClasses(),
-                (className, presenter) -> presenter.setup(className, this));
+                (className, presenter) -> presenter.setup(className, this),
+                newPersistableDataObjectModal,
+                null);
     }
 
     @Override
