@@ -88,7 +88,7 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         }
     }
 
-    protected String selectedNodeId() {
+    public String selectedNodeId() {
         if (editorSession != null && editorSession.getSelectionControl().getSelectedItems().size() == 1) {
             return editorSession.getSelectionControl().getSelectedItems().iterator().next();
         } else {
@@ -96,7 +96,7 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         }
     }
 
-    protected Element selectedNodeElement() {
+    public Element selectedNodeElement() {
         return canvasHandler.getGraphIndex().get(selectedNodeId());
     }
 
