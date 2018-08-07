@@ -17,12 +17,12 @@
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
 import java.util.Set;
-import java.util.function.Function;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.Element;
 import org.kie.workbench.common.stunner.core.graph.Node;
@@ -34,16 +34,16 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
 
     protected EditorSession editorSession;
 
-    protected final CommonDomainLookups commonDomainLookups;
+    private final ToolboxDomainLookups toolboxDomainLookups;
 
-    protected final DefinitionsCacheRegistry definitionsCacheRegistry;
+    private final DefinitionsCacheRegistry definitionsCacheRegistry;
 
-    protected final GeneralCreateNodeAction createNodeAction;
+    private final GeneralCreateNodeAction createNodeAction;
 
-    public AbstractCanvasShortcutsControlImpl(final CommonDomainLookups commonDomainLookups,
+    public AbstractCanvasShortcutsControlImpl(final ToolboxDomainLookups toolboxDomainLookups,
                                               final DefinitionsCacheRegistry definitionsCacheRegistry,
                                               final GeneralCreateNodeAction createNodeAction) {
-        this.commonDomainLookups = commonDomainLookups;
+        this.toolboxDomainLookups = toolboxDomainLookups;
         this.definitionsCacheRegistry = definitionsCacheRegistry;
         this.createNodeAction = createNodeAction;
     }
@@ -60,11 +60,13 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     }
 
     @Override
-    public void appendNode(final String sourceNodeId, final Function<String, Boolean> canBeNodeAppended) {
+    public void appendNode(final String sourceNodeId, final Class targetNodeDefinitionClass) {
 
         final Node sourceNode = CanvasLayoutUtils.getElement(canvasHandler, sourceNodeId).asNode();
 
-        commonDomainLookups.setDomain(canvasHandler.getDiagram().getMetadata().getDefinitionSetId());
+        final String definitionSetId = canvasHandler.getDiagram().getMetadata().getDefinitionSetId();
+        final CommonDomainLookups commonDomainLookups = toolboxDomainLookups.get(definitionSetId);
+
         final Set<String> connectorDefinitionIds = commonDomainLookups.lookupTargetConnectors(sourceNode);
 
         for (final String connectorDefinitionId : connectorDefinitionIds) {
@@ -74,7 +76,7 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
                                                           connectorDefinitionId);
 
             for (final String targetNodeDefinitionId : targetNodesDefinitionIds) {
-                if (canBeNodeAppended.apply(targetNodeDefinitionId)) {
+                if (hasNodeDefinitionOfClass(targetNodeDefinitionId, targetNodeDefinitionClass)) {
                     createNodeAction.executeAction(canvasHandler,
                                                    sourceNodeId,
                                                    targetNodeDefinitionId,
@@ -96,5 +98,9 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
 
     protected Element selectedNodeElement() {
         return canvasHandler.getGraphIndex().get(selectedNodeId());
+    }
+
+    private boolean hasNodeDefinitionOfClass(final String nodeId, final Class targetNodeDefinitionClass) {
+        return targetNodeDefinitionClass.isInstance(definitionsCacheRegistry.getDefinitionById(nodeId));
     }
 }

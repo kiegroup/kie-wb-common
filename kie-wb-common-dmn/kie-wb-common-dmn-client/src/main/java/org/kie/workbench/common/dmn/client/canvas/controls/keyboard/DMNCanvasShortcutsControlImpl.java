@@ -25,9 +25,9 @@ import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 
 @DMNEditor
@@ -35,10 +35,10 @@ import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegis
 public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
     @Inject
-    public DMNCanvasShortcutsControlImpl(final CommonDomainLookups commonDomainLookups,
+    public DMNCanvasShortcutsControlImpl(final ToolboxDomainLookups toolboxDomainLookups,
                                          final DefinitionsCacheRegistry definitionsCacheRegistry,
                                          final @DMNEditor GeneralCreateNodeAction createNodeAction) {
-        super(commonDomainLookups, definitionsCacheRegistry, createNodeAction);
+        super(toolboxDomainLookups, definitionsCacheRegistry, createNodeAction);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContro
                                     KeyboardEvent.Key.D)) {
             if (selectedNodeIsDecision() || selectedNodeIsInput()) {
                 appendNode(selectedNodeId(),
-                           (nodeId) -> definitionsCacheRegistry.getDefinitionById(nodeId) instanceof Decision);
+                           Decision.class);
             }
         }
     }

@@ -28,19 +28,19 @@ import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
 import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
+import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 
 @Dependent
 public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
     @Inject
-    public BPMNCanvasShortcutsControlImpl(final CommonDomainLookups commonDomainLookups,
+    public BPMNCanvasShortcutsControlImpl(final ToolboxDomainLookups toolboxDomainLookups,
                                           final DefinitionsCacheRegistry definitionsCacheRegistry,
                                           final GeneralCreateNodeAction createNodeAction) {
-        super(commonDomainLookups, definitionsCacheRegistry, createNodeAction);
+        super(toolboxDomainLookups, definitionsCacheRegistry, createNodeAction);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.T)) {
                 if (selectedNodeIsStart() || selectedNodeIsTask()) {
                     appendNode(selectedNodeId(),
-                               (nodeId) -> definitionsCacheRegistry.getDefinitionById(nodeId) instanceof NoneTask);
+                               NoneTask.class);
                 }
             }
 
@@ -58,7 +58,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.G)) {
                 if (selectedNodeIsTask()) {
                     appendNode(selectedNodeId(),
-                               (nodeId) -> definitionsCacheRegistry.getDefinitionById(nodeId) instanceof ParallelGateway);
+                               ParallelGateway.class);
                 }
             }
 
@@ -66,7 +66,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.E)) {
                 if (selectedNodeIsStart() || selectedNodeIsTask() || selectedNodeIsGateway()) {
                     appendNode(selectedNodeId(),
-                               (nodeId) -> definitionsCacheRegistry.getDefinitionById(nodeId) instanceof EndNoneEvent);
+                               EndNoneEvent.class);
                 }
             }
         }
