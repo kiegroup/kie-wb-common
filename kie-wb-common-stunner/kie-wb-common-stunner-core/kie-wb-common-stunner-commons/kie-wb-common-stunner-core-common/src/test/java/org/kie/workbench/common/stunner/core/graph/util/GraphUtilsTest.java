@@ -60,7 +60,7 @@ public class GraphUtilsTest {
     @Test
     public void countChildrenTest() {
         Long countChildren = GraphUtils.countChildren(graphInstance.parentNode);
-        assertEquals(Long.valueOf(3),
+        assertEquals(Long.valueOf(4),
                      countChildren);
     }
 
@@ -117,9 +117,10 @@ public class GraphUtilsTest {
     @Test
     public void getChildNodesTest() {
         List<Node> dockedNodes = GraphUtils.getChildNodes(graphInstance.parentNode);
-        assertEquals(dockedNodes.size(), 3);
+        assertEquals(dockedNodes.size(), 4);
         assertEquals(dockedNodes.get(0), graphInstance.startNode);
         assertEquals(dockedNodes.get(1), graphInstance.intermNode);
         assertEquals(dockedNodes.get(2), graphInstance.endNode);
+        assertEquals(dockedNodes.get(3), graphInstance.dockedNode);
     }
 }

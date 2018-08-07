@@ -128,24 +128,27 @@ public class DeleteNodeCommandTest {
 
         final AbstractCompositeCommand<AbstractCanvasHandler, CanvasViolation> compositeCommand = tested.getCommand();
         assertNotNull(compositeCommand);
-        assertTrue(6 == compositeCommand.size());
+        assertEquals(7,compositeCommand.size());
         final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = compositeCommand.getCommands();
         assertNotNull(commands);
         final CanvasUndockNodeCommand c1 = (CanvasUndockNodeCommand) commands.get(0);
-        final DeleteCanvasNodeCommand c2 = (DeleteCanvasNodeCommand) commands.get(1);
-        final RemoveCanvasChildCommand c3 = (RemoveCanvasChildCommand) commands.get(2);
-        final DeleteCanvasConnectorCommand c4 = (DeleteCanvasConnectorCommand) commands.get(3);
-        final SetCanvasConnectionCommand c5 = (SetCanvasConnectionCommand) commands.get(4);
-        final DeleteCanvasNodeCommand c6 = (DeleteCanvasNodeCommand) commands.get(5);
+        final RemoveCanvasChildCommand c2 = (RemoveCanvasChildCommand) commands.get(1);
+        final DeleteCanvasNodeCommand c3 = (DeleteCanvasNodeCommand) commands.get(2);
+        final RemoveCanvasChildCommand c4 = (RemoveCanvasChildCommand) commands.get(3);
+        final DeleteCanvasConnectorCommand c5 = (DeleteCanvasConnectorCommand) commands.get(4);
+        final SetCanvasConnectionCommand c6 = (SetCanvasConnectionCommand) commands.get(5);
+        final DeleteCanvasNodeCommand c7 = (DeleteCanvasNodeCommand) commands.get(6);
 
         assertEquals(graphHolder.intermNode, c1.getParent());
         assertEquals(graphHolder.dockedNode, c1.getChild());
-        assertEquals(graphHolder.dockedNode, c2.getCandidate());
-        assertEquals(graphHolder.parentNode, c3.getParent());
-        assertEquals(graphHolder.intermNode, c3.getChild());
-        assertEquals(graphHolder.edge2, c4.getCandidate());
-        assertEquals(graphHolder.edge1, c5.getEdge());
-        assertEquals(graphHolder.intermNode, c6.getCandidate());
+        assertEquals(graphHolder.dockedNode, c2.getChild());
+        assertEquals(graphHolder.parentNode, c2.getParent());
+        assertEquals(graphHolder.dockedNode, c3.getCandidate());
+        assertEquals(graphHolder.parentNode, c4.getParent());
+        assertEquals(graphHolder.intermNode, c4.getChild());
+        assertEquals(graphHolder.edge2, c5.getCandidate());
+        assertEquals(graphHolder.edge1, c6.getEdge());
+        assertEquals(graphHolder.intermNode, c7.getCandidate());
     }
 
     @Test
@@ -159,22 +162,25 @@ public class DeleteNodeCommandTest {
         assertEquals(CommandResult.Type.INFO, result.getType());
         final AbstractCompositeCommand<AbstractCanvasHandler, CanvasViolation> compositeCommand = tested.getCommand();
         assertNotNull(compositeCommand);
-        assertTrue(5 == compositeCommand.size());
+        assertEquals(6, compositeCommand.size());
         final List<Command<AbstractCanvasHandler, CanvasViolation>> commands = compositeCommand.getCommands();
         assertNotNull(commands);
 
         final CanvasUndockNodeCommand c1 = (CanvasUndockNodeCommand) commands.get(0);
-        final DeleteCanvasNodeCommand c2 = (DeleteCanvasNodeCommand) commands.get(1);
-        final RemoveCanvasChildCommand c3 = (RemoveCanvasChildCommand) commands.get(2);
-        final DeleteCanvasConnectorCommand c4 = (DeleteCanvasConnectorCommand) commands.get(3);
-        final DeleteCanvasNodeCommand c5 = (DeleteCanvasNodeCommand) commands.get(4);
+        final RemoveCanvasChildCommand c2 = (RemoveCanvasChildCommand) commands.get(1);
+        final DeleteCanvasNodeCommand c3 = (DeleteCanvasNodeCommand) commands.get(2);
+        final RemoveCanvasChildCommand c4 = (RemoveCanvasChildCommand) commands.get(3);
+        final DeleteCanvasConnectorCommand c5 = (DeleteCanvasConnectorCommand) commands.get(4);
+        final DeleteCanvasNodeCommand c6 = (DeleteCanvasNodeCommand) commands.get(5);
 
         assertEquals(graphHolder.intermNode, c1.getParent());
         assertEquals(graphHolder.dockedNode, c1.getChild());
-        assertEquals(graphHolder.dockedNode, c2.getCandidate());
-        assertEquals(graphHolder.parentNode, c3.getParent());
-        assertEquals(graphHolder.intermNode, c3.getChild());
-        assertEquals(graphHolder.edge1, c4.getCandidate());
-        assertEquals(graphHolder.intermNode, c5.getCandidate());
+        assertEquals(graphHolder.dockedNode, c2.getChild());
+        assertEquals(graphHolder.parentNode, c2.getParent());
+        assertEquals(graphHolder.dockedNode, c3.getCandidate());
+        assertEquals(graphHolder.parentNode, c4.getParent());
+        assertEquals(graphHolder.intermNode, c4.getChild());
+        assertEquals(graphHolder.edge1, c5.getCandidate());
+        assertEquals(graphHolder.intermNode, c6.getCandidate());
     }
 }
