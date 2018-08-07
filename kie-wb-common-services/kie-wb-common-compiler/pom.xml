@@ -25,6 +25,7 @@
     <module>kie-wb-common-compiler-maven-plugins-testing</module>
     <module>kie-wb-common-compiler-service</module>
     <module>kie-wb-common-compiler-distribution</module>
+    <module>kie-wb-common-compiler-offprocess</module>
   </modules>
 
 </project>
