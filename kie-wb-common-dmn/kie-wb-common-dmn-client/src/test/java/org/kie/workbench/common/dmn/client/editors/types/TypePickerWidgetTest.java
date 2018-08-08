@@ -287,7 +287,7 @@ public class TypePickerWidgetTest {
         picker.setEnabled(false);
 
         verify(typeButton).setEnabled(eq(false));
-        typeSelector.setEnabled(eq(false));
+        verify(typeSelector).setEnabled(eq(false));
 
         assertFalse(picker.isEnabled());
     }
@@ -297,7 +297,7 @@ public class TypePickerWidgetTest {
         picker.setEnabled(true);
 
         verify(typeButton).setEnabled(eq(true));
-        typeSelector.setEnabled(eq(true));
+        verify(typeSelector).setEnabled(eq(true));
 
         assertTrue(picker.isEnabled());
     }
