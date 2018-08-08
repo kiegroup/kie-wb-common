@@ -20,26 +20,11 @@
         <artifactId>kie-wb-common-compiler-core</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
-      <dependency>
-        <groupId>net.openhft</groupId>
-        <artifactId>chronicle-queue</artifactId>
-        <version>5.16.10</version>
-      </dependency>
-      <dependency>
-        <groupId>net.openhft</groupId>
-        <artifactId>chronicle-core</artifactId>
-        <version>1.16.16</version>
-      </dependency>
-      <dependency>
-        <groupId>net.openhft</groupId>
-        <artifactId>chronicle-bytes</artifactId>
-        <version>1.16.16</version>
-      </dependency>
-      <dependency>
-        <groupId>net.openhft</groupId>
-        <artifactId>chronicle-wire</artifactId>
-        <version>1.16.15</version>
-      </dependency>
+      <!--<dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-io</artifactId>
+        <version>3.0.1</version>
+      </dependency>-->
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -557,6 +542,13 @@
     <dependency>
       <groupId>org.uberfire</groupId>
       <artifactId>uberfire-nio2-fs</artifactId>
+    </dependency>
+
+    <!-- Runtime for maven in memory classpath plugin -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-io</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- test-->

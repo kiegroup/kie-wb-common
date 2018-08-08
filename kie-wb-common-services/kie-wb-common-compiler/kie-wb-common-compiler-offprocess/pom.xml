@@ -20,6 +20,11 @@
         <artifactId>kie-wb-common-compiler-core</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+      <dependency>
+        <groupId>org.codehaus.plexus</groupId>
+        <artifactId>plexus-io</artifactId>
+        <version>3.0.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
@@ -212,6 +217,14 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
+
+    <!-- Runtime for maven in memory classpath plugin -->
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-io</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -282,23 +295,41 @@
           </nonFilteredFileExtensions>
         </configuration>
       </plugin>
-      <!--<plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>1.5.0</version>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.0.2</version>
         <executions>
           <execution>
-            <id>my-execution</id>
-            <phase>compile</phase>
+            <id>build-classpath</id>
+            <phase>process-resources</phase>
             <goals>
-              <goal>java</goal>
+              <goal>build-classpath</goal>
             </goals>
+            <configuration>
+              <outputFile>offprocess.cpath</outputFile>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClasspathGenerator</mainClass>
-        </configuration>
-      </plugin>-->
+      </plugin>
+      <plugin>
+       <groupId>org.codehaus.mojo</groupId>
+       <artifactId>exec-maven-plugin</artifactId>
+       <version>1.5.0</version>
+       <executions>
+         <execution>
+           <id>my-execution</id>
+           <phase>compile</phase>
+           <goals>
+             <goal>java</goal>
+           </goals>
+         </execution>
+       </executions>
+       <configuration>
+         <arguments>${version.org.kie}</arguments>
+         <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClassPathMavenGenerator</mainClass>
+       </configuration>
+     </plugin>
     </plugins>
   </build>
 </project>

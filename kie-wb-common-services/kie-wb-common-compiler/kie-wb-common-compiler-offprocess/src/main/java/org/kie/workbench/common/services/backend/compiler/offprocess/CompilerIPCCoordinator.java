@@ -23,5 +23,5 @@ public interface CompilerIPCCoordinator<T extends CompilationResponse> {
     /**
      * Compile a project starting from the main POM into a timeout window
      */
-    T compile(final CompilationRequest req);
+    T compile(final CompilationRequest req, final int secondsTimeout);
 }

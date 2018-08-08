@@ -42,12 +42,22 @@ public class ClasspathGenerator {
 
     public static void main(String[] args) throws Exception {
         String mavenRepo = createMavenRepo().toAbsolutePath().toString();
-        String compilerPath = Paths.get(module + "/target/classes/compiler_classpath_prj/").toAbsolutePath().toString();
+        Path toprj= Paths.get(module + "/target/classes/compiler_classpath_prj/");
+        if(!Files.exists(toprj)){
+            toprj= Paths.get("target/classes/compiler_classpath_prj/");
+        }
+        String compilerPath = toprj.toAbsolutePath().toString();
+        logger.info("compilerPath:{}", compilerPath);
         logger.info("\n********************************\nBuild to generate the classpath template\n********************************");
         String cp = createClasspathFile(mavenRepo, compilerPath);
+        logger.info("cp:{}",cp);
         logger.info("\n************************************\nEnd build to generate the classpath template\n************************************\n\n");
-        write(Paths.get(module + "/target/classes").toAbsolutePath().toString() + "/classpath.template", cp.replace(mavenRepo, "<maven_repo>"));
-        logger.info("\n************************************\nSaving content to /target/classes/classpath.template \n************************************\n\n");
+        Path toTemplate = Paths.get(module + "/target/classes");
+        if(!Files.exists(toTemplate)){
+            toTemplate = Paths.get("target/classes");
+        }
+        write(toTemplate.toAbsolutePath().toString() + "/classpath.template", cp.replace(mavenRepo, "<maven_repo>"));
+        logger.info("\n************************************\nSaving content to {}/classpath.template \n************************************\n\n",toTemplate.toAbsolutePath().toString());
     }
 
     private static void write(String filename, String content) throws IOException {
@@ -57,7 +67,7 @@ public class ClasspathGenerator {
     }
 
     public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"), "/.m2/repository");
+        Path mavenRepository = Paths.get(System.getProperty("user.home"), ".m2/repository");
         if (!Files.exists(mavenRepository)) {
             logger.info("Creating a m2_repo into " + mavenRepository);
             if (!Files.exists(Files.createDirectories(mavenRepository))) {

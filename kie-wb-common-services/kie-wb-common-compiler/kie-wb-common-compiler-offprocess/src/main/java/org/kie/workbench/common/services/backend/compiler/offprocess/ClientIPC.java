@@ -34,10 +34,8 @@ public class ClientIPC {
     private static Logger logger = LoggerFactory.getLogger(ClientIPC.class);
 
     public static KieCompilationResponse listenObjs(String uuid) throws Exception {
-        logger.info("Reading buffer obj from client....");
         ExcerptTailer tailer = QueueProvider.getQueue().createTailer();
         KieCompilationResponse res = new DefaultKieCompilationResponse(false);
-        ;
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {// this will tell you if there is any data  to read{
                 Wire wire = dc.wire();

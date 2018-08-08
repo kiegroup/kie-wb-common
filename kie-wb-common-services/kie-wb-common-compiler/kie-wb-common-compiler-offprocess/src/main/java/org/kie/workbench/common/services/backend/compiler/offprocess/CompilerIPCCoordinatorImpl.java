@@ -47,33 +47,34 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         javaHome = System.getProperty("java.home");
         javaBin = javaHome + File.separator + "bin" + File.separator + "java";
         try {
-            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("classpath.template"), StandardCharsets.UTF_8);
+            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("offprocess.classpath.template"), StandardCharsets.UTF_8);
+            //classpathTemplate = "<maven_repo>/org/kie/workbench/services/kie-wb-common-compiler-core/7.10.0-SNAPSHOT/kie-wb-common-compiler-core-7.10.0-SNAPSHOT.jar:" + IOUtils.toString(getClass().getClassLoader().getResourceAsStream("classpath.template"), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
 
     @Override
-    public CompilationResponse compile(CompilationRequest req) {
+    public CompilationResponse compile(CompilationRequest req, int secondsTimeout) {
         return internalBuild(req.getMavenRepo(),
                              req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                             getAlternateSettings(req.getOriginalArgs()));
+                             getAlternateSettings(req.getOriginalArgs()), secondsTimeout);
     }
 
     private String getAlternateSettings(String[] args) {
         for (String arg : args) {
             if (arg.startsWith(MavenCLIArgs.ALTERNATE_USER_SETTINGS)) {
-                return arg.substring(2, arg.length());
+                return arg.substring(2, args.length);
             }
         }
         return "";
     }
 
-    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath) {
+    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath,int secondsTimeout) {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
         String uuid = UUID.randomUUID().toString();
         try {
-            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath);
+            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, secondsTimeout);
             KieCompilationResponse res = ClientIPC.listenObjs(uuid);
             if (res != null) {
                 return res;
@@ -86,27 +87,29 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         }
     }
 
-    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath) throws Exception {
+    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, int secondsTimeout) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
                         "-cp",
-                        System.getProperty("user.dir") + "/" + "target/kie-wb-common-compiler-offprocess-7.10.0-SNAPSHOT.jar:" + classpath,
-                        "org.kie.workbench.common.services.backend.compiler.offprocess.ServerAppender",
+                        System.getProperty("user.dir") + "/" + "target/kie-wb-common-compiler-offprocess-7.10.0-SNAPSHOT.jar:"+  classpath,
+                        "org.kie.workbench.common.services.backend.compiler.offprocess.ServerIPC",
                         uuid,
                         projectPath,
                         mavenRepo,
                         alternateSettingsAbsPath
                 };
-        logger.info("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************", commandArrayServer);
+        if(logger.isDebugEnabled()) {
+            logger.debug("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************", commandArrayServer);
+        }
         ProcessBuilder serverPb = new ProcessBuilder(commandArrayServer);
         serverPb.directory(new File(projectPath));
         serverPb.redirectErrorStream(true);
         serverPb.inheritIO();
-        writeStdOut(serverPb, "Waiting for client.", 10);
+        writeStdOut(serverPb, secondsTimeout);
     }
 
-    private void writeStdOut(ProcessBuilder builder, String terminationMsg, int secondsTimeout) throws Exception {
+    private void writeStdOut(ProcessBuilder builder, int secondsTimeout) throws Exception {
         Process process = builder.start();
         process.waitFor(secondsTimeout, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

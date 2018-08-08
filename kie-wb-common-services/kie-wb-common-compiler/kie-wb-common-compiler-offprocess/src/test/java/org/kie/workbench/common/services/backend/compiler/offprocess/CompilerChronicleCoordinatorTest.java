@@ -19,6 +19,7 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -37,6 +38,12 @@ public class CompilerChronicleCoordinatorTest {
     private Path mavenRepo;
     private String alternateSettingsAbsPath;
     private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
+
+    @BeforeClass
+    public static void setup() {
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+    }
 
     public static Path createMavenRepo() throws Exception {
         Path mavenRepository = Paths.get(System.getProperty("user.home"),
@@ -77,6 +84,6 @@ public class CompilerChronicleCoordinatorTest {
                                                                },
                                                                Boolean.FALSE);
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl();
-        return compiler.compile(req);
+        return compiler.compile(req, 20);
     }
 }
