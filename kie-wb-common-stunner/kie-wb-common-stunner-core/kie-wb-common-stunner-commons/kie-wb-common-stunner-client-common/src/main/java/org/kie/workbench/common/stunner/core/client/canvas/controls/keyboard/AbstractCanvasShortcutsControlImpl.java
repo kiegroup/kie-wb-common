@@ -100,7 +100,15 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
         return canvasHandler.getGraphIndex().get(selectedNodeId());
     }
 
-    private boolean hasNodeDefinitionOfClass(final String nodeId, final Class targetNodeDefinitionClass) {
-        return targetNodeDefinitionClass.isInstance(definitionsCacheRegistry.getDefinitionById(nodeId));
+    /**
+     * Workaround for missing Class.isInstance in GWT
+     */
+    private <T> boolean hasNodeDefinitionOfClass(final String nodeId, final Class<T> targetNodeDefinitionClass) {
+        try {
+            T targetClassObject = (T) definitionsCacheRegistry.getDefinitionById(nodeId);
+        } catch (ClassCastException ccException) {
+            return false;
+        }
+        return true;
     }
 }
