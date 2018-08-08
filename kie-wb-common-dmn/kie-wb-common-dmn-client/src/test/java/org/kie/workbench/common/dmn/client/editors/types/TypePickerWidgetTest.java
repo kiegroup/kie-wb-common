@@ -52,8 +52,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -201,54 +202,52 @@ public class TypePickerWidgetTest {
     public void testMakeTypeSelectorForBuiltInType() {
         final BuiltInType bit = BuiltInType.ANY;
 
-        final String[] optionText = new String[]{""};
-        doAnswer(i -> {
-            optionText[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setText(anyString());
-
-        final String[] optionValue = new String[]{""};
-        doAnswer(i -> {
-            optionValue[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setValue(anyString());
+        final ArgumentCaptor<String> optionTextCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> optionValueCaptor = ArgumentCaptor.forClass(String.class);
 
         when(qNameFieldConverter.toWidgetValue(any(QName.class))).thenReturn(bit.getName());
 
         final Optional<Option> oo = picker.makeTypeSelector(bit);
+        verify(option).setText(optionTextCaptor.capture());
+        verify(option).setValue(optionValueCaptor.capture());
+        verify(qNameFieldConverter).toWidgetValue(eq(bit.asQName()));
 
         assertTrue(oo.isPresent());
-        assertEquals(bit.getName(),
-                     optionText[0]);
-        assertEquals(bit.getName(),
-                     optionValue[0]);
+        assertEquals(bit.getName(), optionTextCaptor.getValue());
+        assertEquals(bit.getName(), optionValueCaptor.getValue());
     }
 
     @Test
     public void testMakeTypeSelectorForItemDefinition() {
+        final String itemDefinitionNameValue = "person";
         final ItemDefinition itemDefinition = definitions.getItemDefinition().get(0);
+        itemDefinition.setName(new Name(itemDefinitionNameValue));
 
-        final String[] optionText = new String[]{""};
-        doAnswer(i -> {
-            optionText[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setText(anyString());
+        final ArgumentCaptor<String> optionTextCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> optionValueCaptor = ArgumentCaptor.forClass(String.class);
 
-        final String[] optionValue = new String[]{""};
-        doAnswer(i -> {
-            optionValue[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setValue(anyString());
-
+        final ArgumentCaptor<QName> qNameCaptor = ArgumentCaptor.forClass(QName.class);
         when(qNameFieldConverter.toWidgetValue(any(QName.class))).thenReturn(itemDefinition.getName().getValue());
 
         final Optional<Option> oo = picker.makeTypeSelector(itemDefinition);
+        verify(option).setText(optionTextCaptor.capture());
+        verify(option).setValue(optionValueCaptor.capture());
+        verify(qNameFieldConverter).toWidgetValue(qNameCaptor.capture());
 
         assertTrue(oo.isPresent());
-        assertEquals(itemDefinition.getName().getValue(),
-                     optionText[0]);
-        assertEquals(itemDefinition.getName().getValue(),
-                     optionValue[0]);
+        assertEquals(itemDefinitionNameValue, optionTextCaptor.getValue());
+        assertEquals(itemDefinitionNameValue, optionValueCaptor.getValue());
+        assertEquals(itemDefinitionNameValue, qNameCaptor.getValue().getLocalPart());
+    }
+
+    @Test
+    public void testMakeTypeSelectorForNullItemDefinition() {
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
+        doReturn(null).when(itemDefinition).getName();
+        assertFalse(picker.makeTypeSelector(itemDefinition).isPresent());
+        verify(option, never()).setText(anyString());
+        verify(option, never()).setValue(anyString());
+        verify(qNameFieldConverter, never()).toWidgetValue(any(QName.class));
     }
 
     @Test
