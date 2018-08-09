@@ -23,14 +23,24 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasContro
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.ClientSession;
 
+/**
+ * By implementing this interface you can append different nodes to canvas depending on pressed keyboard key
+ * combination.
+ */
 public interface CanvasShortcutsControl<C extends CanvasHandler, S extends ClientSession> extends CanvasControl<C>,
                                                                                                   CanvasControl.SessionAware<S> {
 
     /**
-     * Each implementation recognizes different shortucts
+     * Invoked each time some keys were pressed
      * @param keys
      */
     void onKeyDownEvent(final KeyboardEvent.Key... keys);
 
+    /**
+     * Appends node to an existing one with 'sourceNodeId'
+     * @param sourceNodeId id of the source node
+     * @param definitionCheck function that returns true if its argument is instance of demanded definition, false
+     * otherwise.
+     */
     void appendNode(final String sourceNodeId, final Function<Object, Boolean> definitionCheck);
 }

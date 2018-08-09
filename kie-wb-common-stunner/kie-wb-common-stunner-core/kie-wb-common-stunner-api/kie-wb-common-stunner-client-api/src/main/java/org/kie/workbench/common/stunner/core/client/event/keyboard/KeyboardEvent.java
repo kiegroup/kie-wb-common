@@ -31,6 +31,7 @@ public interface KeyboardEvent {
         D(68),
         E(69),
         G(71),
+        S(83),
         T(84),
         V(86),
         X(88),

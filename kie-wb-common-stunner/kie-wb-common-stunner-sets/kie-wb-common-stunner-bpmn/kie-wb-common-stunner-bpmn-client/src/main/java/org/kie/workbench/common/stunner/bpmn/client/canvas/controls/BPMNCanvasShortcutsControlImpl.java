@@ -19,9 +19,8 @@ package org.kie.workbench.common.stunner.bpmn.client.canvas.controls;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.stunner.bpmn.definition.BaseGateway;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseStartEvent;
-import org.kie.workbench.common.stunner.bpmn.definition.BaseTask;
+import org.kie.workbench.common.stunner.bpmn.definition.BaseEndEvent;
+import org.kie.workbench.common.stunner.bpmn.definition.EmbeddedSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.EndNoneEvent;
 import org.kie.workbench.common.stunner.bpmn.definition.NoneTask;
 import org.kie.workbench.common.stunner.bpmn.definition.ParallelGateway;
@@ -46,51 +45,31 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
     @Override
     public void onKeyDownEvent(final KeyboardEvent.Key... keys) {
         if (selectedNodeId() != null) {
-            if (KeysMatcher.doKeysMatch(keys,
-                                        KeyboardEvent.Key.T)) {
-                if (selectedNodeIsStart() || selectedNodeIsTask()) {
-                    appendNode(selectedNodeId(),
-                               (definition) -> definition instanceof NoneTask);
-                }
+            if (KeysMatcher.doKeysMatch(keys, KeyboardEvent.Key.T) && !selectedNodeIsEndEvent()) {
+                appendNode(selectedNodeId(),
+                           (definition) -> definition instanceof NoneTask);
             }
 
-            if (KeysMatcher.doKeysMatch(keys,
-                                        KeyboardEvent.Key.G)) {
-                if (selectedNodeIsTask()) {
-                    appendNode(selectedNodeId(),
-                               (definition) -> definition instanceof ParallelGateway);
-                }
+            if (KeysMatcher.doKeysMatch(keys, KeyboardEvent.Key.G) && !selectedNodeIsEndEvent()) {
+                appendNode(selectedNodeId(),
+                           (definition) -> definition instanceof ParallelGateway);
             }
 
-            if (KeysMatcher.doKeysMatch(keys,
-                                        KeyboardEvent.Key.E)) {
-                if (selectedNodeIsStart() || selectedNodeIsTask() || selectedNodeIsGateway()) {
-                    appendNode(selectedNodeId(),
-                               (definition) -> definition instanceof EndNoneEvent);
-                }
+            if (KeysMatcher.doKeysMatch(keys, KeyboardEvent.Key.E) && !selectedNodeIsEndEvent()) {
+                appendNode(selectedNodeId(),
+                           (definition) -> definition instanceof EndNoneEvent);
+            }
+
+            if (KeysMatcher.doKeysMatch(keys, KeyboardEvent.Key.S) && !selectedNodeIsEndEvent()) {
+                appendNode(selectedNodeId(),
+                           (definition) -> definition instanceof EmbeddedSubprocess);
             }
         }
     }
 
-    private boolean selectedNodeIsStart() {
+    private boolean selectedNodeIsEndEvent() {
         if (selectedNodeElement().getContent() instanceof Definition) {
-            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof BaseStartEvent;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean selectedNodeIsTask() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
-            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof BaseTask;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean selectedNodeIsGateway() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
-            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof BaseGateway;
+            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof BaseEndEvent;
         } else {
             return false;
         }

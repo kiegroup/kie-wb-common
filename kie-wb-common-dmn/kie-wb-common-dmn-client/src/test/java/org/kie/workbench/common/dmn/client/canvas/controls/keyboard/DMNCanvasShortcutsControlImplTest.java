@@ -16,76 +16,73 @@
 
 package org.kie.workbench.common.dmn.client.canvas.controls.keyboard;
 
-import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.junit.Before;
-import org.junit.Test;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
+import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
-import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
-import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
-import org.mockito.Mock;
+import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
+import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.BaseCanvasShortcutsControlImplTest;
+import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyDownEvent;
 
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
-@RunWith(LienzoMockitoTestRunner.class)
-public class DMNCanvasShortcutsControlImplTest {
+@RunWith(GwtMockitoTestRunner.class)
+public class DMNCanvasShortcutsControlImplTest extends BaseCanvasShortcutsControlImplTest {
 
-    private DMNCanvasShortcutsControlImpl canvasShortcutsControl;
-
-    @Mock
-    private ToolboxDomainLookups toolboxDomainLookups;
-
-    @Mock
-    private DefinitionsCacheRegistry definitionsCacheRegistry;
-
-    @Mock
-    private GeneralCreateNodeAction generalCreateNodeAction;
-
-    @Mock
-    private Element selectedNodeElement;
-
-    private final String selectedNodeId = "selected-node-id";
-
-    @Before
-    public void setUp() {
-        canvasShortcutsControl = spy(new DMNCanvasShortcutsControlImpl(toolboxDomainLookups,
-                                                                       definitionsCacheRegistry,
-                                                                       generalCreateNodeAction));
-
-        doReturn(selectedNodeId).when(canvasShortcutsControl).selectedNodeId();
-        doReturn(selectedNodeElement).when(canvasShortcutsControl).selectedNodeElement();
+    @Override
+    public AbstractCanvasShortcutsControlImpl getCanvasShortcutsControl() {
+        return spy(new DMNCanvasShortcutsControlImpl(toolboxDomainLookups,
+                                                     definitionsCacheRegistry,
+                                                     generalCreateNodeAction));
     }
 
-    @Test
-    public void testDecisionIsAppendedIfDecisionSelected() {
-        final Definition definition = mock(Definition.class);
-        doReturn(definition).when(selectedNodeElement).getContent();
-        doReturn(mock(Decision.class)).when(definition).getDefinition();
-        doNothing().when(canvasShortcutsControl).appendNode(selectedNodeId, Decision.class);
-
-        canvasShortcutsControl.onKeyDownEvent(KeyboardEvent.Key.D);
-
-        verify(canvasShortcutsControl).appendNode(selectedNodeId, Decision.class);
+    @Override
+    public List<TestedTuple> getTestedTuples() {
+        return Arrays.asList(new TestedTuple(DmnNode.DecisionNode.definition,
+                                             KeyDownEvent.Key.D,
+                                             expectedPositiveReactionOnNode(DmnNode.DecisionNode)),
+                             new TestedTuple(new Decision(),
+                                             KeyDownEvent.Key.E,
+                                             expectedPositiveReactionOnNode(null)),
+                             new TestedTuple(new InputData(),
+                                             KeyDownEvent.Key.D,
+                                             expectedPositiveReactionOnNode(DmnNode.DecisionNode)),
+                             new TestedTuple(new KnowledgeRequirement(),
+                                             KeyDownEvent.Key.D,
+                                             expectedPositiveReactionOnNode(null)));
     }
 
-    @Test
-    public void testDecisionIsAppendedIfInputDataIsSelected() {
-        final Definition definition = mock(Definition.class);
-        doReturn(definition).when(selectedNodeElement).getContent();
-        doReturn(mock(InputData.class)).when(definition).getDefinition();
-        doNothing().when(canvasShortcutsControl).appendNode(selectedNodeId, Decision.class);
+    private Map<Object, Boolean> expectedPositiveReactionOnNode(final DmnNode node) {
+        final Map<Object, Boolean> reactions = new HashMap<>();
+        Stream.of(DmnNode.values()).forEach(dmnNode -> reactions.put(dmnNode.definition, false));
 
-        canvasShortcutsControl.onKeyDownEvent(KeyboardEvent.Key.D);
+        if (node != null) {
+            reactions.put(node.definition, true);
+        }
 
-        verify(canvasShortcutsControl).appendNode(selectedNodeId, Decision.class);
+        return reactions;
+    }
+
+    public enum DmnNode {
+        DecisionNode(new Decision()),
+        BusinessKnowledgeModelNode(new BusinessKnowledgeModel()),
+        KnowledgeRequirementNode(new KnowledgeRequirement()),
+        TextAnnotationNode(new TextAnnotation()),
+        InputDataNode(new InputData());
+
+        private Object definition;
+
+        DmnNode(final Object definition) {
+            this.definition = definition;
+        }
     }
 }
