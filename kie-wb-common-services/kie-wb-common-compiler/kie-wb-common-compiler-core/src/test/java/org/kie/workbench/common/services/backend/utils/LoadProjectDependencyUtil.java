@@ -16,9 +16,11 @@
 package org.kie.workbench.common.services.backend.utils;
 
 import java.lang.reflect.Method;
+
+import org.slf4j.Logger;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
-import org.slf4j.Logger;
 
 public class LoadProjectDependencyUtil {
 
@@ -49,9 +51,9 @@ public class LoadProjectDependencyUtil {
             assertThat(obj.toString()).startsWith("dummy.DummyB");
 
             Method m = clazz.getMethod("greetings",
-                    new Class[]{});
+                                       new Class[]{});
             Object greeting = m.invoke(obj,
-                    new Object[]{});
+                                       new Object[]{});
             assertThat(greeting.toString()).isEqualTo("Hello World !");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();

@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -49,23 +50,22 @@ public class BuildInMemoryClasspathMojoTest {
     private static Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
     private String alternateSettingsAbsPath;
     private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
+    private static String gitDaemonEnabled ;
+    private static String gitSshEnabled ;
+
+    @BeforeClass
+    public static void setup() {
+        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+    }
 
     @Before
     public void setUp() throws Exception {
         mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
 
         if (!Files.exists(mavenRepo)) {
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
-
-
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
             if (!Files.exists(Files.createDirectories(mavenRepo))) {
                 throw new Exception("Folder not writable in the project");
             }
@@ -123,6 +123,8 @@ public class BuildInMemoryClasspathMojoTest {
 
     @AfterClass
     public static void tearDown() {
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
         if(tmpRoot!= null) {
             rm(tmpRoot.toFile());
         }

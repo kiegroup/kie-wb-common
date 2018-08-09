@@ -20,17 +20,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.assertj.core.api.SoftAssertions;
 
 import org.eclipse.jgit.api.Git;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.DefaultMavenCompilerTest;
-import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.JGitUtils;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -40,15 +39,21 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class JGitUtilsTest {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private Path mavenRepo;
+    private static String gitDaemonEnabled;
+    private static String gitSshEnabled;
 
     @BeforeClass
     public static void setupSystemProperties() {
+        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
                            "false");
@@ -56,6 +61,12 @@ public class JGitUtilsTest {
                            "false");
         System.setProperty("org.uberfire.sys.repo.monitor.disabled",
                            "true");
+    }
+
+    @AfterClass
+    public static void restoreSystemProperties(){
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
     }
 
     @Before
@@ -79,7 +90,6 @@ public class JGitUtilsTest {
         fileSystemTestingUtils.cleanup();
         TestUtil.rm(new File("src/../.security/"));
     }
-
 
     @Test
     public void tempCloneTest() throws Exception {

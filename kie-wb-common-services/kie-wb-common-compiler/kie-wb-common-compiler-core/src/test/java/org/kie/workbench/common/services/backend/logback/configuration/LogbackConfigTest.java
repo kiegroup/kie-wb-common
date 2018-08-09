@@ -21,16 +21,16 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.Encoder;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.slf4j.LoggerFactory;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class LogbackConfigTest {
 
     LoggerContext loggerContext = new LoggerContext();
-
 
     @Test
     public void configureLoggingProgrammatically() {
@@ -38,7 +38,7 @@ public class LogbackConfigTest {
         LogbackConfig config = new LogbackConfig();
         config.configure(loggerContext);
         root.info("test appender");
-        Appender<ILoggingEvent> kieSift =  root.getAppender("KieSift");
+        Appender<ILoggingEvent> kieSift = root.getAppender("KieSift");
         assertThat(kieSift).isNotNull();
         KieSiftingAppender kieSiftAppender = (KieSiftingAppender) kieSift;
         assertThat(kieSiftAppender).isNotNull();
@@ -51,5 +51,4 @@ public class LogbackConfigTest {
         PatternLayoutEncoder encoder = (PatternLayoutEncoder) enc;
         assertThat(encoder.getPattern()).isEqualTo("%d [%thread] %level %logger{35} - %msg%n");
     }
-
 }

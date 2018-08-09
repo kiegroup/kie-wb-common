@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.eclipse.jgit.api.Git;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -51,13 +52,17 @@ public class JGITCompilerBeforeDecoratorTest {
 
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private Path mavenRepo;
+    private String mavenRepo;
+    private static String gitDaemonEnabled;
+    private static String gitSshEnabled;
 
     @Rule
     public TestName testName = new TestName();
 
     @BeforeClass
     public static void setupSystemProperties() {
+        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
                            "false");
@@ -67,12 +72,18 @@ public class JGITCompilerBeforeDecoratorTest {
                            "true");
     }
 
+    @AfterClass
+    public static void restoreSystemProperties(){
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
+    }
+
     @Before
     public void setUp() throws Exception {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = TestUtil.createMavenRepo();
+        mavenRepo = TestUtil.getMavenRepo();
     }
 
     @After
@@ -88,7 +99,7 @@ public class JGITCompilerBeforeDecoratorTest {
         //Compile the repo
         JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
@@ -111,7 +122,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
         //Compile the repo
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
@@ -142,7 +153,7 @@ public class JGITCompilerBeforeDecoratorTest {
         //Compile the repo
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);

@@ -25,13 +25,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import static org.assertj.core.api.Assertions.fail;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationStrategy;
 import org.junit.Test;
 import org.uberfire.java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ConfigurationTest {
 
@@ -45,7 +46,6 @@ public class ConfigurationTest {
         Map<ConfigurationKey, String> conf = provider.loadConfiguration();
         assertThat(conf.keySet()).hasSize(14);
     }
-
 
     @Test
     public void loadPropertiesConfig() {
@@ -173,5 +173,4 @@ public class ConfigurationTest {
         File fileObject = new File(url.toURI());
         return new FileOutputStream(fileObject);
     }
-
 }

@@ -16,10 +16,6 @@
 
 package org.kie.workbench.common.services.backend.compiler;
 
-import org.junit.Rule;
-import org.junit.rules.TestName;
-import org.kie.workbench.common.services.backend.utils.TestUtil;
-import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -34,14 +30,18 @@ import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.constants.TestConstants;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
@@ -59,7 +59,7 @@ public class DefaultMavenCompilerTest {
     private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private Path mavenRepo;
+    private String mavenRepo;
 
     @Rule
     public TestName testName = new TestName();
@@ -68,8 +68,7 @@ public class DefaultMavenCompilerTest {
     public void setUp() throws Exception {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-
-        mavenRepo = TestUtil.createMavenRepo();
+        mavenRepo = TestUtil.getMavenRepo();
     }
 
     @After
@@ -125,7 +124,7 @@ public class DefaultMavenCompilerTest {
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
@@ -202,7 +201,7 @@ public class DefaultMavenCompilerTest {
         Path prjFolder = Paths.get(tmpCloned + "/");
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
@@ -261,7 +260,7 @@ public class DefaultMavenCompilerTest {
         assertThat(lastCommit).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
@@ -329,7 +328,7 @@ public class DefaultMavenCompilerTest {
         assertThat(cloned).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
@@ -378,13 +377,13 @@ public class DefaultMavenCompilerTest {
         String pomAsAstring = new String(encoded,
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain("<artifactId>kie-takari-lifecycle-plugin</artifactId>")
-                                .doesNotContain("<packaging>kjar</packaging>")
-                                .doesNotContain("<compilerId>jdt</compilerId>")
-                                .doesNotContain("<source>1.8</source>")
-                                .doesNotContain("<target>1.8</target>");
+                .doesNotContain("<packaging>kjar</packaging>")
+                .doesNotContain("<compilerId>jdt</compilerId>")
+                .doesNotContain("<source>1.8</source>")
+                .doesNotContain("<target>1.8</target>");
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
@@ -396,8 +395,8 @@ public class DefaultMavenCompilerTest {
                                   StandardCharsets.UTF_8);
 
         assertThat(pomAsAstring).contains("<compilerId>jdt</compilerId>")
-                                .contains("<source>1.8</source>")
-                                .contains("<target>1.8</target>");
+                .contains("<source>1.8</source>")
+                .contains("<target>1.8</target>");
 
         TestUtil.rm(tmpRoot.toFile());
     }
@@ -440,7 +439,7 @@ public class DefaultMavenCompilerTest {
         assertThat(lastCommit).isNotNull();
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);

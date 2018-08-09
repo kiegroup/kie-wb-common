@@ -21,12 +21,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
@@ -39,7 +40,6 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(resources).hasSize(3);
     }
-
 
     @Test
     public void filterClassesByPackage() {
@@ -62,16 +62,16 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
-    public void filterSubClassesByPackage(){
+    public void filterSubClassesByPackage() {
         List<String> targets = new ArrayList<>(4);
         targets.add("/target/classes/org/kie/test/A.class");
         targets.add("/target/classes/org/kie/test/child/B.class");
         targets.add("/target/classes/org/kie/test/child/son/C.class");
         targets.add("/target/classes/org/kie-test/T.class");
 
-        List<String> orgKie =  CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
+        List<String> orgKie = CompilerClassloaderUtils.filterClassesByPackage(targets, "org.kie");
         assertThat(orgKie).hasSize(3)
-                .containsExactlyInAnyOrder("org.kie.test.A","org.kie.test.child.B","org.kie.test.child.son.C")
+                .containsExactlyInAnyOrder("org.kie.test.A", "org.kie.test.child.B", "org.kie.test.child.son.C")
                 .doesNotContain("org.kie-test/T");
     }
 
@@ -100,8 +100,8 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/io/akka/test/C.class");
         targets.add("/target/classes/com/acme/test/D.class");
         targets.add("/target/classes/com/acme/test/E.class");
-        targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit.jar");
-        targets.add(mavenRepo.toAbsolutePath().toString() + "/junit/junit/4.12/junit-4.12.jar");
+        targets.add(mavenRepo + "/junit/junit/4.12/junit.jar");
+        targets.add(mavenRepo + "/junit/junit/4.12/junit-4.12.jar");
 
         Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
         assertThat(orgKie).hasSize(5);
@@ -116,7 +116,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie-test/T.class");
 
         Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
-        assertThat(orgKie).hasSize(4).contains("org.kie.test","org.kie.test.child","org.kie.test.child.son", "org.kie-test");
+        assertThat(orgKie).hasSize(4).contains("org.kie.test", "org.kie.test.child", "org.kie.test.child.son", "org.kie-test");
     }
 
     @Test
@@ -152,7 +152,6 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         Optional<ClassLoader> classLoader = CompilerClassloaderUtils.createClassloaderFromStringDeps(res.getDependencies());
         assertThat(classLoader).isPresent();
         assertThat(classLoader.get()).isNotNull();
-
     }
 
     @Test
@@ -164,7 +163,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     }
 
     @Test
-    public void tokenizerTest(){
+    public void tokenizerTest() {
         String cpString = "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/kie-api/7.9.0-SNAPSHOT/kie-api-7.9.0-SNAPSHOT.jar:" +
                 "file:/home/sesame/.m2/repository/repositories/kie/global/org/kie/soup/kie-soup-maven-support/7.9.0-SNAPSHOT/" +
                 "kie-soup-maven-support-7.9.0-SNAPSHOT.jar:file:/home/sesame/.m2/" +

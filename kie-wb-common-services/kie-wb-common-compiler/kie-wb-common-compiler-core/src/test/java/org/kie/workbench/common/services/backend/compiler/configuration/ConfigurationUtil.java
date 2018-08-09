@@ -17,15 +17,12 @@ package org.kie.workbench.common.services.backend.compiler.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ConfigurationUtil {
-
 
     private static final Logger logger = LoggerFactory.getLogger(ConfigurationUtil.class);
 
@@ -48,5 +45,4 @@ public class ConfigurationUtil {
         }
         return prop;
     }
-
 }

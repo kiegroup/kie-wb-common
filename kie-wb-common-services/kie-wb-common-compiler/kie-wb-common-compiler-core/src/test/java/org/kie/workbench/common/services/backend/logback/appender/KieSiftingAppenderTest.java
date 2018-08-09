@@ -22,28 +22,29 @@ import java.util.Map;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.logback.OutputSharedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class KieSiftingAppenderTest {
 
     private Logger logger = LoggerFactory.getLogger(KieSiftingAppenderTest.class);
 
     @Test
-    public void appendTest(){
-        String compilationID ="80dbc168-a1fe-499d-a414-d4a37d13d100-1516620517065-0";
+    public void appendTest() {
+        String compilationID = "80dbc168-a1fe-499d-a414-d4a37d13d100-1516620517065-0";
         String[] args = new String[]{};
         LoggingEvent event = new LoggingEvent("org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppenderTest",
-                                               (ch.qos.logback.classic.Logger)logger,
-                                               Level.INFO,
-                                               "I'm a beatiful test message :)",
-                                               null, args);
+                                              (ch.qos.logback.classic.Logger) logger,
+                                              Level.INFO,
+                                              "I'm a beatiful test message :)",
+                                              null, args);
 
-        Map<String,String> mdcMap = new HashMap<>();
+        Map<String, String> mdcMap = new HashMap<>();
         mdcMap.put(MavenConfig.COMPILATION_ID, compilationID);
         event.setMDCPropertyMap(mdcMap);
 
@@ -56,12 +57,10 @@ public class KieSiftingAppenderTest {
         assertThat(msg).isEqualTo("INFO I'm a beatiful test message :)");
     }
 
-    public class KieSiftingAppenderProxy extends KieSiftingAppender{
+    public class KieSiftingAppenderProxy extends KieSiftingAppender {
 
-        public void appendTest(  ILoggingEvent event){
+        public void appendTest(ILoggingEvent event) {
             super.append(event);
         }
     }
-
-
 }
