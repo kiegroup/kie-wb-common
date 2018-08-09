@@ -107,7 +107,8 @@ public class TestUtil {
         if (!Files.exists(mavenRepository)) {
             logger.info("Creating a m2_repo into " + mavenRepository);
             if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                throw new Exception("Folder not writable in the project");
+                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
+                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
             }
         }
         return mavenRepository;
