@@ -16,7 +16,12 @@
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,30 +33,51 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 public class CompilerChronicleCoordinatorTest {
 
     private static Path prjPath;
-    private Path mavenRepo;
+    private String mavenRepo;
     private String alternateSettingsAbsPath;
     private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
+    private static String gitDaemonEnabled;
+    private static String gitSshEnabled;
 
     @BeforeClass
     public static void setup() {
+        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
     }
 
-    public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"),
-                                         "/.m2/repository");
-        if (!Files.exists(mavenRepository)) {
+    @AfterClass
+    public static void tearDown() {
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
+    }
+
+    public static String getMavenRepo() throws Exception {
+        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
+        String mavenRepo = "";
+        for (String repo : repos) {
+            if (System.getenv(repo) != null) {
+                mavenRepo = System.getenv(repo);
+                break;
+            }
+        }
+        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
+    }
+
+    public static java.nio.file.Path createMavenRepo() throws Exception {
+        java.nio.file.Path mavenRepository = java.nio.file.Paths.get(System.getProperty("user.home"), ".m2/repository");
+        if (!java.nio.file.Files.exists(mavenRepository)) {
             logger.info("Creating a m2_repo into " + mavenRepository);
-            if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                throw new Exception("Folder not writable in the project");
+            if (!java.nio.file.Files.exists(Files.createDirectories(mavenRepository))) {
+                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
+                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
             }
         }
         return mavenRepository;
@@ -59,7 +85,7 @@ public class CompilerChronicleCoordinatorTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = createMavenRepo();
+        mavenRepo = getMavenRepo();
         prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
     }
@@ -76,7 +102,7 @@ public class CompilerChronicleCoordinatorTest {
 
     private CompilationResponse build() {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{
                                                                        MavenCLIArgs.COMPILE,

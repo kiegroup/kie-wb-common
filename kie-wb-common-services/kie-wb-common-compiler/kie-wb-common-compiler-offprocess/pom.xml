@@ -21,13 +21,26 @@
         <version>${version.org.kie}</version>
       </dependency>
       <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-io</artifactId>
-        <version>3.0.1</version>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-offprocess-classpath</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-testutil</artifactId>
+        <version>${version.org.kie}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
   <dependencies>
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-offprocess-classpath</artifactId>
+    </dependency>
     <dependency>
       <groupId>net.openhft</groupId>
       <artifactId>chronicle-queue</artifactId>
@@ -225,6 +238,12 @@
       <scope>runtime</scope>
     </dependency>
 
+    <!-- Test -->
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-testutil</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
@@ -295,41 +314,6 @@
           </nonFilteredFileExtensions>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <version>3.0.2</version>
-        <executions>
-          <execution>
-            <id>build-classpath</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>build-classpath</goal>
-            </goals>
-            <configuration>
-              <outputFile>offprocess.cpath</outputFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-       <groupId>org.codehaus.mojo</groupId>
-       <artifactId>exec-maven-plugin</artifactId>
-       <version>1.5.0</version>
-       <executions>
-         <execution>
-           <id>my-execution</id>
-           <phase>compile</phase>
-           <goals>
-             <goal>java</goal>
-           </goals>
-         </execution>
-       </executions>
-       <configuration>
-         <arguments>${version.org.kie}</arguments>
-         <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClassPathMavenGenerator</mainClass>
-       </configuration>
-     </plugin>
     </plugins>
   </build>
 </project>

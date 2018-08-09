@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.kie.workbench.services</groupId>
     <artifactId>kie-wb-common-compiler</artifactId>
-    <version>${version.org.kie}</version>
+    <version>7.10.0-SNAPSHOT</version>
   </parent>
-  <artifactId>kie-wb-common-compiler-offprocess</artifactId>
-  <name>Kie Workbench - Common - Compiler - OffProcess</name>
-  <description>Kie Workbench - Common - Compiler - OffProcess</description>
+  <artifactId>kie-wb-common-compiler-offprocess-classpath</artifactId>
+  <name>Kie Workbench - Common - Compiler - OffProcess - Classpath</name>
+  <description>Kie Workbench - Common - Compiler - OffProcess - Classpath</description>
   <properties>
-    <java.module.name>org.kie.wb.common.services.backend.compiler.core.offprocess</java.module.name>
+    <java.module.name>org.kie.wb.common.services.backend.compiler.offprocess.classpath</java.module.name>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -22,6 +22,7 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>net.openhft</groupId>
@@ -546,41 +547,97 @@
       <scope>runtime</scope>
     </dependency>
   </dependencies>
+
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <filtering>true</filtering>
+        <directory>src/main/filtered-resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>src/test/projects</directory>
+      </testResource>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <filtering>true</filtering>
+        <directory>src/test/resources/compiler_classpath_prj</directory>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
-        <groupId>io.takari.maven.plugins</groupId>
-        <artifactId>takari-lifecycle-plugin</artifactId>
-        <version>1.13.5</version>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-          </execution>
-        </executions>
+        <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <compilerId>jdt</compilerId>
-          <source>1.8</source>
-          <target>1.8</target>
-          <failOnError>false</failOnError>
+          <systemPropertyVariables>
+            <apple.awt.UIElement>true</apple.awt.UIElement>
+            <org.uberfire.nio.git.daemon.enabled>false</org.uberfire.nio.git.daemon.enabled>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
+        <artifactId>maven-resources-plugin</artifactId>
         <configuration>
-          <skipMain>true</skipMain>
-          <skip>true</skip>
+          <nonFilteredFileExtensions>
+            <nonFilteredFileExtension>bpmn2</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dmn</nonFilteredFileExtension>
+            <nonFilteredFileExtension>drl</nonFilteredFileExtension>
+            <nonFilteredFileExtension>drt</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dsl</nonFilteredFileExtension>
+            <nonFilteredFileExtension>dslr</nonFilteredFileExtension>
+            <nonFilteredFileExtension>gdst</nonFilteredFileExtension>
+            <nonFilteredFileExtension>java</nonFilteredFileExtension>
+            <nonFilteredFileExtension>pmml</nonFilteredFileExtension>
+            <nonFilteredFileExtension>sxls</nonFilteredFileExtension>
+            <nonFilteredFileExtension>template</nonFilteredFileExtension>
+            <nonFilteredFileExtension>txls</nonFilteredFileExtension>
+            <nonFilteredFileExtension>xls</nonFilteredFileExtension>
+          </nonFilteredFileExtensions>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>build-classpath</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <configuration>
+              <outputFile>offprocess.cpath</outputFile>
+              <overWriteIfNewer>true</overWriteIfNewer>
+          </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+       <groupId>org.codehaus.mojo</groupId>
+       <artifactId>exec-maven-plugin</artifactId>
+       <version>1.5.0</version>
+       <executions>
+         <execution>
+           <id>my-execution</id>
+           <phase>compile</phase>
+           <goals>
+             <goal>java</goal>
+           </goals>
+         </execution>
+       </executions>
+       <configuration>
+         <arguments>${version.org.kie}</arguments>
+         <mainClass>org.kie.workbench.common.services.backend.compiler.offprocess.generator.ClassPathMavenGenerator</mainClass>
+       </configuration>
+     </plugin>
     </plugins>
   </build>
 </project>

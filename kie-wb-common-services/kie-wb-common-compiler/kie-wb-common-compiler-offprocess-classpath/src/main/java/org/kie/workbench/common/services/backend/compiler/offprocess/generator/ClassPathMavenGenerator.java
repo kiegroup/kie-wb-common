@@ -19,14 +19,15 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.uberfire.java.nio.file.Files;
-import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
 
 public class ClassPathMavenGenerator {
 
@@ -34,16 +35,17 @@ public class ClassPathMavenGenerator {
     private static Logger logger = LoggerFactory.getLogger(ClassPathMavenGenerator.class);
     private static String servicesMod = "kie-wb-common-services";
     private static String compilerMod = "kie-wb-common-compiler";
-    private static String offprocessMod = "kie-wb-common-compiler-offprocess";
+    private static String offprocessMod = "kie-wb-common-compiler-offprocess-classpath";
     private static String cpathPathFile = "offprocess.cpath";
     private static String classPathFile = "offprocess.classpath.template";
 
     public static void main(String[] args) throws Exception {
-        String kieVersion = args[0];
+       // String kieVersion = args[0];
+        String kieVersion = "7.10.0-SNAPSHOT";
         String mavenRepo = getMavenRepo();
         Path pwd = Paths.get("").toAbsolutePath();
         StringBuilder sb = new StringBuilder();
-        sb.append(pwd.toAbsolutePath()).
+        sb.append(pwd.toAbsolutePath()).append(SEP).
                 append(servicesMod).append(SEP).
                 append(compilerMod).append(SEP).
                 append(offprocessMod).append(SEP).
@@ -81,7 +83,7 @@ public class ClassPathMavenGenerator {
 
 
         StringBuilder sbo = new StringBuilder();
-                    sbo.append(pwd.toAbsolutePath()).
+                    sbo.append(pwd.toAbsolutePath()).append(SEP).
                             append(servicesMod).append(SEP).
                             append(compilerMod).append(SEP).
                             append(offprocessMod).append(SEP).
@@ -101,12 +103,14 @@ public class ClassPathMavenGenerator {
 
     public static String getMavenRepo() throws Exception {
         List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
+        String mavenRepo = "";
         for (String repo : repos) {
             if (System.getenv(repo) != null) {
-                return System.getenv(repo);
+                mavenRepo = System.getenv(repo);
+                break;
             }
         }
-        return createMavenRepo().toAbsolutePath().toString();
+        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
     }
 
     public static Path createMavenRepo() throws Exception {
@@ -114,7 +118,8 @@ public class ClassPathMavenGenerator {
         if (!Files.exists(mavenRepository)) {
             logger.info("Creating a m2_repo into " + mavenRepository);
             if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                throw new Exception("Folder not writable in the project");
+                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
+                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
             }
         }
         return mavenRepository;

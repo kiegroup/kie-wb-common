@@ -48,7 +48,6 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         javaBin = javaHome + File.separator + "bin" + File.separator + "java";
         try {
             classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("offprocess.classpath.template"), StandardCharsets.UTF_8);
-            //classpathTemplate = "<maven_repo>/org/kie/workbench/services/kie-wb-common-compiler-core/7.10.0-SNAPSHOT/kie-wb-common-compiler-core-7.10.0-SNAPSHOT.jar:" + IOUtils.toString(getClass().getClassLoader().getResourceAsStream("classpath.template"), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
