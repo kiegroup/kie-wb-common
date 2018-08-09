@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
 import java.util.Set;
+import java.util.function.Function;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
@@ -60,7 +61,7 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     }
 
     @Override
-    public void appendNode(final String sourceNodeId, final Class targetNodeDefinitionClass) {
+    public void appendNode(final String sourceNodeId, final Function<Object, Boolean> definitionCheck) {
 
         final Node sourceNode = CanvasLayoutUtils.getElement(canvasHandler, sourceNodeId).asNode();
 
@@ -76,7 +77,8 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
                                                           connectorDefinitionId);
 
             for (final String targetNodeDefinitionId : targetNodesDefinitionIds) {
-                if (hasNodeDefinitionOfClass(targetNodeDefinitionId, targetNodeDefinitionClass)) {
+                final Object definition = definitionsCacheRegistry.getDefinitionById(targetNodeDefinitionId);
+                if (definitionCheck.apply(definition)) {
                     createNodeAction.executeAction(canvasHandler,
                                                    sourceNodeId,
                                                    targetNodeDefinitionId,
@@ -98,17 +100,5 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
 
     public Element selectedNodeElement() {
         return canvasHandler.getGraphIndex().get(selectedNodeId());
-    }
-
-    /**
-     * Workaround for missing Class.isInstance in GWT
-     */
-    private <T> boolean hasNodeDefinitionOfClass(final String nodeId, final Class<T> targetNodeDefinitionClass) {
-        try {
-            T targetClassObject = (T) definitionsCacheRegistry.getDefinitionById(nodeId);
-        } catch (ClassCastException ccException) {
-            return false;
-        }
-        return true;
     }
 }

@@ -47,7 +47,7 @@ public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContro
                                     KeyboardEvent.Key.D)) {
             if (selectedNodeIsDecision() || selectedNodeIsInput()) {
                 appendNode(selectedNodeId(),
-                           Decision.class);
+                           (definition) -> definition instanceof Decision);
             }
         }
     }

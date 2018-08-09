@@ -50,7 +50,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.T)) {
                 if (selectedNodeIsStart() || selectedNodeIsTask()) {
                     appendNode(selectedNodeId(),
-                               NoneTask.class);
+                               (definition) -> definition instanceof NoneTask);
                 }
             }
 
@@ -58,7 +58,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.G)) {
                 if (selectedNodeIsTask()) {
                     appendNode(selectedNodeId(),
-                               ParallelGateway.class);
+                               (definition) -> definition instanceof ParallelGateway);
                 }
             }
 
@@ -66,7 +66,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
                                         KeyboardEvent.Key.E)) {
                 if (selectedNodeIsStart() || selectedNodeIsTask() || selectedNodeIsGateway()) {
                     appendNode(selectedNodeId(),
-                               EndNoneEvent.class);
+                               (definition) -> definition instanceof EndNoneEvent);
                 }
             }
         }

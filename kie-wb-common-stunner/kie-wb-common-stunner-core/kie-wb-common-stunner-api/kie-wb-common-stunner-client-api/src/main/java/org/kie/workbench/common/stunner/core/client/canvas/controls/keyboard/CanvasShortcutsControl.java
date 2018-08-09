@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import java.util.function.Function;
+
 import org.kie.workbench.common.stunner.core.client.canvas.CanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
@@ -30,9 +32,5 @@ public interface CanvasShortcutsControl<C extends CanvasHandler, S extends Clien
      */
     void onKeyDownEvent(final KeyboardEvent.Key... keys);
 
-    /**
-     * @param sourceNodeId
-     * @param targetNodeDefinitionClass
-     */
-    void appendNode(final String sourceNodeId, final Class targetNodeDefinitionClass);
+    void appendNode(final String sourceNodeId, final Function<Object, Boolean> definitionCheck);
 }
