@@ -42,6 +42,10 @@ public class StunnerWiresHandlerFactory implements WiresHandlerFactory {
         this.delegate = new WiresHandlerFactoryImpl();
     }
 
+    StunnerWiresHandlerFactory(WiresHandlerFactory delegate) {
+        this.delegate = delegate;
+    }
+
     @Override
     public WiresConnectorHandler newConnectorHandler(final WiresConnector wiresConnector,
                                                      final WiresManager wiresManager) {
@@ -49,6 +53,7 @@ public class StunnerWiresHandlerFactory implements WiresHandlerFactory {
                                              wiresManager,
                                              e -> {
                                              },
+                                             new WiresConnectorEventConsumers(wiresConnector).addControlPoint(),
                                              new WiresConnectorEventConsumers(wiresConnector).addControlPoint());
     }
 
