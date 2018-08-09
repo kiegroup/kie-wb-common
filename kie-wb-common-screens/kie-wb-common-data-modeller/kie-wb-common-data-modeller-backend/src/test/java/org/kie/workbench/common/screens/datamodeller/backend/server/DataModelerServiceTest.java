@@ -46,6 +46,7 @@ import org.uberfire.java.nio.base.options.CommentedOption;
 import org.uberfire.java.nio.file.FileAlreadyExistsException;
 import org.uberfire.java.nio.file.FileSystem;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyMap;
@@ -253,12 +254,12 @@ public class DataModelerServiceTest {
                times(1)).endBatch();
     }
 
-    @Test(expected = FileAlreadyExistsException.class)
+    @Test
     public void testCreateDataObjectAlreadyExists() {
         final Path path = PathFactory.newPath("DataObject.java", "file:///DataObject.java");
 
         when(ioService.exists(any(org.uberfire.java.nio.file.Path.class))).thenReturn(true);
-
-        dataModelerService.createJavaFile(path, "", "");
+        assertThatThrownBy(() -> dataModelerService.createJavaFile(path, "", ""))
+                .isInstanceOf(FileAlreadyExistsException.class);
     }
 }
