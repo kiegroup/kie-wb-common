@@ -69,7 +69,7 @@ public class DefaultMavenCompilerTest {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = TestUtil.getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
     }
 
     @After

@@ -34,6 +34,7 @@ import org.kie.scanner.KieModuleMetaData;
 import org.kie.scanner.KieModuleMetaDataImpl;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -70,8 +71,8 @@ public class KieMetadataTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtil.getMavenRepo();
-        alternateSettingsAbsPath = TestUtil.getSettingsFile();
+        mavenRepo = TestUtilMaven.getMavenRepo();
+        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         tmpRoot = Files.createTempDirectory("repo");
     }
 

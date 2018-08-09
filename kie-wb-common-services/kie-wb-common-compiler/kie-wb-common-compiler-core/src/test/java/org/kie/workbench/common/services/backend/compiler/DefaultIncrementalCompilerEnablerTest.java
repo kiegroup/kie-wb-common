@@ -44,7 +44,7 @@ public class DefaultIncrementalCompilerEnablerTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtil.getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
     }
 
     @Test

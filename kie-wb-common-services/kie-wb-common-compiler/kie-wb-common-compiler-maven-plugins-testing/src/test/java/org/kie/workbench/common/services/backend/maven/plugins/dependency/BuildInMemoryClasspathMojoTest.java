@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
@@ -50,40 +51,13 @@ public class BuildInMemoryClasspathMojoTest {
     private String mavenRepo;
     private static Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
     private String alternateSettingsAbsPath;
-    private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
         tmpRoot = Files.createTempDirectory("repo");
-        alternateSettingsAbsPath = getSettingsFile();
+        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
-
-    public static String getMavenRepo() throws Exception {
-        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
-        String mavenRepo = "";
-        for (String repo : repos) {
-            if (System.getenv(repo) != null) {
-                mavenRepo = System.getenv(repo);
-                break;
-            }
-        }
-        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
-    }
-
-    public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"),
-                                         "/.m2/repository");
-        if (!Files.exists(mavenRepository)) {
-            logger.info("Creating a m2_repo into " + mavenRepository);
-            if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
-                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
-            }
-        }
-        return mavenRepository;
-    }
-
 
     @Test
     public void getClassloaderFromAllDependenciesSimpleTest(){
@@ -146,16 +120,5 @@ public class BuildInMemoryClasspathMojoTest {
         }
     }
 
-    public static String getSettingsFile(){
-        String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
-        if(jenkinsFile != null){
-            logger.info("Using settings.xml file provided by JENKINS:{}", jenkinsFile);
-            return jenkinsFile;
-        }else {
-            logger.info("Using local settings.xml file.");
-            return new File("src/test/settings.xml").getAbsolutePath();
-        }
-
-    }
 
 }

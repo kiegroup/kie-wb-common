@@ -39,9 +39,9 @@ public class BaseCompilerTest implements Serializable {
 
     public BaseCompilerTest(String prjName) {
         try {
-            mavenRepo = getMavenRepo();
+            mavenRepo = TestUtilMaven.getMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
-            alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+            alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
             Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
             TestUtil.copyTree(Paths.get(prjName), tmp);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
@@ -50,30 +50,6 @@ public class BaseCompilerTest implements Serializable {
         }
     }
 
-    public static String getMavenRepo() throws Exception {
-        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
-        String mavenRepo = "";
-        for (String repo : repos) {
-            if (System.getenv(repo) != null) {
-                mavenRepo = System.getenv(repo);
-                break;
-            }
-        }
-        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
-    }
-
-    public static Path createMavenRepo() throws Exception {
-        Path mavenRepository = Paths.get(System.getProperty("user.home"),
-                                         "/.m2/repository");
-        if (!Files.exists(mavenRepository)) {
-            logger.info("Creating a m2_repo into " + mavenRepository);
-            if (!Files.exists(Files.createDirectories(mavenRepository))) {
-                logger.error("Folder not writable to create Maven repo{}", mavenRepository);
-                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
-            }
-        }
-        return mavenRepository;
-    }
 
     @AfterClass
     public static void tearDown() {

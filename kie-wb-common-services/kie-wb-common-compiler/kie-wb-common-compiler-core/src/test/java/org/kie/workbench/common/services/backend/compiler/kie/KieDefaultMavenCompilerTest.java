@@ -39,6 +39,7 @@ import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -73,7 +74,7 @@ public class KieDefaultMavenCompilerTest {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
 
-        mavenRepo = TestUtil.getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
     }
 
     @After
@@ -287,7 +288,7 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
+        String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         String MASTER_BRANCH = "master";
 
         //Setup origin in memory
@@ -358,7 +359,7 @@ public class KieDefaultMavenCompilerTest {
     @Test
     public void buildCompileWithOverrideOnRegularFSTest() throws Exception {
 
-        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
+        String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo");
         //NIO creation and copy content
         Path temp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
@@ -418,7 +419,7 @@ public class KieDefaultMavenCompilerTest {
 
     @Test
     public void buildCompileWithOverrideOnGitVFS() throws Exception {
-        final String alternateSettingsAbsPath = TestUtil.getSettingsFile();
+        final String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
 
         final URI originRepo = URI.create("git://buildCompileWithOverrideOnGitVFS");
         final JGitFileSystem origin = (JGitFileSystem) ioService.newFileSystem(originRepo,

@@ -41,7 +41,7 @@ public class MavenOutputTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtil.getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
     }
 
     @Test

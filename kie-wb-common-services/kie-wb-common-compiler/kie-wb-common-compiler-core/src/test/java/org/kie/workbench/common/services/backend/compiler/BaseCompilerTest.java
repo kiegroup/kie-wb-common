@@ -48,9 +48,9 @@ public class BaseCompilerTest {
 
     public BaseCompilerTest(String prjName) {
         try {
-            mavenRepo = TestUtil.getMavenRepo();
+            mavenRepo = TestUtilMaven.getMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
-            alternateSettingsAbsPath = TestUtil.getSettingsFile();
+            alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
             Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", prjName);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         } catch (Exception e) {
