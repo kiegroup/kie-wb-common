@@ -17,10 +17,12 @@ package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 
 import java.io.File;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,34 +47,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class BuildInMemoryClasspathMojoTest {
 
     private static Path tmpRoot;
-    private Path mavenRepo;
+    private String mavenRepo;
     private static Logger logger = LoggerFactory.getLogger(BuildInMemoryClasspathMojoTest.class);
     private String alternateSettingsAbsPath;
     private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
-
-
-        mavenRepo = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
-
-        if (!Files.exists(mavenRepo)) {
-            logger.info("Creating a m2_repo into " + mavenRepo);
-            if (!Files.exists(Files.createDirectories(mavenRepo))) {
-                throw new Exception("Folder not writable in the project");
-            }
-        }
+        mavenRepo = getMavenRepo();
         tmpRoot = Files.createTempDirectory("repo");
         alternateSettingsAbsPath = getSettingsFile();
+    }
 
+    public static String getMavenRepo() throws Exception {
+        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
+        String mavenRepo = "";
+        for (String repo : repos) {
+            if (System.getenv(repo) != null) {
+                mavenRepo = System.getenv(repo);
+                break;
+            }
+        }
+        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
+    }
+
+    public static Path createMavenRepo() throws Exception {
+        Path mavenRepository = Paths.get(System.getProperty("user.home"),
+                                         "/.m2/repository");
+        if (!Files.exists(mavenRepository)) {
+            logger.info("Creating a m2_repo into " + mavenRepository);
+            if (!Files.exists(Files.createDirectories(mavenRepository))) {
+                throw new Exception("Folder not writable in the project");
+            }
+        }
+        return mavenRepository;
     }
 
 
@@ -82,7 +90,7 @@ public class BuildInMemoryClasspathMojoTest {
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{ MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
                                                                Boolean.FALSE);
@@ -99,7 +107,7 @@ public class BuildInMemoryClasspathMojoTest {
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath, MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
                                                                Boolean.FALSE);
@@ -114,7 +122,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void testCompilerClassloaderUtilsTests(){
         Path path = Paths.get(".").resolve("target/test-classes//dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
-                                                                                                               mavenRepo.toAbsolutePath().toString());
+                                                                                                               mavenRepo);
         assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;

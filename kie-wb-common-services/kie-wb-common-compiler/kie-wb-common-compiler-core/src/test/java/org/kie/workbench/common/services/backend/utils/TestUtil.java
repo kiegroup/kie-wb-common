@@ -21,10 +21,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.slf4j.Logger;
@@ -86,6 +87,18 @@ public class TestUtil {
             }
             bw.close();
         }
+    }
+
+    public static String getMavenRepo() throws Exception {
+        List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
+        String mavenRepo = "";
+        for (String repo : repos) {
+            if (System.getenv(repo) != null) {
+                mavenRepo = System.getenv(repo);
+                break;
+            }
+        }
+        return StringUtils.isEmpty(mavenRepo) ? createMavenRepo().toAbsolutePath().toString() : mavenRepo;
     }
 
     public static Path createMavenRepo() throws Exception {
