@@ -18,6 +18,16 @@
     <java.module.name>org.kie.wb.common.services.backend.compiler.service</java.module.name>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-testutil</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
@@ -69,6 +79,12 @@
       </exclusions>
     </dependency>
     <!-- test -->
+
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-testutil</artifactId>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.assertj</groupId>

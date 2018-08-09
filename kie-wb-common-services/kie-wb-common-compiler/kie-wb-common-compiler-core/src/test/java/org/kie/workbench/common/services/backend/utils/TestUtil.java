@@ -21,11 +21,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.slf4j.Logger;
@@ -37,7 +35,7 @@ import org.uberfire.java.nio.file.Paths;
 public class TestUtil {
 
     private static Logger logger = LoggerFactory.getLogger(TestUtil.class);
-    private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
+    //private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     public static void copyTree(Path source,
                                 Path target) throws IOException {
@@ -87,7 +85,7 @@ public class TestUtil {
             bw.close();
         }
     }
-
+/*
     public static String getMavenRepo() throws Exception {
         List<String> repos = Arrays.asList("M2_REPO", "MAVEN_REPO_LOCAL", "MAVEN_REPO", "M2_REPO_LOCAL");
         String mavenRepo = "";
@@ -110,7 +108,7 @@ public class TestUtil {
             }
         }
         return mavenRepository;
-    }
+    }*/
 
     public static Path createAndCopyToDirectory(Path root, String dirName, String copyTree) throws IOException {
         //NIO creation and copy content
@@ -119,7 +117,7 @@ public class TestUtil {
         return dir;
         //end NIO
     }
-
+/*
     public static String getSettingsFile() {
         String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
         if (jenkinsFile != null) {
@@ -129,7 +127,7 @@ public class TestUtil {
             logger.info("Using local settings.xml file.");
             return new File("src/test/settings.xml").getAbsolutePath();
         }
-    }
+    }*/
 
     public static void saveMavenLogIfCompilationResponseNotSuccessfull(Path tmp, CompilationResponse response, Class<?> testClass, TestName testName) throws Exception {
         String logName = testClass.getSimpleName() + "." + testName.getMethodName();

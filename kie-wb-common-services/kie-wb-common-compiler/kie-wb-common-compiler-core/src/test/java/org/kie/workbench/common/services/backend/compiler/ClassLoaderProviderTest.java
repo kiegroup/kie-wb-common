@@ -65,7 +65,7 @@ public class ClassLoaderProviderTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepo = TestUtil.getMavenRepo();
+        mavenRepo = TestUtilMaven.getMavenRepo();
     }
 
     @After
@@ -159,7 +159,7 @@ public class ClassLoaderProviderTest {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
-        String alternateSettingsAbsPath = TestUtil.getSettingsFile();
+        String alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
