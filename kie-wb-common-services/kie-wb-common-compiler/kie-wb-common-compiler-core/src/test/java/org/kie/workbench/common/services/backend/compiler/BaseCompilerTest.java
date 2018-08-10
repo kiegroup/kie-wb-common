@@ -16,8 +16,11 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
@@ -37,11 +40,39 @@ public class BaseCompilerTest {
 
     protected static Path tmpRoot;
     protected String mavenRepo;
-    protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
+    protected static Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
     protected KieCompilationResponse res;
+    private static int gitDaemonPort;
+
+
+
+    public static int findFreePort() {
+        int port = 0;
+        try {
+            ServerSocket server = new ServerSocket(0);
+            port = server.getLocalPort();
+            server.close();
+        } catch (IOException e) {
+            Assert.fail("Can't find free port!");
+        }
+        logger.debug("Found free port " + port);
+        return port;
+    }
+
+
+    @BeforeClass
+    public static void setupSystemProperties() {
+        String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
+        if(gitPort!= null) {
+            gitDaemonPort = Integer.valueOf(gitPort);
+        }
+        int freePort = findFreePort();
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
+        logger.info("Git port used:{}",freePort);
+    }
 
     @Rule
     public TestName testName = new TestName();
@@ -80,6 +111,7 @@ public class BaseCompilerTest {
 
     @AfterClass
     public static void tearDown() {
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(gitDaemonPort));
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }

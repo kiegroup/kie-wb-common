@@ -13,30 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.offprocess;
+package org.kie.workbench.common.services.backend.compiler.offprocess.impl;
+
+import java.io.File;
 
 import net.openhft.chronicle.queue.ChronicleQueue;
 import net.openhft.chronicle.queue.ChronicleQueueBuilder;
 
 public class QueueProvider {
 
-    private static ChronicleQueue queue;
-    private static String prefixInfoObjs = "/offprocess-queue";
+    private ChronicleQueue queue;
+    private String basePath;
+    private String queueName;
 
-    static {
-        init();
+    public QueueProvider(String queueName) {
+        this.queueName = queueName;
+        init(queueName);
     }
 
-    private static void init() {
-        String basePath = System.getProperty("java.io.tmpdir") + prefixInfoObjs;
+    private void init(String name) {
+        basePath = System.getProperty("java.io.tmpdir") + File.separator + name;
         queue = ChronicleQueueBuilder.single(basePath).build();
     }
 
-    public static ChronicleQueue getQueue() {
+    public ChronicleQueue getQueue() {
         return queue;
     }
 
-    public static void cleanQueue() {
+    public String getAbsoultePath() {
+        return basePath;
+    }
+
+    public String getQueueName() {
+        return queueName;
+    }
+
+    public void cleanQueue() {
         queue.close();
     }
 }

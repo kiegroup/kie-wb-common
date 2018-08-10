@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -29,7 +30,10 @@ import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -60,6 +64,36 @@ public class DefaultMavenCompilerTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
+    private static int gitDaemonPort;
+
+    public static int findFreePort() {
+        int port = 0;
+        try {
+            ServerSocket server = new ServerSocket(0);
+            port = server.getLocalPort();
+            server.close();
+        } catch (IOException e) {
+            Assert.fail("Can't find free port!");
+        }
+        logger.debug("Found free port " + port);
+        return port;
+    }
+
+    @BeforeClass
+    public static void setupSystemProperties() {
+        String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
+        if(gitPort!= null) {
+            gitDaemonPort = Integer.valueOf(gitPort);
+        }
+        int freePort = findFreePort();
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
+        logger.info("Git port used:{}",freePort);
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(gitDaemonPort));
+    }
 
     @Rule
     public TestName testName = new TestName();

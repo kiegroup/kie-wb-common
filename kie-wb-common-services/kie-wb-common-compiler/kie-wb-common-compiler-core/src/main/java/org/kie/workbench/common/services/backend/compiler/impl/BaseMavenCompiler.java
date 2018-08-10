@@ -93,9 +93,9 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
         Thread.currentThread().setContextClassLoader(original);
         if (exitCode == 0) {
-            return (T) new DefaultKieCompilationResponse(Boolean.TRUE);
+            return (T) new DefaultKieCompilationResponse(Boolean.TRUE, req.getRequestUUID());
         } else {
-            return (T) new DefaultKieCompilationResponse(Boolean.FALSE);
+            return (T) new DefaultKieCompilationResponse(Boolean.FALSE, req.getRequestUUID());
         }
     }
 

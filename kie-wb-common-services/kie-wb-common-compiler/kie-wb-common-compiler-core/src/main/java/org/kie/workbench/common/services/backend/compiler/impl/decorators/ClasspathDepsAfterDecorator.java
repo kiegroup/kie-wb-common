@@ -76,11 +76,13 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
                                                    req.getInfo().getPrjPath(),
-                                                   deps);
+                                                   deps,
+                                                   req.getRequestUUID());
         }else{
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
-                                                   req.getInfo().getPrjPath());
+                                                   req.getInfo().getPrjPath(),
+                                                   req.getRequestUUID());
         }
         return t;
     }

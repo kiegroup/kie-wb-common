@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.offprocess;
+package org.kie.workbench.common.services.backend.compiler.offprocess.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,31 +30,33 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompila
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Paths;
 
-public class ServerIPC {
-
-    private static Logger logger = LoggerFactory.getLogger(ServerIPC.class);
+public class ServerIPCImpl {
 
     public static void main(String[] args) throws Exception {
         String uuid = args[0];
         String workingDir = args[1];
         String mavenRepo = args[2];
         String alternateSettingsAbsPath = args[3];
+        String queueName = args[4];
         String threadName = Thread.currentThread().getName();
-        publishResponse(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
+        QueueProvider provider = new QueueProvider(queueName);
+        execute(workingDir, mavenRepo, alternateSettingsAbsPath, uuid, provider);
         Thread.currentThread().setName(threadName);// restore the previous name to avoid the override of the maven output
     }
 
-    public static void publishResponse(String workingDir, String mavenRepo, String alternateSettingsAbsPath, String uuid) throws Exception {
+    public static void execute(String workingDir, String mavenRepo, String alternateSettingsAbsPath, String uuid, QueueProvider provider) throws Exception {
         KieCompilationResponse res = build(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
-        ExcerptAppender appender = QueueProvider.getQueue().acquireAppender();
         byte[] bytez = serialize(res);
         if (bytez == null) {
             return;
         }
+        writeOnQueue(bytez, provider);
+    }
+
+    private static void writeOnQueue(byte[] bytez, QueueProvider provider) {
+        ExcerptAppender appender = provider.getQueue().acquireAppender();
         appender.writeBytes(Bytes.allocateDirect(bytez));
     }
 

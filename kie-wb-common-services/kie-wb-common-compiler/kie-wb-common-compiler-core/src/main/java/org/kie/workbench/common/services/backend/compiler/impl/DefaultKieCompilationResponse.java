@@ -43,39 +43,45 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     private Set<String> eventsTypeClasses;
     private DefaultCompilationResponse defaultResponse;
 
-    public DefaultKieCompilationResponse(Boolean successful) {
-        this(successful, Collections.emptyList());
-    }
-
-    public DefaultKieCompilationResponse(Boolean successful,
-                                         List<String> mavenOutput) {
-        this.defaultResponse = new DefaultCompilationResponse(successful,
-                                                              mavenOutput,
-                                                              null,
-                                                              Collections.emptyList(),
-                                                              Collections.emptyList());
+    public DefaultKieCompilationResponse(Boolean successful, String requestUUID) {
+        this(successful, Collections.emptyList(), requestUUID);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          List<String> mavenOutput,
-                                         Path workingDir) {
+                                         String requestUUID) {
+        this.defaultResponse = new DefaultCompilationResponse(successful,
+                                                              mavenOutput,
+                                                              null,
+                                                              Collections.emptyList(),
+                                                              Collections.emptyList(),
+                                                              requestUUID);
+    }
+
+    public DefaultKieCompilationResponse(Boolean successful,
+                                         List<String> mavenOutput,
+                                         Path workingDir,
+                                         String requestUUID) {
         this.defaultResponse = new DefaultCompilationResponse(successful,
                                                               mavenOutput,
                                                               workingDir,
                                                               Collections.emptyList(),
-                                                              Collections.emptyList());
+                                                              Collections.emptyList(),
+                                                              requestUUID);
     }
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          List<String> mavenOutput,
                                          List<String> targetContent,
                                          List<String> projectDependencies,
-                                         Path workingDir) {
+                                         Path workingDir,
+                                         String requestUUID) {
         this.defaultResponse = new DefaultCompilationResponse(successful,
                                                               mavenOutput,
                                                               workingDir,
                                                               targetContent,
-                                                              projectDependencies);
+                                                              projectDependencies,
+                                                              requestUUID);
     }
 
 
@@ -88,13 +94,15 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                          List<String> targetContent,
                                          List<String> projectDependencies,
                                          Path workingDir,
-                                         Set<String> eventTypesClasses) {
+                                         Set<String> eventTypesClasses,
+                                         String requestUUID) {
 
         this.defaultResponse = new DefaultCompilationResponse(successful,
                                                               mavenOutput,
                                                               workingDir,
                                                               targetContent,
-                                                              projectDependencies);
+                                                              projectDependencies,
+                                                              requestUUID);
         this.kieModuleMetaInfo = kieModuleMetaInfo;
         this.kieModule = kieModule;
         this.projectClassLoaderStore = projectClassLoaderStore;
@@ -166,6 +174,10 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         return eventsTypeClasses;
     }
 
+    public String getRequestUUID() {
+        return defaultResponse.getRequestUUID();
+    }
+
     @Override
     public String toString() {
         return "DefaultKieCompilationResponse{" +
@@ -174,6 +186,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                 ", projectClassLoaderStore=" + projectClassLoaderStore +
                 ", eventsTypeClasses=" + eventsTypeClasses +
                 ", defaultResponse=" + defaultResponse +
+                ", requestUUID()=" + defaultResponse.getRequestUUID() +
                 ", successful=" + isSuccessful() +
                 ", mavenOutput=" + getMavenOutput() +
                 ", workingDir=" + getWorkingDir() +

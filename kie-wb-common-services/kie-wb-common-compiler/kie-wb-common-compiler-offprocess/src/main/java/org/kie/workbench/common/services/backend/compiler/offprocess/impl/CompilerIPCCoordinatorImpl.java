@@ -13,41 +13,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.offprocess;
+package org.kie.workbench.common.services.backend.compiler.offprocess.impl;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import net.openhft.chronicle.queue.ChronicleQueue;
 import org.apache.commons.io.IOUtils;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.offprocess.ClientIPC;
+import org.kie.workbench.common.services.backend.compiler.offprocess.CompilerIPCCoordinator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private static String placeholder = "<maven_repo>";
+    private String mavenModuleName = "kie-wb-common-compiler-offprocess";
+    private String classpathFile = "offprocess.classpath.template";
     private String javaHome;
     private String javaBin;
     private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private String classpathTemplate;
-    private ChronicleQueue queue;
+    private ResponseSharedMap responseMap;
+    private ClientIPC clientIPC;
+    private QueueProvider provider;
+    private String queueName;
 
-    public CompilerIPCCoordinatorImpl() {
-        queue = QueueProvider.getQueue();
+    public CompilerIPCCoordinatorImpl(QueueProvider provider) {
+        this.queueName = provider.getQueueName();
+        this.provider = provider;
+        responseMap = new ResponseSharedMap();
+        clientIPC = new ClientIPCImpl(responseMap, provider);
         javaHome = System.getProperty("java.home");
         javaBin = javaHome + File.separator + "bin" + File.separator + "java";
         try {
-            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream("offprocess.classpath.template"), StandardCharsets.UTF_8);
+            classpathTemplate = IOUtils.toString(getClass().getClassLoader().getResourceAsStream(classpathFile), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
@@ -57,7 +65,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
     public CompilationResponse compile(CompilationRequest req, int secondsTimeout) {
         return internalBuild(req.getMavenRepo(),
                              req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                             getAlternateSettings(req.getOriginalArgs()), secondsTimeout);
+                             getAlternateSettings(req.getOriginalArgs()), secondsTimeout, req.getRequestUUID());
     }
 
     private String getAlternateSettings(String[] args) {
@@ -69,37 +77,48 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         return "";
     }
 
-    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath,int secondsTimeout) {
+    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath, int secondsTimeout, String uuid) {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
-        String uuid = UUID.randomUUID().toString();
         try {
-            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, secondsTimeout);
-            KieCompilationResponse res = ClientIPC.listenObjs(uuid);
-            if (res != null) {
-                return res;
+            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, secondsTimeout, queueName);
+            if (clientIPC.isLoaded(uuid)) {
+                return getCompilationResponse(uuid);
             } else {
-                return new DefaultKieCompilationResponse(true);
+                while (!clientIPC.isLoaded(uuid)) {
+                }
+                return getCompilationResponse(uuid);
             }
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
-            return new DefaultKieCompilationResponse(false);
+            return new DefaultKieCompilationResponse(false, "");
         }
     }
 
-    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, int secondsTimeout) throws Exception {
+    private CompilationResponse getCompilationResponse(String uuid) {
+        KieCompilationResponse res = clientIPC.getResponse(uuid);
+        if (res != null) {
+            return res;
+        } else {
+            return new DefaultKieCompilationResponse(true, "");
+        }
+    }
+
+    //@TODO add the current jar
+    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, int secondsTimeout, String queueName) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
                         "-cp",
-                        System.getProperty("user.dir") + "/" + "target/kie-wb-common-compiler-offprocess-7.10.0-SNAPSHOT.jar:"+  classpath,
-                        "org.kie.workbench.common.services.backend.compiler.offprocess.ServerIPC",
+                        System.getProperty("user.dir") + "/" + "target/" + mavenModuleName + "-7.10.0-SNAPSHOT.jar:" + classpath,
+                        ServerIPCImpl.class.getCanonicalName(),
                         uuid,
                         projectPath,
                         mavenRepo,
-                        alternateSettingsAbsPath
+                        alternateSettingsAbsPath,
+                        queueName
                 };
-        if(logger.isDebugEnabled()) {
-            logger.debug("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************", commandArrayServer);
+        if (logger.isDebugEnabled()) {
+            logger.debug("************************** \n Invoking server in a separate process with args: \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n{} \n**************************", commandArrayServer);
         }
         ProcessBuilder serverPb = new ProcessBuilder(commandArrayServer);
         serverPb.directory(new File(projectPath));
@@ -113,7 +132,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         process.waitFor(secondsTimeout, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
-        while ((line = reader.readLine()) != null && (!line.endsWith("BUILD SUCCESS") || !line.endsWith("BUILD FAILURE") )) {
+        while ((line = reader.readLine()) != null && (!line.endsWith("BUILD SUCCESS") || !line.endsWith("BUILD FAILURE"))) {
             if (logger.isInfoEnabled()) {
                 logger.info(line);
             }

@@ -38,6 +38,7 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private Boolean successful;
     private List<String> mavenOutput;
     private Path workingDir;
+    private String requestUUID;
 
     private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
@@ -49,32 +50,38 @@ public class DefaultCompilationResponse implements CompilationResponse,
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,
-                                      final Path workingDir) {
+                                      final Path workingDir,
+                                      final String requestUUID) {
         this.successful = successful;
         this.mavenOutput = new ArrayList<>(mavenOutput);
         this.workingDir = workingDir;
+        this.requestUUID = requestUUID;
     }
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,
                                       final Path workingDir,
                                       final List<String> targetContent,
-                                      final List<String> projectDependencies) {
+                                      final List<String> projectDependencies,
+                                      final String requestUUID) {
         this.successful = successful;
         this.mavenOutput = mavenOutput;
         this.workingDir = workingDir;
         this.targetContent = new ArrayList<>(targetContent);
         this.projectDependencies = new ArrayList<>(projectDependencies);
+        this.requestUUID = requestUUID;
     }
 
     public DefaultCompilationResponse(final Boolean successful,
                                       final List<String> mavenOutput,
                                       final Path workingDir,
-                                      final List<String> projectDependencies) {
+                                      final List<String> projectDependencies,
+                                      final String requestUUID) {
         this.successful = successful;
         this.mavenOutput = new ArrayList<>(mavenOutput);
         this.workingDir = workingDir;
         this.projectDependencies = new ArrayList<>(projectDependencies);
+        this.requestUUID = requestUUID;
     }
 
     public Boolean isSuccessful() {
@@ -138,6 +145,10 @@ public class DefaultCompilationResponse implements CompilationResponse,
         return projectDependenciesAsURL;
     }
 
+    public String getRequestUUID() {
+        return requestUUID;
+    }
+
     private List<URL> getProjectDependenciesAsURLs() {
         if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUrls(projectDependencies);
@@ -157,5 +168,22 @@ public class DefaultCompilationResponse implements CompilationResponse,
             return CompilerClassloaderUtils.processScannedFilesAsURIs(targetContent);
         }
         return Collections.emptyList();
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("DefaultCompilationResponse{");
+        sb.append("successful=").append(successful);
+        sb.append(", mavenOutput=").append(mavenOutput);
+        sb.append(", workingDir=").append(workingDir);
+        sb.append(", requestUUID='").append(requestUUID).append('\'');
+        sb.append(", projectDependencies=").append(projectDependencies);
+        sb.append(", projectDependenciesAsURI=").append(projectDependenciesAsURI);
+        sb.append(", projectDependenciesAsURL=").append(projectDependenciesAsURL);
+        sb.append(", targetContent=").append(targetContent);
+        sb.append(", targetContentAsURI=").append(targetContentAsURI);
+        sb.append(", targetContentAsURL=").append(targetContentAsURL);
+        sb.append('}');
+        return sb.toString();
     }
 }

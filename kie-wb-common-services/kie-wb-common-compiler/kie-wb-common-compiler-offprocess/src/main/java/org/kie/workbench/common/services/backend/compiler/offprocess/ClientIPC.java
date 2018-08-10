@@ -15,45 +15,14 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-
-import net.openhft.chronicle.bytes.Bytes;
-import net.openhft.chronicle.queue.ExcerptTailer;
-import net.openhft.chronicle.wire.DocumentContext;
-import net.openhft.chronicle.wire.Wire;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponseOffProcess;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ClientIPC {
+/***
+ * Client class to interact with the result of the separate Process build
+ */
+public interface ClientIPC {
 
-    private static Logger logger = LoggerFactory.getLogger(ClientIPC.class);
-
-    public static KieCompilationResponse listenObjs(String uuid) throws Exception {
-        ExcerptTailer tailer = QueueProvider.getQueue().createTailer();
-        KieCompilationResponse res = new DefaultKieCompilationResponse(false);
-        try (DocumentContext dc = tailer.readingDocument()) {
-            if (dc.isPresent()) {// this will tell you if there is any data  to read{
-                Wire wire = dc.wire();
-                Bytes bytes = wire.bytes();
-                if (!bytes.isEmpty()) {
-                    Object obj = deserialize(bytes.toByteArray());
-                    res = (DefaultKieCompilationResponseOffProcess) obj;
-                }
-            }
-        }
-        return res;
-    }
-
-    private static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        try (ByteArrayInputStream b = new ByteArrayInputStream(bytes)) {
-            try (ObjectInputStream o = new ObjectInputStream(b)) {
-                return o.readObject();
-            }
-        }
-    }
+    boolean isLoaded(String uuid);
+    
+    KieCompilationResponse getResponse(String uuid);
 }

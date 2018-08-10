@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kie.workbench.common.services.backend.compiler.offprocess;
+package org.kie.workbench.common.services.backend.compiler.offprocess.impl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,9 +25,13 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
  */
 public class ResponseSharedMap {
 
-    private static Map<String, CompilationResponse> map = new ConcurrentHashMap();
+    private Map<String, CompilationResponse> map;
 
-    public static CompilationResponse getResponse(String key) {
+    public ResponseSharedMap() {
+        map = new ConcurrentHashMap();
+    }
+
+    public CompilationResponse getResponse(String key) {
         if (map.containsKey(key)) {
             return map.get(key);
         } else {
@@ -35,17 +39,21 @@ public class ResponseSharedMap {
         }
     }
 
-    public static void removeResponse(String key) {
+    public void removeResponse(String key) {
         map.remove(key);
     }
 
-    public static void addResponse(String key, CompilationResponse res) {
+    public void addResponse(String key, CompilationResponse res) {
         if (!map.containsKey(key)) {
             map.put(key, res);
         }
     }
 
-    public static void purgeAll(){
+    public boolean contains(String key) {
+        return map.containsKey(key);
+    }
+
+    public void purgeAll() {
         map.clear();
     }
 }

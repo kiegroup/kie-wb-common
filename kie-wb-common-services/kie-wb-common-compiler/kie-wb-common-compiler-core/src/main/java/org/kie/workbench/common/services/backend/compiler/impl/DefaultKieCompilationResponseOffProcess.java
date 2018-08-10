@@ -44,6 +44,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     private Boolean successful;
     private List<String> mavenOutput;
     private String workingDir;
+    private String requestUUID;
 
     private List<String> projectDependencies;
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
@@ -64,7 +65,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         this.workingDir = res.getWorkingDir().get().toString();
         this.projectDependencies = res.getDependencies();
         this.targetContent = res.getTargetContent();
-
+        this.requestUUID = ((DefaultKieCompilationResponse)res).getRequestUUID();
     }
 
     @Override
@@ -105,6 +106,10 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     @Override
     public List<String> getDependencies() {
         return new ArrayList<>(projectDependencies);
+    }
+
+    public String getRequestUUID() {
+        return requestUUID;
     }
 
     @Override
@@ -176,7 +181,8 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("DefaultKieCompilationResponseOffProcess{");
-        sb.append("kieModuleMetaInfo=").append(kieModuleMetaInfo);
+        sb.append("requestUUID=").append(requestUUID);
+        sb.append(", kieModuleMetaInfo=").append(kieModuleMetaInfo);
         sb.append(", kieModule=").append(kieModule);
         sb.append(", projectClassLoaderStore=").append(projectClassLoaderStore);
         sb.append(", eventsTypeClasses=").append(eventsTypeClasses);
