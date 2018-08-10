@@ -26,13 +26,11 @@ import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.util.Bpmn2ResourceImpl;
 import org.eclipse.bpmn2.util.ImportHelper;
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.XMLLoad;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.XMLSave;
@@ -107,7 +105,7 @@ public class JBPMBpmn2ResourceImpl extends Bpmn2ResourceImpl {
 
     /**
      * Prepares this resource for saving.
-     *
+     * <p>
      * Sets all ID attributes of cross-referenced objects
      * that are not yet set, to a generated UUID. Do not set if only referenced
      * by their container.
@@ -117,7 +115,7 @@ public class JBPMBpmn2ResourceImpl extends Bpmn2ResourceImpl {
         EObject cur;
         Definitions thisDefinitions = ImportHelper.getDefinitions(this);
         setIdEvenIfSet(thisDefinitions);
-        for (Iterator<EObject> iter = getAllContents(); iter.hasNext();) {
+        for (Iterator<EObject> iter = getAllContents(); iter.hasNext(); ) {
             cur = iter.next();
 
             for (EObject referenced : cur.eCrossReferences()) {
@@ -133,7 +131,6 @@ public class JBPMBpmn2ResourceImpl extends Bpmn2ResourceImpl {
             }
         }
     }
-
 
     class DiagnosticWrappedException extends WrappedException implements Diagnostic {
 
