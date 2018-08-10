@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.commands.general;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.kie.workbench.common.dmn.api.definition.HasVariable;
@@ -46,9 +47,9 @@ public class SetTypeRefCommand extends AbstractCanvasGraphCommand implements Vet
     public SetTypeRefCommand(final HasVariable hasVariable,
                              final QName typeRef,
                              final org.uberfire.mvp.Command canvasOperation) {
-        this.hasVariable = hasVariable;
-        this.typeRef = typeRef;
-        this.canvasOperation = canvasOperation;
+        this.hasVariable = Objects.requireNonNull(hasVariable);
+        this.typeRef = Objects.requireNonNull(typeRef);
+        this.canvasOperation = Objects.requireNonNull(canvasOperation);
 
         this.oldTypeRef = Optional.ofNullable(hasVariable.getVariable().getTypeRef());
     }
