@@ -60,10 +60,6 @@ public class CreateNodeAction extends AbstractToolboxAction {
         return this;
     }
 
-    public String getEdgeId() {
-        return edgeId;
-    }
-
     public CreateNodeAction setEdgeId(final String edgeId) {
         this.edgeId = edgeId;
         return this;

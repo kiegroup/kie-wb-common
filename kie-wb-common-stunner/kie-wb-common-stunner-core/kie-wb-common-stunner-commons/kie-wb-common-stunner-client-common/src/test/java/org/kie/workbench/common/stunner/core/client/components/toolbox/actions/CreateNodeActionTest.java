@@ -231,39 +231,5 @@ public class CreateNodeActionTest {
                                                    NODE_UUID,
                                                    TARGET_NODE_ID,
                                                    EDGE_ID);
-
-//        ArgumentCaptor<Command> commandArgumentCaptor = ArgumentCaptor.forClass(Command.class);
-//        verify(sessionCommandManager, times(1)).execute(eq(canvasHandler),
-//                                                        commandArgumentCaptor.capture());
-//        DeferredCompositeCommand command = (DeferredCompositeCommand) commandArgumentCaptor.getValue();
-//        DeferredCommand c0 = (DeferredCommand) command.getCommands().get(0);
-//        DeferredCommand c1 = (DeferredCommand) command.getCommands().get(1);
-//        DeferredCommand c2 = (DeferredCommand) command.getCommands().get(2);
-//        DeferredCommand c3 = (DeferredCommand) command.getCommands().get(3);
-//        AddNodeCommand addNodeCommand = (AddNodeCommand) c0.getCommand();
-//        UpdateElementPositionCommand updateElementPositionCommand = (UpdateElementPositionCommand) c1.getCommand();
-//        AddConnectorCommand addConnectorCommand = (AddConnectorCommand) c2.getCommand();
-//        SetConnectionTargetNodeCommand setTargetNodeCommand = (SetConnectionTargetNodeCommand) c3.getCommand();
-//        assertEquals(targetNode, addNodeCommand.getCandidate());
-//        assertEquals("ss1", addNodeCommand.getShapeSetId());
-//        assertEquals(edge, addConnectorCommand.getCandidate());
-//        assertEquals(element, addConnectorCommand.getSource());
-//        assertEquals("ss1", addConnectorCommand.getShapeSetId());
-//        assertEquals(edge, setTargetNodeCommand.getEdge());
-//        assertEquals(targetNode, setTargetNodeCommand.getNode());
-//        assertEquals(targetNode, updateElementPositionCommand.getElement());
-//        assertEquals(new Point2D(100d, 500d), updateElementPositionCommand.getLocation());
-//        final ArgumentCaptor<CanvasSelectionEvent> eventArgumentCaptor =
-//                ArgumentCaptor.forClass(CanvasSelectionEvent.class);
-//        verify(canvasElementSelectedEvent,
-//               times(1)).fire(eventArgumentCaptor.capture());
-//        final CanvasSelectionEvent eCaptured = eventArgumentCaptor.getValue();
-//        assertEquals(TARGET_NODE_UUID,
-//                     eCaptured.getIdentifiers().iterator().next());
-//
-//        assertTrue(addConnectorCommand.getConnection() instanceof MagnetConnection);
-//        assertEquals(((MagnetConnection) addConnectorCommand.getConnection()).getMagnetIndex().getAsInt(), MagnetConnection.MAGNET_RIGHT);
-//        assertTrue(setTargetNodeCommand.getConnection() instanceof MagnetConnection);
-//        assertEquals(((MagnetConnection) setTargetNodeCommand.getConnection()).getMagnetIndex().getAsInt(), MagnetConnection.MAGNET_LEFT);
     }
 }
