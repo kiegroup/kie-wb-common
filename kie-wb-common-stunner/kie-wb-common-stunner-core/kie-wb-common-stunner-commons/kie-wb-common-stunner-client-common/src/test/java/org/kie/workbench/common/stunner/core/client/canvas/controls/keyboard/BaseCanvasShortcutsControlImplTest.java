@@ -32,10 +32,12 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -103,6 +105,18 @@ public abstract class BaseCanvasShortcutsControlImplTest {
         });
 
         softly.assertAll();
+    }
+
+    @Test
+    public void testNothingHappensIfTheSelectedNodeIdIsNull() {
+        canvasShortcutsControl = getCanvasShortcutsControl();
+        doReturn(null).when(canvasShortcutsControl).selectedNodeId();
+
+        canvasShortcutsControl.onKeyDownEvent(KeyboardEvent.Key.D);
+        verify(canvasShortcutsControl, never()).appendNode(anyString(), any(Function.class));
+
+        canvasShortcutsControl.onKeyDownEvent(KeyboardEvent.Key.T);
+        verify(canvasShortcutsControl, never()).appendNode(anyString(), any(Function.class));
     }
 
     public class TestedTuple {

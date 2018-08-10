@@ -43,17 +43,19 @@ public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContro
 
     @Override
     public void onKeyDownEvent(final KeyboardEvent.Key... keys) {
-        if (KeysMatcher.doKeysMatch(keys,
-                                    KeyboardEvent.Key.D)) {
-            if (selectedNodeIsDecision() || selectedNodeIsInput()) {
-                appendNode(selectedNodeId(),
-                           (definition) -> definition instanceof Decision);
+        if (selectedNodeId() != null) {
+            if (KeysMatcher.doKeysMatch(keys,
+                                        KeyboardEvent.Key.D)) {
+                if (selectedNodeIsDecision() || selectedNodeIsInput()) {
+                    appendNode(selectedNodeId(),
+                               (definition) -> definition instanceof Decision);
+                }
             }
         }
     }
 
     private boolean selectedNodeIsDecision() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
+        if (selectedNodeElement() != null && selectedNodeElement().getContent() instanceof Definition) {
             return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof Decision;
         } else {
             return false;
@@ -61,7 +63,7 @@ public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContro
     }
 
     private boolean selectedNodeIsInput() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
+        if (selectedNodeElement() != null && selectedNodeElement().getContent() instanceof Definition) {
             return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof InputData;
         } else {
             return false;

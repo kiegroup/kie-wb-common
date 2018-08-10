@@ -68,7 +68,7 @@ public class BPMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsContr
     }
 
     private boolean selectedNodeIsEndEvent() {
-        if (selectedNodeElement().getContent() instanceof Definition) {
+        if (selectedNodeElement() != null && selectedNodeElement().getContent() instanceof Definition) {
             return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof BaseEndEvent;
         } else {
             return false;

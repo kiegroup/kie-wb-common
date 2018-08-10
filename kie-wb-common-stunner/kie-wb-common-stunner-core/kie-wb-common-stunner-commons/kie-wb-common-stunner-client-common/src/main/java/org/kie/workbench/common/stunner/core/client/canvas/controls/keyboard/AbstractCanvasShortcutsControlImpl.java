@@ -99,6 +99,10 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     }
 
     public Element selectedNodeElement() {
-        return canvasHandler.getGraphIndex().get(selectedNodeId());
+        if (selectedNodeId() != null) {
+            return CanvasLayoutUtils.getElement(canvasHandler, selectedNodeId());
+        } else {
+            return null;
+        }
     }
 }
