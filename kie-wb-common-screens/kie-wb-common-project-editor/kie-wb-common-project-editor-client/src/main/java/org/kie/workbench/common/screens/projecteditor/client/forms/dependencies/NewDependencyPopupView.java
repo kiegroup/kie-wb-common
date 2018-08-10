@@ -39,4 +39,10 @@ public interface NewDependencyPopupView {
     void setVersionValidationState( final ValidationState validationState );
 
     void clean();
+    
+    void setGroupId(String groupId);
+    
+    void setArtifactId(String artifactId);
+    
+    void setVersion(String version);
 }

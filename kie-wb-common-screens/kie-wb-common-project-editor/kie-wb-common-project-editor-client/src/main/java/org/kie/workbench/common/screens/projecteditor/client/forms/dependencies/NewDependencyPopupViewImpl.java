@@ -161,4 +161,19 @@ public class NewDependencyPopupViewImpl
     interface Binder extends UiBinder<Form, NewDependencyPopupViewImpl> {
     }
 
+    @Override
+    public void setGroupId(String groupId) {
+        this.groupIdTextBox.setText(groupId);
+    }
+
+    @Override
+    public void setArtifactId(String artifactId) {
+        this.artifactIdTextBox.setText(artifactId);
+    }
+
+    @Override
+    public void setVersion(String version) {
+        this.versionTextBox.setText(version);
+    }
+
 }

@@ -48,6 +48,16 @@ public class NewDependencyPopup {
         view.show();
     }
 
+    public void show(final Callback<Dependency> callback,
+                     final Dependency dependency) {
+        show(callback);
+        view.setArtifactId(dependency.getArtifactId());
+        view.setGroupId(dependency.getGroupId());
+        view.setVersion(dependency.getVersion());
+
+        validator = new DependencyValidator(dependency);
+    }
+    
     public void onOkClicked() {
 
         if (validator.validate()) {

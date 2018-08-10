@@ -74,6 +74,10 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     @Inject
     @DataField("remove-button")
     private HTMLAnchorElement removeButton;
+    
+    @Inject
+    @DataField("edit-button")
+    private HTMLAnchorElement editButton;
 
     private final String packageWhiteListRadioGroupName = UUID.uuid();
     private DependenciesItemPresenter.WhiteListedPackagesState whiteListedPackagesState;
@@ -140,5 +144,10 @@ public class DependenciesItemView implements DependenciesItemPresenter.View,
     @EventHandler("remove-button")
     public void delete(final ClickEvent event) {
         presenter.remove();
+    }
+    
+    @EventHandler("edit-button")
+    public void edit(final ClickEvent event) {
+        presenter.showEditDependencyPopup();
     }
 }

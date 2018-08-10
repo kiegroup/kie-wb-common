@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.guvnor.common.services.project.model.Dependency;
+import org.kie.workbench.common.screens.projecteditor.client.forms.dependencies.NewDependencyPopup;
 import org.kie.workbench.common.services.shared.dependencies.EnhancedDependency;
 import org.kie.workbench.common.services.shared.dependencies.TransitiveEnhancedDependency;
 import org.kie.workbench.common.services.shared.whitelist.WhiteList;
@@ -46,10 +47,13 @@ public class DependenciesItemPresenter {
 
     DependenciesPresenter parentPresenter;
     EnhancedDependency enhancedDependency;
+    private final NewDependencyPopup newDependencyPopup;
 
     @Inject
-    public DependenciesItemPresenter(final View view) {
+    public DependenciesItemPresenter(final View view,
+                                     final NewDependencyPopup newDependencyPopup) {
         this.view = view;
+        this.newDependencyPopup = newDependencyPopup;
     }
 
     public DependenciesItemPresenter setup(final EnhancedDependency enhancedDependency,
@@ -83,6 +87,18 @@ public class DependenciesItemPresenter {
         parentPresenter.remove(enhancedDependency);
     }
 
+    public void showEditDependencyPopup() {
+        newDependencyPopup.show(dependency -> {
+                                    view.setArtifactId(dependency.getArtifactId());
+                                    enhancedDependency.getDependency().setArtifactId(dependency.getArtifactId());
+                                    view.setGroupId(dependency.getGroupId());
+                                    enhancedDependency.getDependency().setGroupId(dependency.getGroupId());
+                                    view.setVersion(dependency.getVersion());
+                                    enhancedDependency.getDependency().setVersion(dependency.getVersion());
+                                },
+                                enhancedDependency.getDependency());
+    }
+    
     public View getView() {
         return view;
     }
