@@ -112,6 +112,7 @@ public class JBPMBpmn2ResourceImpl extends Bpmn2ResourceImpl {
      * that are not yet set, to a generated UUID. Do not set if only referenced
      * by their container.
      */
+    @Override
     protected void prepareSave() {
         EObject cur;
         Definitions thisDefinitions = ImportHelper.getDefinitions(this);
