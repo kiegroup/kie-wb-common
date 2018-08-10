@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
-import java.io.File;
 import java.util.UUID;
 
 import net.openhft.chronicle.core.io.IOTools;

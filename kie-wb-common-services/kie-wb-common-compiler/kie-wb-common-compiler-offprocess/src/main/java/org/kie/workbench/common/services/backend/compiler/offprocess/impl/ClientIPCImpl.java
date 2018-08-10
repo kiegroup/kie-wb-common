@@ -23,7 +23,6 @@ import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptTailer;
 import net.openhft.chronicle.wire.DocumentContext;
 import net.openhft.chronicle.wire.Wire;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponseOffProcess;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -43,15 +42,14 @@ public class ClientIPCImpl implements ClientIPC {
     }
 
     public KieCompilationResponse getResponse(String uuid) {
-        CompilationResponse res = map.getResponse(uuid);
-        if (res != null) {
-            return (KieCompilationResponse) map.getResponse(uuid);
-        } else {
+        if(isLoaded(uuid)) {
+            return (DefaultKieCompilationResponseOffProcess)map.getResponse(uuid);
+        }else {
             return new DefaultKieCompilationResponse(false, "");
         }
     }
 
-    public boolean isLoaded(String uuid) {
+    private boolean isLoaded(String uuid) {
         ExcerptTailer tailer = provider.getQueue().createTailer();
         KieCompilationResponse res = getLastKieResponse(tailer);
         DefaultKieCompilationResponseOffProcess kres = (DefaultKieCompilationResponseOffProcess) res;

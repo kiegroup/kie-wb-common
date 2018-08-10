@@ -22,7 +22,10 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilatio
  */
 public interface ClientIPC {
 
-    boolean isLoaded(String uuid);
-    
+    /***
+     * Blocking method to retrieve a KieCompilationResponse from an external process
+     * @param uuid
+     * @return
+     */
     KieCompilationResponse getResponse(String uuid);
 }

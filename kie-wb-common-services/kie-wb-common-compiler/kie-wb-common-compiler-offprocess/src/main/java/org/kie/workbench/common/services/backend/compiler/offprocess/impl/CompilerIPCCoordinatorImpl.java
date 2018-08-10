@@ -20,11 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
+import org.guvnor.common.services.project.backend.server.utils.configuration.ConfigurationKey;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.ConfigurationPropertiesStrategy;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
@@ -35,19 +38,21 @@ import org.slf4j.LoggerFactory;
 
 public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
+    private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private static String placeholder = "<maven_repo>";
     private String mavenModuleName = "kie-wb-common-compiler-offprocess";
     private String classpathFile = "offprocess.classpath.template";
     private String javaHome;
     private String javaBin;
-    private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private String classpathTemplate;
     private ResponseSharedMap responseMap;
     private ClientIPC clientIPC;
     private QueueProvider provider;
     private String queueName;
+    private String kieVersion;
 
     public CompilerIPCCoordinatorImpl(QueueProvider provider) {
+        this.kieVersion = getKieVersion();
         this.queueName = provider.getQueueName();
         this.provider = provider;
         responseMap = new ResponseSharedMap();
@@ -68,6 +73,13 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                              getAlternateSettings(req.getOriginalArgs()), secondsTimeout, req.getRequestUUID());
     }
 
+    private String getKieVersion(){
+        ConfigurationPropertiesStrategy prop = new ConfigurationPropertiesStrategy();
+        Map<ConfigurationKey, String> conf = prop.loadConfiguration();
+        return conf.get(ConfigurationKey.KIE_VERSION);
+    }
+
+
     private String getAlternateSettings(String[] args) {
         for (String arg : args) {
             if (arg.startsWith(MavenCLIArgs.ALTERNATE_USER_SETTINGS)) {
@@ -81,13 +93,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
         try {
             invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, secondsTimeout, queueName);
-            if (clientIPC.isLoaded(uuid)) {
-                return getCompilationResponse(uuid);
-            } else {
-                while (!clientIPC.isLoaded(uuid)) {
-                }
-                return getCompilationResponse(uuid);
-            }
+            return getCompilationResponse(uuid);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             return new DefaultKieCompilationResponse(false, "");
@@ -103,13 +109,12 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         }
     }
 
-    //@TODO add the current jar
     private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, int secondsTimeout, String queueName) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
                         "-cp",
-                        System.getProperty("user.dir") + "/" + "target/" + mavenModuleName + "-7.10.0-SNAPSHOT.jar:" + classpath,
+                        getClasspathIncludedCurrentModuleDep(mavenRepo, classpath),
                         ServerIPCImpl.class.getCanonicalName(),
                         uuid,
                         projectPath,
@@ -125,6 +130,22 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         serverPb.redirectErrorStream(true);
         serverPb.inheritIO();
         writeStdOut(serverPb, secondsTimeout);
+    }
+
+    private String getClasspathIncludedCurrentModuleDep(String mavenRepo, String classpath){
+        StringBuilder sb = new StringBuilder();
+        this.getClass().getPackage();
+        sb.append(mavenRepo).
+                append(File.separator).append("org").
+                append(File.separator).append("kie").
+                append(File.separator).append("workbench").
+                append(File.separator).append("services").
+                append(File.separator).append(mavenModuleName).
+                append(File.separator).append(kieVersion).
+                append(File.separator).append(mavenModuleName).
+                append("-").append(kieVersion).append(".jar").append(":").
+                append(classpath);
+        return  sb.toString();
     }
 
     private void writeStdOut(ProcessBuilder builder, int secondsTimeout) throws Exception {
