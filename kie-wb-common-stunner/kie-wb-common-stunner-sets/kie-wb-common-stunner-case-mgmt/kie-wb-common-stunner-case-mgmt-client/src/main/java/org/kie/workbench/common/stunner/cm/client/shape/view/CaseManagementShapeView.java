@@ -25,8 +25,11 @@ import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.shared.core.types.Color;
+import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
+import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitive;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
@@ -47,8 +50,8 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
     public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, ILayoutHandler layoutHandler) {
         super(svgShapeView.getName(),
               (SVGPrimitiveShape) svgShapeView.getPrimitive(),
-              svgShapeView.getBoundingBox().getWidth(),
-              svgShapeView.getBoundingBox().getHeight(),
+              ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getWidth(),
+              ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getHeight(),
               false);
 
         this.svgShapeView = svgShapeView;
@@ -60,7 +63,14 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         this.optDropZone = makeDropZone();
         this.optDropZone.ifPresent((dz) -> dz.setDraggable(false));
 
-        setTitle(getName());
+
+
+
+
+        setTitle(svgShapeView.getName());
+        svgShapeView.getTextViewDecorator().moveTitleToTop();
+        refresh();
+
         if (null != layoutHandler) {
             setChildLayoutHandler(layoutHandler);
         }

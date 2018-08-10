@@ -64,7 +64,7 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
     public WiresShapeViewExt(final ViewEventType[] supportedEventTypes,
                              final MultiPath path) {
         this(path,
-             new WiresLayoutContainer());
+             new WiresLayoutContainer().refresh());
         setEventHandlerManager(new ViewEventHandlerManager(getGroup(),
                                                            path,
                                                            supportedEventTypes));
@@ -323,7 +323,7 @@ public class WiresShapeViewExt<T extends WiresShapeViewExt>
         return cast();
     }
 
-    protected WiresTextDecorator getTextViewDecorator() {
+    public WiresTextDecorator getTextViewDecorator() {
         return textViewDecorator;
     }
 

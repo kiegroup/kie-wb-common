@@ -209,7 +209,7 @@ public class DecoratedShapeView<T extends WiresShapeViewExt>
         return path.clear().rect(x,
                                  y,
                                  width,
-                                 height)
-                .setStrokeAlpha(0);
+                                 height);
+//                .setStrokeAlpha(0);
     }
 }

@@ -65,18 +65,18 @@ public class CaseManagementCanvasView extends WiresCanvasView {
     public AbstractCanvas.View addChildShape(final ShapeView<?> parent, final ShapeView<?> child, final int index) {
 
 
-        SVGShapeViewImpl parentView = (SVGShapeViewImpl) parent;
-        SVGShapeViewImpl childView = (SVGShapeViewImpl) child;
-
-        parentView.addChild((IPrimitive<?>) childView.getContainer());
-
-//        CaseManagementShapeView parentCMView = (CaseManagementShapeView) parent;
-//        CaseManagementShapeView childCMView = (CaseManagementShapeView) child;
+//        SVGShapeViewImpl parentView = (SVGShapeViewImpl) parent;
+//        SVGShapeViewImpl childView = (SVGShapeViewImpl) child;
 //
-//        GWT.log("parent name " + parentCMView.getName());
-//        GWT.log("child name " + childCMView.getName());
-//
-//        parentCMView.addShape(childCMView, index);
+//        parentView.addChild((IPrimitive<?>) childView.getContainer());
+
+        CaseManagementShapeView parentCMView = (CaseManagementShapeView) parent;
+        CaseManagementShapeView childCMView = (CaseManagementShapeView) child;
+
+        GWT.log("parent name " + parentCMView.getName());
+        GWT.log("child name " + childCMView.getName());
+
+        parentCMView.addShape(childCMView, index);
 
         return this;
     }
