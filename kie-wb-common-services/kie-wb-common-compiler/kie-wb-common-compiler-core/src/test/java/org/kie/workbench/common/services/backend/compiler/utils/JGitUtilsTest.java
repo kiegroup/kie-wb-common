@@ -52,7 +52,7 @@ public class JGitUtilsTest {
 
     @BeforeClass
     public static void setupSystemProperties() {
-        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitDaemonEnabled = System.getProperty("org.uberfire.nio.git.daemon.enabled");
         gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
@@ -64,7 +64,7 @@ public class JGitUtilsTest {
     }
 
     @AfterClass
-    public static void restoreSystemProperties(){
+    public static void restoreSystemProperties() {
         System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
         System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
     }

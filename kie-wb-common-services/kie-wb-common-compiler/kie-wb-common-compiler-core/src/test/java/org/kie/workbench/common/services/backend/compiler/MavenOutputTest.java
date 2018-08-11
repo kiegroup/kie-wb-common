@@ -25,7 +25,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
-
 import org.kie.workbench.common.services.backend.utils.TestUtil;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;

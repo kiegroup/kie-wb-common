@@ -32,13 +32,16 @@ import org.eclipse.jgit.api.RebaseCommand;
 import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtilGit;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
@@ -61,13 +64,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieDefaultMavenCompilerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
+    private static Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
+    private static int gitDaemonPort;
 
     @Rule
     public TestName testName = new TestName();
+
+    @BeforeClass
+    public static void setupSystemProperties() {
+        String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
+        if (gitPort != null) {
+            gitDaemonPort = Integer.valueOf(gitPort);
+        }
+        int freePort = TestUtilGit.findFreePort();
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
+        logger.info("Git port used:{}", freePort);
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(gitDaemonPort));
+    }
 
     @Before
     public void setUp() throws Exception {

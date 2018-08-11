@@ -66,28 +66,16 @@ public class DefaultMavenCompilerTest {
     private String mavenRepo;
     private static int gitDaemonPort;
 
-    public static int findFreePort() {
-        int port = 0;
-        try {
-            ServerSocket server = new ServerSocket(0);
-            port = server.getLocalPort();
-            server.close();
-        } catch (IOException e) {
-            Assert.fail("Can't find free port!");
-        }
-        logger.debug("Found free port " + port);
-        return port;
-    }
 
     @BeforeClass
     public static void setupSystemProperties() {
         String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
-        if(gitPort!= null) {
+        if (gitPort != null) {
             gitDaemonPort = Integer.valueOf(gitPort);
         }
-        int freePort = findFreePort();
+        int freePort = TestUtilGit.findFreePort();
         System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
-        logger.info("Git port used:{}",freePort);
+        logger.info("Git port used:{}", freePort);
     }
 
     @AfterClass

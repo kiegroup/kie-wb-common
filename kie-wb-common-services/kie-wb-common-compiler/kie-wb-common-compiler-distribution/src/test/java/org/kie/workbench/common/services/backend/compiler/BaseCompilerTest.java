@@ -15,12 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
-import java.io.File;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
@@ -37,12 +33,12 @@ public class BaseCompilerTest implements Serializable {
     protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
-    private static String gitDaemonEnabled ;
-    private static String gitSshEnabled ;
+    private static String gitDaemonEnabled;
+    private static String gitSshEnabled;
 
     @BeforeClass
     public static void setup() {
-        gitDaemonEnabled =  System.getProperty("org.uberfire.nio.git.daemon.enabled");
+        gitDaemonEnabled = System.getProperty("org.uberfire.nio.git.daemon.enabled");
         gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");

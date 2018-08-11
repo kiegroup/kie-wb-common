@@ -93,7 +93,7 @@ public class TestUtil {
         //end NIO
     }
 
-    public static void saveMavenLogIfCompilationResponseNotSuccessfull(Path tmp, CompilationResponse response, Class<?> testClass, TestName testName) throws Exception{
+    public static void saveMavenLogIfCompilationResponseNotSuccessfull(Path tmp, CompilationResponse response, Class<?> testClass, TestName testName) throws Exception {
         String logName = testClass.getSimpleName() + "." + testName.getMethodName();
         if (!response.isSuccessful()) {
             TestUtil.writeMavenOutputIntoTargetFolder(tmp, response.getMavenOutput(), logName);

@@ -43,7 +43,7 @@ public class ClientIPCImpl implements ClientIPC {
 
     public KieCompilationResponse getResponse(String uuid) {
         if(isLoaded(uuid)) {
-            return (DefaultKieCompilationResponseOffProcess)map.getResponse(uuid);
+            return (DefaultKieCompilationResponse) map.getResponse(uuid);
         }else {
             return new DefaultKieCompilationResponse(false, "");
         }
@@ -77,7 +77,7 @@ public class ClientIPCImpl implements ClientIPC {
     }
 
     private KieCompilationResponse getLastKieResponse(ExcerptTailer tailer) {
-        KieCompilationResponse res = new DefaultKieCompilationResponse(false, "");
+        KieCompilationResponse res = new DefaultKieCompilationResponseOffProcess(false, "");
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {
                 Wire wire = dc.wire();

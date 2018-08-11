@@ -209,5 +209,4 @@ public class KieAfterDecorator<T extends CompilationResponse, C extends AFCompil
             }
         }
     }
-
 }

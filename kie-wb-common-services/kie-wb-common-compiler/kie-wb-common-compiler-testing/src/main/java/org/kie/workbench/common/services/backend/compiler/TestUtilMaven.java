@@ -31,12 +31,11 @@ public class TestUtilMaven {
             logger.info("Creating a m2_repo into " + mavenRepository);
             if (!java.nio.file.Files.exists(java.nio.file.Files.createDirectories(mavenRepository))) {
                 logger.error("Folder not writable to create Maven repo{}", mavenRepository);
-                throw new Exception("Folder not writable to create Maven repo:"+mavenRepository);
+                throw new Exception("Folder not writable to create Maven repo:" + mavenRepository);
             }
         }
         return mavenRepository;
     }
-
 
     public static String getSettingsFile() {
         String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
@@ -48,5 +47,4 @@ public class TestUtilMaven {
             return new File("src/test/settings.xml").getAbsolutePath();
         }
     }
-
 }

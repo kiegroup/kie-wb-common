@@ -65,7 +65,7 @@ public class CompilerChronicleCoordinatorTest {
         queueProvider = new QueueProvider(queueName);
         mavenRepo = TestUtilMaven.getMavenRepo();
         prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
-        alternateSettingsAbsPath =  TestUtilMaven.getSettingsFile();
+        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
     @After

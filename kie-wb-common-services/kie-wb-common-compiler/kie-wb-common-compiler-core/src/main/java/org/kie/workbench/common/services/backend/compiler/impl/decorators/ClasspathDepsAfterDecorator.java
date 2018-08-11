@@ -66,18 +66,18 @@ public class ClasspathDepsAfterDecorator<T extends CompilationResponse, C extend
 
     private T handleClasspath(CompilationRequest req, T res) {
         T t;
-        Map<String,Object> kieMap = req.getMap();
+        Map<String, Object> kieMap = req.getMap();
         String classpathKey = req.getRequestUUID() + "." + STRING_CLASSPATH_KEY;
         Object o = kieMap.get(classpathKey);
-        if(o != null){
+        if (o != null) {
             Set<String> depsModules = (Set<String>) o;
-            List<String> deps =CompilerClassloaderUtils.readItemsFromClasspathString(depsModules);
+            List<String> deps = CompilerClassloaderUtils.readItemsFromClasspathString(depsModules);
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
                                                    req.getInfo().getPrjPath(),
                                                    deps,
                                                    req.getRequestUUID());
-        }else{
+        } else {
             t = (T) new DefaultCompilationResponse(res.isSuccessful(),
                                                    res.getMavenOutput(),
                                                    req.getInfo().getPrjPath(),

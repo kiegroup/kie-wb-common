@@ -28,6 +28,7 @@ import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
+import org.uberfire.java.nio.file.Paths;
 
 /***
  * Default implementation of a Kie Compilation response,
@@ -83,8 +84,6 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               projectDependencies,
                                                               requestUUID);
     }
-
-
 
     public DefaultKieCompilationResponse(Boolean successful,
                                          KieModuleMetaInfo kieModuleMetaInfo,

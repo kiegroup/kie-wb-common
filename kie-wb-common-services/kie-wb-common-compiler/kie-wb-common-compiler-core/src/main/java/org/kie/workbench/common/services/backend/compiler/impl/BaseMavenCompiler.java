@@ -110,7 +110,7 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
             try {
                 boolean isChanged = Files.exists(path);
                 backup.add(new BackupItem(path, isChanged ? Files.readAllBytes(path) : null, isChanged));
-                if(!Files.exists(path.getParent())){
+                if (!Files.exists(path.getParent())) {
                     Files.createDirectories(path.getParent());
                 }
                 Files.write(path, readAllBytes(input), StandardOpenOption.CREATE,

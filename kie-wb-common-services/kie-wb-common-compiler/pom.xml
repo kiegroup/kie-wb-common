@@ -8,7 +8,7 @@
     <artifactId>kie-wb-common-services</artifactId>
     <version>7.10.0-SNAPSHOT</version>
   </parent>
-  
+
   <artifactId>kie-wb-common-compiler</artifactId>
   <packaging>pom</packaging>
 

@@ -50,12 +50,16 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> targetContent ;
+    private List<String> targetContent;
     private List<URI> targetContentAsURI = Collections.emptyList();
     private List<URL> targetContentAsURL = Collections.emptyList();
 
+    public DefaultKieCompilationResponseOffProcess(boolean successful, String requestUUID) {
+        this.successful = successful;
+        this.requestUUID = requestUUID;
+    }
 
-    public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res){
+    public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res) {
         this.kieModuleMetaInfo = res.getKieModuleMetaInfo().get();
         this.kieModule = res.getKieModule().get();
         this.projectClassLoaderStore = res.getProjectClassLoaderStore();
@@ -65,7 +69,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         this.workingDir = res.getWorkingDir().get().toString();
         this.projectDependencies = res.getDependencies();
         this.targetContent = res.getTargetContent();
-        this.requestUUID = ((DefaultKieCompilationResponse)res).getRequestUUID();
+        this.requestUUID = ((DefaultKieCompilationResponse) res).getRequestUUID();
     }
 
     @Override
@@ -136,7 +140,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     }
 
     private List<URL> getProjectDependenciesAsURLs() {
-        if(projectDependencies != null && !projectDependencies.isEmpty()){
+        if (projectDependencies != null && !projectDependencies.isEmpty()) {
             return CompilerClassloaderUtils.readAllDepsAsUrls(projectDependencies);
         }
         return Collections.emptyList();
@@ -146,7 +150,6 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     public List<String> getTargetContent() {
         return targetContent;
     }
-
 
     @Override
     public List<URI> getTargetContentAsURI() {
@@ -165,7 +168,7 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
     }
 
     private List<URL> getRawAsURLs(final List<String> targetContent) {
-        if(targetContent != null && !targetContent.isEmpty()){
+        if (targetContent != null && !targetContent.isEmpty()) {
             return CompilerClassloaderUtils.processScannedFilesAsURLs(targetContent);
         }
         return Collections.emptyList();
