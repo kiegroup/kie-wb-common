@@ -17,7 +17,10 @@ package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
@@ -49,7 +52,7 @@ public class BaseCompilerTest implements Serializable {
         try {
             mavenRepo = TestUtilMaven.getMavenRepo();
             tmpRoot = Files.createTempDirectory("repo");
-            alternateSettingsAbsPath = new File("src/test/settings.xml").getAbsolutePath();
+            alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
             Path tmp = Files.createDirectories(Paths.get(tmpRoot.toString(), "dummy"));
             TestUtil.copyTree(Paths.get(prjName), tmp);
             info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));

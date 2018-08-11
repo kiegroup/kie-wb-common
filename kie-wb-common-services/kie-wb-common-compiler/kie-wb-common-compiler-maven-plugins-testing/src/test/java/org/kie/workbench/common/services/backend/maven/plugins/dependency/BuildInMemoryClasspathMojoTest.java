@@ -67,8 +67,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void setUp() throws Exception {
         mavenRepo = TestUtilMaven.getMavenRepo();
         tmpRoot = Files.createTempDirectory("repo");
-        alternateSettingsAbsPath = getSettingsFile();
-
+        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
 
@@ -135,16 +134,5 @@ public class BuildInMemoryClasspathMojoTest {
         }
     }
 
-    public static String getSettingsFile(){
-        String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
-        if(jenkinsFile != null){
-            logger.info("Using settings.xml file provided by JENKINS:{}", jenkinsFile);
-            return jenkinsFile;
-        }else {
-            logger.info("Using local settings.xml file.");
-            return new File("src/test/settings.xml").getAbsolutePath();
-        }
-
-    }
 
 }

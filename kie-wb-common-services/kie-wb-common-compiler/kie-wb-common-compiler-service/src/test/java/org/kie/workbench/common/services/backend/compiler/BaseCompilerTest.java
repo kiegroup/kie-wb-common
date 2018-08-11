@@ -31,7 +31,7 @@ public class BaseCompilerTest implements Serializable{
 
     protected static Path tmpRoot;
     protected String mavenRepo;
-    protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
+    protected static Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;

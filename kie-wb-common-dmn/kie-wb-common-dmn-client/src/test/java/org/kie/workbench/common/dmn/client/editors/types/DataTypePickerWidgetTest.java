@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.thirdparty.guava.common.collect.Ordering;
 import com.google.gwtmockito.GwtMock;
 import com.google.gwtmockito.GwtMockitoTestRunner;
@@ -38,7 +39,6 @@ import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.client.graph.DMNGraphUtils;
-import org.kie.workbench.common.dmn.client.property.dmn.QNameFieldConverter;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -52,8 +52,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -61,9 +62,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
-public class TypePickerWidgetTest {
+public class DataTypePickerWidgetTest {
 
-    private static final String VALUE = "value";
+    private static final QName VALUE = new QName();
+
+    private static final String WIDGET_VALUE = "[][string][feel]";
 
     @Mock
     private Button typeButton;
@@ -72,10 +75,10 @@ public class TypePickerWidgetTest {
     private TranslationService translationService;
 
     @Mock
-    private QNameFieldConverter qNameFieldConverter;
+    private DMNGraphUtils dmnGraphUtils;
 
     @Mock
-    private DMNGraphUtils dmnGraphUtils;
+    private DataTypeModal dataTypeModal;
 
     @GwtMock
     @SuppressWarnings("unused")
@@ -102,22 +105,28 @@ public class TypePickerWidgetTest {
 
     private Definitions definitions;
 
-    private TypePickerWidget picker;
+    private DataTypePickerWidget picker;
+
+    private QNameConverter qNameConverter;
 
     @Before
     public void setup() {
         this.definitions = new Definitions();
         this.definitions.getItemDefinition().add(new ItemDefinition());
+        this.qNameConverter = spy(new QNameConverter(dmnGraphUtils));
 
         when(typeSelector.getElement()).thenReturn(typeSelectorElement);
         when(option.getElement()).thenReturn(optionElement);
         when(dmnGraphUtils.getDefinitions()).thenReturn(definitions);
+        when(dmnModel.getPrefixForNamespaceURI(anyString())).thenReturn(Optional.empty());
+
         when(translationService.getTranslation(anyString())).thenAnswer(i -> i.getArguments()[0]);
 
-        this.picker = spy(new TypePickerWidget(typeButton,
-                                               translationService,
-                                               qNameFieldConverter,
-                                               dmnGraphUtils));
+        this.picker = spy(new DataTypePickerWidget(typeButton,
+                                                   translationService,
+                                                   qNameConverter,
+                                                   dmnGraphUtils,
+                                                   dataTypeModal));
     }
 
     @Test
@@ -133,7 +142,7 @@ public class TypePickerWidgetTest {
     public void testSetDMNModel_BasicInitialisation() {
         picker.setDMNModel(dmnModel);
 
-        verify(qNameFieldConverter).setDMNModel(eq(dmnModel));
+        verify(qNameConverter).setDMNModel(eq(dmnModel));
         verify(typeSelector).clear();
     }
 
@@ -152,7 +161,7 @@ public class TypePickerWidgetTest {
         assertTrue(builtInTypes.isEmpty());
 
         //Check the items were sorted correctly
-        assertTrue(Ordering.from(TypePickerWidget.BUILT_IN_TYPE_COMPARATOR).isOrdered(builtInTypesAddedToWidget));
+        assertTrue(Ordering.from(DataTypePickerWidget.BUILT_IN_TYPE_COMPARATOR).isOrdered(builtInTypesAddedToWidget));
     }
 
     @Test
@@ -173,7 +182,7 @@ public class TypePickerWidgetTest {
         assertTrue(itemDefinitions.isEmpty());
 
         //Check the items were sorted correctly
-        assertTrue(Ordering.from(TypePickerWidget.ITEM_DEFINITION_COMPARATOR).isOrdered(itemDefinitionsAddedToWidget));
+        assertTrue(Ordering.from(DataTypePickerWidget.ITEM_DEFINITION_COMPARATOR).isOrdered(itemDefinitionsAddedToWidget));
     }
 
     @Test
@@ -201,69 +210,67 @@ public class TypePickerWidgetTest {
     public void testMakeTypeSelectorForBuiltInType() {
         final BuiltInType bit = BuiltInType.ANY;
 
-        final String[] optionText = new String[]{""};
-        doAnswer(i -> {
-            optionText[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setText(anyString());
+        final ArgumentCaptor<String> optionTextCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> optionValueCaptor = ArgumentCaptor.forClass(String.class);
 
-        final String[] optionValue = new String[]{""};
-        doAnswer(i -> {
-            optionValue[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setValue(anyString());
-
-        when(qNameFieldConverter.toWidgetValue(any(QName.class))).thenReturn(bit.getName());
+        doReturn(bit.getName()).when(qNameConverter).toWidgetValue(any(QName.class));
 
         final Optional<Option> oo = picker.makeTypeSelector(bit);
+        verify(option).setText(optionTextCaptor.capture());
+        verify(option).setValue(optionValueCaptor.capture());
+        verify(qNameConverter).toWidgetValue(eq(bit.asQName()));
 
         assertTrue(oo.isPresent());
-        assertEquals(bit.getName(),
-                     optionText[0]);
-        assertEquals(bit.getName(),
-                     optionValue[0]);
+        assertEquals(bit.getName(), optionTextCaptor.getValue());
+        assertEquals(bit.getName(), optionValueCaptor.getValue());
     }
 
     @Test
     public void testMakeTypeSelectorForItemDefinition() {
+        final String itemDefinitionNameValue = "person";
         final ItemDefinition itemDefinition = definitions.getItemDefinition().get(0);
+        itemDefinition.setName(new Name(itemDefinitionNameValue));
 
-        final String[] optionText = new String[]{""};
-        doAnswer(i -> {
-            optionText[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setText(anyString());
+        final ArgumentCaptor<String> optionTextCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<String> optionValueCaptor = ArgumentCaptor.forClass(String.class);
 
-        final String[] optionValue = new String[]{""};
-        doAnswer(i -> {
-            optionValue[0] = (String) i.getArguments()[0];
-            return null;
-        }).when(option).setValue(anyString());
-
-        when(qNameFieldConverter.toWidgetValue(any(QName.class))).thenReturn(itemDefinition.getName().getValue());
+        final ArgumentCaptor<QName> qNameCaptor = ArgumentCaptor.forClass(QName.class);
+        doReturn(itemDefinition.getName().getValue()).when(qNameConverter).toWidgetValue(any(QName.class));
 
         final Optional<Option> oo = picker.makeTypeSelector(itemDefinition);
+        verify(option).setText(optionTextCaptor.capture());
+        verify(option).setValue(optionValueCaptor.capture());
+        verify(qNameConverter).toWidgetValue(qNameCaptor.capture());
 
         assertTrue(oo.isPresent());
-        assertEquals(itemDefinition.getName().getValue(),
-                     optionText[0]);
-        assertEquals(itemDefinition.getName().getValue(),
-                     optionValue[0]);
+        assertEquals(itemDefinitionNameValue, optionTextCaptor.getValue());
+        assertEquals(itemDefinitionNameValue, optionValueCaptor.getValue());
+        assertEquals(itemDefinitionNameValue, qNameCaptor.getValue().getLocalPart());
+    }
+
+    @Test
+    public void testMakeTypeSelectorForNullItemDefinition() {
+        final ItemDefinition itemDefinition = mock(ItemDefinition.class);
+        doReturn(null).when(itemDefinition).getName();
+        assertFalse(picker.makeTypeSelector(itemDefinition).isPresent());
+        verify(option, never()).setText(anyString());
+        verify(option, never()).setValue(anyString());
+        verify(qNameConverter, never()).toWidgetValue(any(QName.class));
     }
 
     @Test
     public void testSetValue() {
         picker.setValue(VALUE);
 
-        verify(typeSelector).setValue(eq(VALUE), eq(false));
-        verify(picker, never()).fireValueChangeEvent(anyString());
+        verify(typeSelector).setValue(eq(WIDGET_VALUE), eq(false));
+        verify(picker, never()).fireValueChangeEvent(any());
     }
 
     @Test
     public void testSetValueFireEvent() {
         picker.setValue(VALUE, true);
 
-        verify(typeSelector).setValue(eq(VALUE), eq(false));
+        verify(typeSelector).setValue(eq(WIDGET_VALUE), eq(false));
         verify(picker).fireValueChangeEvent(eq(null));
     }
 
@@ -271,8 +278,8 @@ public class TypePickerWidgetTest {
     public void testSetValueDoNotFireEvent() {
         picker.setValue(VALUE, false);
 
-        verify(typeSelector).setValue(eq(VALUE), eq(false));
-        verify(picker, never()).fireValueChangeEvent(anyString());
+        verify(typeSelector).setValue(eq(WIDGET_VALUE), eq(false));
+        verify(picker, never()).fireValueChangeEvent(any());
     }
 
     @Test
@@ -287,7 +294,7 @@ public class TypePickerWidgetTest {
         picker.setEnabled(false);
 
         verify(typeButton).setEnabled(eq(false));
-        typeSelector.setEnabled(eq(false));
+        verify(typeSelector).setEnabled(eq(false));
 
         assertFalse(picker.isEnabled());
     }
@@ -297,8 +304,21 @@ public class TypePickerWidgetTest {
         picker.setEnabled(true);
 
         verify(typeButton).setEnabled(eq(true));
-        typeSelector.setEnabled(eq(true));
+        verify(typeSelector).setEnabled(eq(true));
 
         assertTrue(picker.isEnabled());
+    }
+
+    @Test
+    public void testOnClickTypeButton() {
+
+        final String value = "value";
+        final ClickEvent clickEvent = mock(ClickEvent.class);
+
+        when(typeSelector.getValue()).thenReturn(value);
+
+        picker.onClickTypeButton(clickEvent);
+
+        verify(dataTypeModal).show(value);
     }
 }

@@ -93,6 +93,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.kie.workbench.stunner</groupId>
+      <artifactId>kie-wb-common-stunner-forms-client</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.kie.workbench.forms</groupId>
       <artifactId>kie-wb-common-forms-api</artifactId>
     </dependency>
@@ -184,6 +189,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.uberfire</groupId>
+      <artifactId>uberfire-commons-editor-client</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-bus</artifactId>
     </dependency>
@@ -231,6 +242,11 @@
     <dependency>
       <groupId>org.jboss.errai</groupId>
       <artifactId>errai-marshalling</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.google.jsinterop</groupId>
+      <artifactId>jsinterop-annotations</artifactId>
     </dependency>
 
     <!--Wires Grids dependencies-->

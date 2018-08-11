@@ -25,6 +25,11 @@
         <artifactId>kie-wb-common-compiler-testutil</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
+      <dependency>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-core</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -79,12 +84,6 @@
       </exclusions>
     </dependency>
     <!-- test -->
-
-    <dependency>
-      <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler-testutil</artifactId>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.assertj</groupId>

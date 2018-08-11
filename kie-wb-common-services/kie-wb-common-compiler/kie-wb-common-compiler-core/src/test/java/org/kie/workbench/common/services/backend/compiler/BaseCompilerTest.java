@@ -15,14 +15,13 @@
  */
 package org.kie.workbench.common.services.backend.compiler;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
+import org.kie.workbench.common.services.backend.utils.TestUtil;
+import java.io.File;
+import java.io.IOException;
+
+import org.junit.AfterClass;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -40,7 +39,7 @@ public class BaseCompilerTest {
 
     protected static Path tmpRoot;
     protected String mavenRepo;
-    protected static Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
+    protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
