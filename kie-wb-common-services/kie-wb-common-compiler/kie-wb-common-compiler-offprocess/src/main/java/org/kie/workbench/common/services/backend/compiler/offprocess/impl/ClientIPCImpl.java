@@ -43,9 +43,9 @@ public class ClientIPCImpl implements ClientIPC {
 
     public KieCompilationResponse getResponse(String uuid) {
         if(isLoaded(uuid)) {
-            return (DefaultKieCompilationResponse) map.getResponse(uuid);
+            return (DefaultKieCompilationResponseOffProcess) map.getResponse(uuid);
         }else {
-            return new DefaultKieCompilationResponse(false, "");
+            return new DefaultKieCompilationResponseOffProcess(false, "");
         }
     }
 
