@@ -31,11 +31,8 @@ import org.drools.core.rule.KieModuleMetaInfo;
 import org.kie.api.builder.KieModule;
 import org.kie.workbench.common.services.backend.compiler.impl.classloader.CompilerClassloaderUtils;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
-import org.uberfire.java.nio.file.Path;
-import org.uberfire.java.nio.file.Paths;
 
-public class DefaultKieCompilationResponseOffProcess implements KieCompilationResponse,
-                                                                Serializable {
+public class DefaultKieCompilationResponseOffProcess implements Serializable {
 
     private KieModuleMetaInfo kieModuleMetaInfo;
     private KieModule kieModule;
@@ -72,42 +69,34 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         this.requestUUID = ((DefaultKieCompilationResponse) res).getRequestUUID();
     }
 
-    @Override
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
         return Optional.ofNullable(kieModuleMetaInfo);
     }
 
-    @Override
     public Optional<KieModule> getKieModule() {
         return Optional.ofNullable(kieModule);
     }
 
-    @Override
     public Map<String, byte[]> getProjectClassLoaderStore() {
         return new HashMap<>(projectClassLoaderStore);
     }
 
-    @Override
     public Set<String> getEventTypeClasses() {
         return new HashSet<>(eventsTypeClasses);
     }
 
-    @Override
     public Boolean isSuccessful() {
         return successful;
     }
 
-    @Override
     public List<String> getMavenOutput() {
         return new ArrayList<>(mavenOutput);
     }
 
-    @Override
-    public Optional<Path> getWorkingDir() {
-        return Optional.ofNullable(Paths.get(workingDir));
+    public String getWorkingDir() {
+        return workingDir;
     }
 
-    @Override
     public List<String> getDependencies() {
         return new ArrayList<>(projectDependencies);
     }
@@ -116,7 +105,6 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         return requestUUID;
     }
 
-    @Override
     public List<URI> getDependenciesAsURI() {
         if (projectDependenciesAsURI.isEmpty()) {
             projectDependenciesAsURI = getProjectDependenciesAsURIs();
@@ -131,7 +119,6 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         return Collections.emptyList();
     }
 
-    @Override
     public List<URL> getDependenciesAsURL() {
         if (projectDependenciesAsURL.isEmpty()) {
             projectDependenciesAsURL = getProjectDependenciesAsURLs();
@@ -146,12 +133,10 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         return Collections.emptyList();
     }
 
-    @Override
     public List<String> getTargetContent() {
         return targetContent;
     }
 
-    @Override
     public List<URI> getTargetContentAsURI() {
         if (targetContentAsURI.isEmpty()) {
             targetContentAsURI = getRawAsURIs(targetContent);
@@ -159,7 +144,6 @@ public class DefaultKieCompilationResponseOffProcess implements KieCompilationRe
         return targetContentAsURI;
     }
 
-    @Override
     public List<URL> getTargetContentAsURL() {
         if (targetContentAsURL.isEmpty()) {
             targetContentAsURL = getRawAsURLs(targetContent);

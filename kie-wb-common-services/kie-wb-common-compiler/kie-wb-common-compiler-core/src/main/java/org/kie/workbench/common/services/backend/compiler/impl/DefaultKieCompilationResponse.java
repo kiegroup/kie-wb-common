@@ -108,6 +108,28 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         this.eventsTypeClasses = eventTypesClasses;
     }
 
+    public DefaultKieCompilationResponse(DefaultKieCompilationResponseOffProcess res) {
+
+        this.defaultResponse = new DefaultCompilationResponse(res.isSuccessful(),
+                                                              res.getMavenOutput(),
+                                                              Paths.get(res.getWorkingDir()),
+                                                              res.getTargetContent(),
+                                                              res.getDependencies(),
+                                                              res.getRequestUUID());
+        if (res.getKieModuleMetaInfo().isPresent()) {
+            this.kieModuleMetaInfo = res.getKieModuleMetaInfo().get();
+        }
+        if (res.getKieModule().isPresent()) {
+            this.kieModule = res.getKieModule().get();
+        }
+        if (!res.getProjectClassLoaderStore().isEmpty()){
+            this.projectClassLoaderStore = res.getProjectClassLoaderStore();
+        }
+        if(!res.getEventTypeClasses().isEmpty()) {
+            this.eventsTypeClasses = res.getEventTypeClasses();
+        }
+    }
+
     @Override
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
         return Optional.ofNullable(kieModuleMetaInfo);

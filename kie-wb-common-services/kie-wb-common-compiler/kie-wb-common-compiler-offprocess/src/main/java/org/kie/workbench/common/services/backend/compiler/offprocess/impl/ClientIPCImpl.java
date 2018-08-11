@@ -43,41 +43,41 @@ public class ClientIPCImpl implements ClientIPC {
 
     public KieCompilationResponse getResponse(String uuid) {
         if(isLoaded(uuid)) {
-            return (DefaultKieCompilationResponseOffProcess) map.getResponse(uuid);
+            return (KieCompilationResponse)map.getResponse(uuid);
         }else {
-            return new DefaultKieCompilationResponseOffProcess(false, "");
+            return new DefaultKieCompilationResponse(false, "");
         }
     }
 
     private boolean isLoaded(String uuid) {
         ExcerptTailer tailer = provider.getQueue().createTailer();
-        KieCompilationResponse res = getLastKieResponse(tailer);
-        DefaultKieCompilationResponseOffProcess kres = (DefaultKieCompilationResponseOffProcess) res;
+        DefaultKieCompilationResponseOffProcess res = getLastKieResponse(tailer);
+        DefaultKieCompilationResponse kres = new DefaultKieCompilationResponse(res);
         if (uuid.equals(kres.getRequestUUID())) {
             if (!map.contains(kres.getRequestUUID())) {
-                map.addResponse(uuid, res);
+                map.addResponse(uuid, kres);
                 return true;
             }
         } else {
             //we loop in the queue to find our Response by UUID
             while (!uuid.equals(kres.getRequestUUID())) {
                 res = getLastKieResponse(tailer);
-                kres = (DefaultKieCompilationResponseOffProcess) res;
+                kres = new DefaultKieCompilationResponse(res);
             }
             if (!uuid.equals(kres.getRequestUUID())) {
                 return false;
             }
         }
         if (!map.contains(kres.getRequestUUID())) {
-            map.addResponse(uuid, res);
+            map.addResponse(uuid, new DefaultKieCompilationResponse(res));
             return true;
         } else {
             return false;
         }
     }
 
-    private KieCompilationResponse getLastKieResponse(ExcerptTailer tailer) {
-        KieCompilationResponse res = new DefaultKieCompilationResponseOffProcess(false, "");
+    private DefaultKieCompilationResponseOffProcess getLastKieResponse(ExcerptTailer tailer) {
+        DefaultKieCompilationResponseOffProcess res = new DefaultKieCompilationResponseOffProcess(false, "");
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {
                 Wire wire = dc.wire();

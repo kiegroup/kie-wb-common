@@ -29,6 +29,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
+import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponseOffProcess;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.CompilerIPCCoordinatorImpl;
@@ -88,7 +89,7 @@ public class CompilerChronicleCoordinatorTest {
         CompilationResponse res = compiler.compile(req, 20);
         Assert.assertNotNull(res);
         Assert.assertTrue(res.isSuccessful());
-        DefaultKieCompilationResponseOffProcess kres = (DefaultKieCompilationResponseOffProcess) res;
+        DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
         Assert.assertEquals(uuid, kres.getRequestUUID());
     }
 
@@ -110,7 +111,7 @@ public class CompilerChronicleCoordinatorTest {
         CompilationResponse res = compiler.compile(req, 20);
         Assert.assertNotNull(res);
         Assert.assertTrue(res.isSuccessful());
-        DefaultKieCompilationResponseOffProcess kres = (DefaultKieCompilationResponseOffProcess) res;
+        DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
         Assert.assertEquals(uuid, kres.getRequestUUID());
 
         // Second Build
@@ -126,7 +127,7 @@ public class CompilerChronicleCoordinatorTest {
         CompilationResponse secondRes = compiler.compile(secondRequest, 20);
         Assert.assertNotNull(secondRes);
         Assert.assertTrue(secondRes.isSuccessful());
-        DefaultKieCompilationResponseOffProcess secondKres = (DefaultKieCompilationResponseOffProcess) secondRes;
+        DefaultKieCompilationResponse secondKres = (DefaultKieCompilationResponse) secondRes;
         Assert.assertEquals(secondUuid, secondKres.getRequestUUID());
     }
 }

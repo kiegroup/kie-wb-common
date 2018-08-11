@@ -47,7 +47,7 @@ public class ServerIPCImpl {
     }
 
     public static void execute(String workingDir, String mavenRepo, String alternateSettingsAbsPath, String uuid, QueueProvider provider) throws Exception {
-        KieCompilationResponse res = build(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
+        DefaultKieCompilationResponseOffProcess res = build(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
         byte[] bytez = serialize(res);
         if (bytez == null) {
             return;
@@ -60,7 +60,7 @@ public class ServerIPCImpl {
         appender.writeBytes(Bytes.allocateDirect(bytez));
     }
 
-    private static KieCompilationResponse build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
+    private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(prjPath));
         CompilationRequest req;
@@ -85,7 +85,7 @@ public class ServerIPCImpl {
                                                 uuid);
         }
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-        KieCompilationResponse resConverted = new DefaultKieCompilationResponseOffProcess(res);
+        DefaultKieCompilationResponseOffProcess resConverted = new DefaultKieCompilationResponseOffProcess(res);
         return resConverted;
     }
 
