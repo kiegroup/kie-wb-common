@@ -20,7 +20,6 @@ import java.util.UUID;
 import net.openhft.chronicle.core.io.IOTools;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,12 +29,13 @@ import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponseOffProcess;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.CompilerIPCCoordinatorImpl;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.QueueProvider;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompilerChronicleCoordinatorTest {
 
@@ -87,10 +87,11 @@ public class CompilerChronicleCoordinatorTest {
                                                                Boolean.FALSE, uuid);
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         CompilationResponse res = compiler.compile(req, 20);
-        Assert.assertNotNull(res);
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res).isNotNull();
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        Assert.assertEquals(uuid, kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
     }
 
     @Test
@@ -109,10 +110,11 @@ public class CompilerChronicleCoordinatorTest {
                                                                Boolean.FALSE, uuid);
 
         CompilationResponse res = compiler.compile(req, 20);
-        Assert.assertNotNull(res);
-        Assert.assertTrue(res.isSuccessful());
+        assertThat(res).isNotNull();
+        assertThat(res.isSuccessful()).isTrue();
+        assertThat(res.getMavenOutput()).isNotEmpty();
         DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        Assert.assertEquals(uuid, kres.getRequestUUID());
+        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
 
         // Second Build
         String secondUuid = UUID.randomUUID().toString();
@@ -125,9 +127,9 @@ public class CompilerChronicleCoordinatorTest {
                                                                                 Boolean.FALSE, secondUuid);
 
         CompilationResponse secondRes = compiler.compile(secondRequest, 20);
-        Assert.assertNotNull(secondRes);
-        Assert.assertTrue(secondRes.isSuccessful());
+        assertThat(secondRes).isNotNull();
+        assertThat(secondRes.isSuccessful()).isTrue();
         DefaultKieCompilationResponse secondKres = (DefaultKieCompilationResponse) secondRes;
-        Assert.assertEquals(secondUuid, secondKres.getRequestUUID());
+        assertThat(secondUuid).isEqualToIgnoringCase(secondKres.getRequestUUID());
     }
 }

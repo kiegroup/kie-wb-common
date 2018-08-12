@@ -90,6 +90,9 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     }
 
     public List<String> getMavenOutput() {
+        if(mavenOutput == null){
+            return Collections.emptyList();
+        }
         return new ArrayList<>(mavenOutput);
     }
 
@@ -98,6 +101,9 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     }
 
     public List<String> getDependencies() {
+        if(projectDependencies == null){
+            return Collections.emptyList();
+        }
         return new ArrayList<>(projectDependencies);
     }
 
