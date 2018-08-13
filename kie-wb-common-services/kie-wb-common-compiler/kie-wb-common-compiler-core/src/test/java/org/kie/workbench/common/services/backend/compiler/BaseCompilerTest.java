@@ -16,10 +16,8 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestName;
@@ -45,18 +43,20 @@ public class BaseCompilerTest {
     protected WorkspaceCompilationInfo info;
     protected AFCompiler compiler;
     protected KieCompilationResponse res;
-    private static int gitDaemonPort;
-
 
     @BeforeClass
     public static void setupSystemProperties() {
-        String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
-        if (gitPort != null) {
-            gitDaemonPort = Integer.valueOf(gitPort);
-        }
         int freePort = TestUtilGit.findFreePort();
         System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
         logger.info("Git port used:{}", freePort);
+    }
+
+    @AfterClass
+    public static void tearDown() {
+        System.clearProperty("org.uberfire.nio.git.daemon.port");
+        if (tmpRoot != null) {
+            TestUtil.rm(tmpRoot.toFile());
+        }
     }
 
     @Rule
@@ -94,11 +94,5 @@ public class BaseCompilerTest {
         return new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
     }
 
-    @AfterClass
-    public static void tearDown() {
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(gitDaemonPort));
-        if (tmpRoot != null) {
-            TestUtil.rm(tmpRoot.toFile());
-        }
-    }
+
 }

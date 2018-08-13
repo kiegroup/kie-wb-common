@@ -28,15 +28,11 @@ public class ResponseSharedMap {
     private Map<String, CompilationResponse> map;
 
     public ResponseSharedMap() {
-        map = new ConcurrentHashMap();
+        map = new ConcurrentHashMap<>();
     }
 
     public CompilationResponse getResponse(String key) {
-        if (map.containsKey(key)) {
-            return map.get(key);
-        } else {
-            return null;
-        }
+        return map.getOrDefault(key, null);
     }
 
     public void removeResponse(String key) {

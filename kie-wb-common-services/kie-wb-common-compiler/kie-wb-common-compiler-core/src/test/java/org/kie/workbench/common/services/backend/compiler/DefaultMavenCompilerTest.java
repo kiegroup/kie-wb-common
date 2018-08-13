@@ -64,15 +64,10 @@ public class DefaultMavenCompilerTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
-    private static int gitDaemonPort;
 
 
     @BeforeClass
     public static void setupSystemProperties() {
-        String gitPort = System.getProperty("org.uberfire.nio.git.daemon.port");
-        if (gitPort != null) {
-            gitDaemonPort = Integer.valueOf(gitPort);
-        }
         int freePort = TestUtilGit.findFreePort();
         System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
         logger.info("Git port used:{}", freePort);
@@ -80,7 +75,7 @@ public class DefaultMavenCompilerTest {
 
     @AfterClass
     public static void tearDownClass() {
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(gitDaemonPort));
+        System.clearProperty("org.uberfire.nio.git.daemon.port");
     }
 
     @Rule

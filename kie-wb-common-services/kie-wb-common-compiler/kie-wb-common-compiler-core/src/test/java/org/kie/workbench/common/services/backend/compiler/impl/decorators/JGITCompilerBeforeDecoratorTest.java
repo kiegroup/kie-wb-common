@@ -54,16 +54,12 @@ public class JGITCompilerBeforeDecoratorTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
-    private static String gitDaemonEnabled;
-    private static String gitSshEnabled;
 
     @Rule
     public TestName testName = new TestName();
 
     @BeforeClass
     public static void setupSystemProperties() {
-        gitDaemonEnabled = System.getProperty("org.uberfire.nio.git.daemon.enabled");
-        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
                            "false");
@@ -75,8 +71,8 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @AfterClass
     public static void restoreSystemProperties() {
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
+        System.clearProperty("org.uberfire.nio.git.daemon.enabled");
+        System.clearProperty("org.uberfire.nio.git.ssh.enabled");
     }
 
     @Before
