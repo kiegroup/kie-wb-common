@@ -31,17 +31,16 @@ import org.slf4j.LoggerFactory;
 
 public class ClassPathMavenGenerator {
 
-    private static final String SEP = File.separator;
     private static Logger logger = LoggerFactory.getLogger(ClassPathMavenGenerator.class);
-    private static String servicesMod = "kie-wb-common-services";
-    private static String compilerMod = "kie-wb-common-compiler";
-    private static String offprocessMod = "kie-wb-common-compiler-offprocess-classpath";
-    private static String cpathPathFile = "offprocess.cpath";
-    private static String classPathFile = "offprocess.classpath.template";
+    private static final String servicesMod = "kie-wb-common-services",
+    compilerMod = "kie-wb-common-compiler",
+    offprocessMod = "kie-wb-common-compiler-offprocess-classpath",
+    cpathPathFile = "offprocess.cpath",
+    classPathFile = "offprocess.classpath.template",
+    SEP = File.separator;
 
     public static void main(String[] args) throws Exception {
-       // String kieVersion = args[0];
-        String kieVersion = "7.10.0-SNAPSHOT";
+        String kieVersion = args[0];
         String mavenRepo = getMavenRepo();
         Path pwd = Paths.get("").toAbsolutePath();
         StringBuilder sb = new StringBuilder();

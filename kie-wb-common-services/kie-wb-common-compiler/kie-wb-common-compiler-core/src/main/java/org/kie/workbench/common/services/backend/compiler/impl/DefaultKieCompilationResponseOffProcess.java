@@ -54,6 +54,11 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     public DefaultKieCompilationResponseOffProcess(boolean successful, String requestUUID) {
         this.successful = successful;
         this.requestUUID = requestUUID;
+        this.targetContent = Collections.emptyList();
+        this.projectDependencies = Collections.emptyList();
+        this.projectClassLoaderStore = Collections.emptyMap();
+        this.eventsTypeClasses = Collections.emptySet();
+        this.mavenOutput = Collections.emptyList();
     }
 
     public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res) {

@@ -121,11 +121,15 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         if (res.getKieModule().isPresent()) {
             this.kieModule = res.getKieModule().get();
         }
-        if (!res.getProjectClassLoaderStore().isEmpty()){
+        if(res.getProjectClassLoaderStore() != null && !res.getProjectClassLoaderStore().isEmpty()){
             this.projectClassLoaderStore = res.getProjectClassLoaderStore();
+        }else{
+            this.projectClassLoaderStore = Collections.emptyMap();
         }
-        if(!res.getEventTypeClasses().isEmpty()) {
+        if(res.getEventTypeClasses()!= null && !res.getEventTypeClasses().isEmpty()) {
             this.eventsTypeClasses = res.getEventTypeClasses();
+        }else{
+            this.eventsTypeClasses = Collections.emptySet();
         }
     }
 

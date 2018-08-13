@@ -21,7 +21,7 @@ import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 public interface CompilerIPCCoordinator<T extends CompilationResponse> {
 
     /**
-     * Compile a project starting from the main POM into a timeout window
+     * Compile a project starting from the main POM
      */
-    T compile(final CompilationRequest req, final int secondsTimeout);
+    T compile(final CompilationRequest req);
 }

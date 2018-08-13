@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
-    private static String placeholder = "<maven_repo>";
-    private String mavenModuleName = "kie-wb-common-compiler-offprocess";
-    private String classpathFile = "offprocess.classpath.template";
+    private static final String placeholder = "<maven_repo>";
+    private static final String mavenModuleName = "kie-wb-common-compiler-offprocess";
+    private static final String classpathFile = "offprocess.classpath.template";
     private String javaHome;
     private String javaBin;
     private String classpathTemplate;
@@ -67,10 +67,10 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
     }
 
     @Override
-    public CompilationResponse compile(CompilationRequest req, int secondsTimeout) {
+    public CompilationResponse compile(CompilationRequest req) {
         return internalBuild(req.getMavenRepo(),
                              req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                             getAlternateSettings(req.getOriginalArgs()), secondsTimeout, req.getRequestUUID());
+                             getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID());
     }
 
     private String getKieVersion(){
@@ -83,16 +83,16 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
     private String getAlternateSettings(String[] args) {
         for (String arg : args) {
             if (arg.startsWith(MavenCLIArgs.ALTERNATE_USER_SETTINGS)) {
-                return arg.substring(2, args.length);
+                return arg.substring(2);
             }
         }
         return "";
     }
 
-    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath, int secondsTimeout, String uuid) {
+    private CompilationResponse internalBuild(String mavenRepo, String projectPath, String alternateSettingsAbsPath, String uuid) {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
         try {
-            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, secondsTimeout, queueName);
+            invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
             return getCompilationResponse(uuid);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -109,7 +109,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         }
     }
 
-    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, int secondsTimeout, String queueName) throws Exception {
+    private void invokeServerBuild(String mavenRepo, String projectPath, String uuid, String classpath, String alternateSettingsAbsPath, String queueName) throws Exception {
         String[] commandArrayServer =
                 {
                         javaBin,
@@ -129,7 +129,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         serverPb.directory(new File(projectPath));
         serverPb.redirectErrorStream(true);
         serverPb.inheritIO();
-        writeStdOut(serverPb, secondsTimeout);
+        writeStdOut(serverPb);
     }
 
     private String getClasspathIncludedCurrentModuleDep(String mavenRepo, String classpath){
@@ -148,9 +148,9 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         return  sb.toString();
     }
 
-    private void writeStdOut(ProcessBuilder builder, int secondsTimeout) throws Exception {
+    private void writeStdOut(ProcessBuilder builder) throws Exception {
         Process process = builder.start();
-        process.waitFor(secondsTimeout, TimeUnit.SECONDS);
+        process.waitFor();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null && (!line.endsWith("BUILD SUCCESS") || !line.endsWith("BUILD FAILURE"))) {

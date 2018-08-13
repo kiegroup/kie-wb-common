@@ -86,7 +86,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                },
                                                                Boolean.FALSE, uuid);
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
-        CompilationResponse res = compiler.compile(req, 20);
+        CompilationResponse res = compiler.compile(req);
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
@@ -109,7 +109,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                },
                                                                Boolean.FALSE, uuid);
 
-        CompilationResponse res = compiler.compile(req, 20);
+        CompilationResponse res = compiler.compile(req);
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
@@ -126,10 +126,11 @@ public class CompilerChronicleCoordinatorTest {
                                                                                 },
                                                                                 Boolean.FALSE, secondUuid);
 
-        CompilationResponse secondRes = compiler.compile(secondRequest, 20);
+        CompilationResponse secondRes = compiler.compile(secondRequest);
         assertThat(secondRes).isNotNull();
         assertThat(secondRes.isSuccessful()).isTrue();
         DefaultKieCompilationResponse secondKres = (DefaultKieCompilationResponse) secondRes;
         assertThat(secondUuid).isEqualToIgnoringCase(secondKres.getRequestUUID());
     }
+
 }
