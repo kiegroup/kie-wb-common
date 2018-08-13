@@ -59,14 +59,38 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res) {
         this.kieModuleMetaInfo = res.getKieModuleMetaInfo().get();
         this.kieModule = res.getKieModule().get();
-        this.projectClassLoaderStore = res.getProjectClassLoaderStore();
-        this.eventsTypeClasses = res.getEventTypeClasses();
         this.successful = res.isSuccessful();
-        this.mavenOutput = res.getMavenOutput();
-        this.workingDir = res.getWorkingDir().get().toString();
-        this.projectDependencies = res.getDependencies();
-        this.targetContent = res.getTargetContent();
         this.requestUUID = ((DefaultKieCompilationResponse) res).getRequestUUID();
+        if(res.getProjectClassLoaderStore() != null) {
+            this.projectClassLoaderStore = res.getProjectClassLoaderStore();
+        }else{
+            this.projectClassLoaderStore = Collections.emptyMap();
+        }
+        if(res.getEventTypeClasses() != null) {
+            this.eventsTypeClasses = res.getEventTypeClasses();
+        }else{
+            this.eventsTypeClasses = Collections.emptySet();
+        }
+        if(res.getMavenOutput() != null) {
+            this.mavenOutput = res.getMavenOutput();
+        }else{
+            this.mavenOutput = Collections.emptyList();
+        }
+        if(res.getWorkingDir().isPresent()) {
+            this.workingDir = res.getWorkingDir().get().toString();
+        }else {
+            this.workingDir = "";
+        }
+        if(res.getDependencies()!= null) {
+            this.projectDependencies = res.getDependencies();
+        }else {
+            this.projectDependencies = Collections.emptyList();
+        }
+        if(res.getTargetContent()!= null) {
+            this.targetContent = res.getTargetContent();
+        }else{
+            this.targetContent = Collections.emptyList();
+        }
     }
 
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
