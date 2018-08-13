@@ -109,10 +109,9 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
     }
 
     public DefaultKieCompilationResponse(DefaultKieCompilationResponseOffProcess res) {
-
         this.defaultResponse = new DefaultCompilationResponse(res.isSuccessful(),
                                                               res.getMavenOutput(),
-                                                              Paths.get(res.getWorkingDir()),
+                                                              getWorkingDir(res.getWorkingDir()),
                                                               res.getTargetContent(),
                                                               res.getDependencies(),
                                                               res.getRequestUUID());
@@ -127,6 +126,15 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         }
         if(!res.getEventTypeClasses().isEmpty()) {
             this.eventsTypeClasses = res.getEventTypeClasses();
+        }
+    }
+
+    private Path getWorkingDir(String workingDir){
+        if(workingDir!= null){
+           return Paths.get("file://"+workingDir);
+        }
+        else{
+            return null;
         }
     }
 
