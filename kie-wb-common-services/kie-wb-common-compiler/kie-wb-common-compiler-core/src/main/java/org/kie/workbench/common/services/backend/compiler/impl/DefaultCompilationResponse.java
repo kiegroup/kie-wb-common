@@ -53,7 +53,11 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final Path workingDir,
                                       final String requestUUID) {
         this.successful = successful;
-        this.mavenOutput = new ArrayList<>(mavenOutput);
+        if(mavenOutput != null) {
+            this.mavenOutput = new ArrayList<>(mavenOutput);
+        }else{
+            this.mavenOutput = Collections.emptyList();
+        }
         this.workingDir = workingDir;
         this.requestUUID = requestUUID;
     }
@@ -65,10 +69,22 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final List<String> projectDependencies,
                                       final String requestUUID) {
         this.successful = successful;
-        this.mavenOutput = mavenOutput;
+        if(mavenOutput != null) {
+            this.mavenOutput = new ArrayList<>(mavenOutput);
+        }else{
+            this.mavenOutput = Collections.emptyList();
+        }
         this.workingDir = workingDir;
-        this.targetContent = new ArrayList<>(targetContent);
-        this.projectDependencies = new ArrayList<>(projectDependencies);
+        if(targetContent != null) {
+            this.targetContent = new ArrayList<>(targetContent);
+        }else{
+            this.targetContent = Collections.emptyList();
+        }
+        if(projectDependencies != null) {
+            this.projectDependencies = new ArrayList<>(projectDependencies);
+        }else{
+            this.projectDependencies = Collections.emptyList();
+        }
         this.requestUUID = requestUUID;
     }
 
@@ -78,9 +94,18 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final List<String> projectDependencies,
                                       final String requestUUID) {
         this.successful = successful;
-        this.mavenOutput = new ArrayList<>(mavenOutput);
+        if(mavenOutput != null) {
+            this.mavenOutput = new ArrayList<>(mavenOutput);
+        }else{
+            this.mavenOutput = Collections.emptyList();
+        }
+
+        if(projectDependencies != null) {
+            this.projectDependencies = new ArrayList<>(projectDependencies);
+        }else{
+            this.projectDependencies = Collections.emptyList();
+        }
         this.workingDir = workingDir;
-        this.projectDependencies = new ArrayList<>(projectDependencies);
         this.requestUUID = requestUUID;
     }
 
