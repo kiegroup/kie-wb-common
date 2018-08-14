@@ -150,7 +150,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private void writeStdOut(ProcessBuilder builder) throws Exception {
         Process process = builder.start();
-        process.waitFor();
+        process.waitFor(20, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null && (!line.endsWith("BUILD SUCCESS") || !line.endsWith("BUILD FAILURE"))) {
