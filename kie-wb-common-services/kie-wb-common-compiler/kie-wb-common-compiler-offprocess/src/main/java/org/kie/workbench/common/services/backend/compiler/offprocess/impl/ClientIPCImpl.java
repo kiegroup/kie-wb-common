@@ -51,25 +51,20 @@ public class ClientIPCImpl implements ClientIPC {
 
     private boolean isLoaded(String uuid) {
         ExcerptTailer tailer = provider.getQueue().createTailer();
-        DefaultKieCompilationResponseOffProcess res = getLastKieResponse(tailer);
+        DefaultKieCompilationResponseOffProcess res = readThisDocument(tailer);
         DefaultKieCompilationResponse kres = new DefaultKieCompilationResponse(res);
-
         if (uuid.equals(kres.getRequestUUID())) {
             if (!map.contains(kres.getRequestUUID())) {
                 map.addResponse(uuid, kres);
                 return true;
             }
         } else {
-            logger.info("loop in the queue");
             //we loop in the queue to find our Response by UUID
-            while (!uuid.equals(kres.getRequestUUID())) {
-                res = getLastKieResponse(tailer);
-                kres = new DefaultKieCompilationResponse(res);
-            }
-            if (!uuid.equals(kres.getRequestUUID())) {
-                return false;
-            }
+            tailer.toStart();
+            res = loopOverQueue(tailer,uuid, 0l);
         }
+
+        kres = new DefaultKieCompilationResponse(res);
         if (!map.contains(kres.getRequestUUID())) {
             map.addResponse(uuid, new DefaultKieCompilationResponse(res));
             return true;
@@ -78,9 +73,24 @@ public class ClientIPCImpl implements ClientIPC {
         }
     }
 
-    private DefaultKieCompilationResponseOffProcess getLastKieResponse(ExcerptTailer tailer) {
-        logger.info("reading lastKieResponse");
-        DefaultKieCompilationResponseOffProcess res = new DefaultKieCompilationResponseOffProcess(false, "");
+
+    private DefaultKieCompilationResponseOffProcess loopOverQueue(ExcerptTailer tailer, String uuid, long previousIndex) {
+        long currentIndex = tailer.index();
+        logger.info("current index on tailer:{}", currentIndex);
+        DefaultKieCompilationResponseOffProcess  res = readThisDocument(tailer);
+        if(uuid.equals(res.getRequestUUID())){
+            return res;
+        }else{
+            if(currentIndex == previousIndex){
+                // end of the queue
+                return new DefaultKieCompilationResponseOffProcess(false, "");
+            }
+            return loopOverQueue(tailer, uuid, currentIndex);
+        }
+    }
+
+    private DefaultKieCompilationResponseOffProcess readThisDocument(ExcerptTailer tailer) {
+        DefaultKieCompilationResponseOffProcess res = null;
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {
                 Wire wire = dc.wire();

@@ -46,8 +46,7 @@ public class CompilerChronicleCoordinatorTest {
     private static Path prjPath;
     private String mavenRepo;
     private String alternateSettingsAbsPath;
-    private static String gitDaemonEnabled;
-    private static String gitSshEnabled;
+
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
 
@@ -77,7 +76,7 @@ public class CompilerChronicleCoordinatorTest {
         IOTools.shallowDeleteDirWithFiles(queueProvider.getAbsoultePath());
     }
 
-    @Test @Ignore //@TODO FIX loopClientIPC on Jenkins
+    @Test
     public void offProcessOneBuildTest() {
         String uuid = UUID.randomUUID().toString();
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
@@ -98,7 +97,7 @@ public class CompilerChronicleCoordinatorTest {
         assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
     }
 
-    @Test @Ignore //@TODO FIX loopClientIPC on Jenkins
+    @Test
     public void offProcessTwoBuildTest() {
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
