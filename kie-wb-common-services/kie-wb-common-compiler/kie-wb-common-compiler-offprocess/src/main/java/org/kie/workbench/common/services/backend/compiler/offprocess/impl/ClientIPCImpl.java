@@ -105,6 +105,9 @@ public class ClientIPCImpl implements ClientIPC {
                 }
             }
         }
+        if(res == null){
+            res = new DefaultKieCompilationResponseOffProcess(false, "");
+        }
         return res;
     }
 
