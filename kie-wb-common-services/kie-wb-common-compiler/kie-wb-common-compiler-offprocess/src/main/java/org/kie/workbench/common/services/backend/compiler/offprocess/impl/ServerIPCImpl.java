@@ -47,7 +47,7 @@ public class ServerIPCImpl {
     public static void main(String[] args) throws Exception {
         checksParamsNumber(args);
         String uuid = args[0];
-        checksUUIDLenght(uuid);
+        checksUUIDLength(uuid);
         String workingDir = args[1];
         checksWorkingDir(workingDir);
         String mavenRepo = args[2];
@@ -76,7 +76,7 @@ public class ServerIPCImpl {
         }
     }
 
-    private static void checksUUIDLenght(String uuid) {
+    private static void checksUUIDLength(String uuid) {
         if(StringUtils.isEmpty(uuid) || uuid.length() < 10){
             logger.error("uuid too short, less than 10 chars:{}", uuid);
             throw new RuntimeException("uuid too short less than 10 chars:" + uuid);
@@ -84,7 +84,7 @@ public class ServerIPCImpl {
     }
 
     private static void checksSettingFile(String alternateSettingsAbsPath) {
-        if(!new File(alternateSettingsAbsPath).exists()){
+        if(StringUtils.isNotEmpty(alternateSettingsAbsPath) && !new File(alternateSettingsAbsPath).exists()){
             logger.error("SettingsAbsPath doesn't exists:{}",alternateSettingsAbsPath);
             throw new RuntimeException("SettingsAbsPath doesn't exists:"+alternateSettingsAbsPath);
         }
@@ -108,6 +108,7 @@ public class ServerIPCImpl {
         DefaultKieCompilationResponseOffProcess res = build(workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
         byte[] bytez = serialize(res);
         if (bytez == null) {
+            logger.warn("The serialized response is null, working dir:{}\n mavenrepo:{} \n alternateSettingsAbsPath:{} \n uuid:{}", workingDir, mavenRepo, alternateSettingsAbsPath, uuid);
             return;
         }
         writeOnQueue(bytez, provider);
@@ -122,7 +123,7 @@ public class ServerIPCImpl {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(prjPath));
         CompilationRequest req;
-        if (alternateSettingsAbsPath != null && alternateSettingsAbsPath.length() > 1) {
+        if (StringUtils.isNotEmpty(alternateSettingsAbsPath)) {
             req = new DefaultCompilationRequest(mavenRepo,
                                                 info,
                                                 new String[]{
