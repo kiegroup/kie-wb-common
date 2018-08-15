@@ -53,12 +53,14 @@ public class ClientIPCImpl implements ClientIPC {
         ExcerptTailer tailer = provider.getQueue().createTailer();
         DefaultKieCompilationResponseOffProcess res = getLastKieResponse(tailer);
         DefaultKieCompilationResponse kres = new DefaultKieCompilationResponse(res);
+
         if (uuid.equals(kres.getRequestUUID())) {
             if (!map.contains(kres.getRequestUUID())) {
                 map.addResponse(uuid, kres);
                 return true;
             }
         } else {
+            logger.info("loop in the queue");
             //we loop in the queue to find our Response by UUID
             while (!uuid.equals(kres.getRequestUUID())) {
                 res = getLastKieResponse(tailer);
@@ -77,6 +79,7 @@ public class ClientIPCImpl implements ClientIPC {
     }
 
     private DefaultKieCompilationResponseOffProcess getLastKieResponse(ExcerptTailer tailer) {
+        logger.info("reading lastKieResponse");
         DefaultKieCompilationResponseOffProcess res = new DefaultKieCompilationResponseOffProcess(false, "");
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {

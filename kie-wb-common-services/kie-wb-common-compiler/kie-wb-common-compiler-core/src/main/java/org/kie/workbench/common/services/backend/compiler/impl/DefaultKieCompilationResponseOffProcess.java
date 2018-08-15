@@ -71,7 +71,7 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
         this.mavenOutput = Optional.ofNullable(res.getMavenOutput()).orElse(Collections.emptyList());
         this.projectDependencies = Optional.ofNullable(res.getDependencies()).orElse(Collections.emptyList());
         this.targetContent = Optional.ofNullable(res.getTargetContent()).orElse(Collections.emptyList());
-        this.workingDir = Optional.ofNullable(res.getWorkingDir().get().toString()).orElse("");
+        this.workingDir = res.getWorkingDir().map(Object::toString).orElse("");
     }
 
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {

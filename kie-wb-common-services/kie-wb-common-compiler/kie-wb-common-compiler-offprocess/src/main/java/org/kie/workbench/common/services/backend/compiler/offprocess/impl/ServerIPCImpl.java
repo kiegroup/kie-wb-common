@@ -115,6 +115,7 @@ public class ServerIPCImpl {
     }
 
     private static void writeOnQueue(byte[] bytez, QueueProvider provider) {
+        logger.info("writeOnQueue");
         ExcerptAppender appender = provider.getQueue().acquireAppender();
         appender.writeBytes(Bytes.allocateDirect(bytez));
     }

@@ -26,9 +26,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * Executed by Maven with the exec-maven-plugin after the execution of the maven-dependency-plugin.
+ * <p>The dependency plugin create the offprocess.cpath file, this class read this file and replace the initial path
+ * to the mavenrepo used with a placeholder (<maven_repo>).</p>
+ * <p>This placeholder wil be replaced with the maven repo used,
+ * and sent as a param by the compiler-offprocess module when
+ * a offprocess build will be required.</p>
+ */
 public class ClassPathMavenGenerator {
 
     private static Logger logger = LoggerFactory.getLogger(ClassPathMavenGenerator.class);
@@ -53,6 +62,23 @@ public class ClassPathMavenGenerator {
 
         String content = new String(Files.readAllBytes(filePath));
         String replaced = content.replace(mavenRepo, "<maven_repo>");
+        replaced = replaceTargetInTheClassPathFile(kieVersion, replaced);
+
+        StringBuilder sbo = new StringBuilder();
+                    sbo.append(pwd.toAbsolutePath()).append(SEP).
+                            append(servicesMod).append(SEP).
+                            append(compilerMod).append(SEP).
+                            append(offprocessMod).append(SEP).
+                            append("target").append(SEP).
+                            append("classes").append(SEP).
+                            append(classPathFile);
+        Path offProcessModule = Paths.get(sbo.toString());
+        write(offProcessModule.toAbsolutePath().toString(), replaced);
+        logger.info("\n************************************\nSaving {} to {} \n************************************\n\n",classPathFile, offProcessModule.toAbsolutePath().toString());
+    }
+
+    @NotNull
+    private static String replaceTargetInTheClassPathFile(String kieVersion, String replaced) {
         while(replaced.contains("target")){
             int targetIndex = replaced.lastIndexOf("target");
             String tmp = replaced.substring(0, targetIndex + 6);
@@ -79,19 +105,7 @@ public class ClassPathMavenGenerator {
                     append(kieVersion);
             replaced = replaced.replace(toClean, sbi.toString());
         }
-
-
-        StringBuilder sbo = new StringBuilder();
-                    sbo.append(pwd.toAbsolutePath()).append(SEP).
-                            append(servicesMod).append(SEP).
-                            append(compilerMod).append(SEP).
-                            append(offprocessMod).append(SEP).
-                            append("target").append(SEP).
-                            append("classes").append(SEP).
-                            append(classPathFile);
-        Path offProcessModule = Paths.get(sbo.toString());
-        write(offProcessModule.toAbsolutePath().toString(), replaced);
-        logger.info("\n************************************\nSaving {} to {} \n************************************\n\n",classPathFile, offProcessModule.toAbsolutePath().toString());
+        return replaced;
     }
 
     private static void write(String filename, String content) throws IOException {
