@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +45,9 @@ public class ClassPathMavenGenerator {
     offprocessMod = "kie-wb-common-compiler-offprocess-classpath",
     cpathPathFile = "offprocess.cpath",
     classPathFile = "offprocess.classpath.template",
+    TARGET = "target",
+    MAVEN_REPO_PLACEHOLDER = "<maven_repo>",
+    JAR_EXT = ".jar",
     SEP = File.separator;
 
     public static void main(String[] args) throws Exception {
@@ -61,7 +63,7 @@ public class ClassPathMavenGenerator {
         Path filePath = Paths.get(sb.toString());
 
         String content = new String(Files.readAllBytes(filePath));
-        String replaced = content.replace(mavenRepo, "<maven_repo>");
+        String replaced = content.replace(mavenRepo, MAVEN_REPO_PLACEHOLDER);
         replaced = replaceTargetInTheClassPathFile(kieVersion, replaced);
 
         StringBuilder sbo = new StringBuilder();
@@ -69,7 +71,7 @@ public class ClassPathMavenGenerator {
                             append(servicesMod).append(SEP).
                             append(compilerMod).append(SEP).
                             append(offprocessMod).append(SEP).
-                            append("target").append(SEP).
+                            append(TARGET).append(SEP).
                             append("classes").append(SEP).
                             append(classPathFile);
         Path offProcessModule = Paths.get(sbo.toString());
@@ -77,41 +79,41 @@ public class ClassPathMavenGenerator {
         logger.info("\n************************************\nSaving {} to {} \n************************************\n\n",classPathFile, offProcessModule.toAbsolutePath().toString());
     }
 
-    @NotNull
     private static String replaceTargetInTheClassPathFile(String kieVersion, String replaced) {
-        while(replaced.contains("target")){
-            int targetIndex = replaced.lastIndexOf("target");
-            String tmp = replaced.substring(0, targetIndex + 6);
-            int lastDotsIndex = tmp.lastIndexOf(":",targetIndex);
-            int longToJar = replaced.substring(lastDotsIndex+1).indexOf(".jar");
-            String jarTmp = replaced.substring(lastDotsIndex+1, lastDotsIndex+1 +longToJar);
-            String artifact = jarTmp.substring(jarTmp.lastIndexOf(File.separator)+1);
-            String artifactNoVersionTmp = artifact.replace(kieVersion,"");
-            String artifactNoVersion = artifactNoVersionTmp.substring(0,artifactNoVersionTmp.length()-1);
-            String toClean = tmp.substring(lastDotsIndex+1);
-            StringBuilder sbi = new StringBuilder();
-            sbi.append("<maven_repo>").
-                    append(SEP).
-                    append("org").
-                    append(SEP).
-                    append("kie").
-                    append(SEP).
-                    append("workbench").
-                    append(SEP).
-                    append("services").
-                    append(SEP).
-                    append(artifactNoVersion).
-                    append(SEP).
-                    append(kieVersion);
-            replaced = replaced.replace(toClean, sbi.toString());
+        String[] deps = replaced.split(":");
+        int i = 0;
+        for(String dep : deps){
+            if(dep.contains(TARGET)){
+                cleanFromTarget(kieVersion, deps, i, dep);
+            }
+            i++;
         }
-        return replaced;
+        return String.join(":", deps);
+    }
+
+    private static void cleanFromTarget(String kieVersion, String[] deps, int i, String dep) {
+        String tmp = dep.substring(dep.lastIndexOf(TARGET) + 6);
+        String jarTmp = tmp.substring(0, tmp.indexOf(JAR_EXT));
+        String artifact = jarTmp.substring(jarTmp.lastIndexOf(File.separator)+1);
+        String artifactNoVersionTmp = artifact.replace(kieVersion,"");
+        String artifactNoVersion = artifactNoVersionTmp.substring(0,artifactNoVersionTmp.length() - 1);
+        deps[i] = composeNewDependencyString(kieVersion, artifactNoVersion);
+    }
+
+    private static String composeNewDependencyString(String kieVersion, String artifactNoVersion) {
+        StringBuilder sbi = new StringBuilder();
+        sbi.append(MAVEN_REPO_PLACEHOLDER).
+                append(SEP).
+                append("org").append(SEP).append("kie").append(SEP).append("workbench").append(SEP).append("services").
+                append(SEP).
+                append(artifactNoVersion).append(SEP).append(kieVersion).append(SEP).append(artifactNoVersion).append("-").append(kieVersion).append(JAR_EXT);
+        return sbi.toString();
     }
 
     private static void write(String filename, String content) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-        writer.write(content);
-        writer.close();
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(content);
+        }
     }
 
     public static String getMavenRepo() throws Exception {
