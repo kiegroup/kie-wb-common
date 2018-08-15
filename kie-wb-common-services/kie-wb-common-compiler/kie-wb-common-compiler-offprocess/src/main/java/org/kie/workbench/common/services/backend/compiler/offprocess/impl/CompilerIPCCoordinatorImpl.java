@@ -93,6 +93,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
         try {
             invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
+            logger.info("invokeServerBuild completed");
             return getCompilationResponse(uuid);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -150,10 +151,11 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private void writeStdOut(ProcessBuilder builder) throws Exception {
         Process process = builder.start();
+        logger.info("Build in a separate process started");
         process.waitFor(20, TimeUnit.SECONDS);
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
-        while ((line = reader.readLine()) != null && (!line.endsWith("BUILD SUCCESS") || !line.endsWith("BUILD FAILURE"))) {
+        while ((line = reader.readLine()) != null && (!line.contains("BUILD SUCCESS") || !line.contains("BUILD FAILURE"))) {
             if (logger.isInfoEnabled()) {
                 logger.info(line);
             }

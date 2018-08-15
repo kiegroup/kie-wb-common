@@ -32,6 +32,8 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompila
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.CompilerIPCCoordinatorImpl;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.QueueProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
@@ -39,6 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompilerChronicleCoordinatorTest {
 
+    private Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
     private String mavenRepo;
     private String alternateSettingsAbsPath;
@@ -87,6 +90,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                Boolean.FALSE, uuid);
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         CompilationResponse res = compiler.compile(req);
+        logger.info("offProcessOneBuildTest first build completed");
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
@@ -110,6 +114,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                Boolean.FALSE, uuid);
 
         CompilationResponse res = compiler.compile(req);
+        logger.info("offProcessTwoBuildTest first build completed");
         assertThat(res).isNotNull();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getMavenOutput()).isNotEmpty();
@@ -127,6 +132,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                                 Boolean.FALSE, secondUuid);
 
         CompilationResponse secondRes = compiler.compile(secondRequest);
+        logger.info("offProcessTwoBuildTest second build completed");
         assertThat(secondRes).isNotNull();
         assertThat(secondRes.isSuccessful()).isTrue();
         DefaultKieCompilationResponse secondKres = (DefaultKieCompilationResponse) secondRes;

@@ -40,11 +40,11 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private Path workingDir;
     private String requestUUID;
 
-    private List<String> projectDependencies = Collections.emptyList();
+    private List<String> projectDependencies ;
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> targetContent = Collections.emptyList();
+    private List<String> targetContent ;
     private List<URI> targetContentAsURI = Collections.emptyList();
     private List<URL> targetContentAsURL = Collections.emptyList();
 
@@ -52,14 +52,16 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final List<String> mavenOutput,
                                       final Path workingDir,
                                       final String requestUUID) {
-        this.successful = successful;
-        if(mavenOutput != null) {
-            this.mavenOutput = new ArrayList<>(mavenOutput);
-        }else{
-            this.mavenOutput = Collections.emptyList();
-        }
-        this.workingDir = workingDir;
-        this.requestUUID = requestUUID;
+
+        this(successful,mavenOutput,workingDir, Collections.emptyList(), Collections.emptyList(), requestUUID);
+    }
+
+    public DefaultCompilationResponse(final Boolean successful,
+                                      final List<String> mavenOutput,
+                                      final Path workingDir,
+                                      final List<String> projectDependencies,
+                                      final String requestUUID) {
+        this(successful,mavenOutput,workingDir, Collections.emptyList(), projectDependencies, requestUUID);
     }
 
     public DefaultCompilationResponse(final Boolean successful,
@@ -69,44 +71,20 @@ public class DefaultCompilationResponse implements CompilationResponse,
                                       final List<String> projectDependencies,
                                       final String requestUUID) {
         this.successful = successful;
-        if(mavenOutput != null) {
-            this.mavenOutput = new ArrayList<>(mavenOutput);
-        }else{
-            this.mavenOutput = Collections.emptyList();
-        }
+        this.mavenOutput = nullToEmpty(mavenOutput);
+
         this.workingDir = workingDir;
-        if(targetContent != null) {
-            this.targetContent = new ArrayList<>(targetContent);
-        }else{
-            this.targetContent = Collections.emptyList();
-        }
-        if(projectDependencies != null) {
-            this.projectDependencies = new ArrayList<>(projectDependencies);
-        }else{
-            this.projectDependencies = Collections.emptyList();
-        }
+        this.targetContent = nullToEmpty(targetContent);
+        this.projectDependencies = nullToEmpty(projectDependencies);
         this.requestUUID = requestUUID;
     }
 
-    public DefaultCompilationResponse(final Boolean successful,
-                                      final List<String> mavenOutput,
-                                      final Path workingDir,
-                                      final List<String> projectDependencies,
-                                      final String requestUUID) {
-        this.successful = successful;
-        if(mavenOutput != null) {
-            this.mavenOutput = new ArrayList<>(mavenOutput);
-        }else{
-            this.mavenOutput = Collections.emptyList();
+    private <T> List<T> nullToEmpty(List<T> list) {
+        if (list == null) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<>(list);
         }
-
-        if(projectDependencies != null) {
-            this.projectDependencies = new ArrayList<>(projectDependencies);
-        }else{
-            this.projectDependencies = Collections.emptyList();
-        }
-        this.workingDir = workingDir;
-        this.requestUUID = requestUUID;
     }
 
     public Boolean isSuccessful() {

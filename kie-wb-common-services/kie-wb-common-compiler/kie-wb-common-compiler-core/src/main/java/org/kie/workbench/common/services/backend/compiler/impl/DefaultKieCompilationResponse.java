@@ -115,22 +115,11 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
                                                               res.getTargetContent(),
                                                               res.getDependencies(),
                                                               res.getRequestUUID());
-        if (res.getKieModuleMetaInfo().isPresent()) {
-            this.kieModuleMetaInfo = res.getKieModuleMetaInfo().get();
-        }
-        if (res.getKieModule().isPresent()) {
-            this.kieModule = res.getKieModule().get();
-        }
-        if(res.getProjectClassLoaderStore() != null && !res.getProjectClassLoaderStore().isEmpty()){
-            this.projectClassLoaderStore = res.getProjectClassLoaderStore();
-        }else{
-            this.projectClassLoaderStore = Collections.emptyMap();
-        }
-        if(res.getEventTypeClasses()!= null && !res.getEventTypeClasses().isEmpty()) {
-            this.eventsTypeClasses = res.getEventTypeClasses();
-        }else{
-            this.eventsTypeClasses = Collections.emptySet();
-        }
+
+        this.kieModuleMetaInfo = res.getKieModuleMetaInfo().orElse(null);
+        this.kieModule = res.getKieModule().orElse(null);
+        this.projectClassLoaderStore = Optional.ofNullable(res.getProjectClassLoaderStore()).orElse(Collections.emptyMap());
+        this.eventsTypeClasses = Optional.ofNullable(res.getEventTypeClasses()).orElse(Collections.emptySet());
     }
 
     private Path getWorkingDir(String workingDir){

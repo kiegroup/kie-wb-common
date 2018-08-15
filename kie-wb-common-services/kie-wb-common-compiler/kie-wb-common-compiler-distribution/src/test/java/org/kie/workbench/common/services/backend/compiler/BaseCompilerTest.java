@@ -33,13 +33,9 @@ public class BaseCompilerTest implements Serializable {
     protected Logger logger = LoggerFactory.getLogger(BaseCompilerTest.class);
     protected String alternateSettingsAbsPath;
     protected WorkspaceCompilationInfo info;
-    private static String gitDaemonEnabled;
-    private static String gitSshEnabled;
 
     @BeforeClass
     public static void setup() {
-        gitDaemonEnabled = System.getProperty("org.uberfire.nio.git.daemon.enabled");
-        gitSshEnabled = System.getProperty("org.uberfire.nio.git.ssh.enabled");
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
     }
@@ -59,8 +55,8 @@ public class BaseCompilerTest implements Serializable {
 
     @AfterClass
     public static void tearDown() {
-        System.setProperty("org.uberfire.nio.git.daemon.enabled", gitDaemonEnabled);
-        System.setProperty("org.uberfire.nio.git.ssh.enabled", gitSshEnabled);
+        System.clearProperty("org.uberfire.nio.git.daemon.enabled");
+        System.clearProperty("org.uberfire.nio.git.ssh.enabled");
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }

@@ -66,36 +66,12 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
         this.kieModule = res.getKieModule().get();
         this.successful = res.isSuccessful();
         this.requestUUID = ((DefaultKieCompilationResponse) res).getRequestUUID();
-        if(res.getProjectClassLoaderStore() != null) {
-            this.projectClassLoaderStore = res.getProjectClassLoaderStore();
-        }else{
-            this.projectClassLoaderStore = Collections.emptyMap();
-        }
-        if(res.getEventTypeClasses() != null) {
-            this.eventsTypeClasses = res.getEventTypeClasses();
-        }else{
-            this.eventsTypeClasses = Collections.emptySet();
-        }
-        if(res.getMavenOutput() != null) {
-            this.mavenOutput = res.getMavenOutput();
-        }else{
-            this.mavenOutput = Collections.emptyList();
-        }
-        if(res.getWorkingDir().isPresent()) {
-            this.workingDir = res.getWorkingDir().get().toString();
-        }else {
-            this.workingDir = "";
-        }
-        if(res.getDependencies()!= null) {
-            this.projectDependencies = res.getDependencies();
-        }else {
-            this.projectDependencies = Collections.emptyList();
-        }
-        if(res.getTargetContent()!= null) {
-            this.targetContent = res.getTargetContent();
-        }else{
-            this.targetContent = Collections.emptyList();
-        }
+        this.projectClassLoaderStore = Optional.ofNullable(res.getProjectClassLoaderStore()).orElse(Collections.emptyMap());
+        this.eventsTypeClasses = Optional.ofNullable(res.getEventTypeClasses()).orElse(Collections.emptySet());
+        this.mavenOutput = Optional.ofNullable(res.getMavenOutput()).orElse(Collections.emptyList());
+        this.projectDependencies = Optional.ofNullable(res.getDependencies()).orElse(Collections.emptyList());
+        this.targetContent = Optional.ofNullable(res.getTargetContent()).orElse(Collections.emptyList());
+        this.workingDir = Optional.ofNullable(res.getWorkingDir().get().toString()).orElse("");
     }
 
     public Optional<KieModuleMetaInfo> getKieModuleMetaInfo() {
@@ -119,9 +95,6 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     }
 
     public List<String> getMavenOutput() {
-        if(mavenOutput == null){
-            return Collections.emptyList();
-        }
         return new ArrayList<>(mavenOutput);
     }
 
@@ -130,9 +103,6 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     }
 
     public List<String> getDependencies() {
-        if(projectDependencies == null){
-            return Collections.emptyList();
-        }
         return new ArrayList<>(projectDependencies);
     }
 
