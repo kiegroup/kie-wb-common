@@ -44,8 +44,8 @@ public class CatchingIntermediateConditionalEventTest extends CatchingIntermedia
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 19;
 
     private static final String CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE = null;
-    private final static String CONDITION_EXPRESSION_LANGUAGE = "drools";
-    private final static String CONDITION_ERPRESSION_TYPE = "stunner.bpmn.ScriptType";
+    private static final String CONDITION_EXPRESSION_LANGUAGE = "drools";
+    private static final String CONDITION_ERPRESSION_TYPE = "stunner.bpmn.ScriptType";
 
     public CatchingIntermediateConditionalEventTest(Marshaller marshallerType) {
         super(marshallerType);
