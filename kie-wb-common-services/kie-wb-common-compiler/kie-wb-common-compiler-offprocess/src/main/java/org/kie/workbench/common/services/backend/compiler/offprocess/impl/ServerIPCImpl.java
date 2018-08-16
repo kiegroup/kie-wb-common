@@ -118,6 +118,7 @@ public class ServerIPCImpl {
         logger.info("writeOnQueue");
         ExcerptAppender appender = provider.getQueue().acquireAppender();
         appender.writeBytes(Bytes.allocateDirect(bytez));
+        logger.info("last index appended:{}",appender.lastIndexAppended());
     }
 
     private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {

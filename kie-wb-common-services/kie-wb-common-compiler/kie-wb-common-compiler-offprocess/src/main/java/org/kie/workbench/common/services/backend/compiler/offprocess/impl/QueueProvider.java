@@ -19,12 +19,17 @@ import java.io.File;
 
 import net.openhft.chronicle.queue.ChronicleQueue;
 import net.openhft.chronicle.queue.ChronicleQueueBuilder;
+import net.openhft.chronicle.queue.impl.StoreFileListener;
+import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QueueProvider {
 
-    private ChronicleQueue queue;
+    private SingleChronicleQueue queue;
     private String basePath;
     private String queueName;
+    private Logger logger = LoggerFactory.getLogger(QueueProvider.class);
 
     public QueueProvider(String queueName) {
         this.queueName = queueName;
@@ -34,6 +39,7 @@ public class QueueProvider {
     private void init(String name) {
         basePath = System.getProperty("java.io.tmpdir") + File.separator + name;
         queue = ChronicleQueueBuilder.single(basePath).build();
+        logger.info(queue.toString());
     }
 
     public ChronicleQueue getQueue() {

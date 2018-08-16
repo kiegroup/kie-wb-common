@@ -76,7 +76,7 @@ public class ClientIPCImpl implements ClientIPC {
 
     private DefaultKieCompilationResponseOffProcess loopOverQueue(ExcerptTailer tailer, String uuid, long previousIndex) {
         long currentIndex = tailer.index();
-        logger.info("current index on tailer:{}", currentIndex);
+        logger.info("current index on loopOverQueue:{}", currentIndex);
         DefaultKieCompilationResponseOffProcess  res = readThisDocument(tailer);
         if(uuid.equals(res.getRequestUUID())){
             return res;
@@ -90,9 +90,11 @@ public class ClientIPCImpl implements ClientIPC {
     }
 
     private DefaultKieCompilationResponseOffProcess readThisDocument(ExcerptTailer tailer) {
+        logger.info("current index on readThisDocument:{}", tailer.index());
         DefaultKieCompilationResponseOffProcess res = null;
         try (DocumentContext dc = tailer.readingDocument()) {
             if (dc.isPresent()) {
+                logger.info("Document Context index:{}",dc.index());
                 Wire wire = dc.wire();
                 Bytes bytes = wire.bytes();
                 if (!bytes.isEmpty()) {
