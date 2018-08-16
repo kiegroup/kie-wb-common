@@ -39,8 +39,8 @@ public class StartConditionalEventTest extends StartEvent<StartConditionalEvent>
     private static final int AMOUNT_OF_NODES_IN_DIAGRAM = 10;
 
     private static final String CONDITION_EXPRESSION_SCRIPT_DEFAULT_VALUE = null;
-    private final static String CONDITION_EXPRESSION_LANGUAGE = "drools";
-    private final static String CONDITION_ERPRESSION_TYPE = "stunner.bpmn.ScriptType";
+    private static final String CONDITION_EXPRESSION_LANGUAGE = "drools";
+    private static final String CONDITION_ERPRESSION_TYPE = "stunner.bpmn.ScriptType";
 
     public StartConditionalEventTest(Marshaller marshallerType) {
         super(marshallerType);
