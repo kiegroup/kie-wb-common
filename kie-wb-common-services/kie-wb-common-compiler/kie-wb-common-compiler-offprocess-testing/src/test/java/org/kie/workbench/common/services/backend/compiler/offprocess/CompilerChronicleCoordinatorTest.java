@@ -41,7 +41,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompilerChronicleCoordinatorTest {
 
-    private Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
+    private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
     private static String mavenRepo;
     private String alternateSettingsAbsPath;
@@ -52,6 +52,7 @@ public class CompilerChronicleCoordinatorTest {
     @BeforeClass
     public static void setup() throws Exception{
         queueProvider = new QueueProvider(queueName);
+        logger.info("Queue path on setupTest:{}",queueProvider.getAbsoultePath());
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
