@@ -211,30 +211,6 @@ public class BoundaryCatchingIntermediateConditionalEventTest extends BoundaryCa
                                            CANCELLING);
     }
 
-    @Test
-    @Override
-    public void testMarshallTopLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getFilledTopLevelEventId(), HAS_NO_INCOME_EDGE, HAS_NO_OUTGOING_EDGE);
-    }
-
-    @Test
-    @Override
-    public void testMarshallTopLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(getEmptyTopLevelEventId(), HAS_NO_INCOME_EDGE, HAS_NO_OUTGOING_EDGE);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventFilledProperties() throws Exception {
-        checkEventMarshalling(getFilledSubprocessLevelEventId(), HAS_NO_INCOME_EDGE, HAS_NO_OUTGOING_EDGE);
-    }
-
-    @Test
-    @Override
-    public void testMarshallSubprocessLevelEventEmptyProperties() throws Exception {
-        checkEventMarshalling(getEmptySubprocessLevelEventId(), HAS_NO_INCOME_EDGE, HAS_NO_OUTGOING_EDGE);
-    }
-
     @Override
     String getBpmnCatchingIntermediateEventFilePath() {
         return BPMN_CATCHING_INTERMEDIATE_EVENT_FILE_PATH;
