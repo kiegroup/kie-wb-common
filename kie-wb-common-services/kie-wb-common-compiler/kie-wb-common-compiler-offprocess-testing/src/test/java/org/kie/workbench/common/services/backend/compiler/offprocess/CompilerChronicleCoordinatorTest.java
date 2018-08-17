@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
-import java.io.File;
 import java.util.UUID;
 
 import net.openhft.chronicle.core.io.IOTools;
@@ -23,7 +22,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
@@ -45,14 +43,16 @@ public class CompilerChronicleCoordinatorTest {
 
     private Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
-    private String mavenRepo;
+    private static String mavenRepo;
     private String alternateSettingsAbsPath;
 
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
 
     @BeforeClass
-    public static void setup() {
+    public static void setup() throws Exception{
+        queueProvider = new QueueProvider(queueName);
+        mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
     }
@@ -66,9 +66,6 @@ public class CompilerChronicleCoordinatorTest {
 
     @Before
     public void setUp() throws Exception {
-        String tempDir = System.getProperty("java.io.tmpdir");
-        queueProvider = new QueueProvider(tempDir + File.separator + queueName);
-        mavenRepo = TestUtilMaven.getMavenRepo();
         prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
