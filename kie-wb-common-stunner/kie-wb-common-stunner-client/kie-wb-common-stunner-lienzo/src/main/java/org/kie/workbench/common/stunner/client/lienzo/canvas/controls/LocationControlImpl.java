@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +37,8 @@ import com.ait.lienzo.client.core.shape.wires.ILocationAcceptor;
 import com.ait.lienzo.client.core.shape.wires.SelectionManager;
 import com.ait.lienzo.client.core.shape.wires.WiresContainer;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
-import com.ait.lienzo.client.core.types.BoundingBox;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
+import org.kie.workbench.common.stunner.client.lienzo.components.drag.DragBoundsEnforcer;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.Canvas;
@@ -55,9 +56,10 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasDragBounds;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasEventHandlers;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragEvent;
+import org.kie.workbench.common.stunner.core.client.shape.view.event.DragHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseEnterEvent;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseEnterHandler;
 import org.kie.workbench.common.stunner.core.client.shape.view.event.MouseExitEvent;
@@ -95,19 +97,23 @@ public class LocationControlImpl
     private final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory;
     private final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent;
     private CommandManagerProvider<AbstractCanvasHandler> commandManagerProvider;
-    private double[] boundsConstraint;
+    private Bounds boundsConstraint;
     private final Collection<String> selectedIDs = new LinkedList<>();
+    private final Event<CanvasSelectionEvent> selectionEvent;
 
     protected LocationControlImpl() {
         this(null,
+             null,
              null);
     }
 
     @Inject
     public LocationControlImpl(final CanvasCommandFactory<AbstractCanvasHandler> canvasCommandFactory,
-                               final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent) {
+                               final Event<ShapeLocationsChangedEvent> shapeLocationsChangedEvent,
+                               final Event<CanvasSelectionEvent> selectionEvent) {
         this.canvasCommandFactory = canvasCommandFactory;
         this.shapeLocationsChangedEvent = shapeLocationsChangedEvent;
+        this.selectionEvent = selectionEvent;
     }
 
     @Override
@@ -196,9 +202,7 @@ public class LocationControlImpl
 
             // Drag & constraints.
             shape.getShapeView().setDragEnabled(true);
-            if (shape.getShapeView() instanceof HasDragBounds) {
-                ensureDragConstraints((HasDragBounds<?>) shape.getShapeView());
-            }
+            ensureDragConstraints(shape.getShapeView());
 
             if (shape.getShapeView() instanceof HasEventHandlers) {
                 final HasEventHandlers hasEventHandlers = (HasEventHandlers) shape.getShapeView();
@@ -226,6 +230,30 @@ public class LocationControlImpl
                                                 outHandler);
                     registerHandler(shape.getUUID(),
                                     outHandler);
+
+                    //Adding DragHandler on the shape to check whether the moving shape is not selected, th
+                    final DragHandler dragHandler = new DragHandler() {
+                        @Override
+                        public void start(DragEvent event) {
+                            if (Objects.nonNull(selectionEvent)) {
+                                //select the moving shape, if not
+                                selectionEvent.fire(new CanvasSelectionEvent(canvasHandler, shape.getUUID()));
+                            }
+                        }
+
+                        @Override
+                        public void end(DragEvent event) {
+
+                        }
+
+                        @Override
+                        public void handle(DragEvent event) {
+
+                        }
+                    };
+
+                    hasEventHandlers.addHandler(ViewEventType.DRAG, dragHandler);
+                    registerHandler(shape.getUUID(), dragHandler);
                 }
             }
         }
@@ -303,30 +331,20 @@ public class LocationControlImpl
     }
 
     @SuppressWarnings("unchecked")
-    private void ensureDragConstraints(final HasDragBounds<?> shapeView) {
+    private void ensureDragConstraints(final ShapeView shapeView) {
         if (null == boundsConstraint) {
             boundsConstraint = getLocationBounds();
             // Selection multiple bounding constraints.
-            ifSelectionManager(s -> s.getControl().setBoundsConstraint(new BoundingBox(boundsConstraint[0],
-                                                                                       boundsConstraint[1],
-                                                                                       boundsConstraint[2],
-                                                                                       boundsConstraint[3])));
+            ifSelectionManager(s-> DragBoundsEnforcer.forSelectionManager(s).enforce(boundsConstraint));
         }
         // Shape drag bounds.
-        shapeView.setDragBounds(boundsConstraint[0],
-                                boundsConstraint[1],
-                                boundsConstraint[2],
-                                boundsConstraint[3]);
+        DragBoundsEnforcer.forShape(shapeView).enforce(boundsConstraint);
     }
 
     @SuppressWarnings("unchecked")
-    private double[] getLocationBounds() {
+    private Bounds getLocationBounds() {
         final Graph<DefinitionSet, ? extends Node> graph = canvasHandler.getDiagram().getGraph();
-        final Bounds bounds = graph.getContent().getBounds();
-        return new double[]{bounds.getUpperLeft().getX(),
-                bounds.getUpperLeft().getY(),
-                bounds.getLowerRight().getX(),
-                bounds.getLowerRight().getY()};
+        return graph.getContent().getBounds();
     }
 
     @SuppressWarnings("unchecked")
