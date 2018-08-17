@@ -46,7 +46,8 @@ public class QueueProvider {
     }
 
     private void initName(String name) {
-        queue = ChronicleQueueBuilder.single(name).build();
+        basePath = name;
+        queue = ChronicleQueueBuilder.single(basePath).build();
         logger.info(queue.toString());
     }
 
