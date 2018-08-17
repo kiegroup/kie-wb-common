@@ -15,6 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
+import java.io.File;
 import java.util.UUID;
 
 import net.openhft.chronicle.core.io.IOTools;
@@ -65,7 +66,8 @@ public class CompilerChronicleCoordinatorTest {
 
     @Before
     public void setUp() throws Exception {
-        queueProvider = new QueueProvider(queueName);
+        String tempDir = System.getProperty("java.io.tmpdir");
+        queueProvider = new QueueProvider(tempDir + File.separator + queueName);
         mavenRepo = TestUtilMaven.getMavenRepo();
         prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
