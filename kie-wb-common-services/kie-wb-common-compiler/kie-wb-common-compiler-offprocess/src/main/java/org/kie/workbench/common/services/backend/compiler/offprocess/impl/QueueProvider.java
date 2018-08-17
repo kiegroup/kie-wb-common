@@ -36,6 +36,20 @@ public class QueueProvider {
         init(queueName);
     }
 
+    public QueueProvider(String queueName, boolean initName) {
+        this.queueName = queueName;
+        if(initName){
+            initName(queueName);
+        }else{
+            init(queueName);
+        }
+    }
+
+    private void initName(String name) {
+        queue = ChronicleQueueBuilder.single(name).build();
+        logger.info(queue.toString());
+    }
+
     private void init(String name) {
         basePath = System.getProperty("java.io.tmpdir") + File.separator + name;
         queue = ChronicleQueueBuilder.single(basePath).build();

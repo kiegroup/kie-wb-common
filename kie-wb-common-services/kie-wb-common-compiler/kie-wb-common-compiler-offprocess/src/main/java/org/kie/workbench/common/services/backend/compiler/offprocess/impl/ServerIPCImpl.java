@@ -57,7 +57,9 @@ public class ServerIPCImpl {
         String queueName = args[4];
         checksQueueNameLenght(queueName);
         String threadName = Thread.currentThread().getName();
-        QueueProvider provider = new QueueProvider(queueName);
+        logger.info("queue-name on ServerIPC:{}", queueName);
+        QueueProvider provider = new QueueProvider(queueName, true);
+        logger.info("queue path son ServerIPC:{}", provider.getAbsoultePath());
         execute(workingDir, mavenRepo, alternateSettingsAbsPath, uuid, provider);
         Thread.currentThread().setName(threadName);// restore the previous name to avoid the override of the maven output
     }

@@ -53,7 +53,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     public CompilerIPCCoordinatorImpl(QueueProvider provider) {
         this.kieVersion = getKieVersion();
-        this.queueName = provider.getQueueName();
+        this.queueName = provider.getAbsoultePath();
         this.provider = provider;
         responseMap = new ResponseSharedMap();
         clientIPC = new ClientIPCImpl(responseMap, provider);
