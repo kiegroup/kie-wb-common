@@ -19,7 +19,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
 
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptAppender;
@@ -57,9 +56,7 @@ public class ServerIPCImpl {
         String queueName = args[4];
         checksQueueNameLenght(queueName);
         String threadName = Thread.currentThread().getName();
-        logger.info("queue-name on ServerIPC:{}", queueName);
         QueueProvider provider = new QueueProvider(queueName, true);
-        logger.info("queue path on ServerIPC:{}", provider.getAbsoultePath());
         execute(workingDir, mavenRepo, alternateSettingsAbsPath, uuid, provider);
         Thread.currentThread().setName(threadName);// restore the previous name to avoid the override of the maven output
     }
@@ -117,10 +114,14 @@ public class ServerIPCImpl {
     }
 
     private static void writeOnQueue(byte[] bytez, QueueProvider provider) {
-        logger.info("writeOnQueue");
+        if(logger.isDebugEnabled()) {
+            logger.debug("write On Queue");
+        }
         ExcerptAppender appender = provider.getQueue().acquireAppender();
         appender.writeBytes(Bytes.allocateDirect(bytez));
-        logger.info("last index appended:{}",appender.lastIndexAppended());
+        if(logger.isDebugEnabled()) {
+            logger.debug("last index appended:{}", appender.lastIndexAppended());
+        }
     }
 
     private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
@@ -148,8 +149,7 @@ public class ServerIPCImpl {
                                                 uuid);
         }
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
-        DefaultKieCompilationResponseOffProcess resConverted = new DefaultKieCompilationResponseOffProcess(res);
-        return resConverted;
+        return new DefaultKieCompilationResponseOffProcess(res);
     }
 
     private static byte[] serialize(Object obj) throws IOException {

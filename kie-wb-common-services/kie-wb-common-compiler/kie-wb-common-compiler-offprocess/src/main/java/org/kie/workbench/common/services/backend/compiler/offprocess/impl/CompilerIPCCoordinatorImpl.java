@@ -36,6 +36,9 @@ import org.kie.workbench.common.services.backend.compiler.offprocess.CompilerIPC
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Coordinator of the build executed in a separate process and the cleint to read the result
+ */
 public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
@@ -53,7 +56,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     public CompilerIPCCoordinatorImpl(QueueProvider provider) {
         this.kieVersion = getKieVersion();
-        this.queueName = provider.getAbsoultePath();
+        this.queueName = provider.getAbsolutePath();
         this.provider = provider;
         responseMap = new ResponseSharedMap();
         clientIPC = new ClientIPCImpl(responseMap, provider);
@@ -93,7 +96,9 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         String classpath = classpathTemplate.replace(placeholder, mavenRepo);
         try {
             invokeServerBuild(mavenRepo, projectPath, uuid, classpath, alternateSettingsAbsPath, queueName);
-            logger.info("invokeServerBuild completed");
+            if(logger.isDebugEnabled()) {
+                logger.debug("invokeServerBuild completed");
+            }
             return getCompilationResponse(uuid);
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
@@ -151,8 +156,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private void writeStdOut(ProcessBuilder builder) throws Exception {
         Process process = builder.start();
-        logger.info("Build in a separate process started");
-        process.waitFor(20, TimeUnit.SECONDS);
+        process.waitFor();
         BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
         String line;
         while ((line = reader.readLine()) != null && (!line.contains("BUILD SUCCESS") || !line.contains("BUILD FAILURE"))) {

@@ -19,11 +19,13 @@ import java.io.File;
 
 import net.openhft.chronicle.queue.ChronicleQueue;
 import net.openhft.chronicle.queue.ChronicleQueueBuilder;
-import net.openhft.chronicle.queue.impl.StoreFileListener;
 import net.openhft.chronicle.queue.impl.single.SingleChronicleQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/***
+ * Provider of the Chronicle Queue
+ */
 public class QueueProvider {
 
     private SingleChronicleQueue queue;
@@ -61,7 +63,7 @@ public class QueueProvider {
         return queue;
     }
 
-    public String getAbsoultePath() {
+    public String getAbsolutePath() {
         return basePath;
     }
 

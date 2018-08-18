@@ -45,14 +45,12 @@ public class CompilerChronicleCoordinatorTest {
     private static Path prjPath;
     private static String mavenRepo;
     private String alternateSettingsAbsPath;
-
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
 
     @BeforeClass
     public static void setup() throws Exception{
-        queueProvider = new QueueProvider(queueName);
-        logger.info("Queue path on setupTest:{}",queueProvider.getAbsoultePath());
+
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
@@ -62,24 +60,26 @@ public class CompilerChronicleCoordinatorTest {
     public static void tearDownClass() {
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
-        IOTools.shallowDeleteDirWithFiles(queueProvider.getAbsoultePath());
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        queueProvider = new QueueProvider(queueName);
         prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
     @After
     public void tearDown() {
-        IOTools.shallowDeleteDirWithFiles(queueProvider.getAbsoultePath());
+        IOTools.shallowDeleteDirWithFiles(queueProvider.getAbsolutePath());
     }
 
     @Test
     public void offProcessOneBuildTest() {
-        String uuid = UUID.randomUUID().toString();
+
+        CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
+        String uuid = UUID.randomUUID().toString();
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{
@@ -87,7 +87,7 @@ public class CompilerChronicleCoordinatorTest {
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE, uuid);
-        CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
+
         CompilationResponse res = compiler.compile(req);
         logger.info("offProcessOneBuildTest first build completed");
         assertThat(res).isNotNull();
