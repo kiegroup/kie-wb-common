@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.IOUtils;
@@ -53,6 +56,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
     private QueueProvider provider;
     private String queueName;
     private String kieVersion;
+    private ExecutorService executor;
 
     public CompilerIPCCoordinatorImpl(QueueProvider provider) {
         this.kieVersion = getKieVersion();
@@ -67,6 +71,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
+        executor = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -74,6 +79,13 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         return internalBuild(req.getMavenRepo(),
                              req.getInfo().getPrjPath().toAbsolutePath().toString(),
                              getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID());
+    }
+
+    @Override
+    public CompletableFuture compileAsync(CompilationRequest req) {
+        return CompletableFuture.supplyAsync(() -> (internalBuild(req.getMavenRepo(),
+                                                                  req.getInfo().getPrjPath().toAbsolutePath().toString(),
+                                                                  getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID())), executor);
     }
 
     private String getKieVersion(){

@@ -103,7 +103,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add(mavenRepo + "/junit/junit/4.12/junit.jar");
         targets.add(mavenRepo + "/junit/junit/4.12/junit-4.12.jar");
 
-        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
+        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo);
         assertThat(orgKie).hasSize(5);
     }
 
@@ -115,13 +115,13 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
         targets.add("/target/classes/org/kie/test/child/son/C.class");
         targets.add("/target/classes/org/kie-test/T.class");
 
-        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo.toString());
+        Set<String> orgKie = CompilerClassloaderUtils.filterPathClasses(targets, mavenRepo);
         assertThat(orgKie).hasSize(4).contains("org.kie.test", "org.kie.test.child", "org.kie.test.child.son", "org.kie-test");
     }
 
     @Test
     public void loadDependenciesClassloaderFromProject() {
-        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(), mavenRepo.toString());
+        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(tmpRoot.toString(), mavenRepo);
         assertThat(classloader).isPresent();
     }
 
@@ -129,7 +129,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
     public void loadDependenciesClassloaderFromProjectWithPomList() {
         List<String> pomList = MavenUtils.searchPoms(tmpRoot);
         assertThat(pomList).hasSize(1);
-        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList, mavenRepo.toString());
+        Optional<ClassLoader> classloader = CompilerClassloaderUtils.loadDependenciesClassloaderFromProject(pomList, mavenRepo);
         assertThat(classloader).isPresent();
     }
 
@@ -142,7 +142,7 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void getClassloaderFromAllDependencies() {
-        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo.toString());
+        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo);
         assertThat(classLoader).isPresent();
     }
 

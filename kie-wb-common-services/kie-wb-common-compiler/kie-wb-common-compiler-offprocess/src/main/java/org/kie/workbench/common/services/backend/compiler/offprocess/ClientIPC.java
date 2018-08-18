@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 
 /***
@@ -28,4 +30,5 @@ public interface ClientIPC {
      * @return
      */
     KieCompilationResponse getResponse(String uuid);
+
 }

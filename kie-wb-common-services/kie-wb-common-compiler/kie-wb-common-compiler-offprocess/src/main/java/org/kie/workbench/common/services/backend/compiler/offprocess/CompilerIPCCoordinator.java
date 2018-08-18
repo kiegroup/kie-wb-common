@@ -15,8 +15,11 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 
 public interface CompilerIPCCoordinator<T extends CompilationResponse> {
 
@@ -24,4 +27,9 @@ public interface CompilerIPCCoordinator<T extends CompilationResponse> {
      * Compile a project starting from the main POM
      */
     T compile(final CompilationRequest req);
+
+    /**
+     * Async compile a project starting from the main POM
+     */
+    CompletableFuture<T> compileAsync(final CompilationRequest req);
 }

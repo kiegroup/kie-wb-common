@@ -44,7 +44,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(tmpRoot,
-                                                                            mavenRepo.toString());
+                                                                            mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -53,7 +53,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildAndSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(tmpRoot,
-                                                                            mavenRepo.toString(),
+                                                                            mavenRepo,
                                                                             Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -63,7 +63,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     @Test
     public void buildAndInstallNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
-        CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot, mavenRepo.toString());
+        CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot, mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -72,7 +72,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildAndInstallSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot,
-                                                                                      mavenRepo.toString(),
+                                                                                      mavenRepo,
                                                                                       Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -83,7 +83,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
-                                                                            mavenRepo.toString());
+                                                                            mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
     }
@@ -92,7 +92,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildAndInstallExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
-                                                                                      mavenRepo.toString());
+                                                                                      mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getDependencies()).isNotEmpty();
@@ -103,7 +103,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildAndInstallSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
-                                                                                      mavenRepo.toString(),
+                                                                                      mavenRepo,
                                                                                       Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
@@ -114,7 +114,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildSpecializedNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot,
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE});
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -124,7 +124,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildSpecializedSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
@@ -135,7 +135,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildSpecializedSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot,
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
@@ -153,7 +153,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         override.put(path, input);
 
         CompletableFuture<KieCompilationResponse> futureRes = service.build(tmpRoot,
-                                                                            mavenRepo.toString(), override);
+                                                                            mavenRepo, override);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -169,7 +169,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         override.put(path, input);
 
         CompletableFuture<KieCompilationResponse> futureRes = service.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
-                                                                            mavenRepo.toString(),
+                                                                            mavenRepo,
                                                                             override);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
@@ -183,7 +183,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(tmpRoot.toAbsolutePath().toString(),
-                                                                            mavenRepo.toString());
+                                                                            mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -192,7 +192,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteAndSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(tmpRoot.toAbsolutePath().toString(),
-                                                                            mavenRepo.toString(),
+                                                                            mavenRepo,
                                                                             Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -202,7 +202,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     @Test
     public void buildRemoteAndInstallNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
-        CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot.toAbsolutePath().toString(), mavenRepo.toString());
+        CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot.toAbsolutePath().toString(), mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -211,7 +211,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteAndInstallSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(tmpRoot.toAbsolutePath().toString(),
-                                                                                      mavenRepo.toString(),
+                                                                                      mavenRepo,
                                                                                       Boolean.FALSE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -222,7 +222,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.build(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
-                                                                            mavenRepo.toString());
+                                                                            mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
     }
@@ -231,7 +231,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteAndInstallExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
-                                                                                      mavenRepo.toString());
+                                                                                      mavenRepo);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
         assertThat(res.getDependencies()).isNotEmpty();
@@ -242,7 +242,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteAndInstallSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildAndInstall(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
-                                                                                      mavenRepo.toString(),
+                                                                                      mavenRepo,
                                                                                       Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
@@ -253,7 +253,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteSpecializedNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot.toAbsolutePath().toString(),
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE});
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -263,7 +263,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteSpecializedSkipDepsExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
@@ -274,7 +274,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
     public void buildRemoteSpecializedSkipDepsNonExistentProject() throws Exception {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot.toAbsolutePath().toString(),
-                                                                                       mavenRepo.toString(),
+                                                                                       mavenRepo,
                                                                                        new String[]{MavenCLIArgs.COMPILE},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
