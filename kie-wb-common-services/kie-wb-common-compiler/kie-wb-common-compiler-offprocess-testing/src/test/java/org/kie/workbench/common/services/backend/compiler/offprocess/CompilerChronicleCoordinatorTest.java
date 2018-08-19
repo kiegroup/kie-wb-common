@@ -50,7 +50,6 @@ public class CompilerChronicleCoordinatorTest {
 
     @BeforeClass
     public static void setup() throws Exception{
-
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
@@ -76,7 +75,6 @@ public class CompilerChronicleCoordinatorTest {
 
     @Test
     public void offProcessOneBuildTest() {
-
         CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
         String uuid = UUID.randomUUID().toString();
@@ -87,7 +85,6 @@ public class CompilerChronicleCoordinatorTest {
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE, uuid);
-
         CompilationResponse res = compiler.compile(req);
         logger.info("offProcessOneBuildTest first build completed");
         assertThat(res).isNotNull();
@@ -111,7 +108,6 @@ public class CompilerChronicleCoordinatorTest {
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE, uuid);
-
         CompilationResponse res = compiler.compile(req);
         logger.info("offProcessTwoBuildTest first build completed");
         assertThat(res).isNotNull();
@@ -129,7 +125,6 @@ public class CompilerChronicleCoordinatorTest {
                                                                                         MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                                 },
                                                                                 Boolean.FALSE, secondUuid);
-
         CompilationResponse secondRes = compiler.compile(secondRequest);
         logger.info("offProcessTwoBuildTest second build completed");
         assertThat(secondRes).isNotNull();
@@ -137,7 +132,4 @@ public class CompilerChronicleCoordinatorTest {
         DefaultKieCompilationResponse secondKres = (DefaultKieCompilationResponse) secondRes;
         assertThat(secondUuid).isEqualToIgnoringCase(secondKres.getRequestUUID());
     }
-
-
-
 }

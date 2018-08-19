@@ -2,6 +2,8 @@ package org.kie.workbench.common.services.backend.compiler.offprocess.service;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import net.openhft.chronicle.core.io.IOTools;
 import org.junit.After;
@@ -34,10 +36,11 @@ public class CompilerOffProcessServiceTest {
     private String alternateSettingsAbsPath;
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
+    private static ExecutorService executor;
 
     @BeforeClass
     public static void setup() throws Exception{
-
+        executor = Executors.newCachedThreadPool();
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
@@ -63,7 +66,7 @@ public class CompilerOffProcessServiceTest {
 
     @Test
     public void offProcessServiceCompileAsyncTest() throws Exception {
-        CompilerOffprocessService service = new CompilerOffprocessServiceImpl();
+        CompilerOffprocessService service = new CompilerOffprocessServiceImpl(executor, queueProvider);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
         String uuid = UUID.randomUUID().toString();
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
