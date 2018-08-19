@@ -32,7 +32,12 @@
       </dependency>
       <dependency>
         <groupId>org.kie.workbench.services</groupId>
-        <artifactId>kie-wb-common-compiler-offprocess</artifactId>
+        <artifactId>kie-wb-common-compiler-offprocess-core</artifactId>
+        <version>${version.org.kie}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.kie.workbench.services</groupId>
+        <artifactId>kie-wb-common-compiler-offprocess-service</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
     </dependencies>
@@ -40,12 +45,22 @@
   <dependencies>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
-      <artifactId>kie-wb-common-compiler-offprocess</artifactId>
+      <artifactId>kie-wb-common-compiler-offprocess-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-offprocess-service</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-compiler-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.kie.workbench.services</groupId>
+      <artifactId>kie-wb-common-compiler-service</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

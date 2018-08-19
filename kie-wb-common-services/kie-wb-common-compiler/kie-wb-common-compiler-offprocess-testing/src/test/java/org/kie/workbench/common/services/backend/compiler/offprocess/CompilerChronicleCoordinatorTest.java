@@ -16,7 +16,6 @@
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import net.openhft.chronicle.core.io.IOTools;
 import org.junit.After;
@@ -31,7 +30,6 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultKieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
-import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.CompilerIPCCoordinatorImpl;
 import org.kie.workbench.common.services.backend.compiler.offprocess.impl.QueueProvider;
 import org.slf4j.Logger;
@@ -140,28 +138,6 @@ public class CompilerChronicleCoordinatorTest {
         assertThat(secondUuid).isEqualToIgnoringCase(secondKres.getRequestUUID());
     }
 
-    @Test
-    public void offProcessOneBuildAsyncTest() throws Exception {
 
-        CompilerIPCCoordinator compiler = new CompilerIPCCoordinatorImpl(queueProvider);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjPath);
-        String uuid = UUID.randomUUID().toString();
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{
-                                                                       MavenCLIArgs.COMPILE,
-                                                                       MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
-                                                               },
-                                                               Boolean.FALSE, uuid);
-
-        CompletableFuture<KieCompilationResponse> futureRes =  compiler.compileAsync(req);
-        logger.info("offProcessOneBuildAsyncTest build completed");
-        KieCompilationResponse res = futureRes.get();
-        assertThat(res).isNotNull();
-        assertThat(res.isSuccessful()).isTrue();
-        assertThat(res.getMavenOutput()).isNotEmpty();
-        DefaultKieCompilationResponse kres = (DefaultKieCompilationResponse) res;
-        assertThat(uuid).isEqualToIgnoringCase( kres.getRequestUUID());
-    }
 
 }

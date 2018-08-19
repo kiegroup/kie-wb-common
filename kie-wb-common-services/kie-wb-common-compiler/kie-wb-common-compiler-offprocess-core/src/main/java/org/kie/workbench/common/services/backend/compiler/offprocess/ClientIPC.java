@@ -15,21 +15,18 @@
  */
 package org.kie.workbench.common.services.backend.compiler.offprocess;
 
-import java.util.concurrent.CompletableFuture;
-
-import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 
-public interface CompilerIPCCoordinator<T extends CompilationResponse> {
+/***
+ * Client class to interact with the result of the separate Process build
+ */
+public interface ClientIPC {
 
-    /**
-     * Compile a project starting from the main POM
+    /***
+     * Blocking method to retrieve a KieCompilationResponse from an external process
+     * @param uuid
+     * @return
      */
-    T compile(final CompilationRequest req);
+    KieCompilationResponse getResponse(String uuid);
 
-    /**
-     * Async compile a project starting from the main POM
-     */
-    CompletableFuture<T> compileAsync(final CompilationRequest req);
 }

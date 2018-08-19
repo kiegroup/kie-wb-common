@@ -81,12 +81,6 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                              getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID());
     }
 
-    @Override
-    public CompletableFuture compileAsync(CompilationRequest req) {
-        return CompletableFuture.supplyAsync(() -> (internalBuild(req.getMavenRepo(),
-                                                                  req.getInfo().getPrjPath().toAbsolutePath().toString(),
-                                                                  getAlternateSettings(req.getOriginalArgs()),  req.getRequestUUID())), executor);
-    }
 
     private String getKieVersion(){
         ConfigurationPropertiesStrategy prop = new ConfigurationPropertiesStrategy();

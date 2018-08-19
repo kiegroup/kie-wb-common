@@ -25,7 +25,8 @@
     <module>kie-wb-common-compiler-offprocess-classpath</module>
     <module>kie-wb-common-compiler-core</module>
     <module>kie-wb-common-compiler-service</module>
-    <module>kie-wb-common-compiler-offprocess</module>
+    <module>kie-wb-common-compiler-offprocess-core</module>
+    <module>kie-wb-common-compiler-offprocess-service</module>
     <module>kie-wb-common-compiler-distribution</module>
     <module>kie-wb-common-compiler-maven-plugins-testing</module>
     <module>kie-wb-common-compiler-offprocess-testing</module>
