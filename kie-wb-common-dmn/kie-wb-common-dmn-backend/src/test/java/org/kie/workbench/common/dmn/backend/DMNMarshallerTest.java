@@ -60,7 +60,7 @@ import org.kie.dmn.api.core.DMNRuntime;
 import org.kie.dmn.api.core.ast.DecisionNode;
 import org.kie.dmn.backend.marshalling.v1_1.xstream.XStreamMarshaller;
 import org.kie.dmn.core.util.KieHelper;
-import org.kie.dmn.model.v1x.Definitions;
+import org.kie.dmn.model.api.Definitions;
 import org.kie.workbench.common.dmn.api.DMNDefinitionSet;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
@@ -928,8 +928,8 @@ public class DMNMarshallerTest {
         final DMNModel dmnModel = runtime.getModels().get(0);
 
         final DecisionNode dmnDecision = dmnModel.getDecisions().iterator().next();
-        assertTrue(dmnDecision.getDecision().getExpression() instanceof org.kie.dmn.model.v1x.FunctionDefinition);
-        final org.kie.dmn.model.v1x.FunctionDefinition dmnFunction = (org.kie.dmn.model.v1x.FunctionDefinition) dmnDecision.getDecision().getExpression();
+        assertTrue(dmnDecision.getDecision().getExpression() instanceof org.kie.dmn.model.api.FunctionDefinition);
+        final org.kie.dmn.model.api.FunctionDefinition dmnFunction = (org.kie.dmn.model.api.FunctionDefinition) dmnDecision.getDecision().getExpression();
         assertTrue(dmnFunction.getAdditionalAttributes().containsKey(org.kie.dmn.model.v1_1.TFunctionDefinition.KIND_QNAME));
         assertEquals("J",
                      dmnFunction.getAdditionalAttributes().get(org.kie.dmn.model.v1_1.TFunctionDefinition.KIND_QNAME));
@@ -1002,10 +1002,10 @@ public class DMNMarshallerTest {
 
         DecisionNode d0 = dmnModel.getDecisionById("_653b3426-933a-4050-9568-ab2a66b43c36");
         // the identified DMN Decision is composed of a DMN Context where the first context-entry value is a literal expression missing text (text is null).
-        org.kie.dmn.model.v1x.Context d0c = (org.kie.dmn.model.v1x.Context) d0.getDecision().getExpression();
-        org.kie.dmn.model.v1x.Expression contextEntryValue = d0c.getContextEntry().get(0).getExpression();
-        assertTrue(contextEntryValue instanceof org.kie.dmn.model.v1x.LiteralExpression);
-        assertEquals(null, ((org.kie.dmn.model.v1x.LiteralExpression) contextEntryValue).getText());
+        org.kie.dmn.model.api.Context d0c = (org.kie.dmn.model.api.Context) d0.getDecision().getExpression();
+        org.kie.dmn.model.api.Expression contextEntryValue = d0c.getContextEntry().get(0).getExpression();
+        assertTrue(contextEntryValue instanceof org.kie.dmn.model.api.LiteralExpression);
+        assertEquals(null, ((org.kie.dmn.model.api.LiteralExpression) contextEntryValue).getText());
 
         // -- Stunner side.
 
