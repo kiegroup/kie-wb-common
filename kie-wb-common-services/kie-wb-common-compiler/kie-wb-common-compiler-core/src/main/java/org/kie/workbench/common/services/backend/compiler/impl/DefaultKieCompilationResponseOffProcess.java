@@ -63,7 +63,7 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
 
     public DefaultKieCompilationResponseOffProcess(KieCompilationResponse res) {
         this.kieModuleMetaInfo = res.getKieModuleMetaInfo().orElse(null);
-        this.kieModule = res.getKieModule().get();
+        this.kieModule = res.getKieModule().orElse(null);
         this.successful = res.isSuccessful();
         this.requestUUID = ((DefaultKieCompilationResponse) res).getRequestUUID();
         this.projectClassLoaderStore = Optional.ofNullable(res.getProjectClassLoaderStore()).orElse(Collections.emptyMap());
