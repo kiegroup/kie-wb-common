@@ -31,30 +31,32 @@ import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitive;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
+import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGPrimitiveFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
 public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize<SVGShapeViewImpl> {
+
+    public static final String VALUE_STAGE__CRHT = " M 163 51 H 2.6 c -0.9 0 -1.7 -0.5 -2.2 -1.2 c -0.5 -0.8 -0.5 -1.7 0 -2.5 l 12.8 -23 c 0.3 -0.5 0.2 -1.1 -0.1 -1.5 L 0.8 3.9 c -0.5 -0.8 -0.6 -1.8 -0.1 -2.6 c 0.4 -0.8 1.3 -1.3 2.2 -1.3 h 160.2 c 0.9 0 1.6 0.4 2.1 1.2 l 13.8 21.6 c 0.5 0.8 0.5 1.8 0.1 2.6 l -13.9 24.3 C 164.8 50.5 163.9 51 163 51 z";
 
     private final double minWidth;
     private final double minHeight;
     private final Optional<MultiPath> optDropZone;
     private double currentWidth;
     private double currentHeight;
-    private final SVGShapeViewImpl svgShapeView;
     private final ILayoutHandler layoutHandler;
+    private final String shapeLabel;
 
-    public CaseManagementShapeView(SVGShapeViewImpl svgShapeView) {
-        this(svgShapeView, null);
+    public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, String shapeLabel) {
+        this(svgShapeView, shapeLabel, null);
     }
 
-    public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, ILayoutHandler layoutHandler) {
+    public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, String shapeLabel, ILayoutHandler layoutHandler) {
         super(svgShapeView.getName(),
               (SVGPrimitiveShape) svgShapeView.getPrimitive(),
               ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getWidth(),
               ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getHeight(),
               false);
 
-        this.svgShapeView = svgShapeView;
         this.layoutHandler = layoutHandler;
         this.minWidth = svgShapeView.getBoundingBox().getWidth();
         this.minHeight = svgShapeView.getBoundingBox().getHeight();
@@ -62,12 +64,9 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         this.currentHeight = minHeight;
         this.optDropZone = makeDropZone();
         this.optDropZone.ifPresent((dz) -> dz.setDraggable(false));
+        this.shapeLabel = shapeLabel;
 
-
-
-
-
-        setTitle(svgShapeView.getName());
+        setTitle(shapeLabel);
         svgShapeView.getTextViewDecorator().moveTitleToTop();
         refresh();
 
@@ -122,11 +121,16 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         getLayoutHandler().requestLayout(this);
     }
 
+    public void addShapeAtNextIndex(final WiresShape shape) {
+        addShape(shape, getChildShapes().size());
+    }
+
     public void addShape(final WiresShape shape, final int targetIndex) {
 
         if (shape == null || (targetIndex < 0 || targetIndex > getChildShapes().size())) {
             return;
         }
+        GWT.log("adding shape at target index: " + targetIndex);
         final List<WiresShape> existingChildShapes = new ArrayList<>();
 
         existingChildShapes.addAll(getChildShapes().toList());
@@ -186,8 +190,31 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
     }
 
     protected CaseManagementShapeView createGhost() {
-        SVGShapeViewImpl newView = new SVGShapeViewImpl(svgShapeView.getName(), (SVGPrimitiveShape) svgShapeView.getPrimitive(), 0d, 0d, false);
-        CaseManagementShapeView ghost = new CaseManagementShapeView(newView, layoutHandler);
+
+        SVGPrimitiveShape mainShape = SVGPrimitiveFactory.newSVGPrimitiveShape(
+                new com.ait.lienzo.client.core.shape.MultiPath(VALUE_STAGE__CRHT)
+                        .setDraggable(false)
+                        .setID("stage__RYU6")
+                        .setX(0.00)
+                        .setY(0.00)
+                        .setAlpha(1.00)
+                        .setListening(true)
+                        .setScale(1.00, 1.00)
+                        .setOffset(0.00, 0.00)
+                        .setFillColor("#ffffff")
+                        .setStrokeColor("#393f44")
+                        .setStrokeWidth(1.50), true, null);
+
+        SVGShapeViewImpl newView = new SVGShapeViewImpl("stage",
+//                                                        SVGPrimitiveFactory.newSVGPrimitiveShape(getShape(), false, null),
+                                                        mainShape,
+                                                        0d,
+                                                        0d,
+                                                        false);
+
+
+        CaseManagementShapeView ghost = new CaseManagementShapeView(newView, shapeLabel, layoutHandler);
+
         for (WiresShape wiresShape : getChildShapes()) {
             final CaseManagementShapeView shapeView = ((CaseManagementShapeView) wiresShape).getGhost();
             ghost.add(shapeView);

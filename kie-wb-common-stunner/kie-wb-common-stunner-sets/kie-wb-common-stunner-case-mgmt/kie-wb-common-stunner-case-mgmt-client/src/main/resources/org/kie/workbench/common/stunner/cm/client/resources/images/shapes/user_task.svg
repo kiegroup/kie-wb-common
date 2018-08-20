@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright 2017 Red Hat, Inc. and/or its affiliates.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License atå
+  ~
+  ~   http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<!-- add  filter="url(#selectShadow)"  to make the selection shadow -->
+<svg id="user_task" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:stunner="http://kiegroup.org/2017/stunner"
+     x="0px" y="0px"
+     width="150px" height="98px"
+     viewBox="0 0 150 98">
+
+  <rect class="stage_child" x="0" y="0" width="148.5" height="96.5" rx="2"/>
+
+  <g class="task_group_user" stunner:transform="non-scalable" transform="translate(10,10) scale(0.05,0.05)">
+    <path class="icon" d="M262.4,286.9c-10.5-1.6-10.8-27.2-10.7-30.4c8.2-3.2,30.7-30.4,37.5-71.3c18,0,40.8-56.9,11.1-56.9
+	C301.1,112.3,323.4,0,210,0s-91.1,111.8-90.3,127.8c-31,0-6.9,57.3,11.1,57.3c6.7,40.9,27.9,68,37.5,71.3
+	c-1.1,3.3-0.2,28.8-10.7,30.4C123.9,292.3,0,359.1,0,420h420C420,359.1,296.1,292.3,262.4,286.9L262.4,286.9z"/>
+  </g>
+</svg>

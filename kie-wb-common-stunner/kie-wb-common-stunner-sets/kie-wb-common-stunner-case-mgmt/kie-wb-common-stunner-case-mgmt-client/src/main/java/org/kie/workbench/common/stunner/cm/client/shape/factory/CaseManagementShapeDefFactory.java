@@ -20,10 +20,9 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
-import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.WiresTextDecorator;
+import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgDiagramShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgNullShapeDef;
@@ -31,14 +30,12 @@ import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgSha
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgSubprocessShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgTaskShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
-import org.kie.workbench.common.stunner.cm.client.wires.CaseManagementContainmentControl;
 import org.kie.workbench.common.stunner.cm.client.wires.HorizontalStackLayoutManager;
 import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
+import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeDefFactory;
-import org.kie.workbench.common.stunner.core.client.shape.view.HasTitle;
-import org.kie.workbench.common.stunner.core.util.UUID;
 import org.kie.workbench.common.stunner.svg.client.shape.SVGShape;
 import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
@@ -48,6 +45,11 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
 
     private final SVGShapeFactory svgShapeFactory;
     private final CaseManagementShapeDefFunctionalFactory<BPMNDefinition, CaseManagementSvgShapeDef, Shape> functionalFactory;
+
+    private static final String CM_STAGE = "stage";
+    private static final String CM_TASK = "task";
+    private static final String CM_SUBCASE = "subcase";
+    private static final String CM_SUBPROCESS = "subprocess";
 
     // CDI Proxy
     @SuppressWarnings("unused")
@@ -86,8 +88,9 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
 
         SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
         SVGShapeViewImpl svgShapeView = (SVGShapeViewImpl) shape.getShapeView();
+        svgShapeView.setUserData(new WiresUtils.UserData());
 
-        return new CaseManagementShape(new CaseManagementShapeView(svgShapeView, new HorizontalStackLayoutManager()));
+        return new CaseManagementShape(new CaseManagementShapeView(svgShapeView, "", new HorizontalStackLayoutManager()));
     }
 
     @SuppressWarnings("unchecked")
@@ -95,13 +98,14 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
 
         SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
         SVGShapeViewImpl svgShapeView = (SVGShapeViewImpl) shape.getShapeView();
-
+        svgShapeView.setUserData(new WiresUtils.UserData());
 //        svgShapeView.setFillAlpha(0.25d);
 
         if (instance instanceof AdHocSubprocess) {
-            return new CaseManagementShape(new CaseManagementShapeView(svgShapeView, new VerticalStackLayoutManager()));
+            return new CaseManagementShape(new CaseManagementShapeView(svgShapeView, CM_STAGE, new VerticalStackLayoutManager()));
         } else {
-            return new CaseManagementShape(new CaseManagementShapeView(svgShapeView));
+            return new CaseManagementShape(new CaseManagementShapeView(svgShapeView,
+                                                                       instance instanceof ReusableSubprocess ? CM_SUBCASE : CM_SUBPROCESS));
         }
     }
 
@@ -110,7 +114,9 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
 
         SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
         SVGShapeViewImpl svgShapeView = (SVGShapeViewImpl) shape.getShapeView();
+        svgShapeView.setUserData(new WiresUtils.UserData());
+//        svgShapeView.setFillAlpha(0.25d);
 
-        return new CaseManagementShape(new CaseManagementShapeView(svgShapeView));
+        return new CaseManagementShape(new CaseManagementShapeView(svgShapeView, CM_TASK));
     }
 }

@@ -52,6 +52,10 @@
     stroke-miterlimit:10;
 }
 
+.icon {
+    fill:#4D5258;
+}
+
 .stage_strip {
     fill:#EDEDED;
     stroke:#BBBBBB;

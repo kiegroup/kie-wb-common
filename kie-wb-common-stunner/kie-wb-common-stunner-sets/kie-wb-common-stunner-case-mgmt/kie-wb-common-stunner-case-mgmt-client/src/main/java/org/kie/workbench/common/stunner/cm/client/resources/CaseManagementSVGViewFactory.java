@@ -27,9 +27,9 @@ public interface CaseManagementSVGViewFactory {
 
     String PATH_CSS = "images/shapes/cm-shapes.css";
     String PATH_STAGE = "images/shapes/stage.svg";
-    String PATH_TASK = "images/shapes/stage_child.svg";
-    String PATH_SUBPROCESS = "images/shapes/stage_child.svg";
-    String PATH_SUBCASE = "images/shapes/stage_child.svg";
+    String PATH_TASK = "images/shapes/user_task.svg";
+    String PATH_SUBPROCESS = "images/shapes/subprocess.svg";
+    String PATH_SUBCASE = "images/shapes/subcase.svg";
     String PATH_RECTANGLE = "images/shapes/rectangle.svg";
 
     @SVGSource(PATH_STAGE)

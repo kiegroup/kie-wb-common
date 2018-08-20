@@ -28,7 +28,7 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewI
 public class HorizontalStackLayoutManager extends AbstractNestedLayoutHandler {
 
     static final double LEFT_MARGIN_PADDING =65.0;
-    static final double PADDING_X = 5.0;
+    static final double PADDING_X = 15.0;
     static final double PADDING_Y = 25.0;
 
     @Override
