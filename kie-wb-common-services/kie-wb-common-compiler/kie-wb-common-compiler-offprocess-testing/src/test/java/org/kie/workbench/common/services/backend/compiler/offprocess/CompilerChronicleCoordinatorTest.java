@@ -44,32 +44,25 @@ public class CompilerChronicleCoordinatorTest {
     private static Logger logger = LoggerFactory.getLogger(CompilerChronicleCoordinatorTest.class);
     private static Path prjPath;
     private static String mavenRepo;
-    private String alternateSettingsAbsPath;
+    private static String alternateSettingsAbsPath;
     private static String queueName = "offprocess-queue-test";
     private static QueueProvider queueProvider;
 
     @BeforeClass
     public static void setup() throws Exception{
+        queueProvider = new QueueProvider(queueName);
+        logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+        prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
+        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
     @AfterClass
     public static void tearDownClass() {
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
-    }
-
-    @Before
-    public void setUp() {
-        queueProvider = new QueueProvider(queueName);
-        prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
-        alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
-    }
-
-    @After
-    public void tearDown() {
         IOTools.shallowDeleteDirWithFiles(queueProvider.getAbsolutePath());
     }
 

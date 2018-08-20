@@ -32,7 +32,7 @@
   <logger name="org.kie" level="INFO"/>
   <logger name="org.guvnor" level="INFO"/>
   <logger name="org.kie.workbench.common.services.backend.compiler.offprocess" level="DEBUG"/>
-  
+
   <root level="INFO">
     <appender-ref ref="KieSift"/>
     <appender-ref ref="consoleAppender"/>
