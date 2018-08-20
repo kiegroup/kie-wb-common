@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -56,7 +57,6 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
     private QueueProvider provider;
     private String queueName;
     private String kieVersion;
-    private ExecutorService executor;
 
     public CompilerIPCCoordinatorImpl(QueueProvider provider) {
         this.kieVersion = getKieVersion();
@@ -71,7 +71,6 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        executor = Executors.newCachedThreadPool();
     }
 
     @Override
@@ -127,6 +126,8 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
                         javaBin,
                         "-cp",
                         getClasspathIncludedCurrentModuleDep(mavenRepo, classpath),
+                        "-Dorg.uberfire.nio.git.daemon.enabled=false",
+                        "-Dorg.uberfire.nio.ssh.daemon.enabled=false",
                         ServerIPCImpl.class.getCanonicalName(),
                         uuid,
                         projectPath,
