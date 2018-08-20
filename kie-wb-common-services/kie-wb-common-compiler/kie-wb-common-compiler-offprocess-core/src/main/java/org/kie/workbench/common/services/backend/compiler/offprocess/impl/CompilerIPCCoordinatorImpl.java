@@ -46,7 +46,7 @@ public class CompilerIPCCoordinatorImpl implements CompilerIPCCoordinator {
 
     private Logger logger = LoggerFactory.getLogger(CompilerIPCCoordinatorImpl.class);
     private static final String placeholder = "<maven_repo>";
-    private static final String mavenModuleName = "kie-wb-common-compiler-offprocess";
+    private static final String mavenModuleName = "kie-wb-common-compiler-offprocess-core";
     private static final String classpathFile = "offprocess.classpath.template";
     private String javaHome;
     private String javaBin;
