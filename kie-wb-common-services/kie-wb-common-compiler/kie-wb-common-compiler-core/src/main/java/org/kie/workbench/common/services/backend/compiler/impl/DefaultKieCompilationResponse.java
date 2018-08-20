@@ -126,9 +126,7 @@ public class DefaultKieCompilationResponse implements KieCompilationResponse,
         if(workingDir!= null){
            return Paths.get("file://"+workingDir);
         }
-        else{
-            return null;
-        }
+        return null;
     }
 
     @Override

@@ -49,7 +49,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
     private String mavenRepo;
     private Path tmpRoot;
     private Path temp;
-    private Logger logger = LoggerFactory.getLogger(KieDefaultMavenIncrementalCompilerTest.class);
+    private final Logger logger = LoggerFactory.getLogger(KieDefaultMavenIncrementalCompilerTest.class);
 
     @Rule
     public TestName testName = new TestName();

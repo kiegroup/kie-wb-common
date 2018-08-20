@@ -40,11 +40,11 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private Path workingDir;
     private String requestUUID;
 
-    private List<String> projectDependencies ;
+    private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> targetContent ;
+    private List<String> targetContent = Collections.emptyList();
     private List<URI> targetContentAsURI = Collections.emptyList();
     private List<URL> targetContentAsURL = Collections.emptyList();
 
@@ -82,9 +82,8 @@ public class DefaultCompilationResponse implements CompilationResponse,
     private <T> List<T> nullToEmpty(List<T> list) {
         if (list == null) {
             return Collections.emptyList();
-        } else {
-            return new ArrayList<>(list);
         }
+        return new ArrayList<>(list);
     }
 
     public Boolean isSuccessful() {

@@ -43,11 +43,11 @@ public class DefaultKieCompilationResponseOffProcess implements Serializable {
     private String workingDir;
     private String requestUUID;
 
-    private List<String> projectDependencies;
+    private List<String> projectDependencies = Collections.emptyList();
     private List<URI> projectDependenciesAsURI = Collections.emptyList();
     private List<URL> projectDependenciesAsURL = Collections.emptyList();
 
-    private List<String> targetContent;
+    private List<String> targetContent = Collections.emptyList();
     private List<URI> targetContentAsURI = Collections.emptyList();
     private List<URL> targetContentAsURL = Collections.emptyList();
 

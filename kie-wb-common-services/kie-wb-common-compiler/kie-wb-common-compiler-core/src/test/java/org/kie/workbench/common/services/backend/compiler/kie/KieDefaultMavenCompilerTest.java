@@ -64,7 +64,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieDefaultMavenCompilerTest {
 
-    private static Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(KieDefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
