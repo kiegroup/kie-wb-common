@@ -27,39 +27,39 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Relation;
 
 public class ExpressionPropertyConverter {
 
-    public static Expression wbFromDMN(final org.kie.dmn.model.v1_1.Expression dmn) {
+    public static Expression wbFromDMN(final org.kie.dmn.model.v1x.Expression dmn) {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // consider a LiteralExpression with null text as missing expression altogether.
-        if (dmn instanceof org.kie.dmn.model.v1_1.LiteralExpression) {
-            org.kie.dmn.model.v1_1.LiteralExpression literalExpression = (org.kie.dmn.model.v1_1.LiteralExpression) dmn;
+        if (dmn instanceof org.kie.dmn.model.v1x.LiteralExpression) {
+            org.kie.dmn.model.v1x.LiteralExpression literalExpression = (org.kie.dmn.model.v1x.LiteralExpression) dmn;
             if (literalExpression.getText() == null) {
                 return null;
             }
         }
 
-        if (dmn instanceof org.kie.dmn.model.v1_1.LiteralExpression) {
-            return LiteralExpressionPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.LiteralExpression) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.Context) {
-            return ContextPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.Context) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.Relation) {
-            return RelationPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.Relation) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.List) {
-            return ListPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.List) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.Invocation) {
-            return InvocationPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.Invocation) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.FunctionDefinition) {
-            return FunctionDefinitionPropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.FunctionDefinition) dmn);
-        } else if (dmn instanceof org.kie.dmn.model.v1_1.DecisionTable) {
-            return DecisionTablePropertyConverter.wbFromDMN((org.kie.dmn.model.v1_1.DecisionTable) dmn);
+        if (dmn instanceof org.kie.dmn.model.v1x.LiteralExpression) {
+            return LiteralExpressionPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.LiteralExpression) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.Context) {
+            return ContextPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.Context) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.Relation) {
+            return RelationPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.Relation) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.List) {
+            return ListPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.List) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.Invocation) {
+            return InvocationPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.Invocation) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.FunctionDefinition) {
+            return FunctionDefinitionPropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.FunctionDefinition) dmn);
+        } else if (dmn instanceof org.kie.dmn.model.v1x.DecisionTable) {
+            return DecisionTablePropertyConverter.wbFromDMN((org.kie.dmn.model.v1x.DecisionTable) dmn);
         }
         return null;
     }
 
-    public static org.kie.dmn.model.v1_1.Expression dmnFromWB(final Expression wb) {
+    public static org.kie.dmn.model.v1x.Expression dmnFromWB(final Expression wb) {
         // SPECIAL CASE: to represent a partially edited DMN file.
         // reference above.
         if (wb == null) {
-            org.kie.dmn.model.v1_1.LiteralExpression mockedExpression = new org.kie.dmn.model.v1_1.LiteralExpression();
+            org.kie.dmn.model.v1x.LiteralExpression mockedExpression = new org.kie.dmn.model.v1_1.TLiteralExpression();
             return mockedExpression;
         }
 
