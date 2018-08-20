@@ -112,7 +112,13 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
 
     public void addChildElement(PropertyWriter p) {
         this.childElements.put(p.getElement().getId(), p);
-        process.getFlowElements().add(p.getFlowElement());
+        // compatibility fix: boundary events should always occur at the bottom
+        // otherwise they will be drawn at an incorrect position on load
+        if (p instanceof BoundaryEventPropertyWriter) {
+            process.getFlowElements().add(p.getFlowElement());
+        } else {
+            process.getFlowElements().add(0, p.getFlowElement());
+        }
 
         ElementParameters simulationParameters = p.getSimulationParameters();
         if (simulationParameters != null) {

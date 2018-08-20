@@ -136,6 +136,8 @@ public abstract class BPMNDiagramMarshallerBase {
     private CloneManager cloneManager;
     @Mock
     private FactoryManager applicationFactoryManager;
+    @Mock
+    protected GraphCommandManager commandManager;
 
     private EdgeFactory<Object> connectionEdgeFactory;
     private NodeFactory<Object> viewNodeFactory;
@@ -329,9 +331,6 @@ public abstract class BPMNDiagramMarshallerBase {
                 new NodeFactoryImpl(definitionUtils)
         );
 
-        GraphCommandManagerImpl commandManager = new GraphCommandManagerImpl(null,
-                                                                             null,
-                                                                             null);
         GraphCommandFactory commandFactory = new GraphCommandFactory();
 
         // The tested BPMN marshaller.
