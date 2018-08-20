@@ -55,7 +55,7 @@ public class CompilerChronicleCoordinatorTest {
         mavenRepo = TestUtilMaven.getMavenRepo();
         System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
-        prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
+        prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 

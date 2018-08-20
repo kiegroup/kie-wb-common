@@ -126,7 +126,7 @@ public class ServerIPCImpl {
 
     private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(prjPath));
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get("file://"+prjPath));
         CompilationRequest req;
         if (StringUtils.isNotEmpty(alternateSettingsAbsPath)) {
             req = new DefaultCompilationRequest(mavenRepo,

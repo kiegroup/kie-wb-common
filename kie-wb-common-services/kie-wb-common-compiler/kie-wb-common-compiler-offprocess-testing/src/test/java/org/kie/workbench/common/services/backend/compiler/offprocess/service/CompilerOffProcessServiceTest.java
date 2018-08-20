@@ -46,7 +46,7 @@ public class CompilerOffProcessServiceTest {
         System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
         queueProvider = new QueueProvider(queueName);
         logger.info("queue on test setup:{}", queueProvider.getAbsolutePath());
-        prjPath = Paths.get("target/test-classes/kjar-2-single-resources");
+        prjPath = Paths.get("file://"+System.getProperty("user.dir")+"/target/test-classes/kjar-2-single-resources");
         alternateSettingsAbsPath = TestUtilMaven.getSettingsFile();
     }
 
