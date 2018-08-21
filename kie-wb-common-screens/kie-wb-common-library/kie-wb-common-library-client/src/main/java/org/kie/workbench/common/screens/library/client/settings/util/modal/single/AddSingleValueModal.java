@@ -42,6 +42,8 @@ public class AddSingleValueModal extends Elemental2Modal<AddSingleValueModal.Vie
         void setHeader(final String header);
 
         void setLabel(final String label);
+        
+        void setValue(final String value);
     }
 
     @Inject
@@ -56,16 +58,21 @@ public class AddSingleValueModal extends Elemental2Modal<AddSingleValueModal.Vie
 
         getView().setHeader(translationService.format(headerKey));
         getView().setLabel(translationService.format(labelKey));
-        super.setup();
+        setup();
     }
 
     public void show(final Consumer<String> onAdd) {
         this.onAdd = onAdd;
         getView().clearForm();
-        super.show();
+        show();
         getView().focus();
     }
 
+    public void show(final Consumer<String> onAdd, final String value) {
+    	show(onAdd);
+    	getView().setValue(value);
+    }
+    
     public void add() {
         onAdd.accept(getView().getValue());
         hide();

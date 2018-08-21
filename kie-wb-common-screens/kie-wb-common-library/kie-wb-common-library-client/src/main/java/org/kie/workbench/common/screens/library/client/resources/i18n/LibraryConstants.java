@@ -366,6 +366,9 @@ public class LibraryConstants {
     public static final String AddIncludedKnowledgeBase = "AddIncludedKnowledgeBase";
 
     @TranslationKey(defaultValue = "")
+    public static final String EditIncludedKnowledgeBase = "EditIncludedKnowledgeBase";
+
+    @TranslationKey(defaultValue = "")
     public static final String PackageName = "PackageName";
 
     @TranslationKey(defaultValue = "")
@@ -426,10 +429,19 @@ public class LibraryConstants {
     public static final String AddGlobal = "AddGlobal";
 
     @TranslationKey(defaultValue = "")
+    public static final String EditGlobal = "EditGlobal";
+
+    @TranslationKey(defaultValue = "")
     public static final String AddEventListener = "AddEventListener";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditEventListener = "EditEventListener";
 
     @TranslationKey(defaultValue = "")
     public static final String AddRequiredRole = "AddRequiredRole";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditRequiredRole = "EditRequiredRole";
 
     @TranslationKey(defaultValue = "")
     public static final String AddRemoteableClass = "AddRemoteableClass";
@@ -441,13 +453,22 @@ public class LibraryConstants {
     public static final String AddConfiguration = "AddConfiguration";
 
     @TranslationKey(defaultValue = "")
+    public static final String EditConfiguration = "EditConfiguration";
+
+    @TranslationKey(defaultValue = "")
     public static final String AddEnvironmentHandler = "AddEnvironmentHandler";
 
     @TranslationKey(defaultValue = "")
     public static final String AddWorkItemHandler = "AddWorkItemHandler";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditWorkItemHandler = "EditWorkItemHandler";
 
     @TranslationKey(defaultValue = "")
     public static final String AddEnvironmentEntry = "AddEnvironmentEntry";
+
+    @TranslationKey(defaultValue = "")
+    public static final String EditEnvironmentEntry = "EditEnvironmentEntry";
 
     @TranslationKey(defaultValue = "")
     public static final String ProjectScreenSettings = "ProjectScreenSettings";
