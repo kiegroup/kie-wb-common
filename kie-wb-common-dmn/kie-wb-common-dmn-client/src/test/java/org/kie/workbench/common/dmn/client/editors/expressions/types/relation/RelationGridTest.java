@@ -134,9 +134,6 @@ public class RelationGridTest {
     @Mock
     private GridColumn parentGridColumn;
 
-    //    @Mock
-    private Decision hasExpression = new Decision();
-
     @Mock
     private Viewport viewport;
 
@@ -209,6 +206,8 @@ public class RelationGridTest {
     private GridCellTuple parent;
 
     private Relation relation = new Relation();
+
+    private Decision hasExpression = new Decision();
 
     private Optional<Relation> expression = Optional.of(relation);
 
