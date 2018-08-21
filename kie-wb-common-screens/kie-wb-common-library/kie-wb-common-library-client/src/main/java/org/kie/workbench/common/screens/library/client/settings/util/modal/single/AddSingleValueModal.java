@@ -42,6 +42,8 @@ public class AddSingleValueModal extends Elemental2Modal<AddSingleValueModal.Vie
         void setHeader(final String header);
 
         void setLabel(final String label);
+        
+        void setValue(final String value);
     }
 
     @Inject

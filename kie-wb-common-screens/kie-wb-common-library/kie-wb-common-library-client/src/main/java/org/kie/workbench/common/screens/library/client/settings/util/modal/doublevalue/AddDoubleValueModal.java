@@ -46,6 +46,10 @@ public class AddDoubleValueModal extends Elemental2Modal<AddDoubleValueModal.Vie
         void setNameLabel(final String label);
 
         void setValueLabel(final String label);
+        
+        void setName(final String name);
+        
+        void setValue(final String value);
     }
 
     @Inject
