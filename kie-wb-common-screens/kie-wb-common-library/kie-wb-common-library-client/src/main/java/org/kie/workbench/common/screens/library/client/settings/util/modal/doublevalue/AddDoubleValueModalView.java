@@ -134,4 +134,14 @@ public class AddDoubleValueModalView implements AddDoubleValueModal.View {
     public void setValueLabel(final String label) {
         this.valueLabel.textContent = label;
     }
+
+    @Override
+    public void setName(String name) {
+        this.name.value = name;
+    }
+
+    @Override
+    public void setValue(String value) {
+        this.value.value = value;
+    }
 }

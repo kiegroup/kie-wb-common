@@ -427,9 +427,15 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddEventListener = "AddEventListener";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditEventListener = "EditEventListener";
 
     @TranslationKey(defaultValue = "")
     public static final String AddRequiredRole = "AddRequiredRole";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditRequiredRole = "EditRequiredRole";
 
     @TranslationKey(defaultValue = "")
     public static final String AddRemoteableClass = "AddRemoteableClass";
@@ -445,6 +451,9 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String AddWorkItemHandler = "AddWorkItemHandler";
+    
+    @TranslationKey(defaultValue = "")
+    public static final String EditWorkItemHandler = "EditWorkItemHandler";
 
     @TranslationKey(defaultValue = "")
     public static final String AddEnvironmentEntry = "AddEnvironmentEntry";
