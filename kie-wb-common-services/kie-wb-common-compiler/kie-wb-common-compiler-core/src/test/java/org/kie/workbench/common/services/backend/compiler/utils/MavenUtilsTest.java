@@ -16,10 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler.utils;
 
-import java.io.File;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.appformer.maven.integration.Aether;
 import org.assertj.core.api.SoftAssertions;
@@ -27,6 +25,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenRepos;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
+import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,15 +69,13 @@ public class MavenUtilsTest {
     @Test
     public void getMavenLocalRepoDirTest() {
         String testRepo = MavenUtils.getMavenRepoDir(MavenRepos.LOCAL);
-        File mavenRepository = FileUtils.getFile(testRepo);
-        assertThat(mavenRepository).isDirectory();
+        assertThat(Files.isDirectory(Paths.get(testRepo))).isTrue();
     }
 
     @Test
     public void getMavenGlobalRepoDirTest() {
         System.setProperty(GLOBAL_M2_REPO_NAME, Aether.getAether().getLocalRepository().getUrl());
         String testRepo = MavenUtils.getMavenRepoDir(MavenRepos.GLOBAL);
-        File mavenRepository = FileUtils.getFile(testRepo);
-        assertThat(mavenRepository).isDirectory();
+        assertThat(Files.isDirectory(Paths.get(testRepo))).isTrue();
     }
 }
