@@ -46,9 +46,7 @@ import org.uberfire.mocks.EventSourceMock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -75,6 +73,9 @@ public class DMNEditBusinessKnowledgeModelToolboxActionTest {
 
     @Mock
     private EventSourceMock<EditExpressionEvent> editExpressionEvent;
+
+    @Mock
+    private MouseClickEvent mouseClickEvent;
 
     private DMNEditBusinessKnowledgeModelToolboxAction tested;
     private BusinessKnowledgeModel bkm;
@@ -111,10 +112,9 @@ public class DMNEditBusinessKnowledgeModelToolboxActionTest {
 
     @Test
     public void testAction() {
-        final MouseClickEvent event = mock(MouseClickEvent.class);
         final ToolboxAction<AbstractCanvasHandler> cascade = tested.onMouseClick(canvasHandler,
                                                                                  E_UUID,
-                                                                                 event);
+                                                                                 mouseClickEvent);
         assertEquals(tested,
                      cascade);
 
@@ -135,13 +135,21 @@ public class DMNEditBusinessKnowledgeModelToolboxActionTest {
                      editExprEvent.getHasName().get());
         assertEquals(session,
                      editExprEvent.getSession());
+    }
 
-        try {
-            hasExpression.setExpression(new DecisionTable());
-        } catch (UnsupportedOperationException use) {
-            //This is expected
-        } catch (Exception e) {
-            fail();
-        }
+    @Test(expected = UnsupportedOperationException.class)
+    public void testActionSetExpression() {
+        tested.onMouseClick(canvasHandler,
+                            E_UUID,
+                            mouseClickEvent);
+
+        final ArgumentCaptor<EditExpressionEvent> eventCaptor = ArgumentCaptor.forClass(EditExpressionEvent.class);
+        verify(editExpressionEvent,
+               times(1)).fire(eventCaptor.capture());
+
+        final EditExpressionEvent editExprEvent = eventCaptor.getValue();
+        final HasExpression hasExpression = editExprEvent.getHasExpression();
+
+        hasExpression.setExpression(new DecisionTable());
     }
 }
