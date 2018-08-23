@@ -29,6 +29,8 @@ import bpsim.Scenario;
 import bpsim.ScenarioParameters;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
+import org.eclipse.bpmn2.FlowElementsContainer;
+import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.Property;
@@ -111,24 +113,16 @@ public class ProcessPropertyWriter extends BasePropertyWriter implements Element
     }
 
     public void addChildElement(PropertyWriter p) {
-        this.childElements.put(p.getElement().getId(), p);
-        // compatibility fix: boundary events should always occur at the bottom
-        // otherwise they will be drawn at an incorrect position on load
-        if (p instanceof BoundaryEventPropertyWriter) {
-            process.getFlowElements().add(p.getFlowElement());
-        } else {
-            process.getFlowElements().add(0, p.getFlowElement());
-        }
-
-        ElementParameters simulationParameters = p.getSimulationParameters();
-        if (simulationParameters != null) {
-            this.simulationParameters.add(simulationParameters);
-        }
+        Processes.addChildElement(
+                p,
+                childElements,
+                process,
+                simulationParameters,
+                itemDefinitions,
+                rootElements);
 
         addChildShape(p.getShape());
         addChildEdge(p.getEdge());
-        this.itemDefinitions.addAll(p.getItemDefinitions());
-        this.rootElements.addAll(p.rootElements);
 
         if (p instanceof SubProcessPropertyWriter) {
             Collection<BasePropertyWriter> childElements =
