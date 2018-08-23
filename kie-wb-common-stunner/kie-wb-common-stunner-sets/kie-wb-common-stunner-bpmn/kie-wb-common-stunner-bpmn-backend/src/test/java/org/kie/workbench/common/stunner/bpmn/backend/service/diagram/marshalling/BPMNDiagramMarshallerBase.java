@@ -109,6 +109,7 @@ import org.kie.workbench.common.stunner.core.rule.RuleSet;
 import org.kie.workbench.common.stunner.core.rule.violations.DefaultRuleViolations;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.mockito.Mock;
+import org.mockito.Spy;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -136,8 +137,9 @@ public abstract class BPMNDiagramMarshallerBase {
     private CloneManager cloneManager;
     @Mock
     private FactoryManager applicationFactoryManager;
-    @Mock
-    protected GraphCommandManager commandManager;
+    @Spy
+    protected GraphCommandManager commandManager =
+            new GraphCommandManagerImpl(null, null, null);
 
     private EdgeFactory<Object> connectionEdgeFactory;
     private NodeFactory<Object> viewNodeFactory;
