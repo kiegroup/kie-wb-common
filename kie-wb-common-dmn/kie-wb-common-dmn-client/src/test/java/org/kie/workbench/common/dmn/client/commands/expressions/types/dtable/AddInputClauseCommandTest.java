@@ -70,6 +70,12 @@ public class AddInputClauseCommandTest {
     @Mock
     private GraphCommandExecutionContext graphCommandExecutionContext;
 
+    @Mock
+    private org.uberfire.mvp.Command executeCanvasOperation;
+
+    @Mock
+    private org.uberfire.mvp.Command undoCanvasOperation;
+
     private DecisionTable dtable;
 
     private InputClause inputClause;
@@ -79,9 +85,6 @@ public class AddInputClauseCommandTest {
     private DecisionTableUIModelMapper uiModelMapper;
 
     private AddInputClauseCommand command;
-
-    @Mock
-    private org.uberfire.mvp.Command canvasOperation;
 
     @Before
     public void setUp() throws Exception {
@@ -104,7 +107,8 @@ public class AddInputClauseCommandTest {
                                                      uiInputClauseColumn,
                                                      index,
                                                      uiModelMapper,
-                                                     canvasOperation));
+                                                     executeCanvasOperation,
+                                                     undoCanvasOperation));
     }
 
     @Test
@@ -322,8 +326,8 @@ public class AddInputClauseCommandTest {
                      canvasAddInputClauseCommand.undo(canvasHandler));
         assertEquals(1, uiModel.getColumnCount());
 
-        // one time in execute(), one time in undo()
-        verify(canvasOperation, times(2)).execute();
+        verify(executeCanvasOperation).execute();
+        verify(undoCanvasOperation).execute();
         verify(command, times(2)).updateParentInformation();
     }
 
@@ -337,7 +341,7 @@ public class AddInputClauseCommandTest {
         // just row number column
         assertEquals(1, uiModel.getColumnCount());
 
-        verify(canvasOperation).execute();
+        verify(undoCanvasOperation).execute();
         verify(command).updateParentInformation();
     }
 
