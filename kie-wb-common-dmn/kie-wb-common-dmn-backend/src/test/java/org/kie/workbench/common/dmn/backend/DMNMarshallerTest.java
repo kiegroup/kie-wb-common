@@ -532,6 +532,9 @@ public class DMNMarshallerTest {
         assertNotNull(rootNode);
         assertRootNodeConnectedTo(rootNode,
                                   decisionNode);
+        assertEquals("decisionNode parent is Definitions DMN root",
+                     "_153e2b47-3bd2-4db0-828c-db3fce0b3199",
+                     ((DMNElement) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getParent()).getId().getValue());
 
         Context context = (Context) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getExpression();
         assertEquals("contextNode's parent is decisionNode",
