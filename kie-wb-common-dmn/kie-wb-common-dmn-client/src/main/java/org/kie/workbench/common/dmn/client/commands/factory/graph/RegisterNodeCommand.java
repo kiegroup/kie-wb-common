@@ -22,6 +22,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.function.KindUtilities;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
@@ -38,7 +39,7 @@ public class RegisterNodeCommand extends org.kie.workbench.common.stunner.core.g
     @SuppressWarnings("unchecked")
     public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
         final CommandResult<RuleViolation> results = super.execute(context);
-        if (!results.getType().equals(CommandResult.Type.ERROR)) {
+        if (!CommandUtils.isError(results)) {
             final Node<?, Edge> candidate = getCandidate();
             if (candidate.getContent() instanceof View) {
                 final DMNModelInstrumentedBase dmnModel = (DMNModelInstrumentedBase) ((View) candidate.getContent()).getDefinition();

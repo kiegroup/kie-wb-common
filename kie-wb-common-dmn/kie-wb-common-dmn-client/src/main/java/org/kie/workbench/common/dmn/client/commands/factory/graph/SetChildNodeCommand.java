@@ -21,6 +21,7 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.client.property.dmn.DefaultValueUtilities;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
@@ -46,7 +47,7 @@ public class SetChildNodeCommand extends org.kie.workbench.common.stunner.core.g
     @SuppressWarnings("unchecked")
     public CommandResult<RuleViolation> execute(final GraphCommandExecutionContext context) {
         final CommandResult<RuleViolation> results = super.execute(context);
-        if (!results.getType().equals(CommandResult.Type.ERROR)) {
+        if (!CommandUtils.isError(results)) {
             final Node<?, Edge> parent = getParent(context);
             final Node<?, Edge> candidate = getCandidate(context);
             if (parent.getContent() instanceof View) {
