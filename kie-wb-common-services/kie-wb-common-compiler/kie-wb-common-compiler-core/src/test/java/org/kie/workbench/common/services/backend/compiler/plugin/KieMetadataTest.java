@@ -77,7 +77,7 @@ public class KieMetadataTest {
         tmpRoot = Files.createTempDirectory("repo");
     }
 
-    @Test @Ignore //it tooks 30% of the time of the time spent by all module's test (108)
+    @Test @Ignore //AF-1459 it tooks 30% of the time of the time spent by all module's test (108)
     public void compileAndLoadKieJarMetadataAllResourcesPackagedJar() throws Exception {
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
