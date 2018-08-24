@@ -25,7 +25,6 @@ import com.ait.lienzo.client.core.shape.Viewport;
 import com.ait.lienzo.client.core.types.Transform;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwt.user.client.ui.AbsolutePanel;
-import com.google.gwt.user.client.ui.Widget;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,8 +51,10 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionCellValue;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ExpressionEditorColumn;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
+import org.kie.workbench.common.dmn.client.editors.types.HasNameAndDataTypeControl;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -109,7 +110,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -131,6 +131,8 @@ public class InvocationGridTest {
     private static final String NAME = "name";
 
     private static final String NAME_NEW = "name-new";
+
+    private static final String EXPRESSION_TEXT_NEW = "invocation-expression-new";
 
     private GridCellTuple tupleWithoutValue;
 
@@ -349,7 +351,7 @@ public class InvocationGridTest {
         assertEquals(1,
                      uiModel.getCell(0, 0).getValue().getValue());
         assertEquals(InvocationDefaultValueUtilities.PREFIX + "1",
-                     uiModel.getCell(0, 1).getValue().getValue());
+                     ((InformationItemCell.HasNameAndDataTypeCell) uiModel.getCell(0, 1).getValue().getValue()).getName().getValue());
         assertTrue(uiModel.getCell(0, 2).getValue() instanceof ExpressionCellValue);
         final ExpressionCellValue dcv0 = (ExpressionCellValue) uiModel.getCell(0, 2).getValue();
         assertEquals(undefinedExpressionEditor,
@@ -417,6 +419,20 @@ public class InvocationGridTest {
                      md1.getTitle());
         assertEquals("invocation-expression",
                      md2.getTitle());
+    }
+
+    @Test
+    public void testExpressionColumnMetaDataSetExpressionText() {
+        setupGrid(0);
+
+        final GridColumn<?> column = grid.getModel().getColumns().get(InvocationUIModelMapper.BINDING_EXPRESSION_COLUMN_INDEX);
+        final List<GridColumn.HeaderMetaData> header = column.getHeaderMetaData();
+        final InvocationColumnExpressionHeaderMetaData md2 = (InvocationColumnExpressionHeaderMetaData) header.get(1);
+
+        md2.setTitle(EXPRESSION_TEXT_NEW);
+
+        assertEquals(EXPRESSION_TEXT_NEW,
+                     ((LiteralExpression) expression.get().getExpression()).getText());
     }
 
     @Test
@@ -599,26 +615,24 @@ public class InvocationGridTest {
 
         addParameterBinding(0);
 
-        verify(parent).onResize();
+        verify(parent).proposeContainingColumnWidth(eq(grid.getWidth() + grid.getPadding() * 2));
+
+        verify(gridLayer).batch(redrawCommandCaptor.capture());
         verify(gridPanel).refreshScrollPosition();
         verify(gridPanel).updatePanelSize();
-        verify(gridLayer, times(2)).batch(redrawCommandCaptor.capture());
-        verify(grid).selectCell(eq(0), eq(InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX), eq(false), eq(false));
-        verify(grid).startEditingCell(eq(0), eq(InvocationUIModelMapper.BINDING_PARAMETER_COLUMN_INDEX));
 
-        final List<GridLayerRedrawManager.PrioritizedCommand> redrawCommands = redrawCommandCaptor.getAllValues();
+        final GridLayerRedrawManager.PrioritizedCommand redrawCommand = redrawCommandCaptor.getValue();
 
-        //First call displays the inline editor for the new row
-        final GridLayerRedrawManager.PrioritizedCommand redrawCommand0 = redrawCommands.get(0);
-        redrawCommand0.execute();
-
-        verify(gridLayerDomElementContainer).add(any(Widget.class));
-
-        //Second call redraws grid following addition of new row
-        final GridLayerRedrawManager.PrioritizedCommand redrawCommand1 = redrawCommands.get(1);
-        redrawCommand1.execute();
+        redrawCommand.execute();
 
         verify(gridLayer).draw();
+
+        verify(headerEditor).bind(any(HasNameAndDataTypeControl.class),
+                                  eq(0),
+                                  eq(1));
+        verify(cellEditorControls).show(eq(headerEditor),
+                                        anyInt(),
+                                        anyInt());
     }
 
     private void addParameterBinding(final int index) {
