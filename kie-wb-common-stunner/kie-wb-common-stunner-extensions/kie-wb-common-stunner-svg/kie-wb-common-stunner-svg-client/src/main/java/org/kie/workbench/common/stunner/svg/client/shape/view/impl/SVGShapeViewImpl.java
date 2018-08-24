@@ -19,7 +19,6 @@ package org.kie.workbench.common.stunner.svg.client.shape.view.impl;
 import java.util.Collection;
 
 import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.client.lienzo.shape.impl.ShapeStateDefaultHandler;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.DecoratedShapeView;

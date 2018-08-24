@@ -87,13 +87,13 @@ public class ShapeStateDefaultHandler
     public ShapeStateDefaultHandler setBorderShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         handler.getAttributesHandler().setView(shapeSupplier);
         borderShapeSupplier = shapeSupplier;
-        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BORDER);
+//        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BORDER);
         return this;
     }
 
     public ShapeStateDefaultHandler setBackgroundShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         backgroundShapeSupplier = shapeSupplier;
-        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BACKGROUND);
+//        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BACKGROUND);
         return this;
     }
 

@@ -54,6 +54,7 @@
 
 .icon {
     fill:#4D5258;
+    opacity: 1;
 }
 
 .stage_strip {
@@ -66,6 +67,28 @@
 .rectangle {
     opacity: 0;
 }
+
+#userTask .task_group_user {
+    opacity: 1;
+}
+
+/* JARY ADDED ALL OF THESE JUST TO SEE IF ANY WOULD FIX ICONS, BUT DIDN'T WORK, SO COMMENTED BACK OUT
+.task_group_user {
+    opacity: 1;
+}
+#icon_grp {
+    opacity: 1;
+    fill: #000000;
+    fill-opacity: 1;
+    stroke-opacity: 1;
+    stroke-width: 5px;
+    stroke: #4aa241;
+}
+
+#userIcon {
+    opacity: 1;
+} */
+
 
 /*
     *******************************
