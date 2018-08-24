@@ -74,7 +74,7 @@ public class CompilerClassloaderUtils {
      */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                           String localRepo) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,

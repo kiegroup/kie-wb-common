@@ -36,31 +36,31 @@ public class KieMavenCompilerFactoryTest {
 
     @Test
     public void logOutputAfterDecoratorTest() {
-        AFCompiler logAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        AFCompiler logAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
         assertThat(logAfter).isInstanceOf(OutputLogAfterDecorator.class);
     }
 
     @Test
     public void kieAfterDecoratorTest() {
-        AFCompiler kieAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        AFCompiler kieAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER_NO_INCREMENTAL);
         assertThat(kieAfter).isInstanceOf(KieAfterDecorator.class);
     }
 
     @Test
     public void jGitBeforeDecoratorTest() {
-        AFCompiler jgitBefore = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
+        AFCompiler jgitBefore = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_NO_INCREMENTAL);
         assertThat(jgitBefore).isInstanceOf(JGITCompilerBeforeDecorator.class);
     }
 
     @Test
     public void classpathDepsAfterDecoratorTest() {
-        AFCompiler classpathAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
+        AFCompiler classpathAfter = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
         assertThat(classpathAfter).isInstanceOf(ClasspathDepsAfterDecorator.class);
     }
 
     @Test
     public void kieAndLogAfterDecoratorTest() {
-        AFCompiler kieAfterDecorator = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        AFCompiler kieAfterDecorator = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
         assertThat(kieAfterDecorator).isInstanceOf(KieAfterDecorator.class);
         AFCompiler outputLofAfterDecorator = ((KieAfterDecorator) kieAfterDecorator).getCompiler();
         assertThat(outputLofAfterDecorator).isInstanceOf(OutputLogAfterDecorator.class);

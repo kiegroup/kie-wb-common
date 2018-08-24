@@ -68,7 +68,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesSimpleTest(){
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -85,7 +85,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesComplexTest() {
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

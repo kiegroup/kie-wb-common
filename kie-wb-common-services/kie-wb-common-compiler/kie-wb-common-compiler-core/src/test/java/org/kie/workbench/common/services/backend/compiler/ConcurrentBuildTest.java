@@ -166,7 +166,7 @@ public class ConcurrentBuildTest {
             logger.error(e.getMessage());
         }
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                      info,
@@ -201,7 +201,7 @@ public class ConcurrentBuildTest {
             logger.error(e.getMessage());
         }
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                      info,

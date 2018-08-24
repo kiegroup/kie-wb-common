@@ -45,50 +45,97 @@ public class KieMavenCompilerFactory {
         AFCompiler compiler;
         switch (decorator) {
             case NONE:
-                compiler = new BaseMavenCompiler();
+                compiler = new BaseMavenCompiler(KieDecorator.NONE);
+                break;
+
+            case INCREMENTAL_ONLY:
+                compiler = new BaseMavenCompiler(KieDecorator.INCREMENTAL_ONLY);
                 break;
 
             case CLASSPATH_DEPS_AFTER_DECORATOR:
-                compiler = new ClasspathDepsAfterDecorator(new BaseMavenCompiler());
+                compiler = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR));
+                break;
+
+            case CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL:
+                compiler = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL));
                 break;
 
             case KIE_AFTER:
-                compiler = new KieAfterDecorator(new BaseMavenCompiler());
+                compiler = new KieAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AFTER));
+                break;
+
+            case KIE_AFTER_NO_INCREMENTAL:
+                compiler = new KieAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AFTER_NO_INCREMENTAL));
                 break;
 
             case KIE_AND_CLASSPATH_AFTER_DEPS:
-                compiler = new KieAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler()));
+                compiler = new KieAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS)));
+                break;
+
+            case KIE_AND_CLASSPATH_AFTER_DEPS_NO_INCREMENTAL:
+                compiler = new KieAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS_NO_INCREMENTAL)));
                 break;
 
             case KIE_LOG_AND_CLASSPATH_DEPS_AFTER:
-                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler())));
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER))));
+                break;
+
+            case KIE_LOG_AND_CLASSPATH_DEPS_AFTER_NO_INCREMENTAL:
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER_NO_INCREMENTAL))));
                 break;
 
             case KIE_AND_LOG_AFTER:
-                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_LOG_AFTER)));
+                break;
+
+            case KIE_AND_LOG_AFTER_NO_INCREMENTAL:
+                compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL)));
                 break;
 
             case JGIT_BEFORE:
-                compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler());
+                compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE));
+                break;
+
+            case JGIT_BEFORE_NO_INCREMENTAL:
+                compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_NO_INCREMENTAL));
                 break;
 
             case JGIT_BEFORE_AND_LOG_AFTER:
-                compiler = new JGITCompilerBeforeDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler()));
+                compiler = new JGITCompilerBeforeDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER)));
+                break;
+
+            case JGIT_BEFORE_AND_LOG_AFTER_NO_INCREMENTAL:
+                compiler = new JGITCompilerBeforeDecorator(new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER_NO_INCREMENTAL)));
                 break;
 
             case JGIT_BEFORE_AND_KIE_AFTER:
-                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new BaseMavenCompiler()));
+                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AFTER)));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AFTER_NO_INCREMENTAL:
+                compiler = new JGITCompilerBeforeDecorator(new KieAfterDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AFTER_NO_INCREMENTAL)));
                 break;
 
             case LOG_OUTPUT_AFTER:
-                compiler = new OutputLogAfterDecorator(new BaseMavenCompiler());
+                compiler = new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER));
+                break;
+
+            case LOG_OUTPUT_AFTER_NO_INCREMENTAL:
+                compiler = new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL));
                 break;
 
             case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER:
                 compiler = new JGITCompilerBeforeDecorator(
                         new KieAfterDecorator(
                                 new OutputLogAfterDecorator(
-                                        new BaseMavenCompiler())));
+                                        new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER))));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AND_LOG_AFTER_NO_INCREMENTAL:
+                compiler = new JGITCompilerBeforeDecorator(
+                        new KieAfterDecorator(
+                                new OutputLogAfterDecorator(
+                                        new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AFTER_NO_INCREMENTAL))));
                 break;
 
             case JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER:
@@ -96,11 +143,19 @@ public class KieMavenCompilerFactory {
                         new KieAfterDecorator(
                                 new OutputLogAfterDecorator(
                                         new ClasspathDepsAfterDecorator(
-                                                new BaseMavenCompiler()))));
+                                                new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER)))));
+                break;
+
+            case JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER_NO_INCREMENTAL:
+                compiler = new JGITCompilerBeforeDecorator(
+                        new KieAfterDecorator(
+                                new OutputLogAfterDecorator(
+                                        new ClasspathDepsAfterDecorator(
+                                                new BaseMavenCompiler(KieDecorator.JGIT_BEFORE_AND_KIE_AND_LOG_AND_CLASSPATH_AFTER_NO_INCREMENTAL)))));
                 break;
 
             default:
-                compiler = new BaseMavenCompiler();
+                compiler = new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
         }
         return compiler;
     }

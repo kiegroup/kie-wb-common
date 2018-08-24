@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -45,12 +46,12 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                new String[]{
-                                                                       MavenCLIArgs.INSTALL,
+                                                                       MavenCLIArgs.COMPILE,
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler());
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -63,12 +64,12 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
                                                                new String[]{
-                                                                       MavenCLIArgs.INSTALL,
+                                                                       MavenCLIArgs.COMPILE,
                                                                        MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler());
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS_NO_INCREMENTAL));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();

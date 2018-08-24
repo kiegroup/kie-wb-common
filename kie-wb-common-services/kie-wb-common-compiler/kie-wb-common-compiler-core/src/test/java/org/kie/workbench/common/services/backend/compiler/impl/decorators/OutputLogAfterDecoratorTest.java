@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -49,10 +50,10 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -70,10 +71,10 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
 
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER));
         CompilationResponse res = decorator.compile(req, override);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -85,10 +86,10 @@ public class OutputLogAfterDecoratorTest extends BaseCompilerTest {
     public void compileFailedTest() throws Exception {
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                createdNewPrjInRepo("dummy-fail", ResourcesConstants.DUMMY_FAIL_DEPS_SIMPLE),
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
 
-        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler());
+        OutputLogAfterDecorator decorator = new OutputLogAfterDecorator(new BaseMavenCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();

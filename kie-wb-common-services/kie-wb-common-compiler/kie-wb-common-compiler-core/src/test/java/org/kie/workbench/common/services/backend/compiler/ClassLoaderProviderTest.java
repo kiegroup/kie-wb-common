@@ -93,7 +93,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
@@ -107,7 +107,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderFromStringTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
 
         assertThat(res.isSuccessful()).isTrue();
@@ -121,7 +121,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadTargetFolderClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
@@ -167,7 +167,7 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
@@ -217,7 +217,7 @@ public class ClassLoaderProviderTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);

@@ -65,7 +65,7 @@ public class ArchetypeTest {
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString());
         assertThat(isDirEmpty(tmpRoot)).isTrue();
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

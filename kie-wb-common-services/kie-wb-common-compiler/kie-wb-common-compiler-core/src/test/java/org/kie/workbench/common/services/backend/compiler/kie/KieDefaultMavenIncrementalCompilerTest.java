@@ -70,7 +70,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         tmpRoot = Files.createTempDirectory("repo");
         temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -93,7 +93,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(temp.toAbsolutePath().toString(),
-                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
+                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_default-compile");
         assertThat(incrementalConfiguration.toFile()).exists();
     }
 
@@ -104,7 +104,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
@@ -122,7 +122,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         assertThat(res.isSuccessful()).isTrue();
 
         Path incrementalConfiguration = Paths.get(tmp.toAbsolutePath().toString(),
-                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_compile");
+                                                  "/target/incremental/io.takari.maven.plugins_takari-lifecycle-plugin_compile_default-compile");
         assertThat(incrementalConfiguration.toFile()).exists();
     }
 

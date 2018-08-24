@@ -80,7 +80,7 @@ public class BaseCompilerTest {
             compiler = KieMavenCompilerFactory.getCompiler(decorator);
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                    info,
-                                                                   new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                                   new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                    Boolean.FALSE);
             res = (KieCompilationResponse) compiler.compile(req);
             TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmpRoot, res, this.getClass(), testName);

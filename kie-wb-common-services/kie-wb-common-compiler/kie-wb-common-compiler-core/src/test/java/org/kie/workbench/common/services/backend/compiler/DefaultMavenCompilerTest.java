@@ -241,7 +241,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_NO_INCREMENTAL);
 
         String MASTER_BRANCH = "master";
 

@@ -27,6 +27,7 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
@@ -55,12 +56,25 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
     private int writeBlockSize = 1024;
     private ReusableAFMavenCli cli;
+    private KieDecorator decorator;
+    private boolean changedPoms;
+    private boolean skipLog;
 
     private IncrementalCompilerEnabler enabler;
 
-    public BaseMavenCompiler() {
+    public BaseMavenCompiler(KieDecorator decorator) {
         cli = new ReusableAFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
+        this.decorator = decorator;
+        if(decorator.equals(KieDecorator.NONE)){
+            changedPoms = true;
+        }
+        if(decorator.name().contains("NO_INCREMENTAL")){
+            changedPoms = true;
+        }
+        if(!decorator.name().contains("LOG")){
+            skipLog = true;
+        }
     }
 
     public Boolean cleanInternalCache() {
@@ -69,14 +83,19 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
 
     @Override
     public T compile(CompilationRequest req) {
-        MDC.clear();
-        MDC.put(MavenConfig.COMPILATION_ID, req.getRequestUUID());
-        Thread.currentThread().setName(req.getRequestUUID());
-        if (logger.isDebugEnabled()) {
-            logger.debug("KieCompilationRequest:{}", req);
+        if(!skipLog) {
+            MDC.clear();
+            MDC.put(MavenConfig.COMPILATION_ID, req.getRequestUUID());
+            Thread.currentThread().setName(req.getRequestUUID());
+            if (logger.isDebugEnabled()) {
+                logger.debug("KieCompilationRequest:{}", req);
+            }
         }
 
-        enabler.process(req);
+        if(!changedPoms) {
+            enabler.process(req);
+            changedPoms = true;
+        }
 
         req.getKieCliRequest().getRequest().setLocalRepositoryPath(req.getMavenRepo());
         /**

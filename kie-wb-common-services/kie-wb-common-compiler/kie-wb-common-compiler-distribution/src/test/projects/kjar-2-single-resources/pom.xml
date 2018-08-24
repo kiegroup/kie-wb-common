@@ -15,7 +15,7 @@
   </dependencies>
   <build>
     <plugins>
-      <plugin>
+     <!-- <plugin>
         <groupId>io.takari.maven.plugins</groupId>
         <artifactId>takari-lifecycle-plugin</artifactId>
         <version>${version.io.takari.maven.plugins}</version>
@@ -26,7 +26,7 @@
           <target>1.8</target>
           <failOnError>true</failOnError>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>3.5</version>
@@ -45,7 +45,7 @@
           </properties>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.7.0</version>
         <executions>
@@ -58,7 +58,7 @@
           <skipMain>true</skipMain>
           <skip>true</skip>
         </configuration>
-      </plugin>
+      </plugin>-->
     </plugins>
   </build>
 </project>
