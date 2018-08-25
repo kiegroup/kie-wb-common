@@ -48,21 +48,21 @@ import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 public class CaseManagementContainmentAcceptorControlImpl extends AbstractAcceptorControl
         implements ContainmentAcceptorControl<AbstractCanvasHandler> {
 
-    final IContainmentAcceptor CONTAINMENT_ACCEPTOR = new CanvasManagementContainmentAcceptor();
-
     private final CaseManagementCanvasCommandFactory canvasCommandFactory;
     private final CaseManagementContainmentStateHolder state;
+    private final IContainmentAcceptor containmentAcceptor;
 
     @Inject
     public CaseManagementContainmentAcceptorControlImpl(final @CaseManagementEditor CaseManagementCanvasCommandFactory canvasCommandFactory,
                                                         final CaseManagementContainmentStateHolder state) {
         this.canvasCommandFactory = canvasCommandFactory;
         this.state = state;
+        this.containmentAcceptor = new CanvasManagementContainmentAcceptor();
     }
 
     @Override
     protected void onInit(final WiresCanvas.View view) {
-        view.setContainmentAcceptor(CONTAINMENT_ACCEPTOR);
+        view.setContainmentAcceptor(containmentAcceptor);
     }
 
     @Override

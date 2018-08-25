@@ -18,7 +18,6 @@ package org.kie.workbench.common.stunner.svg.client.shape.view.impl;
 
 import java.util.Collection;
 
-import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
 import org.kie.workbench.common.stunner.client.lienzo.shape.impl.ShapeStateDefaultHandler;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.WiresScalableContainer;
 import org.kie.workbench.common.stunner.client.lienzo.shape.view.wires.ext.DecoratedShapeView;
@@ -107,9 +106,5 @@ public class SVGShapeViewImpl
     @Override
     public void applyState(final ShapeState shapeState) {
         shapeStateHandler.applyState(shapeState);
-    }
-
-    public void setChildLayoutHandler(ILayoutHandler handler) {
-        childViewHandler.getView().setLayoutHandler(handler);
     }
 }

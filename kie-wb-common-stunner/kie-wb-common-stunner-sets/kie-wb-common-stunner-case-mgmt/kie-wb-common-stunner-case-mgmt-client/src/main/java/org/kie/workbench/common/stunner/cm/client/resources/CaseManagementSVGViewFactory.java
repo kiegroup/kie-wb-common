@@ -22,7 +22,7 @@ import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeViewResour
 
 import static org.kie.workbench.common.stunner.cm.client.resources.CaseManagementSVGViewFactory.PATH_CSS;
 
-@SVGViewFactory(PATH_CSS)
+@SVGViewFactory(cssPath = PATH_CSS, builder = CaseManagementSVGViewBuilder.class)
 public interface CaseManagementSVGViewFactory {
 
     String PATH_CSS = "images/shapes/cm-shapes.css";

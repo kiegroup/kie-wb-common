@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Red Hat, Inc. and/or its affiliates.
+ * Copyright 2018 Red Hat, Inc. and/or its affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.svg.gen.model;
+package org.kie.workbench.common.stunner.svg.client.shape.view.factory;
 
-import java.util.List;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
+import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public interface ViewFactory {
+public interface SVGShapeViewBuilder {
 
-    String getSimpleName();
-
-    String getPackage();
-
-    String getImplementedType();
-
-    String getViewBuilderType();
-
-    StyleSheetDefinition getStyleSheetDefinition();
-
-    List<ViewDefinition<?>> getViewDefinitions();
+    public SVGShapeView build(String name,
+                              SVGPrimitiveShape primitiveShape,
+                              double width,
+                              double height,
+                              boolean resizable);
 }

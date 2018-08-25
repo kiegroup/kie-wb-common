@@ -20,16 +20,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.ait.lienzo.client.core.shape.Group;
-import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
-import com.ait.lienzo.shared.core.types.Color;
-import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
-import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitive;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGPrimitiveFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
@@ -43,36 +38,44 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
     private final Optional<MultiPath> optDropZone;
     private double currentWidth;
     private double currentHeight;
-    private final ILayoutHandler layoutHandler;
-    private final String shapeLabel;
+    private String shapeLabel;
 
-    public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, String shapeLabel) {
-        this(svgShapeView, shapeLabel, null);
+    public CaseManagementShapeView(final String name,
+                                   final SVGPrimitiveShape svgPrimitive,
+                                   final double width,
+                                   final double height,
+                                   final boolean resizable) {
+        super(name, svgPrimitive, width, height, resizable);
+        this.minWidth = width;
+        this.minHeight = height;
+        this.currentWidth = minWidth;
+        this.currentHeight = minHeight;
+        this.optDropZone = makeDropZone();
+        this.optDropZone.ifPresent((dz) -> dz.setDraggable(false));
     }
 
+    public void setLabel(String shapeLabel) {
+        this.shapeLabel = shapeLabel;
+        setTitle(shapeLabel);
+        getTextViewDecorator().moveTitleToTop();
+        refresh();
+    }
+
+    // TODO (Jeremy): Remove this constructor - "wrapping" the shape this way doesnt' works fine...
     public CaseManagementShapeView(SVGShapeViewImpl svgShapeView, String shapeLabel, ILayoutHandler layoutHandler) {
         super(svgShapeView.getName(),
               (SVGPrimitiveShape) svgShapeView.getPrimitive(),
               ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getWidth(),
               ((SVGPrimitiveShape) svgShapeView.getPrimitive()).getBoundingBox().getHeight(),
               false);
-
-        this.layoutHandler = layoutHandler;
         this.minWidth = svgShapeView.getBoundingBox().getWidth();
         this.minHeight = svgShapeView.getBoundingBox().getHeight();
         this.currentWidth = minWidth;
         this.currentHeight = minHeight;
         this.optDropZone = makeDropZone();
         this.optDropZone.ifPresent((dz) -> dz.setDraggable(false));
-        this.shapeLabel = shapeLabel;
-
-        setTitle(shapeLabel);
-        svgShapeView.getTextViewDecorator().moveTitleToTop();
-        refresh();
-
-        if (null != layoutHandler) {
-            setChildLayoutHandler(layoutHandler);
-        }
+        setLabel(shapeLabel);
+        setLayoutHandler(layoutHandler);
     }
 
     public double getWidth() {
@@ -81,30 +84,6 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
 
     public double getHeight() {
         return currentHeight;
-    }
-
-    @Override
-    public SVGShapeViewImpl setMinWidth(Double minWidth) {
-        getPath().setMinWidth(minWidth);
-        return cast();
-    }
-
-    @Override
-    public SVGShapeViewImpl setMaxWidth(Double maxWidth) {
-        getPath().setMaxWidth(maxWidth);
-        return cast();
-    }
-
-    @Override
-    public SVGShapeViewImpl setMinHeight(Double minHeight) {
-        getPath().setMinHeight(minHeight);
-        return cast();
-    }
-
-    @Override
-    public SVGShapeViewImpl setMaxHeight(Double maxHeight) {
-        getPath().setMaxHeight(maxHeight);
-        return cast();
     }
 
     public void logicallyReplace(final WiresShape original, final WiresShape replacement) {
@@ -130,7 +109,6 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         if (shape == null || (targetIndex < 0 || targetIndex > getChildShapes().size())) {
             return;
         }
-        GWT.log("adding shape at target index: " + targetIndex);
         final List<WiresShape> existingChildShapes = new ArrayList<>();
 
         existingChildShapes.addAll(getChildShapes().toList());
@@ -191,6 +169,9 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
 
     protected CaseManagementShapeView createGhost() {
 
+        // TODO (Jeremy):
+        // - No need to create a SVGShapeView etc here, a ghost can be any WiresShape.
+        // - Do not hardcode the ghost shape here, as this class is being used for all canvas shapes generated from SVG.
         SVGPrimitiveShape mainShape = SVGPrimitiveFactory.newSVGPrimitiveShape(
                 new com.ait.lienzo.client.core.shape.MultiPath(VALUE_STAGE__CRHT)
                         .setDraggable(false)
@@ -212,8 +193,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
                                                         0d,
                                                         false);
 
-
-        CaseManagementShapeView ghost = new CaseManagementShapeView(newView, shapeLabel, layoutHandler);
+        CaseManagementShapeView ghost = new CaseManagementShapeView(newView, shapeLabel, getLayoutHandler());
 
         for (WiresShape wiresShape : getChildShapes()) {
             final CaseManagementShapeView shapeView = ((CaseManagementShapeView) wiresShape).getGhost();
