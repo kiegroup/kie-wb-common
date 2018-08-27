@@ -20,20 +20,15 @@ import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
-import org.kie.workbench.common.stunner.bpmn.definition.AdHocSubprocess;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
-import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgDiagramShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgNullShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgSubprocessShapeDef;
-import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgTaskShapeDef;
+import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgUserTaskShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
-import org.kie.workbench.common.stunner.cm.client.wires.HorizontalStackLayoutManager;
 import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
-import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeDefFactory;
@@ -45,11 +40,6 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
 
     private final SVGShapeFactory svgShapeFactory;
     private final CaseManagementShapeDefFunctionalFactory<BPMNDefinition, CaseManagementSvgShapeDef, Shape> functionalFactory;
-
-    private static final String CM_STAGE = "stage";
-    private static final String CM_TASK = "task";
-    private static final String CM_SUBCASE = "subcase";
-    private static final String CM_SUBPROCESS = "subprocess";
 
     // CDI Proxy
     @SuppressWarnings("unused")
@@ -69,13 +59,13 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
     public void init() {
         functionalFactory
                 .set(CaseManagementSvgDiagramShapeDef.class,
-                     this::newDiagramShape)
-                .set(CaseManagementSvgTaskShapeDef.class,
-                     this::newStageChildShape)
+                     this::newCaseManagementShape)
                 .set(CaseManagementSvgSubprocessShapeDef.class,
-                     this::newSubprocessDerivedShape)
+                     this::newCaseManagementShape)
+                .set(CaseManagementSvgUserTaskShapeDef.class,
+                     this::newCaseManagementShape)
                 .set(CaseManagementSvgNullShapeDef.class,
-                     this::newStageChildShape);
+                     this::newCaseManagementShape);
     }
 
     @Override
@@ -84,39 +74,9 @@ public class CaseManagementShapeDefFactory implements ShapeDefFactory<BPMNDefini
     }
 
     @SuppressWarnings("unchecked")
-    private Shape newDiagramShape(final Object instance, final CaseManagementSvgShapeDef svgShapeDef) {
+    private Shape newCaseManagementShape(final Object instance, final CaseManagementSvgShapeDef svgShapeDef) {
         SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
         CaseManagementShapeView cmShapeView = (CaseManagementShapeView) shape.getShapeView();
-        cmShapeView.setLabel("");
-        cmShapeView.setLayoutHandler(new HorizontalStackLayoutManager());
-        cmShapeView.setUserData(new WiresUtils.UserData());
-        return new CaseManagementShape(cmShapeView);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Shape newSubprocessDerivedShape(final Object instance, final CaseManagementSvgShapeDef svgShapeDef) {
-        SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
-        CaseManagementShapeView cmShapeView = (CaseManagementShapeView) shape.getShapeView();
-        cmShapeView.setUserData(new WiresUtils.UserData());
-        String label = null;
-        ILayoutHandler layoutHandler = null;
-        if (instance instanceof AdHocSubprocess) {
-            label = CM_STAGE;
-            layoutHandler = new VerticalStackLayoutManager();
-        } else {
-            label = instance instanceof ReusableSubprocess ? CM_SUBCASE : CM_SUBPROCESS;
-        }
-        cmShapeView.setLabel(label);
-        cmShapeView.setLayoutHandler(layoutHandler);
-        return new CaseManagementShape(cmShapeView);
-    }
-
-    @SuppressWarnings("unchecked")
-    private Shape newStageChildShape(final Object instance, final CaseManagementSvgShapeDef svgShapeDef) {
-        SVGShape shape = svgShapeFactory.newShape(instance, svgShapeDef);
-        CaseManagementShapeView cmShapeView = (CaseManagementShapeView) shape.getShapeView();
-        cmShapeView.setLabel(CM_TASK);
-        cmShapeView.setUserData(new WiresUtils.UserData());
-        return new CaseManagementShape(cmShapeView);
+        return CaseManagementShapeCommand.create(instance.getClass(), cmShapeView);
     }
 }

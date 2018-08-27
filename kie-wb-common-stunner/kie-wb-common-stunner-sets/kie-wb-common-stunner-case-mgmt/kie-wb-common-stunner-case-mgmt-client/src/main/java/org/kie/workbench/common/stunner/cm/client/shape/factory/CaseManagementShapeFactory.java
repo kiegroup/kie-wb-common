@@ -38,7 +38,7 @@ import org.kie.workbench.common.stunner.bpmn.definition.UserTask;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgDiagramShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgNullShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgSubprocessShapeDef;
-import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgTaskShapeDef;
+import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgUserTaskShapeDef;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.definition.ReusableSubprocess;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
@@ -72,14 +72,14 @@ public class CaseManagementShapeFactory implements ShapeFactory<BPMNDefinition, 
                 .delegate(AdHocSubprocess.class,
                           new CaseManagementSvgSubprocessShapeDef(),
                           () -> shapeDefFactory)
-                .delegate(UserTask.class,
-                          new CaseManagementSvgTaskShapeDef(),
-                          () -> shapeDefFactory)
                 .delegate(EmbeddedSubprocess.class,
                           new CaseManagementSvgSubprocessShapeDef(),
                           () -> shapeDefFactory)
                 .delegate(ReusableSubprocess.class,
                           new CaseManagementSvgSubprocessShapeDef(),
+                          () -> shapeDefFactory)
+                .delegate(UserTask.class,
+                          new CaseManagementSvgUserTaskShapeDef(),
                           () -> shapeDefFactory)
                 .delegate(NoneTask.class,
                           new CaseManagementSvgNullShapeDef(),

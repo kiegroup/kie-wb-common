@@ -68,27 +68,29 @@
     opacity: 0;
 }
 
-#userTask .task_group_user {
+.subprocess {
+    fill: #FFFFFF;
+}
+
+.subprocess_border {
+    opacity: 1;
+    stroke: #393F44;
+    stroke-width: 1.5;
+}
+
+.subprocess_background {
+    opacity: 1;
+    fill: #FFFFFF;
+}
+
+.subprocess_group {
     opacity: 1;
 }
 
-/* JARY ADDED ALL OF THESE JUST TO SEE IF ANY WOULD FIX ICONS, BUT DIDN'T WORK, SO COMMENTED BACK OUT
-.task_group_user {
-    opacity: 1;
+.subprocess_group_icon {
+    stroke: #393F44;
+    fill: #393F44;
 }
-#icon_grp {
-    opacity: 1;
-    fill: #000000;
-    fill-opacity: 1;
-    stroke-opacity: 1;
-    stroke-width: 5px;
-    stroke: #4aa241;
-}
-
-#userIcon {
-    opacity: 1;
-} */
-
 
 /*
     *******************************

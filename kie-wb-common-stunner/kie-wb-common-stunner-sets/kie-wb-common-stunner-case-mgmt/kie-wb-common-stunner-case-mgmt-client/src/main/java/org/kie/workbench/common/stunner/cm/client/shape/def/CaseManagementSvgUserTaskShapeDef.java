@@ -32,7 +32,7 @@ import org.kie.workbench.common.stunner.core.definition.shape.Glyph;
 import org.kie.workbench.common.stunner.svg.client.shape.factory.SVGShapeViewResources;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
 
-public final class CaseManagementSvgTaskShapeDef extends BaseDimensionedShapeDef
+public final class CaseManagementSvgUserTaskShapeDef extends BaseDimensionedShapeDef
         implements CaseManagementSvgShapeDef<BaseTask> {
 
     public static final SVGShapeViewResources<BaseTask, CaseManagementSVGViewFactory> VIEW_RESOURCES =
@@ -51,7 +51,7 @@ public final class CaseManagementSvgTaskShapeDef extends BaseDimensionedShapeDef
     @Override
     public FontHandler<BaseTask, SVGShapeView> newFontHandler() {
         return newFontHandlerBuilder()
-                .position(CaseManagementSvgTaskShapeDef::getSubprocessTextPosition)
+                .position(CaseManagementSvgUserTaskShapeDef::getSubprocessTextPosition)
                 .build();
     }
 
