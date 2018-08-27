@@ -20,7 +20,9 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.local.api.elemental2.IsElement;
+import org.kie.workbench.common.screens.library.client.resources.i18n.LibraryConstants;
 import org.kie.workbench.common.screens.library.client.settings.sections.persistence.PersistencePresenter;
+import org.kie.workbench.common.screens.library.client.settings.util.modal.single.AddSingleValueModal;
 import org.kie.workbench.common.widgets.client.widget.ListItemPresenter;
 import org.kie.workbench.common.widgets.client.widget.ListItemView;
 
@@ -35,10 +37,12 @@ public class PersistableDataObjectsItemPresenter extends ListItemPresenter<Strin
 
     PersistencePresenter parentPresenter;
     private String className;
+    private AddSingleValueModal newPersistableDataObjectModal;
 
     @Inject
-    public PersistableDataObjectsItemPresenter(final View view) {
+    public PersistableDataObjectsItemPresenter(final View view, AddSingleValueModal newPersistableDataObjectModal) {
         super(view);
+        this.newPersistableDataObjectModal = newPersistableDataObjectModal;
     }
 
     public PersistableDataObjectsItemPresenter setup(final String className,
@@ -49,6 +53,9 @@ public class PersistableDataObjectsItemPresenter extends ListItemPresenter<Strin
 
         view.init(this);
         view.setClassName(className);
+
+        newPersistableDataObjectModal.setup(LibraryConstants.EditPersistableDataObject,
+                                            LibraryConstants.Class);
 
         return this;
     }
@@ -61,6 +68,15 @@ public class PersistableDataObjectsItemPresenter extends ListItemPresenter<Strin
     public void remove() {
         super.remove();
         parentPresenter.fireChangeEvent();
+    }
+
+    public void openEditModal() {
+        newPersistableDataObjectModal.show(v -> {
+                                               super.remove();
+                                               this.getListPresenter().add(v);
+                                               parentPresenter.fireChangeEvent();
+                                           },
+                                           className);
     }
 
     public View getView() {
