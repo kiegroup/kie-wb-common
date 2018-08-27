@@ -29,8 +29,6 @@ import bpsim.Scenario;
 import bpsim.ScenarioParameters;
 import org.eclipse.bpmn2.Documentation;
 import org.eclipse.bpmn2.ExtensionAttributeValue;
-import org.eclipse.bpmn2.FlowElementsContainer;
-import org.eclipse.bpmn2.ItemDefinition;
 import org.eclipse.bpmn2.LaneSet;
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.Property;
