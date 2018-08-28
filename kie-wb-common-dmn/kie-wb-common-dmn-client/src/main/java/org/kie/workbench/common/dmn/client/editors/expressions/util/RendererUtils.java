@@ -84,7 +84,7 @@ public class RendererUtils {
         final Text typeRef = context.getRenderer().getTheme().getHeaderText();
         typeRef.setFontStyle(FONT_STYLE_TYPE_REF);
         typeRef.setFontSize(BaseExpressionGridTheme.FONT_SIZE - 2.0);
-        typeRef.setText("(" + headerMetaData.getTypeRef().toString() + ")");
+        typeRef.setText("(" + headerMetaData.getTypeRef() + ")");
         typeRef.setListening(false);
         typeRef.setX(blockWidth / 2);
         typeRef.setY(rowHeight / 2 + SPACING);
