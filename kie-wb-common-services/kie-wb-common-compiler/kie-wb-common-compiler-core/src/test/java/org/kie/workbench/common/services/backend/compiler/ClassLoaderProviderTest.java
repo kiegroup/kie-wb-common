@@ -74,7 +74,6 @@ public class ClassLoaderProviderTest {
 
     @After
     public void clean() {
-        System.clearProperty(MAVEN_MAIN_SKIP);
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }
@@ -88,7 +87,7 @@ public class ClassLoaderProviderTest {
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
-        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp, TestUtil.getBannedEnvVars());
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
                                                                mavenPhases,
@@ -212,8 +211,6 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void getResourcesFromADroolsPRJWithError() throws Exception {
-
-        System.setProperty(MAVEN_MAIN_SKIP, Boolean.TRUE.toString());
 
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
