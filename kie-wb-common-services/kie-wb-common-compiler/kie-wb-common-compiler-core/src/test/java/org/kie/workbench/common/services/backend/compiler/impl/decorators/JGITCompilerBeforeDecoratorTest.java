@@ -58,7 +58,7 @@ public class JGITCompilerBeforeDecoratorTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private Make.String mavenRepo;
-    private Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
+    private static Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
 
     @Rule
     public TestName testName = new TestName();
