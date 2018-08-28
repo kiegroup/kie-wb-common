@@ -34,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -73,11 +72,6 @@ public class StunnerWiresHandlerFactoryTest {
     @Test
     public void newConnectorHandler() {
         WiresConnectorHandler wiresConnectorHandler = tested.newConnectorHandler(connector, wiresManager);
-        Consumer<WiresConnectorHandlerImpl.Event> doubleClickEventConsumer = (Consumer<WiresConnectorHandlerImpl.Event>) Whitebox.getInternalState(wiresConnectorHandler, "doubleClickEventConsumer");
-        doubleClickEventConsumer.accept(event);
-        verify(connectorControl).addControlPoint(anyDouble(), anyDouble());
-
-        reset(connectorControl);
         Consumer<WiresConnectorHandlerImpl.Event> mouseDownEventConsumer = (Consumer<WiresConnectorHandlerImpl.Event>) Whitebox.getInternalState(wiresConnectorHandler, "mouseDownEventConsumer");
         mouseDownEventConsumer.accept(event);
         verify(connectorControl).addControlPoint(anyDouble(), anyDouble());

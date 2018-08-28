@@ -53,7 +53,6 @@ public class StunnerWiresHandlerFactory implements WiresHandlerFactory {
                                              wiresManager,
                                              e -> {
                                              },
-                                             new WiresConnectorEventConsumers(wiresConnector).addControlPoint(),
                                              new WiresConnectorEventConsumers(wiresConnector).addControlPoint());
     }
 
