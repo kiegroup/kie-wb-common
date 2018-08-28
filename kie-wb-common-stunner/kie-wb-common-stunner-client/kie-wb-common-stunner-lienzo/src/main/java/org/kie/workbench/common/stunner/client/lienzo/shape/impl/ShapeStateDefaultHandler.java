@@ -80,21 +80,22 @@ public class ShapeStateDefaultHandler
 
     public ShapeStateDefaultHandler setRenderType(final RenderType renderType) {
         handler.getAttributesHandler().useAttributes(renderType.stateAttributesProvider);
-        shapeViewDataEncoder.applyShapeViewRenderType(borderShapeSupplier, renderType);
+        //TODO: need to fix when resolution of JBPM-7681 is available
+//        shapeViewDataEncoder.applyShapeViewRenderType(borderShapeSupplier, renderType);
         return this;
     }
 
     public ShapeStateDefaultHandler setBorderShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         handler.getAttributesHandler().setView(shapeSupplier);
         borderShapeSupplier = shapeSupplier;
-        //TODO: need to fixwhen resolution of JBPM-7681 is available
+        //TODO: need to fix when resolution of JBPM-7681 is available
 //        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BORDER);
         return this;
     }
 
     public ShapeStateDefaultHandler setBackgroundShape(final Supplier<LienzoShapeView<?>> shapeSupplier) {
         backgroundShapeSupplier = shapeSupplier;
-        //TODO: need to fixwhen resolution of JBPM-7681 is available
+        //TODO: need to fix when resolution of JBPM-7681 is available
 //        shapeViewDataEncoder.applyShapeViewType(shapeSupplier, ShapeType.BACKGROUND);
         return this;
     }
