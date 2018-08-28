@@ -17,56 +17,19 @@
 package org.kie.workbench.common.dmn.client.canvas.controls.keyboard;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 
-import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
-import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeysMatcher;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
-import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
-import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
-import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 
 @DMNEditor
 @Dependent
 public class DMNCanvasShortcutsControlImpl extends AbstractCanvasShortcutsControlImpl {
 
     @Inject
-    public DMNCanvasShortcutsControlImpl(final ToolboxDomainLookups toolboxDomainLookups,
-                                         final DefinitionsCacheRegistry definitionsCacheRegistry,
-                                         final @DMNEditor GeneralCreateNodeAction createNodeAction) {
-        super(toolboxDomainLookups, definitionsCacheRegistry, createNodeAction);
-    }
-
-    @Override
-    public void onKeyDownEvent(final KeyboardEvent.Key... keys) {
-        if (selectedNodeId() != null) {
-            if (KeysMatcher.doKeysMatch(keys,
-                                        KeyboardEvent.Key.D)) {
-                if (selectedNodeIsDecision() || selectedNodeIsInput()) {
-                    appendNode(selectedNodeId(),
-                               (definition) -> definition instanceof Decision);
-                }
-            }
-        }
-    }
-
-    private boolean selectedNodeIsDecision() {
-        if (selectedNodeElement() != null && selectedNodeElement().getContent() instanceof Definition) {
-            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof Decision;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean selectedNodeIsInput() {
-        if (selectedNodeElement() != null && selectedNodeElement().getContent() instanceof Definition) {
-            return ((Definition) selectedNodeElement().getContent()).getDefinition() instanceof InputData;
-        } else {
-            return false;
-        }
+    public DMNCanvasShortcutsControlImpl(final @DMNEditor Instance<KeyboardShortcut> implementedActions) {
+        super(implementedActions);
     }
 }

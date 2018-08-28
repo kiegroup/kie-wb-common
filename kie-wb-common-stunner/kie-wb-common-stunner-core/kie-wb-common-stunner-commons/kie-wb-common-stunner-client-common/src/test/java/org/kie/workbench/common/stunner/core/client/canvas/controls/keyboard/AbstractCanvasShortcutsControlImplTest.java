@@ -16,30 +16,25 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Set;
-import java.util.function.Function;
+import java.util.List;
+
+import javax.enterprise.inject.Instance;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.select.SelectionControl;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
 import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
-import org.kie.workbench.common.stunner.core.diagram.Diagram;
-import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.Graph;
-import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
-import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
-import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 import org.mockito.Mock;
+import org.uberfire.mocks.MockInstanceImpl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -47,38 +42,30 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(GwtMockitoTestRunner.class)
 public class AbstractCanvasShortcutsControlImplTest {
 
     @Mock
-    private ToolboxDomainLookups toolboxDomainLookups;
-
-    @Mock
-    private DefinitionsCacheRegistry definitionsCacheRegistry;
-
-    @Mock
-    private GeneralCreateNodeAction generalCreateNodeAction;
-
-    @Mock
     private AbstractCanvasHandler canvasHandlerMock;
+
+    @Mock
+    private KeyboardShortcut keyboardShortcutAction;
+
+    private Instance<KeyboardShortcut> shortcuts;
 
     private AbstractCanvasShortcutsControlImpl canvasShortcutsControl;
 
     @Before
     public void setUp() throws Exception {
-        canvasShortcutsControl = new AbstractCanvasShortcutsControlImpl(toolboxDomainLookups,
-                                                                        definitionsCacheRegistry,
-                                                                        generalCreateNodeAction) {
+
+        shortcuts = new MockInstanceImpl(keyboardShortcutAction);
+
+        canvasShortcutsControl = new AbstractCanvasShortcutsControlImpl(shortcuts) {
             {
                 this.canvasHandler = canvasHandlerMock;
-            }
-
-            @Override
-            public void onKeyDownEvent(KeyboardEvent.Key... keys) {
-                // Tested via BaseCanvasShortcutsControlImplTest
             }
         };
     }
@@ -94,60 +81,60 @@ public class AbstractCanvasShortcutsControlImplTest {
         canvasShortcutsControl.bind(session);
 
         assertThat(canvasShortcutsControl.editorSession).isEqualTo(session);
-        verify(keyboardControl).addKeyShortcutCallback(any(KeyboardControl.KeyShortcutCallback.class));
+        verify(keyboardControl).addKeyShortcutCallback(eq(canvasShortcutsControl));
     }
 
     @Test
-    public void testAppendNode() {
-        final String sourceNodeId = "source-node";
+    public void testOnKeyShortcutNothingSelected() {
+        mockSelectedElements();
+        mockActionReactingOnKeyAndSelectedElement(KeyboardEvent.Key.E, mock(Element.class));
 
-        final Index index = mock(Index.class);
-        doReturn(index).when(canvasHandlerMock).getGraphIndex();
-        final Element selectedElement = mock(Element.class);
-        doReturn(selectedElement).when(index).get(sourceNodeId);
-        final Node selectedNode = mock(Node.class);
-        doReturn(selectedNode).when(selectedElement).asNode();
+        canvasShortcutsControl.onKeyShortcut(KeyboardEvent.Key.E);
 
-        final Diagram diagram = mock(Diagram.class);
-        final Metadata metadata = mock(Metadata.class);
-        final String definitionSetId = "def-set-id";
-        doReturn(diagram).when(canvasHandlerMock).getDiagram();
-        doReturn(metadata).when(diagram).getMetadata();
-        doReturn(definitionSetId).when(metadata).getDefinitionSetId();
+        verify(keyboardShortcutAction, never()).executeAction(any(), any());
+    }
 
-        final CommonDomainLookups commonDomainLookups = mock(CommonDomainLookups.class);
-        doReturn(commonDomainLookups).when(toolboxDomainLookups).get(definitionSetId);
+    @Test
+    public void testOnKeyShortcutSelectedElement() {
+        final Element selectedElement = mockSelectedElements("element").get(0);
 
-        final String targetConnectorDefinitionId = "connector-def-id";
-        final Set<String> targetConnectorIds = Collections.singleton(targetConnectorDefinitionId);
-        doReturn(targetConnectorIds).when(commonDomainLookups).lookupTargetConnectors(selectedNode);
+        mockActionReactingOnKeyAndSelectedElement(KeyboardEvent.Key.E, selectedElement);
 
-        final String targetNodeDefinitionId = "target-node-id";
-        final Set<String> targetNodeDefinitionIds = Collections.singleton(targetNodeDefinitionId);
-        doReturn(targetNodeDefinitionIds).when(commonDomainLookups).lookupTargetNodes(any(Graph.class),
-                                                                                      eq(selectedNode),
-                                                                                      eq(targetConnectorDefinitionId));
+        canvasShortcutsControl.onKeyShortcut(KeyboardEvent.Key.E);
 
-        final Object targetNodeDefinition = mock(Object.class);
-        doReturn(targetNodeDefinition).when(definitionsCacheRegistry).getDefinitionById(targetNodeDefinitionId);
+        verify(keyboardShortcutAction).executeAction(canvasHandlerMock, canvasShortcutsControl.selectedNodeId());
+    }
 
-        // Positive check, desired target definition
-        final Function<Object, Boolean> positiveDefinitionCheck = (def) -> def == targetNodeDefinition;
-        canvasShortcutsControl.appendNode(sourceNodeId, positiveDefinitionCheck);
-        verify(generalCreateNodeAction).executeAction(eq(canvasHandlerMock),
-                                                      eq(sourceNodeId),
-                                                      eq(targetNodeDefinitionId),
-                                                      eq(targetConnectorDefinitionId));
+    @Test
+    public void testOnKeyShortcutWrongPressedKey() {
+        final Element selectedElement = mockSelectedElements("element").get(0);
 
-        reset(generalCreateNodeAction);
+        mockActionReactingOnKeyAndSelectedElement(KeyboardEvent.Key.T, selectedElement);
 
-        // Negative check, not desired target definition
-        final Function<Object, Boolean> negativeDefinitionCheck = (def) -> def != targetNodeDefinition;
-        canvasShortcutsControl.appendNode(sourceNodeId, negativeDefinitionCheck);
-        verify(generalCreateNodeAction, never()).executeAction(eq(canvasHandlerMock),
-                                                               eq(sourceNodeId),
-                                                               eq(targetNodeDefinitionId),
-                                                               eq(targetConnectorDefinitionId));
+        canvasShortcutsControl.onKeyShortcut(KeyboardEvent.Key.E);
+
+        verify(keyboardShortcutAction, never()).executeAction(any(), any());
+    }
+
+    @Test
+    public void testOnKeyShortcutWrongElement() {
+        mockSelectedElements("element");
+
+        mockActionReactingOnKeyAndSelectedElement(KeyboardEvent.Key.E, mock(Element.class));
+
+        canvasShortcutsControl.onKeyShortcut(KeyboardEvent.Key.E);
+
+        verify(keyboardShortcutAction, never()).executeAction(any(), any());
+    }
+
+    @Test
+    public void testOnKeyShortcutSelectedElements() {
+        mockSelectedElements("element-1", "element-2");
+        mockActionReactingOnKeyAndSelectedElement(KeyboardEvent.Key.E, mock(Element.class));
+
+        canvasShortcutsControl.onKeyShortcut(KeyboardEvent.Key.E);
+
+        verify(keyboardShortcutAction, never()).executeAction(any(), any());
     }
 
     @Test
@@ -180,7 +167,10 @@ public class AbstractCanvasShortcutsControlImplTest {
         assertThat(canvasShortcutsControl.selectedNodeElement()).isEqualTo(selectedElement);
     }
 
-    private void mockSelectedElements(final String... selectedIds) {
+    private List<Element> mockSelectedElements(final String... selectedIds) {
+
+        final Index index = mock(Index.class);
+        doReturn(index).when(canvasHandlerMock).getGraphIndex();
 
         final EditorSession session = mock(EditorSession.class);
         final SelectionControl selectionControl = mock(SelectionControl.class);
@@ -190,5 +180,20 @@ public class AbstractCanvasShortcutsControlImplTest {
         doReturn(Arrays.asList(selectedIds)).when(selectionControl).getSelectedItems();
 
         canvasShortcutsControl.bind(session);
+
+        final List<Element> selectedElements = new ArrayList<>();
+        for (final String id : selectedIds) {
+            final Element element = mock(Element.class);
+            doReturn(element).when(index).get(id);
+            selectedElements.add(element);
+        }
+
+        return selectedElements;
+    }
+
+    private void mockActionReactingOnKeyAndSelectedElement(final KeyboardEvent.Key key,
+                                                           final Element element) {
+        when(keyboardShortcutAction.matchesPressedKeys(key)).thenReturn(true);
+        when(keyboardShortcutAction.matchesSelectedElement(element)).thenReturn(true);
     }
 }

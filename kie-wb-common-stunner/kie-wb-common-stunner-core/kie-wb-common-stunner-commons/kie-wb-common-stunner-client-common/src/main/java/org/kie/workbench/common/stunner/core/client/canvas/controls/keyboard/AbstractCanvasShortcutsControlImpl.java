@@ -16,37 +16,31 @@
 
 package org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard;
 
-import java.util.Set;
-import java.util.function.Function;
+import java.util.Iterator;
+
+import javax.enterprise.inject.Instance;
+import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.AbstractCanvasHandlerRegistrationControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.shortcut.KeyboardShortcut;
 import org.kie.workbench.common.stunner.core.client.canvas.util.CanvasLayoutUtils;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.GeneralCreateNodeAction;
-import org.kie.workbench.common.stunner.core.client.components.toolbox.actions.ToolboxDomainLookups;
+import org.kie.workbench.common.stunner.core.client.event.keyboard.KeyboardEvent;
 import org.kie.workbench.common.stunner.core.client.session.impl.EditorSession;
 import org.kie.workbench.common.stunner.core.graph.Element;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.lookup.domain.CommonDomainLookups;
-import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 
 public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasHandlerRegistrationControl<AbstractCanvasHandler>
-        implements CanvasShortcutsControl<AbstractCanvasHandler, EditorSession> {
+        implements CanvasControl.SessionAware<EditorSession>,
+                   KeyboardControl.KeyShortcutCallback {
+
+    final private Instance<KeyboardShortcut> keyboardShortcutActions;
 
     protected EditorSession editorSession;
 
-    private final ToolboxDomainLookups toolboxDomainLookups;
-
-    private final DefinitionsCacheRegistry definitionsCacheRegistry;
-
-    private final GeneralCreateNodeAction createNodeAction;
-
-    public AbstractCanvasShortcutsControlImpl(final ToolboxDomainLookups toolboxDomainLookups,
-                                              final DefinitionsCacheRegistry definitionsCacheRegistry,
-                                              final GeneralCreateNodeAction createNodeAction) {
-        this.toolboxDomainLookups = toolboxDomainLookups;
-        this.definitionsCacheRegistry = definitionsCacheRegistry;
-        this.createNodeAction = createNodeAction;
+    @Inject
+    public AbstractCanvasShortcutsControlImpl(final Instance<KeyboardShortcut> keyboardShortcutActions) {
+        this.keyboardShortcutActions = keyboardShortcutActions;
     }
 
     @Override
@@ -57,34 +51,17 @@ public abstract class AbstractCanvasShortcutsControlImpl extends AbstractCanvasH
     @Override
     public void bind(final EditorSession session) {
         this.editorSession = session;
-        session.getKeyboardControl().addKeyShortcutCallback(this::onKeyDownEvent);
+        session.getKeyboardControl().addKeyShortcutCallback(this);
     }
 
     @Override
-    public void appendNode(final String sourceNodeId, final Function<Object, Boolean> definitionCheck) {
-
-        final Node sourceNode = CanvasLayoutUtils.getElement(canvasHandler, sourceNodeId).asNode();
-
-        final String definitionSetId = canvasHandler.getDiagram().getMetadata().getDefinitionSetId();
-        final CommonDomainLookups commonDomainLookups = toolboxDomainLookups.get(definitionSetId);
-
-        final Set<String> connectorDefinitionIds = commonDomainLookups.lookupTargetConnectors(sourceNode);
-
-        for (final String connectorDefinitionId : connectorDefinitionIds) {
-            final Set<String> targetNodesDefinitionIds =
-                    commonDomainLookups.lookupTargetNodes(canvasHandler.getDiagram().getGraph(),
-                                                          sourceNode,
-                                                          connectorDefinitionId);
-
-            for (final String targetNodeDefinitionId : targetNodesDefinitionIds) {
-                final Object definition = definitionsCacheRegistry.getDefinitionById(targetNodeDefinitionId);
-                if (definitionCheck.apply(definition)) {
-                    createNodeAction.executeAction(canvasHandler,
-                                                   sourceNodeId,
-                                                   targetNodeDefinitionId,
-                                                   connectorDefinitionId);
-
-                    break;
+    public void onKeyShortcut(final KeyboardEvent.Key... keys) {
+        if (selectedNodeId() != null) {
+            final Iterator<KeyboardShortcut> keyboardShortcutActionsIterator = keyboardShortcutActions.iterator();
+            while (keyboardShortcutActionsIterator.hasNext()) {
+                final KeyboardShortcut action = keyboardShortcutActionsIterator.next();
+                if (action.matchesPressedKeys(keys) && action.matchesSelectedElement(selectedNodeElement())) {
+                    action.executeAction(canvasHandler, selectedNodeId());
                 }
             }
         }

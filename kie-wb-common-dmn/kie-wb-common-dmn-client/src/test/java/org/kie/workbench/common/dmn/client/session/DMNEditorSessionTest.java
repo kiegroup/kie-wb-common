@@ -22,7 +22,7 @@ import java.util.Map;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.dmn.client.canvas.controls.keyboard.DMNCanvasShortcutsControlImpl;
+import org.kie.workbench.common.dmn.api.qualifiers.DMNEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.CanvasControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.actions.CanvasInPlaceTextEditorControl;
@@ -36,7 +36,7 @@ import org.kie.workbench.common.stunner.core.client.canvas.controls.connection.C
 import org.kie.workbench.common.stunner.core.client.canvas.controls.containment.ContainmentAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.docking.DockingAcceptorControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.drag.LocationControl;
-import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.CanvasShortcutsControl;
+import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.AbstractCanvasShortcutsControlImpl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.keyboard.KeyboardControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.resize.ResizeControl;
 import org.kie.workbench.common.stunner.core.client.canvas.controls.toolbox.ToolboxControl;
@@ -105,7 +105,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
     private ClipboardControl clipboardControl;
 
     @Mock
-    private DMNCanvasShortcutsControlImpl canvasShortcutsControl;
+    private AbstractCanvasShortcutsControlImpl canvasShortcutsControl;
 
     @Before
     @Override
@@ -149,7 +149,7 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
         canvasHandlerControls.put(elementBuilderControl, ElementBuilderControl.class);
         canvasHandlerControls.put(nodeBuilderControl, NodeBuilderControl.class);
         canvasHandlerControls.put(edgeBuilderControl, EdgeBuilderControl.class);
-        canvasHandlerControls.put(canvasShortcutsControl, CanvasShortcutsControl.class);
+        canvasHandlerControls.put(canvasShortcutsControl, AbstractCanvasShortcutsControlImpl.class);
         return canvasHandlerControls;
     }
 
@@ -158,5 +158,6 @@ public class DMNEditorSessionTest extends BaseDMNSessionTest<DMNEditorSession> {
         super.assertInitQualifiers();
         verify(managedSession).registerCanvasHandlerControl(eq(CanvasInPlaceTextEditorControl.class), eq(SingleLineTextEditorBox.class));
         verify(managedSession).registerCanvasHandlerControl(eq(ElementBuilderControl.class), eq(Observer.class));
+        verify(managedSession).registerCanvasHandlerControl(eq(AbstractCanvasShortcutsControlImpl.class), eq(DMNEditor.class));
     }
 }
