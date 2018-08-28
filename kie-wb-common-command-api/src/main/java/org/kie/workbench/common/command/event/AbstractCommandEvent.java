@@ -39,6 +39,6 @@ public abstract class AbstractCommandEvent<C, V> {
     }
 
     public boolean hasError() {
-        return result != null && result.getType() != null && CommandResult.Type.ERROR.equals(result.getType());
+        return result != null && CommandResult.Type.ERROR.equals(result.getType());
     }
 }

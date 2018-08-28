@@ -24,12 +24,12 @@ public abstract class DelegateCommandManager<C, V> implements CommandManager<C, 
     public CommandResult<V> allow(final C context,
                                   final Command<C, V> command) {
         if (null != getDelegate()) {
-            final CommandResult<V> r = getDelegate().allow(context,
+            final CommandResult<V> result = getDelegate().allow(context,
                                                            command);
             postAllow(context,
                       command,
-                      r);
-            return r;
+                      result);
+            return result;
         }
         return null;
     }
@@ -43,12 +43,12 @@ public abstract class DelegateCommandManager<C, V> implements CommandManager<C, 
     public CommandResult<V> execute(final C context,
                                     final Command<C, V> command) {
         if (null != getDelegate()) {
-            final CommandResult<V> r = getDelegate().execute(context,
+            final CommandResult<V> result = getDelegate().execute(context,
                                                              command);
             postExecute(context,
                         command,
-                        r);
-            return r;
+                        result);
+            return result;
         }
         return null;
     }
@@ -62,12 +62,12 @@ public abstract class DelegateCommandManager<C, V> implements CommandManager<C, 
     public CommandResult<V> undo(final C context,
                                  final Command<C, V> command) {
         if (null != getDelegate()) {
-            final CommandResult<V> r = getDelegate().undo(context,
+            final CommandResult<V> result = getDelegate().undo(context,
                                                           command);
             postUndo(context,
                      command,
-                     r);
-            return r;
+                     result);
+            return result;
         }
         return null;
     }
