@@ -36,7 +36,6 @@ public class DefaultCompilationRequest implements CompilationRequest {
     private String mavenRepo;
     private Boolean skipPrjDependenciesCreationList;
     private Boolean restoreOverride;
-    private Properties bannedEnvVars;
 
     /***
      * @param mavenRepo a string representation of the Path
@@ -98,15 +97,13 @@ public class DefaultCompilationRequest implements CompilationRequest {
         this.skipPrjDependenciesCreationList = skipPrjDependenciesCreationList;
         this.requestUUID = uuid.trim().isEmpty() ? UUID.randomUUID().toString() : uuid;
         this.restoreOverride = restoreOverride;
-        this.bannedEnvVars = info.getBennedEnvVars();
         this.originalArgs = args;
         Map internalMap = new HashMap();
         internalMap.put(MavenConfig.COMPILATION_ID, this.requestUUID);
         this.req = new AFCliRequest(this.info.getPrjPath().toAbsolutePath().toString(),
                                     args,
                                     internalMap,
-                                    this.requestUUID,
-                                    bannedEnvVars);
+                                    this.requestUUID);
     }
 
     public DefaultCompilationRequest(String mavenRepo,
@@ -166,8 +163,4 @@ public class DefaultCompilationRequest implements CompilationRequest {
         return restoreOverride;
     }
 
-    @Override
-    public Properties getBannedEnvVars() {
-        return bannedEnvVars;
-    }
 }

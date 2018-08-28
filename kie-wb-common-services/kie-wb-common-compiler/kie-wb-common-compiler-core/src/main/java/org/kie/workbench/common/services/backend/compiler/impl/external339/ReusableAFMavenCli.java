@@ -188,16 +188,9 @@ public class ReusableAFMavenCli {
                                                                                                                                                      file.getFileName().toString()))));
     }
 
-    private static void purgeBannedProperties(Properties toPurge, Properties itemsToRemove){
-        for(Object key: itemsToRemove.keySet()){
-            toPurge.remove(key);
-        }
-    }
-
     static void populateProperties(CommandLine commandLine,
                                    Properties systemProperties,
-                                   Properties userProperties,
-                                   Properties bannedEnvVars) {
+                                   Properties userProperties) {
 
         EnvironmentUtils.addEnvVars(systemProperties);
 
@@ -218,8 +211,8 @@ public class ReusableAFMavenCli {
             }
         }
 
-        SystemProperties.addSystemProperties(systemProperties);
-        purgeBannedProperties(systemProperties, bannedEnvVars);
+        //SystemProperties.addSystemProperties(systemProperties);//disabled
+
         // ----------------------------------------------------------------------
         // Properties containing info about the currently running version of Maven
         // These override any corresponding properties set on the command line
@@ -452,8 +445,7 @@ public class ReusableAFMavenCli {
     protected void properties(AFCliRequest cliRequest) {
         populateProperties(cliRequest.getCommandLine(),
                            cliRequest.getSystemProperties(),
-                           cliRequest.getUserProperties(),
-                           cliRequest.getBannedEnvVars());
+                           cliRequest.getUserProperties());
     }
 
     protected PlexusContainer container(AFCliRequest cliRequest,

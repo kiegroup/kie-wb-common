@@ -84,10 +84,4 @@ public interface CompilationRequest {
      * @return
      */
     Boolean getRestoreOverride();
-
-    /**
-     * Properties with the banned env vars who could prevent the correct build
-     * @return
-     */
-    Properties getBannedEnvVars();
 }

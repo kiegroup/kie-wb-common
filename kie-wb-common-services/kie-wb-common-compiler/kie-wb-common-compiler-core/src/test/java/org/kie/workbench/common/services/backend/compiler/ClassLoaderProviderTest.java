@@ -209,6 +209,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void getResourcesFromADroolsPRJWithError() throws Exception {
+
         /**
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
