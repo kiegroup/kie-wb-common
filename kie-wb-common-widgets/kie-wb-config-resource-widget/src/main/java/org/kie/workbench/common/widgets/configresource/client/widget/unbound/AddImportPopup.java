@@ -107,4 +107,9 @@ public class AddImportPopup extends BaseModal {
         importTypeHelpInline.setText("");
         super.show();
     }
+
+    public void show(final String importType) {
+        this.show();
+        this.importTypeTextBox.setText(importType);
+    }
 }
