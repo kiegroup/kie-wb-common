@@ -15,6 +15,8 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
+import java.util.Properties;
+
 import org.uberfire.java.nio.file.Path;
 
 /***
@@ -25,9 +27,16 @@ public class WorkspaceCompilationInfo {
 
     protected Path prjPath;
     protected Boolean kiePluginPresent = Boolean.FALSE;
+    protected Properties bannedEnvVars = new Properties();
 
     public WorkspaceCompilationInfo(Path prjPath) {
         this.prjPath = prjPath;
+        bannedEnvVars.put("maven.main.skip","");//TODO decide where to move the banned envVars
+    }
+
+    public WorkspaceCompilationInfo(Path prjPath, Properties bannedEnvVars) {
+        this.prjPath = prjPath;
+        this.bannedEnvVars= bannedEnvVars;
     }
 
     public Boolean lateAdditionKiePluginPresent(Boolean present) {
@@ -50,10 +59,16 @@ public class WorkspaceCompilationInfo {
         return prjPath;
     }
 
+    public Properties getBennedEnvVars(){
+        return bannedEnvVars;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("WorkspaceCompilationInfo{");
-        sb.append("prjPath:{").append(prjPath);
+        sb.append("prjPath=").append(prjPath);
+        sb.append(", kiePluginPresent=").append(kiePluginPresent);
+        sb.append(", bannedEnvVars=").append(bannedEnvVars);
         sb.append('}');
         return sb.toString();
     }
