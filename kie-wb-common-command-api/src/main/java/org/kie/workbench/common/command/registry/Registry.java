@@ -17,7 +17,7 @@
 package org.kie.workbench.common.command.registry;
 
 /**
- * Base type for any of Stunner's registry implementations.
+ * Base type for any registry implementations.
  * @param <T> The type for the items that the registry handles.
  */
 public interface Registry<T> {

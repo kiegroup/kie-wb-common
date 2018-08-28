@@ -21,7 +21,7 @@ import org.kie.workbench.common.command.registry.command.CommandRegistry;
 import org.kie.workbench.common.command.registry.command.CommandRegistryImpl;
 
 /**
- * Factory for the different Stunner's registry types available.
+ * Factory for command registry.
  */
 public interface CommandRegistryFactory {
 

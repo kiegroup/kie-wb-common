@@ -29,11 +29,11 @@ public abstract class CommandResultBuilder<V> {
     private final Collection<V> violations = new LinkedList<>();
 
     public static final CommandResult SUCCESS = new CommandResultImpl<>(CommandResult.Type.INFO,
-                                                                    new LinkedList<>()
+                                                                        new LinkedList<>()
     );
 
     public static final CommandResult FAILED = new CommandResultImpl<>(CommandResult.Type.ERROR,
-                                                                   new LinkedList<>()
+                                                                       new LinkedList<>()
     );
 
     public abstract CommandResult.Type getType(final V violation);
