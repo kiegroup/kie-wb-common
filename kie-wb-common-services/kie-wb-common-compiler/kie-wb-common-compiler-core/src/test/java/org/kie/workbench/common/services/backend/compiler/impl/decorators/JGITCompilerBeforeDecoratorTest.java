@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtilGit;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
@@ -60,6 +61,9 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @BeforeClass
     public static void setupSystemProperties() {
+        int freePort = TestUtilGit.findFreePort();
+        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
+        logger.info("Git port used:{}", freePort);
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
                            "false");
@@ -71,6 +75,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @AfterClass
     public static void restoreSystemProperties() {
+        System.clearProperty("org.uberfire.nio.git.daemon.port");
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
     }
