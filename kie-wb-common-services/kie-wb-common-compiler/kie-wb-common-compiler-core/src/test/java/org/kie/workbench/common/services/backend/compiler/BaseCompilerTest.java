@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -74,10 +75,10 @@ public class BaseCompilerTest {
         }
     }
 
-    public BaseCompilerTest(String prjName, KieDecorator decorator) {
+    public BaseCompilerTest(String prjName, Set<KieDecorator> decorators) {
         this(prjName);
         try {
-            compiler = KieMavenCompilerFactory.getCompiler(decorator);
+            compiler = KieMavenCompilerFactory.getCompiler(decorators);
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                    info,
                                                                    new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},

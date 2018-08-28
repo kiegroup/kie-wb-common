@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.compiler.kie;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,7 +37,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class KieMavenOutputTest {
 
@@ -55,11 +58,12 @@ public class KieMavenOutputTest {
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
+        //final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);

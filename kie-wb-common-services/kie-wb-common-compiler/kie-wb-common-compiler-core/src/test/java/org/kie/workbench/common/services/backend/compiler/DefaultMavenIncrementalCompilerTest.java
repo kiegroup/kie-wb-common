@@ -16,6 +16,8 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.After;
@@ -37,7 +39,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class DefaultMavenIncrementalCompilerTest {
 
@@ -65,7 +67,7 @@ public class DefaultMavenIncrementalCompilerTest {
     public void testIsValidMavenHome() throws Exception {
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -80,7 +82,7 @@ public class DefaultMavenIncrementalCompilerTest {
     public void testIncrementalWithPluginEnabled() throws Exception {
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -99,8 +101,7 @@ public class DefaultMavenIncrementalCompilerTest {
     public void testIncrementalWithPluginEnabledThreeTime() throws Exception {
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
-
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -126,7 +127,7 @@ public class DefaultMavenIncrementalCompilerTest {
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_INCREMENTAL_DIR);
 
         //compiler
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -197,11 +198,11 @@ public class DefaultMavenIncrementalCompilerTest {
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_KIE_MULTIMODULE_UNTOUCHED_WITH_ERROR_DIR);
 
         //compiler
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
+                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.FAIL_NEVER},
                                                                Boolean.TRUE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(temp, res, this.getClass(), testName);

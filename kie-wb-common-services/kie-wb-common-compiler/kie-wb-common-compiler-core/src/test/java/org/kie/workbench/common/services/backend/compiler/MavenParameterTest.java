@@ -24,7 +24,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.maven.cli.CLIManager;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class MavenParameterTest {
 

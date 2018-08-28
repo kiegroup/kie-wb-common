@@ -17,7 +17,6 @@ package org.kie.workbench.common.services.backend.compiler.impl.decorators;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
@@ -34,7 +33,6 @@ import org.junit.rules.TestName;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -47,7 +45,7 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.kie.workbench.common.services.backend.constants.TestConstants.TARGET_TAKARI_PLUGIN;
 
 public class JGITCompilerBeforeDecoratorTest {
@@ -95,7 +93,7 @@ public class JGITCompilerBeforeDecoratorTest {
         final FileSystem fileSystem = createFileSystem("myrepodecorator");
 
         //Compile the repo
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE));
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(fileSystem.getPath("/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -130,7 +128,7 @@ public class JGITCompilerBeforeDecoratorTest {
         InputStream input = new FileInputStream(new File("target/test-classes/kjar-2-single-resources_override/src/main/java/dummy/PersonOverride.java"));
         override.put(path, input);
 
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE));
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
         CompilationResponse res = compiler.compile(req, override);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();
@@ -158,7 +156,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
         Map<Path, InputStream> override = new HashMap<>();
 
-        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(KieDecorator.JGIT_BEFORE));
+        JGITCompilerBeforeDecorator compiler = new JGITCompilerBeforeDecorator(new BaseMavenCompiler(true,false));
         CompilationResponse res = compiler.compile(req, override);
 
         final java.nio.file.Path tempPath = ((Git) compiler.getGitMap().get(fileSystem)).getRepository().getDirectory().toPath().getParent();

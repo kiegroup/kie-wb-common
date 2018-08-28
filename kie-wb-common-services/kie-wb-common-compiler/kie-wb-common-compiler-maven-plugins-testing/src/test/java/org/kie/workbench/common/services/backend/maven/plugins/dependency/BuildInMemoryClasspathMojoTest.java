@@ -17,6 +17,8 @@ package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 
 import java.io.File;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
@@ -41,7 +43,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class BuildInMemoryClasspathMojoTest {
 
@@ -68,7 +70,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesSimpleTest(){
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_BUILD_CLASSPATH )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -85,7 +87,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesComplexTest() {
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_BUILD_CLASSPATH )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

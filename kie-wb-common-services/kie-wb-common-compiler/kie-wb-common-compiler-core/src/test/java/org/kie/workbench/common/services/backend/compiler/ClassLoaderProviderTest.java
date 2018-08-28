@@ -18,6 +18,8 @@ package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +52,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class ClassLoaderProviderTest {
 
@@ -82,7 +84,8 @@ public class ClassLoaderProviderTest {
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -93,7 +96,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
@@ -163,7 +166,8 @@ public class ClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -213,7 +217,8 @@ public class ClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_INCREMENTAL_BUILD)));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

@@ -34,7 +34,7 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.api.FileSystemProviders;
 import org.uberfire.java.nio.file.spi.FileSystemProvider;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class DefaultIncrementalCompilerEnablerTest {
 
@@ -72,7 +72,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         assertThat(enabler.process(req).getResult()).isTrue();
@@ -119,7 +119,7 @@ public class DefaultIncrementalCompilerEnablerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         assertThat(enabler.process(req).getResult()).isTrue();

@@ -17,6 +17,8 @@ package org.kie.workbench.common.services.backend.compiler.kie;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.After;
@@ -42,7 +44,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class KieDefaultMavenIncrementalCompilerTest {
 
@@ -70,7 +72,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
         tmpRoot = Files.createTempDirectory("repo");
         temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -104,7 +107,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
         //end NIO
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_INCREMENTAL_BUILD )));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
@@ -135,7 +139,8 @@ public class KieDefaultMavenIncrementalCompilerTest {
         //end NIO
 
         //compiler
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,

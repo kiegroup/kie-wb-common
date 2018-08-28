@@ -19,8 +19,7 @@ import java.lang.reflect.Method;
 
 import org.slf4j.Logger;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.*;
 
 public class LoadProjectDependencyUtil {
 

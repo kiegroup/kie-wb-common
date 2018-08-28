@@ -19,6 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.HashSet;
 
 import net.openhft.chronicle.bytes.Bytes;
 import net.openhft.chronicle.queue.ExcerptAppender;
@@ -125,7 +127,8 @@ public class ServerIPCImpl {
     }
 
     private static DefaultKieCompilationResponseOffProcess build(String prjPath, String mavenRepo, String alternateSettingsAbsPath, String uuid) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS )));
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get("file://"+prjPath));
         CompilationRequest req;
         if (StringUtils.isNotEmpty(alternateSettingsAbsPath)) {

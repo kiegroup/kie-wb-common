@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.services.backend.maven.common;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,7 +36,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class ArchetypeTest {
 
@@ -65,7 +68,8 @@ public class ArchetypeTest {
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString());
         assertThat(isDirEmpty(tmpRoot)).isTrue();
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

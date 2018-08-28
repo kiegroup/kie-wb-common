@@ -26,7 +26,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.kie.workbench.common.services.backend.logback.appender.KieSiftingAppender;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class LogbackConfigTest {
 

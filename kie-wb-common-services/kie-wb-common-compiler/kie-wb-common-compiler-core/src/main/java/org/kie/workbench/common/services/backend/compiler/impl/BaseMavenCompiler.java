@@ -27,7 +27,6 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.external339.ReusableAFMavenCli;
 import org.kie.workbench.common.services.backend.compiler.impl.incrementalenabler.DefaultIncrementalCompilerEnabler;
@@ -45,7 +44,7 @@ import org.uberfire.java.nio.file.StandardOpenOption;
  * <p>
  * MavenCompiler compiler = new DefaultMavenCompiler();
  * or
- * MavenCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_OUTPUT_AFTER);
+ * MavenCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_AFTER);
  * <p>
  * WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
  * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE}, Boolean.TRUE );
@@ -56,23 +55,18 @@ public class BaseMavenCompiler<T extends CompilationResponse> implements AFCompi
     private static final Logger logger = LoggerFactory.getLogger(BaseMavenCompiler.class);
     private int writeBlockSize = 1024;
     private ReusableAFMavenCli cli;
-    private KieDecorator decorator;
     private boolean changedPoms;
     private boolean skipLog;
 
     private IncrementalCompilerEnabler enabler;
 
-    public BaseMavenCompiler(KieDecorator decorator) {
+    public BaseMavenCompiler(boolean enableIncremental, boolean enableLogging) {
         cli = new ReusableAFMavenCli();
         enabler = new DefaultIncrementalCompilerEnabler();
-        this.decorator = decorator;
-        if(decorator.equals(KieDecorator.NONE)){
+        if(!enableIncremental){
             changedPoms = true;
         }
-        if(decorator.name().contains("NO_INCREMENTAL")){
-            changedPoms = true;
-        }
-        if(!decorator.name().contains("LOG")){
+        if(!enableLogging){
             skipLog = true;
         }
     }

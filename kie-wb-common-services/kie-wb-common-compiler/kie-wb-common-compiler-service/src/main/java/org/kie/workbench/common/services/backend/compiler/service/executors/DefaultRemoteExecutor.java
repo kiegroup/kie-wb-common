@@ -62,7 +62,7 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
     }
 
     private CompilerAggregateEntryCache setupCompileInfo(String workingDir) {
-        AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER))));
+        AFCompiler compiler = new KieAfterDecorator(new OutputLogAfterDecorator(new ClasspathDepsAfterDecorator(new BaseMavenCompiler(true, true))));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(workingDir));
         return new CompilerAggregateEntryCache(compiler, info);
     }

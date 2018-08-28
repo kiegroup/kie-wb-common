@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,7 +75,9 @@ public class CompilerClassloaderUtils {
      */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
                                                                           String localRepo) {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
+
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_BUILD_CLASSPATH)));
+        // AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.CLASSPATH_DEPS_AFTER_DECORATOR_NO_INCREMENTAL);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,

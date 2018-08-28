@@ -18,9 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.offprocess;
 import java.util.UUID;
 
 import net.openhft.chronicle.core.io.IOTools;
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
@@ -37,7 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class CompilerChronicleCoordinatorTest {
 

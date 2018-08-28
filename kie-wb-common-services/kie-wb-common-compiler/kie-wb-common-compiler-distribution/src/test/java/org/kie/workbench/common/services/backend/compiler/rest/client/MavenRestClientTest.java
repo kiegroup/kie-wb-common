@@ -24,7 +24,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.Future;
-
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -57,7 +56,7 @@ import org.uberfire.io.IOService;
 import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(Arquillian.class)
 public class MavenRestClientTest {

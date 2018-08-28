@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -51,7 +50,7 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS));
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(true,false));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isTrue();
@@ -69,7 +68,7 @@ public class ClasspathDepsAfterDecoratorTest extends BaseCompilerTest {
                                                                },
                                                                Boolean.FALSE);
 
-        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS_NO_INCREMENTAL));
+        ClasspathDepsAfterDecorator decorator = new ClasspathDepsAfterDecorator(new BaseMavenCompiler(false,false));
         CompilationResponse res = decorator.compile(req);
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(res.isSuccessful()).isFalse();

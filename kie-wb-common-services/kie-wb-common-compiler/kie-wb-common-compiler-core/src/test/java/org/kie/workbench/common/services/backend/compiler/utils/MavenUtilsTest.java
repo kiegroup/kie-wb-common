@@ -27,7 +27,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService.GLOBAL_M2_REPO_NAME;
 
 public class MavenUtilsTest {

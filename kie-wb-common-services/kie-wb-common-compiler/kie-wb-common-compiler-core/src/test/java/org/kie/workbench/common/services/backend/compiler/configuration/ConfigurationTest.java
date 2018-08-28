@@ -31,8 +31,7 @@ import org.guvnor.common.services.project.backend.server.utils.configuration.Con
 import org.junit.Test;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.*;
 
 public class ConfigurationTest {
 

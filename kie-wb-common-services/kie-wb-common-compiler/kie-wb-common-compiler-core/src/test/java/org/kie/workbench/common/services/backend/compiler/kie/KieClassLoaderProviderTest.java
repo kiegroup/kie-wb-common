@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.kie;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +31,6 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
@@ -44,7 +44,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class KieClassLoaderProviderTest {
 
@@ -74,7 +74,8 @@ public class KieClassLoaderProviderTest {
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

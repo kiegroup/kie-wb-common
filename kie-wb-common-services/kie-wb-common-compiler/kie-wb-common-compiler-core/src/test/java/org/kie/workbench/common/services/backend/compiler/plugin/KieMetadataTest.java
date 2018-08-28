@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.services.backend.compiler.plugin;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +52,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class KieMetadataTest {
 
@@ -83,8 +85,8 @@ public class KieMetadataTest {
          * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
          * */
         Path temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_ALL_RESOURCES);
-
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH )));
+        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -111,6 +113,8 @@ public class KieMetadataTest {
         Map<String, TypeMetaInfo> typesMI = kieModuleMetaInfo.getTypeMetaInfos();
         assertThat(typesMI).hasSize(35);
 
+
+        Map<String, byte[]> projectClasloaderStore = res.getProjectClassLoaderStore();
         Optional<KieModule> kieModuleOptional = res.getKieModule();
         assertThat(kieModuleOptional).isPresent();
 
@@ -130,7 +134,7 @@ public class KieMetadataTest {
         try {
             Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-            AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_LOG_AND_CLASSPATH_DEPS_AFTER);
+            final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
             WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
             CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                    info,
@@ -174,7 +178,7 @@ public class KieMetadataTest {
          * */
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

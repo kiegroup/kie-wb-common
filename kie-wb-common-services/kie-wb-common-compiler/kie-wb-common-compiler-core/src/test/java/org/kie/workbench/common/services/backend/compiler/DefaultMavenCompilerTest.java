@@ -17,11 +17,11 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -31,7 +31,6 @@ import org.eclipse.jgit.api.RebaseResult;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -56,7 +55,7 @@ import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 public class DefaultMavenCompilerTest {
 
@@ -89,7 +88,7 @@ public class DefaultMavenCompilerTest {
     }
 
     @After
-    public void tearDown() throws IOException {
+    public void tearDown()  {
         fileSystemTestingUtils.cleanup();
         TestUtil.rm(new File("src/../.security/"));
     }
@@ -139,7 +138,7 @@ public class DefaultMavenCompilerTest {
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -208,7 +207,7 @@ public class DefaultMavenCompilerTest {
         assertThat(rbResult.getStatus().isSuccessful()).isTrue();
 
         //Compile the repo
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_OUTPUT_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -241,7 +240,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
 
         String MASTER_BRANCH = "master";
 
@@ -279,7 +278,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);
@@ -303,7 +302,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE_AND_LOG_AFTER);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
 
         String MASTER_BRANCH = "master";
 
@@ -402,7 +401,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         DefaultIncrementalCompilerEnabler enabler = new DefaultIncrementalCompilerEnabler();
         assertThat(enabler.process(req).getResult()).isTrue();
@@ -420,7 +419,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void cleanInternalTest() throws Exception {
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.JGIT_BEFORE);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
 
         String MASTER_BRANCH = "master";
 
@@ -458,7 +457,7 @@ public class DefaultMavenCompilerTest {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE},
+                                                               new String[]{MavenCLIArgs.COMPILE},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(origin.getPath("/"), res, this.getClass(), testName);

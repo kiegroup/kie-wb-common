@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -46,7 +47,7 @@ import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 public class ConcurrentBuildTest {
 
@@ -166,7 +167,8 @@ public class ConcurrentBuildTest {
             logger.error(e.getMessage());
         }
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_LOGGING )));
+        //final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                      info,
@@ -201,7 +203,8 @@ public class ConcurrentBuildTest {
             logger.error(e.getMessage());
         }
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
+        //final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_LOG_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_LOGGING )));
         final WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         final CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                      info,
