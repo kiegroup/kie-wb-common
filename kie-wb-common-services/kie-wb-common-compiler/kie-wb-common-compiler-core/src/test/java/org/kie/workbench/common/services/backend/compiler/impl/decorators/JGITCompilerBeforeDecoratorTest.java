@@ -40,6 +40,9 @@ import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
+import org.mvel2.util.Make;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.Path;
@@ -54,7 +57,8 @@ public class JGITCompilerBeforeDecoratorTest {
 
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
-    private String mavenRepo;
+    private Make.String mavenRepo;
+    private Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
 
     @Rule
     public TestName testName = new TestName();
