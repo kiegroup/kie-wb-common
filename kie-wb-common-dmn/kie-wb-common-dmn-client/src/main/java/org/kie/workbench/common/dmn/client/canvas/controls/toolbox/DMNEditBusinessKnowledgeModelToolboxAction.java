@@ -94,7 +94,7 @@ public class DMNEditBusinessKnowledgeModelToolboxAction implements ToolboxAction
 
                                                              @Override
                                                              public void setExpression(final Expression expression) {
-                                                                 throw new UnsupportedOperationException("It is not possible to set the EncapsulatedLogic of a BusinssKnowledgeModel.");
+                                                                 throw new UnsupportedOperationException("It is not possible to set the EncapsulatedLogic of a BusinessKnowledgeModel.");
                                                              }
 
                                                              @Override

@@ -16,7 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -211,16 +211,16 @@ public class ExpressionContainerGrid extends BaseGridWidget implements HasListSe
     @Override
     public List<ListSelectorItem> getItems(final int uiRowIndex,
                                            final int uiColumnIndex) {
-        final List<ListSelectorItem> items = new ArrayList<>();
         if (hasExpression.isClearSupported()) {
-            items.add(ListSelectorTextItem.build(translationService.format(DMNEditorConstants.ExpressionEditor_Clear),
-                                                 true,
-                                                 () -> {
-                                                     cellEditorControls.hide();
-                                                     clearExpressionType();
-                                                 }));
+            return Collections.singletonList(ListSelectorTextItem
+                                                     .build(translationService.format(DMNEditorConstants.ExpressionEditor_Clear),
+                                                            true,
+                                                            () -> {
+                                                                cellEditorControls.hide();
+                                                                clearExpressionType();
+                                                            }));
         }
-        return items;
+        return Collections.emptyList();
     }
 
     @Override

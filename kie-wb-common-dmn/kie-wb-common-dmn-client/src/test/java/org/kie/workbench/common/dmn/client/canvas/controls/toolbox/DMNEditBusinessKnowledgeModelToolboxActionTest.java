@@ -17,6 +17,7 @@
 package org.kie.workbench.common.dmn.client.canvas.controls.toolbox;
 
 import com.google.gwtmockito.GwtMockitoTestRunner;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -137,7 +138,7 @@ public class DMNEditBusinessKnowledgeModelToolboxActionTest {
                      editExprEvent.getSession());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testActionSetExpression() {
         tested.onMouseClick(canvasHandler,
                             E_UUID,
@@ -150,6 +151,8 @@ public class DMNEditBusinessKnowledgeModelToolboxActionTest {
         final EditExpressionEvent editExprEvent = eventCaptor.getValue();
         final HasExpression hasExpression = editExprEvent.getHasExpression();
 
-        hasExpression.setExpression(new DecisionTable());
+        Assertions.assertThatThrownBy(() -> hasExpression.setExpression(new DecisionTable()))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("It is not possible to set the EncapsulatedLogic of a BusinessKnowledgeModel.");
     }
 }
