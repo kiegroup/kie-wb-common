@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.compiler.kie;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 
@@ -72,8 +73,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         tmpRoot = Files.createTempDirectory("repo");
         temp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_INCREMENTAL_BUILD )));
-        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -107,8 +107,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.DUMMY_DIR);
         //end NIO
 
-        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.INCREMENTAL_ONLY);
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_INCREMENTAL_BUILD ));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
@@ -139,8 +138,7 @@ public class KieDefaultMavenIncrementalCompilerTest {
         //end NIO
 
         //compiler
-        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER_NO_INCREMENTAL);
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
 
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,

@@ -74,7 +74,6 @@ public class KieClassLoaderProviderTest {
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
-        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
         final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,

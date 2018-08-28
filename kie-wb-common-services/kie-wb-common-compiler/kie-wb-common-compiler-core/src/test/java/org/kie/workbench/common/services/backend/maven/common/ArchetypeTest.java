@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.maven.common;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -68,8 +69,7 @@ public class ArchetypeTest {
         Path tmp = Paths.get(tmpRoot.toAbsolutePath().toString());
         assertThat(isDirEmpty(tmpRoot)).isTrue();
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
-        //AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.LOG_AFTER_NO_INCREMENTAL);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo.toAbsolutePath().toString(),
                                                                info,

@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class KieDefaultMavenCompilerTest {
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -217,7 +218,7 @@ public class KieDefaultMavenCompilerTest {
 
         Path prjFolder = Paths.get(tmpCloned + "/");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -274,7 +275,7 @@ public class KieDefaultMavenCompilerTest {
 
         assertThat(lastCommit).isNotNull();
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD)));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -342,7 +343,7 @@ public class KieDefaultMavenCompilerTest {
 
         assertThat(cloned).isNotNull();
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmpCloned + "/"));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -392,7 +393,7 @@ public class KieDefaultMavenCompilerTest {
                                                           "        this.age = age;\n" +
                                                           "    }");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(temp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -465,7 +466,7 @@ public class KieDefaultMavenCompilerTest {
                                                           "        this.age = age;\n" +
                                                           "    }");
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.ENABLE_LOGGING ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(origin.getPath("master", "/")); // git://buildCompileWithOverrideOnGitVFS/dummy/
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

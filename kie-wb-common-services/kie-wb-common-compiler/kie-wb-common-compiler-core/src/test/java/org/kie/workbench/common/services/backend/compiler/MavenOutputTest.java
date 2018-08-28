@@ -16,6 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -56,7 +57,7 @@ public class MavenOutputTest {
                           tmpNio);
 
         Path tmp = Paths.get(tmpNio.toAbsolutePath().toString());
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

@@ -18,6 +18,7 @@ package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 import java.io.File;
 import java.net.URLClassLoader;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -70,7 +71,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesSimpleTest(){
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_simple");
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_BUILD_CLASSPATH )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -87,7 +88,7 @@ public class BuildInMemoryClasspathMojoTest {
     public void getClassloaderFromAllDependenciesComplexTest() {
 
         Path path = Paths.get(".").resolve("target/test-classes/dummy_deps_complex");
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.STORE_BUILD_CLASSPATH )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(path);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,

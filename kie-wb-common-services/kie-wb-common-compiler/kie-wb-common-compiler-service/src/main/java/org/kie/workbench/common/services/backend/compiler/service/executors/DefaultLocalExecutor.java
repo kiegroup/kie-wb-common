@@ -17,6 +17,7 @@ package org.kie.workbench.common.services.backend.compiler.service.executors;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -63,7 +64,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
     }
 
     private CompilerAggregateEntryCache setupCompileInfo(Path workingDir) {
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD, KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(workingDir);
         return new CompilerAggregateEntryCache(compiler, info);
     }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -138,7 +139,7 @@ public class DefaultMavenCompilerTest {
                                          StandardCharsets.UTF_8);
         assertThat(pomAsAstring).doesNotContain(TestConstants.TAKARI_LIFECYCLE_ARTIFACT);
 
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(prjFolder);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -207,7 +208,7 @@ public class DefaultMavenCompilerTest {
         assertThat(rbResult.getStatus().isSuccessful()).isTrue();
 
         //Compile the repo
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
 
         byte[] encoded = Files.readAllBytes(Paths.get(tmpCloned + "/pom.xml"));
         String pomAsAstring = new String(encoded,
@@ -240,7 +241,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithJGitDecoratorTest() throws Exception {
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD ));
 
         String MASTER_BRANCH = "master";
 
@@ -302,7 +303,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void buildWithAllDecoratorsTest() throws Exception {
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.ENABLE_LOGGING, KieDecorator.UPDATE_JGIT_BEFORE_BUILD ));
 
         String MASTER_BRANCH = "master";
 
@@ -419,7 +420,7 @@ public class DefaultMavenCompilerTest {
 
     @Test
     public void cleanInternalTest() throws Exception {
-        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>(Arrays.asList(KieDecorator.UPDATE_JGIT_BEFORE_BUILD )));
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.UPDATE_JGIT_BEFORE_BUILD ));
 
         String MASTER_BRANCH = "master";
 
