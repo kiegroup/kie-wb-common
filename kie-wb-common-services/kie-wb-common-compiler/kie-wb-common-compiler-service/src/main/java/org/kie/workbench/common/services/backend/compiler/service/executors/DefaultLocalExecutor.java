@@ -16,9 +16,7 @@
 package org.kie.workbench.common.services.backend.compiler.service.executors;
 
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;

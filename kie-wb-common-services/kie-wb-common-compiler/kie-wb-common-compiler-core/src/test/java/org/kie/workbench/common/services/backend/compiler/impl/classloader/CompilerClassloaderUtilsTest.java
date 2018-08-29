@@ -17,7 +17,7 @@ package org.kie.workbench.common.services.backend.compiler.impl.classloader;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     public CompilerClassloaderUtilsTest() {
-        super("target/test-classes/kjar-2-single-resources", new HashSet<>(Arrays.asList(KieDecorator.STORE_KIE_OBJECTS , KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD)));//KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
+        super("target/test-classes/kjar-2-single-resources", EnumSet.of(KieDecorator.STORE_KIE_OBJECTS , KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD));
     }
 
     @Test
