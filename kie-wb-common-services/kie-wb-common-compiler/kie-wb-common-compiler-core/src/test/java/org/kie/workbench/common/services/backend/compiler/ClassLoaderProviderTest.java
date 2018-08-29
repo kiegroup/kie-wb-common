@@ -95,7 +95,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.DEBUG, MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
