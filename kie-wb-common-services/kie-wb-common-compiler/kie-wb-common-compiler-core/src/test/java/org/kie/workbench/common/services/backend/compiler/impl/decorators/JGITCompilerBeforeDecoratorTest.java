@@ -64,9 +64,6 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @BeforeClass
     public static void setupSystemProperties() {
-        int freePort = TestUtilGit.findFreePort();
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
-        logger.info("Git port used:{}", freePort);
         //These are not needed for the tests
         System.setProperty("org.uberfire.nio.git.daemon.enabled",
                            "false");
@@ -78,7 +75,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @AfterClass
     public static void restoreSystemProperties() {
-        System.clearProperty("org.uberfire.nio.git.daemon.port");
+        System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
     }
