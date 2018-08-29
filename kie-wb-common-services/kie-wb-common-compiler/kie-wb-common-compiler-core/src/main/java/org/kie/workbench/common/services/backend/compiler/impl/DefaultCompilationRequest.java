@@ -17,7 +17,6 @@ package org.kie.workbench.common.services.backend.compiler.impl;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.UUID;
 
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;

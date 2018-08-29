@@ -15,8 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl;
 
-import java.util.Properties;
-
 import org.uberfire.java.nio.file.Path;
 
 /***
@@ -29,10 +27,6 @@ public class WorkspaceCompilationInfo {
     protected Boolean kiePluginPresent = Boolean.FALSE;
 
     public WorkspaceCompilationInfo(Path prjPath) {
-        this.prjPath = prjPath;
-    }
-
-    public WorkspaceCompilationInfo(Path prjPath, Properties bannedEnvVars) {
         this.prjPath = prjPath;
     }
 

@@ -94,7 +94,7 @@ public class JGITCompilerBeforeDecoratorTest {
     }
 
     @After
-    public void tearDown() throws IOException {
+    public void tearDown() {
         fileSystemTestingUtils.cleanup();
         TestUtil.rm(new File("src/../.security/"));
     }

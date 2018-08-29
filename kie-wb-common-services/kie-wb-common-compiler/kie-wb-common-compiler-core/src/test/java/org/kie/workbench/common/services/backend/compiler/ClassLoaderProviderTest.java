@@ -204,7 +204,6 @@ public class ClassLoaderProviderTest {
 
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(resources).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
@@ -245,7 +244,6 @@ public class ClassLoaderProviderTest {
         assertThat(kieModuleOptional).isPresent();
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(classloaderOptional).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
@@ -286,6 +284,5 @@ public class ClassLoaderProviderTest {
         assertThat(kieModuleOptional).isPresent();
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(classloaderOptional).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 }
