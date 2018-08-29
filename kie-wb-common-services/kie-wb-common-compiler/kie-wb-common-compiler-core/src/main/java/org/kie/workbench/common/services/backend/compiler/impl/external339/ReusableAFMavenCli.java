@@ -210,8 +210,8 @@ public class ReusableAFMavenCli {
                 }
             }
         }
-
-        //SystemProperties.addSystemProperties(systemProperties);//disabled
+        //disabled to shield from env var who prevent the correct build (ie. maven.skip.main)
+        //SystemProperties.addSystemProperties(systemProperties);
 
         // ----------------------------------------------------------------------
         // Properties containing info about the currently running version of Maven
