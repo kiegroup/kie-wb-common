@@ -28,7 +28,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultPomEditorTest extends BaseCompilerTest {
 

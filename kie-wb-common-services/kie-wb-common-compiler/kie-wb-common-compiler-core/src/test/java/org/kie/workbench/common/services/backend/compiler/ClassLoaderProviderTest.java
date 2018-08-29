@@ -18,7 +18,6 @@ package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -53,7 +52,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClassLoaderProviderTest {
 
@@ -62,7 +61,6 @@ public class ClassLoaderProviderTest {
     private Path tmp;
     private Path uberfireTmp;
     private Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
-    private final String MAVEN_MAIN_SKIP ="maven.main.skip";
 
     @Rule
     public TestName testName = new TestName();
@@ -206,7 +204,6 @@ public class ClassLoaderProviderTest {
 
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(resources).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
@@ -247,6 +244,5 @@ public class ClassLoaderProviderTest {
         assertThat(kieModuleOptional).isPresent();
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(classloaderOptional).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 }

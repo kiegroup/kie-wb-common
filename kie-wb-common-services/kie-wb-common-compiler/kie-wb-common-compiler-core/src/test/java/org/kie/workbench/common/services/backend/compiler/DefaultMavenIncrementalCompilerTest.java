@@ -16,7 +16,6 @@
 package org.kie.workbench.common.services.backend.compiler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -33,20 +32,17 @@ import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilat
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uberfire.java.nio.file.DirectoryStream;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultMavenIncrementalCompilerTest {
 
     private String mavenRepo;
     private Path tmpRoot;
-    private Logger logger = LoggerFactory.getLogger(DefaultMavenIncrementalCompilerTest.class);
 
     @Rule
     public TestName testName = new TestName();

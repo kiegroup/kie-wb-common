@@ -25,7 +25,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCon
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UUIDThreadNameDiscriminatorTest {
 

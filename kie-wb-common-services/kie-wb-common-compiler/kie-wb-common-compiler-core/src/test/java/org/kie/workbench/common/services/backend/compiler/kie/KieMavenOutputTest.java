@@ -15,9 +15,7 @@
  */
 package org.kie.workbench.common.services.backend.compiler.kie;
 
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -38,7 +36,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieMavenOutputTest {
 

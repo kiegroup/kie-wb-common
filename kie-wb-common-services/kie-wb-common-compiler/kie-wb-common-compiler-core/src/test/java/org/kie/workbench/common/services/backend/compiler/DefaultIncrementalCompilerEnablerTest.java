@@ -34,12 +34,11 @@ import org.uberfire.java.nio.file.Paths;
 import org.uberfire.java.nio.file.api.FileSystemProviders;
 import org.uberfire.java.nio.file.spi.FileSystemProvider;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultIncrementalCompilerEnablerTest {
 
     private String mavenRepo;
-    private Logger logger = LoggerFactory.getLogger(DefaultIncrementalCompilerEnablerTest.class);
 
     @Before
     public void setUp() throws Exception {

@@ -19,10 +19,8 @@ package org.kie.workbench.common.services.backend.compiler;
 import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullCommand;
@@ -56,7 +54,6 @@ import org.uberfire.java.nio.fs.jgit.JGitFileSystem;
 import org.uberfire.mocks.FileSystemTestingUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
 
 public class DefaultMavenCompilerTest {
 
@@ -466,7 +463,7 @@ public class DefaultMavenCompilerTest {
 
         lastCommit = origin.getGit().resolveRevCommit(origin.getGit().getRef(MASTER_BRANCH).getObjectId());
 
-        assertNotNull(lastCommit);
+        assertThat(lastCommit).isNotNull();
 
         ioService.write(origin.getPath("/dummyA/src/main/java/dummy/DummyA.java"),
                         new String(java.nio.file.Files.readAllBytes(new File("src/test/projects/DummyA.java").toPath())));

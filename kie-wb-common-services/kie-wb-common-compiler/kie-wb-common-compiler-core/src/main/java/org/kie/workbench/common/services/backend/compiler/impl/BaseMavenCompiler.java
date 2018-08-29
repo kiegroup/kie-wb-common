@@ -44,7 +44,7 @@ import org.uberfire.java.nio.file.StandardOpenOption;
  * <p>
  * MavenCompiler compiler = new DefaultMavenCompiler();
  * or
- * MavenCompiler compiler = MavenCompilerFactory.getCompiler(Decorator.LOG_AFTER);
+ * MavenCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of( KieDecorator.ENABLE_LOGGING );
  * <p>
  * WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(tmp);
  * CompilationRequest req = new DefaultCompilationRequest(mavenRepo, info,new String[]{MavenArgs.COMPILE}, Boolean.TRUE );

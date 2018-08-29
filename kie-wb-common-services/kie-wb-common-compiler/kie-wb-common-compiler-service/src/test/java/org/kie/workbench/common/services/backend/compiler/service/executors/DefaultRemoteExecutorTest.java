@@ -25,7 +25,7 @@ import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLI
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultRemoteExecutorTest extends BaseCompilerTest {
 

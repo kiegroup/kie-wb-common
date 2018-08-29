@@ -17,9 +17,7 @@ package org.kie.workbench.common.services.backend.maven.plugins.dependency;
 
 import java.io.File;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Optional;
 
 import org.apache.commons.io.FileUtils;
@@ -44,7 +42,7 @@ import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
 import org.uberfire.java.nio.file.Paths;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BuildInMemoryClasspathMojoTest {
 

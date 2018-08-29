@@ -15,7 +15,6 @@
  */
 package org.kie.workbench.common.services.backend.compiler.impl.kie;
 
-import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
 
@@ -28,7 +27,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.JGITCo
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class KieMavenCompilerFactoryTest {
 
