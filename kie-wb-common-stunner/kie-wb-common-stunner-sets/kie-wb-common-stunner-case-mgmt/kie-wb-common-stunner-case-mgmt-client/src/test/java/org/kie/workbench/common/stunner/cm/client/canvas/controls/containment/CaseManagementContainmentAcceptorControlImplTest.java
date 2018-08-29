@@ -16,47 +16,8 @@
 
 package org.kie.workbench.common.stunner.cm.client.canvas.controls.containment;
 
-import java.util.Collections;
-import java.util.Optional;
-
-import com.ait.lienzo.client.core.shape.wires.IContainmentAcceptor;
-import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
-import com.ait.lienzo.client.core.shape.wires.WiresContainer;
-import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
-import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
-import org.kie.workbench.common.stunner.cm.client.canvas.CaseManagementCanvasHandler;
-import org.kie.workbench.common.stunner.cm.client.canvas.CaseManagementCanvasView;
-import org.kie.workbench.common.stunner.cm.client.command.CaseManagementCanvasCommandFactory;
-import org.kie.workbench.common.stunner.cm.client.command.CaseManagementRemoveChildCommand;
-import org.kie.workbench.common.stunner.cm.client.command.CaseManagementSetChildCommand;
-import org.kie.workbench.common.stunner.cm.client.wires.CaseManagementContainmentStateHolder;
-import org.kie.workbench.common.stunner.cm.client.wires.MockCaseManagementShapeView;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandManager;
-import org.kie.workbench.common.stunner.core.client.command.CanvasCommandResultBuilder;
-import org.kie.workbench.common.stunner.core.client.command.RequiresCommandManager;
-import org.kie.workbench.common.stunner.core.graph.Edge;
-import org.kie.workbench.common.stunner.core.graph.Node;
-import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
-import org.kie.workbench.common.stunner.core.graph.processing.index.Index;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mock;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementContainmentAcceptorControlImplTest {

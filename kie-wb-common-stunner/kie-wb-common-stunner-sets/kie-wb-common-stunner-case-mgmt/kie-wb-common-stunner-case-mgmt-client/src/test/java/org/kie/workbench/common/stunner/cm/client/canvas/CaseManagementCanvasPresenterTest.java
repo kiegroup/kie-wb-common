@@ -16,31 +16,8 @@
 
 package org.kie.workbench.common.stunner.cm.client.canvas;
 
-import javax.enterprise.event.Event;
-
-import com.ait.lienzo.client.core.shape.wires.WiresManager;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kie.workbench.common.stunner.client.widgets.canvas.view.LienzoPanel;
-import org.kie.workbench.common.stunner.core.client.canvas.Layer;
-import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasClearEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasDrawnEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasFocusedEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeAddedEvent;
-import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeRemovedEvent;
-import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.uberfire.mocks.EventSourceMock;
-
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementCanvasPresenterTest {

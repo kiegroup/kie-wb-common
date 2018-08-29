@@ -25,7 +25,6 @@ import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.spy;
 
 public abstract class BaseLayoutManagerTest {
 

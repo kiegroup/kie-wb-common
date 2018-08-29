@@ -16,18 +16,8 @@
 
 package org.kie.workbench.common.stunner.cm.client.wires;
 
-import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementShapeViewTest {

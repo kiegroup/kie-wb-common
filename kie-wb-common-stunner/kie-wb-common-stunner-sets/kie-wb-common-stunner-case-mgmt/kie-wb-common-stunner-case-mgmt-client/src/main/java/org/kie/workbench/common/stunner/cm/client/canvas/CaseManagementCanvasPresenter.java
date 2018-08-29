@@ -22,7 +22,6 @@ import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.ait.lienzo.client.core.shape.wires.WiresShape;
 import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.client.lienzo.Lienzo;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
@@ -37,11 +36,6 @@ import org.kie.workbench.common.stunner.core.client.canvas.event.CanvasFocusedEv
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeAddedEvent;
 import org.kie.workbench.common.stunner.core.client.canvas.event.registration.CanvasShapeRemovedEvent;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
-import org.kie.workbench.common.stunner.svg.client.shape.SVGMutableShape;
-import org.kie.workbench.common.stunner.svg.client.shape.SVGShape;
-import org.kie.workbench.common.stunner.svg.client.shape.impl.SVGMutableShapeImpl;
-import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
-import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
 @Dependent
 @CaseManagementEditor

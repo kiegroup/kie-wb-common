@@ -18,9 +18,7 @@ package org.kie.workbench.common.stunner.cm.client.canvas;
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
-import com.ait.lienzo.client.core.shape.IPrimitive;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresCanvas;
 import org.kie.workbench.common.stunner.client.lienzo.canvas.wires.WiresUtils;
 import org.kie.workbench.common.stunner.client.lienzo.wires.WiresManagerFactory;
@@ -28,12 +26,7 @@ import org.kie.workbench.common.stunner.client.widgets.canvas.wires.WiresCanvasV
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvas;
-import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.view.ShapeView;
-import org.kie.workbench.common.stunner.svg.client.shape.SVGShape;
-import org.kie.workbench.common.stunner.svg.client.shape.view.SVGContainer;
-import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
-import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
 @Dependent
 @CaseManagementEditor
@@ -51,7 +44,6 @@ public class CaseManagementCanvasView extends WiresCanvasView {
             WiresShape wiresShape = (WiresShape) shapeView;
             wiresManager.register(wiresShape, false);
             WiresUtils.assertShapeGroup(wiresShape.getGroup(), WiresCanvas.WIRES_CANVAS_GROUP_ID);
-
         } else if (WiresUtils.isWiresConnector(shapeView)) {
             //Don't render connectors
 

@@ -19,74 +19,42 @@
     CM shape styles.
     ******************
  */
-
-.stage_background {
-    fill: white;
-    stroke: none;
-}
-
-.stage_border {
-    stroke: #393f44;
-    stroke-width: 1.5px;
-}
-
-.stage_group {
-    opacity: 1;
-}
-
-.stage_inner_icon {
-    fill: #4D5258;
-}
-
-.stage {
-    fill: #FFFFFF;
-    stroke: #393F44;
-    stroke-width: 1.5;
-    stroke-miterlimit: 10;
-}
-
-.stage_child {
-    fill:#FFFFFF;
-    stroke:#393F44;
-    stroke-width:1.5;
-    stroke-miterlimit:10;
-}
-
-.icon {
-    fill:#4D5258;
-    opacity: 1;
-}
-
-.stage_strip {
-    fill:#EDEDED;
-    stroke:#BBBBBB;
-    stroke-width:1.5;
-    stroke-miterlimit:10;
-}
-
 .rectangle {
     opacity: 0;
 }
 
+.stage,
+.subcase,
+.user_task,
 .subprocess {
     fill: #FFFFFF;
 }
 
+.stage_border,
+.subcase_border,
+.user_task_border,
 .subprocess_border {
     opacity: 1;
     stroke: #393F44;
     stroke-width: 1.5;
 }
 
+.stage_background,
+.subcase_background,
+.user_task_background,
 .subprocess_background {
     opacity: 1;
     fill: #FFFFFF;
 }
 
+.subcase_group,
+.user_task_group,
 .subprocess_group {
     opacity: 1;
 }
 
+.subcase_group_icon,
+.user_task_group_icon,
 .subprocess_group_icon {
     stroke: #393F44;
     fill: #393F44;
@@ -94,7 +62,7 @@
 
 /*
     *******************************
-    Global BPMN text styles.
+    Global CM text styles
     *******************************
  */
 #text {

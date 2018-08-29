@@ -21,13 +21,13 @@ import java.util.Optional;
 
 import com.ait.lienzo.client.core.shape.Group;
 import com.ait.lienzo.client.core.shape.MultiPath;
-import com.ait.lienzo.client.core.shape.wires.ILayoutHandler;
 import com.ait.lienzo.client.core.shape.wires.WiresShape;
+import com.ait.lienzo.shared.core.types.ColorName;
 import com.ait.tooling.nativetools.client.collection.NFastArrayList;
 import com.google.gwt.core.client.GWT;
+import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
 import org.kie.workbench.common.stunner.core.client.shape.view.HasSize;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
-import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGPrimitiveFactory;
 import org.kie.workbench.common.stunner.svg.client.shape.view.impl.SVGShapeViewImpl;
 
 public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize<SVGShapeViewImpl> {
@@ -38,6 +38,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
     private double currentWidth;
     private double currentHeight;
     private String shapeLabel;
+    private SVGPrimitiveShape primitiveShape;
 
     public CaseManagementShapeView(final String name,
                                    final SVGPrimitiveShape svgPrimitive,
@@ -51,6 +52,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         this.currentHeight = minHeight;
         this.optDropZone = makeDropZone();
         this.optDropZone.ifPresent((dz) -> dz.setDraggable(false));
+        this.primitiveShape = svgPrimitive;
     }
 
     public void setLabel(String shapeLabel) {
@@ -68,7 +70,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         return currentHeight;
     }
 
-    public void logicallyReplace(final WiresShape original, final WiresShape replacement) {
+    public void logicallyReplace(final CaseManagementShapeView original, final CaseManagementShapeView replacement) {
 
         if (original == null || replacement == null || replacement.getParent() == this) {
             return;
@@ -99,7 +101,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         existingChildShapes.forEach(WiresShape::removeFromParent);
 
         boolean removed = existingChildShapes.remove(shape);
-        existingChildShapes.add(removed ? targetIndex -1 : targetIndex, shape);
+        existingChildShapes.add(removed ? targetIndex - 1 : targetIndex, shape);
 
         //call to add(..) causes ILayoutHandler to be invoked
         existingChildShapes.forEach(this::add);
@@ -144,6 +146,7 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
     public CaseManagementShapeView getGhost() {
         final CaseManagementShapeView ghost = createGhost();
         if (null != ghost) {
+            ghost.setFillColor(ColorName.GRAY.getColorString());
             ghost.setFillAlpha(0.5d);
             ghost.setStrokeAlpha(0.5d);
             ghost.setUUID(getUUID());
@@ -153,13 +156,15 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
 
     protected CaseManagementShapeView createGhost() {
 
-        CaseManagementShapeView ghost = new CaseManagementShapeView(shapeLabel, (SVGPrimitiveShape) getPrimitive(),
-                                                                    currentWidth, currentHeight, false);
+        CaseManagementShapeView thisGhost = new CaseManagementShapeView(shapeLabel,
+                                                                        new SVGPrimitiveShape(getShape().copy()),
+                                                                        currentWidth, currentHeight, false);
+        thisGhost.setLayoutHandler(new VerticalStackLayoutManager());
 
         for (WiresShape wiresShape : getChildShapes()) {
-            final CaseManagementShapeView shapeView = ((CaseManagementShapeView) wiresShape).getGhost();
-            ghost.add(shapeView);
+            final CaseManagementShapeView childGhost = ((CaseManagementShapeView) wiresShape).getGhost();
+            thisGhost.add(childGhost);
         }
-        return ghost;
+        return thisGhost;
     }
 }

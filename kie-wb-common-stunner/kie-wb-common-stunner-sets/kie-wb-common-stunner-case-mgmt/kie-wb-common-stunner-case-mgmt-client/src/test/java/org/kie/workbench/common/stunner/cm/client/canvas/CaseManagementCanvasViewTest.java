@@ -19,10 +19,6 @@ package org.kie.workbench.common.stunner.cm.client.canvas;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 @RunWith(LienzoMockitoTestRunner.class)
 public class CaseManagementCanvasViewTest {
 

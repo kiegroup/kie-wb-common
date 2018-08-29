@@ -21,14 +21,12 @@ import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDefinition;
-import org.kie.workbench.common.stunner.cm.client.shape.CaseManagementShape;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgDiagramShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgNullShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgSubprocessShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.def.CaseManagementSvgUserTaskShapeDef;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
-import org.kie.workbench.common.stunner.cm.client.wires.VerticalStackLayoutManager;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.client.shape.Shape;
 import org.kie.workbench.common.stunner.core.client.shape.factory.ShapeDefFactory;

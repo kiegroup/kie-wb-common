@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.stunner.cm.client.resources;
 
-import com.google.gwt.core.client.GWT;
 import org.kie.workbench.common.stunner.cm.client.shape.view.CaseManagementShapeView;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGPrimitiveShape;
 import org.kie.workbench.common.stunner.svg.client.shape.view.SVGShapeView;
