@@ -42,7 +42,11 @@ public class MavenBannedVars {
             } catch (IOException e) {
                 logger.error(e.getMessage());
             } finally {
-                in.close();
+                try{
+                    in.close();
+                }catch (Exception e){
+                    logger.error(e.getMessage());
+                }
             }
         }
         return prop;

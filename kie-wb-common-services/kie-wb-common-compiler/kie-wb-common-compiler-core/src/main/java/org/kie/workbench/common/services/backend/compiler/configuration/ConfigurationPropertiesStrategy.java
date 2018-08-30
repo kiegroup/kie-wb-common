@@ -91,14 +91,17 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
         } else {
             try {
                 prop.load(in);
-
                 valid = Boolean.TRUE;
                 setUpValues(prop);
             } catch (IOException e) {
                 logger.error(e.getMessage());
                 valid = Boolean.FALSE;
             } finally {
-                in.close();
+                try{
+                    in.close();
+                }catch (Exception e){
+                    logger.error(e.getMessage());
+                }
             }
         }
         return prop;
