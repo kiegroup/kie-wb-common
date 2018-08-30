@@ -15,6 +15,9 @@
  */
 package org.kie.workbench.common.stunner.bpmn.definition.property.event.signal;
 
+import java.util.Objects;
+
+import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
 import org.kie.workbench.common.forms.adf.definitions.annotations.metaModel.FieldDefinition;
@@ -38,7 +41,7 @@ public class SignalScope implements BPMNProperty {
         this("");
     }
 
-    public SignalScope(final String value) {
+    public SignalScope(final @MapsTo("value") String value) {
         this.value = value;
     }
 
@@ -52,14 +55,17 @@ public class SignalScope implements BPMNProperty {
 
     @Override
     public int hashCode() {
-        return (null != value) ? value.hashCode() : 0;
+        return Objects.hashCode(value);
     }
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
         if (o instanceof SignalScope) {
             SignalScope other = (SignalScope) o;
-            return (null != value) ? value.equals(other.value) : null == other.value;
+            return Objects.equals(value, other.value);
         }
         return false;
     }

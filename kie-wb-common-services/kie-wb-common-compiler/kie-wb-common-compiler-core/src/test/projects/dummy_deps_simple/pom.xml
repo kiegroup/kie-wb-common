@@ -26,6 +26,26 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <version>${version.io.takari.maven.plugins.compiler}</version>
+        <executions>
+          <execution>
+            <id>default-compile</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <compilerId>jdt</compilerId>
+          <source>1.8</source>
+          <target>1.8</target>
+          <failOnError>true</failOnError>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${version.org.apache.maven.plugins.maven-compiler-plugin}</version>
       </plugin>

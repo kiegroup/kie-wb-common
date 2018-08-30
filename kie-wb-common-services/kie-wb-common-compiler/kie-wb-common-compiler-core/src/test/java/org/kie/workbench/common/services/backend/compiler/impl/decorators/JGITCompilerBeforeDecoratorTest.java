@@ -30,8 +30,10 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
+import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.TestUtilGit;
 import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
@@ -60,6 +62,7 @@ public class JGITCompilerBeforeDecoratorTest {
     @Rule
     public TestName testName = new TestName();
 
+
     @BeforeClass
     public static void setupSystemProperties() {
         //These are not needed for the tests
@@ -73,6 +76,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @AfterClass
     public static void restoreSystemProperties() {
+        System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
         System.clearProperty("org.uberfire.sys.repo.monitor.disabled");

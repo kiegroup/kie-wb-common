@@ -41,6 +41,29 @@
           <goalPrefix>kie</goalPrefix>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>io.takari.maven.plugins</groupId>
+        <artifactId>takari-lifecycle-plugin</artifactId>
+        <version>${version.io.takari.maven.plugins.compiler}</version>
+        <configuration>
+          <compilerId>jdt</compilerId>
+          <source>1.8</source>
+          <target>1.8</target>
+          <failOnError>true</failOnError>
+        </configuration>
+        <extensions>true</extensions>
+      </plugin>
+      <plugin>
+        <groupId>org.kie</groupId>
+        <artifactId>kie-takari-plugin</artifactId>
+        <version>${version.org.kie}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <properties>
+            <drools.dialect.java.compiler.lnglevel>1.6</drools.dialect.java.compiler.lnglevel>
+          </properties>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 </project>
