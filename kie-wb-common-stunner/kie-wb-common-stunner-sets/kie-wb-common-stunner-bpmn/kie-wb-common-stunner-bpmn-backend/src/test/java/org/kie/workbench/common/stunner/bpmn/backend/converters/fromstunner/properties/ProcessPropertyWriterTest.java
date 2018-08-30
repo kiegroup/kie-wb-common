@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunner.pro
 import org.eclipse.bpmn2.Process;
 import org.eclipse.bpmn2.di.BPMNEdge;
 import org.eclipse.bpmn2.di.BPMNShape;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,14 +29,39 @@ import static org.kie.workbench.common.stunner.bpmn.backend.converters.fromstunn
 
 public class ProcessPropertyWriterTest {
 
-    ProcessPropertyWriter p = new ProcessPropertyWriter(
-            bpmn2.createProcess(), new FlatVariableScope());
+    ProcessPropertyWriter p ;
+    FlatVariableScope variableScope;
+
+    @Before
+    public void before() {
+        this.variableScope = new FlatVariableScope();
+        this.p = new ProcessPropertyWriter(
+                bpmn2.createProcess(), variableScope);
+    }
 
     @Test
     public void setIdWithWhitespace() {
         p.setId("some weird   id \t");
         Process process = p.getProcess();
         assertThat(process.getId()).isEqualTo("someweirdid");
+    }
+
+    @Test
+    public void addChildElement() {
+        Process process = p.getProcess();
+
+        BoundaryEventPropertyWriter boundaryEventPropertyWriter =
+                new BoundaryEventPropertyWriter(bpmn2.createBoundaryEvent(), variableScope);
+
+        UserTaskPropertyWriter userTaskPropertyWriter =
+                new UserTaskPropertyWriter(bpmn2.createUserTask(), variableScope);
+
+        p.addChildElement(boundaryEventPropertyWriter);
+        p.addChildElement(userTaskPropertyWriter);
+
+        // boundary event should always occur after other nodes (compat with old marshallers)
+        assertThat(process.getFlowElements().get(0)).isEqualTo(userTaskPropertyWriter.getFlowElement());
+        assertThat(process.getFlowElements().get(1)).isEqualTo(boundaryEventPropertyWriter.getFlowElement());
     }
 
     @Test

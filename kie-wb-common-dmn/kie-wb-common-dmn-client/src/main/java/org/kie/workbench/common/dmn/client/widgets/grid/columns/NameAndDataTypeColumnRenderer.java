@@ -19,11 +19,9 @@ package org.kie.workbench.common.dmn.client.widgets.grid.columns;
 import java.util.List;
 
 import com.ait.lienzo.client.core.shape.Group;
-import com.ait.lienzo.client.core.shape.Text;
 import com.google.gwt.core.client.GWT;
 import org.gwtbootstrap3.client.ui.base.TextBoxBase;
 import org.kie.workbench.common.dmn.client.editors.expressions.util.RendererUtils;
-import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridTheme;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
 import org.uberfire.ext.wires.core.grids.client.model.GridColumn;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
@@ -34,20 +32,16 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.columns.si
 
 public class NameAndDataTypeColumnRenderer<W extends TextBoxBase, E extends BaseDOMElement<String, W>> extends BaseGridColumnSingletonDOMElementRenderer<String, W, E> {
 
-    static final String FONT_STYLE_TYPE_REF = "italic";
-
-    static final double SPACING = 8.0;
-
     public NameAndDataTypeColumnRenderer(final BaseSingletonDOMElementFactory<String, W, E> factory) {
         super(factory);
     }
 
     @Override
-    protected Group renderHeaderContent(final GridHeaderColumnRenderContext context,
-                                        final List<GridColumn.HeaderMetaData> headerMetaData,
-                                        final int headerRowIndex,
-                                        final double blockWidth,
-                                        final double rowHeight) {
+    public Group renderHeaderContent(final List<GridColumn.HeaderMetaData> headerMetaData,
+                                     final GridHeaderColumnRenderContext context,
+                                     final int headerRowIndex,
+                                     final double blockWidth,
+                                     final double rowHeight) {
         final Group headerGroup = GWT.create(Group.class);
 
         if (headerRowIndex >= headerMetaData.size()) {
@@ -55,32 +49,15 @@ public class NameAndDataTypeColumnRenderer<W extends TextBoxBase, E extends Base
         }
 
         final GridColumn.HeaderMetaData headerRowMetaData = headerMetaData.get(headerRowIndex);
-        final String title = headerRowMetaData.getTitle();
-
         if (headerRowMetaData instanceof NameAndDataTypeHeaderMetaData) {
-            final NameAndDataTypeHeaderMetaData nadHeaderMetaData = (NameAndDataTypeHeaderMetaData) headerRowMetaData;
-            final Text name = context.getRenderer().getTheme().getHeaderText();
-            name.setText(title);
-            name.setListening(false);
-            name.setX(blockWidth / 2);
-            name.setY(rowHeight / 2 - SPACING);
-
-            final Text typeRef = context.getRenderer().getTheme().getHeaderText();
-            typeRef.setFontStyle(FONT_STYLE_TYPE_REF);
-            typeRef.setFontSize(BaseExpressionGridTheme.FONT_SIZE - 2.0);
-            typeRef.setText("(" + nadHeaderMetaData.getTypeRef().toString() + ")");
-            typeRef.setListening(false);
-            typeRef.setX(blockWidth / 2);
-            typeRef.setY(rowHeight / 2 + SPACING);
-
-            headerGroup.add(name);
-            headerGroup.add(typeRef);
-
-            return headerGroup;
+            return RendererUtils.getNameAndDataTypeText((NameAndDataTypeHeaderMetaData) headerRowMetaData,
+                                                        context,
+                                                        blockWidth,
+                                                        rowHeight);
         }
 
-        return super.renderHeaderContent(context,
-                                         headerMetaData,
+        return super.renderHeaderContent(headerMetaData,
+                                         context,
                                          headerRowIndex,
                                          blockWidth,
                                          rowHeight);

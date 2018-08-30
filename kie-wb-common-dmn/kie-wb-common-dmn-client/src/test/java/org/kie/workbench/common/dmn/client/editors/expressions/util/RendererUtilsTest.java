@@ -16,20 +16,32 @@
 
 package org.kie.workbench.common.dmn.client.editors.expressions.util;
 
+import java.util.Collections;
+
+import com.ait.lienzo.client.core.shape.Group;
+import com.ait.lienzo.client.core.shape.Node;
 import com.ait.lienzo.client.core.shape.Text;
 import com.ait.lienzo.shared.core.types.TextAlign;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
+import com.google.gwtmockito.GwtMock;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.kie.workbench.common.dmn.api.property.dmn.QName;
+import org.kie.workbench.common.dmn.client.editors.expressions.types.literal.LiteralExpressionColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGridTheme;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.NameAndDataTypeHeaderMetaData;
 import org.mockito.Mock;
+import org.uberfire.ext.wires.core.grids.client.model.GridData;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCell;
 import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
+import org.uberfire.ext.wires.core.grids.client.widget.context.GridHeaderColumnRenderContext;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.GridRenderer;
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.themes.GridRendererTheme;
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,8 +50,18 @@ import static org.mockito.Mockito.when;
 public class RendererUtilsTest {
 
     private static final String VALUE = "some text value";
+
     private static final double WIDTH = 200;
+
     private static final double HEIGHT = 80;
+
+    private static final String TITLE = "title";
+
+    private static final QName TYPE_REF = new QName();
+
+    private static final int BLOCK_WIDTH = 100;
+
+    private static final double ROW_HEIGHT = 32.0;
 
     private Text text;
 
@@ -50,24 +72,53 @@ public class RendererUtilsTest {
     private GridRendererTheme gridTheme;
 
     @Mock
-    private GridBodyCellRenderContext context;
+    private GridBodyCellRenderContext cellContext;
+
+    @Mock
+    private LiteralExpressionColumn uiColumn;
+
+    @Mock
+    private GridData uiModel;
+
+    @Mock
+    private Text headerText1;
+
+    @Mock
+    private Text headerText2;
+
+    @GwtMock
+    @SuppressWarnings("unused")
+    private Group headerGroup;
+
+    private GridHeaderColumnRenderContext headerContext;
 
     @Before
+    @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
         text = spy(new Text(""));
+        headerContext = new GridHeaderColumnRenderContext(0,
+                                                          Collections.singletonList(uiColumn),
+                                                          Collections.singletonList(uiColumn),
+                                                          0,
+                                                          uiModel,
+                                                          gridRenderer);
 
-        when(context.getRenderer()).thenReturn(gridRenderer);
+        when(cellContext.getRenderer()).thenReturn(gridRenderer);
         when(gridRenderer.getTheme()).thenReturn(gridTheme);
         when(gridTheme.getBodyText()).thenReturn(text);
-        when(context.getCellWidth()).thenReturn(WIDTH);
-        when(context.getCellHeight()).thenReturn(HEIGHT);
+        when(cellContext.getCellWidth()).thenReturn(WIDTH);
+        when(cellContext.getCellHeight()).thenReturn(HEIGHT);
+
+        when(gridTheme.getHeaderText()).thenReturn(headerText1, headerText2);
+        when(headerText1.asNode()).thenReturn(mock(Node.class));
+        when(headerText2.asNode()).thenReturn(mock(Node.class));
     }
 
     @Test
     public void testCenteredText() throws Exception {
         final BaseGridCell<String> cell = new BaseGridCell<>(new BaseGridCellValue<>(VALUE));
 
-        RendererUtils.getCenteredCellText(context, cell);
+        RendererUtils.getCenteredCellText(cellContext, cell);
 
         verify(text).setText(VALUE);
         verify(text).setListening(false);
@@ -79,7 +130,7 @@ public class RendererUtilsTest {
     public void testLeftAlignTest() throws Exception {
         final BaseGridCell<String> cell = new BaseGridCell<>(new BaseGridCellValue<>(VALUE));
 
-        RendererUtils.getExpressionCellText(context, cell);
+        RendererUtils.getExpressionCellText(cellContext, cell);
 
         verify(text).setText(VALUE);
         verify(text).setListening(false);
@@ -87,5 +138,31 @@ public class RendererUtilsTest {
         verify(text).setY(5);
         verify(text).setFontFamily(BaseExpressionGridTheme.FONT_FAMILY_EXPRESSION);
         verify(text).setTextAlign(TextAlign.LEFT);
+    }
+
+    @Test
+    public void testRenderHeaderContentWithNameAndDataTypeHeaderMetaData() {
+        final NameAndDataTypeHeaderMetaData metaData = mock(NameAndDataTypeHeaderMetaData.class);
+
+        when(metaData.getTitle()).thenReturn(TITLE);
+        when(metaData.getTypeRef()).thenReturn(TYPE_REF);
+
+        RendererUtils.getNameAndDataTypeText(metaData,
+                                             headerContext,
+                                             BLOCK_WIDTH,
+                                             ROW_HEIGHT);
+
+        verify(headerText1).setText(eq(TITLE));
+        verify(headerText1).setX(BLOCK_WIDTH / 2);
+        verify(headerText1).setY(ROW_HEIGHT / 2 - RendererUtils.SPACING);
+
+        verify(headerText2).setText(eq("(" + TYPE_REF + ")"));
+        verify(headerText2).setX(BLOCK_WIDTH / 2);
+        verify(headerText2).setY(ROW_HEIGHT / 2 + RendererUtils.SPACING);
+        verify(headerText2).setFontStyle(RendererUtils.FONT_STYLE_TYPE_REF);
+        verify(headerText2).setFontSize(BaseExpressionGridTheme.FONT_SIZE - 2.0);
+
+        verify(headerGroup).add(headerText1);
+        verify(headerGroup).add(headerText2);
     }
 }

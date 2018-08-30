@@ -58,7 +58,7 @@ public class JGITCompilerBeforeDecoratorTest {
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepo;
-    protected static Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
+    private static Logger logger = LoggerFactory.getLogger(JGITCompilerBeforeDecoratorTest.class);
 
     @Rule
     public TestName testName = new TestName();
@@ -77,6 +77,7 @@ public class JGITCompilerBeforeDecoratorTest {
 
     @AfterClass
     public static void restoreSystemProperties() {
+        System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
         System.clearProperty("org.uberfire.nio.git.daemon.enabled");
         System.clearProperty("org.uberfire.nio.git.ssh.enabled");
         System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
