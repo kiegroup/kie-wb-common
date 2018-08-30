@@ -97,7 +97,7 @@ public class ConfigurationPropertiesStrategy implements ConfigurationStrategy {
             } catch (IOException e) {
                 logger.error(e.getMessage());
                 valid = Boolean.FALSE;
-            }finally {
+            } finally {
                 in.close();
             }
         }

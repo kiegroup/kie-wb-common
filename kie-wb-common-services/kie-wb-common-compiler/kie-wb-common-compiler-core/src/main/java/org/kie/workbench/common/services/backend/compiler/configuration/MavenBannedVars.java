@@ -41,7 +41,7 @@ public class MavenBannedVars {
                 prop.load(in);
             } catch (IOException e) {
                 logger.error(e.getMessage());
-            }finally {
+            } finally {
                 in.close();
             }
         }
