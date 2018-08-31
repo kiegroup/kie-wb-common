@@ -34,6 +34,8 @@ import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRende
 
 public class InformationItemCell extends ContextGridCell<InformationItemCell.HasNameCell> {
 
+    static final String SET_NAME_UNSUPPORTED_MESSAGE = "HasNameCell.setName(Name) on a wrapped String is not supported.";
+
     public interface HasNameCell extends HasName {
 
         Group render(final GridBodyCellRenderContext context);
@@ -48,7 +50,7 @@ public class InformationItemCell extends ContextGridCell<InformationItemCell.Has
 
                 @Override
                 public void setName(final Name name) {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException(SET_NAME_UNSUPPORTED_MESSAGE);
                 }
 
                 @Override

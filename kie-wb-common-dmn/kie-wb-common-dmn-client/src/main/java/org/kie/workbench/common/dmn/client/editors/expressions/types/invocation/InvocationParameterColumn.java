@@ -26,10 +26,10 @@ import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.NameAndDataTypeColumn;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableNameAndDataTypeColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 
-public class InvocationParameterColumn extends NameAndDataTypeColumn<InvocationGrid> {
+public class InvocationParameterColumn extends EditableNameAndDataTypeColumn<InvocationGrid> {
 
     public InvocationParameterColumn(final List<HeaderMetaData> headerMetaData,
                                      final InvocationGrid gridWidget,

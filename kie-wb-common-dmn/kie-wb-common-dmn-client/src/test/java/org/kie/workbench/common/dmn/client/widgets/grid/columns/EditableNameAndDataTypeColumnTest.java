@@ -35,7 +35,7 @@ import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.ContextGrid;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell.HasNameAndDataTypeCell;
-import org.kie.workbench.common.dmn.client.editors.types.HasNameAndDataTypeControl;
+import org.kie.workbench.common.dmn.client.editors.types.HasNameAndTypeRef;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 import org.kie.workbench.common.dmn.client.widgets.grid.model.GridCellTuple;
@@ -62,7 +62,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(LienzoMockitoTestRunner.class)
-public class NameAndDataTypeColumnTest {
+public class EditableNameAndDataTypeColumnTest {
 
     private static final int UI_ROW_INDEX = 0;
 
@@ -112,26 +112,26 @@ public class NameAndDataTypeColumnTest {
     private InformationItem informationItem = new InformationItem();
 
     @Captor
-    private ArgumentCaptor<HasNameAndDataTypeControl> hasNameAndDataTypeControlCaptor;
+    private ArgumentCaptor<HasNameAndTypeRef> hasNameAndDataTypeControlCaptor;
 
     @Captor
     private ArgumentCaptor<Name> nameCaptor;
 
     private GridCell<InformationItemCell.HasNameCell> cell;
 
-    private NameAndDataTypeColumn column;
+    private EditableNameAndDataTypeColumn column;
 
     @Before
     public void setup() {
         this.cell = new BaseGridCell<>(new BaseGridCellValue<>(HasNameAndDataTypeCell.wrap(informationItem)));
-        this.column = spy(new NameAndDataTypeColumn<ContextGrid>(headerMetaData,
-                                                                 gridWidget,
-                                                                 isEditable,
-                                                                 clearDisplayNameConsumer,
-                                                                 setDisplayNameConsumer,
-                                                                 setTypeRefConsumer,
-                                                                 cellEditorControls,
-                                                                 editor) {
+        this.column = spy(new EditableNameAndDataTypeColumn<ContextGrid>(headerMetaData,
+                                                                         gridWidget,
+                                                                         isEditable,
+                                                                         clearDisplayNameConsumer,
+                                                                         setDisplayNameConsumer,
+                                                                         setTypeRefConsumer,
+                                                                         cellEditorControls,
+                                                                         editor) {
             //Nothing to implement
         });
 
@@ -174,7 +174,7 @@ public class NameAndDataTypeColumnTest {
                     context,
                     callback);
 
-        verify(editor).bind(any(HasNameAndDataTypeControl.class),
+        verify(editor).bind(any(HasNameAndTypeRef.class),
                             eq(UI_ROW_INDEX),
                             eq(UI_COLUMN_INDEX));
 
@@ -187,22 +187,22 @@ public class NameAndDataTypeColumnTest {
     public void testEditGetters() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
-        hasNameAndDataTypeControl.getDisplayName();
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
+        hasNameAndTypeRef.getName();
         verify(informationItem).getName();
 
-        hasNameAndDataTypeControl.getTypeRef();
+        hasNameAndTypeRef.getTypeRef();
         verify(informationItem).getTypeRef();
 
-        assertThat(hasNameAndDataTypeControl.asDMNModelInstrumentedBase()).isEqualTo(informationItem);
+        assertThat(hasNameAndTypeRef.asDMNModelInstrumentedBase()).isEqualTo(informationItem);
     }
 
     @Test
     public void testEditSetNameNoChange() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
-        hasNameAndDataTypeControl.setDisplayName(informationItem.getName().getValue());
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
+        hasNameAndTypeRef.setName(informationItem.getName());
 
         verify(clearDisplayNameConsumer, never()).accept(any(HasName.class));
         verify(setDisplayNameConsumer, never()).accept(anyObject(), any(Name.class));
@@ -212,8 +212,8 @@ public class NameAndDataTypeColumnTest {
     public void testEditSetNameChanged() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
-        hasNameAndDataTypeControl.setDisplayName(NEW_NAME);
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
+        hasNameAndTypeRef.setName(new Name(NEW_NAME));
 
         verify(clearDisplayNameConsumer, never()).accept(any(HasName.class));
         verify(setDisplayNameConsumer).accept(eq(cell.getValue().getValue()), nameCaptor.capture());
@@ -225,8 +225,8 @@ public class NameAndDataTypeColumnTest {
     public void testEditSetNameChangedToEmpty() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
-        hasNameAndDataTypeControl.setDisplayName(null);
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
+        hasNameAndTypeRef.setName(null);
 
         verify(clearDisplayNameConsumer).accept(eq(cell.getValue().getValue()));
         verify(setDisplayNameConsumer, never()).accept(anyObject(), any(Name.class));
@@ -236,8 +236,8 @@ public class NameAndDataTypeColumnTest {
     public void testEditSetTypeRefNoChange() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
-        hasNameAndDataTypeControl.setTypeRef(new QName());
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
+        hasNameAndTypeRef.setTypeRef(new QName());
 
         verify(setTypeRefConsumer, never()).accept(anyObject(), any(QName.class));
     }
@@ -246,11 +246,11 @@ public class NameAndDataTypeColumnTest {
     public void testEditSetTypeRefChanged() {
         mockEditAction();
 
-        final HasNameAndDataTypeControl hasNameAndDataTypeControl = hasNameAndDataTypeControlCaptor.getValue();
+        final HasNameAndTypeRef hasNameAndTypeRef = hasNameAndDataTypeControlCaptor.getValue();
         final QName feel = new QName(DMNModelInstrumentedBase.Namespace.DMN.getUri(),
                                      "",
                                      DMNModelInstrumentedBase.Namespace.DMN.getPrefix());
-        hasNameAndDataTypeControl.setTypeRef(feel);
+        hasNameAndTypeRef.setTypeRef(feel);
 
         verify(setTypeRefConsumer).accept(eq((HasNameAndDataTypeCell) cell.getValue().getValue()), eq(feel));
     }

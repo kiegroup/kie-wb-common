@@ -54,7 +54,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.context.Exp
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
-import org.kie.workbench.common.dmn.client.editors.types.HasNameAndDataTypeControl;
+import org.kie.workbench.common.dmn.client.editors.types.HasNameAndTypeRef;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -627,7 +627,7 @@ public class InvocationGridTest {
 
         verify(gridLayer).draw();
 
-        verify(headerEditor).bind(any(HasNameAndDataTypeControl.class),
+        verify(headerEditor).bind(any(HasNameAndTypeRef.class),
                                   eq(0),
                                   eq(1));
         verify(cellEditorControls).show(eq(headerEditor),
@@ -704,7 +704,7 @@ public class InvocationGridTest {
     public void testGetDisplayName() {
         setupGrid(0);
 
-        assertThat(extractHeaderMetaData().getDisplayName()).isEqualTo(NAME);
+        assertThat(extractHeaderMetaData().getName().getValue()).isEqualTo(NAME);
     }
 
     private InvocationColumnHeaderMetaData extractHeaderMetaData() {
@@ -717,7 +717,7 @@ public class InvocationGridTest {
     public void testSetDisplayNameWithNoChange() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(NAME);
+        extractHeaderMetaData().setName(new Name(NAME));
 
         verify(sessionCommandManager, never()).execute(any(AbstractCanvasHandler.class),
                                                        any(org.kie.workbench.common.stunner.core.command.Command.class));
@@ -728,7 +728,7 @@ public class InvocationGridTest {
     public void testSetDisplayNameWithEmptyValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName("");
+        extractHeaderMetaData().setName(new Name());
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());
@@ -743,7 +743,7 @@ public class InvocationGridTest {
     public void testSetDisplayNameWithNullValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(null);
+        extractHeaderMetaData().setName(null);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());
@@ -758,7 +758,7 @@ public class InvocationGridTest {
     public void testSetDisplayNameWithNonEmptyValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(NAME_NEW);
+        extractHeaderMetaData().setName(new Name(NAME_NEW));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());

@@ -52,7 +52,7 @@ import org.kie.workbench.common.dmn.client.editors.expressions.types.ExpressionE
 import org.kie.workbench.common.dmn.client.editors.expressions.types.GridFactoryCommandUtils;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionEditorDefinition;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.undefined.UndefinedExpressionGrid;
-import org.kie.workbench.common.dmn.client.editors.types.HasNameAndDataTypeControl;
+import org.kie.workbench.common.dmn.client.editors.types.HasNameAndTypeRef;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
 import org.kie.workbench.common.dmn.client.resources.i18n.DMNEditorConstants;
 import org.kie.workbench.common.dmn.client.session.DMNSession;
@@ -629,7 +629,7 @@ public class ContextGridTest {
 
         verify(gridLayer).draw();
 
-        verify(headerEditor).bind(any(HasNameAndDataTypeControl.class),
+        verify(headerEditor).bind(any(HasNameAndTypeRef.class),
                                   eq(0),
                                   eq(1));
         verify(cellEditorControls).show(eq(headerEditor),
@@ -721,7 +721,7 @@ public class ContextGridTest {
     public void testGetDisplayName() {
         setupGrid(0);
 
-        assertThat(extractHeaderMetaData().getDisplayName()).isEqualTo(NAME);
+        assertThat(extractHeaderMetaData().getName().getValue()).isEqualTo(NAME);
     }
 
     private NameColumnHeaderMetaData extractHeaderMetaData() {
@@ -734,7 +734,7 @@ public class ContextGridTest {
     public void testSetDisplayNameWithNoChange() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(NAME);
+        extractHeaderMetaData().setName(new Name(NAME));
 
         verify(sessionCommandManager, never()).execute(any(AbstractCanvasHandler.class),
                                                        any(org.kie.workbench.common.stunner.core.command.Command.class));
@@ -745,7 +745,7 @@ public class ContextGridTest {
     public void testSetDisplayNameWithEmptyValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName("");
+        extractHeaderMetaData().setName(new Name());
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());
@@ -760,7 +760,7 @@ public class ContextGridTest {
     public void testSetDisplayNameWithNullValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(null);
+        extractHeaderMetaData().setName(null);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());
@@ -775,7 +775,7 @@ public class ContextGridTest {
     public void testSetDisplayNameWithNonEmptyValue() {
         setupGrid(0);
 
-        extractHeaderMetaData().setDisplayName(NAME_NEW);
+        extractHeaderMetaData().setName(new Name(NAME_NEW));
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               compositeCommandCaptor.capture());

@@ -32,6 +32,7 @@ import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.grids.Grid
 import org.uberfire.ext.wires.core.grids.client.widget.grid.renderers.themes.GridRendererTheme;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -88,9 +89,10 @@ public class InformationItemCellNameTest {
         assertThat(cell.getValue().getValue().getName().getValue()).isEqualTo(VALUE1);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
     public void testSetName() {
-        cell.getValue().getValue().setName(new Name(VALUE2));
+        assertThatThrownBy(() -> cell.getValue().getValue().setName(new Name(VALUE2)))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessageContaining(InformationItemCell.SET_NAME_UNSUPPORTED_MESSAGE);
     }
 
     @Test

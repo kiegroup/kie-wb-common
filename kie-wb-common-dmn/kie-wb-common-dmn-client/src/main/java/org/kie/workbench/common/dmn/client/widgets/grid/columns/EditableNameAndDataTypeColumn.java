@@ -31,7 +31,7 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.editors.expressions.types.context.InformationItemCell;
-import org.kie.workbench.common.dmn.client.editors.types.HasNameAndDataTypeControl;
+import org.kie.workbench.common.dmn.client.editors.types.HasNameAndTypeRef;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
 import org.kie.workbench.common.dmn.client.widgets.grid.BaseExpressionGrid;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
@@ -42,7 +42,7 @@ import org.uberfire.ext.wires.core.grids.client.model.impl.BaseGridCellValue;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellEditContext;
 import org.uberfire.ext.wires.core.grids.client.widget.context.GridBodyCellRenderContext;
 
-public abstract class NameAndDataTypeColumn<G extends BaseExpressionGrid> extends DMNSimpleGridColumn<G, InformationItemCell.HasNameCell> {
+public abstract class EditableNameAndDataTypeColumn<G extends BaseExpressionGrid> extends DMNSimpleGridColumn<G, InformationItemCell.HasNameCell> {
 
     private final Predicate<Integer> isEditable;
     private final Consumer<HasName> clearDisplayNameConsumer;
@@ -51,14 +51,14 @@ public abstract class NameAndDataTypeColumn<G extends BaseExpressionGrid> extend
     private final CellEditorControlsView.Presenter cellEditorControls;
     private final NameAndDataTypeEditorView.Presenter editor;
 
-    public NameAndDataTypeColumn(final HeaderMetaData headerMetaData,
-                                 final G gridWidget,
-                                 final Predicate<Integer> isEditable,
-                                 final Consumer<HasName> clearDisplayNameConsumer,
-                                 final BiConsumer<HasName, Name> setDisplayNameConsumer,
-                                 final BiConsumer<HasTypeRef, QName> setTypeRefConsumer,
-                                 final CellEditorControlsView.Presenter cellEditorControls,
-                                 final NameAndDataTypeEditorView.Presenter editor) {
+    public EditableNameAndDataTypeColumn(final HeaderMetaData headerMetaData,
+                                         final G gridWidget,
+                                         final Predicate<Integer> isEditable,
+                                         final Consumer<HasName> clearDisplayNameConsumer,
+                                         final BiConsumer<HasName, Name> setDisplayNameConsumer,
+                                         final BiConsumer<HasTypeRef, QName> setTypeRefConsumer,
+                                         final CellEditorControlsView.Presenter cellEditorControls,
+                                         final NameAndDataTypeEditorView.Presenter editor) {
         this(Collections.singletonList(headerMetaData),
              gridWidget,
              isEditable,
@@ -69,14 +69,14 @@ public abstract class NameAndDataTypeColumn<G extends BaseExpressionGrid> extend
              editor);
     }
 
-    public NameAndDataTypeColumn(final List<HeaderMetaData> headerMetaData,
-                                 final G gridWidget,
-                                 final Predicate<Integer> isEditable,
-                                 final Consumer<HasName> clearDisplayNameConsumer,
-                                 final BiConsumer<HasName, Name> setDisplayNameConsumer,
-                                 final BiConsumer<HasTypeRef, QName> setTypeRefConsumer,
-                                 final CellEditorControlsView.Presenter cellEditorControls,
-                                 final NameAndDataTypeEditorView.Presenter editor) {
+    public EditableNameAndDataTypeColumn(final List<HeaderMetaData> headerMetaData,
+                                         final G gridWidget,
+                                         final Predicate<Integer> isEditable,
+                                         final Consumer<HasName> clearDisplayNameConsumer,
+                                         final BiConsumer<HasName, Name> setDisplayNameConsumer,
+                                         final BiConsumer<HasTypeRef, QName> setTypeRefConsumer,
+                                         final CellEditorControlsView.Presenter cellEditorControls,
+                                         final NameAndDataTypeEditorView.Presenter editor) {
         super(headerMetaData,
               new NameAndDataTypeColumnRenderer(),
               gridWidget);
@@ -106,7 +106,7 @@ public abstract class NameAndDataTypeColumn<G extends BaseExpressionGrid> extend
 
         final InformationItemCell.HasNameAndDataTypeCell binding = (InformationItemCell.HasNameAndDataTypeCell) cell.getValue().getValue();
 
-        editor.bind(new HasNameAndDataTypeControl() {
+        editor.bind(new HasNameAndTypeRef() {
                         @Override
                         public QName getTypeRef() {
                             return binding.getTypeRef();
@@ -122,20 +122,20 @@ public abstract class NameAndDataTypeColumn<G extends BaseExpressionGrid> extend
                         }
 
                         @Override
-                        public String getDisplayName() {
-                            return binding.getName().getValue();
+                        public Name getName() {
+                            return binding.getName();
                         }
 
                         @Override
-                        public void setDisplayName(final String name) {
-                            if (Objects.equals(name, getDisplayName())) {
+                        public void setName(final Name name) {
+                            if (Objects.equals(name, getName())) {
                                 return;
                             }
 
-                            if (name == null || name.trim().isEmpty()) {
+                            if (name == null || name.getValue() == null || name.getValue().trim().isEmpty()) {
                                 clearDisplayNameConsumer.accept(binding);
                             } else {
-                                setDisplayNameConsumer.accept(binding, new Name(name));
+                                setDisplayNameConsumer.accept(binding, name);
                             }
                         }
 

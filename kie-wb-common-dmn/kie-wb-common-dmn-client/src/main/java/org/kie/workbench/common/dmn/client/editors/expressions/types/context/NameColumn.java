@@ -25,10 +25,10 @@ import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
 import org.kie.workbench.common.dmn.client.editors.types.NameAndDataTypeEditorView;
-import org.kie.workbench.common.dmn.client.widgets.grid.columns.NameAndDataTypeColumn;
+import org.kie.workbench.common.dmn.client.widgets.grid.columns.EditableNameAndDataTypeColumn;
 import org.kie.workbench.common.dmn.client.widgets.grid.controls.container.CellEditorControlsView;
 
-public class NameColumn extends NameAndDataTypeColumn<ContextGrid> {
+public class NameColumn extends EditableNameAndDataTypeColumn<ContextGrid> {
 
     public NameColumn(final HeaderMetaData headerMetaData,
                       final ContextGrid gridWidget,
