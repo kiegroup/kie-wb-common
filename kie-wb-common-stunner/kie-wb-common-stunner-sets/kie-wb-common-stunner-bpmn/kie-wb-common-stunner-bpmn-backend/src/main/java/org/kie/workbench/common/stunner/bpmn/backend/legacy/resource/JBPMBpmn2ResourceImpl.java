@@ -19,18 +19,14 @@ package org.kie.workbench.common.stunner.bpmn.backend.legacy.resource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.bpmn2.Bpmn2Package;
-import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.util.Bpmn2ResourceImpl;
-import org.eclipse.bpmn2.util.ImportHelper;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.xmi.XMLLoad;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.emf.ecore.xmi.XMLSave;
@@ -101,35 +97,6 @@ public class JBPMBpmn2ResourceImpl extends Bpmn2ResourceImpl {
                 }
             }
         };
-    }
-
-    /**
-     * Prepares this resource for saving.
-     * <p>
-     * Sets all ID attributes of cross-referenced objects
-     * that are not yet set, to a generated UUID. Do not set if only referenced
-     * by their container.
-     */
-    @Override
-    protected void prepareSave() {
-        EObject cur;
-        Definitions thisDefinitions = ImportHelper.getDefinitions(this);
-        setIdEvenIfSet(thisDefinitions);
-        for (Iterator<EObject> iter = getAllContents(); iter.hasNext(); ) {
-            cur = iter.next();
-
-            for (EObject referenced : cur.eCrossReferences()) {
-                if (referenced.eContainer() != cur) {
-                    setIdIfNotSet(referenced);
-                }
-                if (thisDefinitions != null) {
-                    Resource refResource = referenced.eResource();
-                    if (refResource != null && refResource != this) {
-                        createImportIfNecessary(thisDefinitions, refResource);
-                    }
-                }
-            }
-        }
     }
 
     class DiagnosticWrappedException extends WrappedException implements Diagnostic {

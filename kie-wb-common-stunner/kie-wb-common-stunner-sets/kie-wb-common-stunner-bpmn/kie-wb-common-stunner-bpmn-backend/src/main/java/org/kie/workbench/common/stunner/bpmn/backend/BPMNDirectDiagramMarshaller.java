@@ -34,7 +34,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.bpmn2.Bpmn2Package;
 import org.eclipse.bpmn2.Definitions;
 import org.eclipse.bpmn2.DocumentRoot;
-import org.eclipse.bpmn2.util.Bpmn2Resource;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -109,7 +108,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
     public String marshall(final Diagram<Graph, Metadata> diagram) throws IOException {
         LOG.debug("Starting diagram marshalling...");
 
-        Bpmn2Resource resource = createBpmn2Resource();
+        Resource resource = createBpmn2Resource();
 
         // we start converting from the root, then pull out the result
         DefinitionsConverter definitionsConverter =
@@ -133,7 +132,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         }
     }
 
-    private String renderToString(Bpmn2Resource resource) throws IOException {
+    private String renderToString(Resource resource) throws IOException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         resource.save(outputStream, new HashMap<>());
         return StringEscapeUtils.unescapeHtml4(
@@ -188,7 +187,7 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         return diagram.getGraph();
     }
 
-    private Bpmn2Resource createBpmn2Resource() {
+    private Resource createBpmn2Resource() {
         DroolsFactoryImpl.init();
         BpsimFactoryImpl.init();
 
@@ -199,9 +198,8 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
                 .put("bpmn2",
                      new JBPMBpmn2ResourceFactoryImpl());
 
-        Bpmn2Resource resource =
-                (Bpmn2Resource) rSet.createResource(
-                        URI.createURI("virtual.bpmn2"));
+        Resource resource = rSet.createResource(
+                URI.createURI("virtual.bpmn2"));
 
         rSet.getResources().add(resource);
         return resource;
@@ -219,15 +217,14 @@ public class BPMNDirectDiagramMarshaller implements DiagramMarshaller<Graph, Met
         final ResourceSet resourceSet = new ResourceSetImpl();
         Resource.Factory.Registry resourceFactoryRegistry = resourceSet.getResourceFactoryRegistry();
         resourceFactoryRegistry.getExtensionToFactoryMap().put(
-                Resource.Factory.Registry.DEFAULT_EXTENSION, new JBPMBpmn2ResourceFactoryImpl());
+                Resource.Factory.Registry.DEFAULT_EXTENSION, new Bpmn2ResourceFactory());
 
         EPackage.Registry packageRegistry = resourceSet.getPackageRegistry();
         packageRegistry.put("http://www.omg.org/spec/BPMN/20100524/MODEL", Bpmn2Package.eINSTANCE);
         packageRegistry.put("http://www.jboss.org/drools", DroolsPackage.eINSTANCE);
 
-        final JBPMBpmn2ResourceImpl resource =
-                (JBPMBpmn2ResourceImpl) resourceSet
-                        .createResource(URI.createURI("inputStream://dummyUriWithValidSuffix.xml"));
+        final Bpmn2Resource resource = (Bpmn2Resource) resourceSet
+                .createResource(URI.createURI("inputStream://dummyUriWithValidSuffix.xml"));
 
         resource.getDefaultLoadOptions()
                 .put(JBPMBpmn2ResourceImpl.OPTION_ENCODING, "UTF-8");
