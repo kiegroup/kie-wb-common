@@ -716,7 +716,7 @@ public class LibraryServiceImplTest {
 
         libraryService.removeBranch(masterBranch);
 
-        verify(fileSystemProvider).delete(baseBranchPath);
+        verify(ioService).delete(baseBranchPath);
         verify(systemRepositoryChangedEvent).fire(any());
     }
 
