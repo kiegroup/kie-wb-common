@@ -528,13 +528,16 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
                             final Branch branch) {
         libraryInternalPreferences.load(loadedLibraryInternalPreferences -> {
                                             final Optional<Branch> lastBranchOpened = loadedLibraryInternalPreferences.getLastBranchOpened(project);
+                                            final Command goToProjectCommand = () -> projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject).resolveProject(project.getSpace(), branch);
 
                                             if (!lastBranchOpened.isPresent() || !lastBranchOpened.get().equals(branch)) {
                                                 loadedLibraryInternalPreferences.setLastBranchOpened(project,
                                                                                                      branch);
-                                                loadedLibraryInternalPreferences.save(() -> projectService.call((RemoteCallback<WorkspaceProject>) this::goToProject).resolveProject(project.getSpace(), branch),
+                                                loadedLibraryInternalPreferences.save(goToProjectCommand,
                                                                                       error -> {
                                                                                       });
+                                            } else {
+                                                goToProjectCommand.execute();
                                             }
                                         },
                                         error -> {

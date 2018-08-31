@@ -788,6 +788,24 @@ public class LibraryPlacesTest {
     }
 
     @Test
+    public void goToProjectSameBranch() {
+        final WorkspaceProject project = new WorkspaceProject(activeOrganizationalUnit,
+                                                              activeRepository,
+                                                              activeBranch,
+                                                              mock(Module.class));
+
+        doReturn(Optional.of(activeBranch)).when(libraryInternalPreferences).getLastBranchOpened(project);
+        doReturn(activeProject).when(projectService).resolveProject(activeSpace, activeBranch);
+
+        libraryPlaces.goToProject(project,
+                                  activeBranch);
+
+        verify(libraryInternalPreferences, never()).setLastBranchOpened(any(), any());
+        verify(libraryInternalPreferences, never()).save(any(Command.class), any());
+        verify(libraryPlaces).goToProject(activeProject);
+    }
+
+    @Test
     public void placesAreUpdatedWhenActiveModuleIsRenamedTest() {
 
         libraryPlaces.onChange(new WorkspaceProjectContextChangeEvent(mock(WorkspaceProject.class),
