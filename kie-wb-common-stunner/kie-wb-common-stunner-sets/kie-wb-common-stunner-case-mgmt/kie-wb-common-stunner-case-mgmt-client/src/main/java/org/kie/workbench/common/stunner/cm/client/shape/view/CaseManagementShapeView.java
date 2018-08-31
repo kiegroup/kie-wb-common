@@ -100,8 +100,11 @@ public class CaseManagementShapeView extends SVGShapeViewImpl implements HasSize
         existingChildShapes.addAll(getChildShapes().toList());
         existingChildShapes.forEach(WiresShape::removeFromParent);
 
-        boolean removed = existingChildShapes.remove(shape);
-        existingChildShapes.add(removed ? targetIndex - 1 : targetIndex, shape);
+        int existIndex = existingChildShapes.indexOf(shape);
+        if (existIndex >= 0) {
+            existingChildShapes.remove(shape);
+        }
+        existingChildShapes.add((existIndex >= 0 && existIndex < targetIndex) ? targetIndex -1 : targetIndex, shape);
 
         //call to add(..) causes ILayoutHandler to be invoked
         existingChildShapes.forEach(this::add);

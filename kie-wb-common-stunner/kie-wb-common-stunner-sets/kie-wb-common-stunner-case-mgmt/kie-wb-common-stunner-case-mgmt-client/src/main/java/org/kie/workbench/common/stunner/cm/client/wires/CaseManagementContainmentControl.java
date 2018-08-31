@@ -162,8 +162,8 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
     }
 
     private void clearState() {
-        state.getGhost().ifPresent(WiresShapeViewExt::destroy);
         state.getGhost().ifPresent(WiresShape::removeFromParent);
+        state.getGhost().ifPresent(WiresShapeViewExt::destroy);
         state.setGhost(Optional.empty());
         state.setOriginalIndex(Optional.empty());
         state.setOriginalParent(Optional.empty());
@@ -200,10 +200,10 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
     }
 
     private Integer getShapeIndex() {
-        if (getParent() == null || getShape() == null) {
-            return null;
+        if (!(getParent() instanceof CaseManagementShapeView) || getShape() == null) {
+            return 0;
         }
-        return ((CaseManagementShapeView) getParent()).getIndex((CaseManagementShapeView) getShape());
+        return ((CaseManagementShapeView) getParent()).getIndex(getShape());
     }
 
     private void restore(final CaseManagementShapeView ghost,
