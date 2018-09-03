@@ -173,60 +173,6 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
 
     protected abstract boolean isHeaderHidden();
 
-    protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {
-        return (gc) -> new DeleteCellValueCommand(gc,
-                                                  () -> uiModelMapper,
-                                                  gridLayer::batch);
-    }
-
-    protected Function<GridCellValueTuple, Command> newCellHasValueCommand() {
-        return (gcv) -> new SetCellValueCommand(gcv,
-                                                () -> uiModelMapper,
-                                                gridLayer::batch);
-    }
-
-    protected Function<GridCellTuple, Command> newHeaderHasNoValueCommand() {
-        return (gc) -> new DeleteHeaderValueCommand(extractEditableHeaderMetaData(gc),
-                                                    gridLayer::batch);
-    }
-
-    protected Function<GridCellValueTuple, Command> newHeaderHasValueCommand() {
-        return (gcv) -> {
-            final String title = gcv.getValue().getValue().toString();
-            return new SetHeaderValueCommand(title,
-                                             extractEditableHeaderMetaData(gcv),
-                                             gridLayer::batch);
-        };
-    }
-
-    protected Function<GridCellTuple, Command> newHeaderHasNameHasNoValueCommand() {
-        return (gcv) -> {
-            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
-            commandBuilder.addCommand(new DeleteHeaderValueCommand(extractEditableHeaderMetaData(gcv),
-                                                                   () -> {
-                                                                       gridLayer.batch();
-                                                                       getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), uuid)));
-                                                                   }));
-            getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
-            return commandBuilder.build();
-        };
-    }
-
-    protected Function<GridCellValueTuple, Command> newHeaderHasNameHasValueCommand() {
-        return (gcv) -> {
-            final String title = gcv.getValue().getValue().toString();
-            final CompositeCommand.Builder<AbstractCanvasHandler, CanvasViolation> commandBuilder = new CompositeCommand.Builder<>();
-            commandBuilder.addCommand(new SetHeaderValueCommand(title,
-                                                                extractEditableHeaderMetaData(gcv),
-                                                                () -> {
-                                                                    gridLayer.batch();
-                                                                    getNodeUUID().ifPresent(uuid -> refreshFormPropertiesEvent.fire(new RefreshFormProperties(sessionManager.getCurrentSession(), uuid)));
-                                                                }));
-            getUpdateStunnerTitleCommand(title).ifPresent(commandBuilder::addCommand);
-            return commandBuilder.build();
-        };
-    }
-
     @SuppressWarnings("unchecked")
     public Consumer<HasName> clearDisplayNameConsumer(final boolean updateStunnerTitle) {
         return (hn) -> {
@@ -322,14 +268,16 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                      newCellHasValueCommand());
     }
 
-    public TextBoxSingletonDOMElementFactory getHeaderHasNameTextBoxFactory() {
-        return new TextBoxSingletonDOMElementFactory(gridPanel,
-                                                     gridLayer,
-                                                     this,
-                                                     sessionManager,
-                                                     sessionCommandManager,
-                                                     newHeaderHasNameHasNoValueCommand(),
-                                                     newHeaderHasNameHasValueCommand());
+    protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {
+        return (gc) -> new DeleteCellValueCommand(gc,
+                                                  () -> uiModelMapper,
+                                                  gridLayer::batch);
+    }
+
+    protected Function<GridCellValueTuple, Command> newCellHasValueCommand() {
+        return (gcv) -> new SetCellValueCommand(gcv,
+                                                () -> uiModelMapper,
+                                                gridLayer::batch);
     }
 
     public TextAreaSingletonDOMElementFactory getHeaderTextAreaFactory() {
@@ -340,6 +288,20 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
                                                       sessionCommandManager,
                                                       newHeaderHasNoValueCommand(),
                                                       newHeaderHasValueCommand());
+    }
+
+    protected Function<GridCellTuple, Command> newHeaderHasNoValueCommand() {
+        return (gc) -> new DeleteHeaderValueCommand(extractEditableHeaderMetaData(gc),
+                                                    gridLayer::batch);
+    }
+
+    protected Function<GridCellValueTuple, Command> newHeaderHasValueCommand() {
+        return (gcv) -> {
+            final String title = gcv.getValue().getValue().toString();
+            return new SetHeaderValueCommand(title,
+                                             extractEditableHeaderMetaData(gcv),
+                                             gridLayer::batch);
+        };
     }
 
     protected EditableHeaderMetaData extractEditableHeaderMetaData(final GridCellTuple gc) {
