@@ -28,10 +28,7 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
-import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Binding;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Invocation;
 import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
@@ -140,18 +137,12 @@ public class InvocationGrid extends BaseExpressionGrid<Invocation, InvocationGri
 
     @Override
     protected void initialiseUiColumns() {
-        HasTypeRef hasTypeRef = expression.get();
-        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-        if (base instanceof HasVariable) {
-            final HasVariable hasVariable = (HasVariable) base;
-            hasTypeRef = hasVariable.getVariable();
-        }
-
         final InvocationColumnExpressionHeaderMetaData expressionHeaderMetaData = new InvocationColumnExpressionHeaderMetaData(this::getExpressionText,
                                                                                                                                this::setExpressionText,
                                                                                                                                getHeaderTextAreaFactory());
-        final InvocationParameterColumn nameColumn = new InvocationParameterColumn(Arrays.asList(new InvocationColumnHeaderMetaData(hasName,
-                                                                                                                                    hasTypeRef,
+        final InvocationParameterColumn nameColumn = new InvocationParameterColumn(Arrays.asList(new InvocationColumnHeaderMetaData(hasExpression,
+                                                                                                                                    expression,
+                                                                                                                                    hasName,
                                                                                                                                     clearDisplayNameConsumer(true),
                                                                                                                                     setDisplayNameConsumer(true),
                                                                                                                                     setTypeRefConsumer(),

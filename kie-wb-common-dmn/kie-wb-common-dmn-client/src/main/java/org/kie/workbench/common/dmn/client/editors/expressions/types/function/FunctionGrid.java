@@ -28,9 +28,6 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
-import org.kie.workbench.common.dmn.api.definition.HasVariable;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
@@ -149,16 +146,10 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
 
     @Override
     protected void initialiseUiColumns() {
-        HasTypeRef hasTypeRef = expression.get();
-        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-        if (base instanceof HasVariable) {
-            final HasVariable hasVariable = (HasVariable) base;
-            hasTypeRef = hasVariable.getVariable();
-        }
-
         final GridColumn expressionColumn = new FunctionColumn(gridLayer,
-                                                               Arrays.asList(new FunctionColumnNameHeaderMetaData(hasName,
-                                                                                                                  hasTypeRef,
+                                                               Arrays.asList(new FunctionColumnNameHeaderMetaData(hasExpression,
+                                                                                                                  expression,
+                                                                                                                  hasName,
                                                                                                                   clearDisplayNameConsumer(true),
                                                                                                                   setDisplayNameConsumer(true),
                                                                                                                   setTypeRefConsumer(),

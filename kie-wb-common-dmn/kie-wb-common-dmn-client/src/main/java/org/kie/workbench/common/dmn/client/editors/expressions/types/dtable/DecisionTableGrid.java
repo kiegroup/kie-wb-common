@@ -27,10 +27,7 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
-import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BuiltinAggregator;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionRule;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DecisionTableOrientation;
@@ -222,17 +219,9 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             final List<GridColumn.HeaderMetaData> metaData = new ArrayList<>();
             expression.ifPresent(dtable -> {
                 if (hasName.isPresent()) {
-                    final HasName name = hasName.get();
-
-                    HasTypeRef hasTypeRef = dtable;
-                    final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-                    if (base instanceof HasVariable) {
-                        final HasVariable hasVariable = (HasVariable) base;
-                        hasTypeRef = hasVariable.getVariable();
-                    }
-
-                    metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(name,
-                                                                                    hasTypeRef,
+                    metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(hasExpression,
+                                                                                    expression,
+                                                                                    hasName,
                                                                                     clearDisplayNameConsumer(true),
                                                                                     setDisplayNameConsumer(true),
                                                                                     setTypeRefConsumer(),

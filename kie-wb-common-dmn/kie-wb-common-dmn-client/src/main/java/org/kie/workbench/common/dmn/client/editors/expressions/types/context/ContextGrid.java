@@ -27,11 +27,8 @@ import com.ait.lienzo.shared.core.types.EventPropagationMode;
 import org.jboss.errai.ui.client.local.spi.TranslationService;
 import org.kie.workbench.common.dmn.api.definition.HasExpression;
 import org.kie.workbench.common.dmn.api.definition.HasName;
-import org.kie.workbench.common.dmn.api.definition.HasTypeRef;
-import org.kie.workbench.common.dmn.api.definition.HasVariable;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
-import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationItem;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.client.commands.expressions.types.context.AddContextEntryCommand;
@@ -141,15 +138,9 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
 
     @Override
     public void initialiseUiColumns() {
-        HasTypeRef hasTypeRef = expression.get();
-        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-        if (base instanceof HasVariable) {
-            final HasVariable hasVariable = (HasVariable) base;
-            hasTypeRef = hasVariable.getVariable();
-        }
-
-        final NameColumn nameColumn = new NameColumn(new NameColumnHeaderMetaData(hasName,
-                                                                                  hasTypeRef,
+        final NameColumn nameColumn = new NameColumn(new NameColumnHeaderMetaData(hasExpression,
+                                                                                  expression,
+                                                                                  hasName,
                                                                                   clearDisplayNameConsumer(true),
                                                                                   setDisplayNameConsumer(true),
                                                                                   setTypeRefConsumer(),
