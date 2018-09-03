@@ -130,7 +130,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
         String prefix = typeRef.getPrefix();
 
         final Definitions definitions = dmnGraphUtils.getDefinitions();
-        final Optional<String> nsPrefix = definitions.getPrefixForNamespaceURI(namespace);
+        final Optional<String> nsPrefix = definitions == null ? Optional.empty() : definitions.getPrefixForNamespaceURI(namespace);
         if (nsPrefix.isPresent()) {
             prefix = nsPrefix.get();
             namespace = "";
