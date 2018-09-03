@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
@@ -66,7 +64,6 @@ import org.kie.workbench.common.stunner.core.client.api.SessionManager;
 import org.kie.workbench.common.stunner.core.client.canvas.AbstractCanvasHandler;
 import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
 import org.uberfire.ext.wires.core.grids.client.model.GridCell;
@@ -162,8 +159,8 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
         final GridColumn expressionColumn = new FunctionColumn(gridLayer,
                                                                Arrays.asList(new FunctionColumnNameHeaderMetaData(hasName,
                                                                                                                   hasTypeRef,
-                                                                                                                  clearDisplayNameConsumer(),
-                                                                                                                  setDisplayNameConsumer(),
+                                                                                                                  clearDisplayNameConsumer(true),
+                                                                                                                  setDisplayNameConsumer(true),
                                                                                                                   setTypeRefConsumer(),
                                                                                                                   cellEditorControls,
                                                                                                                   headerEditor),
@@ -177,28 +174,6 @@ public class FunctionGrid extends BaseExpressionGrid<FunctionDefinition, DMNGrid
         model.appendColumn(expressionColumn);
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> !isSelectionLayer || gridColumn.equals(expressionColumn));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Consumer<HasName> clearDisplayNameConsumer() {
-        return (hn) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
-            getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        };
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public BiConsumer<HasName, Name> setDisplayNameConsumer() {
-        return (hn, name) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
-            getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        };
     }
 
     @Override

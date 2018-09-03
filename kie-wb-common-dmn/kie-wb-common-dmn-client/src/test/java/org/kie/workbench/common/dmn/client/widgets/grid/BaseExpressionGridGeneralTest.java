@@ -442,7 +442,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
     @SuppressWarnings("unchecked")
     private void doTestClearDisplayNameConsumer() {
-        grid.clearDisplayNameConsumer().accept(decision);
+        grid.clearDisplayNameConsumer(false).accept(decision);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               commandCaptor.capture());
@@ -478,7 +478,7 @@ public class BaseExpressionGridGeneralTest extends BaseExpressionGridTest {
 
     @SuppressWarnings("unchecked")
     private void doTestSetDisplayNameConsumer() {
-        grid.setDisplayNameConsumer().accept(decision, NAME);
+        grid.setDisplayNameConsumer(false).accept(decision, NAME);
 
         verify(sessionCommandManager).execute(eq(canvasHandler),
                                               commandCaptor.capture());

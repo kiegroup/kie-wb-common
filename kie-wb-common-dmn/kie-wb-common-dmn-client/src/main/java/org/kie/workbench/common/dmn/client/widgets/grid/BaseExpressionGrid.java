@@ -228,15 +228,27 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     }
 
     @SuppressWarnings("unchecked")
-    public Consumer<HasName> clearDisplayNameConsumer() {
-        return (hn) -> sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                                     newHasNameHasNoValueCommand(hn).build());
+    public Consumer<HasName> clearDisplayNameConsumer(final boolean updateStunnerTitle) {
+        return (hn) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
     }
 
     @SuppressWarnings("unchecked")
-    public BiConsumer<HasName, Name> setDisplayNameConsumer() {
-        return (hn, name) -> sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                                           newHasNameHasValueCommand(hn, name).build());
+    public BiConsumer<HasName, Name> setDisplayNameConsumer(final boolean updateStunnerTitle) {
+        return (hn, name) -> {
+            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
+            if (updateStunnerTitle) {
+                getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
+            }
+            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
+                                          commandBuilder.build());
+        };
     }
 
     public BiConsumer<HasTypeRef, QName> setTypeRefConsumer() {

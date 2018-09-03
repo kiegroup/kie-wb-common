@@ -19,8 +19,6 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.context;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
@@ -60,7 +58,6 @@ import org.kie.workbench.common.stunner.core.client.command.CanvasCommandFactory
 import org.kie.workbench.common.stunner.core.client.command.CanvasViolation;
 import org.kie.workbench.common.stunner.core.client.command.SessionCommandManager;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
-import org.kie.workbench.common.stunner.core.command.impl.CompositeCommand;
 import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.util.DefinitionUtils;
 import org.kie.workbench.common.stunner.forms.client.event.RefreshFormProperties;
@@ -153,15 +150,15 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
 
         final NameColumn nameColumn = new NameColumn(new NameColumnHeaderMetaData(hasName,
                                                                                   hasTypeRef,
-                                                                                  clearDisplayNameConsumer(),
-                                                                                  setDisplayNameConsumer(),
+                                                                                  clearDisplayNameConsumer(true),
+                                                                                  setDisplayNameConsumer(true),
                                                                                   setTypeRefConsumer(),
                                                                                   cellEditorControls,
                                                                                   headerEditor),
                                                      this,
                                                      (rowIndex) -> rowIndex != getModel().getRowCount() - 1,
-                                                     superClearDisplayNameConsumer(),
-                                                     superSetDisplayNameConsumer(),
+                                                     clearDisplayNameConsumer(false),
+                                                     setDisplayNameConsumer(false),
                                                      setTypeRefConsumer(),
                                                      cellEditorControls,
                                                      headerEditor);
@@ -175,36 +172,6 @@ public class ContextGrid extends BaseExpressionGrid<Context, ContextGridData, Co
         model.appendColumn(expressionColumn);
 
         getRenderer().setColumnRenderConstraint((isSelectionLayer, gridColumn) -> !isSelectionLayer || gridColumn.equals(expressionColumn));
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Consumer<HasName> clearDisplayNameConsumer() {
-        return (hn) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
-            getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        };
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public BiConsumer<HasName, Name> setDisplayNameConsumer() {
-        return (hn, name) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
-            getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        };
-    }
-
-    Consumer<HasName> superClearDisplayNameConsumer() {
-        return super.clearDisplayNameConsumer();
-    }
-
-    BiConsumer<HasName, Name> superSetDisplayNameConsumer() {
-        return super.setDisplayNameConsumer();
     }
 
     @Override

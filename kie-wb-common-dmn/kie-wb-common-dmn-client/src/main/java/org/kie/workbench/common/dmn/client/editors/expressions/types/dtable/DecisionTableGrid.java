@@ -19,8 +19,6 @@ package org.kie.workbench.common.dmn.client.editors.expressions.types.dtable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import javax.enterprise.event.Event;
@@ -187,8 +185,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
     private InputClauseColumn makeInputClauseColumn(final InputClause ic) {
         final InputClauseColumn column = new InputClauseColumn(new InputClauseColumnHeaderMetaData(wrapInputClauseIntoHasName(ic),
                                                                                                    ic.getInputExpression(),
-                                                                                                   clearDisplayNameConsumer(),
-                                                                                                   setDisplayNameConsumer(),
+                                                                                                   clearDisplayNameConsumer(false),
+                                                                                                   setDisplayNameConsumer(false),
                                                                                                    setTypeRefConsumer(),
                                                                                                    cellEditorControls,
                                                                                                    headerEditor),
@@ -235,8 +233,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
 
                     metaData.add(new OutputClauseColumnExpressionNameHeaderMetaData(name,
                                                                                     hasTypeRef,
-                                                                                    clearExpressionDisplayNameConsumer(),
-                                                                                    setExpressionDisplayNameConsumer(),
+                                                                                    clearDisplayNameConsumer(true),
+                                                                                    setDisplayNameConsumer(true),
                                                                                     setTypeRefConsumer(),
                                                                                     cellEditorControls,
                                                                                     headerEditor));
@@ -246,8 +244,8 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
                 if (dtable.getOutput().size() > 1) {
                     metaData.add(new OutputClauseColumnHeaderMetaData(wrapOutputClauseIntoHasName(oc),
                                                                       oc,
-                                                                      clearDisplayNameConsumer(),
-                                                                      setDisplayNameConsumer(),
+                                                                      clearDisplayNameConsumer(false),
+                                                                      setDisplayNameConsumer(false),
                                                                       setTypeRefConsumer(),
                                                                       cellEditorControls,
                                                                       headerEditor));
@@ -269,26 +267,6 @@ public class DecisionTableGrid extends BaseExpressionGrid<DecisionTable, Decisio
             public void setName(final Name name) {
                 outputClause.setName(name.getValue());
             }
-        };
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Consumer<HasName> clearExpressionDisplayNameConsumer() {
-        return (hn) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasNoValueCommand(hn);
-            getUpdateStunnerTitleCommand("").ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
-        };
-    }
-
-    @SuppressWarnings("unchecked")
-    protected BiConsumer<HasName, Name> setExpressionDisplayNameConsumer() {
-        return (hn, name) -> {
-            final CompositeCommand.Builder commandBuilder = newHasNameHasValueCommand(hn, name);
-            getUpdateStunnerTitleCommand(name.getValue()).ifPresent(commandBuilder::addCommand);
-            sessionCommandManager.execute((AbstractCanvasHandler) sessionManager.getCurrentSession().getCanvasHandler(),
-                                          commandBuilder.build());
         };
     }
 
