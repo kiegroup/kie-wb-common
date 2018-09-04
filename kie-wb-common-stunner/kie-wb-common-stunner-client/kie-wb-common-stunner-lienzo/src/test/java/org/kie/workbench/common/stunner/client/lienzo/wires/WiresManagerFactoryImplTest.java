@@ -17,8 +17,8 @@
 package org.kie.workbench.common.stunner.client.lienzo.wires;
 
 import com.ait.lienzo.client.core.shape.Layer;
-import com.ait.lienzo.client.core.shape.decorator.MagnetDecorator;
 import com.ait.lienzo.client.core.shape.wires.WiresManager;
+import com.ait.lienzo.client.core.shape.wires.decorator.MagnetDecorator;
 import com.ait.lienzo.client.core.shape.wires.handlers.impl.WiresHandlerFactoryImpl;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;

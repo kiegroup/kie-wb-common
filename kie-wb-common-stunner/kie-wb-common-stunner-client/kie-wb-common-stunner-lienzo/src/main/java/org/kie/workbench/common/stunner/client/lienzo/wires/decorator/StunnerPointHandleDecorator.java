@@ -17,7 +17,7 @@
 package org.kie.workbench.common.stunner.client.lienzo.wires.decorator;
 
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.shape.decorator.PointHandleDecorator;
+import com.ait.lienzo.client.core.shape.wires.decorator.PointHandleDecorator;
 import com.ait.lienzo.client.core.types.Shadow;
 import com.ait.lienzo.shared.core.types.ColorName;
 

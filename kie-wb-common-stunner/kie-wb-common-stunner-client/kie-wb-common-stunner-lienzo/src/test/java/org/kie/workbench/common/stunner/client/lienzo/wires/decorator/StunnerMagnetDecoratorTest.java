@@ -18,7 +18,7 @@ package org.kie.workbench.common.stunner.client.lienzo.wires.decorator;
 
 import com.ait.lienzo.client.core.shape.MultiPath;
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.shape.decorator.IShapeDecorator;
+import com.ait.lienzo.client.core.shape.wires.decorator.IShapeDecorator;
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import org.junit.Before;
 import org.junit.Test;

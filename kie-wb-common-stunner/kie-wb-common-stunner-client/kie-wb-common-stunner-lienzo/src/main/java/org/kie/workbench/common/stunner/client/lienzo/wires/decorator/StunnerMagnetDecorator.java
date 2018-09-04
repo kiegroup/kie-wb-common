@@ -17,7 +17,7 @@
 package org.kie.workbench.common.stunner.client.lienzo.wires.decorator;
 
 import com.ait.lienzo.client.core.shape.Shape;
-import com.ait.lienzo.client.core.shape.decorator.MagnetDecorator;
+import com.ait.lienzo.client.core.shape.wires.decorator.MagnetDecorator;
 
 public class StunnerMagnetDecorator extends MagnetDecorator {
 
