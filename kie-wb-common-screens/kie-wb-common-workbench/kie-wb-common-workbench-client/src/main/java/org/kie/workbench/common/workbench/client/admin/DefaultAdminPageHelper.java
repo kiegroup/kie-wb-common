@@ -33,7 +33,7 @@ import org.kie.workbench.common.workbench.client.admin.resources.i18n.Preference
 import org.kie.workbench.common.workbench.client.authz.WorkbenchFeatures;
 import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbenchConstants;
 import org.uberfire.client.mvp.PlaceManager;
-import org.uberfire.ext.experimental.client.service.ClientExperimentalFeaturesRegistryService;
+import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
 import org.uberfire.ext.security.management.api.AbstractEntityManager;

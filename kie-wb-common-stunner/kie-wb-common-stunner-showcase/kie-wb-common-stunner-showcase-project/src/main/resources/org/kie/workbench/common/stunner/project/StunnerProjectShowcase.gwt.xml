@@ -84,7 +84,7 @@
   <inherits name="org.dashbuilder.renderer.GChartsRenderer"/>
 
   <!-- Experimental -->
-  <inherits name="org.uberfire.ext.experimental.UberfireExperimentalClient"/>
+  <inherits name="org.uberfire.experimental.UberfireExperimentalClient"/>
 
   <!-- Specify the application specific style sheet. -->
   <stylesheet src='css/stunner-project-showcase.css'/>

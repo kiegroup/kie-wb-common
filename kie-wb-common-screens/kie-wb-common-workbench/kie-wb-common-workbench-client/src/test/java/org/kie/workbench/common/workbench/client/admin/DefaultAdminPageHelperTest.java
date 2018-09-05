@@ -28,7 +28,7 @@ import org.kie.workbench.common.workbench.client.resources.i18n.DefaultWorkbench
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
-import org.uberfire.ext.experimental.client.service.ClientExperimentalFeaturesRegistryService;
+import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
 import org.uberfire.mvp.Command;
