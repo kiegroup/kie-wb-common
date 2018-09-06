@@ -269,15 +269,15 @@ public abstract class BaseExpressionGrid<E extends Expression, D extends GridDat
     }
 
     protected Function<GridCellTuple, Command> newCellHasNoValueCommand() {
-        return (gc) -> new DeleteCellValueCommand(gc,
-                                                  () -> uiModelMapper,
-                                                  gridLayer::batch);
+        return (gridCellTuple) -> new DeleteCellValueCommand(gridCellTuple,
+                                                             () -> uiModelMapper,
+                                                             gridLayer::batch);
     }
 
     protected Function<GridCellValueTuple, Command> newCellHasValueCommand() {
-        return (gcv) -> new SetCellValueCommand(gcv,
-                                                () -> uiModelMapper,
-                                                gridLayer::batch);
+        return (gridCellValueTuple) -> new SetCellValueCommand(gridCellValueTuple,
+                                                               () -> uiModelMapper,
+                                                               gridLayer::batch);
     }
 
     public TextAreaSingletonDOMElementFactory getHeaderTextAreaFactory() {

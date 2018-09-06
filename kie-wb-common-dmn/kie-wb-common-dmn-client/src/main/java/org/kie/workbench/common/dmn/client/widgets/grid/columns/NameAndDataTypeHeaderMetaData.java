@@ -49,21 +49,13 @@ public abstract class NameAndDataTypeHeaderMetaData<E extends Expression> extend
                                          final BiConsumer<HasTypeRef, QName> setTypeRefConsumer,
                                          final CellEditorControlsView.Presenter cellEditorControls,
                                          final NameAndDataTypeEditorView.Presenter headerEditor) {
-        super(cellEditorControls,
-              headerEditor);
-        this.hasName = hasName;
-        this.clearDisplayNameConsumer = clearDisplayNameConsumer;
-        this.setDisplayNameConsumer = setDisplayNameConsumer;
-        this.setTypeRefConsumer = setTypeRefConsumer;
-
-        HasTypeRef hasTypeRef = expression.get();
-        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
-        if (base instanceof HasVariable) {
-            final HasVariable hasVariable = (HasVariable) base;
-            hasTypeRef = hasVariable.getVariable();
-        }
-
-        this.hasTypeRef = hasTypeRef;
+        this(hasName,
+             getTypeRefOfExpression(expression, hasExpression),
+             clearDisplayNameConsumer,
+             setDisplayNameConsumer,
+             setTypeRefConsumer,
+             cellEditorControls,
+             headerEditor);
     }
 
     public NameAndDataTypeHeaderMetaData(final Optional<HasName> hasName,
@@ -80,6 +72,18 @@ public abstract class NameAndDataTypeHeaderMetaData<E extends Expression> extend
         this.clearDisplayNameConsumer = clearDisplayNameConsumer;
         this.setDisplayNameConsumer = setDisplayNameConsumer;
         this.setTypeRefConsumer = setTypeRefConsumer;
+    }
+
+    private static <E extends Expression> HasTypeRef getTypeRefOfExpression(final Optional<E> expression,
+                                                                            final HasExpression hasExpression) {
+        HasTypeRef hasTypeRef = expression.get();
+        final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
+        if (base instanceof HasVariable) {
+            final HasVariable hasVariable = (HasVariable) base;
+            hasTypeRef = hasVariable.getVariable();
+        }
+
+        return hasTypeRef;
     }
 
     @Override
