@@ -17,7 +17,6 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
@@ -69,16 +68,6 @@ public class RolesEditorFieldRenderer extends FieldRenderer<RolesEditorFieldDefi
     }
 
     @Override
-    public void doSave() {
-        view.doSave();
-    }
-
-    @Override
-    public void notifyModelChanged() {
-        doSave();
-    }
-
-    @Override
     public List<KeyValueRow> deserialize(String value) {
         return serializer.deserialize(value, (k, v) -> new KeyValueRow(k, v));
     }
@@ -86,27 +75,5 @@ public class RolesEditorFieldRenderer extends FieldRenderer<RolesEditorFieldDefi
     @Override
     public String serialize(List<KeyValueRow> rows) {
         return serializer.serialize(Optional.ofNullable(rows), KeyValueRow::getKey, KeyValueRow::getValue);
-    }
-
-    @Override
-    public void add() {
-        final List<KeyValueRow> rows = view.getRows();
-        if (rows.isEmpty()) {
-            view.setTableDisplayStyle();
-        }
-        rows.add(new KeyValueRow());
-        RolesListItemWidgetView widget = view.getWidget(view.getRowsCount() - 1);
-        widget.setParentWidget(this);
-    }
-
-    @Override
-    public boolean isDuplicateName(String name) {
-        return view.getRows().stream().filter(row -> Objects.equals(row.getKey(), name)).count() > 1;
-    }
-
-    @Override
-    public void remove(KeyValueRow row) {
-        view.getRows().remove(row);
-        doSave();
     }
 }

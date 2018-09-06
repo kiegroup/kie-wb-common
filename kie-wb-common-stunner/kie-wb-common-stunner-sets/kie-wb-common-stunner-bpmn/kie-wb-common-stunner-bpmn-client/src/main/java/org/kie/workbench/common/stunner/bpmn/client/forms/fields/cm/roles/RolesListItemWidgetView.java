@@ -16,15 +16,19 @@
 
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
+import com.google.gwt.user.client.TakesValue;
+import org.jboss.errai.common.client.api.IsElement;
 import org.jboss.errai.ui.client.widget.HasModel;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType;
 
-public interface RolesListItemWidgetView extends HasModel<KeyValueRow> {
+public interface RolesListItemWidgetView extends TakesValue<KeyValueRow>,
+                                                 HasModel<KeyValueRow>,
+                                                 IsElement {
 
     void init();
 
-    void setParentWidget(final RolesEditorWidgetView.Presenter parentWidget);
+    void setParentWidget(final RolesEditorWidgetView parentWidget);
 
     void notifyModelChanged();
 

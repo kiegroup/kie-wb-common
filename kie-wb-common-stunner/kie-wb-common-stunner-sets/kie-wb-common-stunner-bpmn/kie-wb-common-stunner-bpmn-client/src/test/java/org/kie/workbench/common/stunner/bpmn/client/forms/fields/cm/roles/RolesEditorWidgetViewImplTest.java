@@ -21,8 +21,6 @@ import java.util.List;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
 import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.junit.Before;
@@ -34,9 +32,10 @@ import org.mockito.Mock;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles.RolesEditorFieldRendererTest.ROLE;
 import static org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles.RolesEditorFieldRendererTest.SERIALIZED_ROLE;
-import static org.mockito.Mockito.never;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,12 +51,6 @@ public class RolesEditorWidgetViewImplTest {
     private Button addButton;
 
     @Mock
-    private TableCellElement nameCol;
-
-    @Mock
-    private TableCellElement cardinalityCol;
-
-    @Mock
     private ListWidget<KeyValueRow, RolesListItemWidgetView> rows;
 
     private List<KeyValueRow> roles;
@@ -66,27 +59,20 @@ public class RolesEditorWidgetViewImplTest {
     private RolesListItemWidgetView widget;
 
     @Mock
-    private TableElement table;
-
-    @Mock
     private Style style;
 
     @Before
     public void setUp() throws Exception {
         tested = spy(new RolesEditorWidgetViewImpl());
         tested.addButton = addButton;
-        tested.nameCol = nameCol;
-        tested.cardinalityCol = cardinalityCol;
         tested.rows = rows;
-        tested.table = table;
         tested.init(presenter);
-        roles = new ArrayList<>();
+        roles = spy(new ArrayList<>());
         roles.add(ROLE);
         when(presenter.deserialize(SERIALIZED_ROLE)).thenReturn(roles);
         when(presenter.serialize(roles)).thenReturn(SERIALIZED_ROLE);
         when(rows.getValue()).thenReturn(roles);
-        when(rows.getComponent(0)).thenReturn(widget);
-        when(table.getStyle()).thenReturn(style);
+        when(rows.getComponent(anyInt())).thenReturn(widget);
     }
 
     @Test
@@ -122,18 +108,6 @@ public class RolesEditorWidgetViewImplTest {
     }
 
     @Test
-    public void setTableDisplayStyle() {
-        tested.setTableDisplayStyle();
-        verify(style).setDisplay(Style.Display.TABLE);
-    }
-
-    @Test
-    public void setNoneDisplayStyle() {
-        tested.setNoneDisplayStyle();
-        verify(style).setDisplay(Style.Display.NONE);
-    }
-
-    @Test
     public void setRows() {
         tested.setRows(roles);
         verify(rows).setValue(roles);
@@ -151,21 +125,17 @@ public class RolesEditorWidgetViewImplTest {
 
     @Test
     public void handleAddVarButton() {
-        tested.handleAddVarButton(null);
-        verify(presenter).add();
+        reset(roles);
+        tested.handleAddVarButton();
+        verify(roles).add(any(KeyValueRow.class));
+        verify(tested).getWidget(roles.size() - 1);
+        verify(widget).setParentWidget(tested);
     }
 
     @Test
     public void remove() {
-        //not empty rows
         tested.remove(ROLE);
-        verify(presenter).remove(ROLE);
-        verify(tested, never()).setNoneDisplayStyle();
-
-        //empty rows
-        roles.clear();
-        tested.remove(ROLE);
-        verify(presenter, times(2)).remove(ROLE);
-        verify(tested).setNoneDisplayStyle();
+        verify(roles).remove(ROLE);
+        verify(tested).doSave();
     }
 }

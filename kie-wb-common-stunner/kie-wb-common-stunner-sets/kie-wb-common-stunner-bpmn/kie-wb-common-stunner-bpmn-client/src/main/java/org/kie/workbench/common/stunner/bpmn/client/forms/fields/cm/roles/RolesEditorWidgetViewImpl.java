@@ -17,16 +17,13 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.dom.client.Style;
-import com.google.gwt.dom.client.TableCellElement;
-import com.google.gwt.dom.client.TableElement;
-import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
@@ -37,39 +34,27 @@ import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.client.widget.Table;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @Dependent
-@Templated("RolesEditorWidget.html#widget")
+@Templated("RolesEditorWidget.html")
 public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorWidgetView,
                                                                     HasValue<String> {
 
-    public static final String ROLE = "Role";
-    public static final String CARDINALITY = "Cardinality";
     private String serializedRoles;
 
-    private Presenter presenter;
+    private Optional<Presenter> presenter;
 
     @Inject
     @DataField("addButton")
     protected Button addButton;
 
-    @DataField("table")
-    protected TableElement table = Document.get().createTableElement();
-
-    @DataField("nameth")
-    protected TableCellElement nameCol = Document.get().createTHElement();
-
-    @DataField("datatypeth")
-    protected TableCellElement cardinalityCol = Document.get().createTHElement();
-
     private boolean readOnly = false;
 
     public RolesEditorWidgetViewImpl() {
-
+        this.presenter = Optional.empty();
     }
 
     @Inject
@@ -105,35 +90,35 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
             initView();
         }
         if (fireEvents) {
-            ValueChangeEvent.fireIfNotEqual(this,
-                                            oldValue,
-                                            serializedRoles);
+            ValueChangeEvent.fireIfNotEqual(this, oldValue, serializedRoles);
         }
         setReadOnly(readOnly);
     }
 
     @Override
     public void doSave() {
-        String newValue = presenter.serialize(getRows());
-        setValue(newValue, true);
+        presenter.map(p -> p.serialize(getRows())).ifPresent(newValue -> setValue(newValue, true));
+    }
+
+    @Override
+    public void notifyModelChanged() {
+        doSave();
     }
 
     protected void initView() {
-        setRows(presenter.deserialize(serializedRoles));
+        setRows(presenter.map(p -> p.deserialize(serializedRoles)).orElse(null));
     }
 
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<String> handler) {
-        return addHandler(handler,
-                          ValueChangeEvent.getType());
+        return addHandler(handler, ValueChangeEvent.getType());
     }
 
     @Override
     public void init(final Presenter presenter) {
-        this.presenter = presenter;
+        this.presenter = Optional.ofNullable(presenter);
         addButton.setIcon(IconType.PLUS);
-        nameCol.setInnerText(ROLE);
-        cardinalityCol.setInnerText(CARDINALITY);
+        addButton.addClickHandler((e) -> handleAddVarButton());
     }
 
     @Override
@@ -147,17 +132,7 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
 
     @Override
     public int getRowsCount() {
-        return rows.getValue().size();
-    }
-
-    @Override
-    public void setTableDisplayStyle() {
-        table.getStyle().setDisplay(Style.Display.TABLE);
-    }
-
-    @Override
-    public void setNoneDisplayStyle() {
-        table.getStyle().setDisplay(Style.Display.NONE);
+        return Optional.ofNullable(rows.getValue()).map(List::size).orElse(0);
     }
 
     @Override
@@ -165,7 +140,7 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
         this.rows.setValue(rows);
         for (int i = 0; i < getRowsCount(); i++) {
             RolesListItemWidgetView widget = getWidget(i);
-            widget.setParentWidget(presenter);
+            widget.setParentWidget(this);
         }
     }
 
@@ -175,20 +150,34 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
     }
 
     @Override
-    public RolesListItemWidgetView getWidget(final int index) {
+    public RolesListItemWidgetView getWidget(KeyValueRow row) {
+        return rows.getComponent(row);
+    }
+
+    @Override
+    public RolesListItemWidgetView getWidget(int index) {
         return rows.getComponent(index);
     }
 
-    @EventHandler("addButton")
-    public void handleAddVarButton(final ClickEvent e) {
-        presenter.add();
+    protected void handleAddVarButton() {
+        if (!getRows().isEmpty() && getRows().get(getRowsCount() - 1).getKey() == null) {
+            return;
+        }
+
+        final int index = getRowsCount();
+        getRows().add(new KeyValueRow());
+        final RolesListItemWidgetView widget = getWidget(index);
+        widget.setParentWidget(this);
     }
 
     @Override
     public void remove(final KeyValueRow row) {
-        presenter.remove(row);
-        if (getRows().isEmpty()) {
-            setNoneDisplayStyle();
-        }
+        getRows().remove(row);
+        doSave();
+    }
+
+    @Override
+    public boolean isDuplicateName(String name) {
+        return getRows().stream().filter(row -> Objects.equals(row.getKey(), name)).count() > 1;
     }
 }

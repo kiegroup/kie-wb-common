@@ -37,7 +37,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -49,12 +48,6 @@ public class RolesEditorFieldRendererTest {
 
     @Mock
     private RolesEditorWidgetView view;
-
-    @Mock
-    private RolesListItemWidgetView listView;
-
-    @Mock
-    private KeyValueRow row;
 
     private ManagedInstanceStub<FormGroup> formGroupsInstance;
 
@@ -68,9 +61,6 @@ public class RolesEditorFieldRendererTest {
     public static final KeyValueRow ROLE = new KeyValueRow("role", "1");
 
     private List<KeyValueRow> rows;
-
-    @Mock
-    private RolesListItemWidgetView widget;
 
     @Before
     public void setUp() throws Exception {
@@ -109,18 +99,6 @@ public class RolesEditorFieldRendererTest {
     }
 
     @Test
-    public void doSave() {
-        tested.doSave();
-        verify(view).doSave();
-    }
-
-    @Test
-    public void notifyModelChanged() {
-        tested.notifyModelChanged();
-        verify(tested).doSave();
-    }
-
-    @Test
     public void deserialize() {
         final List<KeyValueRow> deserialized = tested.deserialize(SERIALIZED_ROLE);
         verify(caseRoleSerializer).deserialize(eq(SERIALIZED_ROLE), any());
@@ -132,32 +110,5 @@ public class RolesEditorFieldRendererTest {
         final String serialized = tested.serialize(rows);
         verify(caseRoleSerializer).serialize(eq(Optional.ofNullable(rows)), any(), any());
         assertThat(serialized).isEqualTo(SERIALIZED_ROLE);
-    }
-
-    @Test
-    public void add() {
-        when(view.getWidget(1)).thenReturn(widget);
-        when(view.getRowsCount()).thenReturn(2);
-
-        tested.add();
-        verify(view, never()).setTableDisplayStyle();
-        assertThat(rows.size()).isEqualTo(2);
-        verify(view).getWidget(1);
-        verify(widget).setParentWidget(tested);
-    }
-
-    @Test
-    public void isDuplicateName() {
-        boolean duplicated = tested.isDuplicateName("role");
-        assertThat(duplicated).isFalse();
-        rows.add(ROLE);
-        duplicated = tested.isDuplicateName("role");
-        assertThat(duplicated).isTrue();
-    }
-
-    @Test
-    public void remove() {
-        tested.remove(ROLE);
-        assertThat(rows).isEmpty();
     }
 }

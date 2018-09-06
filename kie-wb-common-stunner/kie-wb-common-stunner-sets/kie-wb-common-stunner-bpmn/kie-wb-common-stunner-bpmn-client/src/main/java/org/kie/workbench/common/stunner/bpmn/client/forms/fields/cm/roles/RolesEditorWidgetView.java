@@ -25,40 +25,32 @@ public interface RolesEditorWidgetView extends IsWidget {
 
     interface Presenter {
 
-        void doSave();
-
-        void notifyModelChanged();
-
         List<KeyValueRow> deserialize(final String s);
 
         String serialize(final List<KeyValueRow> rows);
-
-        void add();
-
-        boolean isDuplicateName(final String name);
-
-        void remove(final KeyValueRow row);
     }
 
     void init(final RolesEditorWidgetView.Presenter presenter);
 
     void doSave();
 
+    void notifyModelChanged();
+
     int getRowsCount();
-
-    void setTableDisplayStyle();
-
-    void setNoneDisplayStyle();
 
     void setRows(final List<KeyValueRow> rows);
 
     List<KeyValueRow> getRows();
 
-    RolesListItemWidgetView getWidget(final int index);
+    RolesListItemWidgetView getWidget(final KeyValueRow row);
+
+    RolesListItemWidgetView getWidget(int index);
 
     void setVisible(final boolean visible);
 
     void remove(final KeyValueRow row);
 
     void setReadOnly(final boolean readOnly);
+
+    boolean isDuplicateName(final String name);
 }

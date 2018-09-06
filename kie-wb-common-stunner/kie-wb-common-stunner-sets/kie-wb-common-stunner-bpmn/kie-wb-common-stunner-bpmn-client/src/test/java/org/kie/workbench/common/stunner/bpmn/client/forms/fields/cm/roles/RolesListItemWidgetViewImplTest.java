@@ -28,10 +28,10 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueR
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTextBox;
+import org.kie.workbench.common.stunner.client.widgets.canvas.actions.IntegerTextBox;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.uberfire.ext.widgets.common.client.common.NumericIntegerTextBox;
 import org.uberfire.mocks.EventSourceMock;
 import org.uberfire.workbench.events.NotificationEvent;
 
@@ -57,7 +57,7 @@ public class RolesListItemWidgetViewImplTest {
     private VariableNameTextBox role;
 
     @Mock
-    private NumericIntegerTextBox cardinality;
+    private IntegerTextBox cardinality;
 
     @Mock
     private EventSourceMock<NotificationEvent> notification;
@@ -72,7 +72,7 @@ public class RolesListItemWidgetViewImplTest {
     private DataBinder<KeyValueRow> row;
 
     @Mock
-    private RolesEditorWidgetView.Presenter widget;
+    private RolesEditorWidgetView widget;
 
     @Before
     public void setUp() throws Exception {
@@ -97,7 +97,7 @@ public class RolesListItemWidgetViewImplTest {
         verify(deleteButton).setIcon(IconType.TRASH);
 
         //test blur
-        BlurHandler blur = spy(blurHandlerCaptor.getValue());
+        BlurHandler blur = blurHandlerCaptor.getValue();
         blur.onBlur(null);
         verify(notification, never()).fire(any());
         verify(tested).notifyModelChanged();
@@ -145,7 +145,7 @@ public class RolesListItemWidgetViewImplTest {
 
     @Test
     public void handleDeleteButton() {
-        tested.handleDeleteButton(null);
+        tested.handleDeleteButton();
         verify(widget).remove(ROLE);
     }
 

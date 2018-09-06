@@ -17,32 +17,33 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import com.google.gwt.event.dom.client.BlurEvent;
-import com.google.gwt.event.dom.client.BlurHandler;
-import com.google.gwt.event.dom.client.ClickEvent;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.databinding.client.api.DataBinder;
+import org.jboss.errai.ui.client.local.api.IsElement;
 import org.jboss.errai.ui.shared.api.annotations.AutoBound;
 import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
-import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
-import org.kie.workbench.common.stunner.bpmn.client.StunnerSpecific;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.Variable.VariableType;
 import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTextBox;
-import org.uberfire.ext.widgets.common.client.common.NumericIntegerTextBox;
+import org.kie.workbench.common.stunner.client.widgets.canvas.actions.IntegerTextBox;
 import org.uberfire.workbench.events.NotificationEvent;
 
+@Dependent
 @Templated("RolesEditorWidget.html#tableRow")
-public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView {
+public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
+                                                    IsElement {
 
     public static final String INVALID_CHARACTERS_MESSAGE = "Invalid characters";
     private static final String DUPLICATE_NAME_ERROR_MESSAGE = "A role with this name already exists";
@@ -54,13 +55,12 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView {
     @Inject
     @Bound(property = "key")
     @DataField("roleInput")
-    @StunnerSpecific
     protected VariableNameTextBox role;
 
     @Inject
     @Bound(property = "value")
     @DataField("cardinalityInput")
-    protected NumericIntegerTextBox cardinality;
+    protected IntegerTextBox cardinality;
 
     private boolean allowDuplicateNames = false;
 
@@ -78,46 +78,42 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView {
     /**
      * Required for implementation of Delete button.
      */
-    private RolesEditorWidgetView.Presenter parentWidget;
+    private Optional<RolesEditorWidgetView> parentWidget;
 
-    public void setParentWidget(final RolesEditorWidgetView.Presenter parentWidget) {
-        this.parentWidget = parentWidget;
+    @Inject
+    public RolesListItemWidgetViewImpl() {
+        parentWidget = Optional.empty();
+    }
+
+    public void setParentWidget(final RolesEditorWidgetView parentWidget) {
+        this.parentWidget = Optional.ofNullable(parentWidget);
     }
 
     @PostConstruct
     public void init() {
         role.setRegExp(StringUtils.ALPHA_NUM_REGEXP, INVALID_CHARACTERS_MESSAGE, INVALID_CHARACTERS_MESSAGE);
-        role.addBlurHandler(getBlurHandler());
-        cardinality.addBlurHandler(getBlurHandler());
+        role.addBlurHandler((e) -> handleBlur(e));
+        cardinality.addBlurHandler((e) -> handleBlur(e));
+        cardinality.addFocusHandler((e) -> handleFocus());
         deleteButton.setIcon(IconType.TRASH);
+        deleteButton.addClickHandler((e) -> handleDeleteButton());
     }
 
-    private BlurHandler getBlurHandler() {
-        return new BlurHandler() {
-            @Override
-            public void onBlur(final BlurEvent event) {
-                String value = role.getText();
-                if (!allowDuplicateNames && isDuplicateName(value)) {
-                    notification.fire(new NotificationEvent(DUPLICATE_NAME_ERROR_MESSAGE,
-                                                            NotificationEvent.NotificationType.ERROR));
-                    role.setValue("");
-                    return;
-                }
-                notifyModelChanged();
-            }
-        };
+    private void handleFocus() {
+        if (Objects.equals("0", cardinality.getText())) {
+            cardinality.clear();
+        }
     }
 
-    @Override
-    public KeyValueRow getModel() {
-        return row.getModel();
-    }
-
-    @Override
-    public void setModel(final KeyValueRow model) {
-        row.setModel(model);
-        previousRole = model.getKey();
-        previousCardinality = model.getValue();
+    private void handleBlur(BlurEvent e) {
+        String value = role.getText();
+        if (!allowDuplicateNames && isDuplicateName(value)) {
+            notification.fire(new NotificationEvent(DUPLICATE_NAME_ERROR_MESSAGE,
+                                                    NotificationEvent.NotificationType.ERROR));
+            role.setValue("");
+            return;
+        }
+        notifyModelChanged();
     }
 
     @Override
@@ -134,12 +130,11 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView {
 
     @Override
     public boolean isDuplicateName(final String name) {
-        return parentWidget.isDuplicateName(name);
+        return parentWidget.map(p -> p.isDuplicateName(name)).orElse(false);
     }
 
-    @EventHandler("deleteButton")
-    public void handleDeleteButton(final ClickEvent e) {
-        parentWidget.remove(getModel());
+    public void handleDeleteButton() {
+        parentWidget.ifPresent(p -> p.remove(getValue()));
     }
 
     @Override
@@ -148,11 +143,33 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView {
         final String currentCardinality = row.getModel().getValue();
 
         //skip in case not modified values
-        if (Objects.equals(previousRole, currentRole) && Objects.equals(previousCardinality, currentCardinality)) {
+        if ((Objects.equals(previousRole, currentRole) && Objects.equals(previousCardinality, currentCardinality))) {
             return;
         }
         previousRole = currentRole;
         previousCardinality = currentCardinality;
-        parentWidget.notifyModelChanged();
+        parentWidget.ifPresent(RolesEditorWidgetView::notifyModelChanged);
+    }
+
+    @Override
+    public void setValue(KeyValueRow value) {
+        row.setModel(value);
+        previousRole = value.getKey();
+        previousCardinality = value.getValue();
+    }
+
+    @Override
+    public KeyValueRow getValue() {
+        return row.getModel();
+    }
+
+    @Override
+    public KeyValueRow getModel() {
+        return getValue();
+    }
+
+    @Override
+    public void setModel(KeyValueRow model) {
+        setValue(model);
     }
 }

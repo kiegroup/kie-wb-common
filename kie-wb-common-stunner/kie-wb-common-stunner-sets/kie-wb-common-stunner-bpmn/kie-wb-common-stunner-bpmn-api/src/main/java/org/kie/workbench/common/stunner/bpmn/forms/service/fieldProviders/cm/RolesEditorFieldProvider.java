@@ -38,7 +38,7 @@ public class RolesEditorFieldProvider extends BasicTypeFieldProvider<RolesEditor
 
     @Override
     public int getPriority() {
-        return 60000;
+        return Integer.MAX_VALUE;
     }
 
     @Override
