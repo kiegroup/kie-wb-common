@@ -17,6 +17,7 @@
 package org.kie.workbench.common.services.backend.compiler.impl.utils;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -48,6 +49,7 @@ import org.uberfire.java.nio.file.Paths;
 public class MavenUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(MavenUtils.class);
+    private static final String JENKINS_SETTINGS_XML_FILE = "JENKINS_SETTINGS_XML_FILE";
 
     public static List<Artifact> resolveDependenciesFromMultimodulePrj(List<String> pomsPaths) {
         MavenXpp3Reader reader = new MavenXpp3Reader();
@@ -126,6 +128,17 @@ public class MavenUtils {
         }
 
         return repository;
+    }
+
+    public static String getSettingsFile() {
+        String jenkinsFile = System.getenv().get(JENKINS_SETTINGS_XML_FILE);
+        if (jenkinsFile != null) {
+            logger.info("Using settings.xml file provided by JENKINS:{}", jenkinsFile);
+            return jenkinsFile;
+        } else {
+            logger.info("Using local settings.xml file.");
+            return new File("src/test/settings.xml").getAbsolutePath();
+        }
     }
 
     private static String getTempRepo() {

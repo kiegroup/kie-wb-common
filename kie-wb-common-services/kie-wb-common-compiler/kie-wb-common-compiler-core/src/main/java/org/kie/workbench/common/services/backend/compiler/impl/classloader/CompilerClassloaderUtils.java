@@ -46,6 +46,7 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -80,7 +81,7 @@ public class CompilerClassloaderUtils {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         CompilationRequest req = new DefaultCompilationRequest(localRepo,
                                                                info,
-                                                               new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
+                                                               new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH, MavenCLIArgs.ALTERNATE_USER_SETTINGS + MavenUtils.getSettingsFile()},
                                                                Boolean.FALSE);
         CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {
