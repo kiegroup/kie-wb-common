@@ -45,5 +45,60 @@ public abstract class ServiceTask<T extends BaseServiceTask> extends Task<T> {
     @Ignore("Test is ignored, because does not make sense, since there is only new Marhsaller tested.")
     @Test
     @Override
-    public void testMigration() {}
+    public void testMigration() {
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallTopLevelTaskEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptyTopLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallSubprocessLevelTaskOneIncomeEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptySubprocessLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallSubprocessLevelTaskTwoIncomesEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptySubprocessLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallTopLevelTaskOneIncomeEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptyTopLevelTaskOneIncomeId(), ONE_INCOME_EDGE, HAS_OUTCOME_EDGE);
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallTopLevelTaskTwoIncomesEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptyTopLevelTaskTwoIncomesId(), TWO_INCOME_EDGES, HAS_OUTCOME_EDGE);
+    }
+
+    @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
+            "Delete this test from this class after https://issues.jboss.org/browse/JBPM-7726 will be resolved.")
+    // The test is already defined in parent Task test class.
+    @Test
+    @Override
+    public void testMarshallSubprocessLevelTaskEmptyProperties() throws Exception {
+        checkTaskMarshalling(getEmptySubprocessLevelTaskId(), ZERO_INCOME_EDGES, HAS_NO_OUTCOME_EDGE);
+    }
 }
