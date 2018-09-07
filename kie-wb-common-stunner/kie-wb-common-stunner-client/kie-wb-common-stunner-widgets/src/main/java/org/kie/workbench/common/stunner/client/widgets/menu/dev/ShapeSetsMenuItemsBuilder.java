@@ -21,9 +21,6 @@ import java.util.Collection;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -58,17 +55,16 @@ public class ShapeSetsMenuItemsBuilder {
     public MenuItem build(final String title,
                           final String prefix,
                           final Callback callback) {
-        final DropDownMenus.Builder menuBuilder = new DropDownMenus.Builder();
-        menuBuilder.addStyleName("pull-right");
+        final DropDownMenu menu = new DropDownMenus.Builder().addStyleName("pull-right").build();
 
         final Collection<ShapeSet<?>> shapeSets = shapeManager.getShapeSets();
         if (null != shapeSets) {
             shapeSets.stream().forEach(shapeSet -> {
-                menuBuilder.add(new AnchorListItems.Builder(prefix + " " + shapeSet.getDescription())
+                menu.add(new AnchorListItems.Builder(prefix + " " + shapeSet.getDescription())
                                  .setTitle(prefix + " " + shapeSet.getDescription())
                                  .setIcon(IconType.PLUS)
-                                 .addClickHandler(event -> callback.onClick(shapeSet))
-                                 .build());
+                                 .addClickHandler(event -> callback.onClick(shapeSet)).build()
+                );
             });
         }
 
@@ -78,9 +74,9 @@ public class ShapeSetsMenuItemsBuilder {
                                                         .setDataToggle(Toggle.DROPDOWN)
                                                         .setSize(ButtonSize.SMALL)
                                                         .setText(title)
-                                                        .setTitle(title)
-                                                        .build())
-                                           .add(menuBuilder.build())
-                                           .build());
+                                                        .setTitle(title).build()
+                                           )
+                                           .add(menu).build()
+        );
     }
 }

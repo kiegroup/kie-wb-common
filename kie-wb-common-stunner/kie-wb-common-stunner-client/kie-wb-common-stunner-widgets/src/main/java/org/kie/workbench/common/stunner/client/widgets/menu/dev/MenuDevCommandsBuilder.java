@@ -25,9 +25,6 @@ import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 import com.google.gwt.user.client.ui.IsWidget;
-import org.gwtbootstrap3.client.ui.AnchorListItem;
-import org.gwtbootstrap3.client.ui.Button;
-import org.gwtbootstrap3.client.ui.ButtonGroup;
 import org.gwtbootstrap3.client.ui.DropDownMenu;
 import org.gwtbootstrap3.client.ui.constants.ButtonSize;
 import org.gwtbootstrap3.client.ui.constants.IconType;
@@ -61,12 +58,11 @@ public class MenuDevCommandsBuilder {
     }
 
     public MenuItem build() {
-        final DropDownMenus.Builder menuBuilder = new DropDownMenus.Builder().addStyleName("pull-right");
+        final DropDownMenu menu = new DropDownMenus.Builder().addStyleName("pull-right").build();
         for (final MenuDevCommand command : devCommands) {
-            menuBuilder.add(new AnchorListItems.Builder(command.getText())
+            menu.add(new AnchorListItems.Builder(command.getText())
                                     .setIcon(command.getIcon())
-                                    .addClickHandler(event -> command.execute())
-                                    .build());
+                             .addClickHandler(event -> command.execute()).build());
         }
 
         final IsWidget group = new ButtonGroups.Builder()
@@ -75,10 +71,8 @@ public class MenuDevCommandsBuilder {
                              .setDataToggle(Toggle.DROPDOWN)
                              .setIcon(IconType.COG)
                              .setSize(ButtonSize.SMALL)
-                             .setTitle("Development")
-                             .build())
-                .add(menuBuilder.build())
-                .build();
+                             .setTitle("Development").build())
+                .add(menu).build();
 
         return MenuUtils.buildItem(group);
     }
