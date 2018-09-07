@@ -34,21 +34,21 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, String settingXML);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified changing the content with the override contents, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, Map<Path, InputStream> override);
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, String settingXML,  Map<Path, InputStream> override);
 
     /**
      * Run a mvn compile on the projectPath with mavenRepo specified, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo,
+    CompletableFuture<KieCompilationResponse> build(Path projectPath, String mavenRepo, String settingXML,
                                                     Boolean skipPrjDependenciesCreationList);
 
     /**
@@ -56,14 +56,14 @@ public interface CompilerExecutor {
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo);
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo, String settingXML);
 
     /**
      * Run a mvn install on the projectPath, maven output provided in the CompilationResponse
      * a new CompilationRequest will be created at every invocation, useful if the project folder and maven repo changes
      * between compilation Requests
      */
-    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo,
+    CompletableFuture<KieCompilationResponse> buildAndInstall(Path projectPath, String mavenRepo, String settingXML,
                                                               Boolean skipPrjDependenciesCreationList);
 
     /**

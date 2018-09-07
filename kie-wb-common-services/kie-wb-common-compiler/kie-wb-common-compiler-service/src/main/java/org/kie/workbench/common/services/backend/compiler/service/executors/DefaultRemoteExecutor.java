@@ -67,14 +67,22 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
         return new CompilerAggregateEntryCache(compiler, info);
     }
 
-    private CompletableFuture<KieCompilationResponse> internalBuild(String projectPath, String mavenRepo,
+    private CompletableFuture<KieCompilationResponse> internalBuild(String projectPath, String mavenRepo, String settingsXML,
                                                                     boolean skipProjectDepCreation, String goal) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(projectPath));
         AFCompiler compiler = getCompiler(projectPath);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
-                                                               info,
-                                                               new String[]{goal},
-                                                               skipProjectDepCreation);
+        CompilationRequest req;
+        if(settingsXML != null) {
+            req = new DefaultCompilationRequest(mavenRepo,
+                                                                   info,
+                                                                   new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingsXML, goal},
+                                                                   skipProjectDepCreation);
+        }else{
+            req = new DefaultCompilationRequest(mavenRepo,
+                                                info,
+                                                new String[]{goal},
+                                                skipProjectDepCreation);
+        }
         return runInItsOwnThread(compiler, req);
     }
 
@@ -97,24 +105,24 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
     /************************************ Suitable for the REST Builds ************************************************/
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo) {
-        return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.COMPILE);
+    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo, String settingsXML) {
+        return internalBuild(projectPath, mavenRepo, settingsXML, Boolean.FALSE, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo, Boolean skipPrjDependenciesCreationList) {
-        return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
+    public CompletableFuture<KieCompilationResponse> build(String projectPath, String mavenRepo, String settingsXML, Boolean skipPrjDependenciesCreationList) {
+        return internalBuild(projectPath, mavenRepo, settingsXML, skipPrjDependenciesCreationList, MavenCLIArgs.COMPILE);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo) {
-        return internalBuild(projectPath, mavenRepo, Boolean.FALSE, MavenCLIArgs.INSTALL);
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo, String settingsXML) {
+        return internalBuild(projectPath, mavenRepo, settingsXML, Boolean.FALSE, MavenCLIArgs.INSTALL);
     }
 
     @Override
-    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo,
+    public CompletableFuture<KieCompilationResponse> buildAndInstall(String projectPath, String mavenRepo, String settingsXML,
                                                                      Boolean skipPrjDependenciesCreationList) {
-        return internalBuild(projectPath, mavenRepo, skipPrjDependenciesCreationList, MavenCLIArgs.INSTALL);
+        return internalBuild(projectPath, mavenRepo, settingsXML, skipPrjDependenciesCreationList, MavenCLIArgs.INSTALL);
     }
 
     @Override

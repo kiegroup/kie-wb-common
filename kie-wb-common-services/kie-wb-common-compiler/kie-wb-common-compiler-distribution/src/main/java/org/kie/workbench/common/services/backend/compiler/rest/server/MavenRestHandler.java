@@ -67,8 +67,8 @@ public class MavenRestHandler extends Application {
      */
     @POST
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo) throws Exception {
-        CompletableFuture<KieCompilationResponse> response = compilerService.build(projectRepo, mavenRepo);
+    public void postAsync(@Suspended AsyncResponse ar, @HeaderParam("project") String projectRepo, @HeaderParam("mavenrepo") String mavenRepo, @HeaderParam("settings_xml") String settingsXML) throws Exception {
+        CompletableFuture<KieCompilationResponse> response = compilerService.build(projectRepo, mavenRepo, settingsXML);
         response.whenCompleteAsync((kieCompilationResponse, throwable) -> {
             if (throwable != null) {
                 logger.error(throwable.getMessage());
