@@ -401,7 +401,10 @@ public class DMNMarshaller implements DiagramMarshaller<Graph, Metadata, Diagram
             }
         }
         org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram dmnDDDMNDiagram = new org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNDiagram();
-        definitions.getExtensionElements().getAny().add(dmnDDDMNDiagram);
+        org.kie.dmn.model.api.DMNElement.ExtensionElements extensionElements = definitions.getExtensionElements();
+        if (extensionElements != null) {
+            extensionElements.getAny().add(dmnDDDMNDiagram);
+        }
 
         for (Node<?, ?> node : g.nodes()) {
             if (node.getContent() instanceof View<?>) {
