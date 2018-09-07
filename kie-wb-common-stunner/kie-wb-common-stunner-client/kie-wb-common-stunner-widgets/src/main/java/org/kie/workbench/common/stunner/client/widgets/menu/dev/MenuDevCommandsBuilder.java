@@ -61,8 +61,9 @@ public class MenuDevCommandsBuilder {
         final DropDownMenu menu = new DropDownMenus.Builder().addStyleName("pull-right").build();
         for (final MenuDevCommand command : devCommands) {
             menu.add(new AnchorListItems.Builder(command.getText())
-                                    .setIcon(command.getIcon())
-                             .addClickHandler(event -> command.execute()).build());
+                             .setIcon(command.getIcon())
+                             .addClickHandler(event -> command.execute()).build()
+            );
         }
 
         final IsWidget group = new ButtonGroups.Builder()
