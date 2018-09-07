@@ -75,15 +75,15 @@ public class CompilerClassloaderUtils {
      * @return
      */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
-                                                                          String localRepo, String settingsXML) {
+                                                                          String localRepo, String settingsXmlPath) {
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
         CompilationRequest req;
-        if(settingsXML != null) {
+        if(settingsXmlPath != null) {
             req = new DefaultCompilationRequest(localRepo,
                                                                    info,
-                                                                   new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH, MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingsXML},
+                                                                   new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH, MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingsXmlPath},
                                                                    Boolean.FALSE);
         }else{
             req = new DefaultCompilationRequest(localRepo,
@@ -332,8 +332,8 @@ public class CompilerClassloaderUtils {
         }
     }
 
-    public static Set<String> filterPathClasses(Collection<String> paths, String mavenRepo) {
-        return paths.stream().collect(new FilterPathClassesCollector(mavenRepo, mavenRepo.length()));
+    public static Set<String> filterPathClasses(Collection<String> paths, String mavenRepoPath) {
+        return paths.stream().collect(new FilterPathClassesCollector(mavenRepoPath, mavenRepoPath.length()));
     }
 
     public static List<String> filterClassesByPackage(Collection<String> items, String packageName) {

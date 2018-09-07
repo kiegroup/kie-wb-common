@@ -63,7 +63,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MavenRestClientTest {
 
     private static Path tmpRoot;
-    private static Path mavenRepo;
+    private static Path mavenRepoPath;
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
     private static String maven = "Apache Maven";
@@ -226,14 +226,14 @@ public class MavenRestClientTest {
             final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
             assertThat(cloned).isNotNull();
-            mavenRepo = Paths.get(System.getProperty("user.home"), "/.m2/repository");
+            mavenRepoPath = Paths.get(System.getProperty("user.home"), "/.m2/repository");
             tmpRoot = Paths.get(gitClonedFolder + "/dummy/");
 
             Client client = ClientBuilder.newClient();
             WebTarget target = client.target(deploymentUrl.toString() + "rest/maven/");
             MultivaluedMap headersMap = new MultivaluedHashMap();
             headersMap.add("project", tmpRoot.toAbsolutePath().toString() + "/dummy");
-            headersMap.add("mavenrepo", mavenRepo.toAbsolutePath().toString());
+            headersMap.add("mavenrepo", mavenRepoPath.toAbsolutePath().toString());
             headersMap.add("settings_xml", settings_XML);
             Future<Response> responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
             Response response = responseFuture.get();
