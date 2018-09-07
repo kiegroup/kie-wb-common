@@ -135,7 +135,7 @@ public class DefaultAdminPageHelper {
     }
 
     private void addExperimentalPreferences() {
-        if (hasAccessToPerspective(PerspectiveIds.EXPERIMENTAL_FEATURES) && experimentalFeaturesService.isExperimentalEnabled()) {
+        if (hasAccessToPerspective(PerspectiveIds.EXPERIMENTAL_FEATURES) && experimentalFeaturesService.isExperimentalEnabled() && !experimentalFeaturesService.getFeaturesRegistry().getAllFeatures().isEmpty()) {
             adminPage.addTool("root",
                               constants.ExperimentalSettings(),
                               new Sets.Builder().add("fa").add("fa-flask").build(),

@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.workbench.client.admin;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwtmockito.GwtMockitoTestRunner;
 import org.guvnor.common.services.shared.preferences.GuvnorPreferenceScopes;
 import org.jboss.errai.security.shared.api.identity.User;
@@ -29,6 +32,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.stubbing.Answer;
 import org.uberfire.experimental.client.service.ClientExperimentalFeaturesRegistryService;
+import org.uberfire.experimental.service.registry.ExperimentalFeature;
+import org.uberfire.experimental.service.registry.ExperimentalFeaturesRegistry;
 import org.uberfire.ext.preferences.client.admin.page.AdminPage;
 import org.uberfire.ext.preferences.client.admin.page.AdminPageOptions;
 import org.uberfire.mvp.Command;
@@ -315,27 +320,45 @@ public class DefaultAdminPageHelperTest {
 
     @Test
     public void experimentalFeaturesAddedTest() {
-        verifyExperimentalFeatureAdded(true);
+        verifyExperimentalFeatureAdded(true, true);
+    }
+
+    @Test
+    public void experimentalFeaturesAddedTestWithoutFeatures() {
+        verifyExperimentalFeatureAdded(true, false);
     }
 
     @Test
     public void experimentalFeaturesWasNotAddedTest() {
-        verifyExperimentalFeatureAdded(false);
+        verifyExperimentalFeatureAdded(false, false);
     }
 
-    private void verifyExperimentalFeatureAdded(final boolean addExperimental) {
+    private void verifyExperimentalFeatureAdded(final boolean addExperimental, final boolean addFeatures) {
         doReturn(true).when(authorizationManager).authorize(any(ResourceRef.class), any(User.class));
+
+        List<ExperimentalFeature> definitions = new ArrayList<>();
+        ExperimentalFeaturesRegistry registry = mock(ExperimentalFeaturesRegistry.class);
+
+        when(registry.getAllFeatures()).thenReturn(definitions);
+
+        when(experimentalFeaturesRegistryService.getFeaturesRegistry()).thenReturn(registry);
+
+        if (addFeatures) {
+            definitions.add(mock(ExperimentalFeature.class));
+            definitions.add(mock(ExperimentalFeature.class));
+        }
 
         when(experimentalFeaturesRegistryService.isExperimentalEnabled()).thenReturn(addExperimental);
 
         defaultAdminPageHelper.setup();
 
-        verify(adminPage,
-               addExperimental ? times(1) : never()).addTool(eq("root"),
-                                                             eq(EXPERIMENTAL_SETTINGS),
-                                                             any(),
-                                                             eq("general"),
-                                                             any(Command.class));
+        boolean shouldAppear = addExperimental && addFeatures;
+
+        verify(adminPage, shouldAppear ? times(1) : never()).addTool(eq("root"),
+                                                                        eq(EXPERIMENTAL_SETTINGS),
+                                                                        any(),
+                                                                        eq("general"),
+                                                                        any(Command.class));
     }
 
     private void verifyLibraryPreferencesWasAddedInGlobalScope() {
