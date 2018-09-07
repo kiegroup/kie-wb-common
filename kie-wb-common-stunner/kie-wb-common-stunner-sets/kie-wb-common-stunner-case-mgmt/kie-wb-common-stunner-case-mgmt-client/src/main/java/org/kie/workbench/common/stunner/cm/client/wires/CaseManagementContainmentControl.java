@@ -96,9 +96,9 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
                 final Point2D mouseRelativeLoc = new Point2D(mouseX - parentAbsLoc.getX(),
                                                              mouseY - parentAbsLoc.getY());
                 //Children contains m_ghost and others excluding m_shape. This therefore moves m_ghost within children.
-                getParent().getLayoutHandler().add(ghost.get(),
-                                                   getParent(),
-                                                   mouseRelativeLoc);
+//                getParent().getLayoutHandler().add(ghost.get(),
+//                                                   getParent(),
+//                                                   mouseRelativeLoc);
 
                 containmentControl.getParentPickerControl().rebuildPicker();
             }
@@ -109,6 +109,7 @@ public class CaseManagementContainmentControl implements WiresContainmentControl
 
     @Override
     public boolean onMoveComplete() {
+        state.getGhost().ifPresent(WiresShape::removeFromParent);
         return containmentControl.onMoveComplete();
     }
 
