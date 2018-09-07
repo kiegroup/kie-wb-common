@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 
@@ -143,7 +144,8 @@ public class CompilerClassloaderUtilsTest extends BaseCompilerTest {
 
     @Test
     public void getClassloaderFromAllDependencies() {
-        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo);
+        Optional<ClassLoader> classLoader = CompilerClassloaderUtils.getClassloaderFromAllDependencies(tmpRoot.toString() + "/dummy", mavenRepo,
+                                                                                                       TestUtilMaven.getSettingsFile());
         assertThat(classLoader).isPresent();
     }
 

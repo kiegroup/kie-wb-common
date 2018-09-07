@@ -46,6 +46,7 @@ import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
 import org.kie.workbench.common.services.backend.compiler.CompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
+import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenConfig;
 import org.kie.workbench.common.services.backend.compiler.impl.CommonConstants;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -74,14 +75,22 @@ public class CompilerClassloaderUtils {
      * @return
      */
     public static Optional<ClassLoader> getClassloaderFromAllDependencies(String prjPath,
-                                                                          String localRepo) {
+                                                                          String localRepo, String settingsXML) {
 
         AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_BUILD_CLASSPATH));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(URI.create(CommonConstants.FILE_URI + prjPath)));
-        CompilationRequest req = new DefaultCompilationRequest(localRepo,
-                                                               info,
-                                                               new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
-                                                               Boolean.FALSE);
+        CompilationRequest req;
+        if(settingsXML != null) {
+            req = new DefaultCompilationRequest(localRepo,
+                                                                   info,
+                                                                   new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH, MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingsXML},
+                                                                   Boolean.FALSE);
+        }else{
+            req = new DefaultCompilationRequest(localRepo,
+                                                                   info,
+                                                                   new String[]{MavenConfig.DEPS_IN_MEMORY_BUILD_CLASSPATH},
+                                                                   Boolean.FALSE);
+        }
         CompilationResponse res = compiler.compile(req);
         if (res.isSuccessful()) {
             /** Maven dependency plugin is not able to append the modules classpath using an absolute path in -Dmdep.outputFile,

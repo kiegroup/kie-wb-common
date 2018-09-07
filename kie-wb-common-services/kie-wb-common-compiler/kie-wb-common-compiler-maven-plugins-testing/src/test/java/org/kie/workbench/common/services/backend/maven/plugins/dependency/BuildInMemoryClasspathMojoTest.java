@@ -103,7 +103,8 @@ public class BuildInMemoryClasspathMojoTest {
     public void testCompilerClassloaderUtilsTests(){
         Path path = Paths.get(".").resolve("target/test-classes//dummy_deps_complex");
         Optional<ClassLoader> classloaderOptional = CompilerClassloaderUtils.getClassloaderFromAllDependencies(path.toAbsolutePath().toString(),
-                                                                                                               mavenRepo);
+                                                                                                               mavenRepo,
+                                                                                                               TestUtilMaven.getSettingsFile());
         assertThat(classloaderOptional).isPresent();
         ClassLoader classloader = classloaderOptional.get();
         URLClassLoader urlsc = (URLClassLoader) classloader;
