@@ -67,7 +67,7 @@ public class MavenRestClientTest {
     private static FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private static IOService ioService;
     private static String maven = "Apache Maven";
-    private static String settings_XML ;
+    private static String mavenSettingsPath;
     /**
      * Maven use as current dir the current module, arquillian w/junit the top level module kie-wb-common
      */
@@ -92,7 +92,7 @@ public class MavenRestClientTest {
         setRunIntoMavenCLI();
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-        settings_XML = TestUtilMaven.getSettingsFile();
+        mavenSettingsPath = TestUtilMaven.getSettingsFile();
     }
 
     public static void tearDown() {
@@ -234,7 +234,8 @@ public class MavenRestClientTest {
             MultivaluedMap headersMap = new MultivaluedHashMap();
             headersMap.add("project", tmpRoot.toAbsolutePath().toString() + "/dummy");
             headersMap.add("mavenrepo", mavenRepoPath.toAbsolutePath().toString());
-            headersMap.add("settings_xml", settings_XML);
+            headersMap.add("settings_xml",
+                           mavenSettingsPath);
             Future<Response> responseFuture = target.request().headers(headersMap).async().post(Entity.entity(String.class, MediaType.TEXT_PLAIN));
             Response response = responseFuture.get();
             assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(200);

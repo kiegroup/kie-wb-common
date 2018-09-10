@@ -55,6 +55,13 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         }
     }
 
+    private CompilationRequest getDefaultRequest(String mavenRepoPath, WorkspaceCompilationInfo info , boolean skipProjectDepCreation, String[] goals){
+        return new DefaultCompilationRequest(mavenRepoPath,
+                                      info,
+                                      goals,
+                                      skipProjectDepCreation);
+    }
+
     private AFCompiler getNewCachedAFCompiler(Path projectPath) {
         CompilerAggregateEntryCache info = setupCompileInfo(projectPath);
         compilerCacheForLocalInvocation.setEntry(projectPath, info);
@@ -73,15 +80,9 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req;
         if(settingXML != null){
-            req = new DefaultCompilationRequest(mavenRepoPath,
-                                                info,
-                                                new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingXML, goal},
-                                                skipProjectDepCreation);
+            req = getDefaultRequest(mavenRepoPath, info, skipProjectDepCreation, new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingXML, goal});
         }else {
-            req = new DefaultCompilationRequest(mavenRepoPath,
-                                                                   info,
-                                                                   new String[]{goal},
-                                                                   skipProjectDepCreation);
+            req = getDefaultRequest(mavenRepoPath, info, skipProjectDepCreation, new String[]{goal});
         }
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req)), executor);
     }
@@ -90,10 +91,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
                                                                     boolean skipProjectDepCreation, String[] args) {
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(projectPath);
         AFCompiler compiler = getCompiler(projectPath);
-        CompilationRequest req = new DefaultCompilationRequest(mavenRepoPath,
-                                                               info,
-                                                               args,
-                                                               skipProjectDepCreation);
+        CompilationRequest req = getDefaultRequest(mavenRepoPath, info, skipProjectDepCreation, args);
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req)), executor);
     }
 
@@ -103,15 +101,10 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req;
         if(settingXML != null) {
-            req = new DefaultCompilationRequest(mavenRepoPath,
-                                                                   info,
-                                                                   new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingXML, goal},
-                                                                   skipProjectDepCreation);
+            req = getDefaultRequest(mavenRepoPath, info, skipProjectDepCreation, new String[]{MavenCLIArgs.ALTERNATE_USER_SETTINGS + settingXML, goal});
+
         }else{
-            req = new DefaultCompilationRequest(mavenRepoPath,
-                                                                   info,
-                                                                   new String[]{goal},
-                                                                   skipProjectDepCreation);
+            req = getDefaultRequest(mavenRepoPath, info, skipProjectDepCreation, new String[]{goal});
         }
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req, override)), executor);
     }
