@@ -42,7 +42,7 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
     public String getName() {
         String name = super.getName();
         if (name == null || name.isEmpty()) {
-            return workItemDefinition.getName();
+            return "";
         } else {
             return name;
         }
@@ -52,7 +52,7 @@ public class ServiceTaskPropertyReader extends TaskPropertyReader {
     public String getDocumentation() {
         String documentation = super.getDocumentation();
         if (documentation == null || documentation.isEmpty()) {
-            return workItemDefinition.getDocumentation();
+            return "";
         } else {
             return documentation;
         }
