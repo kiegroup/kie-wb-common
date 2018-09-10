@@ -16,26 +16,21 @@
 
 package org.kie.workbench.common.stunner.core.client.preferences;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
+/**
+ * Centralize the default Text properties used by Stunner.
+ * Now this is not exposed to be configured by the user through the UI.
+ */
+public interface StunnerTextPreferences {
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+    public double getTextAlpha();
 
-public class DefaultPreferencesRegistryTest {
+    public String getTextFontFamily();
 
-    private DefaultPreferencesRegistry tested;
+    public double getTextFontSize();
 
-    @Before
-    public void setUp() throws Exception {
-        tested = new DefaultPreferencesRegistry();
-    }
+    public String getTextFillColor();
 
-    @Test
-    public void testIt() {
-        final StunnerPreferences preferences = mock(StunnerPreferences.class);
-        tested.set(preferences, StunnerPreferences.class);
-        assertEquals(preferences, tested.get(StunnerPreferences.class));
-    }
+    public String getTextStrokeColor();
+
+    public double getTextStrokeWidth();
 }

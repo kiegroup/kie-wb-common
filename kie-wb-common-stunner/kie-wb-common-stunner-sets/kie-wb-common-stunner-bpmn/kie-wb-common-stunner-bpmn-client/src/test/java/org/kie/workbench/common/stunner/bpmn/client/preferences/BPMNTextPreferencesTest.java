@@ -14,28 +14,30 @@
  * limitations under the License.
  */
 
-package org.kie.workbench.common.stunner.core.client.preferences;
+package org.kie.workbench.common.stunner.bpmn.client.preferences;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.kie.workbench.common.stunner.core.preferences.StunnerPreferences;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
 
-public class DefaultPreferencesRegistryTest {
+public class BPMNTextPreferencesTest {
 
-    private DefaultPreferencesRegistry tested;
+    private BPMNTextPreferences tested;
 
     @Before
     public void setUp() throws Exception {
-        tested = new DefaultPreferencesRegistry();
+        tested = new BPMNTextPreferences();
     }
 
     @Test
-    public void testIt() {
-        final StunnerPreferences preferences = mock(StunnerPreferences.class);
-        tested.set(preferences, StunnerPreferences.class);
-        assertEquals(preferences, tested.get(StunnerPreferences.class));
+    public void testAttributes() {
+        //values from CSS -> BPMNSVGViewFactory#PATH_CSS
+        assertEquals(tested.getTextAlpha(), 1, 0);
+        assertEquals(tested.getTextFillColor(), "#000000");
+        assertEquals(tested.getTextFontFamily(), "Open Sans");
+        assertEquals(tested.getTextStrokeColor(), "#393f44");
+        assertEquals(tested.getTextStrokeWidth(), 1, 0);
+        assertEquals(tested.getTextFontSize(), 12, 0);
     }
 }
