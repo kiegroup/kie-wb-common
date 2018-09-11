@@ -109,7 +109,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -123,7 +123,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                    ZERO_INCOME_EDGES,
                                                                    HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -137,7 +137,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              ZERO_INCOME_EDGES,
                                                              HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -163,7 +163,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                         HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
 
-        assertBusinessRuleTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -201,7 +201,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     ZERO_INCOME_EDGES,
                                                                     HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -215,7 +215,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                           ZERO_INCOME_EDGES,
                                                                           HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -229,7 +229,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     ZERO_INCOME_EDGES,
                                                                     HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -254,7 +254,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                ZERO_INCOME_EDGES,
                                                                HAS_NO_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertBusinessRuleTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -292,7 +292,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -306,7 +306,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                    ONE_INCOME_EDGE,
                                                                    HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -320,7 +320,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              ONE_INCOME_EDGE,
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -345,7 +345,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                         ONE_INCOME_EDGE,
                                                         HAS_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertBusinessRuleTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -370,7 +370,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                ONE_INCOME_EDGE,
                                                                HAS_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertBusinessRuleTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -408,7 +408,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     ONE_INCOME_EDGE,
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -422,7 +422,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                           ONE_INCOME_EDGE,
                                                                           HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -436,7 +436,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     ONE_INCOME_EDGE,
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -474,7 +474,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -488,7 +488,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                    TWO_INCOME_EDGES,
                                                                    HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -502,7 +502,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                              TWO_INCOME_EDGES,
                                                              HAS_OUTCOME_EDGE);
         assertGeneralSet(filledTopLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledTopLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -527,7 +527,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                         TWO_INCOME_EDGES,
                                                         HAS_OUTCOME_EDGE);
         assertGeneralSet(emptyTopLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertBusinessRuleTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptyTopLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -552,7 +552,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                TWO_INCOME_EDGES,
                                                                HAS_OUTCOME_EDGE);
         assertGeneralSet(emptySubprocessLevelTask.getGeneral(), EMPTY_VALUE, EMPTY_VALUE);
-        assertBusinessRuleTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
+        assertServiceTaskExecutionSet(emptySubprocessLevelTask.getExecutionSet(),
                                            EMPTY_VALUE,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            EMPTY_VALUE,
@@ -590,7 +590,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     TWO_INCOME_EDGES,
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJava.getGeneral(), TASK_NAME_JAVA, TASK_DOCUMENTATION_JAVA);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJava.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVA,
                                            TASK_SCRIPT_JAVA_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVA,
@@ -604,7 +604,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                           TWO_INCOME_EDGES,
                                                                           HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskJavascript.getGeneral(), TASK_NAME_JAVASCRIPT, TASK_DOCUMENTATION_JAVASCRIPT);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskJavascript.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_JAVASCRIPT,
                                            TASK_SCRIPT_JAVASCRIPT_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_JAVASCRIPT,
@@ -618,7 +618,7 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
                                                                     TWO_INCOME_EDGES,
                                                                     HAS_OUTCOME_EDGE);
         assertGeneralSet(filledSubprocessLevelTaskMvel.getGeneral(), TASK_NAME_MVEL, TASK_DOCUMENTATION_MVEL);
-        assertBusinessRuleTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
+        assertServiceTaskExecutionSet(filledSubprocessLevelTaskMvel.getExecutionSet(),
                                            TASK_ON_ENTRY_ACTION_MVEL,
                                            TASK_SCRIPT_MVEL_LANGUAGE,
                                            TASK_ON_EXIT_ACTION_MVEL,
@@ -750,43 +750,5 @@ public class EmailServiceTaskTest extends org.kie.workbench.common.stunner.bpmn.
     @Override
     String getEmptySubprocessLevelTaskTwoIncomesId() {
         return EMPTY_TWO_INCOMES_SUBPROCESS_LEVEL_TASK_ID;
-    }
-
-    private void assertBusinessRuleTaskExecutionSet(ServiceTaskExecutionSet executionSet,
-                                                    String onEntryActionScriptValue,
-                                                    String onEntryActionScriptLanguage,
-                                                    String onExitActionScriptValue,
-                                                    String onExitActionScriptLanguage,
-                                                    boolean isAsync,
-                                                    boolean adHocAutostart) {
-        assertNotNull(executionSet);
-        assertNotNull(executionSet.getOnEntryAction());
-        assertNotNull(executionSet.getOnExitAction());
-        assertNotNull(executionSet.getIsAsync());
-        assertNotNull(executionSet.getAdHocAutostart());
-
-        assertNotNull(executionSet.getOnEntryAction().getValue());
-        assertNotNull(executionSet.getOnExitAction().getValue());
-
-        List<ScriptTypeValue> onEntryScriptTypeValues = executionSet.getOnEntryAction().getValue().getValues();
-        List<ScriptTypeValue> onExitScriptTypeValues = executionSet.getOnExitAction().getValue().getValues();
-
-        assertNotNull(onEntryScriptTypeValues);
-        assertNotNull(onExitScriptTypeValues);
-        assertNotNull(onEntryScriptTypeValues.get(0));
-        assertNotNull(onExitScriptTypeValues.get(0));
-
-        assertEquals(onEntryActionScriptValue, onEntryScriptTypeValues.get(0).getScript());
-        assertEquals(onEntryActionScriptLanguage, onEntryScriptTypeValues.get(0).getLanguage());
-        assertEquals(onExitActionScriptValue, onExitScriptTypeValues.get(0).getScript());
-        assertEquals(onExitActionScriptLanguage, onExitScriptTypeValues.get(0).getLanguage());
-        assertEquals(isAsync, executionSet.getIsAsync().getValue());
-        assertEquals(adHocAutostart, executionSet.getAdHocAutostart().getValue());
-    }
-
-    private void assertDataIOSet(DataIOSet dataIOSet, String value) {
-        assertNotNull(dataIOSet);
-        assertNotNull(dataIOSet.getAssignmentsinfo());
-        assertEquals(value, dataIOSet.getAssignmentsinfo().getValue());
     }
 }
