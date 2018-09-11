@@ -24,8 +24,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller;
+import org.kie.workbench.common.stunner.bpmn.definition.property.dataio.DataIOSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.task.ScriptTypeValue;
 import org.kie.workbench.common.stunner.bpmn.workitem.BaseServiceTask;
+import org.kie.workbench.common.stunner.bpmn.workitem.ServiceTaskExecutionSet;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.kie.workbench.common.stunner.bpmn.backend.service.diagram.marshalling.Marshaller.NEW;
 
 @RunWith(Parameterized.class)
@@ -46,6 +51,44 @@ public abstract class ServiceTask<T extends BaseServiceTask> extends Task<T> {
     @Test
     @Override
     public void testMigration() {
+    }
+
+    protected void assertServiceTaskExecutionSet(ServiceTaskExecutionSet executionSet,
+                                                 String onEntryActionScriptValue,
+                                                 String onEntryActionScriptLanguage,
+                                                 String onExitActionScriptValue,
+                                                 String onExitActionScriptLanguage,
+                                                 boolean isAsync,
+                                                 boolean adHocAutostart) {
+        assertNotNull(executionSet);
+        assertNotNull(executionSet.getOnEntryAction());
+        assertNotNull(executionSet.getOnExitAction());
+        assertNotNull(executionSet.getIsAsync());
+        assertNotNull(executionSet.getAdHocAutostart());
+
+        assertNotNull(executionSet.getOnEntryAction().getValue());
+        assertNotNull(executionSet.getOnExitAction().getValue());
+
+        List<ScriptTypeValue> onEntryScriptTypeValues = executionSet.getOnEntryAction().getValue().getValues();
+        List<ScriptTypeValue> onExitScriptTypeValues = executionSet.getOnExitAction().getValue().getValues();
+
+        assertNotNull(onEntryScriptTypeValues);
+        assertNotNull(onExitScriptTypeValues);
+        assertNotNull(onEntryScriptTypeValues.get(0));
+        assertNotNull(onExitScriptTypeValues.get(0));
+
+        assertEquals(onEntryActionScriptValue, onEntryScriptTypeValues.get(0).getScript());
+        assertEquals(onEntryActionScriptLanguage, onEntryScriptTypeValues.get(0).getLanguage());
+        assertEquals(onExitActionScriptValue, onExitScriptTypeValues.get(0).getScript());
+        assertEquals(onExitActionScriptLanguage, onExitScriptTypeValues.get(0).getLanguage());
+        assertEquals(isAsync, executionSet.getIsAsync().getValue());
+        assertEquals(adHocAutostart, executionSet.getAdHocAutostart().getValue());
+    }
+
+    protected void assertDataIOSet(DataIOSet dataIOSet, String value) {
+        assertNotNull(dataIOSet);
+        assertNotNull(dataIOSet.getAssignmentsinfo());
+        assertEquals(value, dataIOSet.getAssignmentsinfo().getValue());
     }
 
     @Ignore("The test is ignored because there is a bug in new Marshaller.\n" +
