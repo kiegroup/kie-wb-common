@@ -77,6 +77,7 @@ public class MavenArtifactResolver {
 
     private RepositorySystemSession newSession(RepositorySystem system) {
         ArtifactRepositoryPreference artifactRepositoryPreference = new ArtifactRepositoryPreference();
+        artifactRepositoryPreference.defaultValue(artifactRepositoryPreference);
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
         LocalRepository localRepo = new LocalRepository(artifactRepositoryPreference.getGlobalM2RepoDir());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
