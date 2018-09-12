@@ -31,9 +31,9 @@ public class FilterPathClassesCollector implements Collector<String, Set<String>
     private static String mavenRepoPath;
     private static int mavenRepoPathLength;
 
-    public FilterPathClassesCollector(String mavenRepoPath, int mavenRepoPathLength) {
+    public FilterPathClassesCollector(String mavenRepoPath) {
         this.mavenRepoPath = mavenRepoPath;
-        this.mavenRepoPathLength = mavenRepoPathLength;
+        this.mavenRepoPathLength = mavenRepoPath == null? 0 : mavenRepoPath.length();
     }
 
     @Override

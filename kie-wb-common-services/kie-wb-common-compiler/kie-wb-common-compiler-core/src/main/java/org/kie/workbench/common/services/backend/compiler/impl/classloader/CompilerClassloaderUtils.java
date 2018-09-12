@@ -342,8 +342,7 @@ public class CompilerClassloaderUtils {
 
     public static Set<String> filterPathClasses(Collection<String> paths,
                                                 String mavenRepoPath) {
-        return paths.stream().collect(new FilterPathClassesCollector(mavenRepoPath,
-                                                                     mavenRepoPath.length()));
+        return paths.stream().collect(new FilterPathClassesCollector(mavenRepoPath));
     }
 
     public static List<String> filterClassesByPackage(Collection<String> items,
