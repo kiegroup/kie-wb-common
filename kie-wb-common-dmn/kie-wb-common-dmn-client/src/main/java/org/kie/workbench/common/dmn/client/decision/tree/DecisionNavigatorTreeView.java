@@ -169,7 +169,7 @@ public class DecisionNavigatorTreeView implements DecisionNavigatorTreePresenter
 
     Element findItem(final DecisionNavigatorItem decisionNavigatorItem) {
 
-        final Optional<DecisionNavigatorItem> item = Optional.ofNullable(decisionNavigatorItem);
+        final Optional<DecisionNavigatorItem> item = ofNullable(decisionNavigatorItem);
 
         if (item.isPresent()) {
             return findTreeItemElement(item.get().getUUID());
