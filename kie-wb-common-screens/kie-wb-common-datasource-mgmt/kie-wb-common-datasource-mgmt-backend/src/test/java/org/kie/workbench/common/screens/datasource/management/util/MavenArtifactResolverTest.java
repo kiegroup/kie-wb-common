@@ -39,7 +39,6 @@ import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
 import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
-import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
 import org.guvnor.m2repo.preferences.ArtifactRepositoryPreference;
 import org.junit.After;
 import org.junit.Test;
@@ -123,7 +122,7 @@ public class MavenArtifactResolverTest {
                                    artifact.getArtifactId(),
                                    artifact.getVersion());
         assertThat(uri).isNotNull();
-        assertThat(uri.getPath()).endsWith("global-m2-repo" + File.separator + "org" + File.separator + "uberfire" + File.separator + "uberfire-m2repo-editor-backend" + File.separator + "100-SNAPSHOT" + File.separator + "uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
+        assertThat(uri.getPath()).endsWith("repositories"+ File.separator+ "kie"+ File.separator +"global" + File.separator + "org" + File.separator + "uberfire" + File.separator + "uberfire-m2repo-editor-backend" + File.separator + "100-SNAPSHOT" + File.separator + "uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
         result = Aether.getAether().getSystem().resolveArtifact(session,
                                                                 artifactRequest);
         assertThat(result.isMissing()).isFalse();
