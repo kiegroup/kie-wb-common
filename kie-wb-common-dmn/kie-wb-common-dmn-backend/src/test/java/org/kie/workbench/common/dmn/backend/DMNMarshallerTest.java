@@ -66,14 +66,19 @@ import org.kie.workbench.common.dmn.api.definition.v1_1.Association;
 import org.kie.workbench.common.dmn.api.definition.v1_1.AuthorityRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.BusinessKnowledgeModel;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Context;
+import org.kie.workbench.common.dmn.api.definition.v1_1.ContextEntry;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNDiagram;
+import org.kie.workbench.common.dmn.api.definition.v1_1.DMNElement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.Decision;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Expression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.FunctionDefinition;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InformationRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.InputData;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeRequirement;
 import org.kie.workbench.common.dmn.api.definition.v1_1.KnowledgeSource;
+import org.kie.workbench.common.dmn.api.definition.v1_1.LiteralExpression;
 import org.kie.workbench.common.dmn.api.definition.v1_1.TextAnnotation;
+import org.kie.workbench.common.dmn.api.property.dmn.types.BuiltInType;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DDExtensionsRegister;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNShape;
 import org.kie.workbench.common.dmn.backend.definition.v1_1.dd.DMNStyle;
@@ -89,6 +94,7 @@ import org.kie.workbench.common.stunner.core.backend.definition.adapter.reflect.
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
 import org.kie.workbench.common.stunner.core.definition.adapter.AdapterManager;
 import org.kie.workbench.common.stunner.core.definition.adapter.binding.BindableAdapterUtils;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.DiagramImpl;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.diagram.MetadataImpl;
@@ -105,6 +111,7 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManagerImpl;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.definition.DefinitionSet;
 import org.kie.workbench.common.stunner.core.graph.content.relationship.Child;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -118,6 +125,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.uberfire.commons.uuid.UUID;
 import org.xml.sax.InputSource;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -125,6 +133,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -417,6 +427,12 @@ public class DMNMarshallerTest {
                                                this::checkTextAnnotationGraph);
     }
 
+    @Test
+    public void testDecisionWithContext() throws Exception {
+        roundTripUnmarshalThenMarshalUnmarshal(this.getClass().getResourceAsStream("/DecisionWithContext.dmn"),
+                                               this::checkDecisionWithContext);
+    }
+
     private void checkTextAnnotationGraph(Graph<?, Node<?, ?>> graph) {
         Node<?, ?> textAnnotation = graph.getNode("60915990-9E1D-42DF-B7F6-0D28383BE9D1");
         assertNodeContentDefinitionIs(textAnnotation,
@@ -513,6 +529,37 @@ public class DMNMarshallerTest {
         assertNodeEdgesTo(knowledgeSourceInput,
                           knowledgeSource,
                           AuthorityRequirement.class);
+    }
+
+    private void checkDecisionWithContext(Graph<?, Node<?, ?>> g) {
+        Node<?, ?> decisionNode = g.getNode("_30810b88-8416-4c02-8ed1-8c19b7606243");
+        assertNodeContentDefinitionIs(decisionNode,
+                                      Decision.class);
+
+        Node<?, ?> rootNode = DMNMarshaller.findDMNDiagramRoot((Graph) g);
+        assertNotNull(rootNode);
+        assertRootNodeConnectedTo(rootNode,
+                                  decisionNode);
+        assertEquals("decisionNode parent is Definitions DMN root",
+                     "_153e2b47-3bd2-4db0-828c-db3fce0b3199",
+                     ((DMNElement) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getParent()).getId().getValue());
+
+        Context context = (Context) ((Decision) ((View<?>) decisionNode.getContent()).getDefinition()).getExpression();
+        assertEquals("contextNode's parent is decisionNode",
+                     "_30810b88-8416-4c02-8ed1-8c19b7606243",
+                     ((DMNElement) context.getParent()).getId().getValue());
+
+        Expression literalExpression1 = context.getContextEntry().get(0).getExpression();
+        assertEquals("literalExpression1's parent-parent is contextNode",
+                     "_0f38d114-5d6e-40dd-aa9c-9f031f9b0571",
+                     ((DMNElement) (literalExpression1).getParent()
+                             .getParent()).getId().getValue());
+
+        Expression literalExpression2 = context.getContextEntry().get(0).getExpression();
+        assertEquals("literalExpression2's parent-parent is contextNode",
+                     "_0f38d114-5d6e-40dd-aa9c-9f031f9b0571",
+                     ((DMNElement) (literalExpression2).getParent()
+                             .getParent()).getId().getValue());
     }
 
     private void checkDiamongGraph(Graph<?, Node<?, ?>> g) {
@@ -1081,6 +1128,67 @@ public class DMNMarshallerTest {
         assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@id"), original, roundtripped);
         assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@name"), original, roundtripped);
         assertXPathEquals(xpath.compile("/semantic:definitions/semantic:inputData/semantic:variable/@typeRef"), original, roundtripped);
+    }
+
+    @Test
+    public void testContextEntryDataType() throws Exception {
+        final DMNMarshaller marshaller = new DMNMarshaller(new XMLEncoderDiagramMetadataMarshaller(),
+                                                           applicationFactoryManager);
+
+        final Context context = new Context();
+        context.setTypeRef(BuiltInType.DATE_TIME.asQName());
+
+        final ContextEntry contextEntry = new ContextEntry();
+        final LiteralExpression literalExpression = new LiteralExpression();
+        literalExpression.setTypeRef(BuiltInType.BOOLEAN.asQName());
+        contextEntry.setExpression(literalExpression);
+        context.getContextEntry().add(contextEntry);
+
+        final Diagram<Graph, Metadata> mockedDiagram = newDiagramDecisionWithExpression(context);
+
+        final String marshalledSource = marshaller.marshall(mockedDiagram);
+
+        final Graph<?, Node<View, ?>> unmarshalledGraph = marshaller.unmarshall(null,
+                                                                                new StringInputStream(marshalledSource));
+        assertThat(unmarshalledGraph.nodes()).hasSize(2);
+
+        checkDecisionExpression(unmarshalledGraph, context);
+    }
+
+    private static Diagram<Graph, Metadata> newDiagramDecisionWithExpression(final Expression expression) {
+        final Diagram<Graph, Metadata> diagram = new DiagramImpl("dmn graph", null);
+        final Graph<DefinitionSet, Node> graph = mock(Graph.class);
+
+        final Node<View, ?> diagramNode = mock(Node.class);
+        final View diagramView = mock(View.class);
+        final DMNDiagram dmnDiagram = new DMNDiagram();
+        doReturn(diagramView).when(diagramNode).getContent();
+        doReturn(dmnDiagram).when(diagramView).getDefinition();
+
+        final Node<View, ?> decisionNode = mock(Node.class);
+        final View decisionView = mock(View.class);
+        final Decision decision = new Decision();
+        doReturn(decisionView).when(decisionNode).getContent();
+        doReturn(decision).when(decisionView).getDefinition();
+        decision.setExpression(expression);
+
+        doReturn(Arrays.asList(diagramNode, decisionNode)).when(graph).nodes();
+        ((DiagramImpl) diagram).setGraph(graph);
+
+        return diagram;
+    }
+
+    private static void checkDecisionExpression(final Graph<?, Node<View, ?>> unmarshalledGraph,
+                                                final Expression expression) {
+        final Node<View, ?> decisionNode = nodeOfDefinition(unmarshalledGraph.nodes().iterator(), Decision.class);
+        assertThat(((Decision) decisionNode.getContent().getDefinition()).getExpression())
+                .isEqualTo(expression);
+    }
+
+    private static Node<View, ?> nodeOfDefinition(final Iterator<Node<View, ?>> nodesIterator, final Class aClass) {
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(nodesIterator, Spliterator.NONNULL), false)
+                .filter(node -> aClass.isInstance(node.getContent().getDefinition()))
+                .findFirst().get();
     }
 
     private XPath namespaceAwareXPath(Map.Entry<String, String>... pfxAndURI) {

@@ -18,6 +18,8 @@ package org.kie.workbench.common.services.backend.compiler;
 
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,9 +57,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ClassLoaderProviderTest {
 
     private String mavenRepo;
-    Path tmpRoot;
-    Path tmp;
-    Path uberfireTmp;
+    private Path tmpRoot;
+    private Path tmp;
+    private Path uberfireTmp;
+    private final String MAVEN_MAIN_SKIP = "maven.main.skip";
     private Logger logger = LoggerFactory.getLogger(ClassLoaderProviderTest.class);
 
     @Rule
@@ -70,6 +73,7 @@ public class ClassLoaderProviderTest {
 
     @After
     public void clean() {
+        System.clearProperty(MAVEN_MAIN_SKIP);
         if (tmpRoot != null) {
             TestUtil.rm(tmpRoot.toFile());
         }
@@ -82,7 +86,7 @@ public class ClassLoaderProviderTest {
 
         uberfireTmp = Paths.get(tmp.toAbsolutePath().toString());
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.NONE);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(new HashSet<>());
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(uberfireTmp);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -93,7 +97,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
@@ -107,7 +111,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadProjectClassloaderFromStringTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
 
         assertThat(res.isSuccessful()).isTrue();
@@ -121,7 +125,7 @@ public class ClassLoaderProviderTest {
 
     @Test
     public void loadTargetFolderClassloaderTest() throws Exception {
-        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.CLEAN, MavenCLIArgs.COMPILE, MavenCLIArgs.INSTALL);
+        CompilationResponse res = compileProjectInRepo(MavenCLIArgs.COMPILE);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
         assertThat(res.isSuccessful()).isTrue();
 
@@ -163,11 +167,11 @@ public class ClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AND_CLASSPATH_AFTER_DEPS);
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.STORE_BUILD_CLASSPATH, KieDecorator.ENABLE_INCREMENTAL_BUILD ));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{MavenCLIArgs.INSTALL, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
+                                                               new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + alternateSettingsAbsPath},
                                                                Boolean.FALSE);
         KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
         TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
@@ -202,7 +206,6 @@ public class ClassLoaderProviderTest {
 
         List<String> resources = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(resources).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
     }
 
     @Test
@@ -213,7 +216,7 @@ public class ClassLoaderProviderTest {
         Path tmpRoot = Files.createTempDirectory("repo");
         Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
 
-        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(KieDecorator.KIE_AFTER);
+        AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_INCREMENTAL_BUILD));
         WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
@@ -242,6 +245,45 @@ public class ClassLoaderProviderTest {
         assertThat(kieModuleOptional).isPresent();
         List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
         assertThat(classloaderOptional).hasSize(3);
-        TestUtil.rm(tmpRoot.toFile());
+    }
+
+    @Test
+    public void getResourcesFromADroolsPRJWithErrorWithMavenSkip() throws Exception {
+        System.setProperty(MAVEN_MAIN_SKIP, Boolean.TRUE.toString());
+        /**
+         * If the test fail check if the Drools core classes used, KieModuleMetaInfo and TypeMetaInfo implements Serializable
+         * */
+        Path tmpRoot = Files.createTempDirectory("repo");
+        Path tmp = TestUtil.createAndCopyToDirectory(tmpRoot, "dummy", ResourcesConstants.KJAR_2_SINGLE_RESOURCES_WITH_ERROR);
+
+        final AFCompiler compiler = KieMavenCompilerFactory.getCompiler(EnumSet.of(KieDecorator.STORE_KIE_OBJECTS, KieDecorator.ENABLE_INCREMENTAL_BUILD));
+        WorkspaceCompilationInfo info = new WorkspaceCompilationInfo(Paths.get(tmp.toUri()));
+        CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
+                                                               info,
+                                                               new String[]{MavenCLIArgs.COMPILE},
+                                                               Boolean.FALSE);
+        KieCompilationResponse res = (KieCompilationResponse) compiler.compile(req);
+        TestUtil.saveMavenLogIfCompilationResponseNotSuccessfull(tmp, res, this.getClass(), testName);
+        if (!res.isSuccessful()) {
+            List<String> msgs = res.getMavenOutput();
+            for (String msg : msgs) {
+                logger.info(msg);
+            }
+        }
+
+        assertThat(res.isSuccessful()).isTrue();
+
+        Optional<KieModuleMetaInfo> metaDataOptional = res.getKieModuleMetaInfo();
+        assertThat(metaDataOptional).isPresent();
+        KieModuleMetaInfo kieModuleMetaInfo = metaDataOptional.get();
+        assertThat(kieModuleMetaInfo).isNotNull();
+
+        Map<String, Set<String>> rulesBP = kieModuleMetaInfo.getRulesByPackage();
+        assertThat(rulesBP).hasSize(1);
+
+        Optional<KieModule> kieModuleOptional = res.getKieModule();
+        assertThat(kieModuleOptional).isPresent();
+        List<String> classloaderOptional = CompilerClassloaderUtils.getStringFromTargets(tmpRoot);
+        assertThat(classloaderOptional).hasSize(3);
     }
 }

@@ -18,7 +18,7 @@
       <plugin>
         <groupId>io.takari.maven.plugins</groupId>
         <artifactId>takari-lifecycle-plugin</artifactId>
-        <version>${version.io.takari.maven.plugins}</version>
+        <version>${version.io.takari.maven.plugins.compiler}</version>
         <extensions>true</extensions>
         <configuration>
           <compilerId>jdt</compilerId>
@@ -43,20 +43,6 @@
           <properties>
             <drools.dialect.java.compiler.lnglevel>1.6</drools.dialect.java.compiler.lnglevel>
           </properties>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.7.0</version>
-        <executions>
-          <execution>
-            <id>default-compile</id>
-            <phase>none</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <skipMain>true</skipMain>
-          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.screens.examples.backend.server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +45,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
-import org.kie.workbench.common.screens.examples.model.ExampleProject;
-import org.kie.workbench.common.screens.examples.validation.ExampleProjectValidators;
+import org.kie.workbench.common.screens.examples.model.ImportProject;
+import org.kie.workbench.common.screens.examples.validation.ImportProjectValidators;
 import org.kie.workbench.common.screens.projecteditor.model.ProjectScreenModel;
 import org.kie.workbench.common.screens.projecteditor.service.ProjectScreenService;
 import org.kie.workbench.common.services.shared.project.KieModule;
@@ -122,13 +123,13 @@ public class ExamplesServiceImplRepositoryNamesTest {
 
     @Mock
     private ExampleOrganizationalUnit exampleOrganizationalUnit;
-    private List<ExampleProject> exampleProjects;
+    private List<ImportProject> importProjects;
 
     @Captor
     private ArgumentCaptor<ProjectScreenModel> modelCapture;
 
     @Mock
-    private ExampleProjectValidators validators;
+    private ImportProjectValidators validators;
 
     @Before
     public void setup() {
@@ -172,10 +173,8 @@ public class ExamplesServiceImplRepositoryNamesTest {
                                                  anyString(),
                                                  anyString())).thenReturn(mock(ConfigGroup.class));
 
-        final ExampleProject exProject1 = mock(ExampleProject.class);
-        exampleProjects = new ArrayList<ExampleProject>() {{
-            add(exProject1);
-        }};
+        final ImportProject exProject1 = mock(ImportProject.class);
+        importProjects = Collections.singletonList(exProject1);
         final OrganizationalUnit ou = mock(OrganizationalUnit.class);
         doReturn("ou").when(ou).getName();
 
@@ -219,10 +218,10 @@ public class ExamplesServiceImplRepositoryNamesTest {
     @Test
     public void nameIsNotTaken() {
         service.setupExamples(exampleOrganizationalUnit,
-                              exampleProjects);
+                              importProjects);
 
         verify(repositoryCopier).copy(any(OrganizationalUnit.class),
-                                      eq("module1"),
+                                      eq("example-module1"),
                                       any(Path.class));
         verify(projectScreenService,
                never()).save(any(),
@@ -247,7 +246,7 @@ public class ExamplesServiceImplRepositoryNamesTest {
                                                                         eq(module1));
 
         service.setupExamples(exampleOrganizationalUnit,
-                              exampleProjects);
+                              importProjects);
 
         verify(projectScreenService).save(any(),
                                           modelCapture.capture(),
@@ -282,7 +281,7 @@ public class ExamplesServiceImplRepositoryNamesTest {
                                                                                eq(module_1));
 
         service.setupExamples(exampleOrganizationalUnit,
-                              exampleProjects);
+                              importProjects);
 
         verify(projectScreenService).save(any(),
                                           modelCapture.capture(),

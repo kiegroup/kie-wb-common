@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.dmn.client.editors.types;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +41,7 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.dmn.api.definition.v1_1.DMNModelInstrumentedBase;
+import org.kie.workbench.common.dmn.api.definition.v1_1.Definitions;
 import org.kie.workbench.common.dmn.api.definition.v1_1.ItemDefinition;
 import org.kie.workbench.common.dmn.api.property.dmn.Name;
 import org.kie.workbench.common.dmn.api.property.dmn.QName;
@@ -118,12 +120,29 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     Optional<Option> makeTypeSelector(final BuiltInType bit) {
         final Option o = GWT.create(Option.class);
         o.setText(bit.getName());
-        o.setValue(qNameConverter.toWidgetValue(bit.asQName()));
+
+        o.setValue(qNameConverter.toWidgetValue(normaliseBuiltInTypeTypeRef(bit.asQName())));
         return Optional.of(o);
     }
 
+    QName normaliseBuiltInTypeTypeRef(final QName typeRef) {
+        String namespace = typeRef.getNamespaceURI();
+        String localPart = typeRef.getLocalPart();
+        String prefix = typeRef.getPrefix();
+
+        final Definitions definitions = dmnGraphUtils.getDefinitions();
+        final Optional<String> nsPrefix = definitions == null ? Optional.empty() : definitions.getPrefixForNamespaceURI(namespace);
+        if (nsPrefix.isPresent()) {
+            prefix = nsPrefix.get();
+            namespace = "";
+        }
+
+        return new QName(namespace, localPart, prefix);
+    }
+
     private void addItemDefinitions() {
-        final List<ItemDefinition> itemDefinitions = dmnGraphUtils.getDefinitions().getItemDefinition();
+        final Definitions definitions = dmnGraphUtils.getDefinitions();
+        final List<ItemDefinition> itemDefinitions = definitions != null ? definitions.getItemDefinition() : Collections.emptyList();
 
         //There will always be BuiltInTypes so it safe to add a divider
         if (itemDefinitions.size() > 0) {
@@ -159,8 +178,7 @@ public class DataTypePickerWidget extends Composite implements HasValue<QName>,
     @EventHandler("typeButton")
     @SuppressWarnings("unused")
     public void onClickTypeButton(final ClickEvent clickEvent) {
-        final String value = typeSelector.getValue();
-        dataTypeModal.show(value);
+        dataTypeModal.show();
     }
 
     @Override

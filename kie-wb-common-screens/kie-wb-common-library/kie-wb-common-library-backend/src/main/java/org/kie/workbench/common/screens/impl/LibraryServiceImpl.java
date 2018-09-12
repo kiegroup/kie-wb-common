@@ -16,6 +16,8 @@
 
 package org.kie.workbench.common.screens.impl;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,11 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
@@ -38,26 +36,26 @@ import javax.inject.Named;
 import org.ext.uberfire.social.activities.model.SocialUser;
 import org.ext.uberfire.social.activities.service.SocialUserRepositoryAPI;
 import org.guvnor.common.services.project.backend.server.utils.PathUtil;
-import org.guvnor.common.services.project.events.NewProjectEvent;
 import org.guvnor.common.services.project.model.GAV;
 import org.guvnor.common.services.project.model.POM;
 import org.guvnor.common.services.project.model.Package;
 import org.guvnor.common.services.project.model.WorkspaceProject;
 import org.guvnor.common.services.project.service.DeploymentMode;
 import org.guvnor.common.services.project.service.WorkspaceProjectService;
+import org.guvnor.structure.backend.repositories.ConfiguredRepositories;
+import org.guvnor.structure.config.SystemRepositoryChangedEvent;
 import org.guvnor.structure.organizationalunit.OrganizationalUnit;
 import org.guvnor.structure.organizationalunit.OrganizationalUnitService;
+import org.guvnor.structure.repositories.Branch;
+import org.guvnor.structure.repositories.NewBranchEvent;
 import org.guvnor.structure.repositories.Repository;
-import org.guvnor.structure.repositories.RepositoryEnvironmentConfigurations;
 import org.guvnor.structure.repositories.RepositoryService;
-import org.guvnor.structure.repositories.impl.git.GitRepository;
 import org.guvnor.structure.security.OrganizationalUnitAction;
 import org.guvnor.structure.security.RepositoryAction;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.security.shared.exception.UnauthorizedException;
-import org.kie.workbench.common.screens.examples.model.ExampleOrganizationalUnit;
-import org.kie.workbench.common.screens.examples.model.ExampleProject;
 import org.kie.workbench.common.screens.examples.model.ExampleRepository;
+import org.kie.workbench.common.screens.examples.model.ImportProject;
 import org.kie.workbench.common.screens.examples.service.ExamplesService;
 import org.kie.workbench.common.screens.explorer.backend.server.ExplorerServiceHelper;
 import org.kie.workbench.common.screens.explorer.model.FolderItem;
@@ -84,23 +82,17 @@ import org.slf4j.LoggerFactory;
 import org.uberfire.backend.server.util.Paths;
 import org.uberfire.backend.vfs.Path;
 import org.uberfire.io.IOService;
-import org.uberfire.java.nio.file.FileSystem;
 import org.uberfire.java.nio.file.NoSuchFileException;
-import org.uberfire.java.nio.file.attribute.BasicFileAttributes;
 import org.uberfire.java.nio.file.attribute.FileTime;
-import org.uberfire.java.nio.file.spi.FileSystemProvider;
 import org.uberfire.paging.PageResponse;
 import org.uberfire.rpc.SessionInfo;
 import org.uberfire.security.authz.AuthorizationManager;
 
-import static java.util.stream.Collectors.toList;
 import static org.kie.soup.commons.validation.PortablePreconditions.checkNotNull;
 
 @Service
 @ApplicationScoped
 public class LibraryServiceImpl implements LibraryService {
-
-    private static final Pattern STRIP_DOT_GIT = Pattern.compile("\\.git$");
 
     private static final Logger log = LoggerFactory.getLogger(LibraryServiceImpl.class);
 
@@ -120,10 +112,10 @@ public class LibraryServiceImpl implements LibraryService {
     private SocialUserRepositoryAPI socialUserRepositoryAPI;
     private IndexStatusOracle indexOracle;
     private RepositoryService repoService;
-
-    private Event<NewProjectEvent> newProjectEvent;
-
     private PathUtil pathUtil;
+    private Event<NewBranchEvent> newBranchEvent;
+    private ConfiguredRepositories configuredRepositories;
+    private Event<SystemRepositoryChangedEvent> systemRepositoryChangedEvent;
 
     public LibraryServiceImpl() {
     }
@@ -138,13 +130,15 @@ public class LibraryServiceImpl implements LibraryService {
                               final WorkspaceProjectService projectService,
                               final KieModuleService moduleService,
                               final ExamplesService examplesService,
-                              final RepositoryService repoService,
                               @Named("ioStrategy") final IOService ioService,
                               final LibraryInternalPreferences internalPreferences,
                               final SocialUserRepositoryAPI socialUserRepositoryAPI,
                               final IndexStatusOracle indexOracle,
-                              final Event<NewProjectEvent> newProjectEvent,
-                              final PathUtil pathUtil) {
+                              final RepositoryService repoService,
+                              final PathUtil pathUtil,
+                              final Event<NewBranchEvent> newBranchEvent,
+                              final ConfiguredRepositories configuredRepositories,
+                              @org.guvnor.structure.backend.config.Repository final Event<SystemRepositoryChangedEvent> systemRepositoryChangedEvent) {
         this.ouService = ouService;
         this.refactoringQueryService = refactoringQueryService;
         this.preferences = preferences;
@@ -154,13 +148,15 @@ public class LibraryServiceImpl implements LibraryService {
         this.projectService = projectService;
         this.moduleService = moduleService;
         this.examplesService = examplesService;
-        this.repoService = repoService;
         this.ioService = ioService;
         this.internalPreferences = internalPreferences;
         this.socialUserRepositoryAPI = socialUserRepositoryAPI;
         this.indexOracle = indexOracle;
-        this.newProjectEvent = newProjectEvent;
+        this.repoService = repoService;
         this.pathUtil = pathUtil;
+        this.newBranchEvent = newBranchEvent;
+        this.configuredRepositories = configuredRepositories;
+        this.systemRepositoryChangedEvent = systemRepositoryChangedEvent;
     }
 
     @Override
@@ -225,103 +221,6 @@ public class LibraryServiceImpl implements LibraryService {
         return projectService.newProject(activeOrganizationalUnit,
                                          pom,
                                          mode);
-    }
-
-    @Override
-    public WorkspaceProject importProject(final OrganizationalUnit targetOU,
-                                          final String repositoryURL,
-                                          final String username,
-                                          final String password) {
-        final RepositoryEnvironmentConfigurations config = new RepositoryEnvironmentConfigurations();
-        config.setOrigin(repositoryURL);
-        if (username != null && password != null) {
-            config.setUserName(username);
-            config.setPassword(password);
-        }
-
-        final String targetProjectName = inferProjectName(repositoryURL);
-
-        final Repository repo = repoService.createRepository(targetOU,
-                                                             GitRepository.SCHEME.toString(),
-                                                             targetProjectName,
-                                                             config);
-        return projectService.resolveProject(repo);
-    }
-
-    @Override
-    public WorkspaceProject importProject(final OrganizationalUnit organizationalUnit,
-                                          final ExampleProject exampleProject) {
-        final org.uberfire.java.nio.file.Path rootPath = getExampleRepoRoot(exampleProject);
-        final String niogitRepoURI = pathUtil.getNiogitRepoPath(rootPath);
-        if (pathUtil.convert(exampleProject.getRoot()).equals(rootPath)) {
-            return importProject(organizationalUnit, niogitRepoURI, null, null);
-        } else {
-            final RepositoryEnvironmentConfigurations configurations = new RepositoryEnvironmentConfigurations();
-            configurations.setInit(false);
-            configurations.setOrigin(niogitRepoURI);
-            configurations.setBranches(getBranches(rootPath, exampleProject.getRoot()));
-            configurations.setMirror(false);
-            final String subdirectoryPath = pathUtil.stripRepoNameAndSpace(pathUtil.stripProtocolAndBranch(exampleProject.getRoot().toURI()));
-            configurations.setSubdirectory(subdirectoryPath);
-
-            final Repository importedRepo = repoService.createRepository(organizationalUnit,
-                                                                         GitRepository.SCHEME.toString(),
-                                                                         exampleProject.getName(),
-                                                                         configurations);
-
-            // Signal creation of new Project (Creation of OU and Repository, if applicable,
-            // are already handled in the corresponding services).
-            final WorkspaceProject project = projectService.resolveProject(importedRepo);
-            newProjectEvent.fire(new NewProjectEvent(project));
-
-            return project;
-        }
-    }
-
-    private List<String> getBranches(final org.uberfire.java.nio.file.Path rootPath, final Path projectPath) {
-        final FileSystem fs = rootPath.getFileSystem();
-        final String exampleRootPath = pathUtil.stripRepoNameAndSpace(pathUtil.stripProtocolAndBranch(projectPath.toURI()));
-        return StreamSupport.stream(fs.getRootDirectories().spliterator(), false)
-                            .filter(root -> exists(root.resolve(exampleRootPath)))
-                            .map(pathUtil::convert)
-                            .map(root -> pathUtil.extractBranch(root.toURI()))
-                            .flatMap(oBranch -> oBranch.map(Stream::of).orElse(Stream.empty()))
-                            .collect(toList());
-    }
-
-    private boolean exists(org.uberfire.java.nio.file.Path path) {
-        try {
-            final FileSystemProvider provider = path.getFileSystem().provider();
-            provider.readAttributes(path, BasicFileAttributes.class);
-
-            return true;
-        } catch (NoSuchFileException nfe) {
-            return false;
-        }
-    }
-
-    private org.uberfire.java.nio.file.Path getExampleRepoRoot(final ExampleProject exampleProject) {
-        return Stream.iterate(pathUtil.convert(exampleProject.getRoot()),
-                              p -> p.getParent())
-                     .filter(p -> p != null && p.getParent() == null)
-                     .findFirst()
-                     .get();
-    }
-
-    @Override
-    public List<WorkspaceProject> importProjects(OrganizationalUnit targetOU, List<ExampleProject> projects) {
-        return projects.stream()
-                       .map(proj -> importProject(targetOU, proj))
-                       .collect(toList());
-    }
-
-    private String inferProjectName(String repositoryURL) {
-        return Optional.of(repositoryURL)
-                .map(url -> java.nio.file.Paths.get(repositoryURL))
-                .map(path -> path.getFileName().toString())
-                .map(fileName -> STRIP_DOT_GIT.matcher(fileName))
-                .map(matcher -> matcher.replaceFirst(""))
-                .orElse("new-project");
     }
 
     @Override
@@ -437,36 +336,15 @@ public class LibraryServiceImpl implements LibraryService {
     }
 
     @Override
-    public Set<ExampleProject> getExampleProjects() {
+    public Set<ImportProject> getExampleProjects() {
         final String importProjectsUrl = getCustomImportProjectsUrl();
         final ExampleRepository repository = importProjectsUrl == null || importProjectsUrl.isEmpty()
                 ? examplesService.getPlaygroundRepository()
                 : new ExampleRepository(importProjectsUrl);
 
-        final Set<ExampleProject> projects = examplesService.getProjects(repository);
+        final Set<ImportProject> projects = examplesService.getProjects(repository);
 
         return projects;
-    }
-
-    @Override
-    public Set<ExampleProject> getProjects(final String repositoryUrl) {
-        return getProjects(repositoryUrl,
-                           null,
-                           null);
-    }
-
-    @Override
-    public Set<ExampleProject> getProjects(final String repositoryUrl,
-                                           final String userName,
-                                           final String password) {
-        if (repositoryUrl == null) {
-            return getExampleProjects();
-        }
-
-        final ExampleRepository repository = new ExampleRepository(repositoryUrl,
-                                                                   userName,
-                                                                   password);
-        return examplesService.getProjects(repository);
     }
 
     @Override
@@ -489,6 +367,51 @@ public class LibraryServiceImpl implements LibraryService {
         return socialUserRepositoryAPI.findAllUsers().stream()
                 .filter(user -> !user.getUserName().equals("system"))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void addBranch(final String newBranchName,
+                          final String baseBranchName,
+                          final WorkspaceProject project) {
+        Branch baseBranch = project.getRepository().getBranch(baseBranchName)
+                .orElseThrow(() -> new IllegalStateException("The base branch does not exists"));
+
+        final org.uberfire.java.nio.file.Path baseBranchPath = pathUtil.convert(baseBranch.getPath());
+        final String newBranchPathURI = pathUtil.replaceBranch(newBranchName,
+                                                               baseBranch.getPath().toURI());
+        try {
+            final org.uberfire.java.nio.file.Path newBranchPath = ioService.get(new URI(newBranchPathURI));
+            baseBranchPath.getFileSystem().provider().copy(baseBranchPath, newBranchPath);
+            fireNewBranchEvent(pathUtil.convert(newBranchPath),
+                               newBranchPath);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void removeBranch(Branch branch) {
+        final org.uberfire.java.nio.file.Path branchPath = pathUtil.convert(branch.getPath());
+        ioService.delete(branchPath);
+        systemRepositoryChangedEvent.fire(new SystemRepositoryChangedEvent());
+    }
+
+    private void fireNewBranchEvent(final Path targetRoot,
+                                    final org.uberfire.java.nio.file.Path nioTargetRepositoryRoot) {
+
+        configuredRepositories.reloadRepositories();
+
+        final Repository repository = repoService.getRepository(targetRoot);
+
+        final Optional<Branch> branch = repository.getBranch(Paths.convert(nioTargetRepositoryRoot.getRoot()));
+
+        if (branch.isPresent()) {
+            newBranchEvent.fire(new NewBranchEvent(repository,
+                                                   branch.get().getName(),
+                                                   sessionInfo.getIdentity()));
+        } else {
+            throw new IllegalStateException("Could not find a branch that was just created. The Path used was " + nioTargetRepositoryRoot.getRoot());
+        }
     }
 
     String getCustomImportProjectsUrl() {

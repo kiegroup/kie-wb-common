@@ -18,20 +18,20 @@ package org.kie.workbench.common.screens.library.client.screens.importrepository
 
 import java.util.Set;
 
-import org.kie.workbench.common.screens.examples.model.ExampleProject;
+import org.kie.workbench.common.screens.examples.model.ImportProject;
 
 public class ImportProjectsSetupEvent {
 
-    private Set<ExampleProject> projects;
+    private Set<ImportProject> projects;
 
     public ImportProjectsSetupEvent() {
     }
 
-    public ImportProjectsSetupEvent(final Set<ExampleProject> projects) {
+    public ImportProjectsSetupEvent(final Set<ImportProject> projects) {
         this.projects = projects;
     }
 
-    public Set<ExampleProject> getProjects() {
+    public Set<ImportProject> getProjects() {
         return projects;
     }
 }

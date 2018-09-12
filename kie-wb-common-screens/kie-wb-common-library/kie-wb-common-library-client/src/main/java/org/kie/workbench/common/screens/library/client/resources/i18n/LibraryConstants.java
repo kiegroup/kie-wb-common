@@ -460,4 +460,35 @@ public class LibraryConstants {
 
     @TranslationKey(defaultValue = "")
     public static final String DuplicatedProjectName = "DuplicatedProjectName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddBranch = "AddBranch";
+
+    @TranslationKey(defaultValue = "")
+    public static final String AddBranchSuccess = "AddBranchSuccess";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DuplicatedBranchValidation = "DuplicatedBranchValidation";
+
+    @TranslationKey(defaultValue = "")
+    public static final String InvalidBranchName = "InvalidBranchName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DeleteBranchDescription = "DeleteBranchDescription";
+
+    @TranslationKey(defaultValue = "")
+    public static final String ConfirmBranchName = "ConfirmBranchName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String WrongBranchConfirmedName = "WrongBranchConfirmedName";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DeletingBranch = "DeletingBranch";
+
+    @TranslationKey(defaultValue = "")
+    public static final String DeleteBranch = "DeleteBranch";
+
+    @TranslationKey(defaultValue = "")
+    public static final String BranchDeletedSuccessfully = "BranchDeletedSuccessfully";
+
 }
