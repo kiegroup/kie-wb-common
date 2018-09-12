@@ -430,6 +430,12 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Stunner -->

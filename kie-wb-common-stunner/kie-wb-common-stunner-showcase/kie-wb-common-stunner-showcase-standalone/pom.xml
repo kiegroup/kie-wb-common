@@ -443,6 +443,12 @@
     <dependency>
       <groupId>org.kie.workbench.services</groupId>
       <artifactId>kie-wb-common-refactoring-backend</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Stunner. -->
@@ -541,6 +547,10 @@
         <exclusion>
           <groupId>org.kie.workbench.stunner</groupId>
           <artifactId>kie-wb-common-stunner-forms-backend</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -726,6 +736,12 @@
     <dependency>
       <groupId>org.jbpm</groupId>
       <artifactId>jbpm-bpmn2</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jdt.core.compiler</groupId>
+          <artifactId>ecj</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- UberFire Plugins Extension -->
