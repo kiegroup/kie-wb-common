@@ -632,7 +632,7 @@ public class DataModelerScreenPresenterTest
     }
 
     @Test
-    public void onFocusDoesNotRedrawViewWhenMoreIsNotActive() {
+    public void onFocusDoesNotRedrawViewWhenModuleIsNotActive() {
         doReturn(Optional.empty()).when(workbenchContext).getActiveModule();
 
         final DataModelerScreenPresenter presenter = spy(this.presenter);
