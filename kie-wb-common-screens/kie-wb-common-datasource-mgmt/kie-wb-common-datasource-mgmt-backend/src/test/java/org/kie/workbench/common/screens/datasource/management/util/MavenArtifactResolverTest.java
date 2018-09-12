@@ -40,6 +40,7 @@ import org.eclipse.aether.spi.connector.transport.TransporterFactory;
 import org.eclipse.aether.transport.file.FileTransporterFactory;
 import org.eclipse.aether.transport.http.HttpTransporterFactory;
 import org.guvnor.m2repo.backend.server.repositories.ArtifactRepositoryService;
+import org.guvnor.m2repo.preferences.ArtifactRepositoryPreference;
 import org.junit.After;
 import org.junit.Test;
 
@@ -48,8 +49,9 @@ import static org.assertj.core.api.Assertions.*;
 public class MavenArtifactResolverTest {
 
     private static RepositorySystemSession newSession(RepositorySystem system) {
+        ArtifactRepositoryPreference artifactRepositoryPreference = new ArtifactRepositoryPreference();
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(ArtifactRepositoryService.GLOBAL_M2_REPO_NAME);
+        LocalRepository localRepo = new LocalRepository(artifactRepositoryPreference.getGlobalM2RepoDir());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
                                                                            localRepo));
 
