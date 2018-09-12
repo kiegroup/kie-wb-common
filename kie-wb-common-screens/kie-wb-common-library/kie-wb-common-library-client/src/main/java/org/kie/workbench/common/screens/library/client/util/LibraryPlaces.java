@@ -726,6 +726,10 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
 
     public boolean isThisUserAccessingThisRepository(final User user,
                                                      final Repository repository) {
+        return isThisRepositoryBeingAccessed(repository) && sessionInfo.getIdentity().equals(user);
+    }
+
+    public boolean isThisRepositoryBeingAccessed(final Repository repository) {
         final Space space = repository.getSpace();
         final String repositoryAlias = repository.getAlias();
 
@@ -733,7 +737,7 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         final Repository activeRepository = getActiveWorkspace().getRepository();
         final String activeRepositoryAlias = activeRepository.getAlias();
 
-        return space.equals(activeSpace) && repositoryAlias.equals(activeRepositoryAlias) && sessionInfo.getIdentity().equals(user);
+        return space.equals(activeSpace) && repositoryAlias.equals(activeRepositoryAlias);
     }
 
     public void init(final LibraryPerspective libraryPerspective) {
