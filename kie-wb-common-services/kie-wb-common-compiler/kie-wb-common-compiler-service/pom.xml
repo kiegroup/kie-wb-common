@@ -30,11 +30,6 @@
         <artifactId>kie-wb-common-compiler-core</artifactId>
         <version>${version.org.kie}</version>
       </dependency>
-      <dependency>
-        <groupId>org.kie.workbench.services</groupId>
-        <artifactId>kie-wb-common-compiler-testutil</artifactId>
-        <version>${version.org.kie}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
