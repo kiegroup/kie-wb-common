@@ -37,20 +37,21 @@ public class VerticalStackLayoutManager extends AbstractNestedLayoutHandler {
         }
 
         CaseManagementShapeView shape = (CaseManagementShapeView) wiresShape;
-        final double my = mouseRelativeLoc.getY();
+//        final double my = mouseRelativeLoc.getY();
 
         final NFastArrayList<WiresShape> nChildren = container.getChildShapes().copy();
         final List<WiresShape> children = nChildren.remove(shape).toList();
 
         int targetIndex = children.size();
 
-        for (int idx = 0; idx < children.size(); idx++) {
-            final WiresShape child = children.get(idx);
-            if (my < child.getY()) {
-                targetIndex = idx;
-                break;
-            }
-        }
+        //TODO It is not yet supported that drag/drop a child element to reorder it under a stage
+//        for (int idx = 0; idx < children.size(); idx++) {
+//            final WiresShape child = children.get(idx);
+//            if (my < child.getY()) {
+//                targetIndex = idx;
+//                break;
+//            }
+//        }
 
         if (container instanceof CaseManagementShapeView) {
             final int currentIndex = ((CaseManagementShapeView) container).getIndex(shape);
@@ -72,7 +73,17 @@ public class VerticalStackLayoutManager extends AbstractNestedLayoutHandler {
         for (WiresShape ws : container.getChildShapes()) {
             ws.setLocation(new Point2D(PADDING_X,
                                        y));
-            y = y + ws.getPath().getBoundingBox().getHeight() + PADDING_Y;
+            y = y + getTotalHeight(ws) + PADDING_Y;
         }
+    }
+
+    private double getTotalHeight(WiresShape ws) {
+        double height = ws.getPath().getBoundingBox().getHeight();
+
+        for (WiresShape child : ws.getChildShapes()) {
+            height += (getTotalHeight(child) + PADDING_Y);
+        }
+
+        return height;
     }
 }
