@@ -24,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.junit.Test;
 import org.kie.workbench.common.services.backend.compiler.BaseCompilerTest;
+import org.kie.workbench.common.services.backend.compiler.TestUtilMaven;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.uberfire.java.nio.file.Path;
@@ -125,7 +126,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy"),
                                                                                        mavenRepo,
-                                                                                       new String[]{MavenCLIArgs.COMPILE},
+                                                                                       new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + TestUtilMaven.getSettingsFile()},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
@@ -136,7 +137,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot,
                                                                                        mavenRepo,
-                                                                                       new String[]{MavenCLIArgs.COMPILE},
+                                                                                       new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + TestUtilMaven.getSettingsFile()},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
@@ -254,7 +255,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot.toAbsolutePath().toString(),
                                                                                        mavenRepo,
-                                                                                       new String[]{MavenCLIArgs.COMPILE});
+                                                                                       new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + TestUtilMaven.getSettingsFile()});
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();
     }
@@ -264,7 +265,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(Paths.get(tmpRoot.toAbsolutePath() + "/dummy").toAbsolutePath().toString(),
                                                                                        mavenRepo,
-                                                                                       new String[]{MavenCLIArgs.COMPILE},
+                                                                                       new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + TestUtilMaven.getSettingsFile()},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isTrue();
@@ -275,7 +276,7 @@ public class DefaultKieCompilerServiceTest extends BaseCompilerTest {
         AFCompilerService service = new DefaultKieCompilerService();
         CompletableFuture<KieCompilationResponse> futureRes = service.buildSpecialized(tmpRoot.toAbsolutePath().toString(),
                                                                                        mavenRepo,
-                                                                                       new String[]{MavenCLIArgs.COMPILE},
+                                                                                       new String[]{MavenCLIArgs.COMPILE, MavenCLIArgs.ALTERNATE_USER_SETTINGS + TestUtilMaven.getSettingsFile()},
                                                                                        Boolean.TRUE);
         KieCompilationResponse res = futureRes.get();
         assertThat(res.isSuccessful()).isFalse();

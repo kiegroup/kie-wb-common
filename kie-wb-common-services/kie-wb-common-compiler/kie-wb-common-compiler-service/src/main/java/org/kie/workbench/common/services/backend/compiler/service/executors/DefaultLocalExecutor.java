@@ -30,6 +30,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilatio
 import org.kie.workbench.common.services.backend.compiler.impl.WorkspaceCompilationInfo;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompilerFactory;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.uberfire.java.nio.file.Path;
 
 /**
@@ -73,7 +74,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{goal},
+                                                               new String[]{goal, MavenCLIArgs.ALTERNATE_USER_SETTINGS + MavenUtils.getSettingsFile()},
                                                                skipProjectDepCreation);
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req)), executor);
     }
@@ -95,7 +96,7 @@ public class DefaultLocalExecutor implements CompilerExecutor {
         AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{goal},
+                                                               new String[]{goal, MavenCLIArgs.ALTERNATE_USER_SETTINGS + MavenUtils.getSettingsFile()},
                                                                skipProjectDepCreation);
         return CompletableFuture.supplyAsync(() -> ((KieCompilationResponse) compiler.compile(req, override)), executor);
     }

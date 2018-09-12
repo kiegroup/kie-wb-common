@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import org.guvnor.common.services.backend.cache.LRUCache;
 import org.kie.workbench.common.services.backend.compiler.AFCompiler;
 import org.kie.workbench.common.services.backend.compiler.CompilationRequest;
-import org.kie.workbench.common.services.backend.compiler.configuration.KieDecorator;
 import org.kie.workbench.common.services.backend.compiler.configuration.MavenCLIArgs;
 import org.kie.workbench.common.services.backend.compiler.impl.BaseMavenCompiler;
 import org.kie.workbench.common.services.backend.compiler.impl.DefaultCompilationRequest;
@@ -30,6 +29,7 @@ import org.kie.workbench.common.services.backend.compiler.impl.decorators.Classp
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.KieAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.decorators.OutputLogAfterDecorator;
 import org.kie.workbench.common.services.backend.compiler.impl.kie.KieCompilationResponse;
+import org.kie.workbench.common.services.backend.compiler.impl.utils.MavenUtils;
 import org.uberfire.java.nio.file.Paths;
 
 /**
@@ -73,7 +73,7 @@ public class DefaultRemoteExecutor implements RemoteExecutor {
         AFCompiler compiler = getCompiler(projectPath);
         CompilationRequest req = new DefaultCompilationRequest(mavenRepo,
                                                                info,
-                                                               new String[]{goal},
+                                                               new String[]{goal, MavenCLIArgs.ALTERNATE_USER_SETTINGS + MavenUtils.getSettingsFile()},
                                                                skipProjectDepCreation);
         return runInItsOwnThread(compiler, req);
     }
