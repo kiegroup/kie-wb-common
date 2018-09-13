@@ -49,18 +49,7 @@ public class MavenArtifactResolver {
     public MavenArtifactResolver() {
     }
 
-    public static String getGlobalRepoPath() {
-        ArtifactRepositoryPreference artifactRepositoryPreference = new ArtifactRepositoryPreference();
-        artifactRepositoryPreference.defaultValue(artifactRepositoryPreference);
-        String global = artifactRepositoryPreference.getGlobalM2RepoDir();
-        if (global == null) {
-            global = "repositories" + File.separator + "kie" + File.separator + "global";
-            logger.info("using fallback {}",
-                        global);
-        }
-        return global;
-    }
-
+    
     public URI resolve(final String groupId,
                        final String artifactId,
                        final String version) throws Exception {
@@ -90,7 +79,7 @@ public class MavenArtifactResolver {
 
     private RepositorySystemSession newSession(RepositorySystem system) {
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(getGlobalRepoPath());
+        LocalRepository localRepo = new LocalRepository(ArtifactRepositoryPreference.getGlobalM2RepoDirWithFallback());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
                                                                            localRepo));
         return session;
