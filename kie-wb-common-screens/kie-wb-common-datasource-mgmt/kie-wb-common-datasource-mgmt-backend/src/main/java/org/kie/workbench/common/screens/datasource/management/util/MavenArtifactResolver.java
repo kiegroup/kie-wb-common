@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.screens.datasource.management.util;
 
+import java.io.File;
 import java.net.URI;
 import javax.enterprise.context.ApplicationScoped;
 
@@ -48,6 +49,18 @@ public class MavenArtifactResolver {
     public MavenArtifactResolver() {
     }
 
+    public static String getGlobalRepoPath() {
+        ArtifactRepositoryPreference artifactRepositoryPreference = new ArtifactRepositoryPreference();
+        artifactRepositoryPreference.defaultValue(artifactRepositoryPreference);
+        String global = artifactRepositoryPreference.getGlobalM2RepoDir();
+        if (global == null) {
+            global = "repositories" + File.separator + "kie" + File.separator + "global";
+            logger.info("using fallback {}",
+                        global);
+        }
+        return global;
+    }
+
     public URI resolve(final String groupId,
                        final String artifactId,
                        final String version) throws Exception {
@@ -76,10 +89,8 @@ public class MavenArtifactResolver {
     }
 
     private RepositorySystemSession newSession(RepositorySystem system) {
-        ArtifactRepositoryPreference artifactRepositoryPreference = new ArtifactRepositoryPreference();
-        artifactRepositoryPreference.defaultValue(artifactRepositoryPreference);
         DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(artifactRepositoryPreference.getGlobalM2RepoDir());
+        LocalRepository localRepo = new LocalRepository(getGlobalRepoPath());
         session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
                                                                            localRepo));
         return session;
