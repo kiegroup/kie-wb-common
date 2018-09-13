@@ -733,11 +733,16 @@ public class LibraryPlaces implements WorkspaceProjectContextChangeHandler {
         final Space space = repository.getSpace();
         final String repositoryAlias = repository.getAlias();
 
-        final Space activeSpace = getActiveSpace().getSpace();
-        final Repository activeRepository = getActiveWorkspace().getRepository();
-        final String activeRepositoryAlias = activeRepository.getAlias();
+        if (this.projectContext.getActiveOrganizationalUnit().isPresent()
+                && this.projectContext.getActiveWorkspaceProject().isPresent()) {
+            final Space activeSpace = this.projectContext.getActiveOrganizationalUnit().get().getSpace();
+            final Repository activeRepository = this.projectContext.getActiveWorkspaceProject().get().getRepository();
+            final String activeRepositoryAlias = activeRepository.getAlias();
 
-        return space.equals(activeSpace) && repositoryAlias.equals(activeRepositoryAlias);
+            return space.equals(activeSpace) && repositoryAlias.equals(activeRepositoryAlias);
+        }
+
+        return false;
     }
 
     public void init(final LibraryPerspective libraryPerspective) {
