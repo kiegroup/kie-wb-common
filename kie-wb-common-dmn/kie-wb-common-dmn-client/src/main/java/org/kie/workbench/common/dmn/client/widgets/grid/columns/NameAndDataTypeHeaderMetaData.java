@@ -76,7 +76,7 @@ public abstract class NameAndDataTypeHeaderMetaData<E extends Expression> extend
 
     private static <E extends Expression> HasTypeRef getTypeRefOfExpression(final Optional<E> expression,
                                                                             final HasExpression hasExpression) {
-        HasTypeRef hasTypeRef = expression.get();
+        HasTypeRef hasTypeRef = expression.orElseThrow(() -> new UnsupportedOperationException("'expression' should never be null for grids supporting NameAndDataTypeHeaderMetaData."));
         final DMNModelInstrumentedBase base = hasExpression.asDMNModelInstrumentedBase();
         if (base instanceof HasVariable) {
             final HasVariable hasVariable = (HasVariable) base;
