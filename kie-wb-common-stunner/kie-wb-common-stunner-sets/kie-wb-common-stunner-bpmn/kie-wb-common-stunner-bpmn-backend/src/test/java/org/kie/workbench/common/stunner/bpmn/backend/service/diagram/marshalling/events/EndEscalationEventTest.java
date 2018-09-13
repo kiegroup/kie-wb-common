@@ -62,7 +62,7 @@ public class EndEscalationEventTest extends EndEvent<EndEscalationEvent> {
                                                            FILLED_TOP_LEVEL_EVENT_ID,
                                                            HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledTopEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertMessageEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF);
+        assertEscalationEventExecutionSet(filledTopEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledTopEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -93,7 +93,7 @@ public class EndEscalationEventTest extends EndEvent<EndEscalationEvent> {
                                                                   FILLED_SUBPROCESS_LEVEL_EVENT_ID,
                                                                   HAS_NO_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
+        assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -124,7 +124,7 @@ public class EndEscalationEventTest extends EndEvent<EndEscalationEvent> {
                                                                   FILLED_WITH_INCOME_TOP_LEVEL_EVENT_ID,
                                                                   HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
+        assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -167,7 +167,7 @@ public class EndEscalationEventTest extends EndEvent<EndEscalationEvent> {
                                                                   FILLED_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID,
                                                                   HAS_INCOME_EDGE);
         assertGeneralSet(filledSubprocessEvent.getGeneral(), EVENT_NAME, EVENT_DOCUMENTATION);
-        assertMessageEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
+        assertEscalationEventExecutionSet(filledSubprocessEvent.getExecutionSet(), EVENT_REF);
         assertDataIOSet(filledSubprocessEvent.getDataIOSet(), EVENT_DATA_OUTPUT);
     }
 
@@ -221,7 +221,7 @@ public class EndEscalationEventTest extends EndEvent<EndEscalationEvent> {
         return EMPTY_WITH_INCOME_SUBPROCESS_LEVEL_EVENT_ID;
     }
 
-    private void assertMessageEventExecutionSet(EscalationEventExecutionSet executionSet, String escalationRef) {
+    private void assertEscalationEventExecutionSet(EscalationEventExecutionSet executionSet, String escalationRef) {
         assertNotNull(executionSet);
         assertNotNull(executionSet.getEscalationRef());
         assertEquals(escalationRef, executionSet.getEscalationRef().getValue());
