@@ -31,8 +31,11 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasValue;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.IconType;
-import org.jboss.errai.ui.client.widget.ListWidget;
-import org.jboss.errai.ui.client.widget.Table;
+import org.jboss.errai.databinding.client.api.DataBinder;
+import org.jboss.errai.databinding.client.components.ListComponent;
+import org.jboss.errai.databinding.client.components.ListContainer;
+import org.jboss.errai.ui.shared.api.annotations.AutoBound;
+import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
@@ -58,9 +61,14 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
     }
 
     @Inject
-    @DataField("rows")
-    @Table(root = "tbody")
-    protected ListWidget<KeyValueRow, RolesListItemWidgetView> rows;
+    @AutoBound
+    protected DataBinder<List<KeyValueRow>> binder;
+
+    @Inject
+    @DataField("list")
+    @Bound
+    @ListContainer("tbody")
+    protected ListComponent<KeyValueRow, RolesListItemWidgetView> list;
 
     @Inject
     protected Event<NotificationEvent> notification;
@@ -132,12 +140,12 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
 
     @Override
     public int getRowsCount() {
-        return Optional.ofNullable(rows.getValue()).map(List::size).orElse(0);
+        return Optional.ofNullable(getRows()).map(List::size).orElse(0);
     }
 
     @Override
     public void setRows(final List<KeyValueRow> rows) {
-        this.rows.setValue(rows);
+        binder.setModel(rows);
         for (int i = 0; i < getRowsCount(); i++) {
             RolesListItemWidgetView widget = getWidget(i);
             widget.setParentWidget(this);
@@ -146,27 +154,17 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
 
     @Override
     public List<KeyValueRow> getRows() {
-        return rows.getValue();
-    }
-
-    @Override
-    public RolesListItemWidgetView getWidget(KeyValueRow row) {
-        return rows.getComponent(row);
+        return binder.getModel();
     }
 
     @Override
     public RolesListItemWidgetView getWidget(int index) {
-        return rows.getComponent(index);
+        return list.getComponent(index);
     }
 
     protected void handleAddVarButton() {
-        if (!getRows().isEmpty() && getRows().get(getRowsCount() - 1).getKey() == null) {
-            return;
-        }
-
-        final int index = getRowsCount();
-        getRows().add(new KeyValueRow());
-        final RolesListItemWidgetView widget = getWidget(index);
+        getRows().add(getRowsCount(), new KeyValueRow());
+        final RolesListItemWidgetView widget = getWidget(getRowsCount() - 1);
         widget.setParentWidget(this);
     }
 

@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.model;
 import java.util.Objects;
 
 import org.jboss.errai.databinding.client.api.Bindable;
+import org.kie.workbench.common.stunner.core.util.UUID;
 
 @Bindable
 public class KeyValueRow {
@@ -27,14 +28,16 @@ public class KeyValueRow {
 
     private String value;
 
-    private String customKey;
+    private String uuid;
 
     public KeyValueRow() {
+        this("", "");
     }
 
     public KeyValueRow(String key, String value) {
-        this.key = key;
-        this.value = value;
+        this.key = Objects.isNull(key) ?"": key;
+        this.value = Objects.isNull(value) ?"": value;
+        this.uuid = UUID.uuid();
     }
 
     public String getKey() {
@@ -53,14 +56,6 @@ public class KeyValueRow {
         this.value = value;
     }
 
-    public String getCustomKey() {
-        return customKey;
-    }
-
-    public void setCustomKey(String customKey) {
-        this.customKey = customKey;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -71,12 +66,13 @@ public class KeyValueRow {
         }
         KeyValueRow that = (KeyValueRow) o;
         return Objects.equals(getKey(), that.getKey()) &&
-                Objects.equals(getValue(), that.getValue());
+                Objects.equals(getValue(), that.getValue()) &&
+                Objects.equals(uuid, that.uuid);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(getKey(), getValue());
+        return Objects.hash(getKey(), getValue(), uuid);
     }
 }

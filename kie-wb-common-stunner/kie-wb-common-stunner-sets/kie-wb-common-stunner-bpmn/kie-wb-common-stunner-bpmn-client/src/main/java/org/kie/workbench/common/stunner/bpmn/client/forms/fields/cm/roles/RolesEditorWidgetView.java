@@ -42,8 +42,6 @@ public interface RolesEditorWidgetView extends IsWidget {
 
     List<KeyValueRow> getRows();
 
-    RolesListItemWidgetView getWidget(final KeyValueRow row);
-
     RolesListItemWidgetView getWidget(int index);
 
     void setVisible(final boolean visible);

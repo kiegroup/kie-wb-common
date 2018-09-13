@@ -20,9 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import com.google.gwt.dom.client.Style;
 import org.gwtbootstrap3.client.ui.Button;
-import org.jboss.errai.ui.client.widget.ListWidget;
+import org.jboss.errai.databinding.client.api.DataBinder;
+import org.jboss.errai.databinding.client.components.ListComponent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +51,7 @@ public class RolesEditorWidgetViewImplTest {
     private Button addButton;
 
     @Mock
-    private ListWidget<KeyValueRow, RolesListItemWidgetView> rows;
+    private ListComponent<KeyValueRow, RolesListItemWidgetView> list;
 
     private List<KeyValueRow> roles;
 
@@ -59,20 +59,22 @@ public class RolesEditorWidgetViewImplTest {
     private RolesListItemWidgetView widget;
 
     @Mock
-    private Style style;
+    private DataBinder<List<KeyValueRow>> binder;
 
     @Before
     public void setUp() throws Exception {
         tested = spy(new RolesEditorWidgetViewImpl());
         tested.addButton = addButton;
-        tested.rows = rows;
+        tested.list = list;
+        tested.binder = binder;
         tested.init(presenter);
         roles = spy(new ArrayList<>());
         roles.add(ROLE);
         when(presenter.deserialize(SERIALIZED_ROLE)).thenReturn(roles);
         when(presenter.serialize(roles)).thenReturn(SERIALIZED_ROLE);
-        when(rows.getValue()).thenReturn(roles);
-        when(rows.getComponent(anyInt())).thenReturn(widget);
+        when(list.getValue()).thenReturn(roles);
+        when(list.getComponent(anyInt())).thenReturn(widget);
+        when(binder.getModel()).thenReturn(roles);
     }
 
     @Test
@@ -82,7 +84,7 @@ public class RolesEditorWidgetViewImplTest {
         tested.setValue(SERIALIZED_ROLE);
         verify(tested).initView();
         verify(presenter).deserialize(SERIALIZED_ROLE);
-        verify(rows).setValue(roles);
+        verify(binder).setModel(roles);
         verify(tested).setReadOnly(false);
     }
 
@@ -97,20 +99,20 @@ public class RolesEditorWidgetViewImplTest {
     public void setReadOnly() {
         tested.setReadOnly(true);
         verify(addButton).setEnabled(false);
-        verify(rows).getComponent(0);
+        verify(list).getComponent(0);
         verify(widget).setReadOnly(true);
     }
 
     @Test
     public void getRowsCount() {
         final int rowsCount = tested.getRowsCount();
-        assertThat(rowsCount).isEqualTo(rows.getValue().size());
+        assertThat(rowsCount).isEqualTo(list.getValue().size());
     }
 
     @Test
     public void setRows() {
         tested.setRows(roles);
-        verify(rows).setValue(roles);
+        verify(binder).setModel(roles);
     }
 
     @Test
@@ -127,7 +129,7 @@ public class RolesEditorWidgetViewImplTest {
     public void handleAddVarButton() {
         reset(roles);
         tested.handleAddVarButton();
-        verify(roles).add(any(KeyValueRow.class));
+        verify(roles).add(anyInt(), any(KeyValueRow.class));
         verify(tested).getWidget(roles.size() - 1);
         verify(widget).setParentWidget(tested);
     }

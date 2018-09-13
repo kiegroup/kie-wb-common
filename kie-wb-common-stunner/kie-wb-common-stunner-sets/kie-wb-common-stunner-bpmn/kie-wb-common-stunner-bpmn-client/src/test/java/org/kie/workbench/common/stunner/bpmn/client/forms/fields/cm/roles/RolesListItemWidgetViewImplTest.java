@@ -17,7 +17,8 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
 import com.ait.lienzo.test.LienzoMockitoTestRunner;
-import com.google.gwt.event.dom.client.BlurHandler;
+import com.google.gwt.event.dom.client.ChangeHandler;
+import elemental2.dom.HTMLTableRowElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.databinding.client.api.DataBinder;
@@ -66,13 +67,16 @@ public class RolesListItemWidgetViewImplTest {
     private Button deleteButton;
 
     @Captor
-    private ArgumentCaptor<BlurHandler> blurHandlerCaptor;
+    private ArgumentCaptor<ChangeHandler> valueChangeHandler;
 
     @Mock
     private DataBinder<KeyValueRow> row;
 
     @Mock
     private RolesEditorWidgetView widget;
+
+    @Mock
+    private HTMLTableRowElement tableRow;
 
     @Before
     public void setUp() throws Exception {
@@ -81,6 +85,7 @@ public class RolesListItemWidgetViewImplTest {
         tested.cardinality = cardinality;
         tested.notification = notification;
         tested.deleteButton = deleteButton;
+        tested.tableRow = tableRow;
         tested.row = row;
         tested.init();
         tested.setParentWidget(widget);
@@ -92,19 +97,25 @@ public class RolesListItemWidgetViewImplTest {
     @Test
     public void init() {
         verify(role).setRegExp(eq(StringUtils.ALPHA_NUM_REGEXP), anyString(), anyString());
-        verify(role).addBlurHandler(blurHandlerCaptor.capture());
-        verify(cardinality).addBlurHandler(blurHandlerCaptor.capture());
+        verify(role).addChangeHandler(valueChangeHandler.capture());
+        verify(cardinality).addChangeHandler(valueChangeHandler.capture());
         verify(deleteButton).setIcon(IconType.TRASH);
-
-        //test blur
-        BlurHandler blur = blurHandlerCaptor.getValue();
-        blur.onBlur(null);
+        
+        //test handler
+        ChangeHandler handler = valueChangeHandler.getValue();
+        handler.onChange(null);
         verify(notification, never()).fire(any());
         verify(tested).notifyModelChanged();
 
+        //now test with same value then should not call notifyModelChanged
+        reset(tested);
+        handler.onChange(null);
+        verify(tested, never()).notifyModelChanged();
+
+        //now test duplicating role name
         reset(tested);
         when(widget.isDuplicateName(ROLE_NAME)).thenReturn(true);
-        blur.onBlur(null);
+        handler.onChange(null);
         verify(notification).fire(any());
         verify(tested, never()).notifyModelChanged();
     }
@@ -151,13 +162,6 @@ public class RolesListItemWidgetViewImplTest {
 
     @Test
     public void notifyModelChanged() {
-        //without changing the model should not notify
-        tested.setModel(ROLE);
-        tested.notifyModelChanged();
-        verify(widget, never()).notifyModelChanged();
-
-        //with new model set then notify
-        tested.setModel(new KeyValueRow());
         tested.notifyModelChanged();
         verify(widget).notifyModelChanged();
     }

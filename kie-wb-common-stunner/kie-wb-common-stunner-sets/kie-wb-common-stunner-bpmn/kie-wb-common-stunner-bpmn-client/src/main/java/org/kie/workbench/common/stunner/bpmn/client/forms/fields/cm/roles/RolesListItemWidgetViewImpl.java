@@ -20,11 +20,10 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
-import com.google.gwt.event.dom.client.BlurEvent;
+import elemental2.dom.HTMLTableRowElement;
 import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 import org.jboss.errai.databinding.client.api.DataBinder;
@@ -40,7 +39,6 @@ import org.kie.workbench.common.stunner.bpmn.client.forms.widgets.VariableNameTe
 import org.kie.workbench.common.stunner.client.widgets.canvas.actions.IntegerTextBox;
 import org.uberfire.workbench.events.NotificationEvent;
 
-@Dependent
 @Templated("RolesEditorWidget.html#tableRow")
 public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
                                                     IsElement {
@@ -75,14 +73,16 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
     @DataField
     protected Button deleteButton;
 
+    @Inject
+    @DataField("tableRow")
+    protected HTMLTableRowElement tableRow;
+
     /**
      * Required for implementation of Delete button.
      */
     private Optional<RolesEditorWidgetView> parentWidget;
 
-    @Inject
-    public RolesListItemWidgetViewImpl() {
-        parentWidget = Optional.empty();
+    protected RolesListItemWidgetViewImpl() {
     }
 
     public void setParentWidget(final RolesEditorWidgetView parentWidget) {
@@ -92,11 +92,13 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
     @PostConstruct
     public void init() {
         role.setRegExp(StringUtils.ALPHA_NUM_REGEXP, INVALID_CHARACTERS_MESSAGE, INVALID_CHARACTERS_MESSAGE);
-        role.addBlurHandler((e) -> handleBlur(e));
-        cardinality.addBlurHandler((e) -> handleBlur(e));
+        role.addChangeHandler((e) -> hadleValueChange());
+        cardinality.addChangeHandler((e) -> hadleValueChange());
         cardinality.addFocusHandler((e) -> handleFocus());
         deleteButton.setIcon(IconType.TRASH);
         deleteButton.addClickHandler((e) -> handleDeleteButton());
+        //show the widget that is hidden on the template
+        tableRow.hidden = false;
     }
 
     private void handleFocus() {
@@ -105,14 +107,21 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
         }
     }
 
-    private void handleBlur(BlurEvent e) {
-        String value = role.getText();
-        if (!allowDuplicateNames && isDuplicateName(value)) {
+    private void hadleValueChange() {
+        final String currentRole = row.getModel().getKey();
+        final String currentCardinality = row.getModel().getValue();
+        if (!allowDuplicateNames && isDuplicateName(currentRole)) {
             notification.fire(new NotificationEvent(DUPLICATE_NAME_ERROR_MESSAGE,
                                                     NotificationEvent.NotificationType.ERROR));
-            role.setValue("");
             return;
         }
+
+        //skip in case not modified values
+        if ((Objects.equals(previousRole, currentRole) && Objects.equals(previousCardinality, currentCardinality))) {
+            return;
+        }
+        previousRole = currentRole;
+        previousCardinality = currentCardinality;
         notifyModelChanged();
     }
 
@@ -139,23 +148,12 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
 
     @Override
     public void notifyModelChanged() {
-        final String currentRole = row.getModel().getKey();
-        final String currentCardinality = row.getModel().getValue();
-
-        //skip in case not modified values
-        if ((Objects.equals(previousRole, currentRole) && Objects.equals(previousCardinality, currentCardinality))) {
-            return;
-        }
-        previousRole = currentRole;
-        previousCardinality = currentCardinality;
         parentWidget.ifPresent(RolesEditorWidgetView::notifyModelChanged);
     }
 
     @Override
     public void setValue(KeyValueRow value) {
         row.setModel(value);
-        previousRole = value.getKey();
-        previousCardinality = value.getValue();
     }
 
     @Override

@@ -17,6 +17,7 @@
 package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -102,7 +103,8 @@ public class RolesEditorFieldRendererTest {
     public void deserialize() {
         final List<KeyValueRow> deserialized = tested.deserialize(SERIALIZED_ROLE);
         verify(caseRoleSerializer).deserialize(eq(SERIALIZED_ROLE), any());
-        assertThat(deserialized).isEqualTo(rows);
+        assertThat(deserialized).usingElementComparator(Comparator.comparing(KeyValueRow::getKey)).isEqualTo(rows);
+        assertThat(deserialized).usingElementComparator(Comparator.comparing(KeyValueRow::getValue)).isEqualTo(rows);
     }
 
     @Test
