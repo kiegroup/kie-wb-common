@@ -1172,7 +1172,6 @@ public class DMNMarshallerTest {
         assertThat(dmnRuntime.getModels()).hasSize(1);
         final DMNModel dmnModel = dmnRuntime.getModels().get(0);
         final DMNContext context = dmnRuntime.newContext();
-        context.set("A Vowel", "b");
         final DMNResult result = dmnRuntime.evaluateAll(dmnModel, context);
         assertThat(result.getDecisionResultByName("A Vowel").getResult()).isEqualTo("a");
     }
