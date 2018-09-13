@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 public class MavenArtifactResolver {
 
     private static final Logger logger = LoggerFactory.getLogger(MavenArtifactResolver.class);
-    private final String JAR_ARTIFACT = "jar";
+    private static final String JAR_ARTIFACT = "jar";
 
     public MavenArtifactResolver() {
     }
