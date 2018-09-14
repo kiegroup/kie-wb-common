@@ -19,53 +19,23 @@ package org.kie.workbench.common.screens.datasource.management.util;
 import java.io.File;
 import java.net.URI;
 
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.appformer.maven.integration.Aether;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.RepositorySystemSession;
 import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
-import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory;
-import org.eclipse.aether.impl.DefaultServiceLocator;
 import org.eclipse.aether.installation.InstallRequest;
 import org.eclipse.aether.installation.InstallResult;
 import org.eclipse.aether.installation.InstallationException;
-import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
-import org.eclipse.aether.spi.connector.RepositoryConnectorFactory;
-import org.eclipse.aether.spi.connector.transport.TransporterFactory;
-import org.eclipse.aether.transport.file.FileTransporterFactory;
-import org.eclipse.aether.transport.http.HttpTransporterFactory;
 
 import org.junit.After;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MavenArtifactResolverTest {
-
-    private static RepositorySystemSession newSession(RepositorySystem system) {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(MavenArtifactResolver.getGlobalRepoPath());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
-                                                                           localRepo));
-
-        return session;
-    }
-
-    private static RepositorySystem newRepositorySystem() {
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class,
-                           BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class,
-                           FileTransporterFactory.class);
-        locator.addService(TransporterFactory.class,
-                           HttpTransporterFactory.class);
-        return locator.getService(RepositorySystem.class);
-    }
 
     @After
     public void tearDown() throws Exception {
@@ -75,7 +45,7 @@ public class MavenArtifactResolverTest {
     private void deleteArtifactIFPresent() throws ArtifactResolutionException {
         ArtifactRequest artifactRequest = new ArtifactRequest();
         artifactRequest.setArtifact(getArtifact());
-        ArtifactResult result = Aether.getAether().getSystem().resolveArtifact(newSession(newRepositorySystem()),
+        ArtifactResult result = Aether.getAether().getSystem().resolveArtifact(MavenArtifactResolver.getAetherSessionWithGlobalRepo(),
                                                                                artifactRequest);
         if (!result.isMissing()) {
             File artifactFile = result.getArtifact().getFile();
@@ -93,7 +63,7 @@ public class MavenArtifactResolverTest {
 
     @Test
     public void resolveArtifact() throws Exception {
-        RepositorySystemSession session = newSession(newRepositorySystem());
+        RepositorySystemSession session = MavenArtifactResolver.getAetherSessionWithGlobalRepo();
         assertThat(checksIfArtifactIsPresent(session)).isFalse();
 
         File file = new File("target/test-classes/uberfire-m2repo-editor-backend-100-SNAPSHOT.jar");
