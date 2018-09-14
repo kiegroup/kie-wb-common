@@ -226,7 +226,7 @@ public class MavenRestClientTest {
             final Git cloned = Git.cloneRepository().setURI(fs.getGit().getRepository().getDirectory().toURI().toString()).setBare(false).setDirectory(gitClonedFolder).call();
 
             assertThat(cloned).isNotNull();
-            mavenRepoPath = Paths.get(System.getProperty("user.home"), "/.m2/repository");
+            mavenRepoPath = Paths.get(System.getProperty("user.home"), ".m2", "repository");
             tmpRoot = Paths.get(gitClonedFolder + "/dummy/");
 
             Client client = ClientBuilder.newClient();

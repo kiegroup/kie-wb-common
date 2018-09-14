@@ -69,9 +69,8 @@ public class JGitUtilsTest {
     public void setUp() throws Exception {
         fileSystemTestingUtils.setup();
         ioService = fileSystemTestingUtils.getIoService();
-
-        mavenRepoPath = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+        
+        mavenRepoPath = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
         if (!Files.exists(mavenRepoPath)) {
             logger.info("Creating a m2_repo into " + mavenRepoPath);

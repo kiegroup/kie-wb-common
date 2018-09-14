@@ -50,8 +50,7 @@ public class ArchetypeTest {
 
     @Before
     public void setUp() throws Exception {
-        mavenRepoPath = Paths.get(System.getProperty("user.home"),
-                              "/.m2/repository");
+        mavenRepoPath = Paths.get(System.getProperty("user.home"), ".m2", "repository");
 
         if (!Files.exists(mavenRepoPath)) {
             if (!Files.exists(Files.createDirectories(mavenRepoPath))) {

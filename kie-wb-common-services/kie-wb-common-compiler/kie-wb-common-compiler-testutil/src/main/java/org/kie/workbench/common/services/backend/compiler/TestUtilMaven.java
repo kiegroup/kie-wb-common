@@ -26,15 +26,15 @@ public class TestUtilMaven {
     }
 
     public static java.nio.file.Path createMavenRepo() throws Exception {
-        java.nio.file.Path mavenRepoPathsitory = java.nio.file.Paths.get(System.getProperty("user.home"), ".m2/repository");
-        if (!java.nio.file.Files.exists(mavenRepoPathsitory)) {
-            logger.info("Creating a m2_repo into " + mavenRepoPathsitory);
-            if (!java.nio.file.Files.exists(java.nio.file.Files.createDirectories(mavenRepoPathsitory))) {
-                logger.error("Folder not writable to create Maven repo{}", mavenRepoPathsitory);
-                throw new Exception("Folder not writable to create Maven repo:" + mavenRepoPathsitory);
+        java.nio.file.Path mavenRepoPath = java.nio.file.Paths.get(System.getProperty("user.home"), ".m2/repository");
+        if (!java.nio.file.Files.exists(mavenRepoPath)) {
+            logger.info("Creating a m2_repo into " + mavenRepoPath);
+            if (!java.nio.file.Files.exists(java.nio.file.Files.createDirectories(mavenRepoPath))) {
+                logger.error("Folder not writable to create Maven repo{}", mavenRepoPath);
+                throw new Exception("Folder not writable to create Maven repo:" + mavenRepoPath);
             }
         }
-        return mavenRepoPathsitory;
+        return mavenRepoPath;
     }
 
     public static String getSettingsFile() {
