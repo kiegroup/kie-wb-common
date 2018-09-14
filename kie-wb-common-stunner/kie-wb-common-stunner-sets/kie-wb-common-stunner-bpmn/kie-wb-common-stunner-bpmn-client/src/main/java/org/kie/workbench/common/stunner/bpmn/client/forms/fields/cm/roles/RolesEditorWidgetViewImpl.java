@@ -19,6 +19,7 @@ package org.kie.workbench.common.stunner.bpmn.client.forms.fields.cm.roles;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
@@ -39,6 +40,7 @@ import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
+import org.kie.workbench.common.stunner.bpmn.client.forms.util.StringUtils;
 import org.uberfire.workbench.events.NotificationEvent;
 
 @Dependent
@@ -105,7 +107,11 @@ public class RolesEditorWidgetViewImpl extends Composite implements RolesEditorW
 
     @Override
     public void doSave() {
-        presenter.map(p -> p.serialize(getRows())).ifPresent(newValue -> setValue(newValue, true));
+        presenter.map(p -> p.serialize(removeEmptyRoles(getRows()))).ifPresent(newValue -> setValue(newValue, true));
+    }
+
+    private List<KeyValueRow> removeEmptyRoles(List<KeyValueRow> roles) {
+        return roles.stream().filter(row -> !StringUtils.isBlank(row.getKey())).collect(Collectors.toList());
     }
 
     @Override

@@ -16,6 +16,7 @@
 
 package org.kie.workbench.common.stunner.bpmn.forms.serializer;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -47,11 +48,14 @@ public class KeyValueSerializer {
         this.delimiterKeyValue = delimiterKeyValue;
     }
 
-    public <T> List<T> deserialize(String s, BiFunction<String, String, T> builder) {
-        return Stream.of(Optional.ofNullable(s).orElse("").split(delimiterRow))
-                .map(entry -> entry.split(delimiterKeyValue))
-                .map(entry -> builder.apply(entry[0],entry[1]))
-                .collect(Collectors.toList());
+    public <T> List<T> deserialize(String value, BiFunction<String, String, T> builder) {
+        return Optional.ofNullable(value)
+                .filter(s -> !s.isEmpty())
+                .map(s -> Stream.of(s.split(delimiterRow))
+                        .map(entry -> entry.split(delimiterKeyValue))
+                        .map(entry -> builder.apply(entry[0], entry[1]))
+                        .collect(Collectors.toList()))
+                .orElse(new ArrayList<>());
     }
 
     public <T> String serialize(Optional<List<T>> values, Function<T, Object> getKey, Function<T, Object> getValue) {

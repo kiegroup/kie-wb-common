@@ -45,6 +45,7 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
 
     public static final String INVALID_CHARACTERS_MESSAGE = "Invalid characters";
     private static final String DUPLICATE_NAME_ERROR_MESSAGE = "A role with this name already exists";
+    private static final String EMPTY_ERROR_MESSAGE = "Role name already cannot be empty";
 
     @Inject
     @AutoBound
@@ -92,8 +93,8 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
     @PostConstruct
     public void init() {
         role.setRegExp(StringUtils.ALPHA_NUM_REGEXP, INVALID_CHARACTERS_MESSAGE, INVALID_CHARACTERS_MESSAGE);
-        role.addChangeHandler((e) -> hadleValueChange());
-        cardinality.addChangeHandler((e) -> hadleValueChange());
+        role.addChangeHandler((e) -> handleValueChanged());
+        cardinality.addChangeHandler((e) -> handleValueChanged());
         cardinality.addFocusHandler((e) -> handleFocus());
         deleteButton.setIcon(IconType.TRASH);
         deleteButton.addClickHandler((e) -> handleDeleteButton());
@@ -107,12 +108,19 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
         }
     }
 
-    private void hadleValueChange() {
+    private void handleValueChanged() {
         final String currentRole = row.getModel().getKey();
         final String currentCardinality = row.getModel().getValue();
+        if (StringUtils.isBlank(currentRole)) {
+            notification.fire(new NotificationEvent(EMPTY_ERROR_MESSAGE,
+                                                    NotificationEvent.NotificationType.ERROR));
+            row.getModel().setKey(previousRole);
+            return;
+        }
         if (!allowDuplicateNames && isDuplicateName(currentRole)) {
             notification.fire(new NotificationEvent(DUPLICATE_NAME_ERROR_MESSAGE,
                                                     NotificationEvent.NotificationType.ERROR));
+            row.getModel().setKey(previousRole);
             return;
         }
 
@@ -153,6 +161,11 @@ public class RolesListItemWidgetViewImpl implements RolesListItemWidgetView,
 
     @Override
     public void setValue(KeyValueRow value) {
+        //when first setting the value then set as previous as well
+        if (Objects.isNull(previousRole)) {
+            previousRole = value.getKey();
+            previousCardinality = value.getValue();
+        }
         row.setModel(value);
     }
 

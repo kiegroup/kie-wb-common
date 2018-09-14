@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.kie.workbench.common.stunner.bpmn.client.forms.fields.model.KeyValueRow;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +72,7 @@ public class RolesEditorWidgetViewImplTest {
         roles = spy(new ArrayList<>());
         roles.add(ROLE);
         when(presenter.deserialize(SERIALIZED_ROLE)).thenReturn(roles);
-        when(presenter.serialize(roles)).thenReturn(SERIALIZED_ROLE);
+        when(presenter.serialize(any())).thenReturn(SERIALIZED_ROLE);
         when(list.getValue()).thenReturn(roles);
         when(list.getComponent(anyInt())).thenReturn(widget);
         when(binder.getModel()).thenReturn(roles);
@@ -91,7 +92,9 @@ public class RolesEditorWidgetViewImplTest {
     @Test
     public void doSave() {
         tested.doSave();
-        verify(presenter).serialize(roles);
+        final ArgumentCaptor<List> rolesCaptor = ArgumentCaptor.forClass(List.class);
+        verify(presenter).serialize(rolesCaptor.capture());
+        assertThat(rolesCaptor.getValue()).isEqualTo(roles);
         verify(tested).setValue(SERIALIZED_ROLE, true);
     }
 
