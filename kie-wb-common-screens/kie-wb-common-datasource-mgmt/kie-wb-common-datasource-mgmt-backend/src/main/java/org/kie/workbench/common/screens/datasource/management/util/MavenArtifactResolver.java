@@ -16,7 +16,6 @@
 
 package org.kie.workbench.common.screens.datasource.management.util;
 
-import java.io.File;
 import java.net.URI;
 import javax.enterprise.context.ApplicationScoped;
 
@@ -49,6 +48,29 @@ public class MavenArtifactResolver {
     public MavenArtifactResolver() {
     }
 
+    public static RepositorySystemSession getAetherSessionWithGlobalRepo() {
+        return newSession(newRepositorySystem());
+    }
+
+    private static RepositorySystemSession newSession(RepositorySystem system) {
+        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
+        LocalRepository localRepo = new LocalRepository(ArtifactRepositoryPreference.getGlobalM2RepoDirWithFallback());
+        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
+                                                                           localRepo));
+        return session;
+    }
+
+    private static RepositorySystem newRepositorySystem() {
+        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
+        locator.addService(RepositoryConnectorFactory.class,
+                           BasicRepositoryConnectorFactory.class);
+        locator.addService(TransporterFactory.class,
+                           FileTransporterFactory.class);
+        locator.addService(TransporterFactory.class,
+                           HttpTransporterFactory.class);
+        return locator.getService(RepositorySystem.class);
+    }
+
     public URI resolve(final String groupId,
                        final String artifactId,
                        final String version) throws Exception {
@@ -74,24 +96,5 @@ public class MavenArtifactResolver {
                                         " from maven repository",
                                 e);
         }
-    }
-
-    private RepositorySystemSession newSession(RepositorySystem system) {
-        DefaultRepositorySystemSession session = MavenRepositorySystemUtils.newSession();
-        LocalRepository localRepo = new LocalRepository(ArtifactRepositoryPreference.getGlobalM2RepoDirWithFallback());
-        session.setLocalRepositoryManager(system.newLocalRepositoryManager(session,
-                                                                           localRepo));
-        return session;
-    }
-
-    private RepositorySystem newRepositorySystem() {
-        DefaultServiceLocator locator = MavenRepositorySystemUtils.newServiceLocator();
-        locator.addService(RepositoryConnectorFactory.class,
-                           BasicRepositoryConnectorFactory.class);
-        locator.addService(TransporterFactory.class,
-                           FileTransporterFactory.class);
-        locator.addService(TransporterFactory.class,
-                           HttpTransporterFactory.class);
-        return locator.getService(RepositorySystem.class);
     }
 }
