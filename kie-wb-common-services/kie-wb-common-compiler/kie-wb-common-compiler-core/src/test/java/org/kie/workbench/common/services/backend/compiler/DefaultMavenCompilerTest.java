@@ -44,8 +44,6 @@ import org.kie.workbench.common.services.backend.compiler.impl.kie.KieMavenCompi
 import org.kie.workbench.common.services.backend.constants.ResourcesConstants;
 import org.kie.workbench.common.services.backend.constants.TestConstants;
 import org.kie.workbench.common.services.backend.utils.TestUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.uberfire.io.IOService;
 import org.uberfire.java.nio.file.Files;
 import org.uberfire.java.nio.file.Path;
@@ -57,7 +55,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultMavenCompilerTest {
 
-    private static final Logger logger = LoggerFactory.getLogger(DefaultMavenCompilerTest.class);
     private FileSystemTestingUtils fileSystemTestingUtils = new FileSystemTestingUtils();
     private IOService ioService;
     private String mavenRepoPath;
@@ -65,14 +62,16 @@ public class DefaultMavenCompilerTest {
 
     @BeforeClass
     public static void setupSystemProperties() {
-        int freePort = TestUtilGit.findFreePort();
-        System.setProperty("org.uberfire.nio.git.daemon.port", String.valueOf(freePort));
-        logger.info("Git port used:{}", freePort);
+        System.setProperty("org.uberfire.nio.git.daemon.enabled", "false");
+        System.setProperty("org.uberfire.nio.git.ssh.enabled", "false");
+        System.setProperty("org.uberfire.sys.repo.monitor.disabled", "true");
     }
 
     @AfterClass
     public static void tearDownClass() {
-        System.clearProperty("org.uberfire.nio.git.daemon.port");
+        System.clearProperty("org.uberfire.nio.git.daemon.enabled");
+        System.clearProperty("org.uberfire.nio.git.ssh.enabled");
+        System.clearProperty("org.uberfire.sys.repo.monitor.disabled");
     }
 
     @Rule
