@@ -26,6 +26,9 @@ import org.kie.workbench.common.stunner.bpmn.backend.BaseDiagramMarshaller;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.builder.GraphObjectBuilderFactory;
 import org.kie.workbench.common.stunner.bpmn.backend.marshall.json.oryx.OryxManager;
 import org.kie.workbench.common.stunner.bpmn.definition.BPMNDiagram;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.DiagramSet;
+import org.kie.workbench.common.stunner.bpmn.definition.property.diagram.Id;
+import org.kie.workbench.common.stunner.bpmn.definition.property.general.Name;
 import org.kie.workbench.common.stunner.cm.CaseManagementDefinitionSet;
 import org.kie.workbench.common.stunner.cm.definition.CaseManagementDiagram;
 import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
@@ -35,9 +38,12 @@ import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMe
 import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
 import org.kie.workbench.common.stunner.core.graph.Graph;
+import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
+import org.kie.workbench.common.stunner.core.graph.content.definition.Definition;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
+import org.kie.workbench.common.stunner.core.graph.util.GraphUtils;
 import org.kie.workbench.common.stunner.core.registry.impl.DefinitionsCacheRegistry;
 import org.kie.workbench.common.stunner.core.rule.RuleManager;
 
@@ -93,6 +99,35 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
 
     @Override
     public String marshall(Diagram diagram) throws IOException {
-        return super.marshall(diagram);
+        if (validateDiagram(diagram)) {
+            return super.marshall(diagram);
+        } else {
+            throw new RuntimeException("Invalid definition for Case Modeler diagram.");
+        }
+    }
+
+    /**
+     * Check if name and id are assigned for the CM diagram
+     *
+     * @param diagram the case modeler diagram
+     * @return <code>true</code> if name and id are set, <code>false</code> if name or id is not set.
+     */
+    private boolean validateDiagram(Diagram diagram) {
+        Node<Definition<CaseManagementDiagram>, ?> node = GraphUtils.getFirstNode(diagram.getGraph(), CaseManagementDiagram.class);
+        if (node != null) {
+            CaseManagementDiagram definition = node.getContent().getDefinition();
+            if (definition != null) {
+                DiagramSet diagramSet = definition.getDiagramSet();
+                if (diagramSet != null) {
+                    Name name = diagramSet.getName();
+                    Id id = diagramSet.getId();
+                    return name != null && id != null
+                            && name.getValue() != null && id.getValue() != null
+                            && name.getValue().trim().length() > 0 && id.getValue().trim().length() > 0;
+                }
+            }
+        }
+
+        return false;
     }
 }
