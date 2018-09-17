@@ -22,10 +22,12 @@ import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.kie.soup.commons.validation.PortablePreconditions;
 import org.kie.workbench.common.stunner.core.command.CommandResult;
+import org.kie.workbench.common.stunner.core.command.util.CommandUtils;
 import org.kie.workbench.common.stunner.core.graph.Edge;
 import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandExecutionContext;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandResultBuilder;
+import org.kie.workbench.common.stunner.core.graph.command.util.ConnectionCommandHelper;
 import org.kie.workbench.common.stunner.core.graph.content.view.Connection;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.core.graph.content.view.ViewConnector;
@@ -117,8 +119,13 @@ public final class SetConnectionTargetNodeCommand extends AbstractGraphCommand {
         final Node<? extends View<?>, Edge> targetNode = getTargetNode(context);
         final Edge<View<?>, Node> edge = (Edge<View<?>, Node>) getEdge(context);
         final Node<? extends View<?>, Edge> lastTargetNode = edge.getTargetNode();
-        // Only check for rules in case the connector's target node is a different one.
-        if ((null == lastTargetNode && null != targetNode) ||
+        //7.1 fix, by now we just ban a node from referring to itself by checking that source node and target nodes
+        //are not the same.
+        final CommandResult<RuleViolation> selfReferenceCheckResult = ConnectionCommandHelper.checkSelfReferenceViolations(sourceNode,
+                                                                                                                           targetNode);
+        if (CommandUtils.isError(selfReferenceCheckResult)) {
+            resultBuilder.addViolations(CommandUtils.toList(selfReferenceCheckResult.getViolations()));
+        } else if ((null == lastTargetNode && null != targetNode) ||
                 (null != lastTargetNode && (!lastTargetNode.equals(targetNode)))) {
             final Collection<RuleViolation> connectionRuleViolations =
                     doEvaluate(context,

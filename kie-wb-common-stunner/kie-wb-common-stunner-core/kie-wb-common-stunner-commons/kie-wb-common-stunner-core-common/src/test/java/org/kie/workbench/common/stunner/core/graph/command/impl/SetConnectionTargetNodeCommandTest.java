@@ -128,6 +128,19 @@ public class SetConnectionTargetNodeCommandTest extends AbstractGraphCommandTest
 
     @Test
     @SuppressWarnings("unchecked")
+    public void testAllowWhenSourceNodeAndTargetNodeAreEqual() throws Exception {
+        when(edge.getSourceNode()).thenReturn(node);
+        this.tested = new SetConnectionTargetNodeCommand(node,
+                                                         edge,
+                                                         MagnetConnection.Builder.at(MAGNETX,
+                                                                                     MAGNETY));
+        CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
+        assertEquals(CommandResult.Type.ERROR,
+                     result.getType());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
     public void testAllowNoRules() {
         when(graphCommandExecutionContext.getRuleManager()).thenReturn(null);
         CommandResult<RuleViolation> result = tested.allow(graphCommandExecutionContext);
