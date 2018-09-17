@@ -64,6 +64,7 @@ public class BodyPresenterTest {
         final Message message = mock( Message.class );
         presenter.setup( Arrays.asList( message ) );
         verify( notificationPresenter ).setup( message );
+        verify(view).clear();
         verify( view ).addNotification( notificationPresenter.getView() );
     }
 
@@ -71,6 +72,7 @@ public class BodyPresenterTest {
     public void testSetupEmpty() {
         presenter.setup( Collections.<Message>emptyList() );
         verify( notificationPresenter ).setupOk();
+        verify(view).clear();
         verify( view ).addNotification( notificationPresenter.getView() );
     }
 
