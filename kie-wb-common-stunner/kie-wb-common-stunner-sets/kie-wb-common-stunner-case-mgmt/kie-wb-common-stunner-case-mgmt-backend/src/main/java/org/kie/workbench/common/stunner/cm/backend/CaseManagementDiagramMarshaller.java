@@ -16,6 +16,9 @@
 
 package org.kie.workbench.common.stunner.cm.backend;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 
@@ -29,7 +32,9 @@ import org.kie.workbench.common.stunner.cm.qualifiers.CaseManagementEditor;
 import org.kie.workbench.common.stunner.core.api.DefinitionManager;
 import org.kie.workbench.common.stunner.core.api.FactoryManager;
 import org.kie.workbench.common.stunner.core.backend.service.XMLEncoderDiagramMetadataMarshaller;
+import org.kie.workbench.common.stunner.core.diagram.Diagram;
 import org.kie.workbench.common.stunner.core.diagram.Metadata;
+import org.kie.workbench.common.stunner.core.graph.Graph;
 import org.kie.workbench.common.stunner.core.graph.command.GraphCommandManager;
 import org.kie.workbench.common.stunner.core.graph.command.impl.GraphCommandFactory;
 import org.kie.workbench.common.stunner.core.graph.processing.index.GraphIndexBuilder;
@@ -76,5 +81,18 @@ public class CaseManagementDiagramMarshaller extends BaseDiagramMarshaller<CaseM
     @Override
     public Class<? extends BPMNDiagram> getDiagramDefinitionClass() {
         return CaseManagementDiagram.class;
+    }
+
+    @Override
+    public Graph unmarshall(Metadata metadata, InputStream inputStream) throws IOException {
+        Graph result = super.unmarshall(metadata, inputStream);
+        this.updateTitle(metadata, result);
+
+        return result;
+    }
+
+    @Override
+    public String marshall(Diagram diagram) throws IOException {
+        return super.marshall(diagram);
     }
 }

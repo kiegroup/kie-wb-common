@@ -197,7 +197,7 @@ public abstract class BaseDiagramMarshaller<D> implements DiagramMarshaller<Grap
     }
 
     private String getTitle(final BPMNDiagram diagram) {
-        final String title = diagram.getDiagramSet().getName().getValue();
+        final String title = diagram != null ? diagram.getDiagramSet().getName().getValue() : null;
         return title != null && title.trim().length() > 0 ? title : "-- Untitled diagram --";
     }
 
